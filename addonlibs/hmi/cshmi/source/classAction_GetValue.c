@@ -120,6 +120,9 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_constructor(
 				return OV_ERR_OK;
 			}else if(ov_string_match(pobj->v_identifier, "div*")){
 				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "mod*")){
+				//Returns the remainder of the modulo operator
+				return OV_ERR_OK;
 			}else if(ov_string_match(pobj->v_identifier, "abs*")){
 				//Returns the absolute value (modulus) of a number.
 				return OV_ERR_OK;

@@ -1,0 +1,21 @@
+#ifndef MessageSys_OVT_INCLUDED
+#define MessageSys_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+typedef void (* OV_FNCPTR_MSGSYS_RET_FNC)(
+		OV_INSTPTR_ov_object 			pobj,
+		OV_INSTPTR_ov_object 			message,
+		OV_STRING 				errorstring,
+		OV_INT	 				errorcode
+);
+
+
+typedef enum MESSAGESYS_SENDBY {
+	MSG_SEND_DIRECTLY	=	0,
+	MSG_SEND_KSSETVAR	=	2,
+	MSG_SEND_EXTENSION	=	16
+} MESSAGESYS_SENDBY;
+
+#endif

@@ -48,11 +48,6 @@
 *
 *	NH							Nikolas Hansen <Nikolas.Hansen@plt.rwth-aachen.de>
 *
-*	CVS:
-*	----
-*	$Revision$
-*	$Date$
-*
 *	History:
 *	--------
 *	21-June-2007			St
@@ -521,7 +516,8 @@ HMI.prototype = {
 		HMI.PossServers.disabled = true;
 		HMI.PossSheets.disabled = true;
 		
-		//HMIdate was populated in every js-file with the date of CVS commit
+		/*
+		//HMIdate was populated in every js-file with the date of CVS commit, not working with git
 		//publish this date on website
 		if ("undefined" != typeof HMIdate){
 			HMI.HMI_Constants.HMIdate = HMIdate;
@@ -536,6 +532,7 @@ HMI.prototype = {
 			HMIdate = null;
 			dateTextNode = null;
 		}
+		*/
 		
 		//make deep links work
 		this.interpreteUrlParameter();
@@ -2024,12 +2021,4 @@ if (window.location.search && -1 !== unescape(window.location.search).indexOf("t
 	HMI = new HMI(true, true, true, true, true);
 }else{
 	HMI = new HMI(true, true, true, true, false);
-}
-
-var filedate = "$Date$";
-filedate = filedate.substring(7, filedate.length-2);
-if ("undefined" == typeof HMIdate){
-	HMIdate = filedate;
-}else if (HMIdate < filedate){
-	HMIdate = filedate;
 }

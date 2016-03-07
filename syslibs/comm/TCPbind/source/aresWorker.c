@@ -73,6 +73,13 @@ OV_DLLFNCEXPORT getAddrInfoElem *TCPbind_aresWorker_insertGetAddrInfo(
 	pNewElem->status = AIESTATUS_WAITING;
 	/*	last element is never deleted, so the pointer is always valid	*/
 	pNewElem->pPrevious = elemList.pLastElem;
+	if(!elemList.pLastElem){
+		/*	elemList was deleted in shutdown --> no more transactions
+		 * 	no concurrency implications as this very function is called from the same thread as shutdown	*/
+		free(pNewElem);
+		KS_logfile_warning(("aresWorker - insertGetAddrInfo: trying to open a new connection after shutdown. Won't do it"));
+		return 0;
+	}
 	/*	insert Element -> this is the only atomic action	*/
 	elemList.pLastElem->pNext = pNewElem;
 	/*	this one does not need to be atomic, as no other thread touches this value	*/

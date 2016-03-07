@@ -24,10 +24,13 @@ CC_FLAGS = -g -Wall -O2 -fomit-frame-pointer -pipe -msoft-float -fno-builtin -DE
 LD	= $(CC) -Wl,-elf2flt -msoft-float
 LD_FLAGS =
 
+# Set TARGETOS to --targetWindows --targetLinux or --targetSolaris to cross-compile for the respective system.\n
+TARGETOS = 
+		
 all:
 
 %:
-	acplt_makmak -l wagoFBKlib $(MAKMAKOPTIONS)
+	acplt_makmak -l wagoFBKlib $(MAKMAKOPTIONS) $(TARGETOS)
 	tclsh $(PREBUILD) wagoFBKlib $(MAKMAKOPTIONS)
 	$(MAKE) NO_DLL_COPY=1 BIN_DIR='$(BIN_DIR)' USERLIB_DLL='$(USERLIB_DLL)' CC='$(CC)' CC_FLAGS='$(CC_FLAGS)' LD='$(LD)' LD_FLAGS='$(LD_FLAGS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	tclsh $(POSTBUILD) wagoFBKlib

@@ -1,0 +1,555 @@
+The ACPLT/KS C++ Communication Library
+======================================
+
+This is version 1.2.5 of the C++ Communication Libary. As always, it
+contains bug-fixes and some small improvements behind the scenes. For
+details about bug-fixes and changes, see part 3 "Changes & Bug-Fixes"
+of this document below.
+
+IMPORTANT: since version 1.1.3 we now license the source code of the
+ACPLT/KS package under the Artistic License (see file ARTISTIC-LICENSE
+for details). The rationale behind this is that we get better control
+over what the official ACPLT/KS protocol and implementation is. This
+way we can guarantuee better quality and avoid pollution by vicious
+third parties. As with the old PLT License, the Artistic License is
+OpenSource and allows you to use ACPLT/KS for all your projects,
+either commercial or not. Like before, you can tweak the code to suit
+your needs, etc.
+
+
+Currently, the following platforms and compilers are supported by the
+C++ Communication Library:
+
+  Linux 2.6                    g++ 4.2.3
+  Windows NT/9x                Borland C++ 5.0,
+                               Microsoft VC++ 4.2, 5.0, 6.0
+                               Cygnus egcs 1.1.2 (first attempt)
+Partly supported are:
+  HP-UX 10.20                  g++ 2.8.x
+  IRIX 6.x                     g++ 2.7.2, g++ 2.8.x
+  OpenVMS 6.2/7.1              CXX DEC C++ 5.4
+  Solaris 2.6                  g++ 2.7.2, g++ 2.8.x
+
+But now, compile and enjoy --
+  Your ACPLT/KS team <@plt.rwth-aachen.de>
+
+
+1. Introduction
+---------------
+
+The "C++ Communication Library" eases the integration of the open
+communication system ACPLT/KS into applications, thus enabling them to
+operate directly with process data.
+
+For up-to-date information see
+    http://www.acplt.org/ks
+or
+    http://www.acplt.de/ks (German)
+
+The old urls http://www.plt.rwth-aachen.de/ks/english and
+http://www.plt.rwth-aachen.de/ks are still valid and point to the
+same pages.
+
+From there, you can also download the "Technology Paper #8" which
+describes the "C++ Communication Library" in detail.
+
+
+2. Compiling the Library
+------------------------
+
+2.1 Un*x
+--------
+
+Make sure you have the right tools: gcc, gmake, and perl.
+
+Change to the root of the library tree, that is the "acplt" directory,
+where this README file is stored too. Choose your weapons -- pardon,
+operating system -- and then do:
+
+  $ make linux.all
+
+This will build the library as well as some example applications. If
+appropriate, replace "linux" with either "hpux", "irix", or "solaris".
+
+
+2.2 NT/95
+---------
+
+We're in the process of adding support for Cygnus' g++ port to the
+Win32 environment. Currently, the server library can be compiled
+and test examples build. Stay tuned for more information.
+
+On NT/95, take your chances, and do (Borland C++):
+
+  X:\acplt> make -f makefile.nt nt.all
+
+or (Microshaft Visual C+):
+
+  X:\acplt> nmake -f makefile.nt nt.all
+
+During the compilation of the example applications you'll see some
+linker warnings like (Borland C++ only):
+
+  Warning: Extern '_xdr_XXX' was not qualified with __import in module XXX
+
+You can safely ignore these warnings, as there is some compiler/linker
+magic necessary to export variables from DLLs unter Windows NT/95, and
+this magic gets sometimes dazzled (bad magic, huh?).
+
+When using VC+ 4.2, you'll see warnings about the "use of nonstandard
+extensions" -- ignore them. The irony behind this is that the C++
+Communication Library emulates such "nonstandard extensions" like the bool
+data type because Microsoft does not adhere to the C++ language standard.
+
+There are now makefiles for the cygwin egcs C++ compiler available in the
+build/cygwin directories. Please check the makefiles first and adjust the
+settings especially for the include paths of the mingw header files, etc.
+You'll also need to build first your own ONC/RPC library using egcs. The
+ONC/RPC library can currently be linked in only statically, because egcs
+doesn't support exporting global variables from DLLs.
+
+
+2.3 OpenVMS
+-----------
+
+Create a directory for the CXX repository, for example CXX_REPOSITORY.DIR
+in your home directory. Then define the symbol acplt$repository, which must
+point to this directory. Finally do a
+
+  $ gmake openvms.all
+
+That's it. This will build the library as well as the examples.
+
+
+3. Changes & Bug-Fixes
+----------------------
+
+Version 1.2.5
+* Fixed for compiling with Linux/GCC4 
+  Thanks goes to Syte (www.syte.ch) for their contribution 
+
+Version 1.2.3
+- SERVERS:
+  * Fixed a long-standing hidden bug in PltTime::operator<=, which failed
+    to compare two time stamps properly if both timestamps were of the
+    same second but with different microseconds. This in turn caused
+    connection establishment timeouts to be missed in certain situations,
+    especially with OV-based object management systems running sub-second
+    cycles.
+
+Version 1.2.2
+- SERVERS:
+  * Fixed problem related to the creation of the /vendor branch and
+    populating it with information when someone has already created
+    the vendor domain. This also fixes "pure virtual method called"
+    problems with the Manager.
+  * Fixed bug in state reporting when the attempt to open an interserver
+    connection fails. In case the destination host does not run either
+    a portmapper or a Manager, then async_attention() was called with
+    a "call" indication instead of an "open" indication. This has been
+    fixed to always indicate a failed "open".
+  * Added missing KssLink::getAssociationIdentifier(), which returns the
+    association identifier of a link communication object, when asked
+    for its engineered properties.
+
+Version 1.2.1
+- SERVERS:
+  * The vendor domain is now automatically populated by the following
+    three subdomains (applies to class KsSimpleServer only):
+    - extensions (may contain protocol extension information as per TP#6).
+    - modules (contains information per specific module, this is for
+        instance used by the buffered streams mechanism, under the
+        module acpltks).
+      IMPORTANT: make sure you do not create your own extensions domain,
+        or your objects might not show up at all!
+    - specific (may contain additional vendor specific information not
+        covered by TP#6).
+  * Moved buffered-streams specific information from "/vendor" to
+    "/vendor/modules/acpltks".
+  * The listening sockets can now set to SO_REUSEADDR by calling
+    KsServerBase::setReuseAddr(true). This enables binding to a specific
+    port to which MS-based clients are still connected when starting a
+    new KS server (for instance, useful during the development cycle).
+  * Added option "-r" to enable address reuse with the Un*x KS Manager.
+  * Set FD_SETSIZE to 1024 on OpenVMS machines, overriding the
+    brain-damaged default of 32.
+  * Fixed strange setpgrp() parameter calling problem with Solaris which
+    prevented the Un*x-based KS Manager from properly entering daemon mode.
+  * Added "server_os" variable to "/vendor" domain, returning an operating
+    system, version and release string.
+
+- GENERIC:
+  * Fixed warnings from VC++ 6.0 grumbling about converting bool_t to bool.
+  * Removed /float=ieee option from OpenVMS Makefiles, as the UCX network
+    package now seems to rely on code linking to the ONC/RPC functions using
+    BigQ's proprietary floating point formats. It appears that it is
+    converting them to the network float format on-the-fly.
+
+Version 1.2.0
+- SERVERS:
+  * Fixed compiling problems with egcs and new tool chain (linker). This
+    concerned minor glibc2 related compiling problems (glibc2 is fortunately
+    much stronger typed) as well as the template linker perl script.
+  * Fixed a bug on OpenVMS concerning UDP-based buffered XDR streams acting
+    as client-side streams.
+  * Fixed a bug in KsPath::resolvePaths() concerning handling of encoded
+    characters ("%XX") when resolving paths.
+  * Fixed a bug/memory leak when using more than one A/V module for the
+    same server connection.
+
+Version 1.1.3
+- SERVERS:
+  * Fixed registration of the dispatch method, when using the genuine
+    ONC/RPC library and dispatching model.
+  * Fixed bug in auto-detection of ACPLT/KS Manager version when
+    connecting. When connecting to an ACPLT/KS Manager picky about the
+    KS protocol version, we step down the KS protocol version until
+    both sides can agree on the version to use. A client will
+    nevertheless try to ask for the best protocol version it can
+    understand.
+  * Added new ACPLT/KS services, like GetCanonicalPath and
+    RenameObject. Also added the semantic flags to the abstract base class
+    of all communication objects. Made ks.h header file C compliant even
+    for lesser C compilers on 16bit platforms.
+  * Implemented backwards compatibility for v2 clients with v1 servers.
+
+- CLIENTS:
+
+Version 1.0.5
+- SERVERS: interserver connections added (YESSS!). The tserver example shows
+  how to send and receive ACPLT/KS service requests and replies in the
+  background while the server is idle. This makes sending non-blocking
+  requests to other ACPLT/KS servers easy.
+
+- SERVERS: links added.
+
+- SERVERS: fixed a stupid preprocessor define bug in the sorces preventing
+  the buffered streams from working properly on Windows NT/95.
+
+- SERVERS: checking added that makes sure that both the libkssvr and your
+  particular ACPLT/KS server have been compiled using the same setting
+  for PLT_USE_BUFFERED_STREAMS. If you compile one without it and the other
+  one with PLT_USE_BUFFERED_STREAMS, you'll get an unresolved symbol at
+  link time. The name of the unresolved symbol indicates whether the
+  libkssvr has been compiled with PLT_USE_BUFFERED_STREAMS on or off.
+
+- SERVERS: first shots of support for Cygwin development environment added.
+
+- SERVERS: fixed some compile problems with Borland C++ 5.01 which behaves
+  slightly different from BC++ 5.0.
+
+- SERVERS: fixed a bug in the buffered streams which in rare circumstances
+  could cause sending transports to stall.
+
+- CLIENTS: fixed a memory leak in the KscServer class which caused a
+  KsString to not be properly released whenever the last communication object
+  proxy using this particular KscServer object was destroyed.
+
+- BOTH: support for HP-UX 10.20.x and g++ 2.8.x added.
+
+- BOTH: fixed the return value specification of an overloaded operator
+  of a derived class in the hashtable.h module. This allows the C++
+  Communication Library to be compiled with VC++ 6 (other compilers were
+  silently ignoring this buglet).
+
+Version 1.0.4
+- CLIENTS: Fixed a bug which caused A/V modules to be ignored which
+  were attached to data exchange packets.
+
+- SERVERS: Introduced server-side dynamic XDR streams. They can be
+  enabled with -DPLT_USE_BUFFERED_STREAMS=1 (see makefiles). If enabled,
+  client requests will first be read in completely before processing
+  them. Also the replies will first be deserialized completely into a
+  dynamic XDR stream before sending them to a client. This way blocking
+  i/o during receiving requests or sending replies does not block servers
+  anymore until the 30 second timeout occurs. The streams are NOT enabled
+  by default, as they're relatively new and we want to test them even
+  more before rolling them out officially.
+
+Version 1.0.3
+- SERVERS: Fixed a bug which sometimes caused the port number setting
+  to be ignored.
+
+- CLIENTS: Fixed a small bug related to error handling when scanning a
+  resource locator for an explicit port number.
+
+Version 1.0.2
+- CLIENTS: Fixed a bug which crashed applications creating communication
+  objects with an invalid host and/or server name like "//x//a/b/c".
+
+- CLIENTS: The resource locator syntax has been extended to accept an
+  optional port number after the hostname, for example:
+    "//rumpelpumpel.acme.org:2000/MANAGER/vendor/server_time"
+  If no port number is specified, an ACPLT/KS client will look up the
+  manager's port address using the portmapper on the host specified in
+  the resource locator. If the port number is specified (separated by
+  a colon from the host name) then a client will contact the ACPLT/KS
+  manager directly at this port. The purpose of this is that you can
+  now controll the access to ACPLT/KS servers through firewalls without
+  necessarily granting access to the portmapper. If the optional port
+  number is used, a client will contact the ACPLT/KS manager using a
+  TCP/IP connection instead of UDP/IP. This makes firewall configurations
+  easier.
+
+- CLIENTS: Cleaned up error reporting for communication objects like
+  variables and domains. If there is a communication level problem between
+  client and server, an error code of KS_ERR_NETWORKERROR was issued in
+  releases before 1.0.2 of the C++ Communication Library. Beginning with
+  this release 1.0.2 the error code of the server is reported instead
+  by the communication object, if you call getLastResult() on it. Thus,
+  KS_ERR_NETWORKERROR no longer means that there were a problem either
+  in the low-level communication **or** on the ACPLT/KS layer, but instead
+  now indicates **only** low-level communication problems. For instance, you
+  will get a KS_ERR_BADAUTH instead of KS_ERR_NETWORKERROR.
+
+- CLIENTS: Cleaned up error reporting through packages and data exchange
+  packages: when the communication with an ACPLT/KS server fails, then the
+  error code is propagated to all variable objects in a package which refer
+  to this server. Only in this case the package itself will return an error
+  code of KS_ERR_NETWORKERROR. So there are basically these cases:
+
+  * package.getUpdate() == true && package.getLastResult() == KS_ERR_OK
+    Everything is okay. The variables have been successfully read or
+    written.
+
+  * package.getUpdate() == false && package.getLastResult() == KS_ERR_OK
+    Communication with the ACPLT/KS server succeeded but some variables
+    could not be read/written. Reasons for this could be either invalid
+    path names or access restrictions for individual variables.
+
+  * package.getUpdate() == false && package.getLastResult() == KS_ERR_NETWORKERROR
+    Communication with one or more ACPLT/KS servers failed. Variables
+    located in other servers could be read/written nevertheless. The variable
+    objects whose values could not be read/written will return a more precise
+    error code indicating the cause for the failure.
+    
+  * package.getUpdate() == false && package.getLastResult() == some other error code
+    The package object failed to initiate the communication. Reasons for
+    this can be memory constraints. The error code returned by getLastResult()
+    specifies the reason for failure more precise.
+
+
+Version 1.01
+- SERVERS: The constructor sof the classes KsServer and KsSimpleServer now
+  have an optional parameter "port" which can be used to "bind" a ACPLT/KS
+  server to a specific port number. This is necessary when ACPLT/KS servers
+  should be accessed from outside a firewall. If you do not need to bind to
+  a specific port, then use the pre-defined constant KsServerBase::KS_ANYPORT.
+  Because this port parameter is optional, existing code will not break but
+  simply needs to be re-compiled.
+
+- SERVERS: New classes KsInAddrSet and KsHostInAddrSet for checking IP
+  addresses of incomming requests again a lists of allowed or forbidden IP
+  addresses.
+
+- SERVERS: ntksmanager.exe and tmanager.exe now deny register requests from
+  remote "servers". tmanager.exe now does this also on OpenVMS. (On un*x
+  operating systems this was never a problem from the early beginnings of
+  the ACPLT/KS C++ Communication Library, so guess which operating systems
+  are *true* server operating systems...)
+
+- SERVERS: support for "service processes" under Windooze 95, see the
+  documentation for the class KsW95ServiceServer in the Technology Paper #8
+  for details.
+
+- CLIENTS: A bug in the KscPackageClass has been corrected which crashed ACPLT/KS
+  clients trying to remove a variable or package from a KscPackage object.
+
+- CLIENTS: See TP#8 for how to control the timeout and retry values, which
+  control how long an ACPLT/KS client will wait for an answer from a server and
+  if a connection breaks down how often the client will try to reconnect
+  automatically before the timeout is reported to the calling application.
+
+- ALL: The classes PltPtrHandle and PltArrayHandle now have operators for
+  tests on equality or non-equality implemented. The operator==() checks
+  whether both handles *point to the same* object or both are unbound.
+  In this case the operator returns true. The operator!=() is just the
+  opposite.
+
+- ALL: On Windows NT, the file ntksmanager.exe contains version information,
+  which indicates the release level, copyright, and more. Please note, that
+  due to a bug in Windows NT (*a* bug?!), you can't see this information
+  in the Explorer, if the file is located on a network drive. The same applies
+  to the w95ksmanager.exe file which is a ACPLT/KS manager service process
+  for Windows 95.
+
+- For further information, peek at:
+  http://www.plt.rwth-aachen.de/ks/english/firstaid.html
+
+
+4. Porting Notes
+----------------
+
+When stepping up from 1.0.5 to 1.2.0 you should watch the following
+changes:
+
+- SERVERS: the default ACPLT/KS core protocol version is 2 (two). This
+  results in addition of a new field in the engineered properties called
+  "semantic_flags". As you might have noted we now speak of "engineered
+  properties" instead of "projected properties" as the former name was a
+  real mis-nomer. In consequence, method and class names have been
+  changed -- don't panic, there are defines which will provide the old
+  names.
+
+  The exceptions are:
+
+  * KsProjPropsHandle KssCommObj::getPP() has been changed to
+    KsEngPropsHandle KssCommObj::getEP(). Currently, you'll need to make
+    this adjustment in your server source codes.
+
+  * The abstract method KssCommObj::getSemanticFlags() has been introduced.
+    Typically (if you don't need semantic flags), you can implement this
+    method in your derived classes as follows:
+    
+      KS_SEMANTIC_FLAGS myclass::getSemanticFlags() const
+      { return 0; }
+
+  * The old method KsServerBase::getPP(...) has been superseded by
+    KsServerBase::getEP(...). If your ACPLT/KS servers base on class
+    KsSimpleServer, you don't need to worry about this, we've already
+    done this for you.
+
+  * Note that class KsServerBase contains an emulation for the old GetPP
+    service, which will be converted behind the scenes into a call to
+    GetEP, so you get the version 1 compatibility automatically.
+
+- CLIENTS: nothing, old code should compile straight out of the box.
+
+
+5. Suggested Readings
+---------------------
+
+Well -- all "Technology Papers" of course. But for a quick start you
+should first make yourself familiar with the object model of ACPLT/KS
+(Technology Paper #4). If you plan to write a KS server, then you
+should read the "Technology Paper #3" too. In every case, you should
+take a look at the "Technology Paper #8", as it is the reference guide
+to the C++ communication library.
+
+
+6. Legal Stuff
+--------------
+
+                                Preamble
+
+The intent of this document is to state the conditions under which a
+Package may be copied, such that the Copyright Holder maintains some
+semblance of artistic control over the development of the package,
+while giving the users of the package the right to use and distribute
+the Package in a more-or-less customary fashion, plus the right to make
+reasonable modifications.
+
+Definitions:
+
+    - "Package" refers to the collection of files distributed by the
+      Copyright Holder, and derivatives of that collection of files
+      created through textual modification.
+
+    - "Standard Version" refers to such a Package if it has not been
+      modified, or has been modified in accordance with the wishes of
+      the Copyright Holder as specified below.
+
+    - "Copyright Holder" is whoever is named in the copyright or
+      copyrights for the package.
+
+    - "You" is you, if you're thinking about copying or distributing
+      this Package.
+
+    - "Reasonable copying fee" is whatever you can justify on the basis
+      of media cost, duplication charges, time of people involved, and
+      so on. (You will not be required to justify it to the Copyright
+      Holder, but only to the computing community at large as a market
+      that must bear the fee.)
+
+    - "Freely Available" means that no fee is charged for the item
+      itself, though there may be fees involved in handling the item.
+      It also means that recipients of the item may redistribute it
+      under the same conditions they received it.
+
+1.  You may make and give away verbatim copies of the source form of the
+    Standard Version of this Package without restriction, provided that
+    you duplicate all of the original copyright notices and associated
+    disclaimers.
+
+2.  You may apply bug fixes, portability fixes and other modifications
+    derived from the Public Domain or from the Copyright Holder. A
+    Package modified in such a way shall still be considered the
+    Standard Version.
+
+3.  You may otherwise modify your copy of this Package in any way,
+    provided that you insert a prominent notice in each changed file
+    stating how and when you changed that file, and provided that you do
+    at least ONE of the following:
+
+    a) place your modifications in the Public Domain or otherwise make
+       them Freely Available, such as by posting said modifications to
+       Usenet or an equivalent medium, or placing the modifications on a
+       major archive site such as uunet.uu.net, or by allowing the
+       Copyright Holder to include your modifications in the Standard
+       Version of the Package.
+
+    b) use the modified Package only within your corporation or
+       organization.
+
+    c) rename any non-standard executables so the names do not conflict
+       with standard executables, which must also be provided, and
+       provide a separate manual page for each non-standard executable
+       that clearly documents how it differs from the Standard Version.
+
+    d) make other distribution arrangements with the Copyright Holder.
+
+4.  You may distribute the programs of this Package in object code or
+    executable form, provided that you do at least ONE of the following:
+
+    a) distribute a Standard Version of the executables and library
+       files, together with instructions (in the manual page or
+       equivalent) on where to get the Standard Version.
+
+    b) accompany the distribution with the machine-readable source of
+       the Package with your modifications.
+
+    c) give non-standard executables non-standard names, and clearly
+       document the differences in manual pages (or equivalent),
+       together with instructions on where to get the Standard Version.
+
+    d) make other distribution arrangements with the Copyright Holder.
+
+5.  You may charge a reasonable copying fee for any distribution of this
+    Package. You may charge any fee you choose for support of this
+    Package. You may not charge a fee for this Package itself. However,
+    you may distribute this Package in aggregate with other (possibly
+    commercial) programs as part of a larger (possibly commercial)
+    software distribution provided that you do not advertise this
+    Package as a product of your own.
+
+6.  The scripts and library files supplied as input to or produced as
+    output from the programs of this Package do not automatically fall
+    under the copyright of this Package, but belong to whomever
+    generated them, and may be sold commercially, and may be aggregated
+    with this Package.
+
+7.  C subroutines (or comparably compiled subroutines in other
+    languages) supplied by you and linked into this Package shall not be
+    considered part of this Package.
+
+8.  Aggregation of this Package with a commercial distribution is always
+    permitted provided that the use of this Package is embedded; that
+    is, when no overt attempt is made to make this Package's interfaces
+    visible to the end user of the commercial distribution. Such use
+    shall not be construed as a distribution of this Package.
+
+9.  The name of the Copyright Holder may not be used to endorse or
+    promote products derived from this software without specific prior
+    written permission.
+
+10. THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+    WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+    MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+
+The ACPLT/KS Group
+ks@plt.rwth-aachen.de
+Chair of Process Control Engineering
+Aachen University of Technology
+Turmstrasse 46
+D-52064 Aachen, Germany

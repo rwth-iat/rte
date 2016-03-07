@@ -109,21 +109,17 @@ int main(int argc, char **argv) {
 	int	    	archBitwidth = 32;
 #endif
 	
+	char        *builddir = NULL;
+	char        *buildsys = NULL;
+
 	//this is for the host system
 #if OV_SYSTEM_NT
-	//char        *ph;
-	char        *builddir = "nt";
-	char        *buildsys = "NT";
 	targetOs	=	TARGETOS_WIN;
 #else
 #if OV_SYSTEM_LINUX
-	char        *builddir = "linux";
-	char        *buildsys = "LINUX";
 	targetOs	=	TARGETOS_LINUX;
 #else
 #if OV_SYSTEM_SOLARIS
-	char        *builddir = "solaris";
-	char        *buildsys = "SOLARIS";
 	targetOs	=	TARGETOS_SOLARIS;
 #else
 #error --- Betriebssystem nicht unterstuetzt --- 
@@ -231,6 +227,17 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	if(targetOs == TARGETOS_WIN){
+		builddir = "nt";
+		buildsys = "NT";
+	} else if(targetOs == TARGETOS_LINUX){
+		builddir = "linux";
+		buildsys = "LINUX";
+	} else if(targetOs == TARGETOS_SOLARIS){
+		builddir = "solaris";
+		buildsys = "SOLARIS";
+	}
+	
 	if(!libname) {
 		goto HELP;
 	}
@@ -407,6 +414,7 @@ if(new == 0){
 	fprintf(fd,"\n");
 	fprintf(fd,"else\n");
 	fprintf(fd,"DEFINES    = -DOV_SYSTEM_$(SYSTEM)=1 -DPLT_SYSTEM_$(SYSTEM)=1");
+	
 	if(addOpenLib == 1) {
 		fprintf(fd," -Dov_library_open_%s=ov_library_open_%s_old", libname, libname);
 	}
@@ -787,7 +795,7 @@ if(new == 0){
 	fprintf(fd,"%%.o: %%.c $(HEADERS)\n");
 	fprintf(fd,"\t$(COMPILE_C) -o $@ $<\n");
 	fprintf(fd,"\n");
-	if(targetOs != TARGETOS_WIN){
+	if(targetOs == TARGETOS_WIN){
 		fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");
 	} else {
 		fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
@@ -798,7 +806,7 @@ if(new == 0){
 		fprintf(fd,"\t$(RANLIB) $@\n");
 	}
 	fprintf(fd,"\n");
-	if(targetOs != TARGETOS_WIN){
+	if(targetOs == TARGETOS_WIN){
 		fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");
 		fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
 	} else {
@@ -816,7 +824,7 @@ if(new == 0){
 	}
 	fprintf(fd,"\n");
 
-	if(targetOs != TARGETOS_WIN){
+	if(targetOs == TARGETOS_WIN){
 		fprintf(fd,"#   Dependencies\n");
 		fprintf(fd,"#   ------------\n\n");
 

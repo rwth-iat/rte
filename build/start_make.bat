@@ -1,5 +1,5 @@
 @echo off
-rem set ACPLTDEV_PATH to the AcpltDevelopment kint directory
+rem set ACPLTDEV_PATH to the AcpltDevelopment kit directory
 rem it is assumed that MinGW and tools are located in this directory
 set ACPLTDEV_PATH=%~dp0..\..\..\
 

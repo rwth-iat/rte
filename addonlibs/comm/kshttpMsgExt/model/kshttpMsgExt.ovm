@@ -1,0 +1,34 @@
+#include "ov.ovm"
+#include "kshttp.ovm"
+#include "MessageSys.ovm"
+
+LIBRARY kshttpMsgExt
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "Lars Evertz";
+	COPYRIGHT = "";
+	COMMENT   = "Extend the kshttp library to handle Messages from a POST request";
+	
+	CLASS MsgExt : CLASS kshttp/httpClientHandlerExtension
+		IS_INSTANTIABLE;
+		VARIABLES
+			
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			HandleExtendedRequest	:	C_FUNCTION	<KSHTTP_FNC_HANDLEEXTREQUEST>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS MsgSendExt	:	CLASS	MessageSys/MsgSendExtension
+		IS_INSTANTIABLE;
+		VARIABLES
+			httpClientHandlerIDh	:	UINT;
+			httpClientHandlerIDl	:	UINT;
+		END_VARIABLES;
+		OPERATIONS
+			sendMessage	:	C_FUNCTION <MSGSYS_SENDMSG>;
+			HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;	
+		END_OPERATIONS;
+	END_CLASS;
+	
+END_LIBRARY;

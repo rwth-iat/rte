@@ -20,6 +20,7 @@ set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=32"
 set ov_arch_bitwidth_int 32
 set cross 0
 set crossFilename ""
+set targetOS ""
 set gitRepo "https://github.com/acplt/rte/trunk/"
 
 
@@ -100,7 +101,17 @@ if {$cross==1} {
 	source $crossFilename
 	if {$targetOS=="nt"} {
 		set build_dbcommands 0
+		set libsuffix ".dll"
+		set exesuffix ".exe"
+		set batsuffix ".bat"
+	} else {
+		set libsuffix ".so"
+		set exesuffix ""
+		set batsuffix ".sh"
 	}
+	
+} else {
+	set targetOS $os
 }
 
 
@@ -417,11 +428,14 @@ proc build_acplt {} {
 	global cross
 	global CrossPrefix
 	global targetOS
+	variable crossArgs
 
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
 #libml
 	if {$cross==1} { 
 		set crossArgs "PREFIX=$CrossPrefix"
+	} else {
+		set crossArgs "PREFIX= "
 	}
 	build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs
 
@@ -458,12 +472,14 @@ proc build_acplt {} {
 			set crossArgsPrefix "PREFIX=$CrossPrefix"
 			set crossArgsCGDir "OV_CODEGEN_DIR= "
 			set crossArgsCG	"OV_CODEGEN_EXE=ov_codegen"
-		}
-		if {$targetOS=="nt"} {
-			set crossWindresDefs "WINDRESDEFS=--define _WIN32"
-			build_package ov make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs 
+			if {$targetOS=="nt"} {
+				set crossWindresDefs "WINDRESDEFS=--define _WIN32"
+				build_package ov make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs 
+			} else {
+				build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
+			}
 		} else {
-			build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
+			build_package ov make -C $builddir/base/ov/build/$os
 		}
    }
    #if { $os == "nt" } then {
@@ -475,13 +491,13 @@ proc build_acplt {} {
 
 proc install_dir {dir} {
 	global builddir
-	global os
+	global targetOS
 	print_msg "Installing from $dir"
-	if { $os == "linux" } then {
+	if { $targetOS == "linux" } then {
 		set binfiles [concat [glob -nocomplain $dir/*.so] [glob -nocomplain -type {f x} $dir/*]]
 		set libfiles [concat [glob -nocomplain $dir/*.a]]
 	} 
-	if { $os == "nt" } then {
+	if { $targetOS == "nt" } then {
 		set binfiles [concat [glob -nocomplain $dir/*.dll $dir/*.exe]]
 		set libfiles [concat [glob -nocomplain $dir/*.lib $dir/*.a]]
 	}
@@ -517,6 +533,7 @@ proc release_lib_better {libname option} {
 	global compileonly
 	global cross	
 	global targetOS
+	global CrossPrefix
 
 	cd $releasedir/dev/
 	if { $compileonly != 1 } then {
@@ -557,12 +574,21 @@ proc release_lib_better {libname option} {
 		#break if no successful compile
 		set break_in_next_iteration 1 
 		foreach libname $not_yet_build {
-			cd $releasedir/dev/$libname/build/$os/
+			cd $releasedir/dev/$libname/build/$targetOS/
 			
 			if { $option == "all" } then {
 				print_msg "Note: no debug symbols will be created"
 			}
-			set success [build_package $libname $make $option]
+			if {$cross == 1} {
+				if {$targetOS == "nt"} {
+					set MAKMAKOPTION "TARGETOS=--targetWindows"
+				} else {
+					set MAKMAKOPTION "TARGETOS=--targetLinux"
+				}
+				set success [build_package $libname $make $option GCC_BIN_PREFIX=$CrossPrefix BIN_DIR= $MAKMAKOPTION]
+			} else {			
+				set success [build_package $libname $make $option]
+			}
 			
 			if { $success == 0 } {
 				#iterate once more
@@ -854,7 +880,11 @@ if { $os == "nt" } then {
 	install_acplt cygwin
 } else {
 	build_acplt
-	install_acplt linux
+	if {$targetOS == "nt"} {
+		install_acplt cygwin
+	} else {
+		install_acplt linux
+	}
 }
 
 if {$release == 1} {
@@ -902,7 +932,11 @@ if {$release == 1} {
 		install_acplt cygwin
 	} else {
 		build_acplt
-		install_acplt linux
+		if {$targetOS == "nt"} {
+		install_acplt cygwin
+		} else {
+			install_acplt linux
+		}
 	}
 
 	create_release

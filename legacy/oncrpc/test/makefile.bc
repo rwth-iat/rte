@@ -1,0 +1,70 @@
+# If the rpc include directory is not included in the standard path
+# you have to give the path to it here.
+RPCINCLUDEPATH = ..
+
+# If the rpc library is not included in the standard lib path
+# you have to give the path to it here.
+RPCLIBPATH = ..\bin\\
+
+# The architecture you're compiling for...
+ARCH = -D_X86_
+
+# The path to the Borland "Utilities"
+BC = c:\bc5
+
+CC      = $(BC)\bin\bcc32
+LINK    = $(BC)\bin\tlink32
+IMPLIB  = $(BC)\bin\implib
+
+CC_FLAGS = -DWIN32 -D_WIN32=1 -w-pro -a8
+LD_FLAGS = -L$(BC)\lib -x
+
+OBJS =          COUNT.OBJ \
+		COU_SVC.OBJ \
+		COU_XDR.OBJ
+
+RPCGEN =        ..\bin\rpcgen.exe
+
+all: COU_SVC.EXE DO_COU.EXE
+
+clean:
+	del *.OBJ *.EXE COU.H COU_CLNT.* COU_SVC.* COU_XDR.* *.bak *.map
+
+COU_SVC.EXE:    COUNT.OBJ \
+		COU_SVC.OBJ \
+		COU_XDR.OBJ \
+		$(RPCLIBPATH)oncrpc.lib
+     $(LINK) -Tpe $(LD_FLAGS) @&&!
+c0x32.obj COUNT.obj COU_XDR.obj COU_SVC.obj,COU_svc.exe,,$(RPCLIBPATH)\oncrpc.lib import32.lib cw32.lib
+!
+     copy COU_svc.exe ..\bin
+
+DO_COU.EXE:     COU_CLNT.OBJ \
+		COU_XDR.OBJ \
+		DO_COU.OBJ \
+		$(RPCLIBPATH)oncrpc.lib
+     $(LINK) -Tpe $(LD_FLAGS) @&&!
+c0x32.obj COU_XDR.obj COU_CLNT.obj DO_COU.obj,DO_COU.exe,,$(RPCLIBPATH)\oncrpc.lib import32.lib cw32.lib
+!
+     copy DO_COU.exe ..\bin
+
+.c.obj:
+    $(CC) -tW -I$(RPCINCLUDEPATH) $(CC_FLAGS) $(ARCH) -c $*.c
+
+COUNT.obj: COUNT.c COU.H
+COU_SVC.OBJ: COU_SVC.c
+COU_CLNT.OBJ: COU_CLNT.c
+DO_COU.OBJ: DO_COU.c COU.H
+COU_XDR.OBJ: COU_XDR.c
+
+COU_XDR.C:      COU.X
+    $(RPCGEN) COU.X
+
+COU.H:  COU.X
+    $(RPCGEN) COU.X
+
+COU_CLNT.C:     COU.X
+    $(RPCGEN) COU.X
+
+COU_SVC.C:      COU.X
+    $(RPCGEN) COU.X

@@ -44,10 +44,6 @@
 *	--------
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
-*	CVS:
-*	----
-*	$Revision$
-*	$Date$
 *
 *	History:
 *	--------
@@ -125,7 +121,7 @@ function cshmi() {
 /*#########################################################################################################################
 TODO:
 setvar type erlauben
-überall asyncrone requests nutzen
+ueberall asyncrone requests nutzen
 #########################################################################################################################*/
 
 /***********************************************************************
@@ -1236,6 +1232,50 @@ cshmi.prototype = {
 				return previousTemplateCount;
 			}else if (VisualObject.hasAttribute(ParameterValue)){
 				return VisualObject.getAttribute(ParameterValue);
+			}else if (ParameterValue === "getPolylineTotalLength" ||
+					ParameterValue.indexOf("getPolylinePointXAtFractionLength") !== -1||
+					ParameterValue.indexOf("getPolylinePointYAtFractionLength") !== -1){
+
+				//find a polyline with Coords in a parent group
+				var IteratorObj = VisualObject;
+				var Coords = null;
+				while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+					for(var i = 0; i < IteratorObj.childNodes.length;i++){
+						if (IteratorObj.childNodes[i].tagName === "polyline" && IteratorObj.childNodes[i].ResourceList && IteratorObj.childNodes[i].ResourceList.RoutePolyline && IteratorObj.childNodes[i].ResourceList.RoutePolyline.Coords !== undefined){
+							Coords = IteratorObj.childNodes[i].ResourceList.RoutePolyline.Coords;
+							break;
+						}
+					}
+					if(Coords !== null){
+						break;
+					}
+				}
+				if(Coords === null){
+					return "";
+				}
+				if (ParameterValue === "getPolylineTotalLength"){
+					return getPolylineTotalLength(Coords).toString();
+				}
+				
+				//e.g. "getPolylinePointXAtFractionLength:TemplateFBReferenceVariable:fraction"
+				var splittedValueParameter = ParameterValue.split(":");
+				var fraction = 0;
+				if (splittedValueParameter.length > 2){
+					this.ResourceList.Actions["tempPath"] = new Object();
+					this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[1];
+					this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[2];
+					var tempfraction = this._getValue(VisualObject, "tempPath", null, null, null, true);
+					if(tempfraction){
+						fraction = parseFloat(tempfraction);
+					}
+				}
+				var Point = getPolylinePointFromFraction(Coords, fraction);
+				if(Point.x !== null && ParameterValue.indexOf("getPolylinePointXAtFractionLength") !== -1){
+					return Point.x.toString();
+				}else if(Point.y !== null && ParameterValue.indexOf("getPolylinePointYAtFractionLength") !== -1){
+					return Point.y.toString();
+				}
+				return "";
 			}else{
 				//unknown element variable
 				return "";
@@ -1618,6 +1658,8 @@ cshmi.prototype = {
 						NewValue = NewValue * parseFloat(NewValuePart);
 					}else if (thisObserverEntry.ObjectName.indexOf("div") === 0){
 						NewValue = NewValue / parseFloat(NewValuePart);
+					}else if (thisObserverEntry.ObjectName.indexOf("mod") === 0){
+						NewValue = NewValue%NewValuePart;
 					}else if (thisObserverEntry.ObjectName.indexOf("abs") === 0){
 						NewValue = NewValue + Math.abs(parseFloat(NewValuePart));
 					}else if (thisObserverEntry.ObjectName.indexOf("acos") === 0){
@@ -3439,11 +3481,11 @@ cshmi.prototype = {
 			//get connection offsets
 			if (SourceBase === null){
 				//skip
-			}else if (SourceBase.ResourceList && SourceBase.ResourceList.ConnectionFromCount !== undefined){
+			}else if (SourceBase.ResourceList && SourceBase.ResourceList.ConnectionFromCount !== undefined && TargetConnectionPoint !== null){
 				//there is already an incoming connection for this Object
 				SourceBase.ResourceList.ConnectionFromCount += 1;
 				OffsetSource = SourceBase.ResourceList.ConnectionFromCount * parseFloat(requestList[ObjectPath]["gridWidth"]);
-			}else{
+			}else if(TargetConnectionPoint !== null){
 				//remember the result
 				if (SourceBase.ResourceList === undefined){
 					SourceBase.ResourceList = new Object();
@@ -3453,11 +3495,11 @@ cshmi.prototype = {
 			}
 			if (TargetBase === null){
 				//skip
-			}else if (TargetBase.ResourceList && TargetBase.ResourceList.ConnectionFromCount !== undefined){
+			}else if (TargetBase.ResourceList && TargetBase.ResourceList.ConnectionFromCount !== undefined && SourceConnectionPoint !== null){
 				//there is already an incoming connection for this Object
 				TargetBase.ResourceList.ConnectionFromCount += 1;
 				OffsetTarget = TargetBase.ResourceList.ConnectionFromCount * parseFloat(requestList[ObjectPath]["gridWidth"]);
-			}else{
+			}else if(SourceConnectionPoint !== null){
 				//remember the result
 				if (TargetBase.ResourceList === undefined){
 					TargetBase.ResourceList = new Object();
@@ -4955,6 +4997,9 @@ cshmi.prototype = {
 				
 				//append foreignObject to VisualObject
 				parentObject = VisualObject;
+				var classList = csHMIgetElementsByClassName(parentObject, 'autosize');
+				var classListX = csHMIgetElementsByClassName(parentObject, 'autosizeX');
+				var classListY = csHMIgetElementsByClassName(parentObject, 'autosizeY');
 			}else{
 				//build a new DIV in the pure html document
 				HTMLcontentNode = document.createElement('div');
@@ -4969,10 +5014,12 @@ cshmi.prototype = {
 				
 				//append node to HTML document
 				parentObject = HMI.Playground;
+				classList = csHMIgetElementsByClassName(HTMLcontentNode, 'autosize');
+				classListX = csHMIgetElementsByClassName(HTMLcontentNode, 'autosizeX');
+				classListY = csHMIgetElementsByClassName(HTMLcontentNode, 'autosizeY');
 			}
 			
 			//if Element with class "autosize/autosizeX/autosizeY" exists, adjust width&heigth/width/height taken from Client
-			var classList = csHMIgetElementsByClassName(parentObject, 'autosize');
 			if (classList.length != 0) {
 				for (var i = 0; i < classList.length; ++i) {
 					//special adjustment for <canvas>-Element
@@ -4984,7 +5031,6 @@ cshmi.prototype = {
 					classList[i].style.height = SVGHeight+"px";
 				}		
 			}
-			var classListX = csHMIgetElementsByClassName(parentObject, 'autosizeX');
 			if (classListX.length != 0) {
 				for (var i = 0; i < classListX.length; ++i) {
 					if (classListX[i].tagName.toLowerCase() === "canvas") {
@@ -4993,7 +5039,6 @@ cshmi.prototype = {
 					classListX[0].style.width = SVGWidth+"px";
 				}
 			}
-			var classListY = csHMIgetElementsByClassName(parentObject, 'autosizeY');
 			if (classListY.length != 0) {
 				for (var i = 0; i < classListY.length; ++i) {
 					if (classListY[i].tagName.toLowerCase() === "canvas") {
@@ -6415,12 +6460,4 @@ function ObserverEntry(ObjectName, delimiter){
 	}
 	this.ObjectName = ObjectName;
 	this.value = null;
-}
-
-var filedate = "$Date$";
-filedate = filedate.substring(7, filedate.length-2);
-if ("undefined" == typeof HMIdate){
-	HMIdate = filedate;
-}else if (HMIdate < filedate){
-	HMIdate = filedate;
 }

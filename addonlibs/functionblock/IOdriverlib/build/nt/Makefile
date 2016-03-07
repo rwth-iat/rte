@@ -17,10 +17,13 @@ PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
 
+# Set TARGETOS to --targetWindows --targetLinux or --targetSolaris to cross-compile for the respective system.\n
+TARGETOS = 
+		
 all:
 
 %:
-	acplt_makmak -l IOdriverlib $(MAKMAKOPTIONS)
+	acplt_makmak -l IOdriverlib $(MAKMAKOPTIONS) $(TARGETOS)
 	tclsh $(PREBUILD) IOdriverlib $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	tclsh $(POSTBUILD) IOdriverlib

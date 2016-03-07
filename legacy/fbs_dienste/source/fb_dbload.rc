@@ -1,0 +1,44 @@
+/****************************************************************************
+
+
+fbserver.rc
+
+produced by Borland Resource Workshop
+
+
+*****************************************************************************/
+
+#define VERSIONINFO_1        1
+#define IDI_ICON1        1
+
+IDI_ICON1 ICON "fb.ico"
+
+
+
+VERSIONINFO_1 VERSIONINFO 
+FILEVERSION 1, 5, 0, 0
+PRODUCTVERSION 1, 0, 0, 0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", "LTSoft GmbH\r\nBrabanterstr. 13\r\n50171 Kerpen, Germany.\r\n\r\nTel.: 02237/92869-0\r\nFax : 02237/92869-9\r\ne-Mail : ltsoft@ltsoft.de\r\n\r\nInternet : http://www.ltsoft.de\000\000"
+   VALUE "FileVersion", "1.5\000\000"
+   VALUE "InternalName", "fb_dbload.exe\000"
+   VALUE "LegalCopyright", "Copyright © 2000-2008 LTSoft GmbH\000"
+   VALUE "Author", "Alexander Neugebauer <neugebauer@ltsoft.de>\000"
+   VALUE "License", "Copyright © 2000-2008\r\nLTSoft GmbH,\r\nAll rights reserved.\000"
+  }
+
+ }
+
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
+ }
+
+}
+

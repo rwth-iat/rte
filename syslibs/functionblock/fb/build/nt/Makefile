@@ -18,8 +18,13 @@ COMPILER_LO = $(call lc,$(COMPILER))
 #licence check deactivated, as fb is not commercial anymore
 EXTRA_CC_FLAGS = -DFB_OEM_LICENCE=1 -Wextra -Wno-unused-parameter -Werror
 
+# Set TARGETOS to --targetWindows --targetLinux or --targetSolaris to cross-compile for the respective system.\n
+TARGETOS = 
+		
+all:
+
 %:
-	acplt_makmak -l fb $(MAKMAKOPTIONS)
+	acplt_makmak -l fb $(MAKMAKOPTIONS) $(TARGETOS)
 	-tclsh $(PREBUILD) fb $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(COMPILER_LO).mk $*
 	-tclsh $(POSTBUILD) fb

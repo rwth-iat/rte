@@ -1,0 +1,8 @@
+# tcl variable defs for cross-compiling
+# set targetOS to "nt" for windows or "linux" for linux targets. Others are currently not supported
+set targetOS nt
+global targetOS
+# set the prefix of your cross compiler. It has to be found by the OS. Absolute paths should work here but are not tested.
+set CrossPrefix i586-mingw32msvc-
+global CrossPrefix
+

@@ -1,0 +1,174 @@
+<HTML>
+<HEAD>
+   <TITLE>Frequently asked questions about ONC RPC for Windows NT</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0b6Gold (WinNT; I) [Netscape]">
+</HEAD>
+<BODY BACKGROUND="bg.gif" text="#000000" bgcolor="#FFFFFF" link="#000000" vlink="#808080" alink="#FF0000">
+
+<H1>Frequently asked questions about ONC RPC for Windows NT</H1>
+<hr>
+
+<P>If you want your question to go here, please send a mail to <A HREF="mailto:gergeleit@gmd.de">gergeleit@gmd.de</A>.
+I will put any question that might help other users of my port on this
+page.</P>
+
+<UL>
+<LI><B>Q: What is the difference between this ONC RPC and Microsoft RPC?</B></LI>
+
+<P>A: ONC RPC (formerly calles Sun RPC) is a de-facto RPC standard for
+Unix. It is included in all major Unix distributions. Microsoft RPC (MS
+RPC) is a different RPC system and it is interoperable with OSF/DCE RPC.
+OSF/DCE is also available for nearly al OSs, but usually it is not part
+of the standard distribution. OSF/DCE RPC is newer and a little bit more
+powerful than ONC RPC, but for most applications both RPC systems will
+do the job. ONC RPC and OSF/DCE RPC (and thus MS RPC) are <B>not</B> interoperable
+at all.</P>
+
+<LI><B>Q: I want to write an application which is distributed across Unix
+boxes and NT-machines. Can ONC RPC help me to do that?</B></LI>
+
+<P>A: ONC RPC is exactly what you need. This port for NT and the Unix-implementations
+are interoperable (thanks to XDR from Sun).</P>
+
+<LI><B>Q: I want to port an application from Unix to NT. Can ONC RPC help
+me to do that?</B></LI>
+
+<P>A: Again, ONC RPC is exactly what you need. This port for NT and the
+Unix-implementations have the same APIs (but don't forget to call &quot;rpc
+_nt_init()&quot; and &quot;rpc_nt_exit()&quot; in the client code).</P>
+
+<LI><B>Q: What about the copyright? May I use this code in my (commercial) application?</B></LI>
+
+<P>A: You may use, copy or modify ONC RPC for Windows NT according to 
+the <A HREF="copyrght.txt">Sun copyright</A>. In my understanding this includes the free
+use in your (commercial) applications. Please read the <A HREF="Copyrght.htm">standard disclaimer</A>.</P>
+
+<LI><B>Q: Does this port also work with Windows95?</B></LI>
+
+<P>A<B>:</B> Yes, everything but the portmapper <I>service </I>will work
+(Windows95 does not support the service API). You don't need the portmapper
+at all, if you write a client-only application on Windows 95. For a server
+the ascii version of the portmapper (pm_ascii.exe) is ok as well and this
+runs also on Windows95. Also, it is easy to learn from NTs service implementation
+how to run the portmapper as one thread of a GUI application.</P>
+
+<LI><B>Q: Does this port also work with Windows 3.1?</B></LI>
+
+<P>A<B>:</B> No, this has never been a goal of my port. Maybe, some parts
+(client, XDR) run on Win32s, but I never tested that.</P>
+
+<LI><B>Q: Do you know a port of ONC RPC that runs on Windows 3.1?</B></LI>
+
+<P>A: I known some companies that offer RPC products commercially, but
+I dont't know about the details (see <A HREF="http://www.noblenet.com">www.noblenet.com</A>,
+<A HREF="http://www.netmanage.com">www.netmanage.com</A>, <A HREF="http://www.distinct.com">www.distinct.com</A>,
+and <A HREF="http://www.intergraph.com">www.intergraph.com</A> (called
+RhaPC-d).</P>
+
+<LI><B>Q: Is there a tutorial on how to use ONC RPC?</B></LI>
+
+<P>A: Have a look at this <A HREF="http://www.eng.auburn.edu/department/cse/classes/cse605/examples/rpc/stevens/SUNrpc.html">short
+lesson</A> based on UNIX Network Programming from W. Richard Stevens, Prentice
+Hall, Inc., consult the <A HREF="http://www.doc.ic.ac.uk/~mac/manuals/solaris-manual-pages/solaris/usr/man/man3n/rpc.3n.html">Solaris
+(SunOS) manuals</A>, or a good <A HREF="http://www.ora.com/gnn/bus/ora/item/rpc.html">book</A>
+on ONC RPC programming.</P>
+
+<LI><B>Q. How do I set up the demo programs provided with the distribution?</B><BR>
+<BR>
+</LI>
+
+<P>A: For testing you should log in as &quot;Administrator&quot;. Copy
+'oncrpc.dll' to the windows system32 directory. Then you should open three
+command line interfaces.<BR>
+- in the first start 'pm_ascii'<BR>
+- in the second start 'cou_svc'<BR>
+- in the third start 'do_cou localhost'<BR>
+This should result in some local action. If this works you should install
+the portmapper service by copying portmap.exe also to the windows system32
+diretory. Then register it using inst_pm (e.g. 'inst_pm c:\winnt35\system32\portmap.exe').
+Then start the portmapper with the service control panel. Then do the test
+again and leave out the first step 'pm_ascii'.<BR>
+If this also works you have the infrastructure installed for compiling
+your own ONC RPC applications. For building them you will need the rpcgen
+stub generator, the oncrpc.lib in the linker comand line and the directory
+'rpc' with the include files in the compilers include path.</P>
+
+<LI><B>Q: Which compilers are supported?</B></LI>
+
+<P>A: The current distribution runs out-of-the-box only with MS VC++ (works
+with all 32 bit versions, but best with version 4.2). Sorry I have no Borland
+or Watcom compiler availabel.</P>
+
+<LI><B>Q: I tried to recompile ONC RPC with MS VC++ and it gave me a lot
+of warning. Is this OK?</B><BR>
+<BR>
+</LI>
+
+<P>A: Yes, you should ignore these warnings. I did only those changes to
+the original code that were absolutly necessary to get it running (always
+included in #ifdef WIN32). I did not try to make it more ANSI C like.</P>
+
+<LI><B>Q: When I start rpcgen.exe it terminates with an error:
+&quot;..\bin\rpcgen: unable to open cl: No such file or directory&quot;.
+What's wrong?</B><BR>
+<BR>
+</LI>
+
+<P>A: It tried to call the C preprocessor, namely &quot;cl.exe&quot; from VC++.
+It couldn't execute it. Make sure it is in the standard path.</P>
+
+<LI><B>Q: When I use control panel to start the portmapper service, I received
+&quot;error 5, access is denied&quot;. Do you know why?</B><BR>
+<BR>
+</LI>
+
+<P>A: I assume you entered a wrong executable for the portmap service when
+using inst_pm. Sorry for the unprecise description, but you have to enter
+the full pathname <B>plus </B>the filename of the executable i.e. you have
+to enter something like: <I>inst_pm c:\winnt\system32\portmap.exe. </I>If
+it still fails, please check in with regedt32 in the current_control\service
+section the entered executable for the portmap service.</P>
+
+<LI><B>Q: I have strange problems when using XDR file-streams. Do you know what might be wrong?</B><BR>
+<BR>
+</LI>
+
+<P>A: Make sure you are using a <i>binary</i> file. This awful "CR-LF" translation often breaks ported code.</P>
+
+<LI><B>Q: Is it really neccessary to compile the source code?</B></LI>
+
+<P>A: No, if you are willing to trust me (and the others who did the compilation)
+and the compilers and you work with NT on Intel,PowerPC,orALPHA you can
+use the provided binaries.</P>
+
+<LI><B>Q: How do I integrate GUI-Code and ONC RPC stubs?</B></LI>
+
+<P>A: An easy way to do GUI-integration is to use separate threads that
+execute the RPC server-loop and maybe also the client. These threads should
+communicate with the GUI threads via events. In order to use the server-stub
+in another program, you have to redefine the &quot;main()&quot; to something
+else like e.g. &quot;server_main()&quot;. You can do this with the preprocessor
+if you don't want to change the 'rpcgen'-generated file.</P>
+
+<LI><B>Q: How do I integrate ONC RPC stubs with MS VC++ 4.0 projects (written
+in real C++)?</B></LI>
+
+<P>A: I would recommend to define a C subproject that produces a library
+with the (C-)stubs in it. Then use this lib and the &quot;rpcgen&quot;-generated
+header-file (included in 'extern &quot;C&quot; {...}) in your C++ main
+project.</P>
+
+<LI><B>Q: Do you have an MFC integration for ONC RPC?</B></LI>
+
+<P>A: No.</P>
+
+<LI><B>Q: Do you have a version of rpcgen, that can produce C++ code?</B></LI>
+
+<P>A: No, but version 1.11 produces header-files that are at least a little
+bit more understandable for C++.</P>
+
+<P>to be continued ...</P>
+</UL>
+
+</BODY>
+</HTML>

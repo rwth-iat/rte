@@ -1,7 +1,6 @@
 language: c
 compiler:
-  - gcc
-#  - clang
+- gcc
 sudo: false
 addons:
   apt:
@@ -10,15 +9,39 @@ addons:
     - bison
     - flex
     - gcc-multilib
-
+    - texinfo
 env:
-   - OV_ARCH_BITWIDTH=32
-   - OV_ARCH_BITWIDTH=64
-
+  matrix:
+  - OV_ARCH_BITWIDTH=32 DB_COMMANDS=no_dbcommands
+  - OV_ARCH_BITWIDTH=64 DB_COMMANDS=dbcommands
+  global:
+  - secure: aV2zLmzVQf8bPo+m4Xiog5DZ0x4iSunLCdEL0Dhm2CqhBA/Hgxz64UC1Y0eit3cRGOyu3QxP3LdV5Dmc+xMk+uIs+dpVc0NZwnIckN+3mrcg0nr6an7ZbZ8nbKf/sRbsviFvqCNNA1zaYaZ1Ub7ljV75MfOY1McJt4D/ymWPeCA=
+  - secure: KSiHssC0QJMBpcp4RGl1rgZwEj+QFAFq443g4lpTB28hlcJfVYehA9SvaglBxn684nL6d84wwnzK7jXpwVm85mZQJpj9UcJYji5A/lGrtxow6ytnqhaTOhkbiBf3DNCrzpOVZPT7oIdFYthGTnDbn423MOBia/FOYeG5/cF7QeM=
+install: 
 script:
-   - cd ./build
-   - tclsh ./acplt_build.tcl no_dbcommands $OV_ARCH_BITWIDTH
-
+- cd ./build
+- tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
+- cd ..
+- mkdir html
+- makeinfo --html --force doc/libov.texi -o html/ --no-warn
+- cd ..
+after_success:
+- git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
+- cd rte-www
+- git rm -r -f ./doc/current/*
+- mkdir doc
+- cd doc
+- mkdir current
+- cd ..
+- cp -r ../rte/html/* ./doc/current/
+- git add -A ./doc/current
+- git config --global user.email "rte_bot@outlook.de"
+- git config --global user.name "rte-bot"
+- git config --global push.default simple
+- git commit -am "updated generated documentation (texinfo) on webpage by travis-ci
+  [ci skip]"
+- git push -f -q https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
+- cd .. && rm -rf rte-www
 after_failure:
-   - tail -n 20 acplt_build.log
-   
+- cd ./build
+- tail -n 40 acplt_build.log

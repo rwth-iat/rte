@@ -8,6 +8,9 @@ for a 64 bit build.
 
 The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
 
+#Documentation
+An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
+
 #Using the environment
 TODO
 

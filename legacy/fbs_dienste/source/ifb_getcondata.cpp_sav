@@ -1,0 +1,261 @@
+/*****************************************************************************
+*                                                                            *
+*    i F B S p r o                                                           *
+*    #############                                                           *
+*                                                                            *
+*   L T S o f t                                                              *
+*   Agentur für Leittechnik Software GmbH                                    *
+*   Heinrich-Hertz-Straße 10                                                 *
+*   50170 Kerpen                                                             *
+*   Tel      : 02273/9893-0                                                  *
+*   Fax      : 02273/52526                                                   *
+*   e-Mail   : ltsoft@ltsoft.de                                              *
+*   Internet : http://www.ltsoft.de                                          *
+*                                                                            *
+******************************************************************************
+*                                                                            *
+*   iFBSpro - Client-Bibliothek                                              *
+*   IFBSpro/Client - iFBSpro  ACPLT/KS Dienste-Schnittstelle (C++)           *
+*   ==============================================================           *
+*                                                                            *
+*   Datei                                                                    *
+*   -----                                                                    *
+*   ifb_getcondata.cpp                                                       *
+*                                                                            *
+*   Historie                                                                 *
+*   --------                                                                 *
+*   1999-04-07  Alexander Neugebauer: Erstellung, LTSoft, Kerpen             *
+*                                                                            *
+*                                                                            *
+*   Beschreibung                                                             *
+*   ------------                                                             *
+*   Gibt Daten der Verbindungen zurueck                                      *
+*                                                                            *
+*****************************************************************************/
+
+
+
+#include "ifbslibdef.h"
+
+
+/******************************************************************************/
+KS_RESULT get_comcon_data(KscServerBase*     Server,
+                          PltString          &Vname,
+                          ConData            &Data)
+/******************************************************************************/
+{
+    if(!Server) {
+        return KS_ERR_SERVERUNKNOWN;
+    }
+    
+    PltList<InstVarProps> hpp;
+    Data.identifier = Vname;
+
+    KS_RESULT err = ReadBlockPorts(Server, Vname, hpp);
+    if(err)
+        return err;
+
+    while(!hpp.isEmpty() ) {
+        InstVarProps var(hpp.removeFirst());
+        if( !var.eng_props ||
+            !var.curr_props.value) {
+                return KS_ERR_GENERIC;
+        }
+    
+        if( var.eng_props->identifier == "on" ) {
+            Data.on = (bool) ((KsBoolValue &) *var.curr_props.value);
+        
+        } else if( var.eng_props->identifier == "sourcetrig" ) {
+            Data.source_trig = (bool) ((KsBoolValue &) *var.curr_props.value);
+            
+        } else if( var.eng_props->identifier == "sourcefb" ) {
+            Data.source_fb = (KsStringValue &) *var.curr_props.value;
+                
+        } else if( var.eng_props->identifier == "sourceport" ) {
+            Data.source_port = (KsStringValue &) *var.curr_props.value;
+        
+        } else if( var.eng_props->identifier == "targetfb" ) {
+            Data.target_fb = (KsStringValue &) *var.curr_props.value;
+        
+        } else if( var.eng_props->identifier == "targetport" ) {
+            Data.target_port = (KsStringValue &) *var.curr_props.value;
+        }
+
+    } /* while */
+
+    return KS_ERR_OK;
+}
+
+/******************************************************************************/
+KS_RESULT IFBS_GETCONS(KscServerBase*     Server,
+                                            FbDirParams        &Pars,
+                                            PltList<ConData>   &Res)
+/******************************************************************************/
+ {
+    if(!Server) {
+        return KS_ERR_SERVERUNKNOWN;
+    }
+
+    KsString           root = Server->getHostAndName();
+    KsString           Var;
+    PltList<PltString> helplist;
+    PltList<PltString> ConList;
+    PltString          mask;
+    char               VerbName[128];
+    char*              ph;
+    KS_RESULT          err;
+    KscPackage               *pkg = new KscPackage;
+    PltString          hStr;
+    
+    if(!pkg) {
+        return OV_ERR_HEAPOUTOFMEMORY;
+    }
+    
+    if( (Pars.name_mask).len() )
+        mask = Pars.name_mask;
+    else
+        mask = "*";
+
+         Var = Pars.path;
+         Var += ".inputcon";
+         KscVariable *var = new KscVariable(root+Var);
+         if(!pkg->add(KscVariableHandle(var, PltOsNew)) ){
+        // delete var; FIXME : Ist die Variable an handle gebunden ?
+        delete pkg;
+                 return 1;
+         }
+
+         Var = Pars.path;
+         Var += ".outputcon";
+         var = new KscVariable(root+Var);
+         if(!pkg->add(KscVariableHandle(var, PltOsNew)) ){
+        // delete var; FIXME : Ist die Variable an handle gebunden ?
+        delete pkg;
+                 return 1;
+         }
+
+    if(!pkg->getUpdate() ) {
+        err = pkg->getLastResult();
+        if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+        delete pkg;
+        return err;
+    }
+
+        PltIterator<KscVariableHandle> *it = pkg->newVariableIterator();
+
+    for(; *it; ++(*it) ) {
+        const KsVarCurrProps *cp = (**it)->getCurrProps();
+        if(!cp) {
+            delete it;
+            delete pkg;
+            return KS_ERR_GENERIC;
+        }
+        InsertAllComCon(*cp, helplist);
+    }
+
+    /* Speicher freigeben */
+        delete it;
+    delete pkg;
+
+    if(mask != "*") {
+        int len = strlen(FB_CONN_CONTAINER) +2;
+        PltString hStr;
+        
+        while(!helplist.isEmpty() ) {
+            hStr = helplist.removeFirst();
+            strcpy(VerbName, (const char*)hStr);
+            ph = VerbName;
+            ph += len;
+            KsMask MStr(mask);
+            if(MStr.matches(ph) )
+                ConList.addLast(hStr);
+        }
+    
+        while(!ConList.isEmpty() ) {
+            ConData   Verb;
+            hStr = ConList.removeFirst();
+            err = get_comcon_data(Server, hStr, Verb);
+            if(err)
+                return err;
+            else
+                Res.addLast(Verb);
+        }
+    } else {
+        while(!helplist.isEmpty() ) {
+            ConData   Verb;
+            hStr = helplist.removeFirst();
+            err = get_comcon_data(Server, hStr, Verb);
+            if(err)
+                return err;
+            else
+                Res.addLast(Verb);
+        }
+    }
+
+  return KS_ERR_OK;
+
+}
+
+/*****************************************************************************/
+void InsertAllComCon(const KsVarCurrProps &cp, PltList<PltString> &ConList)
+/*****************************************************************************/
+{
+    PltString hStr;
+    int       size;
+    int       i;
+    int       EINFUEGEN;
+
+    if(!cp.value) {
+        return;
+    }
+    
+    switch(cp.value->xdrTypeCode() ) {
+            case KS_VT_STRING:
+                hStr = (const char*)((KsStringValue &) *cp.value);
+                        if( !hStr.len() ) {
+                            return;
+                        }
+                        if(!ConList.isEmpty() ) {
+                                 PltListIterator<PltString> *it = (PltListIterator<PltString> *)ConList.newIterator();
+                                 for(; *it; ++(*it) ) {
+                                        if( hStr == (**it) ) {
+                                            delete it;
+                                                return;
+                                        }
+                                 }
+                                 delete it;
+                        }
+                        ConList.addLast(hStr);
+                break;
+
+            case KS_VT_STRING_VEC:
+                size = ((KsStringVecValue &) *cp.value).size();
+                        if( !size ) {
+                            return;
+                        }
+                for ( i = 0; i < size; ++i ) {
+                                EINFUEGEN = 1;
+                        hStr = (const char*)(((KsStringVecValue &) *cp.value)[i]);
+                                if(!ConList.isEmpty() ) {
+                                    PltListIterator<PltString> *it = (PltListIterator<PltString> *)ConList.newIterator();
+                                    for(; *it; ++(*it) ) {
+                                            if( hStr == (**it) ) {
+                                                    EINFUEGEN = 0;
+                                                    break;
+                                            }
+                                    }
+                                    delete it;
+                                }
+                                if(EINFUEGEN) {
+                                        ConList.addLast(hStr);
+                                }
+                } /* for size */
+                            
+                break;
+            default:
+                        break;
+        } /* switch */
+
+ return;
+
+} /* InsertAllComCon() */

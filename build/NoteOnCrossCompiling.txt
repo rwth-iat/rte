@@ -1,0 +1,7 @@
+The acplt_build.tcl script is able of basic cros compilation.
+To do a cross build there are some prerequisites:
+	1. A native acplt anvironment has to be there in order to have acplt_makmak an ov_codegen. Both of them need to be found by the host OS, so put them into PATH.
+	2. A cross-definitions File has to exist. Take a look at windows32.cross for an example.
+	3. CPATH has to be set according to your cross-toolchain (includes path).
+
+When these prerequisites are met you can invoke the build script with "tslch acplt_build.tcl cross cross-definitions-filename".

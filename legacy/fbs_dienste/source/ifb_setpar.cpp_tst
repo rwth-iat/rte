@@ -1,0 +1,1094 @@
+/*****************************************************************************
+*                                                                            *
+*    i F B S p r o                                                           *
+*    #############                                                           *
+*                                                                            *
+*   L T S o f t                                                              *
+*   Agentur für Leittechnik Software GmbH                                    *
+*   Heinrich-Hertz-Straße 10                                                 *
+*   50170 Kerpen                                                             *
+*   Tel      : 02273/9893-0                                                  *
+*   Fax      : 02273/9893-33                                                 *
+*   e-Mail   : ltsoft@ltsoft.de                                              *
+*   Internet : http://www.ltsoft.de                                          *
+*                                                                            *
+******************************************************************************
+*                                                                            *
+*    iFBSpro  ACPLT/KS Dienste-Schnittstelle (C++)                           *
+*   ===============================================                          *
+*                                                                            *
+*   Datei                                                                    *
+*   -----                                                                    *
+*   set_par.cpp                                                              *
+*                                                                            *
+*   Historie                                                                 *
+*   --------                                                                 *
+*   1999-04-07  Alexander Neugebauer: Erstellung, LTSoft, Kerpen             *
+*                                                                            *
+*                                                                            *
+*   Beschreibung                                                             *
+*   ------------                                                             *
+*   Setzt eine Variable einer Funktionblockinstanz                           *
+*                                                                            *
+*****************************************************************************/
+
+#include "ifbslibdef.h"
+
+/*****************************************************************************/
+KS_RESULT IFBS_SETVAR(KscServerBase*   Server,
+                      FbSetVarParams   &pars)
+/*****************************************************************************/
+{
+
+    if(!Server)
+            return KS_ERR_SERVERUNKNOWN;
+
+    PltString       VarName("//");
+    KS_VAR_TYPE     Typ;            /*  Value-Type      */
+    size_t          Len;            /*  Dummy           */
+    KS_RESULT       fehler;         /*  Dienst-Ergebnis */
+    
+    // Typ der Variable holen
+    KsGetVarParams gpars(1);
+    KsGetVarResult res;
+    
+    if(gpars.identifiers.size() != 1) {
+        // Out of memory ?
+        return KS_ERR_GENERIC;
+    }
+    gpars.identifiers[0] = pars.path;
+    
+    bool ok = Server->requestByOpcode(KS_GETVAR, 0, gpars, res);
+    if(!ok) {
+        fehler = Server->getLastResult();
+        if(fehler == KS_ERR_OK) fehler = KS_ERR_GENERIC;
+        return fehler;
+    }
+    // Dienst ausgefuert ?
+    if(res.result) {
+            return res.result;
+    }
+    // Antwort angelegt ?
+    if(res.items.size() != 1) {
+        // Out of memory ?
+        return KS_ERR_GENERIC;
+    }
+    // Variable gelesen ?
+        if(res.items[0].result) {
+                return res.items[0].result;
+        }
+        
+        // Dann Typ der Variable holen
+        KsVarCurrProps *cp = PLT_DYNAMIC_PCAST(KsVarCurrProps, res.items[0].item.getPtr());
+        
+    if((!cp) || (!(cp->value)) ) {
+        return KS_ERR_GENERIC;
+    }
+        
+        Len = ifb_getValueLengthAsNum(cp);
+        Typ = cp->value->xdrTypeCode();
+
+//    VarName += (const char*)Server->getHost();
+//    VarName += "/";
+//    VarName += (const char*)Server->getName();
+//    VarName += pars.path; /* pars.path sieht so aus : /t_u/.../sum1.inp1 */
+
+//    fehler = ifb_getValueTypeAndLen(VarName, Typ, Len);
+//    if( fehler ) {
+//        return fehler;
+//    }
+
+    // Value setzen
+    return ifb_SeparateValueAndSet(Server, pars.path, pars.value, Typ, pars.state);
+}
+
+/*****************************************************************************/
+KS_RESULT ifb_SeparateValueAndSet(KscServerBase*     Server
+                                 ,PltString         VarPath
+                                 ,PltString         Value
+                                 ,KS_VAR_TYPE       Typ
+                                 ,KS_STATE          Status)
+/*****************************************************************************/
+{
+    KS_RESULT           err;         /*  Dienst-Ergebnis */
+    PltList<PltString>  ValList;
+    
+    switch(Typ) {
+        case KS_VT_BOOL:
+        case KS_VT_INT:
+        case KS_VT_UINT:
+        case KS_VT_SINGLE:
+        case KS_VT_DOUBLE:
+        case KS_VT_STRING:
+        case KS_VT_TIME:
+        case KS_VT_TIME_SPAN:
+                                ValList.addLast(Value);
+                                break;
+        default:
+                                err = SeparateString(Value, Typ, ValList);
+                                if(err) {
+                                    return err;
+                                }
+                                break;
+    } /* switch */
+ 
+    return ifb_setVar(Server, VarPath, ValList, Typ, Status);
+}
+
+/*****************************************************************************/
+KS_RESULT tst_CrNewKsValue(
+                         KsVarCurrProps*        var_props
+                         ,PltList<PltString>    &ValList
+                         ,KS_VAR_TYPE           Typ)
+/*****************************************************************************/
+{
+    
+        size_t          anz, c;
+    PltString       Val;
+    struct tm       time;
+        struct timeval        tv;
+        
+    KsBoolValue *bool_val;
+
+        switch(Typ) {
+            
+                case KS_VT_BOOL        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        Val.toUpper();
+                                    if( (Val == "FALSE") || (Val == "0") )
+                                                                 bool_val = new KsBoolValue(0);
+                                                        else
+                                                                 bool_val = new KsBoolValue(1);
+
+                                                        if(!bool_val) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        var_props->value.bindTo(bool_val, PltOsNew);
+                                                        return KS_ERR_OK;
+                                }
+                case KS_VT_INT        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        long int_wert = (long)atoi( (const char*)Val);
+                                                        KsIntValue *int_val = new KsIntValue(int_wert);
+                                                        if (!int_val) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                case KS_VT_UINT        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        unsigned long uint_wert = (unsigned long)atoi( (const char*)Val);
+                                                        KsUIntValue *uint_val = new KsUIntValue(uint_wert);
+                                                        if (!uint_val) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                case KS_VT_SINGLE        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        float sing_wert = (float)atof( (const char*)Val);
+                                                        KsSingleValue *sing_val = new KsSingleValue(sing_wert);
+                                                        if(!sing_val) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        var_props->value.bindTo(sing_val, PltOsNew);
+                                                        return 0;
+                                }
+                case KS_VT_DOUBLE        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        double doubl_wert = (double)atof( (const char*)Val);
+                                                        KsDoubleValue *double_val = new KsDoubleValue(doubl_wert);
+                                                        if(!double_val) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                case KS_VT_STRING        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        KS_RESULT err = PrepareStringValue(Val);
+                                        if(err) return err;
+                                        
+                                                        KsStringValue *string_val=new KsStringValue(Val);
+                                                        if(!string_val ) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                            return 0;
+                                }
+                case KS_VT_TIME            :
+                                {
+                                    Val = ValList.removeFirst();
+                                        time.tm_hour = 0;
+                                                        time.tm_min = 0;
+                                                        time.tm_sec = 0;
+                                                        tv.tv_usec = 0;
+
+                                                        sscanf((const char*)Val, "%d-%d-%d %d:%d:%d.%ld"
+                                                                , &time.tm_year, &time.tm_mon, &time.tm_mday
+                                                                , &time.tm_hour, &time.tm_min, &time.tm_sec, &tv.tv_usec);
+
+                                                        time.tm_year -= 1900;
+                                                        time.tm_mon -=1;
+                                                        time.tm_isdst = -1; /* keine Sommer-Winterzeit */
+
+                                                        tv.tv_sec = mktime(&time);
+
+                                                        KsTimeValue *time_val = new KsTimeValue(tv.tv_sec, tv.tv_usec);
+                                                        if(!time_val) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                case KS_VT_TIME_SPAN :
+                                {
+                                        Val = ValList.removeFirst();
+                                        double doubl_wert = (double)atof(Val);
+                                                        tv.tv_sec = (long int)doubl_wert;
+
+                                                        float sing_val = (float)((doubl_wert-(double)tv.tv_sec)*1000000);
+                                                        tv.tv_usec = (long int)sing_val;
+
+                                                        KsTimeSpanValue *time_sp_val = new KsTimeSpanValue(tv.tv_sec, tv.tv_usec);
+                                                        if(!time_sp_val) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+///////////////////////////////////////////////////////////////////////////////////////////////////
+                case KS_VT_BOOL_VEC :
+                                {
+                                        anz  = ValList.size();
+                                                        bool *boolvec = new bool[anz];
+                                                        if(!boolvec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        c=0;
+                                                        while(c < anz) {
+                                                            Val = ValList.removeFirst();
+                                                            Val.toUpper();
+                                                                if( (Val == "FALSE") || (Val == "0" ) )
+                                                                        boolvec[c] = FALSE;
+                                                                else
+                                                                        boolvec[c] = TRUE;
+                                                                c++;
+                                                        }
+
+                                                        KsBoolVecValue *bool_vec = new KsBoolVecValue(anz, boolvec, PltOsArrayNew);
+                                                        if(!bool_vec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                case KS_VT_INT_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        long *intvec = new long[anz];
+                                                        if(!intvec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                            Val = ValList.removeFirst();
+                                                                intvec[c]= (long)atoi( (const char*)Val);
+                                                                c++;
+                                                        }
+
+                                                        KsIntVecValue *int_vec = new KsIntVecValue(anz, intvec, PltOsArrayNew);
+                                                        if(!int_vec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                case KS_VT_UINT_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        u_long *uintvec = new u_long[anz];
+                                                        if(!uintvec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                                Val = ValList.removeFirst();
+                                                                uintvec[c]= (u_long)atoi( (const char*)Val);
+                                                                c++;
+                                                        }
+
+                                                        KsUIntVecValue *uint_vec = new KsUIntVecValue(anz, uintvec, PltOsArrayNew);
+                                                        if(!uint_vec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        return 0;
+                                }
+                case KS_VT_SINGLE_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        float *singvec = new float[anz];
+                                                        if(!singvec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                                
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                                Val =ValList.removeFirst();
+                                                                singvec[c] = (float)atof((const char*)Val);
+                                                                c++;
+                                                        }
+
+                                                        KsSingleVecValue *sing_vec = new KsSingleVecValue(anz, singvec, PltOsArrayNew);
+                                                        if(!sing_vec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                case KS_VT_DOUBLE_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        double *doublevec = new double[anz];
+                                                        if(!doublevec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                                
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                            Val = ValList.removeFirst();
+                                                                doublevec[c]=(double)atof((const char*)Val);
+                                                                c++;
+                                                        }
+
+                                                        KsDoubleVecValue *double_vec = new KsDoubleVecValue(anz,
+                                                                                                                                        doublevec, PltOsArrayNew);
+                                                        if(!double_vec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                case KS_VT_TIME_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        KsTime *timevec = new KsTime[anz];
+                                                        if(!timevec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz)  {
+                                                                  Val = ValList.removeFirst();
+                                                                time.tm_hour = 0;
+                                                                time.tm_min = 0;
+                                                                time.tm_sec = 0;
+                                                                tv.tv_usec = 0;
+
+                                                                sscanf((const char*)Val, "%d-%d-%d %d:%d:%d.%ld"
+                                                                    , &time.tm_year, &time.tm_mon, &time.tm_mday
+                                                                        , &time.tm_hour, &time.tm_min, &time.tm_sec, &tv.tv_usec);
+
+                                                                time.tm_year -= 1900;
+                                                                time.tm_mon -=1;
+                                                                time.tm_isdst = -1; /* keine Sommer-Winterzeit */
+
+                                                                tv.tv_sec = mktime(&time);
+
+                                                                timevec[c].tv_sec = tv.tv_sec;
+                                                                timevec[c].tv_usec= tv.tv_usec;
+
+                                                                c++;
+                                                        }
+
+                                                        KsTimeVecValue *time_vec = new KsTimeVecValue(anz, timevec, PltOsArrayNew);
+                                                        if(!time_vec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        return 0;
+                                }
+                case KS_VT_TIME_SPAN_VEC :
+                                {
+                                    double doubl_val;
+                                    float  sing_val;
+                                        anz  = ValList.size();
+                                                        KsTimeSpan *timespanvec = new KsTimeSpan[anz];
+                                                        if(!timespanvec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                                
+                                                        }
+                                                                  
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                                  Val = ValList.removeFirst();
+                                                                doubl_val = (double)atof((const char*)Val);
+                                                                tv.tv_sec = (long int)doubl_val;
+
+                                                                sing_val = (float)((doubl_val-(double)tv.tv_sec)*1000000);
+                                                                tv.tv_usec = (long int)sing_val;
+                                                                timespanvec[c].tv_sec = tv.tv_sec;
+                                                                timespanvec[c].tv_usec = tv.tv_usec;
+                                                                c++;
+                                                        }
+
+                                                        KsTimeSpanVecValue *timespan_vec = new KsTimeSpanVecValue(anz,
+                                                                                                                                        timespanvec, PltOsArrayNew);
+                                                        if(!timespan_vec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        return 0;
+                                }
+                case KS_VT_STRING_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        KsString *stringvec = new KsString[anz];
+                                                        if(!stringvec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                            Val = ValList.removeFirst();
+                                                            KS_RESULT err = PrepareStringValue(Val);
+                                            if(err) {
+                                                delete [] stringvec;
+                                                return 1;
+                                            }
+                                                                stringvec[c] = Val;
+                                                                c++;
+                                                        }
+
+                                                        KsStringVecValue *string_vec = new KsStringVecValue(anz,
+                                                                                                                                        stringvec, PltOsArrayNew);
+                                                        if(!string_vec) {
+                                                                return OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return 0;
+                                }
+                default                                :        return KS_ERR_NOTIMPLEMENTED;
+                                                                
+    } /* case */
+
+    return 1;
+
+} /* tst_CrNewKsValue() */
+
+/*****************************************************************************/
+KS_RESULT ifb_setVar(KscServerBase*         Server
+                     ,PltString             VarPath
+                     ,PltList<PltString>    &ValList
+                     ,KS_VAR_TYPE           Typ
+                     ,KS_STATE              Status)
+/*****************************************************************************/
+{
+    KsSetVarParams          setpar(1);
+    KsSetVarResult          erg(1);
+//    KsArray<KsSetVarItem>        param(1);
+    KS_RESULT               fehler;  /*  Dienst-Ergebnis */
+
+    KsVarCurrProps*         var_props;
+
+    if(setpar.items.size() != 1) {
+        return OV_ERR_HEAPOUTOFMEMORY;
+    }
+    
+    var_props = new KsVarCurrProps;
+    if(!var_props) {
+        return OV_ERR_HEAPOUTOFMEMORY;
+    }
+    fehler = tst_CrNewKsValue(var_props, ValList, Typ);
+    if(fehler) {
+        delete var_props;
+        return fehler;
+    }
+    var_props->state = Status;
+    
+    //param[0].path_and_name = VarPath;
+    //param[0].curr_props.bindTo( (KsCurrProps*)var_props,PltOsNew);
+
+    //setpar.items = param;
+    
+    setpar.items[0].path_and_name = VarPath;
+    setpar.items[0].curr_props.bindTo( (KsCurrProps*)var_props,PltOsNew);
+
+//    bool ok = Server->requestByOpcode(KS_SETVAR, 0, setpar, erg);
+    bool ok = Server->requestByOpcode(KS_SETVAR, GetClientAV(), setpar, erg);
+    if(!ok) {
+        fehler = Server->getLastResult();
+        if(fehler == KS_ERR_OK) fehler = KS_ERR_GENERIC;
+        return fehler;
+    }
+    if(erg.result) {
+            return erg.result;
+    }
+        if(erg.results[0].result) {
+                return erg.results[0].result;
+        }
+        
+    return KS_ERR_OK;
+} /* get_par() */
+
+/*****************************************************************************/
+KsValue* ifb_CrNewKsValue(
+                         KS_RESULT              &err
+                         ,PltList<PltString>    &ValList
+                         ,KS_VAR_TYPE           Typ)
+/*****************************************************************************/
+{
+    
+        size_t          anz, c;
+    PltString       Val;
+    struct tm       time;
+        struct timeval        tv;
+        
+    KsBoolValue *bool_val;
+
+    // Annahme : 
+        err = KS_ERR_OK;
+
+        switch(Typ) {
+            
+                case KS_VT_BOOL        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        Val.toUpper();
+                                    if( (Val == "FALSE") || (Val == "0") )
+                                                                 bool_val = new KsBoolValue(0);
+                                                        else
+                                                                 bool_val = new KsBoolValue(1);
+
+                                                        if(!bool_val) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return bool_val;
+                                }
+                case KS_VT_INT        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        long int_wert = (long)atoi( (const char*)Val);
+                                                        KsIntValue *int_val = new KsIntValue(int_wert);
+                                                        if (!int_val) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return int_val;
+                                }
+                case KS_VT_UINT        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        unsigned long uint_wert = (unsigned long)atoi( (const char*)Val);
+                                                        KsUIntValue *uint_val = new KsUIntValue(uint_wert);
+                                                        if (!uint_val) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return uint_val;
+                                }
+                case KS_VT_SINGLE        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        float sing_wert = (float)atof( (const char*)Val);
+                                                        KsSingleValue *sing_val = new KsSingleValue(sing_wert);
+                                                        if(!sing_val) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return sing_val;
+                                }
+                case KS_VT_DOUBLE        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        double doubl_wert = (double)atof( (const char*)Val);
+                                                        KsDoubleValue *double_val = new KsDoubleValue(doubl_wert);
+                                                        if(!double_val) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return double_val;
+                                }
+                case KS_VT_STRING        :
+                                {
+                                        Val = ValList.removeFirst();
+                                        err = PrepareStringValue(Val);
+                                        if(err) return 0;
+                                        
+                                                        KsStringValue *string_val=new KsStringValue(Val);
+                                                        if(!string_val ) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                            return string_val;
+                                }
+                case KS_VT_TIME            :
+                                {
+                                    Val = ValList.removeFirst();
+                                        time.tm_hour = 0;
+                                                        time.tm_min = 0;
+                                                        time.tm_sec = 0;
+                                                        tv.tv_usec = 0;
+
+                                                        sscanf((const char*)Val, "%d-%d-%d %d:%d:%d.%ld"
+                                                                , &time.tm_year, &time.tm_mon, &time.tm_mday
+                                                                , &time.tm_hour, &time.tm_min, &time.tm_sec, &tv.tv_usec);
+
+                                                        time.tm_year -= 1900;
+                                                        time.tm_mon -=1;
+                                                        time.tm_isdst = -1; /* keine Sommer-Winterzeit */
+
+                                                        tv.tv_sec = mktime(&time);
+
+                                                        KsTimeValue *time_val = new KsTimeValue(tv.tv_sec, tv.tv_usec);
+                                                        if(!time_val) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return time_val;
+                                }
+                case KS_VT_TIME_SPAN :
+                                {
+                                        Val = ValList.removeFirst();
+                                        double doubl_wert = (double)atof(Val);
+                                                        tv.tv_sec = (long int)doubl_wert;
+
+                                                        float sing_val = (float)((doubl_wert-(double)tv.tv_sec)*1000000);
+                                                        tv.tv_usec = (long int)sing_val;
+
+                                                        KsTimeSpanValue *time_sp_val = new KsTimeSpanValue(tv.tv_sec, tv.tv_usec);
+                                                        if(!time_sp_val) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return time_sp_val;
+                                }
+///////////////////////////////////////////////////////////////////////////////////////////////////
+                case KS_VT_BOOL_VEC :
+                                {
+                                        anz  = ValList.size();
+                                                        bool *boolvec = new bool[anz];
+                                                        if(!boolvec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                                return 0;
+                                                        }
+                                                        c=0;
+                                                        while(c < anz) {
+                                                            Val = ValList.removeFirst();
+                                                            Val.toUpper();
+                                                                if( (Val == "FALSE") || (Val == "0" ) )
+                                                                        boolvec[c] = FALSE;
+                                                                else
+                                                                        boolvec[c] = TRUE;
+                                                                c++;
+                                                        }
+
+                                                        KsBoolVecValue *bool_vec = new KsBoolVecValue(anz, boolvec, PltOsArrayNew);
+                                                        if(!bool_vec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return bool_vec;
+                                }
+                case KS_VT_INT_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        long *intvec = new long[anz];
+                                                        if(!intvec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                                return 0;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                            Val = ValList.removeFirst();
+                                                                intvec[c]= (long)atoi( (const char*)Val);
+                                                                c++;
+                                                        }
+
+                                                        KsIntVecValue *int_vec = new KsIntVecValue(anz, intvec, PltOsArrayNew);
+                                                        if(!int_vec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return int_vec;
+                                }
+                case KS_VT_UINT_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        u_long *uintvec = new u_long[anz];
+                                                        if(!uintvec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                                return 0;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                                Val = ValList.removeFirst();
+                                                                uintvec[c]= (u_long)atoi( (const char*)Val);
+                                                                c++;
+                                                        }
+
+                                                        KsUIntVecValue *uint_vec = new KsUIntVecValue(anz, uintvec, PltOsArrayNew);
+                                                        if(!uint_vec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        return uint_vec;
+                                }
+                case KS_VT_SINGLE_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        float *singvec = new float[anz];
+                                                        if(!singvec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                                return 0;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                                Val =ValList.removeFirst();
+                                                                singvec[c] = (float)atof((const char*)Val);
+                                                                c++;
+                                                        }
+
+                                                        KsSingleVecValue *sing_vec = new KsSingleVecValue(anz, singvec, PltOsArrayNew);
+                                                        if(!sing_vec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return sing_vec;
+                                }
+                case KS_VT_DOUBLE_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        double *doublevec = new double[anz];
+                                                        if(!doublevec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                                return 0;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                            Val = ValList.removeFirst();
+                                                                doublevec[c]=(double)atof((const char*)Val);
+                                                                c++;
+                                                        }
+
+                                                        KsDoubleVecValue *double_vec = new KsDoubleVecValue(anz,
+                                                                                                                                        doublevec, PltOsArrayNew);
+                                                        if(!double_vec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return double_vec;
+                                }
+                case KS_VT_TIME_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        KsTime *timevec = new KsTime[anz];
+                                                        if(!timevec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                                return 0;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz)  {
+                                                                  Val = ValList.removeFirst();
+                                                                time.tm_hour = 0;
+                                                                time.tm_min = 0;
+                                                                time.tm_sec = 0;
+                                                                tv.tv_usec = 0;
+
+                                                                sscanf((const char*)Val, "%d-%d-%d %d:%d:%d.%ld"
+                                                                    , &time.tm_year, &time.tm_mon, &time.tm_mday
+                                                                        , &time.tm_hour, &time.tm_min, &time.tm_sec, &tv.tv_usec);
+
+                                                                time.tm_year -= 1900;
+                                                                time.tm_mon -=1;
+                                                                time.tm_isdst = -1; /* keine Sommer-Winterzeit */
+
+                                                                tv.tv_sec = mktime(&time);
+
+                                                                timevec[c].tv_sec = tv.tv_sec;
+                                                                timevec[c].tv_usec= tv.tv_usec;
+
+                                                                c++;
+                                                        }
+
+                                                        KsTimeVecValue *time_vec = new KsTimeVecValue(anz, timevec, PltOsArrayNew);
+                                                        if(!time_vec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        return time_vec;
+                                }
+                case KS_VT_TIME_SPAN_VEC :
+                                {
+                                    double doubl_val;
+                                    float  sing_val;
+                                        anz  = ValList.size();
+                                                        KsTimeSpan *timespanvec = new KsTimeSpan[anz];
+                                                        if(!timespanvec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                                return 0;
+                                                        }
+                                                                  
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                                  Val = ValList.removeFirst();
+                                                                doubl_val = (double)atof((const char*)Val);
+                                                                tv.tv_sec = (long int)doubl_val;
+
+                                                                sing_val = (float)((doubl_val-(double)tv.tv_sec)*1000000);
+                                                                tv.tv_usec = (long int)sing_val;
+                                                                timespanvec[c].tv_sec = tv.tv_sec;
+                                                                timespanvec[c].tv_usec = tv.tv_usec;
+                                                                c++;
+                                                        }
+
+                                                        KsTimeSpanVecValue *timespan_vec = new KsTimeSpanVecValue(anz,
+                                                                                                                                        timespanvec, PltOsArrayNew);
+                                                        if(!timespan_vec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+
+                                                        return timespan_vec;
+                                }
+                case KS_VT_STRING_VEC        :
+                                {
+                                        anz  = ValList.size();
+                                                        KsString *stringvec = new KsString[anz];
+                                                        if(!stringvec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                                return 0;
+                                                        }
+
+                                                        c = 0;
+                                                        while(c < anz) {
+                                                            Val = ValList.removeFirst();
+                                                            err = PrepareStringValue(Val);
+                                            if(err) {
+                                                delete [] stringvec;
+                                                return 0;
+                                            }
+                                                                stringvec[c] = Val;
+                                                                c++;
+                                                        }
+
+                                                        KsStringVecValue *string_vec = new KsStringVecValue(anz,
+                                                                                                                                        stringvec, PltOsArrayNew);
+                                                        if(!string_vec) {
+                                                                err = OV_ERR_HEAPOUTOFMEMORY;
+                                                        }
+                                                        return string_vec;
+                                }
+                default                                :        err = KS_ERR_NOTIMPLEMENTED;
+                                                                break;
+    } /* case */
+
+    return 0;
+
+} /* ifb_CrNewKsValue() */
+
+/*****************************************************************************/
+KS_RESULT PrepareStringValue(PltString& wert) {
+/*****************************************************************************/
+    char *pAnf;
+    char *pc;
+    char *hstr;
+    
+    if(!wert.len() ) {
+        return KS_ERR_OK;
+    }
+    hstr = (char*)malloc(wert.len() +1);
+    if(!hstr) {
+        return OV_ERR_HEAPOUTOFMEMORY;
+    }
+        strcpy(hstr, (const char*)wert);
+        
+        // Prufen, ob am Anfang des Strings " steht
+        pc = hstr;
+    if((*pc) == '"' ) {
+        pc++; pAnf = pc;
+            while(pc && (*pc) ) {
+                if((*pc) == '"') {
+                    // Steht \ vor dem " ?
+                    pc--;
+                    if((*pc) == '\\') {
+                        pc++;   // Auf alte Position setzen
+                    } else {
+                        pc++; *pc = '\0'; // String-Ende markieren
+                        break;
+                    }
+                }
+                pc++;
+            }
+            wert = pAnf;
+    }
+    free(hstr);
+    return KS_ERR_OK;
+}
+
+/*****************************************************************************/
+KS_RESULT SeparateString(PltString& wert, KS_VAR_TYPE typ, PltList<PltString>& Liste)
+/*****************************************************************************/
+{
+        char  ph[256];
+        char* pc;
+        char* pch;
+        PltString  OneString;
+        
+        if(!wert.len() ) {
+            return KS_ERR_OK;
+        }
+        
+        char* help = (char*)malloc(wert.len()+1);
+        if(!help) {
+                return OV_ERR_HEAPOUTOFMEMORY;
+        }
+        
+        strcpy(help, (const char*)wert);
+
+        switch(typ)
+          {
+                case KS_VT_TIME_VEC   : pc  = help;
+                                                                pch = help;
+                                                                
+                                                                while(*pc) {
+                                                                        /* Elemente trennen */
+                                                                        while( (*pc) && ( (*pc)!= ';') ) {
+                                                                                pc++;
+                                                                        }
+                                                                        if(*pc) {
+                                                                                *pc = '\0';
+                                                                                pc++;
+                                                                        }
+                                                                        /* vorangestellte (' ') ignorieren */
+                                                                        while( (*pch) && ( (*pch)==' ') ) {
+                                                                                pch++;
+                                                                        }
+                                                                        
+                                                                        strcpy(ph,pch);
+                                                                        
+                                                                        if(*ph) {
+                                                                                OneString = ph;
+                                                                                Liste.addLast(OneString);
+                                                                        }
+                                                                        pch = pc;
+                                                                } /* while *pc */
+
+                                                                break;
+                                                                
+                case KS_VT_STRING_VEC : pc  = help;
+                                                                pch = help;
+                                                                
+                                                                while(*pc) {
+                                                                        /* Ein String muss mit " beginnen */
+                                                                        while( (*pc) ) {
+                                                                            if( (*pc) == '"')  {
+                                                                                // " Am anfang ?
+                                                                                if(pc != help) {
+                                                                                    pc--;
+                                                                                    if( (*pc) == '\\') {
+                                                                                        // Es darf keine \\" am Anfang stehen
+                                                                                        free(help);
+                                                                                        return KS_ERR_BADVALUE;
+                                                                                    } else {
+                                                                                        pc++;   // Alte Position.
+                                                                                        pc++;   // Anfang des String markieren
+                                                                                        break;
+                                                                                    }
+                                                                                } else {
+                                                                                    pc++;       // String-Anfang merken
+                                                                                    break;
+                                                                                }
+                                                                            }
+                                                                                pc++;
+                                                                        }
+                                                                        if(!(*pc) ) {
+                                                                            break;
+                                                                        }
+                                                                        // Anfang des Strings gefunden.
+                                                                        // Ende Suchen
+                                                                        pch = pc;
+                                                                        
+                                                                        while( (*pch) ) {
+                                                                            if( (*pch) == '"') {
+                                                                                pch--;
+                                                                                if((*pch) == '\\') {
+                                                                                    pch++;      // Alte Position
+                                                                                } else {
+                                                                                    // Dann ist String-Ende gefunden
+                                                                                    pch++;
+                                                                                    *pch = '\0';
+                                                                                    Liste.addLast(pc);
+                                                                                    *pch = '"';
+                                                                                    break;
+                                                                                }
+                                                                            }
+                                                                                pch++;
+                                                                        }
+                                                                        if(!(*pch)) {
+                                                                                free(help);
+                                                                                return KS_ERR_BADVALUE;
+                                                                        }
+                                                                        pch++;
+                                                                        // Elementen mueussen mit ';' getrennt werden
+                                                                        while((*pch) ) {
+                                                                            if( (*pch) == ';') {
+                                                                                // Es kommt noch ein Element
+                                                                                break;
+                                                                            }
+                                                                            if( (*pch) == '"' ) {
+                                                                                free(help);
+                                                                                return KS_ERR_BADVALUE;
+                                                                            }
+                                                                            pch++;
+                                                                        }
+                                                                        
+                                                                        if(!(*pch) ) {
+                                                                                free(help);
+                                                                                return KS_ERR_OK;
+                                                                        }
+                                                                        pch++;
+                                                                        pc = pch;
+                                                                        
+                                                                } /* while *pc */
+                                                                
+                                                                break;
+
+                default               :        pc  = help;
+                                                                pch = help;
+
+                                                                
+                                                                while(*pc) {
+                                                                        /* Elemente trennen */
+                                                                        while( (*pc) && ( (*pc)!= ';') ) {
+                                                                                pc++;
+                                                                        }
+                                                                        if(*pc) {
+                                                                                *pc = '\0';
+                                                                                pc++;
+                                                                        }
+
+                                                                        /* vorangestellte (' ') ignorieren */
+                                                                        while( (*pch) && ( (*pch)==' ') ) {
+                                                                                pch++;
+                                                                        }
+                                                                        strcpy(ph,pch);
+
+                                                                        /* nachfolgende (' ') ignorieren */
+                                                                        pch = ph;
+                                                                        while( (*pch) && ( (*pch)!=' ') ) {
+                                                                                pch++;
+                                                                        }
+                                                                        *pch ='\0';
+
+                                                                        if(*ph) {
+                                                                                OneString = ph;
+                                                                                Liste.addLast(OneString);
+                                                                        }
+                                                                        pch = pc;
+                                                                } /* while *pc */
+                                                                
+                                                                break;
+                                                                
+          } /* case */
+
+        free(help);
+        return KS_ERR_OK;
+        
+} /* SeparateString() */

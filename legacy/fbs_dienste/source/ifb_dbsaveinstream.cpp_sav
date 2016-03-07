@@ -1,0 +1,1322 @@
+/*****************************************************************************
+*                                                                            *
+*    i F B S p r o                                                           *
+*    #############                                                           *
+*                                                                            *
+*   L T S o f t                                                              *
+*   Agentur für Leittechnik Software GmbH                                    *
+*   Heinrich-Hertz-Straße 10                                                 *
+*   50170 Kerpen                                                             *
+*   Tel      : 02273/9893-0                                                  *
+*   Fax      : 02273/9893-33                                                 *
+*   e-Mail   : ltsoft@ltsoft.de                                              *
+*   Internet : http://www.ltsoft.de                                          *
+*                                                                            *
+******************************************************************************
+*                                                                            *
+*   iFBSpro - Client-Bibliothek                                              *
+*   IFBSpro/Client - iFBSpro  ACPLT/KS Dienste-Schnittstelle (C++)           *
+*   ==============================================================           *
+*                                                                            *
+*   Datei                                                                    *
+*   -----                                                                    *
+*   ifb_dbsaveinstream.cpp                                                   *
+*                                                                            *
+*   Historie                                                                 *
+*   --------                                                                 *
+*   07-04-1999  Alexander Neugebauer: Erstellung, LTSoft, Kerpen             *
+*   30-03-2000  IFBS_DB_SAVE_TOSTREAM                                        *
+*                                                                            *
+*   Beschreibung                                                             *
+*   ------------                                                             *
+*                                                                            *
+*                                                                            *
+*****************************************************************************/
+
+#include "ifbslibdef.h"
+
+/******************************************************************************/
+KS_RESULT IFBS_GETDBCONTENTS(KscServerBase *Server,
+                             PltString     &Out,
+                             FILE *fout = 0)
+/******************************************************************************/
+ {
+    KsGetEPParams       params;
+    char                help[256];
+    PltString           log("");
+    KS_RESULT           err = KS_ERR_OK;
+   
+    if(!Server) {
+        err = KS_ERR_SERVERUNKNOWN;
+        iFBS_SetLastError(1, err, log);
+            return err;
+    }
+
+    iFBS_SetLastError(1, err, log);
+
+    struct tm* t;
+    time_t timer;
+
+    PltTime tt = PltTime::now();
+
+    timer = (time_t)tt.tv_sec;
+    t = localtime(&timer);
+
+Out =  "/*********************************************************************\n";
+Out += "======================================================================\n";        
+Out += "  Sicherung der Datenbasis.\n\n";
+
+    if(t) {
+        sprintf(help, "  Erstellt : %4.4d-%2.2d-%2.2d %2.2d:%2.2d:%2.2d\n\n",
+                t->tm_year+1900, t->tm_mon+1, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec );
+                
+        Out += help;
+    }
+
+    sprintf(help, "  HOST                : %s\n  SERVER              : %s\n",
+            (const char*)Server->getHost(), (const char*)Server->getName() );
+    Out += help;
+  
+    // Schreiben in Datei ?
+    if(fout) {
+        fputs((const char*)Out, fout);
+        // String-Buffer leeren
+        Out = "";
+    }
+    
+/////////////////////////////////////////////////////////////////////////////////////////
+// DB-Infos :                                                                          //
+/////////////////////////////////////////////////////////////////////////////////////////
+
+    KsString            root = Server->getHostAndName();
+    KsString            Var;
+    size_t          i;      // Laufvariable;
+    
+    PltArray<KscVariable*> VarArray(7);
+    if(VarArray.size() != 7) {
+        err = OV_ERR_HEAPOUTOFMEMORY;
+        iFBS_SetLastError(1, err, log);
+            return err;
+    }
+
+    KscPackage        *pkg = new KscPackage;
+    if(!pkg) {
+        err = OV_ERR_HEAPOUTOFMEMORY;
+        iFBS_SetLastError(1, err, log);
+            return err;
+    }
+    
+    for(i = 0; i < 7; i++) {
+        switch(i) {
+            case 0: Var = "/vendor/database_size";
+                    break;
+            case 1: Var = "/vendor/database_free";
+                    break;
+            case 2: Var = "/dbinfo.instnumber";
+                    break;
+            case 3: Var = "/dbinfo.tasknumber";
+                    break;
+            case 4: Var = "/dbinfo.connnumber";
+                    break;
+            case 5: Var = "/dbinfo.serversystem";
+                    break;
+            case 6: Var = "/dbinfo.licinfo";
+                    break;
+        }
+        
+        VarArray[i] = new KscVariable(root+Var);
+            if(!VarArray[i]) {
+                delete pkg;
+                err = OV_ERR_HEAPOUTOFMEMORY;
+            iFBS_SetLastError(1, err, log);
+                return err;
+        }
+            if(!pkg->add(KscVariableHandle(VarArray[i], PltOsNew)) ){
+                        delete pkg;
+                        err = KS_ERR_GENERIC;
+            iFBS_SetLastError(1, err, log);
+                        return KS_ERR_GENERIC;
+            }
+    } /* for */
+
+    if (!pkg->getUpdate() ) {
+        err = pkg->getLastResult();
+            if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+            delete pkg;
+        iFBS_SetLastError(1, err, log);
+            return err;
+    }
+
+    // DB-Infos schreiben
+    for(i = 0; i < 7; i++ ) {
+        
+            const KsVarCurrProps *cp = (VarArray[i])->getCurrProps();
+        if((!cp) || (!cp->value) ) {
+            delete pkg;
+            err = KS_ERR_GENERIC;
+                delete pkg;
+            iFBS_SetLastError(1, err, log);
+                return err;
+        }
+        switch(i) {
+            case 0: // database_size
+                    Out += "  DB-Groesse          : ";
+                    ifb_getValueOnly(cp, Out);
+                    break;
+            case 1: // database_free
+                        Out += "  Frei                : ";
+                    ifb_getValueOnly(cp, Out);
+                    break;
+            case 2: // instnumber
+                        Out += "  Anzahl FB-Instanzen : ";
+                        ifb_getValueOnly(cp, Out);
+                    break;
+            case 3: // tasknumber
+                        Out += "  Anzahl Tasks        : ";
+                        ifb_getValueOnly(cp, Out);
+                    break;
+            case 4: // connnumber
+                        Out += "  Anzahl Verbindungen : ";
+                        ifb_getValueOnly(cp, Out);
+                    break;
+            case 5: // serversystem
+                        Out += "\n  Server-System       : ";
+                    Out += (const char*)((KsStringValue &) *cp->value);
+                    break;
+            case 6: // licinfo
+                            Out += "\nDieser Server ist registriert fuer :\n\n";
+                    Out += (const char*)((KsStringValue &) *cp->value);
+                    Out += "\n";
+                    break;
+            } 
+        Out += "\n";
+    }
+
+    delete pkg;
+
+Out += "======================================================================\n";        
+Out += "*********************************************************************/\n\n";
+
+    // Schreiben in Datei ?
+    if(fout) {
+        fputs((const char*)Out, fout);
+        // String-Buffer leeren
+        Out = "";
+    }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der Bibliotheken
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    params.path = "/";
+    params.path += FB_LIBRARIES_CONTAINER;
+    params.type_mask = KS_OT_DOMAIN;
+    params.name_mask = "*";
+    params.scope_flags = KS_EPF_DEFAULT;
+
+    err = get_libs(Server, params, Out);
+    if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+    }
+
+    // Schreiben in Datei ?
+    if(fout) {
+        fputs((const char*)Out, fout);
+        // String-Buffer leeren
+        Out = "";
+    }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der Funktionsblock-Instanzen
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    params.path = "/";
+    params.path += FB_INSTANZ_CONTAINER;
+    params.type_mask = (KS_OT_DOMAIN | KS_OT_HISTORY);
+    params.name_mask = "*";
+    params.scope_flags = KS_EPF_DEFAULT;
+
+    err = get_class(Server, params, Out, fout);
+    if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+    }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der Task-Instanzen
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    params.path = "/";
+    params.path += FB_TASK_CONTAINER;
+    params.type_mask = KS_OT_DOMAIN;
+    params.name_mask = "*";
+    params.scope_flags = KS_EPF_DEFAULT;
+
+    err = get_class(Server, params, Out, fout);
+    if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+    }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der Verbindungen
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    params.path = "/";
+    params.path += FB_CONN_CONTAINER;
+    params.type_mask = KS_OT_DOMAIN;
+    params.name_mask = "*";
+    params.scope_flags = KS_EPF_DEFAULT;
+
+    err = get_class(Server, params, Out, fout);
+    if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+    }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der Task-[Task OR Fb]-Links in Task-Container
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    params.path = "/" ;
+    params.path += FB_TASK_CONTAINER;
+    params.type_mask = KS_OT_DOMAIN | KS_OT_HISTORY;
+    params.name_mask = "*";
+    params.scope_flags = KS_EPF_DEFAULT;
+    err = get_task_list(Server, params, Out, fout);
+    if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+    }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der Fb-[Task OR Fb]-Links in TU-Container
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+    params.path = "/" ;
+    params.path += FB_INSTANZ_CONTAINER;
+    params.type_mask = KS_OT_DOMAIN;
+    params.name_mask = "*";
+    params.scope_flags = KS_EPF_DEFAULT;
+    err = get_task_list(Server, params, Out, fout);
+    if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+    }
+
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der Connection-Links
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   params.path = "/" ;
+   params.path += FB_CONN_CONTAINER;
+   params.type_mask = KS_OT_DOMAIN;
+   params.name_mask = "*";
+   params.scope_flags = KS_EPF_CHILDREN;
+
+   err = get_con_list(Server, params, Out, fout);
+   if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+   }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der restlichen Links Task-Objekten
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   params.path = "/" ;
+   params.path += FB_TASK_CONTAINER;
+   params.type_mask = (KS_OT_DOMAIN | KS_OT_HISTORY);
+   params.name_mask = "*";
+   params.scope_flags = KS_EPF_DEFAULT;
+
+   err = get_xlink_list(Server, params, Out, fout);
+   if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+   }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der restlichen Links TU-Objekten
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   params.path = "/" ;
+   params.path += FB_INSTANZ_CONTAINER;
+   params.type_mask = (KS_OT_DOMAIN | KS_OT_HISTORY);
+   params.name_mask = "*";
+   params.scope_flags = KS_EPF_DEFAULT;
+
+   err = get_xlink_list(Server, params, Out, fout);
+   if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+   }
+
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // Rueckdokumentation der restlichen Links Con-Objekten
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   params.path = "/" ;
+   params.path += FB_CONN_CONTAINER;
+   params.type_mask = (KS_OT_DOMAIN | KS_OT_HISTORY);
+   params.name_mask = "*";
+   params.scope_flags = KS_EPF_DEFAULT;
+
+   err = get_xlink_list(Server, params, Out, fout);
+   if(err) {
+        if(fout) {
+            if(Out != "") {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+   }
+
+   return KS_ERR_OK;
+
+} /* exportproject */
+
+
+
+/*****************************************************************************/
+ KS_RESULT get_libs(KscServerBase* Server, KsGetEPParams& params, PltString& Out)
+/*****************************************************************************/
+{
+    KsGetEPResult  result;
+
+    bool ok = Server->getEP(0, params, result);
+    if( !ok ) {
+        KS_RESULT err = Server->getLastResult();
+        if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+        return err;
+    }
+    if( result.result != KS_ERR_OK ) {
+        return result.result;
+    }
+
+    /* Alle Bibliotheken sichern */
+    while( result.items.size() ) {
+        KsEngPropsHandle hpp = result.items.removeFirst();
+        if(!hpp) {
+            return KS_ERR_GENERIC;
+        }
+        Out += " LIBRARY\n    ";
+        Out += hpp->identifier;
+        Out += "\n";
+        Out += " END_LIBRARY;\n\n";
+        
+    } /* while size() */
+
+    return KS_ERR_OK;
+
+} /* get_libs */
+
+
+/*****************************************************************************/
+ KS_RESULT get_class(KscServerBase* Server, KsGetEPParams& params, PltString& Out, FILE *fout)
+/*****************************************************************************/
+  {
+
+    KS_RESULT      fehler;
+    KsGetEPResult  result;
+
+    bool ok = Server->getEP(0, params, result);
+    if( !ok ) {
+        fehler = Server->getLastResult();
+        if(fehler == KS_ERR_OK) fehler = KS_ERR_GENERIC;
+        return fehler;
+    }
+    if( result.result != KS_ERR_OK ) {
+        return result.result;
+    }
+
+    /* Alle Instanzen sichern */
+    while ( result.items.size() ) {
+        KsEngPropsHandle hpp = result.items.removeFirst();
+        if(!hpp) {
+            return KS_ERR_GENERIC;
+        }
+        
+        if( (params.path == FB_TASK_CONTAINER_PATH) && (hpp->identifier == FB_URTASK) ) {
+            // UrTask nicht sichern
+        } else {
+                
+            Out += " INSTANCE  ";
+            Out += (const char*)params.path;
+            if( hpp->access_mode & KS_AC_PART) {
+                Out += ".";
+            } else {
+                Out += "/";
+            }
+            
+            Out += (const char*)hpp->identifier;
+            Out += " :\n";
+            Out += "    CLASS ";
+            
+            if( hpp->xdrTypeCode() == KS_OT_HISTORY) {
+                
+                Out += (const char*)(((KsHistoryEngProps &)(*hpp)).type_identifier);
+                Out += ";\n";
+                
+            } else {
+                // Instanz oder Container
+                Out += (const char*)(((KsDomainEngProps &)(*hpp)).class_identifier);
+                Out += ";\n";
+
+                KsGetEPParams helpParams;
+                
+                helpParams.path = params.path;
+                if( hpp->access_mode & KS_AC_PART) {
+                    helpParams.path += ".";
+                } else {
+                    helpParams.path += "/";
+                }
+                helpParams.path += hpp->identifier;
+                helpParams.name_mask = "*";
+            
+                if( ((KsDomainEngProps &)(*hpp)).class_identifier != CONTAINER_CLASS_PATH ) {
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // Es ist eine Instanz vom benutzerdefiniertem Typ
+                    // Variablen von Instanz rueckdokumentieren :
+                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                    helpParams.type_mask = KS_OT_VARIABLE;
+                           helpParams.scope_flags = KS_EPF_PARTS;
+
+                    fehler = get_variable(Server, helpParams, Out);
+                    if (fehler) {
+                        return fehler;
+                    }
+                }
+            }
+            Out += " END_INSTANCE;\n\n";
+                    
+            // Schreiben in Datei ?
+            if(fout) {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        } /* if nicht ur_task */
+        
+        // Unterliegende Instanzen sichern
+        KsGetEPParams helpPars;
+        
+        helpPars.path = params.path;
+        if( hpp->access_mode & KS_AC_PART) {
+            helpPars.path += ".";
+        } else {
+            helpPars.path += "/";
+        }
+        
+        helpPars.path += hpp->identifier;
+        helpPars.name_mask = "*";
+        helpPars.type_mask = KS_OT_DOMAIN | KS_OT_HISTORY;
+        helpPars.scope_flags = KS_EPF_DEFAULT;
+
+        fehler = get_class(Server,helpPars,Out,fout);
+        if(fehler) {
+            return fehler;
+        }
+    } /* while size() */
+
+    return KS_ERR_OK;
+
+ } /* get_class */
+
+/*****************************************************************************/
+ KS_RESULT get_variable(KscServerBase* Server,KsGetEPParams& params,PltString& Out)
+/*****************************************************************************/
+{
+    KS_RESULT      err;
+    KsGetEPResult  result;
+    KsString       Var;
+    KsString       root;
+    size_t         i;               /* Laufvariable */
+    size_t         AnzVars;         /* Merker : Anzahl gefundenen Variablen */
+    size_t         AnzFoundObjs;    /* Merker : Anzahl gefundenen Unterobjekten */
+    char           PortType[32];
+    char          *ph;
+    PltString      hStr;
+    float          srvVersion;
+    
+    // Zugriffsrechte ab iFBSpro v2.4.0 geaendert
+    srvVersion = 0;
+    
+    // Merke : //host/server
+    root = Server->getHostAndName();
+    
+    do {
+        Var = "/vendor/server_version";
+        KscVariable  vvar(root + Var);
+        if(!vvar.getUpdate() ) {
+            // ?
+            break;
+        }
+        const KsVarCurrProps* cp = vvar.getCurrProps();
+        if(!cp || !cp->value) {
+            // ?
+            break;
+        }
+        hStr = "";
+        ifb_getValueOnly(                                              /*  |> Funktionsrueckmeldung      */
+                           cp                      /* >|  Eigenschaften der Variable */
+                           ,hStr                    /* >|> Value als String           */
+                           ,1       /* Max. Anzahl Elementen in Array */
+                           ,FALSE       /* Merker, ob Time-Ausgabe "... hh:mm:ss" */
+                           ,FALSE       /* Merker, ob TRUE als "1" und FALSE als "0" */
+                           ,FALSE         /* Merker, ob Array als Liste "{...}"        */
+                           ," "         /* Trenner der Array-Elementen               */
+                           ,FALSE              /* Merker, ob string in Hochkommas   */
+                           ,FALSE
+                           );
+        if( hStr == "" ) {
+            // ?
+            break;
+        }
+        
+        strncpy(PortType, (const char*)hStr, 16);
+        ph = strstr(PortType, ".");
+        if(!ph) {
+            // Kein Dezimal-Punkt?
+            ph = PortType;
+        }
+        ph++;
+        while(ph && (*ph)) {
+            if(*ph == '.') {
+                // 2. Punkt gefunden
+                *ph = '\0';
+                break;                
+            }
+            ph++;
+        }
+        
+        srvVersion = atof(PortType);
+        
+    } while(1==0);  // Nur 1 Mal durchlaufen
+    
+    
+    bool ok = Server->getEP(0, params, result);
+    if( !ok ) {
+        err = Server->getLastResult();
+        if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+        return err;
+    }
+    if( result.result != KS_ERR_OK ) {
+        return result.result;
+    }
+
+    AnzFoundObjs = result.items.size();
+    
+    if ( !AnzFoundObjs ) {
+        // Keine Variablen in Domain
+        return KS_ERR_OK;
+    }
+
+    /* Variablen sichern */
+
+    Out += "    VARIABLE_VALUES\n";
+
+    /* Alle Variable merken */
+    PltArray<KscVariable*> VarArray(AnzFoundObjs);
+    if(VarArray.size() != AnzFoundObjs) {
+            return OV_ERR_HEAPOUTOFMEMORY;
+    }
+    
+
+    // Package anlegen
+    KscPackage        *pkg = new KscPackage;
+    if(!pkg) {
+        return OV_ERR_HEAPOUTOFMEMORY;
+    }
+
+    PltList<KsEngPropsHandle>  ListEP;
+    AnzVars = 0;
+    
+    for(i = 0; i < AnzFoundObjs; i++) {
+        
+            KsEngPropsHandle pv(result.items.removeFirst());
+        if(!pv) {
+            delete pkg;
+            return KS_ERR_GENERIC;
+        }
+        
+        // Ist das eine Variable?
+        if(pv->xdrTypeCode() == KS_OT_VARIABLE) {
+            
+                ListEP.addLast(pv);
+             
+                Var = params.path;
+                Var += ".";
+                Var += pv->identifier;  /* /. */    
+                
+                VarArray[AnzVars] = new KscVariable(root+Var);
+                if(!VarArray[AnzVars]) {
+                    delete pkg;
+                    return OV_ERR_HEAPOUTOFMEMORY;
+                }
+            
+                if(!pkg->add(KscVariableHandle(VarArray[AnzVars], PltOsNew)) ) {
+                    delete pkg;
+                         return KS_ERR_GENERIC;
+                }
+                
+            // Eine Variable mehr
+            AnzVars++;
+        }
+         
+    } /* for (alle Unterobjkte) */
+  
+    if(!pkg->getUpdate() ) {
+        err = pkg->getLastResult();
+        if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+        delete pkg;
+        return err;
+    }
+
+    for(i = 0; i < AnzVars; i++) {
+        
+        KsEngPropsHandle hpp = ListEP.removeFirst();
+        if(!hpp) {
+            delete pkg;
+            return KS_ERR_GENERIC;
+        }
+
+        const KsVarCurrProps *cp = VarArray[i]->getCurrProps();
+        if( (!cp) || (!cp->value) ) {
+            delete pkg;
+            return KS_ERR_GENERIC;
+        }
+
+        // Zugriffsrechte ab iFBSpro v2.4.0 geaendert
+        if(srvVersion < 2.4) {
+        
+           if( IsFlagSet( ((KsVarEngProps&)(*hpp)).semantic_flags, 'i') ) {
+                    strcpy(PortType,"INPUT");
+            } else if( IsFlagSet( ((KsVarEngProps&)(*hpp)).semantic_flags, 'p') ) {
+                    strcpy(PortType,"PARAMETER");
+            } else if( IsFlagSet( ((KsVarEngProps&)(*hpp)).semantic_flags, 'o') ) {
+                    strcpy(PortType,"OUTPUT");
+            } else if( IsFlagSet( ((KsVarEngProps&)(*hpp)).semantic_flags, 'n') ) {
+                  strcpy(PortType,"HIDDEN");
+            } else {
+                // Instanz hat keine FB-Flags. Dann ist die von OV.
+                if( ((KsVarEngProps&)(*hpp)).access_mode & KS_AC_WRITE ) {
+                    strcpy(PortType,"INPUT");
+                } else {
+                    // Es bleiben nur Outputs
+                    strcpy(PortType,"OUTPUT");
+                }
+            }
+        
+        // Version >= 2.4
+        } else {
+            /* 
+            *  Da die Flags zB. in CAEX-Server fuer Objekte "missbraucht" werden,
+            *  setze INPUT/OUTPUT-Merker anhand Zugriffs-Rechten
+            */
+            if( ((KsVarEngProps&)(*hpp)).access_mode & KS_AC_WRITE ) {
+                if( IsFlagSet( ((KsVarEngProps&)(*hpp)).semantic_flags, 'p') ) {
+                    // Parameter
+                    strcpy(PortType,"PARAMETER");
+                } else {
+                    // Input
+                    strcpy(PortType,"INPUT");
+                }
+            } else {
+                
+                if( IsFlagSet( ((KsVarEngProps&)(*hpp)).semantic_flags, 'n') ) {
+                      strcpy(PortType,"HIDDEN");
+                } else {
+                    // Es bleiben nur Outputs
+                    strcpy(PortType,"OUTPUT");
+                }
+            }
+        }
+        Out += "        ";
+        Out += (const char*)hpp->identifier;
+        Out += ifb_getValueLength(cp);
+        Out += " : ";
+        Out += PortType;
+        Out += "  ";
+        Out += ifb_getOvValueType(cp->value->xdrTypeCode() );
+        Out += " = ";
+        ifb_getValueOnly(
+                                cp              /* >|  Eigenschaften der Variable            */
+                                ,Out            /* >|> Value als String                      */
+                                ,ULONG_MAX      /* Max. Anzahl Elementen in Array            */
+                                ,FALSE          /* Merker, ob Time-Ausgabe "... hh:mm:ss"    */
+                                ,FALSE          /* Merker, ob TRUE als "1" und FALSE als "0" */
+                                ,TRUE           /* Merker, ob Array als Liste "{...}"        */
+                                ," , "          /* Trenner der Array-Elementen               */
+                                );
+        if( IsFlagSet( ((KsVarEngProps&)(*hpp)).semantic_flags, 's') ) {
+            sprintf(PortType," STATE = %d", cp->state);
+            Out += PortType;
+        }
+        
+        Out += ";\n";
+        
+    } // for alle Variablen
+
+    Out += "    END_VARIABLE_VALUES;\n";
+
+    /* Speicher freigeben */
+    delete pkg;
+
+    return KS_ERR_OK;
+
+} /* get_variable */
+
+/*****************************************************************************/
+KS_RESULT get_task_list(KscServerBase* Server,KsGetEPParams& params,PltString& Out,FILE *fout)
+/*****************************************************************************/
+{
+
+    KS_RESULT      err;
+    KsGetEPResult  result;
+    KsString       root = Server->getHostAndName();
+    KsString       Var;
+    KsGetEPParams  helpParams;
+
+    bool ok = Server->getEP(0, params, result);
+    if( !ok ) {
+        err = Server->getLastResult();
+        if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+        return err;
+    }
+    if( result.result != KS_ERR_OK ) {
+        return result.result;
+    }
+    
+    while( result.items.size() ) {
+
+        KsEngPropsHandle hpp = result.items.removeFirst();
+        
+        if(hpp->xdrTypeCode() == KS_OT_HISTORY) {
+            Var = ((KsHistoryEngProps &)(*hpp)).type_identifier;
+        } else {
+            Var = ((KsDomainEngProps &)(*hpp)).class_identifier;
+        }
+        if(Var != CONTAINER_CLASS_PATH) {
+ 
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // Child-Tasks dokumentieren :
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            
+            Var = params.path;
+            if( hpp->access_mode & KS_AC_PART) {
+                Var += ".";
+            } else {
+                Var += "/";
+            }
+            Var += hpp->identifier;
+            Var += ".taskchild";
+
+            KscVariable lvar(root+Var);
+            
+            if(!lvar.getUpdate() ) {
+                // Oder ist diese Instanze nicht vom FB ?
+            } else {
+                const KsVarCurrProps* cp = lvar.getCurrProps();
+                if( (!cp) || (!cp->value) ) {
+                    return KS_ERR_GENERIC;
+                }
+            
+                size_t siz = ifb_getValueLengthAsNum(cp);
+                if(!siz) {
+                    // Instanz hat keine Task-Link-Objekte
+                } else {
+            
+                    Out += " LINK\n";
+                    Out += "    OF_ASSOCIATION  tasklist;\n";
+                    Out += "    PARENT  taskparent : CLASS task\n        = ";
+                    Out += (const char*)params.path;
+                    if( hpp->access_mode & KS_AC_PART) {
+                        Out += ".";
+                    } else {
+                        Out += "/";
+                    }
+                    Out += (const char*)hpp->identifier;
+                    Out += ";\n    CHILDREN  taskchild : CLASS task\n        = ";
+        
+                    ifb_getValueOnly(cp                 /* >|  Eigenschaften der Variable            */
+                                    ,Out                /* >|> Value als String                      */
+                                    ,ULONG_MAX          /* Max. Anzahl Elementen in Array            */
+                                    ,FALSE              /* Merker, ob Time-Ausgabe "... hh:mm:ss"    */
+                                    ,FALSE              /* Merker, ob TRUE als "1" und FALSE als "0" */
+                                    ,TRUE               /* Merker, ob Array als Liste "{...}"        */
+                                    ," , "              /* Trenner der Array-Elementen               */
+                                    ,FALSE              /* Merker, ob string in Hochkommas   */
+                                    );
+                         Out += ";\n";
+                    Out += " END_LINK;\n\n";
+                    
+                    // Schreiben in Datei ?
+                    if(fout) {
+                        fputs((const char*)Out, fout);
+                        // String-Buffer leeren
+                        Out = "";
+                    }
+                }
+            }
+        }
+        
+        // Task-Listen von Unterobjekten holen
+        helpParams.path = params.path;
+        if( hpp->access_mode & KS_AC_PART) {
+            helpParams.path += ".";
+        } else {
+            helpParams.path += "/";
+        }
+        helpParams.path += hpp->identifier;
+        
+        helpParams.type_mask = KS_OT_DOMAIN | KS_OT_HISTORY;
+        helpParams.name_mask = "*";
+        helpParams.scope_flags = KS_EPF_DEFAULT;
+
+        err = get_task_list(Server, helpParams, Out, fout);
+        if(err) {
+            return err;
+        }
+    } /* while instanzen */
+
+    return KS_ERR_OK;
+
+} /* get_task_list */
+
+/*****************************************************************************/
+ KS_RESULT get_con_list(KscServerBase* Server,KsGetEPParams& params,PltString& Out, FILE *fout)
+/*****************************************************************************/
+{
+    KS_RESULT      err;
+    KsGetEPResult  result;
+    KsString       root = Server->getHostAndName();
+    KsString       Var;
+    
+    bool ok = Server->getEP(0, params, result);
+    if( !ok ) {
+        err = Server->getLastResult();
+        if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+        return err;
+    }
+    if( result.result != KS_ERR_OK ) {
+        return result.result;
+    }
+    
+    while ( result.items.size() ) {
+        KsEngPropsHandle hpp = result.items.removeFirst();
+            if(!hpp ) {
+                    return KS_ERR_GENERIC;
+            }
+
+        // Package anlegen
+        KscPackage        *pkg = new KscPackage;
+        if(!pkg) {
+            return OV_ERR_HEAPOUTOFMEMORY;
+        }
+        
+        Var = params.path;
+        Var += "/";
+        Var += hpp->identifier;
+//        Var += ".sourcefb"
+        
+        KscVariable *svar = new KscVariable(root + (Var + ".sourcefb") );
+        if(!pkg->add(KscVariableHandle(svar, PltOsNew)) ) {
+                delete pkg;
+                     return KS_ERR_GENERIC;
+            }
+        KscVariable *tvar = new KscVariable(root + (Var + ".targetfb") );
+        if(!pkg->add(KscVariableHandle(tvar, PltOsNew)) ) {
+                delete pkg;
+                     return KS_ERR_GENERIC;
+            }
+            
+        if(!pkg->getUpdate() ) {
+            err = pkg->getLastResult();
+            if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+            delete pkg;
+            return err;
+        }
+
+        const KsVarCurrProps* scp = svar->getCurrProps();
+        if((!scp) || (!scp->value) ) {
+            delete pkg;
+            return KS_ERR_GENERIC;
+        }
+            Out += " LINK\n";
+            Out += "    OF_ASSOCIATION  outputconnections;\n";
+        Out += "    PARENT  sourcefb : CLASS functionblock\n        = ";
+
+        Out += (const char*)((KsStringValue &) *scp->value);
+
+        Out += ";\n    CHILDREN  outputcon : CLASS connection\n        = {";
+        Out += (const char*)Var;
+        Out += "};\n";
+
+        Out += " END_LINK;\n\n";
+
+        const KsVarCurrProps* tcp = tvar->getCurrProps();
+        if((!tcp) || (!tcp->value) ) {
+            delete pkg;
+            return KS_ERR_GENERIC;
+        }
+
+            Out += " LINK\n";
+            Out += "    OF_ASSOCIATION  inputconnections;\n";
+        Out += "    PARENT  targetfb : CLASS functionblock\n        = ";
+
+        Out += (const char*)((KsStringValue &) *tcp->value);
+
+        Out += ";\n    CHILDREN  inputcon : CLASS connection\n        = {";
+        Out += (const char*)Var;
+        Out += "};\n";
+
+        Out += " END_LINK;\n\n";
+
+        delete pkg;
+                    
+        // Schreiben in Datei ?
+        if(fout) {
+            fputs((const char*)Out, fout);
+            // String-Buffer leeren
+            Out = "";
+        }
+
+    } /* while Verbindungen */
+
+    return KS_ERR_OK;
+
+} /* get_con_list */
+
+/******************************************************************************/
+KS_RESULT saveXlink(KscServerBase     *Server
+                    ,KsGetEPParams    &params
+                    ,KsEngPropsHandle &hpo
+                    ,PltString        &Out
+                    ,FILE             *fout
+                    ,bool             parentOnly) {
+/******************************************************************************/
+    KsGetEPResult    result;
+    KS_RESULT        err;
+    char             hStr[256];
+    char             *ph;
+    
+    bool ok = Server->getEP(0, params, result);
+    if ( !ok ) {
+        err = Server->getLastResult();
+        if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+        return err;
+    }
+    if ( result.result ) {
+        return result.result;
+    }
+
+    size_t                     Anz ;            /* Merker : Anzahl gefundenen Objekten */
+    
+    Anz = result.items.size();
+    if(!Anz) {
+        // Keine Objekten gefungen
+        return KS_ERR_OK;
+    }   
+
+    PltList<KsEngPropsHandle>    Liste;           /* Merker : gefundene Links */
+    KS_LINK_TYPE                 LinkTyp;         /* Merker : Link-Typ        */
+    KsString                     hs;              /* Hilfsstring              */
+    while ( result.items.size() ) {
+
+        KsEngPropsHandle hpp = result.items.removeFirst();
+        if(!hpp) {
+            return KS_ERR_GENERIC;
+        }
+
+        // FB-Links nicht addieren
+        hs = hpp->identifier;
+        if( (hs == "inputcon")  ||
+            (hs == "outputcon") ||
+            (hs == "sourcefb") ||
+            (hs == "targetfb") ||
+            (hs == "taskchild") ||
+            (hs == "taskparent") ) { continue;}
+            
+        // Es genuegt, wenn wir fuer 1:M-Links nur die Parent-Seite sichern.
+        // Bei den M:N-Links sichern wir beide Seiten.
+        LinkTyp = ((KsLinkEngProps&)(*hpp)).type;
+        switch(LinkTyp) {
+            case KS_LT_LOCAL_1_1:
+            case KS_LT_LOCAL_1_MANY:
+            case KS_LT_GLOBAL_1_1:
+            case KS_LT_GLOBAL_1_MANY:
+            case KS_LT_LOCAL_MANY_MANY:
+            case KS_LT_GLOBAL_MANY_MANY:
+                                Liste.addLast(hpp);
+                                break;
+            default:
+                                if(parentOnly == FALSE) {
+                                    Liste.addLast(hpp);
+                                }
+                                break;
+        }
+    }
+
+    if(Liste.isEmpty()) {
+        // Keine Links gefunden
+        return KS_ERR_OK;
+    }
+    
+    KsString  help;
+    
+    KsString root = Server->getHostAndName();    // Merke : //host/server
+    while(Liste.size()) {
+        
+        KsEngPropsHandle hpv = Liste.removeFirst();
+        if(!hpv) {
+            // ?
+            continue;
+        }
+        
+        help = params.path;
+        help += ".";
+        help += hpv->identifier;
+        KscVariable  var(root + help);
+        if(!var.getUpdate() ) {
+            // ?
+            continue;
+        }
+        const KsVarCurrProps* cp = var.getCurrProps();
+        if(!cp || !cp->value) {
+            // ?
+            continue;
+        }
+        hs = "";
+        ifb_getValueOnly(                          /*  |> Funktionsrueckmeldung                     */
+                           cp                      /* >|  Eigenschaften der Variable                */
+                           ,hs                     /* >|> Value als String                          */
+                           ,ULONG_MAX              /* >|  Max. Anzahl Elementen in Array            */
+                           ,TRUE                   /* >|  Merker, ob Time-Ausgabe "... hh:mm:ss"    */
+                           ,FALSE                  /* >|  Merker, ob TRUE als "1" und FALSE als "0" */
+                           ,FALSE                  /* >|  Merker, ob Array als Liste "{...}"        */
+                           ," , "                  /* >|  Trenner der Array-Elementen               */
+                           ,FALSE                  /* >|  Merker, ob string in Hochkommas           */
+                        );
+        if( hs == "" ) {
+            // Keine Objekte in der Liste
+            continue;
+        }
+        
+        help = " LINK\n    OF_ASSOCIATION  ";
+        strcpy(hStr, (const char*)((KsLinkEngProps &)(*hpv)).association_identifier);
+        ph = hStr;
+        while(ph && (*ph)) ph++;
+        while(((*ph) != '/') && (ph != hStr)) ph--;
+        if((*ph) == '/') ph++;
+        help += ph;
+            
+        help += ";\n    PARENT  ";
+        strcpy(hStr, (const char*)((KsLinkEngProps &)(*hpv)).opposite_role_identifier);
+        ph = hStr;
+        while(ph && (*ph)) ph++;
+        while(((*ph) != '/') && (ph != hStr)) ph--;
+        if((*ph) == '/') ph++;
+        help += ph;
+
+        help += " : CLASS ";
+        if(hpo->xdrTypeCode() == KS_OT_HISTORY) {
+                strcpy(hStr, (const char*)((KsHistoryEngProps &)(*hpo)).type_identifier);
+        } else {
+                strcpy(hStr, (const char*)(((KsDomainEngProps &)(*hpo)).class_identifier));
+        }
+        ph = hStr;
+        while(ph && (*ph)) ph++;
+        while(((*ph) != '/') && (ph != hStr)) ph--;
+        if((*ph) == '/') ph++;
+        help += ph;
+        help += "\n        = ";
+        help += params.path;
+
+        help += ";\n    CHILDREN  ";
+        help += hpv->identifier;
+        
+        help += " : CLASS unknown\n        = {";
+        help += hs;
+        help += "};\n";
+
+        help += " END_LINK;\n\n";
+        
+        // Schreiben in Datei ?
+        if(fout) {
+            fputs((const char*)help, fout);
+            // String-Buffer leeren
+            Out = "";
+        } else {
+            Out += help;
+        }
+    }
+    
+    return KS_ERR_OK;
+}
+
+/******************************************************************************/
+KS_RESULT get_xlink_list(KscServerBase   *Server
+                         ,KsGetEPParams   &params
+                         ,PltString       &Out
+                         ,FILE            *fout
+                         ,bool            parentOnly) {
+/******************************************************************************/
+    KsGetEPResult  result;
+    KS_RESULT      err;
+        
+    bool ok = Server->getEP(0, params, result);
+    if( !ok ) {
+        err = Server->getLastResult();
+        if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
+        return err;
+    }
+    if( result.result != KS_ERR_OK ) {
+        return result.result;
+    }
+
+    while ( result.items.size() ) {
+        KsEngPropsHandle hpp = result.items.removeFirst();
+        if(!hpp ) {
+                return KS_ERR_GENERIC;
+        }
+    
+        KsGetEPParams   Pars(params);
+        if( hpp->access_mode & KS_AC_PART) {
+            Pars.path += ".";
+        } else {
+            Pars.path += "/";
+        }
+
+        Pars.path += hpp->identifier;
+            
+        if( hpp->xdrTypeCode() == KS_OT_DOMAIN) {
+            err = get_xlink_list(Server, Pars, Out, fout, parentOnly);
+            if(err) {
+                return err;
+            }
+        }
+        
+        // Links sichern
+        Pars.type_mask = KS_OT_LINK;
+        Pars.name_mask = "*";
+        saveXlink(Server, Pars, hpp, Out, fout, parentOnly);
+    }
+    
+    return KS_ERR_OK;
+}
+
+
+/******************************************************************************/
+KS_RESULT IFBS_DBSAVE(KscServerBase*         Server,
+                                      PltString        &datei) {
+/******************************************************************************/
+
+    if(!Server) {
+            return KS_ERR_SERVERUNKNOWN;
+    }
+
+    if(!datei.len() ) {
+            return KS_ERR_BADNAME;
+    }
+
+    FILE *fout = fopen((const char*)datei, "w");
+    if(!fout) {
+                return KS_ERR_BADPATH;
+    }
+
+    fputs("/*********************************************************************\n", fout);
+    fputs("* Datei : ", fout);
+    fputs((const char*)datei, fout);
+    fputs("\n*********************************************************************/\n", fout);
+
+    PltString Str("");
+
+    KS_RESULT err = IFBS_GETDBCONTENTS(Server, Str, fout);
+
+//    fputs((const char*)Str, fout);
+
+    fclose(fout);
+
+    return err;
+}
+
+
+/******************************************************************************/
+KS_RESULT IFBS_DBSAVE_TOSTREAM(KscServerBase*         Server,
+                                                     PltString         &Out) {
+/******************************************************************************/
+
+ return IFBS_GETDBCONTENTS(Server, Out);
+
+}
