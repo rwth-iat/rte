@@ -1,11 +1,12 @@
 # ACPLT Build Script
-# (c) 2015 Chair of Process Control Engineering, RWTH Aachen University
+# (c) 2016 Chair of Process Control Engineering, RWTH Aachen University
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 # Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
 # Author: Constantin Wagner <c.wagner@plt.rwth-aachen.de>
 # Author: Holger Jeromin <h.jeromin@plt.rwth-aachen.de>
+# Author: Lars Evertz <l.evertz@plt.rwth-aachen.de>
 #
-# Usage: tclsh acplt_build.tcl (release) (compileonly)
+# Usage: tclsh acplt_build.tcl (release) (compileonly) (cross FILENAME) (repo REPOSITORY_URL)
 set release 0
 set checkout 0
 set compileonly 0
@@ -17,6 +18,11 @@ set notbuildedlibs 0
 set ov_debug "OV_DEBUG=1"
 set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=32"
 set ov_arch_bitwidth_int 32
+set cross 0
+set crossFilename ""
+set gitRepo "https://github.com/acplt/rte/trunk/"
+
+
 foreach arg $argv {
 	if {$arg == "checkout"} {
 		set release 0
@@ -40,8 +46,20 @@ foreach arg $argv {
 		set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=64"
 		set ov_arch_bitwidth_int 64
 	}
+	if {$crossFilename == 1} {
+		set crossFilename $arg
+	}
+	if {$arg=="cross"} {
+		set cross 1
+		set crossFilename 1
+	}
+	if {$gitRepo == 1} {
+		set gitRepo $arg
+	}
+	if {$arg=="repo"} {
+		set gitRepo 1
+	}
 }
-
 
 
 set basedir [pwd]
@@ -76,6 +94,15 @@ if { $os == "nt" } then {
 }
 
 file delete -force $logfile
+
+#read in cross settings if wanted
+if {$cross==1} {
+	source $crossFilename
+	if {$targetOS=="nt"} {
+		set build_dbcommands 0
+	}
+}
+
 
 
 ####################### PROCEDURES #######################
@@ -274,6 +301,7 @@ proc get_revision {} {
 # Checkout a SVN module or copy if the file are there (from git?)
 proc checkout_dir {module {vcs_server "github"} {dirname ""} } {
 	global basedir
+	global gitRepo
 	set temp [split $module "/"]
 	if {$dirname == ""} {
 		set dirname [lindex $temp end]
@@ -285,7 +313,7 @@ proc checkout_dir {module {vcs_server "github"} {dirname ""} } {
 	}
 	if {$vcs_server == "github"} {
 		print_msg "Checking out $module from github"
-		execute svn co https://github.com/acplt/rte/trunk/$module $dirname
+		execute svn co ${gitRepo}${module} $dirname
 	} elseif {$vcs_server == "acpltpublish"} {
 		print_msg "Checking out $module from acplt publish"
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/publish/$module $dirname
@@ -311,10 +339,10 @@ proc checkout_acplt {} {
 	
 	cd $builddir
 	if {$build_dbcommands == 1} {
-		checkout_dir "archive/oncrpc" "acpltroot" "oncrpc"
-		checkout_dir "archive/acplt" "acpltroot" "base"
+		checkout_dir "legacy/oncrpc"
+		checkout_dir "legacy/comm" "github" "base"
 		cd $builddir/base
-		checkout_dir "archive/fbs_dienste" "acpltrootnotrunk" "fbs_dienste"
+		checkout_dir "legacy/fbs_dienste"
 	} else {
 		file mkdir $builddir/base
 		cd $builddir/base
@@ -386,9 +414,17 @@ proc build_acplt {} {
 	global make
 	global basedir
 	global build_dbcommands
+	global cross
+	global CrossPrefix
+	global targetOS
 
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
-	build_package libml make -C $builddir/base/ov/source/libml -f $makefile
+#libml
+	if {$cross==1} { 
+		set crossArgs "PREFIX=$CrossPrefix"
+	}
+	build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs
+
 	if { $os == "nt" && $build_dbcommands == 1 } then { 
 		cd $builddir/oncrpc
 		execute make.bat
@@ -415,7 +451,20 @@ proc build_acplt {} {
 			build_package ks make -C $builddir/base/ks/build/$os
 			build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
 		}
-		build_package ov make -C $builddir/base/ov/build/$os
+		set crossArgsPrefix ""
+		set crossArgsCGDir ""
+		set crossArgsCG	""
+		if {$cross==1} { 
+			set crossArgsPrefix "PREFIX=$CrossPrefix"
+			set crossArgsCGDir "OV_CODEGEN_DIR= "
+			set crossArgsCG	"OV_CODEGEN_EXE=ov_codegen"
+		}
+		if {$targetOS=="nt"} {
+			set crossWindresDefs "WINDRESDEFS=--define _WIN32"
+			build_package ov make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs 
+		} else {
+			build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
+		}
    }
    #if { $os == "nt" } then {
    #	build_package acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
@@ -466,7 +515,9 @@ proc release_lib_better {libname option} {
 	global os
 	global make
 	global compileonly
-	
+	global cross	
+	global targetOS
+
 	cd $releasedir/dev/
 	if { $compileonly != 1 } then {
 		file delete -force $releasedir/dev/$libname/
@@ -475,13 +526,10 @@ proc release_lib_better {libname option} {
 	set temp [split $libname "/"]
 	set libnametemp [lindex $temp end]
 	set libnamepraefix [lindex $temp end-1]
-	#print_msg "$libnamepraefix"
-	#print_msg "$releasedir/dev/$libnametemp"
-	
+
 	set libs [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] 
 	
-	#print_msg "$libs"
-	print_msg "$libnametemp"
+	print_msg "prepare $libnametemp with release_lib_better"
 	#lib contains the list of the libs to build
 	if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
 	#correct the paths... lifting libraries up from the "core" dir
@@ -510,6 +558,7 @@ proc release_lib_better {libname option} {
 		set break_in_next_iteration 1 
 		foreach libname $not_yet_build {
 			cd $releasedir/dev/$libname/build/$os/
+			
 			if { $option == "all" } then {
 				print_msg "Note: no debug symbols will be created"
 			}
@@ -718,8 +767,8 @@ proc compress {archivename dir} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set system_libs {syslibs/comm/ksbase syslibs/comm/TCPbind syslibs/comm/UDPbind syslibs/comm/ksxdr syslibs/comm/kshttp syslibs/comm/iec62541 syslibs/functionblock/fb syslibs/functionblock/ssc}
-set addon_libs {addonlibs/hmi/cshmi addonlibs/commclient/ksapi addonlibs/commclient/fbcomlib addonlibs/commclient/iec62541fb addonlibs/functionblock/iec61131stdfb addonlibs/functionblock/vdivde3696 addonlibs/functionblock/ACPLTlab003lindyn addonlibs/functionblock/IOdriverlib addonlibs/field/modbusTcpLib}
+set system_libs {syslibs/comm/ksbase syslibs/comm/TCPbind syslibs/comm/UDPbind syslibs/comm/ksxdr syslibs/comm/kshttp syslibs/comm/opcua syslibs/functionblock/fb syslibs/functionblock/ssc}
+set addon_libs {addonlibs/hmi/cshmi addonlibs/commclient/ksapi addonlibs/commclient/fbcomlib addonlibs/commclient/opcuafb addonlibs/functionblock/iec61131stdfb addonlibs/functionblock/vdivde3696 addonlibs/functionblock/ACPLTlab003lindyn addonlibs/functionblock/IOdriverlib addonlibs/field/modbusTcpLib addonlibs/comm/MessageSys addonlibs/comm/kshttpMsgExt addonlibs/processcontrol/cmdlib addonlibs/processcontrol/PCMsgParser addonlibs/processcontrol/PCMsgCreator addonlibs/functionblock/SSChelper}
 print_msg "checking out all libraries of the acplt system"
 
 if {$release != 1} {
