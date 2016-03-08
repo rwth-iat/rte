@@ -10,6 +10,7 @@ addons:
     - flex
     - gcc-multilib
     - texinfo
+    - gcc-mingw-w64-i686
 env:
   matrix:
   - OV_ARCH_BITWIDTH=32 DB_COMMANDS=no_dbcommands
@@ -27,6 +28,7 @@ script:
 - makeinfo --html --force doc/libov.texi -o html/ --no-warn
 - cd ..
 after_success:
+- ls -lah
 - sh ./tools/travis_release_and_crossCompile.sh
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
 - cp `find ./build/ -maxdepth 1 -name '*RTE-linux.tar.gz'` ./releases/.
