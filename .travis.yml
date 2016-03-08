@@ -29,7 +29,7 @@ script:
 - cd ..
 after_success:
 - cd rte
-- ls -lah
+- pwd
 - sh ./tools/travis_release_and_crossCompile.sh
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
