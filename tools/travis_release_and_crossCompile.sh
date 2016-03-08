@@ -8,12 +8,11 @@ cd ..
 
 # windows build
 # copy local binaries
-mkdir localBins
-cp ./build/acplt/system/sysbin/* localBins/.
+mkdir ~/localBins
+cp ./build/acplt/system/sysbin/* ~/localBins/.
 export CPATH=/usr/i686-w64-mingw32/include/
-export PATH=~/rte/localBins:$PATH
-ls -lah
-ls -lah localBins/
+export PATH=~/localBins:$PATH
+ls -lah ~
 cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
