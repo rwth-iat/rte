@@ -34,7 +34,9 @@ after_success:
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
 - find . -name '*RTE-linux.tar.gz'
-- find . -name '*RTE-win32.tar.gz'
+- find . -name '*RTE-win32.zip'
+- find . -name '*RTE-RPi.tar.gz'
+-cp --help
 - cp `find ./rte/build/ -maxdepth 1 -name '*RTE-linux.tar.gz'` -t ./rte-www/releases
 - cd rte-www
 - git rm -r -f ./doc/current/*
