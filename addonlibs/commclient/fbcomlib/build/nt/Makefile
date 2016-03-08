@@ -23,6 +23,6 @@ all:
 
 %:
 	acplt_makmak -l fbcomlib $(MAKMAKOPTIONS) $(TARGETOS)
-	acplt_makmak -l fbcomlib $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) fbcomlib $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	-tclsh $(POSTBUILD) fbcomlib

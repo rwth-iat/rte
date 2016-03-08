@@ -5,3 +5,5 @@ set targetOS nt
 set CrossPrefix i586-mingw32msvc-
 # for arm compiles the -m32 or -m64 options are not used, so reset them. using set crossOverrideBitwidthFlags "OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= "
 set crossOverrideBitwidthFlags ""
+# set arch to X86 or ARM - for ARM some flags are set differently
+set crossArch X86

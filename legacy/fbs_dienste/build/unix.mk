@@ -73,6 +73,8 @@ FLEX			= flex
 BISON			= bison
 RPCGEN			= rpcgen
 
+PREFIX			= 
+
 CC				= $(PREFIX)gcc
 CC_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -DOV_DEBUG -O2
 

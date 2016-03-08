@@ -12,6 +12,8 @@ EXE=.exe
 
 SRCDIR = ../../src/
 
+PREFIX	= 
+
 ### Compiler
 CXX = $(PREFIX)g++
 

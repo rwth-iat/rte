@@ -5,6 +5,8 @@ O = .o
 EXE = .exe
 A = .a
 
+PREFIX	= 
+
 CXX = $(PREFIX)g++
 
 CXX_EXTRA_FLAGS = -I . -I../../include -I$(PLT_DIR)/include -fno-implicit-templates

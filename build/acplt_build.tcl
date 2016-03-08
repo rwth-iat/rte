@@ -22,6 +22,7 @@ set cross 0
 set crossFilename ""
 set targetOS ""
 set crossOverrideBitwidthFlags ""
+set crossArch ""
 set gitRepo "https://github.com/acplt/rte/trunk/"
 
 
@@ -537,6 +538,7 @@ proc release_lib_better {libname option} {
 	global cross	
 	global targetOS
 	global CrossPrefix
+	global crossArch
 
 	cd $releasedir/dev/
 	if { $compileonly != 1 } then {
@@ -587,6 +589,10 @@ proc release_lib_better {libname option} {
 					set MAKMAKOPTION "TARGETOS=--targetWindows"
 				} else {
 					set MAKMAKOPTION "TARGETOS=--targetLinux"
+				}
+				if {$crossArch == "ARM"} {
+					set MAKMAKTEMP "${MAKMAKOPTION} -mARM"
+					set MAKMAKOPTION $MAKMAKTEMP
 				}
 				set success [build_package $libname $make $option GCC_BIN_PREFIX=$CrossPrefix BIN_DIR= $MAKMAKOPTION]
 			} else {			
@@ -644,15 +650,17 @@ proc create_release {} {
 	global env
 	global libsuffix
 	global build_dbcommands
+	global cross	
 
 	#create a release
 	set env(ACPLT_HOME) $releasedir
-	if { $os == "nt" } then {
-		set env(PATH) $releasedir/system/sysbin/\;$env(PATH)
-	} else {
-		set env(PATH) $releasedir/system/sysbin/:$env(PATH)
+	if { $cross != 1} {	
+		if { $os == "nt" } then {
+			set env(PATH) $releasedir/system/sysbin/\;$env(PATH)
+		} else {
+			set env(PATH) $releasedir/system/sysbin/:$env(PATH)
+		}
 	}
-
 	print_msg "Creating release in $releasedir"
 	# if { [file exists $releasedir] } then {
 	#file delete -force $releasedir
