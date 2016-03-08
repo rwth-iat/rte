@@ -33,11 +33,9 @@ after_success:
 - sh ./tools/travis_release_and_crossCompile.sh
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
-- find . -name '*RTE-linux.tar.gz'
-- find . -name '*RTE-win32.zip'
-- find . -name '*RTE-RPi.tar.gz'
-- cp --help
-- cp `find ./rte/build/ -maxdepth 1 -name '*RTE-linux.tar.gz'` -t ./rte-www/releases
+- cp ./rte/acpltRTE-linux.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-linux.tar.gz
+- cp ./rte/acpltRTE-win32.zip ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-win32.zip
+- cp ./rte/acpltRTE-RPi.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-RPi.tar.gz
 - cd rte-www
 - git rm -r -f ./doc/current/*
 - mkdir doc
