@@ -33,7 +33,8 @@ after_success:
 - if [ ${OV_ARCH_BITWIDTH} == "64" ]; then sh ./tools/travis_release_64.sh ; fi
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
-- cp ./rte/acpltRTE-linux.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-linux.tar.gz
+- cp ./rte/acpltRTE-linux32.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-linux32.tar.gz
+- cp ./rte/acpltRTE-linux64.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-linux64.tar.gz
 - cp ./rte/acpltRTE-win32.zip ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-win32.zip
 - cp ./rte/acpltRTE-RPi.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-RPi.tar.gz
 - cd rte-www
@@ -44,8 +45,8 @@ after_success:
 - cd ..
 - cp -r ../rte/html/* ./doc/current/
 - ls -lah
-- git add -A ./doc/current
-- git add -A ./releases
+- git add -Av ./doc/current
+- git add -Av ./releases
 - git config --global user.email "rte_bot@outlook.de"
 - git config --global user.name "rte-bot"
 - git config --global push.default simple
