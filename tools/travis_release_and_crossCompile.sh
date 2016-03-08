@@ -11,11 +11,12 @@ cd ..
 mkdir localBins
 cp ./build/acplt/system/sysbin/* localBins/.
 export CPATH=/usr/i686-w64-mingw32/include/
-export PATH=~/rte/localBins/:$PATH
-echo $PATH
+export PATH=~/rte/localBins:$PATH
+ls -lah
 cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
+tail -n 100 acplt_build.log
 zip -r acpltRTE-win32.zip acplt
 mv acpltRTE-win32.zip ../`date +%F:%R:%S`_acpltRTE-win32.zip
 cd ..
