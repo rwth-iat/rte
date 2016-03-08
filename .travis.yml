@@ -33,10 +33,10 @@ after_success:
 - if [ ${OV_ARCH_BITWIDTH} == "64" ]; then sh ./tools/travis_release_64.sh ; fi
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
-- cp ./rte/acpltRTE-linux32.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-linux32.tar.gz
-- cp ./rte/acpltRTE-linux64.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-linux64.tar.gz
-- cp ./rte/acpltRTE-win32.zip ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-win32.zip
-- cp ./rte/acpltRTE-RPi.tar.gz ./rte-www/releases/`date +%F:%R:%S`_acpltRTE-RPi.tar.gz
+- cp ./rte/acpltRTE-linux32.tar.gz ./rte-www/releases/`date +%F:%R`_acpltRTE-linux32.tar.gz
+- cp ./rte/acpltRTE-linux64.tar.gz ./rte-www/releases/`date +%F:%R`_acpltRTE-linux64.tar.gz
+- cp ./rte/acpltRTE-win32.zip ./rte-www/releases/`date +%F:%R`_acpltRTE-win32.zip
+- cp ./rte/acpltRTE-RPi.tar.gz ./rte-www/releases/`date +%F:%R`_acpltRTE-RPi.tar.gz
 - if [ ${OV_ARCH_BITWIDTH} == "32" ]; then sh ./tools/travis_cleanReleaseDir.sh ; fi
 - cd rte-www
 - git rm -r -f ./doc/current/*
