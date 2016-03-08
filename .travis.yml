@@ -45,8 +45,8 @@ after_success:
 - cd ..
 - cp -r ../rte/html/* ./doc/current/
 - ls -lah
-- git add -Av ./doc/current
-- git add -Av ./releases
+- git add -Av ./doc/current/*
+- git add -Av ./releases/*
 - git config --global user.email "rte_bot@outlook.de"
 - git config --global user.name "rte-bot"
 - git config --global push.default simple
