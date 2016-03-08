@@ -21,7 +21,6 @@ set ov_arch_bitwidth_int 32
 set cross 0
 set crossFilename ""
 set targetOS ""
-set crossOverrideBitwidthFlags ""
 set crossArch ""
 set gitRepo "https://github.com/acplt/rte/trunk/"
 
@@ -371,10 +370,14 @@ proc checkout_acplt {} {
 proc build_package {package args} {
 	global ov_debug
 	global ov_arch_bitwidth_str
-	global crossOverrideBitwidthFlags
+	global crossArch
 	print_msg "Building $package via build_package"
-	
-	return [execute $args $ov_debug $ov_arch_bitwidth_str $crossOverrideBitwidthFlags]
+	if {$crossArch == "ARM"} {
+		set crossOverrideBitwidthFlags	"OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= "	
+		return [execute $args $ov_debug $ov_arch_bitwidth_str $crossOverrideBitwidthFlags]
+	} else {
+		return [execute $args $ov_debug $ov_arch_bitwidth_str]
+	}
 }
 
 # Build in a directory using cygwin bash and ignoring errors
@@ -431,17 +434,21 @@ proc build_acplt {} {
 	global cross
 	global CrossPrefix
 	global targetOS
-	global crossOverrideBitwidthFlags
+	global crossArch
 	variable crossArgs
 
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
 #libml
 	if {$cross==1} { 
 		set crossArgs "PREFIX=$CrossPrefix"
+		if {$crossArch == "ARM"} {
+			build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
+		} else {
+			build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs
+		}
 	} else {
-		set crossArgs "PREFIX= "
+		build_package libml make -C $builddir/base/ov/source/libml -f $makefile
 	}
-	build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs $crossOverrideBitwidthFlags
 
 	if { $os == "nt" && $build_dbcommands == 1 } then { 
 		cd $builddir/oncrpc
@@ -464,10 +471,15 @@ proc build_acplt {} {
 		cd $basedir
 	} else {
 		if {$build_dbcommands == 1} {
+			if {$cross==1} { 
+				set crossArgsPrefix "PREFIX=$CrossPrefix"
+			} else {
+				set crossArgsPrefix "PREFIX= "
+			}
 			#enabling plt and ks just for fb_dbcommands
-			build_package plt make -C $builddir/base/plt/build/$os
-			build_package ks make -C $builddir/base/ks/build/$os
-			build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
+			build_package plt make -C $builddir/base/plt/build/$os $crossArgsPrefix
+			build_package ks make -C $builddir/base/ks/build/$os $crossArgsPrefix
+			build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os $crossArgsPrefix
 		}
 		set crossArgsPrefix ""
 		set crossArgsCGDir ""
@@ -480,7 +492,11 @@ proc build_acplt {} {
 				set crossWindresDefs "WINDRESDEFS=--define _WIN32"
 				build_package ov make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs 
 			} else {
-				build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossOverrideBitwidthFlags
+				if {$crossArch == "ARM"} {
+					build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
+				} else {
+					build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
+				}
 			}
 		} else {
 			build_package ov make -C $builddir/base/ov/build/$os
