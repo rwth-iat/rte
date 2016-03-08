@@ -19,6 +19,7 @@ env:
   - secure: KSiHssC0QJMBpcp4RGl1rgZwEj+QFAFq443g4lpTB28hlcJfVYehA9SvaglBxn684nL6d84wwnzK7jXpwVm85mZQJpj9UcJYji5A/lGrtxow6ytnqhaTOhkbiBf3DNCrzpOVZPT7oIdFYthGTnDbn423MOBia/FOYeG5/cF7QeM=
 install: 
 script:
+- apt-cache search mingw
 - cd ./build
 - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
 - cd ..
