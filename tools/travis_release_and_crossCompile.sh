@@ -17,6 +17,8 @@ find ~ -name 'ov_codegen'
 pwd
 ls -lah ~/localBins
 file ~/localBins/*
+echo $PATH
+which ov_codegen
 cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
