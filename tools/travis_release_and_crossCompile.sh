@@ -11,7 +11,7 @@ cd ..
 mkdir ~/localBins
 cp ./build/acplt/system/sysbin/* ~/localBins/.
 export CPATH=/usr/i686-w64-mingw32/include/
-export PATH=~/localBins:$PATH
+export PATH=/home/travis/localBins:$PATH
 ls -lah ~
 find ~ -name 'ov_codegen'
 pwd
