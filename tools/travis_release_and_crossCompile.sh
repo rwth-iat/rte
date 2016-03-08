@@ -13,6 +13,8 @@ cp ./build/acplt/system/sysbin/* ~/localBins/.
 export CPATH=/usr/i686-w64-mingw32/include/
 export PATH=~/localBins:$PATH
 ls -lah ~
+find ~ -name 'ov_codegen'
+ls -lah ~/localBins
 cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
