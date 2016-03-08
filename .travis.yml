@@ -33,7 +33,7 @@ after_success:
 - sh ./tools/travis_release_and_crossCompile.sh
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
-- cp `find ./rte/build/ -maxdepth 1 -name '*RTE-linux.tar.gz'` ./rte-www/releases/.
+- cp `find ./rte/build/ -maxdepth 1 -name '*RTE-linux.tar.gz'` -t ./rte-www/releases
 - cd rte-www
 - git rm -r -f ./doc/current/*
 - mkdir doc
@@ -42,6 +42,7 @@ after_success:
 - cd ..
 - cp -r ../rte/html/* ./doc/current/
 - git add -A ./doc/current
+- git add -A ./releases
 - git config --global user.email "rte_bot@outlook.de"
 - git config --global user.name "rte-bot"
 - git config --global push.default simple
