@@ -15,7 +15,7 @@ export PATH=/home/travis/localBins:$PATH
 cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
-zip -r acpltRTE-win32.zip acplt
+zip -qr acpltRTE-win32.zip acplt
 mv acpltRTE-win32.zip ../`date +%F:%R:%S`_acpltRTE-win32.zip
 cd ..
 
@@ -24,7 +24,7 @@ cd ..
 mkdir ~/RaspberryTools
 cd ~/RaspberryTools
 git clone https://github.com/raspberrypi/tools
-cd ~/build/rte/build
+cd ~/build/acplt/rte/build
 rm -R acplt acplt.build
 export CPATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.8.3/include/
 export PATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/:$PATH
