@@ -3,7 +3,7 @@
 # pack the linux release
 cd ./build
 tar -pczf acpltRTE-linux.tar.gz acplt
-mv acpltRTE-linux.tar.gz ../`date +%F:%R:%S`_acpltRTE-linux.tar.gz
+mv acpltRTE-linux.tar.gz ../acpltRTE-linux.tar.gz
 cd ..
 
 # windows build
@@ -16,7 +16,7 @@ cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
 zip -qr acpltRTE-win32.zip acplt
-mv acpltRTE-win32.zip ../`date +%F:%R:%S`_acpltRTE-win32.zip
+mv acpltRTE-win32.zip ../acpltRTE-win32.zip
 cd ..
 
 # raspberry pi build
@@ -29,8 +29,9 @@ rm -R acplt acplt.build
 export CPATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.8.3/include/
 export PATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/:$PATH
 tclsh acplt_build.tcl cross raspberryPi.cross
+tail -n 100 acplt_build.log
 tar -pczf acpltRTE-RPi.tar.gz acplt
-mv acpltRTE-RPi.tar.gz ../`date +%F:%R:%S`_acpltRTE-RPi.tar.gz
+mv acpltRTE-RPi.tar.gz ../acpltRTE-RPi.tar.gz
 cd ..
 
 
