@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # pack the linux release
-echo "packing the 32bit Linux release"
+echo "Packing the 32bit Linux release"
 cd ./build
 tar -pczf acpltRTE-linux32.tar.gz acplt
 mv acpltRTE-linux32.tar.gz ../acpltRTE-linux32.tar.gz
