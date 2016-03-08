@@ -10,7 +10,6 @@ addons:
     - flex
     - gcc-multilib
     - texinfo
-    - gcc-mingw-w64-i686
 env:
   matrix:
   - OV_ARCH_BITWIDTH=32 DB_COMMANDS=no_dbcommands
