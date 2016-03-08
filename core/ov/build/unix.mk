@@ -203,7 +203,7 @@ ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	strip --strip-debug $(OV_CODEGEN_EXE)
+	$(PREFIX)strip --strip-debug $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV framework builder
 

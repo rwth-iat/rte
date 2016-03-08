@@ -1,7 +1,7 @@
 # tcl variable defs for cross-compiling
 # set targetOS to "nt" for windows or "linux" for linux targets. Others are currently not supported
-set targetOS nt
+set targetOS linux
 # set the prefix of your cross compiler. It has to be found by the OS. Absolute paths should work here but are not tested.
-set CrossPrefix i586-mingw32msvc-
+set CrossPrefix arm-linux-gnueabihf-
 # for arm compiles the -m32 or -m64 options are not used, so reset them. using set crossOverrideBitwidthFlags "OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= "
-set crossOverrideBitwidthFlags ""
+set crossOverrideBitwidthFlags "OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= "

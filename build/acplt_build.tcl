@@ -21,6 +21,7 @@ set ov_arch_bitwidth_int 32
 set cross 0
 set crossFilename ""
 set targetOS ""
+set crossOverrideBitwidthFlags ""
 set gitRepo "https://github.com/acplt/rte/trunk/"
 
 
@@ -369,9 +370,10 @@ proc checkout_acplt {} {
 proc build_package {package args} {
 	global ov_debug
 	global ov_arch_bitwidth_str
+	global crossOverrideBitwidthFlags
 	print_msg "Building $package via build_package"
 	
-	return [execute $args $ov_debug $ov_arch_bitwidth_str]
+	return [execute $args $ov_debug $ov_arch_bitwidth_str $crossOverrideBitwidthFlags]
 }
 
 # Build in a directory using cygwin bash and ignoring errors
@@ -428,6 +430,7 @@ proc build_acplt {} {
 	global cross
 	global CrossPrefix
 	global targetOS
+	global crossOverrideBitwidthFlags
 	variable crossArgs
 
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
@@ -437,7 +440,7 @@ proc build_acplt {} {
 	} else {
 		set crossArgs "PREFIX= "
 	}
-	build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs
+	build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs $crossOverrideBitwidthFlags
 
 	if { $os == "nt" && $build_dbcommands == 1 } then { 
 		cd $builddir/oncrpc
@@ -476,7 +479,7 @@ proc build_acplt {} {
 				set crossWindresDefs "WINDRESDEFS=--define _WIN32"
 				build_package ov make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs 
 			} else {
-				build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
+				build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossOverrideBitwidthFlags
 			}
 		} else {
 			build_package ov make -C $builddir/base/ov/build/$os

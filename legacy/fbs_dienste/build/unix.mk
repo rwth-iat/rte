@@ -73,7 +73,7 @@ FLEX			= flex
 BISON			= bison
 RPCGEN			= rpcgen
 
-CC				= gcc
+CC				= $(PREFIX)gcc
 CC_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -DOV_DEBUG -O2
 
 CC_DEFINES		= $(DEFINES)
@@ -84,7 +84,7 @@ LINK			= $(CC)
 C_LIBS			= $(GOV_GOVLIB_LIB)
 
 
-CXX				= g++
+CXX				= $(PREFIX)g++
 CXX_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -DNDEBUG -Wall -O2 -fno-implicit-templates
 CXX_DEFINES		= $(CC_DEFINES)
 CXX_INCLUDES	= $(CC_INCLUDES)
@@ -93,8 +93,8 @@ CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(CXX_DEFINES) $(CXX_INCLUDES) -c
 CXX_LINK		= MAKE=$(MAKE) perl ../templ.pl $(CXX)
 CXX_LIBS		= $(C_LIBS) $(GOV_GOVLIB_LIB) $(ACPLTKSLIBS) -lstdc++
 
-AR				= ar
-RANLIB			= ranlib
+AR				= $(PREFIX)ar
+RANLIB			= $(PREFIX)ranlib
 
 LD				= ld $(OV_ARCH_BITWIDTH_LDFLAGS) -shared
 LD_LIB			= -ldl
@@ -147,7 +147,7 @@ depend : depend.mk
 $(DIENST_LIB) : $(DIENST_LIB_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
-	strip --strip-debug $(DIENST_LIB)
+	$(PREFIX)strip --strip-debug $(DIENST_LIB)
 
 
 $(DIENST_LIB_DLL) : $(DIENST_LIB_OBJ)
@@ -182,14 +182,14 @@ templ_for_exec.o : $(SOURCE_DIR)templ_for_exec.cpp
 
 fb_dbsave$(EXE) : fb_dbsave.o templ_for_exec.o
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(LIBKSCLN) $(LIBKS) $(LIBPLT) -lstdc++
-	strip --strip-debug fb_dbsave$(EXE)
+	$(PREFIX)strip --strip-debug fb_dbsave$(EXE)
 
 fb_dbload.o : $(SOURCE_DIR)dbload.cpp
 	$(CXX_COMPILE) -o $@ $<
 
 fb_dbload$(EXE) : fb_dbload.o templ_for_exec.o
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(LIBKSCLN) $(LIBKS) $(LIBPLT) -lstdc++
-	strip --strip-debug fb_dbload$(EXE)
+	$(PREFIX)strip --strip-debug fb_dbload$(EXE)
 
 fb_dbcommands.o : $(SOURCE_DIR)dbcommands.cpp
 	$(CXX_COMPILE) -o $@ $<
@@ -202,14 +202,14 @@ else
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
 endif
 
-	strip --strip-debug fb_dbcommands$(EXE)
+	$(PREFIX)strip --strip-debug fb_dbcommands$(EXE)
 
 fb_init.o : $(SOURCE_DIR)fb_init.cpp
 	$(CXX_COMPILE) -o $@ $<
 
 fb_init$(EXE) : fb_init.o templ_for_exec.o
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
-	strip --strip-debug fb_init$(EXE)
+	$(PREFIX)strip --strip-debug fb_init$(EXE)
 
 
 # $(LIBKSSVR)  -rdynamic

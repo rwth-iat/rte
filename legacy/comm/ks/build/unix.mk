@@ -5,13 +5,13 @@ O = .o
 EXE = .exe
 A = .a
 
-CXX = g++
+CXX = $(PREFIX)g++
 
 CXX_EXTRA_FLAGS = -I . -I../../include -I$(PLT_DIR)/include -fno-implicit-templates
 
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl g++ $(LD_FLAGS)
+CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl $(PREFIX)g++ $(LD_FLAGS)
 
 CXX_LIBS = -lstdc++
 
@@ -25,7 +25,7 @@ CXX_LIBS = -lstdc++
 
 .o.exe:
 	$(CXX_LINK) -o $@ $^ $(LIBPLT) $(CXX_PLATFORM_LIBS) $(CXX_LIBS)
-	strip --strip-debug $@
+	$(PREFIX)strip --strip-debug $@
 
 .cpp.i:
 	$(CXX_COMPILE) -E > $@ $<
@@ -43,16 +43,16 @@ VPATH = ../../src ../../examples
 include ../generic.mk
 
 $(LIBKS): $(LIBKS_OBJECTS)
-	ar r $@ $?
-	strip --strip-debug $(LIBKS)
+	$(PREFIX)ar r $@ $?
+	$(PREFIX)strip --strip-debug $(LIBKS)
 
 $(LIBKSSVR): $(LIBKSSVR_OBJECTS)
-	ar r $@ $?
-	strip --strip-debug $(LIBKSSVR)
+	$(PREFIX)ar r $@ $?
+	$(PREFIX)strip --strip-debug $(LIBKSSVR)
 
 $(LIBKSCLN): $(LIBKSCLN_OBJECTS)
-	ar r $@ $?
-	strip --strip-debug $(LIBKSCLN)
+	$(PREFIX)ar r $@ $?
+	$(PREFIX)strip --strip-debug $(LIBKSCLN)
 
 depend : $(CXX_SOURCES) unix_manager.cpp
 	$(CXX_COMPILE) -MM $^ > .depend
