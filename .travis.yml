@@ -33,6 +33,8 @@ after_success:
 - sh ./tools/travis_release_and_crossCompile.sh
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
+- `find . -name '*RTE-linux.tar.gz'`
+- `find . -name '*RTE-win32.tar.gz'`
 - cp `find ./rte/build/ -maxdepth 1 -name '*RTE-linux.tar.gz'` -t ./rte-www/releases
 - cd rte-www
 - git rm -r -f ./doc/current/*
