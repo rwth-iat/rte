@@ -12,17 +12,26 @@ mkdir ~/localBins
 cp ./build/acplt/system/sysbin/* ~/localBins/.
 export CPATH=/usr/i686-w64-mingw32/include/
 export PATH=/home/travis/localBins:$PATH
-ls -lah ~
-find ~ -name 'ov_codegen'
-pwd
-ls -lah ~/localBins
-file ~/localBins/*
-echo $PATH
-which ov_codegen
 cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
-tail -n 100 acplt_build.log
 zip -r acpltRTE-win32.zip acplt
 mv acpltRTE-win32.zip ../`date +%F:%R:%S`_acpltRTE-win32.zip
 cd ..
+
+# raspberry pi build
+# get toolchain
+mkdir ~/RaspberryTools
+cd ~/RaspberryTools
+git clone https://github.com/raspberrypi/tools
+cd ~/build/rte/build
+rm -R acplt acplt.build
+export CPATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.8.3/include/
+export PATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/:$PATH
+tclsh acplt_build.tcl cross raspberryPi.cross
+tar -pczf acpltRTE-RPi.tar.gz acplt
+mv acpltRTE-RPi.tar.gz ../`date +%F:%R:%S`_acpltRTE-RPi.tar.gz
+cd ..
+
+
+
