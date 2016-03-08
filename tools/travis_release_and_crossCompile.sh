@@ -2,7 +2,7 @@
 
 # pack the linux release
 cd ./build
-tar -pczf acpltRTE-linux.tar.gz acplt
+tar -pczf acpltRTE-linux32.tar.gz acplt
 mv acpltRTE-linux32.tar.gz ../acpltRTE-linux32.tar.gz
 cd ..
 
