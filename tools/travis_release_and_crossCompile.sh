@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # pack the linux release

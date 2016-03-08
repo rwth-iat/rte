@@ -69,6 +69,8 @@ OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER
 #	--------
 
 COMPILER		= GNU
+PREFIX			= 
+OV_CODEGEN_DIR	=	./
 
 CPP_PATH		= 
 #c:/tools/bin/
@@ -78,42 +80,42 @@ BISON			= bison
 CPP 			= cpp
 
 #CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
-CC				= gcc 
+CC				= $(PREFIX)gcc 
 #-I$(MINGWINCLUDEPATH)
 CC_FLAGS		= -g $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -Wno-attributes -Wstrict-aliasing=2 -fno-strict-aliasing -O0
 #-fstrict-aliasing 
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 #LINK			= gcc -mno-cygwin -L$(MINGWLIBPATH)
-LINK			= gcc  
+LINK			= $(PREFIX)gcc  
 #-L$(MINGWLIBPATH)
 C_LIBS			= 
 
 #CXX				= g++ -mno-cygwin -I$(MINGWINCLUDEPATH)
-CXX				= g++ 
+CXX				= $(PREFIX)g++ 
 #-I$(MINGWINCLUDEPATH)
 CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 #CXX_LINK		= g++ -mno-cygwin -L$(MINGWLIBPATH)
-CXX_LINK		= g++ 
+CXX_LINK		= $(PREFIX)g++ 
 #-L$(MINGWLIBPATH)
 #CXX_LINK		= MAKE=$(MAKE) perl ../../../plt/build/templ.pl g++ -mno-cygwin -L$(MINGWLIBPATH)
 CXX_LIBS		= $(C_LIBS) -lwsock32
 
-AR				= ar
-RANLIB			= ranlib
+AR				= $(PREFIX)ar
+RANLIB			= $(PREFIX)ranlib
 
 LD				= $(CC) -shared
 LD_LIB			= 
 
-DLLTOOL			= dlltool
+DLLTOOL			= $(PREFIX)dlltool
 #DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mno-cygwin -mdll -L$(MINGWLIBPATH)
-DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mdll 
+DLLWRAP			= $(PREFIX)dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mdll 
 #-L$(MINGWLIBPATH)
 CXX_DLLWRAP		= $(DLLWRAP) --driver-name g++
 
-WINDRES			= windres --preprocessor $(CPP_PATH)cpp --define OV_USE_WINDRES \
+WINDRES			= $(PREFIX)windres --preprocessor $(CPP_PATH)cpp $(WINDRESDEFS) --define OV_USE_WINDRES \
 				  $(foreach sourcedir, $(SOURCE_DIRS) $(OV_INCLUDE_DIR), --include-dir $(sourcedir))
 				  
 				  #--include-dir $(MINGWINCLUDEPATH)
@@ -176,10 +178,10 @@ all: targets example
 	$(BISON) -t -d -o$@ $<
 
 .ovm.c:
-	./$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 .ovm.h:
-	./$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 #   Dependencies
 #   ------------
@@ -207,7 +209,7 @@ ifeq ($(OV_ARCH_BITWIDTH),64)
 else
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@$(PREFIX)nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 endif
 
@@ -219,7 +221,7 @@ $(ONCRPC_LIB) : $(ONCRPC_DLL)
 
 $(ONCRPC_DLL) : $(ONCRPC_OBJ)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@$(PREFIX)nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 #	ACPLT/OV library for ACPLT/KS integration
@@ -229,7 +231,7 @@ $(OV_LIBOVKS_LIB) : $(OV_LIBOVKS_DLL)
 
 $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(OV_LIBOV_LIB) $(ACPLTKS_LIBS) $(OV_LIBOVKS_RES)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(OV_LIBOVKS_OBJ) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@$(PREFIX)nm $(OV_LIBOVKS_OBJ) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(CXX_DLLWRAP) --def $(basename $@).def -o $@ $^ $(CXX_LIBS)
 
 ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
@@ -335,7 +337,7 @@ $(KSHISTLIB_LIB) : $(KSHISTLIB_DLL)
 
 $(KSHISTLIB_DLL) : $(KSHISTLIB_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@$(PREFIX)nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 kshist.c kshist.h : $(OV_CODEGEN_EXE)
@@ -348,7 +350,7 @@ $(EXAMPLE_LIB) : $(EXAMPLE_DLL)
 
 $(EXAMPLE_DLL) : $(EXAMPLE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@$(PREFIX)nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 example.c example.h : $(OV_CODEGEN_EXE)
@@ -357,13 +359,13 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	------------------------
 $(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ)
-	strip --strip-debug $(ACPLT_BUILDER_EXE)
+	$(PREFIX)strip --strip-debug $(ACPLT_BUILDER_EXE)
 
 #	acplt_makmak
 #	------------------------
 $(ACPLT_MAKMAK_EXE) : $(ACPLT_MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS)
-	strip --strip-debug $(ACPLT_MAKMAK_EXE)
+	$(PREFIX)strip --strip-debug $(ACPLT_MAKMAK_EXE)
 
 #	ACPLT/OV dynov library
 #	--------------------------
@@ -373,7 +375,7 @@ $(DYNOV_LIB) : $(DYNOV_DLL)
 
 $(DYNOV_DLL) : $(DYNOV_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@$(PREFIX)nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 dynov.c dynov.h : $(OV_CODEGEN_EXE)
@@ -386,7 +388,7 @@ $(TASKLIB_LIB) : $(TASKLIB_DLL)
 
 $(TASKLIB_DLL) : $(TASKLIB_OBJ) $(OV_LIBOV_LIB)
 	@echo EXPORTS > $(basename $@).def
-	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
+	@$(PREFIX)nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 tasklib.c tasklib.h : $(OV_CODEGEN_EXE)

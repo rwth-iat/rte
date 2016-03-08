@@ -43,6 +43,10 @@
 #include "common.h"
 
 
+#define TARGETOS_WIN	1
+#define TARGETOS_LINUX	2
+#define TARGETOS_SOLARIS	3
+
 /*	----------------------------------------------------------------------	*/
 /*
  *	Bibliothek-Name in Grossbuchstaben
@@ -96,6 +100,7 @@ int main(int argc, char **argv) {
 	int 	    i;
 	int 	    addOpenLib = 0;
 	int	    	force = 0;
+	int			targetOs = 0;
 
 	//default to the own bitwidth
 #ifdef __x86_64
@@ -103,19 +108,19 @@ int main(int argc, char **argv) {
 #else
 	int	    	archBitwidth = 32;
 #endif
+	
+	char        *builddir = NULL;
+	char        *buildsys = NULL;
 
+	//this is for the host system
 #if OV_SYSTEM_NT
-	//char        *ph;
-	char        *builddir = "nt";
-	char        *buildsys = "NT";
+	targetOs	=	TARGETOS_WIN;
 #else
 #if OV_SYSTEM_LINUX
-	char        *builddir = "linux";
-	char        *buildsys = "LINUX";
+	targetOs	=	TARGETOS_LINUX;
 #else
 #if OV_SYSTEM_SOLARIS
-	char        *builddir = "solaris";
-	char        *buildsys = "SOLARIS";
+	targetOs	=	TARGETOS_SOLARIS;
 #else
 #error --- Betriebssystem nicht unterstuetzt --- 
 #endif  /* SOLARIS */
@@ -161,6 +166,30 @@ int main(int argc, char **argv) {
 		else if( !strcmp(argv[i], "-m64")) {
 			archBitwidth = 64;
 		}
+		/*
+		 *	'-mARM' option
+		 */
+		else if( !strcmp(argv[i], "-mARM")) {
+			archBitwidth = 0;
+		}
+		/*
+		 *	'targetLinux' option
+		 */
+		else if( !strcmp(argv[i], "--targetLinux")) {
+			targetOs = TARGETOS_LINUX;
+		}
+		/*
+		 *	'targetLinux' option
+		 */
+		else if( !strcmp(argv[i], "--targetWindows")) {
+			targetOs = TARGETOS_WIN;
+		}
+		/*
+		 *	'targetLinux' option
+		 */
+		else if( !strcmp(argv[i], "--targetSolaris")) {
+			targetOs = TARGETOS_SOLARIS;
+		}
 
 		/*
 		 *	display help option
@@ -182,13 +211,15 @@ int main(int argc, char **argv) {
 					"-o   OR --userdefined-open  Add user defined 'openlib' option\n"
 					"-h   OR --help              Display this help message and exit\n"
 					"-f   OR --force             Force overwriting Makefile (project settings), note that .tcl scripts will never be overwritten\n"
-					"-m32 OR -m64                Force bit width of the library (default is the same as this executable: ");
+					"-m32 OR -m64 OR -mARM       Force bit width of the library (default is the same as this executable: ");
 #ifdef __x86_64
 			fprintf(stderr, "64");
 #else
 			fprintf(stderr, "32");
 #endif
 			fprintf(stderr, " detected)\n"
+					"							Use -mARM for ARM-Architecture Targets. (There -m32 or -m64 is not Accepted)\n"
+					"--targetLinux OR --targetWindows OR --targetSolaris	Set a target OS for a Cross Makefile.\n"
 					"\n");
 			return 1;
 		} else {
@@ -196,6 +227,17 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	if(targetOs == TARGETOS_WIN){
+		builddir = "nt";
+		buildsys = "NT";
+	} else if(targetOs == TARGETOS_LINUX){
+		builddir = "linux";
+		buildsys = "LINUX";
+	} else if(targetOs == TARGETOS_SOLARIS){
+		builddir = "solaris";
+		buildsys = "SOLARIS";
+	}
+	
 	if(!libname) {
 		goto HELP;
 	}
@@ -372,6 +414,7 @@ if(new == 0){
 	fprintf(fd,"\n");
 	fprintf(fd,"else\n");
 	fprintf(fd,"DEFINES    = -DOV_SYSTEM_$(SYSTEM)=1 -DPLT_SYSTEM_$(SYSTEM)=1");
+	
 	if(addOpenLib == 1) {
 		fprintf(fd," -Dov_library_open_%s=ov_library_open_%s_old", libname, libname);
 	}
@@ -499,11 +542,13 @@ if(new == 0){
 		fprintf(fd,"PREBUILD = ../prebuild.tcl\n");
 		fprintf(fd,"POSTBUILD = ../postbuild.tcl\n");
 		fprintf(fd,"COMPILER_LO = $(call lc,$(COMPILER))\n\n");
+		fprintf(fd,"# Set TARGETOS to --targetWindows --targetLinux or --targetSolaris to cross-compile for the respective system.\n");
+		fprintf(fd,"TARGETOS = \n\n");
 
 		fprintf(fd, "all:\n\n");
 
 		fprintf(fd, "%%:\n");
-		fprintf(fd, "\tacplt_makmak -l %s $(MAKMAKOPTIONS)\n", libname);
+		fprintf(fd, "\tacplt_makmak -l %s $(MAKMAKOPTIONS) $(TARGETOS)\n", libname);
 		sprintf(help, "\ttclsh $(PREBUILD) %s $(MAKMAKOPTIONS)\n", libname);
 		compatiblePath(help);
 		fprintf(fd, "%s", help);
@@ -552,13 +597,20 @@ if(new == 0){
 	fprintf(fd,"_C   = .c\n");
 	fprintf(fd,"_OBJ = .o\n");
 	fprintf(fd,"_LIB = .a\n");
+	//	Executables are codegen and makmak --> host system
 #if OV_SYSTEM_NT
-	fprintf(fd,"_DLL = .dll\n");
 	fprintf(fd,"_EXE = .exe\n\n");
 #else
-	fprintf(fd,"_DLL = .so\n");
 	fprintf(fd,"_EXE =\n\n");
 #endif
+	// Shared Libs are for the target
+	if(targetOs == TARGETOS_WIN){
+		fprintf(fd,"_DLL = .dll\n");
+	} else {
+		fprintf(fd,"_DLL = .so\n");
+	}
+	
+
 
 	fprintf(fd,"#	Include generic part\n");
 	fprintf(fd,"#	--------------------\n");
@@ -567,37 +619,37 @@ if(new == 0){
 
 	fprintf(fd,"# Libraries\n");
 	fprintf(fd,"# ---------\n\n");
-#if OV_SYSTEM_NT
-	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
-	if(numDevLibs+numSysLibs > 0) {
-		fprintf(fd,"ADD_LIBS =");
-		for(i=0; i<numDevLibs; i++) {
-			/* link directly using dll */
-			fprintf(fd," $(USERLIB_DIR)/%s$(_DLL)", devLibs[i]);
+	if(targetOs == TARGETOS_WIN){
+		fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
+		if(numDevLibs+numSysLibs > 0) {
+			fprintf(fd,"ADD_LIBS =");
+			for(i=0; i<numDevLibs; i++) {
+				/* link directly using dll */
+				fprintf(fd," $(USERLIB_DIR)/%s$(_DLL)", devLibs[i]);
+			}
+			for(i=0; i<numSysLibs; i++) {
+				/* link directly using dll */
+				fprintf(fd," $(SYSLIB_DIR)/%s$(_DLL)", sysLibs[i]);
+			}
+			fprintf(fd,"\n");
 		}
-		for(i=0; i<numSysLibs; i++) {
-			/* link directly using dll */
-			fprintf(fd," $(SYSLIB_DIR)/%s$(_DLL)", sysLibs[i]);
+	} else {
+		fprintf(fd,"# Swithces for additional libraries needed for dynamic linkage in Linux\n");
+		if(numDevLibs+numDevLibs > 0) {
+			fprintf(fd,"ADD_LIBS_SWITCHES =");
+			for(i=0; i<numDevLibs; i++) {
+				/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
+				/* link against .a */
+				fprintf(fd," %s$(_DLL)", devLibs[i]);
+			}
+			for(i=0; i<numSysLibs; i++) {
+				/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
+				/* link against .a */
+				fprintf(fd," %s$(_DLL)", sysLibs[i]);
+			}
+			fprintf(fd,"\n");
 		}
-		fprintf(fd,"\n");
 	}
-#else
-	fprintf(fd,"# Swithces for additional libraries needed for dynamic linkage in Linux\n");
-	if(numDevLibs+numDevLibs > 0) {
-		fprintf(fd,"ADD_LIBS_SWITCHES =");
-		for(i=0; i<numDevLibs; i++) {
-			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
-			/* link against .a */
-			fprintf(fd," %s$(_DLL)", devLibs[i]);
-		}
-		for(i=0; i<numSysLibs; i++) {
-			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
-			/* link against .a */
-			fprintf(fd," %s$(_DLL)", sysLibs[i]);
-		}
-		fprintf(fd,"\n");
-	}
-#endif
 	fprintf(fd,"ADD_LIBS += $(foreach lib, $(EXTRA_LIBS),$(lib))\n\n");
 
 	/* Compiler-Optionen */
@@ -610,6 +662,7 @@ if(new == 0){
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
 	fprintf(fd,"endif\n");
 	fprintf(fd,"CC_FLAGS	= -g -std=c99");
+	// remove the folloewing #if to enable cross compiling on an ARM host system
 #if !__arm__
 	if(archBitwidth == 32){
 		fprintf(fd," -m32");
@@ -617,36 +670,36 @@ if(new == 0){
 		fprintf(fd," -m64");
 	}
 #endif
-#if !OV_SYSTEM_NT
-	fprintf(fd," -fPIC");	// all code is position independent on windows
-#endif
+	if(targetOs != TARGETOS_WIN){
+		fprintf(fd," -fPIC");	// all code is position independent on windows
+	}
 	fprintf(fd," -shared -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) $(EXTRA_CC_FLAGS)\n");
-#if OV_SYSTEM_NT
-	fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
-#else	
-	fprintf(fd,"CC_DEFINES	= $(DEFINES)\n");
-#endif
+	if(targetOs == TARGETOS_WIN){
+		fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
+	} else {
+		fprintf(fd,"CC_DEFINES	= $(DEFINES)\n");
+	}
 
 	fprintf(fd,"CC_INCLUDES	= $(INCLUDES) -I.\n");
 	fprintf(fd,"COMPILE_C	= $(CC) $(CC_FLAGS) $(CC_DEFINES) $(CC_INCLUDES) -c\n");
 
-#if OV_SYSTEM_NT
-	fprintf(fd,"LD		= $(CC) -shared");
-	if(archBitwidth == 32){
-		fprintf(fd," -m32");
-	}else if(archBitwidth == 64){
-		fprintf(fd," -m64");
+	if(targetOs == TARGETOS_WIN){
+		fprintf(fd,"LD		= $(CC) -shared");
+		if(archBitwidth == 32){
+			fprintf(fd," -m32");
+		}else if(archBitwidth == 64){
+			fprintf(fd," -m64");
+		}
+		fprintf(fd," -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
+	} else {
+		fprintf(fd,"LD		= $(CC) -shared");
+		if(archBitwidth == 32){
+			fprintf(fd," -m32");
+		}else if(archBitwidth == 64){
+			fprintf(fd," -m64");
+		}
+		fprintf(fd,"\n");
 	}
-	fprintf(fd," -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
-#else
-	fprintf(fd,"LD		= $(CC) -shared");
-	if(archBitwidth == 32){
-		fprintf(fd," -m32");
-	}else if(archBitwidth == 64){
-		fprintf(fd," -m64");
-	}
-	fprintf(fd,"\n");
-#endif
 
 	fprintf(fd,"AR			= $(GCC_BIN_PREFIX)ar\n");
 	fprintf(fd,"RANLIB		= $(GCC_BIN_PREFIX)ranlib\n");
@@ -656,6 +709,7 @@ if(new == 0){
 
 	/* Targets */
 	fprintf(fd,"templates: \n");
+		// this is for the host system
 #if OV_SYSTEM_NT
 	fprintf(fd,"\t-@cmd /c del ..\\..\\source\\sourcetemplates\\\\*$(_C)\n");
 #else
@@ -682,6 +736,7 @@ if(new == 0){
 	fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"\t$(STRIP) --strip-debug $(USERLIB_LIB)\n");
 	fprintf(fd,"\t$(STRIP) --strip-debug $(USERLIB_DLL)\n");
+	// host system either
 #if OV_SYSTEM_NT
 	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
 	fprintf(fd,"endif\n\n");
@@ -692,7 +747,8 @@ if(new == 0){
 	fprintf(fd,"\n");
 
 	fprintf(fd,"debug: $(TARGETS)\n");
-fprintf(fd,"ifndef STATIC_ONLY\n");
+	fprintf(fd,"ifndef STATIC_ONLY\n");
+	// host system either
 #if OV_SYSTEM_NT
 	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
 	fprintf(fd,"endif\n\n");
@@ -707,6 +763,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"#   -----\n");
 	fprintf(fd,"$(LIBRARY).c $(LIBRARY).h: $(wildcard $(MODEL_DIR)$(LIBRARY).ov?) Makefile\n");
 	//[1]
+	// host system either
 #if OV_SYSTEM_LINUX
 	fprintf(fd,"\tsed -i -e 's/\r//' $(MODEL_DIR)$(LIBRARY).ovm\n");
 #endif
@@ -720,6 +777,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd," -I $(MODEL_DIR) -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))\n\n");
 
 	fprintf(fd,"%%.c %%.h: %%.ovm Makefile\n");
+	// host system either
 #if OV_SYSTEM_LINUX
 	fprintf(fd,"\tsed -i -e 's/\r//' $<\n");
 #endif
@@ -737,50 +795,51 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"%%.o: %%.c $(HEADERS)\n");
 	fprintf(fd,"\t$(COMPILE_C) -o $@ $<\n");
 	fprintf(fd,"\n");
-#if OV_SYSTEM_NT
-	fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");
-#else
-	fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
-#endif
-	//fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_DLL)\n");
-#ifndef OV_SYSTEM_NT
-	fprintf(fd,"\t$(AR) rv $@ $^\n");
-	fprintf(fd,"\t$(RANLIB) $@\n");
-#endif
-	fprintf(fd,"\n");
-#if OV_SYSTEM_NT
-	fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");
-	fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
-#else
-	fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
-	if(numDevLibs+numSysLibs > 0) {
-		//ugly method of copying dependencies, but it is the only one to work :(
-		for(i=0; i<numDevLibs; i++) {
-			fprintf(fd,"\tcp $(USERLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", devLibs[i], devLibs[i]);
-		}
-		for(i=0; i<numSysLibs; i++) {
-			fprintf(fd,"\tcp $(SYSLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", sysLibs[i], sysLibs[i]);
-		}
+	if(targetOs == TARGETOS_WIN){
+		fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");
+	} else {
+		fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
 	}
-	fprintf(fd, "\t$(LD) -o $@ $^ $(ADD_LIBS_SWITCHES) $(LD_FLAGS)\n");
-#endif
+	//fprintf(fd, "$(USERLIB_LIB) : $(USERLIB_DLL)\n");
+	if(targetOs != TARGETOS_WIN){
+		fprintf(fd,"\t$(AR) rv $@ $^\n");
+		fprintf(fd,"\t$(RANLIB) $@\n");
+	}
+	fprintf(fd,"\n");
+	if(targetOs == TARGETOS_WIN){
+		fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");
+		fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
+	} else {
+		fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
+		if(numDevLibs+numSysLibs > 0) {
+			//ugly method of copying dependencies, but it is the only one to work :(
+			for(i=0; i<numDevLibs; i++) {
+				fprintf(fd,"\tcp $(USERLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", devLibs[i], devLibs[i]);
+			}
+			for(i=0; i<numSysLibs; i++) {
+				fprintf(fd,"\tcp $(SYSLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", sysLibs[i], sysLibs[i]);
+			}
+		}
+		fprintf(fd, "\t$(LD) -o $@ $^ $(ADD_LIBS_SWITCHES) $(LD_FLAGS)\n");
+	}
 	fprintf(fd,"\n");
 
-#if OV_SYSTEM_NT
-	fprintf(fd,"#   Dependencies\n");
-	fprintf(fd,"#   ------------\n\n");
+	if(targetOs == TARGETOS_WIN){
+		fprintf(fd,"#   Dependencies\n");
+		fprintf(fd,"#   ------------\n\n");
 
-	fprintf(fd,".depend:\n");
-	fprintf(fd,"\ttouch $@\n\n");
+		fprintf(fd,".depend:\n");
+		fprintf(fd,"\ttouch $@\n\n");
 
-	fprintf(fd,"depend : $(SOURCES)\n");
-	fprintf(fd,"\t$(COMPILE_C) -MM $(USERLIB_SRC) > .depend\n\n");
-#endif
+		fprintf(fd,"depend : $(SOURCES)\n");
+		fprintf(fd,"\t$(COMPILE_C) -MM $(USERLIB_SRC) > .depend\n\n");
+	}
 
 	fprintf(fd,"#	Aufraeumen\n");
 	fprintf(fd,"#	----------\n\n");
 
 	fprintf(fd,"clean:\n");
+	// host system
 #if OV_SYSTEM_NT
 	fprintf(fd,"\t-@cmd /c del *$(_C) *.h *$(_LIB) *$(_DLL) *$(_OBJ)\n");
 #else

@@ -16,10 +16,13 @@ PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
 
-debug:
+# Set TARGETOS to --targetWindows --targetLinux or --targetSolaris to cross-compile for the respective system.\n
+TARGETOS = 
+		
+all:
 
 %:
-	acplt_makmak -l iec61131stdfb $(MAKMAKOPTIONS)
+	acplt_makmak -l iec61131stdfb $(MAKMAKOPTIONS) $(TARGETOS)
 	-tclsh $(PREBUILD) iec61131stdfb $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(COMPILER_LO).mk $*
 	-tclsh $(POSTBUILD) iec61131stdfb

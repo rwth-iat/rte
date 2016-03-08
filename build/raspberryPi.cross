@@ -1,0 +1,7 @@
+# tcl variable defs for cross-compiling
+# set targetOS to "nt" for windows or "linux" for linux targets. Others are currently not supported
+set targetOS linux
+# set the prefix of your cross compiler. It has to be found by the OS. Absolute paths should work here but are not tested.
+set CrossPrefix arm-linux-gnueabihf-
+# set arch to X86 or ARM - for ARM some flags are set differently
+set crossArch ARM

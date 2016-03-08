@@ -76,11 +76,13 @@ endif
 #	--------
 
 COMPILER		= GNU
+PREFIX			= 
+OV_CODEGEN_DIR		= ./
 
 FLEX			= flex
 BISON			= bison
 
-CC			= gcc
+CC			= $(PREFIX)gcc
 #!warning! always compile libov with -O0, otherwise there are problem with the database on ARM
 # -fvisibility=hidden gets unix inline with the windows linking http://gcc.gnu.org/wiki/Visibility
 # -Wno-attributes hide warnings for OV structs
@@ -93,7 +95,7 @@ C_LIBS			=
 LD				= $(CC) $(OV_ARCH_BITWIDTH_LDFLAGS) -shared
 LD_LIB			= -ldl
 
-CXX			= gcc -x c++
+CXX			= $(CC) -x c++
 CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates -Wno-deprecated
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
@@ -101,8 +103,8 @@ CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 CXX_LINK 		= MAKE=$(MAKE) perl ../templ.pl gcc
 CXX_LIBS		= $(C_LIBS) -lstdc++
 
-AR				= ar
-RANLIB			= ranlib
+AR				= $(PREFIX)ar
+RANLIB			= $(PREFIX)ranlib
 
 #   Include generic part
 #   --------------------
@@ -147,10 +149,10 @@ all: targets example
 	$(BISON) -t -d -o$@ $<
 
 .ovm.c:
-	./$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 .ovm.h:
-	./$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 #   Dependencies
 #   ------------
@@ -201,13 +203,13 @@ ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	strip --strip-debug $(OV_CODEGEN_EXE)
+	$(PREFIX)strip --strip-debug $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV framework builder
 
 $(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	strip --strip-debug $(OV_BUILDER_EXE)
+	$(PREFIX)strip --strip-debug $(OV_BUILDER_EXE)
 
 #	ACPLT/OV database utility
 
@@ -234,7 +236,7 @@ fnmatch.o : fnmatch.c
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
 	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
-	strip --strip-debug $(DBDUMP_EXE)
+	$(PREFIX)strip --strip-debug $(DBDUMP_EXE)
 
 #	ACPLT/OV database parser
 
@@ -269,7 +271,7 @@ $(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)
 
 $(MAKMAK_EXE) : $(MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	strip --strip-debug $(MAKMAK_EXE)
+	$(PREFIX)strip --strip-debug $(MAKMAK_EXE)
 
 #	ACPLT/OV library informations tool
 
@@ -329,13 +331,13 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	------------------------
 $(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ) $(LD_LIB)
-	strip --strip-debug $(ACPLT_BUILDER_EXE)
+	$(PREFIX)strip --strip-debug $(ACPLT_BUILDER_EXE)
 
 #	acplt_makmak
 #	------------------------
 $(ACPLT_MAKMAK_EXE) : $(ACPLT_MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	strip --strip-debug $(ACPLT_MAKMAK_EXE)
+	$(PREFIX)strip --strip-debug $(ACPLT_MAKMAK_EXE)
 
 
 #	Install

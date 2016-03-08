@@ -42,7 +42,7 @@
 #endif
 
 #if OV_SYSTEM_NT
-#include <WinBase.h>
+#include <winbase.h>
 #endif
 
 /*	----------------------------------------------------------------------	*/

@@ -12,8 +12,10 @@ EXE=.exe
 
 SRCDIR = ../../src/
 
+PREFIX	= 
+
 ### Compiler
-CXX = g++
+CXX = $(PREFIX)g++
 
 #CXX_EXTRA_FLAGS = -I. -I../../include 
 CXX_EXTRA_FLAGS = -I. -I../../include  -fno-implicit-templates
@@ -27,7 +29,7 @@ CXX_EXTRA_FLAGS = -I. -I../../include  -fno-implicit-templates
 
 CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
-CXX_LINK = perl ../templ.pl g++
+CXX_LINK = perl ../templ.pl $(PREFIX)g++
 CXX_LIBS = -lstdc++
 
 .SUFFIXES:
@@ -48,9 +50,9 @@ VPATH = $(SRCDIR)
 include ../generic.mk
 
 libplt.a: $(LIBPLT_OBJECTS)
-	ar r $@ $?
-	$(RANLIB) $@
-	strip --strip-debug libplt.a
+	$(PREFIX)ar r $@ $?
+	$(PREFIX)$(RANLIB) $@
+	$(PREFIX)strip --strip-debug libplt.a
 
 depend : $(CXX_SOURCES)
 	$(CXX_COMPILE) -MM $^ > .depend
