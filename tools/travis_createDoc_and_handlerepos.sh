@@ -43,8 +43,12 @@ if [ ${OV_ARCH_BITWIDTH} == "32" ]; then
   # back in rte-www
   cp -r ../rte/html/* ./doc/current/
   git add -A ./doc/current/*
+  cd ..
+  # back in acplt
 fi
 
+#change to rte-www
+cd rte-www
 git add -A ./releases/*
 git config --global user.email "rte_bot@outlook.de"
 git config --global user.name "rte-bot"
