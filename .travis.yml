@@ -40,6 +40,9 @@ after_success:
 - cp ./rte/acpltRTE-RPi.tar.gz ./rte-www/releases/`date +%F-%R`-${TAG}_acpltRTE-RPi.tar.gz
 - if [[ ${OV_ARCH_BITWIDTH} == "32" && ${CC} == "gcc" ]]; then sh ./rte/tools/travis_cleanReleaseDir.sh ; fi
 - cd rte-www
+- cd ./releases
+- if [[ ${OV_ARCH_BITWIDTH} == "32" && ${CC} == "gcc" ]]; then sh ./rte/tools/travis_createListPage.sh ; fi
+- cd ..
 - git rm -r -f ./doc/current/*
 - mkdir doc
 - cd doc
