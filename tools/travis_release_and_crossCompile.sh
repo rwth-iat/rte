@@ -3,6 +3,7 @@
 # pack the linux release
 echo "Packing the 32bit Linux release"
 cd ./build
+rm -R ./acplt/dev
 tar -pczf acpltRTE-linux32.tar.gz acplt
 mv acpltRTE-linux32.tar.gz ../acpltRTE-linux32.tar.gz
 cd ..
@@ -19,6 +20,7 @@ cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
 echo "Packing Windows release"
+rm -R ./acplt/dev
 zip -qr acpltRTE-win32.zip acplt
 mv acpltRTE-win32.zip ../acpltRTE-win32.zip
 cd ..
@@ -36,6 +38,7 @@ export CPATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-
 export PATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/:$PATH
 tclsh acplt_build.tcl cross raspberryPi.cross
 echo "Packing Release for Raspberry Pi"
+rm -R ./acplt/dev
 tar -pczf acpltRTE-RPi.tar.gz acplt
 mv acpltRTE-RPi.tar.gz ../acpltRTE-RPi.tar.gz
 cd ..
