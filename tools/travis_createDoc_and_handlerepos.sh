@@ -3,10 +3,16 @@
 cd rte
 TAG="$(git rev-parse --short=10 HEAD)"
 
+echo "Creating docs"
+mkdir html
+makeinfo --html --force doc/libov.texi -o html/ --no-warn
+cd ..
+
 if [ ${OV_ARCH_BITWIDTH} == "32" ]; then sh ./tools/travis_release_and_crossCompile.sh ; fi
 if [ ${OV_ARCH_BITWIDTH} == "64" ]; then sh ./tools/travis_release_64.sh ; fi
 cd ..
 
+echo "Moving everything to rte-www"
 git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
 if [ ${OV_ARCH_BITWIDTH} == "32" ]; then
   cp ./rte/acpltRTE-linux32.tar.gz ./rte-www/releases/`date +%F-%R`-${TAG}_acpltRTE-linux32.tar.gz
