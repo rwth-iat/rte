@@ -1,9 +1,9 @@
 #!/bin/bash
 
 WIN32RELEASES=`find . -maxdepth 1  -name '*acpltRTE-win32.zip' -type f -printf '%T@ %p\n' | sort -n | tail -10 | cut -f2- -d" "`
-LINUX32RELEASES=`find . -name '*acpltRTE-linux32.tar.gz' -type f -printf '%T@ %p\n' | sort -n | tail -10 | cut -f2- -d" " `
-LINUX64RELEASES=`find . -name '*acpltRTE-linux64.tar.gz' -type f -printf '%T@ %p\n' | sort -n | tail -10 | cut -f2- -d" " `
-RPIRELEASES=`find . -name '*acpltRTE-RPi.tar.gz' -type f -printf '%T@ %p\n' | sort -n | tail -10 | cut -f2- -d" " `
+LINUX32RELEASES=`find . -maxdepth 1 -name '*acpltRTE-linux32.tar.gz' -type f -printf '%T@ %p\n' | sort -n | tail -10 | cut -f2- -d" " `
+LINUX64RELEASES=`find . -maxdepth 1 -name '*acpltRTE-linux64.tar.gz' -type f -printf '%T@ %p\n' | sort -n | tail -10 | cut -f2- -d" " `
+RPIRELEASES=`find . -maxdepth 1 -name '*acpltRTE-RPi.tar.gz' -type f -printf '%T@ %p\n' | sort -n | tail -10 | cut -f2- -d" " `
 
 rm table1.txt
 touch table1.txt
