@@ -80,6 +80,11 @@ BISON			= bison
 CPP 			= cpp
 
 #CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
+ifneq "$(origin PREFIX)" "undefined"
+CC = $(PREFIX)gcc
+else
+PREFIX=
+endif
 CC				?= $(PREFIX)gcc 
 #-I$(MINGWINCLUDEPATH)
 CC_FLAGS		= -g $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -Wno-attributes -Wstrict-aliasing=2 -fno-strict-aliasing -O0
