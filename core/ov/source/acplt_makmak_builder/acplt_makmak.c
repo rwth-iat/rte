@@ -655,8 +655,12 @@ if(new == 0){
 	/* Compiler-Optionen */
 	fprintf(fd,"#	Compiler\n");
 	fprintf(fd,"#	--------\n");
-	fprintf(fd,"OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)\n");
+	fprintf(fd,"OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)\n\n");
+	fprintf(fd,"ifneq \"$(origin GCC_BIN_PREFIX)\" \"undefined\"\n");
+	fprintf(fd,"CC = $(GCC_BIN_PREFIX)gcc\n");
+	fprintf(fd,"else\n");
 	fprintf(fd,"GCC_BIN_PREFIX		= \n");
+	fprintf(fd,"endif\n\n");
 	fprintf(fd,"CC		?= $(GCC_BIN_PREFIX)gcc\n");
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
