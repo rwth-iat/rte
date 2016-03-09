@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "CC is: ${CC}"
-
 # pack the linux release
 echo "Packing the 32bit Linux release"
 cd ./build
