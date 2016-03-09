@@ -19,7 +19,7 @@ export PATH=/home/travis/localBins:$PATH
 cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
-if [ $? != 0 ] ; then tail -n 40 acplt_build.log ; fi
+if [ $? != 0 ] ; then tail -n 100 acplt_build.log ; fi
 echo "Packing Windows release"
 rm -R ./acplt/dev
 zip -qr acpltRTE-win32.zip acplt
@@ -38,7 +38,7 @@ rm -R acplt acplt.build
 export CPATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/lib/gcc/arm-linux-gnueabihf/4.8.3/include/
 export PATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/:$PATH
 tclsh acplt_build.tcl cross raspberryPi.cross
-if [ $? != 0 ] ; then tail -n 40 acplt_build.log ; fi
+if [ $? != 0 ] ; then tail -n 100 acplt_build.log ; fi
 echo "Packing Release for Raspberry Pi"
 rm -R ./acplt/dev
 tar -pczf acpltRTE-RPi.tar.gz acplt
