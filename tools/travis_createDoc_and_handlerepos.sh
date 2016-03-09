@@ -17,14 +17,8 @@ if [ ${OV_ARCH_BITWIDTH} == "64" ]; then
   cp ./rte/acpltRTE-linux64.tar.gz ./rte-www/releases/`date +%F-%R`-${TAG}_acpltRTE-linux64.tar.gz
 fi
 
-if [ ${OV_ARCH_BITWIDTH} == "32" ]; then bash ./rte/tools/travis_cleanReleaseDir.sh ; fi
-# change into releases dir
-cd ./rte-www/releases
-if [ ${OV_ARCH_BITWIDTH} == "32" ]; then bash ../../rte/tools/travis_createListPage.sh ; fi
-cd ../..
-# back in acplt
-
 if [ ${OV_ARCH_BITWIDTH} == "32" ]; then
+  bash ./rte/tools/travis_cleanReleaseDir.sh
   # change to rte
   cd ./rte
   echo "Creating docs"
