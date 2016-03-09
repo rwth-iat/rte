@@ -28,15 +28,15 @@ script:
 - cd ..
 - mkdir logs
 after_success:
-- cp ./buld/acplt_build.log ./logs/acplt_build-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__OK__.log
+- cp ./build/acplt_build.log ./logs/acplt_build-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__OK__.log
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
 - cd ./rte
 - if [[ ${TRAVIS_PULL_REQUEST} == "false" && ${CC} == "gcc" ]]; then bash ./tools/travis_createDoc_and_handlerepos.sh ; fi
 - cd ..
-- bash ./tools/travis_pushAndCloseRepo.sh
+- bash ./rte/tools/travis_pushAndCloseRepo.sh
 after_failure:
-- cp ./buld/acplt_build.log ./logs/acplt_build-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__FAIL__.log
+- cp ./build/acplt_build.log ./logs/acplt_build-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__FAIL__.log
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
 - cd ./rte
@@ -45,5 +45,5 @@ after_failure:
 - echo "Error lines:"
 - cat acplt_build.log | grep error
 - cd ../..
-- bash ./tools/travis_pushAndCloseRepo.sh
+- bash ./rte/tools/travis_pushAndCloseRepo.sh
 
