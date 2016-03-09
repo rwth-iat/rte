@@ -17,6 +17,6 @@ echo "Pushing to github"
 git config --global user.email "rte_bot@outlook.de"
 git config --global user.name "rte-bot"
 git config --global push.default simple
-git commit -am "updated generated documentation (texinfo) on webpage and created releases by travis-ci [ci skip]"
+git commit -am "updated generated documentation (texinfo) on webpage and created releases by travis-ci [ci skip] (Job: ${TRAVIS_JOB_NUMBER})"
 git push -f -q https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
 cd ..
