@@ -24,11 +24,8 @@ script:
 - cd ./build
 - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
 - cd ..
-- mkdir html
-- makeinfo --html --force doc/libov.texi -o html/ --no-warn
-- cd ..
 after_success:
-- if [[ ${TRAVIS_PULL_REQUEST} == "false" && ${CC} == "gcc" ]]; then sh ./tools/travis_createDoc_and_handlerepos.sh ; fi
+- if [[ ${TRAVIS_PULL_REQUEST} == "false" && ${CC} == "gcc" ]]; then sh ./rte/tools/travis_createDoc_and_handlerepos.sh ; fi
 after_failure:
 - cd ./rte/build
 - tail -n 40 acplt_build.log
