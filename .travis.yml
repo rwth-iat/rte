@@ -31,4 +31,4 @@ after_success:
 - if [[ ${TRAVIS_PULL_REQUEST} == "false" && ${TEMPCC} == "gcc" ]]; then bash ./tools/travis_createDoc_and_handlerepos.sh ; fi
 after_failure:
 - cd ./build
-- tail -n 40 acplt_build.log
+- tail -n 100 acplt_build.log
