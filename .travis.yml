@@ -41,7 +41,7 @@ after_success:
 - if [[ ${OV_ARCH_BITWIDTH} == "32" && ${CC} == "gcc" ]]; then sh ./rte/tools/travis_cleanReleaseDir.sh ; fi
 - cd rte-www
 - cd ./releases
-- if [[ ${OV_ARCH_BITWIDTH} == "32" && ${CC} == "gcc" ]]; then sh ./rte/tools/travis_createListPage.sh ; fi
+- if [[ ${OV_ARCH_BITWIDTH} == "32" && ${CC} == "gcc" ]]; then sh ../../rte/tools/travis_createListPage.sh ; fi
 - cd ..
 - git rm -r -f ./doc/current/*
 - mkdir doc
