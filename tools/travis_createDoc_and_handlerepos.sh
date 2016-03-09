@@ -3,7 +3,8 @@
 # starting in rte
 TAG="$(git rev-parse --short=10 HEAD)"
 
-if [ ${OV_ARCH_BITWIDTH} == "32" ]; then env -u CC bash ./tools/travis_release_and_crossCompile.sh ; fi
+unset CC
+if [ ${OV_ARCH_BITWIDTH} == "32" ]; then bash ./tools/travis_release_and_crossCompile.sh ; fi
 if [ ${OV_ARCH_BITWIDTH} == "64" ]; then bash ./tools/travis_release_64.sh ; fi
 cd ..
 # now in acplt
