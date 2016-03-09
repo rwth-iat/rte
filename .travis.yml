@@ -25,6 +25,7 @@ script:
 - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
 - cd ..
 after_success:
+- pwd
 - if [[ ${TRAVIS_PULL_REQUEST} == "false" && ${CC} == "gcc" ]]; then sh ./rte/tools/travis_createDoc_and_handlerepos.sh ; fi
 after_failure:
 - cd ./rte/build
