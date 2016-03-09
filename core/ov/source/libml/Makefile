@@ -44,7 +44,12 @@ endif
 
 CFLAGS = $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -O2 -DML_SYSTEM_UNIX -DDBG_TO_STDERR=0 -fPIC
 
-PREFIX = 
+
+ifneq "$(origin PREFIX)" "undefined"
+CC = $(PREFIX)gcc
+else
+PREFIX=
+endif
 
 CC ?= $(PREFIX)gcc
 AR = $(PREFIX)ar
