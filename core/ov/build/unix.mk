@@ -82,7 +82,7 @@ OV_CODEGEN_DIR		= ./
 FLEX			= flex
 BISON			= bison
 
-CC			= $(PREFIX)gcc
+CC			?= $(PREFIX)gcc
 #!warning! always compile libov with -O0, otherwise there are problem with the database on ARM
 # -fvisibility=hidden gets unix inline with the windows linking http://gcc.gnu.org/wiki/Visibility
 # -Wno-attributes hide warnings for OV structs

@@ -80,7 +80,7 @@ BISON			= bison
 CPP 			= cpp
 
 #CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
-CC				= $(PREFIX)gcc 
+CC				?= $(PREFIX)gcc 
 #-I$(MINGWINCLUDEPATH)
 CC_FLAGS		= -g $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -Wno-attributes -Wstrict-aliasing=2 -fno-strict-aliasing -O0
 #-fstrict-aliasing 

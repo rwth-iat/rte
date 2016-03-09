@@ -657,7 +657,7 @@ if(new == 0){
 	fprintf(fd,"#	--------\n");
 	fprintf(fd,"OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)\n");
 	fprintf(fd,"GCC_BIN_PREFIX		= \n");
-	fprintf(fd,"CC		= $(GCC_BIN_PREFIX)gcc\n");
+	fprintf(fd,"CC		?= $(GCC_BIN_PREFIX)gcc\n");
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
 	fprintf(fd,"endif\n");
