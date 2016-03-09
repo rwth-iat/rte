@@ -26,8 +26,9 @@ script:
 - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
 - cd ..
 after_success:
+- TEMPCC=$CC
 - test -n $CC && unset CC
-- if [[ ${TRAVIS_PULL_REQUEST} == "false" && ${CC} == "gcc" ]]; then bash ./tools/travis_createDoc_and_handlerepos.sh ; fi
+- if [[ ${TRAVIS_PULL_REQUEST} == "false" && ${TEMPCC} == "gcc" ]]; then bash ./tools/travis_createDoc_and_handlerepos.sh ; fi
 after_failure:
 - cd ./build
 - tail -n 40 acplt_build.log
