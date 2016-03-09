@@ -8,32 +8,32 @@ RPIRELEASES=`find . -maxdepth 1 -name '*acpltRTE-RPi.tar.gz' -type f -printf '%T
 rm table1.txt
 touch table1.txt
 for rel in ${WIN32RELEASES}; do
-  DATE=`echo $rel | cut -f1-2-3-4 -d"-"`
-  TAG=`echo $rel | cut -f5- -d"-" | cut -f1- d"_"`
+  DATE=`echo $rel | cut -f1-4 -d'-' | cut -c3-`
+  TAG=`echo $rel | cut -f5 -d'-' | cut -f1 -d'_'`
   echo "<tr><td><a href='./$rel'>$rel</a></td><td>$TAG</td><td>$DATE</td></tr>" >> table1.txt
 done
 
 rm table2.txt
 touch table2.txt
 for rel in ${LINUX32RELEASES}; do
-  DATE=`echo $rel | cut -f1-2-3-4 -d"-"`
-  TAG=`echo $rel | cut -f5- -d"-" | cut -f1- d"_"`
+  DATE=`echo $rel | cut -f1-4 -d'-' | cut -c3-`
+  TAG=`echo $rel | cut -f5 -d'-' | cut -f1 -d'_'`
   echo "<tr><td><a href='./$rel'>$rel</a></td><td>$TAG</td><td>$DATE</td></tr>" >> table2.txt
 done
 
 rm table3.txt
 touch table3.txt
 for rel in ${LINUX64RELEASES}; do
-  DATE=`echo $rel | cut -f1-2-3-4 -d"-"`
-  TAG=`echo $rel | cut -f5- -d"-" | cut -f1- d"_"`
+  DATE=`echo $rel | cut -f1-4 -d'-' | cut -c3-`
+  TAG=`echo $rel | cut -f5 -d'-' | cut -f1 -d'_'`
   echo "<tr><td><a href='./$rel'>$rel</a></td><td>$TAG</td><td>$DATE</td></tr>" >> table3.txt
 done
 
 rm table4.txt
 touch table4.txt
 for rel in ${RPIRELEASES}; do
-  DATE=`echo $rel | cut -f1-2-3-4 -d"-"`
-  TAG=`echo $rel | cut -f5- -d"-" | cut -f1- d"_"`
+  DATE=`echo $rel | cut -f1-4 -d'-' | cut -c3-`
+  TAG=`echo $rel | cut -f5 -d'-' | cut -f1 -d'_'`
   echo "<tr><td><a href='./$rel'>$rel</a></td><td>$TAG</td><td>$DATE</td></tr>" >> table4.txt
 done
 
