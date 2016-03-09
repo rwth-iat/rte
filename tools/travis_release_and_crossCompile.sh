@@ -22,7 +22,7 @@ cd ./build
 rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
 if [ $? != 0 ] ; then 
-  tail -n 500 acplt_build.log 
+  tail -n 100 acplt_build.log 
   cat acplt_build.log | grep gcc
 fi
 echo "Packing Windows release"
@@ -44,7 +44,7 @@ export CPATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-
 export PATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/:$PATH
 tclsh acplt_build.tcl cross raspberryPi.cross
 if [ $? != 0 ] ; then 
-  tail -n 500 acplt_build.log 
+  tail -n 100 acplt_build.log 
   cat acplt_build.log | grep gcc
 fi
 echo "Packing Release for Raspberry Pi"
