@@ -32,4 +32,5 @@ after_success:
 after_failure:
 - cd ./build
 - tail -n 100 acplt_build.log
-- cat acplt_build.log | grep $CC
+- echo "Error lines:"
+- cat acplt_build.log | grep error
