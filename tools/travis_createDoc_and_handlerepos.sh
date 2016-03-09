@@ -1,15 +1,15 @@
 #!/bin/bash
 
-cd rte
-TAG="$(git rev-parse --short=10 HEAD)"
-
 echo "Creating docs"
 mkdir html
 makeinfo --html --force doc/libov.texi -o html/ --no-warn
 cd ..
 
-if [ ${OV_ARCH_BITWIDTH} == "32" ]; then sh ./tools/travis_release_and_crossCompile.sh ; fi
-if [ ${OV_ARCH_BITWIDTH} == "64" ]; then sh ./tools/travis_release_64.sh ; fi
+cd rte
+TAG="$(git rev-parse --short=10 HEAD)"
+
+if [ ${OV_ARCH_BITWIDTH} == "32" ]; then bash ./tools/travis_release_and_crossCompile.sh ; fi
+if [ ${OV_ARCH_BITWIDTH} == "64" ]; then bash ./tools/travis_release_64.sh ; fi
 cd ..
 
 echo "Moving everything to rte-www"
@@ -23,10 +23,10 @@ if [ ${OV_ARCH_BITWIDTH} == "64" ]; then
   cp ./rte/acpltRTE-linux64.tar.gz ./rte-www/releases/`date +%F-%R`-${TAG}_acpltRTE-linux64.tar.gz
 fi
 
-if [ ${OV_ARCH_BITWIDTH} == "32" ]; then sh ./rte/tools/travis_cleanReleaseDir.sh ; fi
+if [ ${OV_ARCH_BITWIDTH} == "32" ]; then bash ./rte/tools/travis_cleanReleaseDir.sh ; fi
 cd rte-www
 cd ./releases
-if [ ${OV_ARCH_BITWIDTH} == "32" ]; then sh ../../rte/tools/travis_createListPage.sh ; fi
+if [ ${OV_ARCH_BITWIDTH} == "32" ]; then bash ../../rte/tools/travis_createListPage.sh ; fi
 cd ..
 
 if [ ${OV_ARCH_BITWIDTH} == "32" ]; then
