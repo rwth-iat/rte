@@ -45,7 +45,7 @@ extern "C" {
 /*
 *	Execute method of a task object
 */
-typedef OV_DLLFNCEXPORT void FB_FNC_EXECUTE(
+typedef void FB_FNC_EXECUTE(
 	OV_INSTPTR_fb_task	ptask,
 	OV_TIME				*pltc
 );
@@ -53,21 +53,21 @@ typedef OV_DLLFNCEXPORT void FB_FNC_EXECUTE(
 /*
 *	Checkelement method of a connection object
 */
-typedef OV_DLLFNCEXPORT OV_BOOL FB_FNC_CHECKELEMENTS(
+typedef OV_BOOL FB_FNC_CHECKELEMENTS(
 	OV_INSTPTR_fb_connection	pconn
 );
 
 /*
 *	Trigger method of a connection object
 */
-typedef OV_DLLFNCEXPORT void FB_FNC_TRIGGER(
+typedef void FB_FNC_TRIGGER(
 	OV_INSTPTR_fb_connection	pconn
 );
 
 /*
 *	Type method of a functionblock object
 */
-typedef OV_DLLFNCEXPORT void FB_FNC_TYPEMETHOD(
+typedef void FB_FNC_TYPEMETHOD(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 );
@@ -75,7 +75,7 @@ typedef OV_DLLFNCEXPORT void FB_FNC_TYPEMETHOD(
 /*
  * Get port value (object port or real variable) by name
  */
-typedef OV_DLLFNCEXPORT OV_RESULT FB_FNC_GETPORT(
+typedef OV_RESULT FB_FNC_GETPORT(
         OV_INSTPTR_fb_functionchart     pfc,
         const OV_STRING varname,
         OV_ANY *pvarcurrprops
@@ -84,7 +84,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT FB_FNC_GETPORT(
 /*
  * Set port value (object port or real variable) by name
  */
-typedef OV_DLLFNCEXPORT OV_RESULT FB_FNC_SETPORT(
+typedef OV_RESULT FB_FNC_SETPORT(
         OV_INSTPTR_fb_functionchart     pfc,
         const OV_STRING varname,
         OV_ANY *pvarcurrprops

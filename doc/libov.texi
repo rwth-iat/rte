@@ -4639,7 +4639,7 @@ function @code{ov_class_createobject()}.
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_INITOBJ(
+@t{typedef OV_RESULT OV_FNC_INITOBJ(
     OV_INSTPTR_ov_object pobj,
     OV_POINTER           userdata
 );}
@@ -6566,7 +6566,7 @@ the object is destroyed immediately and no object is created.
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_CONSTRUCTOR(
+@t{typedef OV_RESULT OV_FNC_CONSTRUCTOR(
     OV_INSTPTR_ov_object pobj
 );}
 @end format
@@ -6601,7 +6601,7 @@ the object is destroyed immediately and no object is created.
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_CHECKINIT(
+@t{typedef OV_RESULT OV_FNC_CHECKINIT(
     OV_INSTPTR_ov_object pobj
 );}
 @end format
@@ -6634,7 +6634,7 @@ function @code{ov_class_deleteobject()}.
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT void OV_FNC_DESTRUCTOR(
+@t{typedef void OV_FNC_DESTRUCTOR(
     OV_INSTPTR_ov_object pobj
 );}
 @end format
@@ -6666,7 +6666,7 @@ immediately after construction (instantiation) of the object.
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT void OV_FNC_STARTUP(
+@t{typedef void OV_FNC_STARTUP(
     OV_INSTPTR_ov_object pobj
 );}
 @end format
@@ -6698,7 +6698,7 @@ immediately before destruction (deletion) of the object.
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT void OV_FNC_SHUTDOWN(
+@t{typedef void OV_FNC_SHUTDOWN(
     OV_INSTPTR_ov_object pobj
 );}
 @end format
@@ -6729,7 +6729,7 @@ of an object, which returns the access rights of an object or one of its element
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_ACCESS OV_FNC_GETACCESS(
+@t{typedef OV_ACCESS OV_FNC_GETACCESS(
     OV_INSTPTR_ov_object pobj,
     const OV_ELEMENT     *pelem,
     const OV_TICKET      *pticket
@@ -6770,7 +6770,7 @@ of an object, which returns the semantic flags of an object or one of its elemen
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_UINT OV_FNC_GETFLAGS(
+@t{typedef OV_UINT OV_FNC_GETFLAGS(
     OV_INSTPTR_ov_object pobj,
     const OV_ELEMENT     *pelem
 );}
@@ -6805,7 +6805,7 @@ of an object, which returns the comment associated with an object or one of its 
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_STRING OV_FNC_GETCOMMENT(
+@t{typedef OV_STRING OV_FNC_GETCOMMENT(
     OV_INSTPTR_ov_object pobj,
     const OV_ELEMENT     *pelem
 );}
@@ -6840,7 +6840,7 @@ of an object, which returns the technical unit of a variable element of the obje
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_STRING OV_FNC_GETTECHUNIT(
+@t{typedef OV_STRING OV_FNC_GETTECHUNIT(
     OV_INSTPTR_ov_object pobj,
     const OV_ELEMENT     *pelem
 );}
@@ -6875,7 +6875,7 @@ of an object, which reads the current properties of a variable of the object.
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETVAR(
+@t{typedef OV_RESULT OV_FNC_GETVAR(
     OV_INSTPTR_ov_object pobj,
     const OV_ELEMENT     *pelem,
     OV_ANY               *pvarcurrprops
@@ -6916,7 +6916,7 @@ of an object, which sets the current properties of a variable of the object.
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_SETVAR(
+@t{typedef OV_RESULT OV_FNC_SETVAR(
     OV_INSTPTR_ov_object pobj,
     const OV_ELEMENT     *pelem
     const OV_ANY         *pvarcurrprops
@@ -7430,7 +7430,7 @@ Functions associated with the scheduler:
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT void OV_FNC_EXECUTE(
+@t{typedef void OV_FNC_EXECUTE(
     OV_INSTPTR_ov_object   pobj
 );}
 @end format
@@ -8765,7 +8765,7 @@ Functions associated with the vendor tree:
 @strong{Declaration}
 
 @format
-@t{typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETVENDORVAR(
+@t{typedef OV_RESULT OV_FNC_GETVENDORVAR(
     OV_VAR_CURRENT_PROPS   *pvarcurrprops,
     const OV_TICKET        *pticket
 );}

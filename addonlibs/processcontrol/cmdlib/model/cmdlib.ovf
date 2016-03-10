@@ -83,7 +83,7 @@
 	Type comand of a functionblock type of ProcessControl
 ***********************************************************************/
 
-typedef OV_RESULT OV_DLLFNCEXPORT CMDLIB_FNC_TYPECOMMAND(
+typedef OV_RESULT CMDLIB_FNC_TYPECOMMAND(
 	OV_INSTPTR_cmdlib_processcontrol	ppc,
 	OV_STRING								*pstr
 );
@@ -92,7 +92,7 @@ typedef OV_RESULT OV_DLLFNCEXPORT CMDLIB_FNC_TYPECOMMAND(
 	set and control order-Variable
 ***********************************************************************/
 
-typedef OV_RESULT OV_DLLFNCEXPORT CMDLIB_FNC_SETORDER(
+typedef OV_RESULT CMDLIB_FNC_SETORDER(
 	OV_INSTPTR_cmdlib_processcontrol	ppc,
 	const OV_STRING						comstr
 );

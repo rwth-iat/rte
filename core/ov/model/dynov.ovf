@@ -9,30 +9,30 @@ extern "C" {
 /*
 *	Function prototype for check method
 */
-typedef OV_DLLFNCEXPORT OV_BOOL DYNOV_FNC_CHECK(
+typedef OV_BOOL DYNOV_FNC_CHECK(
 	OV_INSTPTR_ov_object 	pobj
 );
 
-typedef OV_DLLFNCEXPORT void DYNOV_FNC_UNCHECK(
+typedef void DYNOV_FNC_UNCHECK(
 	OV_INSTPTR_ov_object 	pobj
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT DYNOV_FNC_EXECUTE(
+typedef OV_RESULT DYNOV_FNC_EXECUTE(
 	OV_INSTPTR_ov_object 	pobj
 );
 
-typedef OV_DLLFNCEXPORT void DYNOV_FNC_UNLINK(
+typedef void DYNOV_FNC_UNLINK(
 	const OV_INSTPTR			pparent,
 	const OV_INSTPTR			pchild
 );
 
-typedef OV_DLLFNCEXPORT OV_ACCESS DYNOV_FNC_GETACCESS(
+typedef OV_ACCESS DYNOV_FNC_GETACCESS(
 	const OV_INSTPTR			pparent,
 	const OV_INSTPTR			pchild,
 	const OV_TICKET				*pticket
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT DYNOV_FNC_LINK(
+typedef OV_RESULT DYNOV_FNC_LINK(
 	const OV_INSTPTR			pparent,
 	const OV_INSTPTR			pchild,
 	const OV_PLACEMENT_HINT			parenthint,
@@ -41,12 +41,12 @@ typedef OV_DLLFNCEXPORT OV_RESULT DYNOV_FNC_LINK(
 	const OV_INSTPTR			prelchild
 );
 
-typedef OV_DLLFNCEXPORT void* DYNOV_FNC_GET(
+typedef void* DYNOV_FNC_GET(
 	OV_INSTPTR		pobj,
 	...
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT DYNOV_FNC_SET(
+typedef OV_RESULT DYNOV_FNC_SET(
 	OV_INSTPTR		pobj,
 	const void*		value,
 	...

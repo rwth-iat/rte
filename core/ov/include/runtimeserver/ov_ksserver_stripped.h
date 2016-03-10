@@ -47,7 +47,7 @@ extern "C" {
 *	------------------
 *	Signal hander function prototype for server shutdown
 */
-typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
+typedef void OV_FNC_SIGHANDLER(
 	int signal
 );
 

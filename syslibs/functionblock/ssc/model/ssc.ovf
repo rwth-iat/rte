@@ -3,13 +3,13 @@
 #define ssc_OVF_INCLUDE
 
 
-typedef OV_DLLFNCEXPORT OV_RESULT SSC_FNC_RESETSSC(
+typedef OV_RESULT SSC_FNC_RESETSSC(
 	OV_INSTPTR_ssc_SequentialControlChart       pSSC
 );
-typedef OV_DLLFNCEXPORT OV_RESULT SSC_FNC_RESETSTEP(
+typedef OV_RESULT SSC_FNC_RESETSTEP(
 	OV_INSTPTR_ssc_step       pStep
 );
-typedef OV_DLLFNCEXPORT OV_BOOL SSC_FNC_CHECKACTION(
+typedef OV_BOOL SSC_FNC_CHECKACTION(
 	OV_INSTPTR_ssc_actionBlock	pActionBlock
 );
 #endif

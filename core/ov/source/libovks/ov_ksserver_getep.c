@@ -51,7 +51,7 @@
 /*
 *	Function prototype for method getephist 
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETEPHIST (
+typedef OV_RESULT OV_FNC_GETEPHIST (
 	OV_INSTPTR_ov_object 	pobj,
 	OV_STRING*		type_identifier,
 	OV_HIST_TYPE*		historytype,
@@ -62,7 +62,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETEPHIST (
 /*
 *	Function prototype for method getephistelem 
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETEPHISTELEM (
+typedef OV_RESULT OV_FNC_GETEPHISTELEM (
 	OV_INSTPTR_ov_object 	pobj,
 	const OV_TICKET		*pticket,
 	OV_GETEP_RES		*result,

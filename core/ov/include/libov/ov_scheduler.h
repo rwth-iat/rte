@@ -41,7 +41,7 @@ extern "C" {
 *	---------------
 *	Function prototype for methods used in active objects
 */
-typedef OV_DLLFNCEXPORT void OV_FNC_EXECUTE(
+typedef void OV_FNC_EXECUTE(
 	OV_INSTPTR_ov_object 	pobj
 );
 

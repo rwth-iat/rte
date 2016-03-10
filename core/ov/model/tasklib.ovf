@@ -1,15 +1,15 @@
 #ifndef TASKLIB_OVF_INCLUDED
 #define TASKLIB_OVF_INCLUDED
 
-typedef OV_DLLFNCEXPORT void TASKLIB_FNC_EXECUTE(
+typedef void TASKLIB_FNC_EXECUTE(
 	OV_INSTPTR_ov_object pobj
 );
 
-typedef OV_DLLFNCEXPORT void TASKLIB_FNC_ACTIVATE(
+typedef void TASKLIB_FNC_ACTIVATE(
 	OV_INSTPTR_tasklib_Task ptask
 );
 
-typedef OV_DLLFNCEXPORT void TASKLIB_FNC_EXECUTECHILDS(
+typedef void TASKLIB_FNC_EXECUTECHILDS(
 	OV_INSTPTR_tasklib_Task ptask,
 	OV_TIME acttime
 );
