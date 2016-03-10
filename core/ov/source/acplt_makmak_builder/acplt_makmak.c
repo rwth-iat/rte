@@ -677,7 +677,7 @@ if(new == 0){
 	if(targetOs != TARGETOS_WIN){
 		fprintf(fd," -fPIC");	// all code is position independent on windows
 	}
-	fprintf(fd," -shared -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) $(EXTRA_CC_FLAGS)\n");
+	fprintf(fd," -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) $(EXTRA_CC_FLAGS)\n");
 	if(targetOs == TARGETOS_WIN){
 		fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
 	} else {
