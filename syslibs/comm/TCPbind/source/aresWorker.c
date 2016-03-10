@@ -20,13 +20,6 @@
 #define OV_COMPILE_LIBRARY_TCPbind
 #endif
 
-#if OV_SYSTEM_UNIX
-#define _POSIX_C_SOURCE	199309L
-#include <time.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#endif
-
 #include "TCPbind.h"
 #include "libov/ov_macros.h"
 #include "ks_logfile.h"
