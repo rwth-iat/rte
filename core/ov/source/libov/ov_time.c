@@ -30,9 +30,9 @@
 #define OV_COMPILE_LIBOV
 
 #if OV_SYSTEM_UNIX
-#include <sys/time.h>
 //	Set _BSD_SOURCE for timegm
 #define _BSD_SOURCE
+#include <sys/time.h>
 #endif
 
 #include "libov/ov_time.h"
