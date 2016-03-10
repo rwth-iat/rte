@@ -40,8 +40,8 @@ OV_DLLFNCEXPORT void SSChelper_commandCreator_typemethod(
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_SSChelper_commandCreator pinst =
-			Ov_StaticPtrCast(SSChelper_commandCreator, pfb);
+	// OV_INSTPTR_SSChelper_commandCreator pinst =
+	// 		Ov_StaticPtrCast(SSChelper_commandCreator, pfb);
 
 	return;
 }

@@ -20,6 +20,11 @@
 #define OV_COMPILE_LIBRARY_opcua
 #endif
 
+#if OV_SYSTEM_UNIX
+//	for gethostname
+#define _BSD_SOURCE
+#include <unistd.h>
+#endif
 
 #include "opcua.h"
 #include "libov/ov_macros.h"

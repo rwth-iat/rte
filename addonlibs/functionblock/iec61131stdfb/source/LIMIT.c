@@ -474,13 +474,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_LIMIT_typemethod(
 									continue;
 								}
 							}
-							else
-								if((pinst->v_IN.value.valueunion.val_time_vec.value[i].secs < 0) || (pinst->v_IN.value.valueunion.val_time_vec.value[i].usecs < 0))
-								{
-									pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs = 0;
-									pinst->v_OUT.value.valueunion.val_time_vec.value[i].usecs = 0;
-									continue;
-								}
+							
 							if(i < pinst->v_MX.value.valueunion.val_time_vec.veclen)
 							{
 								if(ov_time_compare(&pinst->v_IN.value.valueunion.val_time_vec.value[i], &pinst->v_MX.value.valueunion.val_time_vec.value[i]) > 0)

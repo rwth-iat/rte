@@ -590,6 +590,7 @@
 #if OV_SYSTEM_MC164 || OV_SYSTEM_RMOS
 #define Ov_HeapStrdup(ptr)	ov_strdup(ptr)
 #else
+#include <string.h>
 #define Ov_HeapStrdup(ptr)	strdup(ptr)
 #endif
 #else

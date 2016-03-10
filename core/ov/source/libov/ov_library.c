@@ -31,6 +31,8 @@
 
 #define OV_COMPILE_LIBOV
 
+#include <stdlib.h>
+
 #include "libov/ov_library.h"
 #include "libov/ov_structure.h"
 #include "libov/ov_class.h"
