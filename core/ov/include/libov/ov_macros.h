@@ -32,7 +32,7 @@
 
 // for strdup
 #ifdef OV_COMPILE_LIBOV
-#define _BSD_SOURCE
+#define _POSIX_C_SOURCE 200809L
 #include <string.h>
 #endif
 
