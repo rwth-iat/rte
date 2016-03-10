@@ -30,6 +30,12 @@
 #ifndef OV_MACROS_H_INCLUDED
 #define OV_MACROS_H_INCLUDED
 
+// for strdup
+#ifdef OV_COMPILE_LIBOV
+#define _BSD_SOURCE
+#include <string.h>
+#endif
+
 #include "libov/ov_association.h"
 #include "libov/ov_class.h"
 #include "libov/ov_time.h"
@@ -590,7 +596,6 @@
 #if OV_SYSTEM_MC164 || OV_SYSTEM_RMOS
 #define Ov_HeapStrdup(ptr)	ov_strdup(ptr)
 #else
-#include <string.h>
 #define Ov_HeapStrdup(ptr)	strdup(ptr)
 #endif
 #else

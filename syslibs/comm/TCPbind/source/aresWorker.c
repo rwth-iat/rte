@@ -24,7 +24,6 @@
 #define _POSIX_C_SOURCE	199309L
 #include <time.h>
 #include <sys/socket.h>
-#include <fcntl.h>
 #include <unistd.h>
 #endif
 

@@ -29,6 +29,12 @@
 
 #define OV_COMPILE_LIBOV
 
+#if OV_SYSTEM_UNIX
+#include <sys/time.h>
+//	Set _BSD_SOURCE for timegm
+#define _BSD_SOURCE
+#endif
+
 #include "libov/ov_time.h"
 #include "libov/ov_database.h"
 #include "libov/ov_ov.h"
@@ -37,12 +43,6 @@
 #include "mc164/time.h"
 #else
 #include <time.h>
-#endif
-
-#if OV_SYSTEM_UNIX
-#include <sys/time.h>
-//	Set _BSD_SOURCE for timegm
-#define _BSD_SOURCE
 #endif
 
 #if OV_SYSTEM_NT
