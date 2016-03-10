@@ -76,18 +76,19 @@ endif
 #	--------
 
 COMPILER		= GNU
-PREFIX			= 
+
 OV_CODEGEN_DIR		= ./
 
 FLEX			= flex
 BISON			= bison
-ifneq "$(origin PREFIX)" "undefined"
-CC = $(PREFIX)gcc
+
+ifneq "$(origin GCC_BIN_PREFIX)" "undefined"
+CC = $(GCC_BIN_PREFIX)gcc
 else
-PREFIX=
+GCC_BIN_PREFIX=
 endif
 
-CC			?= $(PREFIX)gcc
+CC			?= $(GCC_BIN_PREFIX)gcc
 
 #!warning! always compile libov with -O0, otherwise there are problem with the database on ARM
 # -fvisibility=hidden gets unix inline with the windows linking http://gcc.gnu.org/wiki/Visibility
@@ -109,8 +110,8 @@ CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 CXX_LINK 		= MAKE=$(MAKE) perl ../templ.pl gcc
 CXX_LIBS		= $(C_LIBS) -lstdc++
 
-AR				= $(PREFIX)ar
-RANLIB			= $(PREFIX)ranlib
+AR				= $(GCC_BIN_PREFIX)ar
+RANLIB			= $(GCC_BIN_PREFIX)ranlib
 
 #   Include generic part
 #   --------------------
@@ -209,13 +210,13 @@ ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	$(PREFIX)strip --strip-debug $(OV_CODEGEN_EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV framework builder
 
 $(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	$(PREFIX)strip --strip-debug $(OV_BUILDER_EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug $(OV_BUILDER_EXE)
 
 #	ACPLT/OV database utility
 
@@ -242,7 +243,7 @@ fnmatch.o : fnmatch.c
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
 	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
-	$(PREFIX)strip --strip-debug $(DBDUMP_EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug $(DBDUMP_EXE)
 
 #	ACPLT/OV database parser
 
@@ -277,7 +278,7 @@ $(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)
 
 $(MAKMAK_EXE) : $(MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	$(PREFIX)strip --strip-debug $(MAKMAK_EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug $(MAKMAK_EXE)
 
 #	ACPLT/OV library informations tool
 
@@ -337,13 +338,13 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	------------------------
 $(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ) $(LD_LIB)
-	$(PREFIX)strip --strip-debug $(ACPLT_BUILDER_EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug $(ACPLT_BUILDER_EXE)
 
 #	acplt_makmak
 #	------------------------
 $(ACPLT_MAKMAK_EXE) : $(ACPLT_MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-	$(PREFIX)strip --strip-debug $(ACPLT_MAKMAK_EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug $(ACPLT_MAKMAK_EXE)
 
 
 #	Install
