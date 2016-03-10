@@ -440,7 +440,7 @@ proc build_acplt {} {
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
 #libml
 	if {$cross==1} { 
-		set crossArgs "PREFIX=$CrossPrefix"
+		set crossArgs "GCC_BIN_PREFIX=$CrossPrefix"
 		if {$crossArch == "ARM"} {
 			build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
 		} else {
@@ -472,20 +472,24 @@ proc build_acplt {} {
 	} else {
 		if {$build_dbcommands == 1} {
 			if {$cross==1} { 
-				set crossArgsPrefix "PREFIX=$CrossPrefix"
+				set crossArgsPrefix "GCC_BIN_PREFIX=$CrossPrefix"
+				#enabling plt and ks just for fb_dbcommands
+				build_package plt make -C $builddir/base/plt/build/$os $crossArgsPrefix
+				build_package ks make -C $builddir/base/ks/build/$os $crossArgsPrefix
+				build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os $crossArgsPrefix
 			} else {
-				set crossArgsPrefix "PREFIX= "
+				#enabling plt and ks just for fb_dbcommands
+				build_package plt make -C $builddir/base/plt/build/$os
+				build_package ks make -C $builddir/base/ks/build/$os
+				build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
 			}
-			#enabling plt and ks just for fb_dbcommands
-			build_package plt make -C $builddir/base/plt/build/$os $crossArgsPrefix
-			build_package ks make -C $builddir/base/ks/build/$os $crossArgsPrefix
-			build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os $crossArgsPrefix
+			
 		}
 		set crossArgsPrefix ""
 		set crossArgsCGDir ""
 		set crossArgsCG	""
 		if {$cross==1} { 
-			set crossArgsPrefix "PREFIX=$CrossPrefix"
+			set crossArgsPrefix "GCC_BIN_PREFIX=$CrossPrefix"
 			set crossArgsCGDir "OV_CODEGEN_DIR= "
 			set crossArgsCG	"OV_CODEGEN_EXE=ov_codegen"
 			if {$targetOS=="nt"} {

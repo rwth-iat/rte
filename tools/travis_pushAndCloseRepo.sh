@@ -7,7 +7,7 @@ git pull
 if [[ ${OV_ARCH_BITWIDTH} == "32" && ${CC} == "gcc" ]]; then 
   echo "Cleaning up log dir (leave the 50 newest)"
   mkdir ./logs/tmpSafe
-  cp -v `find ./logs/ -maxdepth 1  -name 'acplt_build*.log' -type f -printf '%T@ %p\n' | sort -n | tail -50 | cut -f2- -d" " ` ./logs/tmpSafe/.
+  mv -v `find ./logs/ -maxdepth 1  -name 'acplt_build*.log' -type f -printf '%T@ %p\n' | sort -n | tail -50 | cut -f2- -d" " ` ./logs/tmpSafe/.
   rm -v `find ./logs/ -maxdepth 1 -name 'acplt_build*.log' -type f`
   mv -v ./logs/tmpSafe/* ./logs/.
   rm -vR ./logs/tmpSafe

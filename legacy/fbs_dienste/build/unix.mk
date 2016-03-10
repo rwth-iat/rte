@@ -73,9 +73,9 @@ FLEX			= flex
 BISON			= bison
 RPCGEN			= rpcgen
 
-PREFIX			= 
+GCC_BIN_PREFIX			= 
 
-CC				= $(PREFIX)gcc
+CC				= $(GCC_BIN_PREFIX)gcc
 CC_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -DOV_DEBUG -O2
 
 CC_DEFINES		= $(DEFINES)
@@ -86,7 +86,7 @@ LINK			= $(CC)
 C_LIBS			= $(GOV_GOVLIB_LIB)
 
 
-CXX				= $(PREFIX)g++
+CXX				= $(GCC_BIN_PREFIX)g++
 CXX_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -DNDEBUG -Wall -O2 -fno-implicit-templates
 CXX_DEFINES		= $(CC_DEFINES)
 CXX_INCLUDES	= $(CC_INCLUDES)
@@ -95,8 +95,8 @@ CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(CXX_DEFINES) $(CXX_INCLUDES) -c
 CXX_LINK		= MAKE=$(MAKE) perl ../templ.pl $(CXX)
 CXX_LIBS		= $(C_LIBS) $(GOV_GOVLIB_LIB) $(ACPLTKSLIBS) -lstdc++
 
-AR				= $(PREFIX)ar
-RANLIB			= $(PREFIX)ranlib
+AR				= $(GCC_BIN_PREFIX)ar
+RANLIB			= $(GCC_BIN_PREFIX)ranlib
 
 LD				= ld $(OV_ARCH_BITWIDTH_LDFLAGS) -shared
 LD_LIB			= -ldl
@@ -149,7 +149,7 @@ depend : depend.mk
 $(DIENST_LIB) : $(DIENST_LIB_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
-	$(PREFIX)strip --strip-debug $(DIENST_LIB)
+	$(GCC_BIN_PREFIX)strip --strip-debug $(DIENST_LIB)
 
 
 $(DIENST_LIB_DLL) : $(DIENST_LIB_OBJ)
@@ -184,14 +184,14 @@ templ_for_exec.o : $(SOURCE_DIR)templ_for_exec.cpp
 
 fb_dbsave$(EXE) : fb_dbsave.o templ_for_exec.o
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(LIBKSCLN) $(LIBKS) $(LIBPLT) -lstdc++
-	$(PREFIX)strip --strip-debug fb_dbsave$(EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug fb_dbsave$(EXE)
 
 fb_dbload.o : $(SOURCE_DIR)dbload.cpp
 	$(CXX_COMPILE) -o $@ $<
 
 fb_dbload$(EXE) : fb_dbload.o templ_for_exec.o
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(LIBKSCLN) $(LIBKS) $(LIBPLT) -lstdc++
-	$(PREFIX)strip --strip-debug fb_dbload$(EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug fb_dbload$(EXE)
 
 fb_dbcommands.o : $(SOURCE_DIR)dbcommands.cpp
 	$(CXX_COMPILE) -o $@ $<
@@ -204,14 +204,14 @@ else
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
 endif
 
-	$(PREFIX)strip --strip-debug fb_dbcommands$(EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug fb_dbcommands$(EXE)
 
 fb_init.o : $(SOURCE_DIR)fb_init.cpp
 	$(CXX_COMPILE) -o $@ $<
 
 fb_init$(EXE) : fb_init.o templ_for_exec.o
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
-	$(PREFIX)strip --strip-debug fb_init$(EXE)
+	$(GCC_BIN_PREFIX)strip --strip-debug fb_init$(EXE)
 
 
 # $(LIBKSSVR)  -rdynamic
