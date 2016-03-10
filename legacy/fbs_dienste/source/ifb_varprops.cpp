@@ -42,7 +42,7 @@ char *ifb_getValueLength(const KsVarCurrProps* cp) {
     size_t      size;       // Laenge des Vectors
     
     if(!cp || !cp->value) {
-        return "";
+        return NULL;
     }
     
     switch(cp->value->xdrTypeCode() ) {
@@ -54,11 +54,11 @@ char *ifb_getValueLength(const KsVarCurrProps* cp) {
         case KS_VT_STRING:
         case KS_VT_TIME:
         case KS_VT_TIME_SPAN:
-                                return "";
+                                return NULL;
         case KS_VT_BYTE_VEC:
                                 size = ((KsByteVecValue &) *cp->value).size();
                                 if (size == 1) {
-                                    return "";
+                                    return NULL;
                                 }
                                 break;
         case KS_VT_BOOL_VEC:
@@ -86,7 +86,7 @@ char *ifb_getValueLength(const KsVarCurrProps* cp) {
                                 size = ((KsTimeSpanVecValue &) *cp->value).size();
                                 break;
         default:
-                                return "";
+                                return NULL;
         } /* switch */
                 
         sprintf(help,"[%d]", size);
@@ -258,7 +258,7 @@ char *ifb_getPortCharacteristic(KS_SEMANTIC_FLAGS flags) {
     if( IsFlagSet( flags, 'd') ) {
 		return IFB_DYNAMIC_PORTIDENT;
     }
-    return "";
+    return NULL;
 }
 
 /******************************************************************************
