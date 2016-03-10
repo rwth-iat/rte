@@ -36,12 +36,12 @@
 #if OV_SYSTEM_MC164
 #include "mc164/time.h"
 #else
+//	Set _BSD_SOURCE for timegm
+#define _BSD_SOURCE
 #include <time.h>
 #endif
 
 #if OV_SYSTEM_UNIX
-//	Set _BSD_SOURCE for timegm
-#define _BSD_SOURCE
 #include <sys/time.h>
 #endif
 
