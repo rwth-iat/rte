@@ -90,9 +90,14 @@ endif
 CC			?= $(PREFIX)gcc
 
 #!warning! always compile libov with -O0, otherwise there are problem with the database on ARM
-# -fvisibility=hidden gets unix inline with the windows linking http://gcc.gnu.org/wiki/Visibility
 # -Wno-attributes hide warnings for OV structs
-CC_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -g -shared -Wall -Winit-self -Wno-attributes -std=c99 -fno-strict-aliasing -fvisibility=hidden -fPIC -O0
+CC_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -g -shared -Wall -Winit-self -Wno-attributes -std=c99 -fno-strict-aliasing -fPIC -O0
+# -fvisibility=hidden gets unix inline with the windows linking http://gcc.gnu.org/wiki/Visibility
+#gcc feature detection
+GCCVERSIONGTEQ4 := $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 4)
+ifeq "$(GCCVERSIONGTEQ4)" "1"
+	CC_FLAGS += -fvisibility=hidden
+endif
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= $(CC) $(OV_ARCH_BITWIDTH_LDFLAGS) 
