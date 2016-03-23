@@ -51,17 +51,24 @@
  * DLLEXPORT
  */
 #if OV_SYSTEM_NT
-#if OV_COMPILER_MSVC
-#define DLLFNCEXPORT 		_declspec(dllexport)
+	#if OV_COMPILER_MSVC
+		#define DLLFNCEXPORT 		_declspec(dllexport)
+	#else
+		#if OV_COMPILER_BORLAND || OV_COMPILER_CYGWIN
+			#define DLLFNCEXPORT 		__declspec(dllexport)
+		#else
+			#define DLLFNCEXPORT
+		#endif
+	#endif
 #else
-#if OV_COMPILER_BORLAND || OV_COMPILER_CYGWIN
-#define DLLFNCEXPORT 		__declspec(dllexport)
-#else
-#define DLLFNCEXPORT
-#endif
-#endif
-#else
-#define DLLFNCEXPORT
+	#if __GNUC__ >= 4
+		/* support on embedded systems is unclear (BFLAT) */
+		#define DLLFNCEXPORT	__attribute__ ((visibility ("default")))
+		#define DLLVAREXPORT	__attribute__ ((visibility ("default")))
+	#else
+		#define DLLFNCEXPORT
+		#define DLLVAREXPORT
+	#endif
 #endif
 
 /**
