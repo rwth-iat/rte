@@ -36,7 +36,7 @@ OV_DLLFNCEXPORT void modbusTcpLib_ModbusTcpManager_typemethod(
 
 OV_DLLFNCEXPORT OV_INT modbusTcpLib_ModbusTcpManager_getReqId(
 ) {
-    if(requestId >= 32817){
+    if(requestId >= 32767){
     	requestId = 0;
     }
     return requestId++;
