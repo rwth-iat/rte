@@ -30,7 +30,7 @@ static OV_UINT client_xid = 0xd639a74c;	/*	some beating on the keyboard for init
  * 				Channel-handling
  *******************************************************************************************************************************************************************************/
 
-OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksbase_DataHandler this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel)
+OV_DLLFNCEXPORT OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksbase_DataHandler this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel)
 {
 	OV_STRING OptValTemp = NULL;
 	OV_INSTPTR_ov_class pClassChannel = NULL;
@@ -112,7 +112,7 @@ OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksbase_DataHandler this, OV_INSTPTR
  ******************************************************************************************************************************************************************************/
 
 /*	if there is no connection (open or opening) open one and reset lasteventtime	*/
-OV_RESULT ksxdr_initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port)
+OV_DLLFNCEXPORT OV_RESULT ksxdr_initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port)
 {
 	OV_RESULT result;
 
@@ -159,7 +159,7 @@ OV_RESULT ksxdr_checkPMAskList(OV_INSTPTR_ksxdr_xdrClient thisCl){
 }
 
 /*	check if connection is open. if so, send and set Client state to busy and reset lasteventtime. if not set client state to awaiting connection. activate typemethod	*/
-OV_RESULT ksxdr_trySend(OV_INSTPTR_ksxdr_xdrClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel)
+OV_DLLFNCEXPORT OV_RESULT ksxdr_trySend(OV_INSTPTR_ksxdr_xdrClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel)
 {
 	OV_RESULT result = OV_ERR_OK;
 
@@ -193,7 +193,7 @@ OV_RESULT ksxdr_trySend(OV_INSTPTR_ksxdr_xdrClient thisCl, OV_INSTPTR_ksbase_Cha
  * @param xid: xid is returned (using a global counter)
  * @return	errorcode
  */
-OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL usesStreamProtocol, KS_DATAPACKET* datapacket, OV_UINT* xid, OV_UINT* pindex)
+OV_DLLFNCEXPORT OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL usesStreamProtocol, KS_DATAPACKET* datapacket, OV_UINT* xid, OV_UINT* pindex)
 {
 	OV_RESULT result;
 	OV_UINT varToSet;
@@ -269,7 +269,7 @@ OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL use
 /*****************************************************************************************************************************************************************************
  * 						Tickets
  *****************************************************************************************************************************************************************************/
-OV_RESULT ksxdr_insertTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator)
+OV_DLLFNCEXPORT OV_RESULT ksxdr_insertTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator)
 {
 	OV_UINT varToSet;
 	OV_VTBLPTR_ksbase_ClientTicketGenerator pVtblTicketGen = NULL;
@@ -296,7 +296,7 @@ OV_RESULT ksxdr_insertTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_
 	return OV_ERR_OK;
 }
 
-OV_RESULT ksxdr_readBackTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator)
+OV_DLLFNCEXPORT OV_RESULT ksxdr_readBackTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator)
 {
 	OV_RESULT result;
 	OV_INT TicketType;
@@ -329,7 +329,7 @@ OV_RESULT ksxdr_readBackTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbas
  * 	decode header of replies (params are not checked for NULL-pointers)
  *************************************************************************************************************************************************************/
 
-OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+OV_DLLFNCEXPORT OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_UINT expectedXID, OV_BOOL usesStreamProtocol, OV_UINT* xid, OV_INT* msgAccepted, OV_INT* msgStatus, OV_UINT* functionStatus)
 {
 	OV_VTBLPTR_ksbase_ClientTicketGenerator	pVtblTicketGenerator = NULL;
