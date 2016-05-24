@@ -655,14 +655,18 @@ if(new == 0){
 	/* Compiler-Optionen */
 	fprintf(fd,"#	Compiler\n");
 	fprintf(fd,"#	--------\n");
-	fprintf(fd,"OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)\n");
+	fprintf(fd,"OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)\n\n");
+	fprintf(fd,"ifneq \"$(origin GCC_BIN_PREFIX)\" \"undefined\"\n");
+	fprintf(fd,"CC = $(GCC_BIN_PREFIX)gcc\n");
+	fprintf(fd,"else\n");
 	fprintf(fd,"GCC_BIN_PREFIX		= \n");
-	fprintf(fd,"CC		= $(GCC_BIN_PREFIX)gcc\n");
+	fprintf(fd,"endif\n\n");
+	fprintf(fd,"CC		?= $(GCC_BIN_PREFIX)gcc\n");
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
 	fprintf(fd,"endif\n");
 	fprintf(fd,"CC_FLAGS	= -g -std=c99");
-	// remove the folloewing #if to enable cross compiling on an ARM host system
+	// remove the following #if to enable cross compiling on an ARM host system
 #if !__arm__
 	if(archBitwidth == 32){
 		fprintf(fd," -m32");
@@ -673,7 +677,18 @@ if(new == 0){
 	if(targetOs != TARGETOS_WIN){
 		fprintf(fd," -fPIC");	// all code is position independent on windows
 	}
-	fprintf(fd," -shared -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) $(EXTRA_CC_FLAGS)\n");
+	fprintf(fd," -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) $(EXTRA_CC_FLAGS)\n");
+
+#if OV_SYSTEM_LINUX //assume that we compile on a linux host
+	if(targetOs != TARGETOS_WIN){ 
+		//gcc feature detection
+		fprintf(fd,"GCCVERSIONGTEQ4 := $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \\>= 4)\n");
+		fprintf(fd,"ifeq \"$(GCCVERSIONGTEQ4)\" \"1\"\n");
+    	fprintf(fd,"    CC_FLAGS += -fvisibility=hidden\n");
+		fprintf(fd,"endif\n");
+	}
+#endif
+
 	if(targetOs == TARGETOS_WIN){
 		fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
 	} else {

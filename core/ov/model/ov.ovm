@@ -30,7 +30,7 @@
 
 LIBRARY ov
 	VERSION = "1.9.0";
-	AUTHOR = "Dirk Meyer/Ansgar Münnemann";
+	AUTHOR = "Dirk Meyer/Ansgar Muennemann";
 	COPYRIGHT = "Copyright (C) 1998-2006 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
 	COMMENT = "Metamodel of ACPLT/OV";
 	/*

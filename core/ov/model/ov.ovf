@@ -58,21 +58,21 @@ extern "C" {
 /*
 *	Function prototype for constructor of an object
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_CONSTRUCTOR(
+typedef OV_RESULT OV_FNC_CONSTRUCTOR(
 	OV_INSTPTR_ov_object 	pobj
 );
 
 /*
 *	Function prototype for checking the initialization
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_CHECKINIT(
+typedef OV_RESULT OV_FNC_CHECKINIT(
 	OV_INSTPTR_ov_object 	pobj
 );
 
 /*
 *	Function prototype for destructor of an object
 */
-typedef OV_DLLFNCEXPORT void OV_FNC_DESTRUCTOR(
+typedef void OV_FNC_DESTRUCTOR(
 	OV_INSTPTR_ov_object 	pobj
 );
 
@@ -80,7 +80,7 @@ typedef OV_DLLFNCEXPORT void OV_FNC_DESTRUCTOR(
 *	Function prototype for method starting up an object 
 *	after creation/system startup
 */
-typedef OV_DLLFNCEXPORT void OV_FNC_STARTUP(
+typedef void OV_FNC_STARTUP(
 	OV_INSTPTR_ov_object 	pobj
 );
 
@@ -88,14 +88,14 @@ typedef OV_DLLFNCEXPORT void OV_FNC_STARTUP(
 *	Function prototype for method shutting down an object 
 *	before deletion/system shutdown
 */
-typedef OV_DLLFNCEXPORT void OV_FNC_SHUTDOWN(
+typedef void OV_FNC_SHUTDOWN(
 	OV_INSTPTR_ov_object 	pobj
 );
 
 /*
 *	Function prototype for method before renaming or moving an object 
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_RENAME(
+typedef OV_RESULT OV_FNC_RENAME(
 	OV_INSTPTR_ov_object	pobj,
 	OV_STRING				newid,
 	OV_INSTPTR_ov_domain	pnewparent
@@ -105,7 +105,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_RENAME(
 *	Function prototype for method reading the access rights
 *	of an object or one of its elements
 */
-typedef OV_DLLFNCEXPORT OV_ACCESS OV_FNC_GETACCESS(
+typedef OV_ACCESS OV_FNC_GETACCESS(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -115,7 +115,7 @@ typedef OV_DLLFNCEXPORT OV_ACCESS OV_FNC_GETACCESS(
 *	Function prototype for method reading the semantical flags of an
 *	object or one of its elements (part of the engineered properties)
 */
-typedef OV_DLLFNCEXPORT OV_UINT OV_FNC_GETFLAGS(
+typedef OV_UINT OV_FNC_GETFLAGS(
 	OV_INSTPTR_ov_object 	pobj,
 	const OV_ELEMENT		*pelem
 );
@@ -125,7 +125,7 @@ typedef OV_DLLFNCEXPORT OV_UINT OV_FNC_GETFLAGS(
 *	object or one of its elements (part of the engineered props)
 *	NOTE: call ov_memstack_lock/unlock() outside of this function!
 */
-typedef OV_DLLFNCEXPORT OV_STRING OV_FNC_GETCOMMENT(
+typedef OV_STRING OV_FNC_GETCOMMENT(
 	OV_INSTPTR_ov_object 	pobj,
 	const OV_ELEMENT		*pelem
 );
@@ -135,7 +135,7 @@ typedef OV_DLLFNCEXPORT OV_STRING OV_FNC_GETCOMMENT(
 *	of a variable of the object (part of the engineered props)
 *	NOTE: call ov_memstack_lock/unlock() outside of this function!
 */
-typedef OV_DLLFNCEXPORT OV_STRING OV_FNC_GETTECHUNIT(
+typedef OV_STRING OV_FNC_GETTECHUNIT(
 	OV_INSTPTR_ov_object 	pobj,
 	const OV_ELEMENT		*pelem
 );
@@ -145,7 +145,7 @@ typedef OV_DLLFNCEXPORT OV_STRING OV_FNC_GETTECHUNIT(
 *	a variable (value, state and timestamp, compare ACPLT/KS)
 *	NOTE: call ov_memstack_lock/unlock() outside of this function!
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETVAR(
+typedef OV_RESULT OV_FNC_GETVAR(
 	OV_INSTPTR_ov_object 	pobj, 
 	const OV_ELEMENT		*pelem,
 	OV_ANY					*pvarcurrprops
@@ -155,7 +155,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETVAR(
 *	Function prototype for method writing the current properties of
 *	a variable (value, state and timestamp, compare ACPLT/KS)
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_SETVAR(
+typedef OV_RESULT OV_FNC_SETVAR(
 	OV_INSTPTR_ov_object 	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_ANY			*pvarcurrprops

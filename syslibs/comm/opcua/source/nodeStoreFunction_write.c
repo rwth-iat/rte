@@ -46,7 +46,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_writeNodes(
 	OV_VTBLPTR_ov_object	pVtblObj	=	NULL;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_TICKET				*pTicket	=	NULL;
-	OV_ANY					value		=	{.value.vartype = OV_VT_VOID, .value.valueunion = {0}, .state=OV_ST_UNKNOWN, .time = {0}};
+	OV_ANY					value		=	{.value.vartype = OV_VT_VOID, .value.valueunion = {0}, .state=OV_ST_UNKNOWN, .time = {0, 0}};
 	OV_TIME_SPAN			tempTimeSpan	=	{.secs = 0, .usecs = 0};
 	OV_TIME_SPAN_VEC		tempTimeSpanVec	=	{.veclen = 0, .value = NULL};
 	pTicket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);

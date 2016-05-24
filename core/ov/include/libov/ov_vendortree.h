@@ -71,7 +71,7 @@ OV_EXTERN OV_BOOL ov_backup;
 *	--------------------
 *	Function prototype for getting vendor variables
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETVENDORVAR(
+typedef OV_RESULT OV_FNC_GETVENDORVAR(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 );
@@ -81,7 +81,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETVENDORVAR(
 *	--------------------
 *	Function prototype for setting vendor variables
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_SETVENDORVAR(
+typedef OV_RESULT OV_FNC_SETVENDORVAR(
 	const OV_ANY	*pvarcurrprops,
 	const OV_TICKET	*pticket
 );

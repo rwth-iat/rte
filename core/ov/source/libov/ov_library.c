@@ -31,6 +31,9 @@
 
 #define OV_COMPILE_LIBOV
 
+#define _BSD_SOURCE
+#include <stdlib.h>
+
 #include "libov/ov_library.h"
 #include "libov/ov_structure.h"
 #include "libov/ov_class.h"

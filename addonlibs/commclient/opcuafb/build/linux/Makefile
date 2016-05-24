@@ -9,7 +9,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 SERVERSTARTKEYS =
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS =
-EXTRA_CC_FLAGS = -Wextra -Wno-unused-parameter -Wno-declaration-after-statement -Wno-unused-function -Werror
+EXTRA_CC_FLAGS = -Wextra -Wno-unused-parameter -Wno-declaration-after-statement -Wno-unused-function
 EXTRA_LIBS = 
 LD_FLAGS = 
 COMPILER = GCC

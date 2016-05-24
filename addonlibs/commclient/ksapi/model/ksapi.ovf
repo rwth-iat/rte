@@ -1,24 +1,24 @@
 #ifndef _KSAPI_OVF
 #define _KSAPI_OVF
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT(
+typedef void KSAPI_FNC_SUBMIT(
 		OV_INSTPTR_ksapi_KSApiCommon	 			pobj
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSAPI_FNC_PREPSUBMIT(
+typedef OV_RESULT KSAPI_FNC_PREPSUBMIT(
 		OV_INSTPTR_ksapi_KSApiCommon	 			pobj,
 		OV_INSTPTR_ksbase_ClientBase*				pClient,
 		OV_VTBLPTR_ksbase_ClientBase*				pVtblClient
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSAPI_FNC_GENSETFSUBMIT(
+typedef OV_RESULT KSAPI_FNC_GENSETFSUBMIT(
 		OV_INSTPTR_ksapi_KSApiCommon	 			pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
 		OV_STRING 									path
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT(
+typedef void KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT(
 		OV_INSTPTR_ksapi_createObject	 		pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
@@ -29,7 +29,7 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT(
 );
 
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT(
+typedef void KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT(
 		OV_INSTPTR_ksapi_deleteObject	 		pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
@@ -37,14 +37,14 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT(
 );
 
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_GETVAR(
+typedef void KSAPI_FNC_SETANDSUBMIT_GETVAR(
 		OV_INSTPTR_ksapi_getVar			 			pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
 		OV_STRING 									path
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_SETVAR(
+typedef void KSAPI_FNC_SETANDSUBMIT_SETVAR(
 		OV_INSTPTR_ksapi_setVar	 			pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
@@ -54,7 +54,7 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_SETVAR(
 
 //definitions for getEPidentifiers
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_EP_GETID(
+typedef void KSAPI_FNC_SETANDSUBMIT_EP_GETID(
 		OV_INSTPTR_ksapi_getEPidentifiers	pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
@@ -62,7 +62,7 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_EP_GETID(
 		OV_STRING 									namemask
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_GETEP(
+typedef void KSAPI_FNC_SETANDSUBMIT_GETEP(
 		OV_INSTPTR_ksapi_getEP	pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
@@ -72,7 +72,7 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_GETEP(
 		OV_EP_FLAGS									scopeFlags
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT(
+typedef void KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT(
 		OV_INSTPTR_ksapi_renameObject	 		pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
@@ -80,7 +80,7 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT(
 		OV_STRING 									newpath
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_LINKOBJECT(
+typedef void KSAPI_FNC_SETANDSUBMIT_LINKOBJECT(
 		OV_INSTPTR_ksapi_linkObject			pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,
@@ -90,7 +90,7 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_LINKOBJECT(
 		OV_STRING									place
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_UNLINKOBJECT(
+typedef void KSAPI_FNC_SETANDSUBMIT_UNLINKOBJECT(
 		OV_INSTPTR_ksapi_unlinkObject			pobj,
 		OV_STRING 									serverHost,
 		OV_STRING 									serverName,

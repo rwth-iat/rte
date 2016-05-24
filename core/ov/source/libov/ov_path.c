@@ -309,7 +309,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 		} else {
 			pparent = (OV_INSTPTR_ov_domain)pobj->v_pouterobject;
 		}
-		for(i=pathByIdSize-2; (i >= 0) && pparent; i--){
+		//	Lars E.: the next line resulted in a warning as there was (i >= 0) up to now. This would have been always true 
+		//		--> it never came up as an error during runtime, so I have no idea, if the correction to (i>0) has any (malicious) consequences in functionality
+		for(i=pathByIdSize-2; (i > 0) && pparent; i--){
 			ppath->elements[i].elemtype = OV_ET_OBJECT;
 			ppath->elements[i].pobj = Ov_StaticPtrCast(ov_object, pparent);
 			if(!pparent->v_pouterobject){

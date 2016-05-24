@@ -36,6 +36,8 @@
 #if OV_SYSTEM_MC164
 #include "mc164/time.h"
 #else
+//	Set _BSD_SOURCE for timegm
+#define _BSD_SOURCE
 #include <time.h>
 #endif
 
@@ -378,6 +380,9 @@ static OV_RESULT ov_time_asciitotime_internal(
 			#if OV_SYSTEM_UNIX
 				//unix has
 				//time_t timegm(struct tm *);
+				// Lars E.: According to timegm manpage: "These functions are nonstandard GNU extensions that are also present on the BSDs. Avoid their use"...
+				//		"For a portable version of timegm(), set the TZ environment variable to UTC, call mktime(3) and restore the value of TZ."
+				//	Feature Test Macro added.
 				secs = timegm(&tm);
 			#endif
 

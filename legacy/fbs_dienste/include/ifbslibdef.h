@@ -4,8 +4,8 @@
 *    #############                                                           *
 *                                                                            *
 *   L T S o f t                                                              *
-*   Agentur für Leittechnik Software GmbH                                    *
-*   Heinrich-Hertz-Straße 10                                                 *
+*   Agentur fÃ¼r Leittechnik Software GmbH                                    *
+*   Heinrich-Hertz-StraÃŸe 10                                                 *
 *   50170 Kerpen                                                             *
 *   Tel      : 02273/9893-0                                                  *
 *   Fax      : 02273/9893-33                                                 *
@@ -179,7 +179,7 @@ size_t ifb_getValueLengthAsNum(                     /*  |> Funktionsrueckmeldung
 * Hilfsfunktion.
 * Rueckgabe Value-Type als String : KS_VT_INT als "INT", KS_VT_INT_VEC als "INT_VEC"
 */
-char *ifb_getPortValueType(                         /*  |> Funktionsrueckmeldung      */
+char const *ifb_getPortValueType(                         /*  |> Funktionsrueckmeldung      */
                          KS_VAR_TYPE typ            /* >|  Typ der Variable */
                          );
 /*
@@ -187,7 +187,7 @@ char *ifb_getPortValueType(                         /*  |> Funktionsrueckmeldung
 * Rueckgabe Value-Type als String fuer FB-Sicherung der Datenbasis
 * zB. KS_VT_INT oder KS_VT_INT_VEC als "INT"
 */
-char *ifb_getOvValueType(                          /*  |> Funktionsrueckmeldung      */
+char const *ifb_getOvValueType(                          /*  |> Funktionsrueckmeldung      */
                         KS_VAR_TYPE typ            /* >|  Typ der Variable */
                         );
 /*
@@ -205,7 +205,7 @@ KS_RESULT ifb_getValueTypeAndLen(                           /*  |> Funktionsruec
 * beim gesetztem Flag 'd' "(dynamic)" und
 * beim gesetztem Flag 's' "(PV)". Sonst ""
 */
-char *ifb_getPortCharacteristic(                    /*  |> Funktionsrueckmeldung      */
+char const *ifb_getPortCharacteristic(                    /*  |> Funktionsrueckmeldung      */
                         KS_SEMANTIC_FLAGS flag      /* >|  Flags-Maske                */
                         );
 /*

@@ -9,7 +9,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 DATABASE = database 
 DATABASECREATEKEYS = 
 MAKMAKOPTIONS = -o
-EXTRA_CC_FLAGS = -DPLT_USE_WINSOCK2=1 -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -Wextra -Wno-unused-parameter -Werror
+EXTRA_CC_FLAGS = -DPLT_USE_WINSOCK2=1 -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -Wextra -Wno-unused-parameter
 EXTRA_LIBS = 
 LD_FLAGS = -lws2_32
 COMPILER = GCC

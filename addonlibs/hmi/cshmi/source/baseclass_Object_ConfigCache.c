@@ -77,7 +77,7 @@ static OV_STRING cshmi_Object_prepareURIencode(OV_STRING strIn){
 
 	if(!strIn){
 		strOut = (OV_STRING)ov_memstack_alloc(1);
-		strOut = '\0';
+		*strOut = '\0';
 		return strOut;
 	}
 	//only " would be the worst case

@@ -44,11 +44,16 @@ endif
 
 CFLAGS = $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -O2 -DML_SYSTEM_UNIX -DDBG_TO_STDERR=0 -fPIC
 
-PREFIX = 
 
-CC = $(PREFIX)gcc
-AR = $(PREFIX)ar
-RANLIB = $(PREFIX)ranlib
+ifneq "$(origin GCC_BIN_PREFIX)" "undefined"
+CC = $(GCC_BIN_PREFIX)gcc
+else
+GCC_BIN_PREFIX=
+endif
+
+CC ?= $(GCC_BIN_PREFIX)gcc
+AR = $(GCC_BIN_PREFIX)ar
+RANLIB = $(GCC_BIN_PREFIX)ranlib
 
 
 

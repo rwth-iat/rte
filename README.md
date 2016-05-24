@@ -11,6 +11,9 @@ The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
 #Documentation
 An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
 
+#Releases
+A Release list can be found here: [Releases](http://acplt.github.io/rte-www/releases/)
+
 #Using the environment
 TODO
 

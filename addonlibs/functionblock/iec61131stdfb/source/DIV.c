@@ -261,9 +261,9 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 					{
 						ov_logfile_error("%s: division of int by 0", pinst->v_identifier);
 						if(pinst->v_IN1.value.valueunion.val_int > 0)
-							pinst->v_OUT.value.valueunion.val_int = LONG_MAX;
+							pinst->v_OUT.value.valueunion.val_int = OV_VL_MAXINT;
 						else if(pinst->v_IN1.value.valueunion.val_int < 0)
-							pinst->v_OUT.value.valueunion.val_int = LONG_MIN;
+							pinst->v_OUT.value.valueunion.val_int = OV_VL_MININT;
 						else
 							pinst->v_OUT.value.valueunion.val_int = 0;
 							
@@ -279,7 +279,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_DIV_typemethod(
 					{
 						ov_logfile_error("%s: division of uint by 0", pinst->v_identifier);
 						if(pinst->v_IN1.value.valueunion.val_uint)
-							pinst->v_OUT.value.valueunion.val_uint = ULONG_MAX;
+							pinst->v_OUT.value.valueunion.val_uint = OV_VL_MAXUINT;
 						else
 							pinst->v_OUT.value.valueunion.val_uint = 0;
 						STDFB_bad_operation = TRUE;

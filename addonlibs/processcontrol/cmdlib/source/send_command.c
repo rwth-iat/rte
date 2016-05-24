@@ -107,11 +107,6 @@ OV_RESULT OV_DLLFNCEXPORT send_command(
 	OV_STRING								Mask;
 	OV_INSTPTR_cmdlib_processcontrol	pfbt;
 	
-	OV_VAR_VALUE      					SendValue;
-	OV_STRING								FullCommand;
-	OV_STRING								RemoteVar;
-	OV_STRING								RemoteInst;
-	
 	/*----------------------------------------------------------------------*/
 	/*               Pruefen der Uebergebenen Parameter                     */
 	/*----------------------------------------------------------------------*/

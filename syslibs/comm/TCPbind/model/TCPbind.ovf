@@ -4,22 +4,22 @@
 /* 
 	Declare your C functions here. 
 	Example:
-	typedef OV_DLLFNCEXPORT void MY_FUNC(
+	typedef void MY_FUNC(
 		OV_STRING varName
 	);
 */
 
-typedef OV_DLLFNCEXPORT OV_RESULT TCPBIND_FNC_ASSOCIATECLIENTHANDLER(
+typedef OV_RESULT TCPBIND_FNC_ASSOCIATECLIENTHANDLER(
 	OV_INSTPTR_TCPbind_TCPChannel this
 );
 
-typedef OV_DLLFNCEXPORT getAddrInfoElem *TCPBIND_ADDGETADDRINFO(
+typedef getAddrInfoElem *TCPBIND_ADDGETADDRINFO(
 	OV_STRING host,
 	OV_STRING port,
 	struct addrinfo *hints
 );
 
-typedef OV_DLLFNCEXPORT void TCPBIND_DELGETADDRINFO(
+typedef void TCPBIND_DELGETADDRINFO(
 	getAddrInfoElem *elem
 );
 

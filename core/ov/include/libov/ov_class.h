@@ -123,7 +123,7 @@ extern "C" {
 *	---------------
 *	Function prototype for function initializing an object
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_INITOBJ(
+typedef OV_RESULT OV_FNC_INITOBJ(
 	OV_INSTPTR_ov_object	pobj,
 	OV_POINTER				userdata
 );

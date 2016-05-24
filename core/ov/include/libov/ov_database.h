@@ -193,7 +193,7 @@ OV_IDLIST_NODE* ov_database_idListGetNode(const OV_UINT idH, const OV_UINT idL);
  *	use bisection to find it
  *	returns OV_ERR_GENERIC if it was not found
  */
-OV_RESULT ov_database_idListGetRelationIndex(const OV_UINT idH, const OV_UINT idL, const struct OV_IDLIST_NODE const* node, OV_UINT* index);
+OV_RESULT ov_database_idListGetRelationIndex(const OV_UINT idH, const OV_UINT idL, const struct OV_IDLIST_NODE *const node, OV_UINT* index);
 
 /*
 *	Create a new database

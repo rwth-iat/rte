@@ -201,7 +201,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
 					pinst->v_OUT.value.valueunion.val_int = pinst->v_IN1.value.valueunion.val_int % pinst->v_IN2.value.valueunion.val_int;
 				else
 				{
-					pinst->v_OUT.value.valueunion.val_int = LONG_MAX;
+					pinst->v_OUT.value.valueunion.val_int = OV_VL_MAXINT;
 					STDFB_bad_operation = TRUE;
 				}
 			break;
@@ -212,7 +212,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_MOD_typemethod(
 					pinst->v_OUT.value.valueunion.val_uint = pinst->v_IN1.value.valueunion.val_uint % pinst->v_IN2.value.valueunion.val_uint;
 				else
 				{
-					pinst->v_OUT.value.valueunion.val_uint = ULONG_MAX;
+					pinst->v_OUT.value.valueunion.val_uint = OV_VL_MAXUINT;
 					STDFB_bad_operation = TRUE;
 				}
 			break;

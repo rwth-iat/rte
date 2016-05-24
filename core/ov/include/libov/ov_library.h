@@ -44,7 +44,7 @@
 *	--------------------
 *	Function prototype for opening a library
 */
-typedef OV_DLLFNCEXPORT struct OV_LIBRARY_DEF* OV_FNC_LIBRARY_OPEN(void);
+typedef struct OV_LIBRARY_DEF* OV_FNC_LIBRARY_OPEN(void);
 
 /*
 *	OV_FNC_LIBRARY_SETGLOBALVARS:

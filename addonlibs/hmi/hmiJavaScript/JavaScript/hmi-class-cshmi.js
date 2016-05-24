@@ -5024,8 +5024,8 @@ cshmi.prototype = {
 				for (var i = 0; i < classList.length; ++i) {
 					//special adjustment for <canvas>-Element
 					if (classList[i].tagName.toLowerCase() === "canvas") {
-						classList[i].width = parsetInt(SVGWidth, 10);
-						classList[i].height = parsetInt(SVGHeight, 10);
+						classList[i].width = parseInt(SVGWidth, 10);
+						classList[i].height = parseInt(SVGHeight, 10);
 					}
 					classList[i].style.width = SVGWidth+"px";
 					classList[i].style.height = SVGHeight+"px";

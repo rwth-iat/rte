@@ -333,7 +333,7 @@ UA_Int32 getReferenceDescriptions_HasProperty(const UA_BrowseDescription* browse
 			|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
 		if(pNode->elemtype == OV_ET_OBJECT){
 			referencedElement.elemtype = OV_ET_NONE;
-			ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE || OV_ET_MEMBER);
+			ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
 			while(referencedElement.elemtype != OV_ET_NONE){
 				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
@@ -342,7 +342,7 @@ UA_Int32 getReferenceDescriptions_HasProperty(const UA_BrowseDescription* browse
 					}
 					(*refCount)++;
 				}
-				ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE || OV_ET_MEMBER);
+				ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
 			}
 		}
 	}

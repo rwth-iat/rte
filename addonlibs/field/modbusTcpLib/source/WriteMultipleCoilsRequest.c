@@ -137,7 +137,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_WriteMultipleCoilsRequest_sendRequest(
 			modbusTcpLib_IOChannel_setErrorText(pIOChannel);
 			Ov_LinkPlaced(modbusTcpLib_errorChannels, pSlave, pIOChannel, OV_PMH_END);
 		}
-		pIOChannel = Ov_GetNextChild(modbusTcpLib_toNextChannel, pIOChannel);
+		pIOChannel = Ov_GetFirstChild(modbusTcpLib_toNextChannel, pIOChannel);
 	}while(pIOChannel);
 	/*	get channel	*/
 	pDomain = Ov_GetParent(ov_containment, thisReq);

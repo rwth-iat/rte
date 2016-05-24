@@ -30,6 +30,12 @@
 #ifndef OV_MACROS_H_INCLUDED
 #define OV_MACROS_H_INCLUDED
 
+// for strdup
+#ifdef OV_COMPILE_LIBOV
+#define _POSIX_C_SOURCE 200809L
+#include <string.h>
+#endif
+
 #include "libov/ov_association.h"
 #include "libov/ov_class.h"
 #include "libov/ov_time.h"

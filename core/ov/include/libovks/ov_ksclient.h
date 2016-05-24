@@ -71,7 +71,7 @@ typedef enum_t OV_KSCLIENT_CONNECTION_STATE;
 *	Callback function used when asynchronously opening a connection to an
 *	ACPLT/KS server.
 */
-typedef OV_DLLFNCEXPORT void OV_FNC_KSCLIENT_OPENCALLBACK(
+typedef void OV_FNC_KSCLIENT_OPENCALLBACK(
 	OV_KSCLIENT_CONNECTION			*pconn,
 	OV_RESULT 						result,
 	OV_POINTER						userdata
@@ -83,7 +83,7 @@ typedef OV_DLLFNCEXPORT void OV_FNC_KSCLIENT_OPENCALLBACK(
 *	Callback function used when asynchronously sending a request to an
 *	ACPLT/KS server.
 */
-typedef OV_DLLFNCEXPORT void OV_FNC_KSCLIENT_REQUESTCALLBACK(
+typedef void OV_FNC_KSCLIENT_REQUESTCALLBACK(
 	OV_KSCLIENT_CONNECTION			*pconn,
 	OV_RESULT 						result,
 	OV_KSCLIENT_SERVICE				*psvc,

@@ -225,10 +225,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_ATAN2_typemethod(
 				if((pinst->v_IN1.value.valueunion.val_uint))
 					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) atan(pinst->v_IN2.value.valueunion.val_uint / pinst->v_IN1.value.valueunion.val_uint);
 				else
-					if(pinst->v_IN2.value.valueunion.val_uint < 0)
-						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (-0.5 * Pi);
-					else
-						pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (0.5 * Pi);
+					pinst->v_OUT.value.valueunion.val_single = (OV_SINGLE) (0.5 * Pi);
 			break;
 			
 			case OV_VT_SINGLE:

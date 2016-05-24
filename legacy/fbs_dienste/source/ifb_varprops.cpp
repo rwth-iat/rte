@@ -4,8 +4,8 @@
 *    ###########                                                             *
 *                                                                            *
 *   L T S o f t                                                              *
-*   Agentur für Leittechnik Software GmbH                                    *
-*   Heinrich-Hertz-Straße 10                                                 *
+*   Agentur fÃ¼r Leittechnik Software GmbH                                    *
+*   Heinrich-Hertz-StraÃŸe 10                                                 *
 *   50170 Kerpen                                                             *
 *   Tel      : 02273/9893-0                                                  *
 *   Fax      : 02273/9893-33                                                 *
@@ -42,7 +42,7 @@ char *ifb_getValueLength(const KsVarCurrProps* cp) {
     size_t      size;       // Laenge des Vectors
     
     if(!cp || !cp->value) {
-        return "";
+        return NULL;
     }
     
     switch(cp->value->xdrTypeCode() ) {
@@ -54,11 +54,11 @@ char *ifb_getValueLength(const KsVarCurrProps* cp) {
         case KS_VT_STRING:
         case KS_VT_TIME:
         case KS_VT_TIME_SPAN:
-                                return "";
+                                return NULL;
         case KS_VT_BYTE_VEC:
                                 size = ((KsByteVecValue &) *cp->value).size();
                                 if (size == 1) {
-                                    return "";
+                                    return NULL;
                                 }
                                 break;
         case KS_VT_BOOL_VEC:
@@ -86,7 +86,7 @@ char *ifb_getValueLength(const KsVarCurrProps* cp) {
                                 size = ((KsTimeSpanVecValue &) *cp->value).size();
                                 break;
         default:
-                                return "";
+                                return NULL;
         } /* switch */
                 
         sprintf(help,"[%d]", size);
@@ -155,7 +155,7 @@ size_t ifb_getValueLengthAsNum(const KsVarCurrProps* cp) {
 * Hilfsfunktion.                                                                *
 * Rueckgabe Value-Type als String fuer FB-Sicherung der Datenbasis              *
 ********************************************************************************/
-char *ifb_getOvValueType(KS_VAR_TYPE typ) {
+char const *ifb_getOvValueType(KS_VAR_TYPE typ) {
 /*******************************************************************************/
 
 #define BAD_TYPE_STRING "UNKNOWN"
@@ -196,7 +196,7 @@ char *ifb_getOvValueType(KS_VAR_TYPE typ) {
 * Hilfsfunktion.                                                                *
 * Rueckgabe Value-Type als String                                               *
 ********************************************************************************/
-char *ifb_getPortValueType(KS_VAR_TYPE typ) {
+char const *ifb_getPortValueType(KS_VAR_TYPE typ) {
 /*******************************************************************************/
 
 #define BAD_TYPE_STRING "UNKNOWN"
@@ -249,7 +249,7 @@ char *ifb_getPortValueType(KS_VAR_TYPE typ) {
 * beim gesetztem Flag 'd' "(dynamic)" und                                       *
 * beim gesetztem Flag 's' "(PV)"                                                *
 ********************************************************************************/
-char *ifb_getPortCharacteristic(KS_SEMANTIC_FLAGS flags) {
+char const *ifb_getPortCharacteristic(KS_SEMANTIC_FLAGS flags) {
 /*******************************************************************************/
 
     if( IsFlagSet( flags, 's') ) {
@@ -258,7 +258,7 @@ char *ifb_getPortCharacteristic(KS_SEMANTIC_FLAGS flags) {
     if( IsFlagSet( flags, 'd') ) {
 		return IFB_DYNAMIC_PORTIDENT;
     }
-    return "";
+    return NULL;
 }
 
 /******************************************************************************

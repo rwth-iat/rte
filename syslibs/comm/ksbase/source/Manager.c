@@ -122,7 +122,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 			if(pExistingSrvRep)
 			{
 				//check if sever version matches to existing one
-				if((version == pExistingSrvRep->v_version))
+				if(version == pExistingSrvRep->v_version)
 				{//version match --> update expiration time
 
 					ksbase_ServerRep_timetolive_set(pExistingSrvRep, timetolive);
@@ -204,7 +204,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 			pSrvRep = (OV_INSTPTR_ksbase_ServerRep)Ov_SearchChild(ov_containment, pSrvRepContainer, versionstring);
 			if(pSrvRep)
 			{
-				if((pSrvRep->v_protocols.veclen == 1))
+				if(pSrvRep->v_protocols.veclen == 1)
 				{
 					if((ov_string_compare(pSrvRep->v_protocols.value[0], protocol) == OV_STRCMP_EQUAL))
 					{

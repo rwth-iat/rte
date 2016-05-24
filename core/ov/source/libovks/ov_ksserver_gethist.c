@@ -51,7 +51,7 @@
 *	Function prototype for method gethistory 
 *	(compare ACPLT/KS)
 */
-typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETHIST (
+typedef OV_RESULT OV_FNC_GETHIST (
   OV_INSTPTR_ov_object pobj,
   OV_UINT items_len,	
   OV_GETHIST_ITEM* pitem,

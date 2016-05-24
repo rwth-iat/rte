@@ -2,6 +2,6 @@
 # set targetOS to "nt" for windows or "linux" for linux targets. Others are currently not supported
 set targetOS nt
 # set the prefix of your cross compiler. It has to be found by the OS. Absolute paths should work here but are not tested.
-set CrossPrefix i586-mingw32msvc-
+set CrossPrefix i686-w64-mingw32-
 # set arch to X86 or ARM - for ARM some flags are set differently
 set crossArch X86

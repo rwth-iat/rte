@@ -214,7 +214,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 			pVtblChannel->m_CloseConnection(pChannel);
 			return;
 		}
-		if((pChannel->v_ConnectionState == KSBASE_CONNSTATE_CLOSED))
+		if(pChannel->v_ConnectionState == KSBASE_CONNSTATE_CLOSED)
 		{
 			ksxdr_initiateConnection(thisCl, pChannel, pVtblChannel, FALSE, thisCl->v_serverHost, thisCl->v_serverPort);
 			thisCl->v_state = (KSBASE_CLST_COMPLETED | KSBASE_CLST_AWAITINGCONNECTION);
