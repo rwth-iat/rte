@@ -67,7 +67,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClientHandler_shutdown(
     return;
 }
 
-void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin)
+OV_DLLFNCEXPORT void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin)
 {
 	unsigned int i;
 	unsigned int temp;
@@ -81,7 +81,7 @@ void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin)
 	return;
 }
 
-OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, const OV_UINT xid, const OV_UINT msgAccepted, const OV_UINT msgState)
+OV_DLLFNCEXPORT OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, const OV_UINT xid, const OV_UINT msgAccepted, const OV_UINT msgState)
 {
 	OV_RESULT result;
 	OV_UINT dummy;
