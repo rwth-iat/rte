@@ -180,7 +180,7 @@ void* workerThread( void* lpParam ){
 							KS_logfile_debug(("aresWorkerThread: address not usable"));
 							continue;
 						}
-						KS_logfile_debug(("file %s\nline %u:\tconnectiong to %i", __FILE__, __LINE__, sockfd));
+						KS_logfile_debug(("file %s\nline %u:\tconnectiong", __FILE__, __LINE__));
 #if OV_SYSTEM_NT
 					//opt in for faster localhost connections on new windows hosts. This has to be before connect
 					//old includes does not have this new define
@@ -193,7 +193,7 @@ void* workerThread( void* lpParam ){
 						if (connect(pCurrElem->socket, walk->ai_addr, walk->ai_addrlen) == TCPBIND_SOCKET_ERROR) {
 							TCPBIND_CLOSE_SOCKET(pCurrElem->socket);
 							pCurrElem->socket = TCPBIND_INVALID_SOCKET;
-							KS_logfile_debug(("%s: connect failed", thisTCPCh->v_identifier));
+							KS_logfile_debug(("file %s\nline %u: connect failed", __FILE__, __LINE__));
 							continue;
 						}
 						break;
