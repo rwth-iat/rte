@@ -726,7 +726,7 @@ if(new == 0){
 	fprintf(fd,"templates: \n");
 		// this is for the host system
 #if OV_SYSTEM_NT
-	fprintf(fd,"\t-@cmd /c del ..\\..\\source\\sourcetemplates\\\\*$(_C)\n");
+	fprintf(fd,"\t-@cmd /c del \"..\\..\\source\\sourcetemplates\\*$(_C)\"\n");
 #else
 	fprintf(fd,"\t-@rm ../../source/sourcetemplates/*$(_C)\n");
 #endif
