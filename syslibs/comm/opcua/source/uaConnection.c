@@ -32,24 +32,29 @@
 /* Generic Buffer Management */
 /*****************************/
 
-static UA_StatusCode GetMallocedBuffer(UA_Connection *connection, UA_ByteString *buf) {
-	*buf = getOvNetworkLayer()->v_sendBuffer;
-	return UA_STATUSCODE_GOOD;
+static UA_StatusCode GetMallocedBuffer(UA_Connection *connection, size_t length, UA_ByteString *buf) {
+	if(length > connection->remoteConf.recvBufferSize)
+		return UA_STATUSCODE_BADCOMMUNICATIONERROR;
+	return UA_ByteString_allocBuffer(buf, length);
 }
 
 static void ReleaseMallocedBuffer(UA_Connection *connection, UA_ByteString *buf) {
-	return;
+	UA_ByteString_deleteMembers(buf);
+}
+
+static void ReleaseReceiveBuffer(UA_Connection *connection, UA_ByteString *buf) {
+	ksbase_free_KSDATAPACKET(&((OV_INSTPTR_opcua_uaConnection)connection->handle)->v_buffer);
 }
 
 /*	callback functions	*/
 
-static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, UA_ByteString *buf, size_t buflen) {
+static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, UA_ByteString *buf) {
     OV_INSTPTR_opcua_uaConnection	pConnection = (OV_INSTPTR_opcua_uaConnection)(connection->handle);
     OV_INSTPTR_ksbase_Channel			pChannel	=	Ov_GetParent(ksbase_AssocChannelClientHandler, pConnection);
     OV_VTBLPTR_ksbase_Channel			pVtblChannel	=	NULL;
     OV_RESULT	result;
 
-    result = ksbase_KSDATAPACKET_append(&(pChannel->v_outData), buf->data, buflen);
+    result = ksbase_KSDATAPACKET_append(&(pChannel->v_outData), buf->data, buf->length);
     if(Ov_Fail(result)){
     	return ov_resultToUaStatusCode(result);
     }
@@ -89,10 +94,11 @@ static OV_RESULT create_UA_Connection(OV_INSTPTR_opcua_uaConnection pinst){
 	    pinst->v_connection->sockfd = 0;
 	    pinst->v_connection->handle = pinst;
 	    pinst->v_connection->localConf = getOvNetworkLayer()->v_localConfig;
-	    pinst->v_connection->write = ov_ua_connection_write;
+	    pinst->v_connection->send = ov_ua_connection_write;
 	    pinst->v_connection->close = ov_ua_connection_closeConnection;
-	    pinst->v_connection->getBuffer = GetMallocedBuffer;
-	    pinst->v_connection->releaseBuffer = ReleaseMallocedBuffer;
+	    pinst->v_connection->getSendBuffer = GetMallocedBuffer;
+	    pinst->v_connection->releaseSendBuffer = ReleaseMallocedBuffer;
+	    pinst->v_connection->releaseRecvBuffer = ReleaseReceiveBuffer;
 	    pinst->v_connection->state = UA_CONNECTION_OPENING;
 	    return OV_ERR_OK;
 }
@@ -179,33 +185,9 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaConnection_HandleRequest(
     *   local variables
     */
 	OV_INSTPTR_opcua_uaConnection	pConnection	=	Ov_StaticPtrCast(opcua_uaConnection, this);
-	UA_ByteString						temp;
-	UA_ByteString						received;
-	OV_RESULT							result;
 
-
-	temp.length = dataReceived->length;
-	temp.data = dataReceived->data;
-	if(UA_ByteString_copy(&temp, &received) != UA_STATUSCODE_GOOD){
-		return OV_ERR_HEAPOUTOFMEMORY;
-	}
-	temp.length = 0;
-	temp.data = NULL;
-	if(pConnection->v_connection == NULL){
-		result = create_UA_Connection(pConnection);
-		if(Ov_Fail(result)){
-			ov_logfile_error("%s - HandleRequest: failed to create UA_Connection. Reason: %s", pConnection->v_identifier, ov_result_getresulttext(result));
-			UA_ByteString_deleteMembers(&received);
-			return result;
-		}
-	}
-	temp = UA_Connection_completeMessages(pConnection->v_connection, received);
-	if(temp.length > 0){
-		ksbase_KSDATAPACKET_append(&(pConnection->v_buffer), temp.data, temp.length);
-	}
-	UA_ByteString_deleteMembers(&temp);
+	pConnection->v_buffer = *dataReceived; // TODO if we have crashes or losses with this buffer, copy the data instead of the pointers and free the dataReceived packet
 	pConnection->v_workNext = TRUE;
-	ksbase_free_KSDATAPACKET(dataReceived);
 	return OV_ERR_OK;
 }
 

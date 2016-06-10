@@ -291,14 +291,14 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_BOOLEAN], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_BOOLEAN]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_BYTE_VEC:
 			arrayLength = pAny->value.valueunion.val_byte_vec.veclen;
 			value = pAny->value.valueunion.val_byte_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_BYTE];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_BYTE], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_BYTE]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_DOUBLE_VEC:
@@ -306,7 +306,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			arrayLength = pAny->value.valueunion.val_double_vec.veclen;
 			value = pAny->value.valueunion.val_double_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_DOUBLE];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_INT_VEC:
@@ -314,14 +314,14 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			arrayLength = pAny->value.valueunion.val_int_vec.veclen;
 			value = pAny->value.valueunion.val_int_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_INT32];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_STATE_VEC:
 			arrayLength = pAny->value.valueunion.val_state_vec.veclen;
 			value = pAny->value.valueunion.val_state_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_INT32];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_SINGLE_VEC:
@@ -329,7 +329,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			arrayLength = pAny->value.valueunion.val_single_vec.veclen;
 			value = pAny->value.valueunion.val_single_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_FLOAT];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_FLOAT], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_FLOAT]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_STRING_VEC:
@@ -351,7 +351,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			}
 			value = tempStringArray;
 			pVariant->type = &UA_TYPES[UA_TYPES_STRING];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_STRING], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_STRING]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_TIME_VEC:
@@ -368,7 +368,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			}
 			value = tempTimeArray;
 			pVariant->type = &UA_TYPES[UA_TYPES_DATETIME];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_DATETIME], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DATETIME]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_TIME_SPAN_VEC:
@@ -386,7 +386,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			}
 			value = tempTimeArray;
 			pVariant->type = &UA_TYPES[UA_TYPES_DOUBLE];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_UINT_VEC:
@@ -394,7 +394,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			arrayLength = pAny->value.valueunion.val_uint_vec.veclen;
 			value = pAny->value.valueunion.val_uint_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_UINT32];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_UINT32], arrayLength);
+			UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_UINT32]);
 			pVariant->arrayLength = arrayLength;
 			break;
 		default:
@@ -408,7 +408,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 
 UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 	OV_UINT iterator = 0;
-	if(pVariant->arrayLength == -1){
+	if(pVariant->arrayLength != 0 && pVariant->data > UA_EMPTY_ARRAY_SENTINEL){
 		/*	scalar values	*/
 		if(pVariant->type == &UA_TYPES[UA_TYPES_BOOLEAN]){
 			pAny->value.vartype = OV_VT_BOOL;
