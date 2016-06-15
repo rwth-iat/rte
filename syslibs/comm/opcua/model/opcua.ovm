@@ -203,6 +203,7 @@ LIBRARY opcua
 				COMMENT	=	"Descriptions of input arguments in order";
 		END_VARIABLES;
 		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 			getaccess		:	C_FUNCTION	<OV_FNC_GETACCESS>;
 		END_OPERATIONS;
 	END_CLASS;

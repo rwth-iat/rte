@@ -91,3 +91,27 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_arguments_getaccess(
 	return ov_object_getaccess(pobj, pelem, pticket);
 }
 
+OV_DLLFNCEXPORT OV_RESULT opcua_arguments_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_opcua_arguments pinst = Ov_StaticPtrCast(opcua_arguments, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = ov_object_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    if(!pinst->v_pouterobject){
+    	return OV_ERR_BADPLACEMENT;
+    }
+    if(!Ov_CanCastTo(opcua_methodNode, pinst->v_pouterobject)){
+    	return OV_ERR_BADPLACEMENT;
+    }
+    return OV_ERR_OK;
+}
+

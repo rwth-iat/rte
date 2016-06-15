@@ -215,7 +215,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						*nodeClass = UA_NODECLASS_REFERENCETYPE;
 					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
 						*nodeClass = UA_NODECLASS_VARIABLE;
-					}else {
+					} else if(Ov_CanCastTo(opcua_methodNode, pobj)){
+						*nodeClass = UA_NODECLASS_METHOD;
+					} else{
 						*nodeClass = UA_NODECLASS_OBJECT;
 					}
 					break;
@@ -268,7 +270,11 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					if(readValueIds[indices[i]].attributeId == UA_ATTRIBUTEID_BROWSENAME){
 						UA_QualifiedName* qName = UA_QualifiedName_new();
 						qName->name = UA_String_fromChars(pobj->v_identifier);
-						qName->namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+						if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
+							qName->namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+						} else {
+							qName->namespaceIndex = 0;
+						}
 						readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_QUALIFIEDNAME];
 						readNodesResults[indices[i]].value.data = qName;
 					} else {
