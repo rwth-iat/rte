@@ -18,7 +18,7 @@ static char			logMsg2[1096];
 #if !LOG_UA_TO_OV
 static const char *LogLevelNames[6] = {"trace", "debug", "info", "warning", "error", "fatal"};
 #endif
-static const char *LogCategoryNames[4] = {"communication", "server", "client", "userland"};
+static const char *LogCategoryNames[6] = {"network", "securechannel", "session", "server", "client", "userland"};
 #endif
 
 static void ov_UAlogger(UA_LogLevel level, UA_LogCategory category, const char *msg, ...) {
@@ -36,9 +36,9 @@ static void ov_UAlogger(UA_LogLevel level, UA_LogCategory category, const char *
 	if(level == 0){
 		snprintf(logMsg2, sizeof(logMsg2), "[UA-trace] %s | %s - %s", LogCategoryNames[category], str, logMsg);
 	} else if(level >= 5){
-		snprintf(logMsg2, sizeof(logMsg2), "[UA-fatal] %s | %s - %s", LogCategoryNames[category], str, msg);
+		snprintf(logMsg2, sizeof(logMsg2), "[UA-fatal] %s | %s - %s", LogCategoryNames[category], str, logMsg);
 	} else {
-		snprintf(logMsg2, sizeof(logMsg2), "[UA] %s | %s - %s", LogCategoryNames[category], str, msg);
+		snprintf(logMsg2, sizeof(logMsg2), "[UA] %s | %s - %s", LogCategoryNames[category], str, logMsg);
 	}
 	switch(level){
 	case 0:
@@ -56,7 +56,7 @@ static void ov_UAlogger(UA_LogLevel level, UA_LogCategory category, const char *
 		break;
 	}
 #else
-	fprintf(stdout,"[UA-%s] %s | %s - %s\n", LogLevelNames[level], LogCategoryNames[category], str, msg);
+	fprintf(stdout,"[UA-%s] %s | %s - %s\n", LogLevelNames[level], LogCategoryNames[category], str, logMsg);
 #if OV_SYSTEM_NT
 /*
  *	added to handle output for eclipse consoles on windows

@@ -30,6 +30,7 @@
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 
+extern OV_INSTPTR_opcua_uaServer opcua_pUaServer;
 
 UA_StatusCode opcua_nsOv_fillReferenceDescription(
 		OV_ELEMENT* pElement, UA_UInt16 referenceTypeNamespaceIndex, UA_Int32 referenceType, UA_UInt32 resultMask, UA_ReferenceDescription* dst){
@@ -42,7 +43,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription(
 		return UA_STATUSCODE_BADINVALIDARGUMENT;
 	}
 	dst->nodeId.nodeId.identifierType = UA_NODEIDTYPE_STRING;
-	dst->nodeId.nodeId.namespaceIndex = 1;
+	dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
 	if(pElement->elemtype == OV_ET_OBJECT || pElement->elemtype == OV_ET_VARIABLE || pElement->elemtype == OV_ET_MEMBER){
 		pObject = pElement->pobj;
 	} else {
@@ -65,7 +66,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription(
 		path = varPath;
 	}
 	dst->nodeId.nodeId.identifier.string = UA_String_fromChars(path);
-	if(dst->nodeId.nodeId.identifier.string.length == -1){
+	if(dst->nodeId.nodeId.identifier.string.length == 0 && dst->nodeId.nodeId.identifier.string.data != UA_EMPTY_ARRAY_SENTINEL){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
 	} else {
 		result = UA_STATUSCODE_GOOD;
@@ -78,7 +79,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription(
 		} else if(pElement->elemtype == OV_ET_VARIABLE){
 			dst->browseName.name = UA_String_fromChars(pElement->elemunion.pvar->v_identifier);
 		}
-		dst->browseName.namespaceIndex = 1;
+		dst->browseName.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
 	}
 	if(resultMask & (1<<4)){
 		if(pElement->elemtype == OV_ET_OBJECT){
@@ -98,10 +99,18 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription(
 		dst->referenceTypeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 		dst->referenceTypeId.identifier.numeric = referenceType;
 	}
-	if(resultMask & (1<<5)){	// TODO fixme	This is the type-node: 0|58 is baseObjectType
-		dst->typeDefinition.nodeId.namespaceIndex = 0;
-		dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
-		dst->typeDefinition.nodeId.identifier.numeric = 58;
+	if(resultMask & (1<<5)){	// TODO fixme	This is the type-node: using 0|58 (baseObjectType) for all variables
+		if(dst->nodeClass == UA_NODECLASS_OBJECT){
+			dst->typeDefinition.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+			dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+			dst->typeDefinition.nodeId.identifier.numeric = ov_database_convertId(pElement->pobj->v_idH, pElement->pobj->v_idL);
+		} else if(dst->nodeClass == UA_NODECLASS_VARIABLE){
+			dst->typeDefinition.nodeId.namespaceIndex = 0;
+			dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+			dst->typeDefinition.nodeId.identifier.numeric = 58;
+		} else {
+			dst->typeDefinition.nodeId = UA_NODEID_NULL;
+		}
 	}
 	return result;
 }
@@ -562,6 +571,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_browseNodes(
 #define INDEX_OvReference					10
 
 	for(index = 0; index<indicesSize;index++){
+		KS_logfile_debug(("browseNodes: iteration %u, index %u", index, indices[index]));
 		ov_memstack_lock();
 		uaResult = opcua_nodeStoreFunctions_resolveNodeIdToPath(browseDescriptions[indices[index]].nodeId, &nodePath);
 		if(uaResult != UA_STATUSCODE_GOOD){
@@ -571,6 +581,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_browseNodes(
 			continue;
 		}
 		pNode = &(nodePath.elements[nodePath.size - 1]);
+		KS_logfile_debug(("nodeIdentifier: %s", pNode->pobj->v_identifier));
 		for(j=0; j<UAREFS_LENGTH; j++){
 			uaReferences[j] = 0;
 		}
@@ -647,7 +658,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_browseNodes(
 			}
 		}
 		// check ov-references
-		if(browseDescriptions[indices[index]].referenceTypeId.namespaceIndex == 1){
+		if(browseDescriptions[indices[index]].referenceTypeId.namespaceIndex == opcua_pUaServer->v_NameSpaceIndex){
 			uaResult = opcua_nodeStoreFunctions_resolveNodeIdToPath(browseDescriptions[indices[index]].referenceTypeId, &assocPath);
 			if(uaResult != UA_STATUSCODE_GOOD){
 				KS_logfile_debug(("nodeStore_browseNodes: could not resolve association for index %u in list. Skipping.", index));
@@ -758,7 +769,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_browseNodes(
 		/*************************************************************************************************************
 		 * create Array
 		 ************************************************************************************************************/
-		browseResults[indices[index]].references = UA_Array_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION], refCount);
+		browseResults[indices[index]].references = UA_Array_new(refCount, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
 		if(!browseResults[indices[index]].references && refCount>0){
 			browseResults[indices[index]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
 			ov_memstack_unlock();
@@ -816,6 +827,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_browseNodes(
 
 		ov_memstack_unlock();
 	}
+	KS_logfile_debug(("Done."));
 	return UA_STATUSCODE_GOOD;
 }
 

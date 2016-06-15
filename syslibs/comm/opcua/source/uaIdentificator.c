@@ -67,7 +67,7 @@ OV_DLLFNCEXPORT OV_RESULT read_xdr_string_tomemstack(UA_ByteString data, OV_UINT
 
 	if(Ov_Fail(read_xdr_uint(data, offset, &length)))
 		return OV_ERR_GENERIC;
-	if(data.length < 0 || length > (OV_UINT)data.length){
+	if(length > (OV_UINT)data.length){
 		return OV_ERR_BADVALUE;
 	}
 	if(*offset <= (OV_UINT) (data.length - length))

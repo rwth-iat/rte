@@ -24,6 +24,7 @@
 #include "opcua.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_result.h"
+#include "ks_logfile.h"
 #include "opcua_helpers.h"
 #include "ksbase_helper.h"
 #include "open62541.h"
@@ -184,10 +185,15 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaConnection_HandleRequest(
     /*    
     *   local variables
     */
+	OV_RESULT result;
 	OV_INSTPTR_opcua_uaConnection	pConnection	=	Ov_StaticPtrCast(opcua_uaConnection, this);
-
-	pConnection->v_buffer = *dataReceived; // TODO if we have crashes or losses with this buffer, copy the data instead of the pointers and free the dataReceived packet
-	pConnection->v_workNext = TRUE;
+KS_logfile_debug(("uaConnection %s: HandleRequest. Received %u bytes", this->v_identifier, dataReceived->length));
+	result = ksbase_KSDATAPACKET_append(&(pConnection->v_buffer), dataReceived->data, dataReceived->length);
+	if(Ov_Fail(result)){
+		KS_logfile_error(("%s - HandleRequest: failed to copy dataPacket. Reason: %s", this->v_identifier, ov_result_getresulttext(result)));
+	}
+	ksbase_free_KSDATAPACKET(dataReceived);
+	pConnection->v_workNext = true;
 	return OV_ERR_OK;
 }
 

@@ -1,6 +1,6 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
- * Git-Revision: v0.2.0-RC1-72-g852ddd5
+ * Git-Revision: v0.2.0-RC1-76-g407dce3-dirty
  */
 
 /*
@@ -865,7 +865,7 @@ size_t UA_calcSizeBinary(void *p, const UA_DataType *type);
 /*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541-build/src_generated/ua_types_generated_encoding_binary.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script C:/AcpltDevelopmentKit/acplt/dev/open62541/tools/generate_datatypes.py
- * on host SPECTRE by user lars at 2016-06-09 04:38:24 */
+ * on host SPECTRE by user lars at 2016-06-13 09:13:10 */
  
 
 /* Boolean */
@@ -1503,7 +1503,7 @@ static UA_INLINE UA_StatusCode UA_QueryFirstRequest_decodeBinary(const UA_ByteSt
 /*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541-build/src_generated/ua_transport_generated.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script C:/AcpltDevelopmentKit/acplt/dev/open62541/tools/generate_datatypes.py
- * on host SPECTRE by user lars at 2016-06-09 04:38:24 */
+ * on host SPECTRE by user lars at 2016-06-13 09:13:10 */
 
 
 #ifdef __cplusplus
@@ -1718,7 +1718,7 @@ static UA_INLINE void UA_SecureConversationMessageHeader_delete(UA_SecureConvers
 /*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541-build/src_generated/ua_transport_generated_encoding_binary.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script C:/AcpltDevelopmentKit/acplt/dev/open62541/tools/generate_datatypes.py
- * on host SPECTRE by user lars at 2016-06-09 04:38:24 */
+ * on host SPECTRE by user lars at 2016-06-13 09:13:10 */
  
 
 /* SecureConversationMessageAbortBody */
@@ -5382,7 +5382,7 @@ size_t UA_calcSizeBinary(void *p, const UA_DataType *type) {
 /*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541-build/src_generated/ua_types_generated.c" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script C:/AcpltDevelopmentKit/acplt/dev/open62541/tools/generate_datatypes.py
- * on host SPECTRE by user lars at 2016-06-09 04:38:24 */
+ * on host SPECTRE by user lars at 2016-06-13 09:13:10 */
  
 
 /* Boolean */
@@ -11871,7 +11871,7 @@ const UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
 /*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541-build/src_generated/ua_transport_generated.c" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script C:/AcpltDevelopmentKit/acplt/dev/open62541/tools/generate_datatypes.py
- * on host SPECTRE by user lars at 2016-06-09 04:38:24 */
+ * on host SPECTRE by user lars at 2016-06-13 09:13:10 */
  
 
 /* SecureConversationMessageAbortBody */
@@ -18024,9 +18024,15 @@ Service_AddReferences_single(UA_Server *server, UA_Session *session, const UA_Ad
     /* cast away the const to loop the call through UA_Server_editNode */
     UA_StatusCode retval = UA_Server_editNode(server, session, &item->sourceNodeId,
                                               (UA_EditNodeCallback)addOneWayReference, item);
-    if(retval != UA_STATUSCODE_GOOD)
-        return retval;
-
+    if(retval != UA_STATUSCODE_GOOD){
+#ifdef UA_ENABLE_EXTERNAL_NAMESPACES
+		/*	Not completely clean, as this is allowed for external nodes only
+		(standard states that in that case only the source node has 
+		to be edited), but for now it works	*/
+		if(item->isForward || retval != UA_STATUSCODE_BADNODEIDUNKNOWN)
+#endif
+		return retval;
+	}
     UA_AddReferencesItem secondItem;
     secondItem = *item;
     secondItem.targetNodeId.nodeId = item->sourceNodeId;
@@ -18036,6 +18042,13 @@ Service_AddReferences_single(UA_Server *server, UA_Session *session, const UA_Ad
                                 (UA_EditNodeCallback)addOneWayReference, &secondItem);
 
     // todo: remove reference if the second direction failed
+#ifdef UA_ENABLE_EXTERNAL_NAMESPACES
+	/*	Same as above but in this case, target and source are switched 
+	as this is the other direction of the reference*/
+	if(retval == UA_STATUSCODE_BADNODEIDUNKNOWN && item->isForward)
+		return UA_STATUSCODE_GOOD;
+	else
+#endif
     return retval;
 }
 
@@ -20741,8 +20754,33 @@ void Service_Call(UA_Server *server, UA_Session *session, const UA_CallRequest *
     }
     response->resultsSize = request->methodsToCallSize;
 
-    for(size_t i = 0; i < request->methodsToCallSize;i++)
-        Service_Call_single(server, session, &request->methodsToCall[i], &response->results[i]);
+#ifdef UA_ENABLE_EXTERNAL_NAMESPACES
+    UA_Boolean isExternal[request->methodsToCallSize];
+    UA_UInt32 indices[request->methodsToCallSize];
+    memset(isExternal, false, sizeof(UA_Boolean) * request->methodsToCallSize);
+    for(size_t j = 0;j<server->externalNamespacesSize;j++) {
+        size_t indexSize = 0;
+        for(size_t i = 0;i < request->methodsToCallSize;i++) {
+            if(request->methodsToCall[i].methodId.namespaceIndex != server->externalNamespaces[j].index)
+                continue;
+            isExternal[i] = true;
+            indices[indexSize] = (UA_UInt32)i;
+            indexSize++;
+        }
+        if(indexSize == 0)
+            continue;
+        UA_ExternalNodeStore *ens = &server->externalNamespaces[j].externalNodeStore;
+        ens->call(ens->ensHandle, &request->requestHeader, request->methodsToCall,
+                       indices, (UA_UInt32)indexSize, response->results);
+    }
+#endif
+	
+    for(size_t i = 0; i < request->methodsToCallSize;i++){
+#ifdef UA_ENABLE_EXTERNAL_NAMESPACES
+        if(!isExternal[i])
+#endif    
+			Service_Call_single(server, session, &request->methodsToCall[i], &response->results[i]);
+	}
 }
 
 #endif /* UA_ENABLE_METHODCALLS */
@@ -22109,10 +22147,12 @@ ServerNetworkLayerTCP_closeConnection(UA_Connection *connection) {
         return;
     connection->state = UA_CONNECTION_CLOSED;
 #endif
-    //cppcheck-suppress unreadVariable
+#if UA_LOGLEVEL <= 300   
+   //cppcheck-suppress unreadVariable
     ServerNetworkLayerTCP *layer = connection->handle;
     UA_LOG_INFO(layer->logger, UA_LOGCATEGORY_NETWORK, "Connection %i | Force closing the connection",
                 connection->sockfd);
+#endif
     /* only "shutdown" here. this triggers the select, where the socket is
        "closed" in the mainloop */
     shutdown(connection->sockfd, 2);

@@ -1,6 +1,6 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
- * Git-Revision: v0.2.0-RC1-72-g852ddd5
+ * Git-Revision: v0.2.0-RC1-76-g407dce3-dirty
  */
 
 /*
@@ -54,7 +54,7 @@ extern "C" {
 # define _DEFAULT_SOURCE
 #endif
 
-#define UA_LOGLEVEL 300
+#define UA_LOGLEVEL 400
 /* #undef UA_ENABLE_MULTITHREADING */
 #define UA_ENABLE_METHODCALLS
 #define UA_ENABLE_SUBSCRIPTIONS
@@ -1343,7 +1343,7 @@ UA_Guid UA_EXPORT UA_Guid_random(void); /* do not use for cryptographic entropy 
  * C:/AcpltDevelopmentKit/acplt/dev/open62541-build/src_generated/ua_nodeids.hgen -- do not modify
  **********************************************************
  * Generated from C:/AcpltDevelopmentKit/acplt/dev/open62541/tools/schema/NodeIds.csv with script C:/AcpltDevelopmentKit/acplt/dev/open62541/tools/generate_nodeids.py
- * on host SPECTRE by user lars at 2016-06-09 04:38:24
+ * on host SPECTRE by user lars at 2016-06-13 09:13:09
  **********************************************************/
  
 
@@ -2043,7 +2043,7 @@ UA_Guid UA_EXPORT UA_Guid_random(void); /* do not use for cryptographic entropy 
 /*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541-build/src_generated/ua_types_generated.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script C:/AcpltDevelopmentKit/acplt/dev/open62541/tools/generate_datatypes.py
- * on host SPECTRE by user lars at 2016-06-09 04:38:24 */
+ * on host SPECTRE by user lars at 2016-06-13 09:13:10 */
 
 
 #ifdef __cplusplus
@@ -5910,6 +5910,10 @@ typedef UA_Int32 (*UA_ExternalNodeStore_translateBrowsePathsToNodeIds)
 (void *ensHandle, const UA_RequestHeader *requestHeader, UA_BrowsePath *browsePath, UA_UInt32 *indices,
  UA_UInt32 indicesSize, UA_BrowsePathResult *browsePathResults, UA_DiagnosticInfo *diagnosticInfos);
 
+typedef UA_Int32 (*UA_ExternalNodeStore_call)
+(void *ensHandle, const UA_RequestHeader *requestHeader, UA_CallMethodRequest *request, UA_UInt32 *indices,
+ UA_UInt32 indicesSize,UA_CallMethodResult *results);
+ 
 typedef UA_Int32 (*UA_ExternalNodeStore_delete)(void *ensHandle);
 
 typedef struct UA_ExternalNodeStore {
@@ -5922,6 +5926,7 @@ typedef struct UA_ExternalNodeStore {
 	UA_ExternalNodeStore_translateBrowsePathsToNodeIds translateBrowsePathsToNodeIds;
 	UA_ExternalNodeStore_addReferences addReferences;
 	UA_ExternalNodeStore_deleteReferences deleteReferences;
+	UA_ExternalNodeStore_call call;
 	UA_ExternalNodeStore_delete destroy;
 } UA_ExternalNodeStore;
 
