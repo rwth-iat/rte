@@ -87,8 +87,8 @@ OV_DLLFNCEXPORT OV_RESULT opcua_nodeStoreFunctions_unpackCallArgs(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_getCallInputArgs(
-	OV_INSTPTR_opcua_methodNode pobj,
+OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_getCallArgs(
+	OV_INSTPTR_opcua_arguments pobj,
 	size_t	*numberofArgs,
 	UA_Argument	**argList
 ) {
@@ -96,11 +96,11 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_getCallInputArgs(
 	if(!numberofArgs || !argList){
 		return UA_STATUSCODE_BADINVALIDARGUMENT;
 	}
-	if(pobj->v_inputNames.veclen != pobj->v_inputTypes.veclen || pobj->v_inputNames.veclen != pobj->v_inputIsArray.veclen
-			|| pobj->v_inputNames.veclen != pobj->v_inputLengths.veclen || pobj->v_inputNames.veclen != pobj->v_inputDescriptions.veclen){
+	if(pobj->v_Names.veclen != pobj->v_Types.veclen || pobj->v_Names.veclen != pobj->v_isArray.veclen
+			|| pobj->v_Names.veclen != pobj->v_Lengths.veclen || pobj->v_Names.veclen != pobj->v_Descriptions.veclen){
 		return UA_STATUSCODE_BADNODEATTRIBUTESINVALID;
 	}
-	*numberofArgs = pobj->v_inputNames.veclen;
+	*numberofArgs = pobj->v_Names.veclen;
 	*argList = UA_Array_new(*numberofArgs, &UA_TYPES[UA_TYPES_ARGUMENT]);
 	if(!*argList){
 		return UA_STATUSCODE_BADOUTOFMEMORY;
@@ -108,21 +108,21 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_getCallInputArgs(
 	/*	iterate over all argument descriptions	*/
 	for(iterator = 0; iterator < *numberofArgs; iterator++){
 		/*	name	*/
-		(*argList)[iterator].name = UA_String_fromChars(pobj->v_inputNames.value[iterator]);
+		(*argList)[iterator].name = UA_String_fromChars(pobj->v_Names.value[iterator]);
 		if(!(*argList)[iterator].name.data){
 			return UA_STATUSCODE_BADOUTOFMEMORY;
 		}
 		/*	dataType	*/
-		(*argList)[iterator].dataType = ov_varTypeToNodeId(pobj->v_inputTypes.value[iterator]);
+		(*argList)[iterator].dataType = ov_varTypeToNodeId(pobj->v_Types.value[iterator]);
 		/*	ValueRank and Array Dimensions	*/
-		if(pobj->v_inputIsArray.value[iterator]){
+		if(pobj->v_isArray.value[iterator]){
 			(*argList)[iterator].valueRank = 1;
 			(*argList)[iterator].arrayDimensionsSize = 1;
 			(*argList)[iterator].arrayDimensions = UA_Array_new(1, &UA_TYPES[UA_TYPES_UINT32]);
 			if(!(*argList)[iterator].arrayDimensions){
 				return UA_STATUSCODE_BADOUTOFMEMORY;
 			}
-			(*argList)[iterator].arrayDimensions[0] = pobj->v_inputLengths.value[iterator];
+			(*argList)[iterator].arrayDimensions[0] = pobj->v_Lengths.value[iterator];
 
 		} else {
 			(*argList)[iterator].valueRank = -1;
@@ -133,7 +133,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_getCallInputArgs(
 		if(!(*argList)[iterator].description.locale.data){
 			return UA_STATUSCODE_BADOUTOFMEMORY;
 		}
-		(*argList)[iterator].description.text = UA_String_fromChars(pobj->v_inputDescriptions.value[iterator]);
+		(*argList)[iterator].description.text = UA_String_fromChars(pobj->v_Descriptions.value[iterator]);
 		if(!(*argList)[iterator].description.text.data){
 			return UA_STATUSCODE_BADOUTOFMEMORY;
 		}
@@ -141,59 +141,6 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_getCallInputArgs(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_getCallOutputArgs(
-	OV_INSTPTR_opcua_methodNode pobj,
-	size_t	*numberofArgs,
-	UA_Argument	**argList
-) {
-	OV_UINT iterator = 0;
-	if(!numberofArgs || !argList){
-		return UA_STATUSCODE_BADINVALIDARGUMENT;
-	}
-	if(pobj->v_outputNames.veclen != pobj->v_outputTypes.veclen || pobj->v_outputNames.veclen != pobj->v_outputIsArray.veclen
-			|| pobj->v_outputNames.veclen != pobj->v_outputLengths.veclen || pobj->v_outputNames.veclen != pobj->v_outputDescriptions.veclen){
-		return UA_STATUSCODE_BADNODEATTRIBUTESINVALID;
-	}
-	*numberofArgs = pobj->v_outputNames.veclen;
-	*argList = UA_Array_new(*numberofArgs, &UA_TYPES[UA_TYPES_ARGUMENT]);
-	if(!*argList){
-		return UA_STATUSCODE_BADOUTOFMEMORY;
-	}
-	/*	iterate over all argument descriptions	*/
-	for(iterator = 0; iterator < *numberofArgs; iterator++){
-		/*	name	*/
-		(*argList)[iterator].name = UA_String_fromChars(pobj->v_outputNames.value[iterator]);
-		if(!(*argList)[iterator].name.data){
-			return UA_STATUSCODE_BADOUTOFMEMORY;
-		}
-		/*	dataType	*/
-		(*argList)[iterator].dataType = ov_varTypeToNodeId(pobj->v_outputTypes.value[iterator]);
-		/*	ValueRank and Array Dimensions	*/
-		if(pobj->v_outputIsArray.value[iterator]){
-			(*argList)[iterator].valueRank = 1;
-			(*argList)[iterator].arrayDimensionsSize = 1;
-			(*argList)[iterator].arrayDimensions = UA_Array_new(1, &UA_TYPES[UA_TYPES_UINT32]);
-			if(!(*argList)[iterator].arrayDimensions){
-				return UA_STATUSCODE_BADOUTOFMEMORY;
-			}
-			(*argList)[iterator].arrayDimensions[0] = pobj->v_outputLengths.value[iterator];
-
-		} else {
-			(*argList)[iterator].valueRank = -1;
-			(*argList)[iterator].arrayDimensionsSize = 0;
-		}
-		/*	description	*/
-		(*argList)[iterator].description.locale = UA_String_fromChars("en");
-		if(!(*argList)[iterator].description.locale.data){
-			return UA_STATUSCODE_BADOUTOFMEMORY;
-		}
-		(*argList)[iterator].description.text = UA_String_fromChars(pobj->v_outputDescriptions.value[iterator]);
-		if(!(*argList)[iterator].description.text.data){
-			return UA_STATUSCODE_BADOUTOFMEMORY;
-		}
-	}
-    return OV_ERR_OK;
-}
 
 OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_call(
 	void *ensHandle,

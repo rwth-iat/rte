@@ -178,48 +178,47 @@ LIBRARY opcua
 		call		:	C_FUNCTION	<UA_FNC_CALL>;
 		packCallArgs	:	C_FUNCTION	<UA_FNC_PACKARGS>;
 		unpackCallArgs	:	C_FUNCTION	<UA_FNC_UNPACKARGS>;
-		getCallInputArgs		:	C_FUNCTION	<UA_FNC_GETCALLARGS>;
-		getCallOutputArgs		:	C_FUNCTION	<UA_FNC_GETCALLARGS>;
+		getCallArgs		:	C_FUNCTION	<UA_FNC_GETCALLARGS>;
 	END_OPERATIONS;	
 	END_CLASS;
+	
+	CLASS arguments			:	CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT	=	"Contains variables to define arguments for a methodNode.";
+		VARIABLES
+			Names	[]	:	STRING
+				HAS_GET_ACCESSOR
+				COMMENT	=	"Names of input arguments in order";
+			Types	[]	:	INT
+				HAS_GET_ACCESSOR
+				COMMENT	=	"Types of input arguments in order";
+			isArray	[]	:	BOOL
+				HAS_GET_ACCESSOR
+				COMMENT	=	"TRUE means the corresponding argument is an array";
+			Lengths	[]	:	UINT
+				HAS_GET_ACCESSOR
+				COMMENT	=	"Length of the array for the corresponding argument";
+			Descriptions	[]	:	STRING
+				HAS_GET_ACCESSOR
+				COMMENT	=	"Descriptions of input arguments in order";
+		END_VARIABLES;
+		OPERATIONS
+			getaccess		:	C_FUNCTION	<OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
 	
 	CLASS methodNode		:	CLASS ov/domain
 		COMMENT	=	"Represents a methodNode in UA. Contains a callable method and some variables to define its signature.";
 		VARIABLES
 			callable	:	BOOL
 				COMMENT	=	"TRUE: Method can be called. FALSE method cannot be called (not initialized or whatever)"
-				INITIALVALUE	=	FALSE;
-			inputNames	[]	:	STRING
-				HAS_GET_ACCESSOR
-				COMMENT	=	"Names of input arguments in order";
-			inputTypes	[]	:	INT
-				HAS_GET_ACCESSOR
-				COMMENT	=	"Types of input arguments in order";
-			inputIsArray	[]	:	BOOL
-				HAS_GET_ACCESSOR
-				COMMENT	=	"TRUE means the corresponding argument is an array";
-			inputLengths	[]	:	UINT
-				HAS_GET_ACCESSOR
-				COMMENT	=	"Length of the array for the corresponding argument";
-			inputDescriptions	[]	:	STRING
-				HAS_GET_ACCESSOR
-				COMMENT	=	"Descriptions of input arguments in order";
-			outputNames	[]	:	STRING
-				HAS_GET_ACCESSOR
-				COMMENT	=	"Names of output arguments in order";
-			outputTypes	[]	:	INT
-				HAS_GET_ACCESSOR
-				COMMENT	=	"Types of output arguments in order";
-			outputIsArray	[]	:	BOOL
-				HAS_GET_ACCESSOR
-				COMMENT	=	"TRUE means the corresponding argument is an array";
-			outputLengths	[]	:	UINT
-				HAS_GET_ACCESSOR
-				COMMENT	=	"Length of the array for the corresponding argument";
-			outputDescriptions	[]	:	STRING
-				HAS_GET_ACCESSOR
-				COMMENT	=	"Descriptions of output arguments in order";							
+				INITIALVALUE	=	FALSE;			
 		END_VARIABLES;
+		PARTS
+			InputArguments	:	CLASS opcua/arguments;
+			OutputArguments	:	CLASS opcua/arguments;
+		END_PARTS;
 		OPERATIONS
 			preCallMethod	:	C_FUNCTION	<UA_FNC_PRECALLMETHOD>;	/*	use to check state of object before arg-parsing - probably not needed often	*/
 			calledMethod	:	C_FUNCTION	<UA_FNC_CALLEDMETHOD> IS_ABSTRACT;	/*	called method	*/
@@ -229,6 +228,7 @@ LIBRARY opcua
 	END_CLASS;
 	
 	CLASS testMethodNode	:	CLASS	opcua/methodNode
+		IS_INSTANTIABLE;
 		OPERATIONS
 			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 			calledMethod	:	C_FUNCTION	<UA_FNC_CALLEDMETHOD>;

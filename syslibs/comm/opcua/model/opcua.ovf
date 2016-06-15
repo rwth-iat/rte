@@ -109,7 +109,7 @@ typedef OV_RESULT UA_FNC_UNPACKARGS(
 );
 	
 typedef UA_StatusCode UA_FNC_GETCALLARGS(
-	OV_INSTPTR_opcua_methodNode pobj,
+	OV_INSTPTR_opcua_arguments pobj,
 	size_t	*numberofArgs,
 	UA_Argument	**argList
 );

@@ -213,7 +213,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						*nodeClass = UA_NODECLASS_VARIABLETYPE;
 					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
 						*nodeClass = UA_NODECLASS_REFERENCETYPE;
-					} else {
+					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						*nodeClass = UA_NODECLASS_VARIABLE;
+					}else {
 						*nodeClass = UA_NODECLASS_OBJECT;
 					}
 					break;
@@ -568,6 +570,15 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						readNodesResults[indices[i]].status = ov_AnyToVariant(ov_variable_initialvalue_get(Ov_StaticPtrCast(ov_variable,pobj)), &(readNodesResults[indices[i]].value));
 						readNodesResults[indices[i]].hasStatus = UA_TRUE;
 						readNodesResults[indices[i]].hasValue = UA_TRUE;
+					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						size_t numberofArgs = 0;
+						UA_Argument *argArray = NULL;
+						readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getCallArgs((OV_INSTPTR_opcua_arguments)pobj, &numberofArgs, &argArray);
+						readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_ARGUMENT];
+						readNodesResults[indices[i]].value.arrayLength = numberofArgs;
+						readNodesResults[indices[i]].value.data = argArray;
+						readNodesResults[indices[i]].hasStatus = UA_TRUE;
+						readNodesResults[indices[i]].hasValue = UA_TRUE;
 					} else {
 						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 					}
@@ -627,6 +638,17 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 							*dataType = ov_varTypeToNodeId(ov_variable_vartype_get(Ov_StaticPtrCast(ov_variable,pobj)));
 						}
+					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						dataType = UA_NodeId_new();
+						if(!dataType){
+							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+						} else {
+							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							dataType->identifierType = UA_NODEIDTYPE_NUMERIC;
+							dataType->namespaceIndex = 0;
+							dataType->identifier.numeric = 296;
+						}
+						break;
 					} else {
 						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 						break;
@@ -720,6 +742,15 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 							}
 							break;
 						}
+					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						valueRank = UA_Int32_new();
+						if(!valueRank){
+							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+							break;
+						}
+						*valueRank = 1;	/*	one dimension	*/
+						readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+						break;
 					} else {
 						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 						break;
@@ -825,6 +856,8 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 								break;
 							}
 						}
+					}else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						arrayDimensions = 0;
 					} else {
 						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 						break;
@@ -964,7 +997,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 		}
 		break;
 		/****************************************************************************************************************************************************
-		 * EXECUTABLE and USEREXECUTABLE - methods have it. methods (or operations) in ov are generally not accessable from the outside world
+		 * EXECUTABLE and USEREXECUTABLE - methods have it. methods (or operations) in ov are generally not accessible from the outside world
 		 * 		despite services are accessible from the outside world, they are specific instances of user-defined classes and not part of the ov-metamodel
 		 ****************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_EXECUTABLE:
@@ -985,6 +1018,25 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					break;
 				}
 				*executable = UA_FALSE;
+				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
+				readNodesResults[indices[i]].value.arrayLength = 0;
+				readNodesResults[indices[i]].value.data = executable;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
+				readNodesResults[indices[i]].value.arrayDimensions = NULL;
+				readNodesResults[indices[i]].hasStatus = UA_TRUE;
+				readNodesResults[indices[i]].hasValue = UA_TRUE;
+				ov_memstack_unlock();
+			} else if(path.elements[path.size-1].elemtype == OV_ET_OBJECT && Ov_CanCastTo(opcua_methodNode, path.elements[path.size-1].pobj)){
+				/*	we have a methodNode	*/
+				OV_INSTPTR_opcua_methodNode pMethod = Ov_StaticPtrCast(opcua_methodNode, path.elements[path.size-1].pobj);
+				executable = UA_Boolean_new();
+				if(!executable){
+					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+					ov_memstack_unlock();
+					break;
+				}
+				*executable = pMethod->v_callable;
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
 				readNodesResults[indices[i]].value.arrayLength = 0;

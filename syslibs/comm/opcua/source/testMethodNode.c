@@ -33,6 +33,11 @@ OV_DLLFNCEXPORT OV_RESULT opcua_testMethodNode_constructor(
     */
     OV_INSTPTR_opcua_testMethodNode pinst = Ov_StaticPtrCast(opcua_testMethodNode, pobj);
     OV_RESULT    result;
+    OV_STRING  names [] = {"test1", "test2"};
+    OV_STRING descriptions [] = {"baldiblubb", "bladiblubb"};
+    OV_INT types [] = {OV_VT_INT, OV_VT_STRING};
+    OV_BOOL isArray [] = {FALSE, FALSE};
+    OV_UINT lengths [] = {0, 0};
 
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
@@ -40,9 +45,46 @@ OV_DLLFNCEXPORT OV_RESULT opcua_testMethodNode_constructor(
          return result;
 
     /* do what */
-
-
-
+    result = Ov_SetDynamicVectorValue(&(pinst->p_InputArguments.v_Names), names, 2, STRING);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_OutputArguments.v_Names), names, 2, STRING);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_InputArguments.v_Descriptions), descriptions, 2, STRING);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_OutputArguments.v_Descriptions), descriptions, 2, STRING);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_InputArguments.v_Types), types, 2, INT);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_OutputArguments.v_Types), types, 2, INT);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_InputArguments.v_Lengths), lengths, 2, UINT);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_OutputArguments.v_Lengths), lengths, 2, UINT);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_InputArguments.v_isArray), isArray, 2, BOOL);
+    if(Ov_Fail(result)){
+    	return result;
+    }
+    result = Ov_SetDynamicVectorValue(&(pinst->p_OutputArguments.v_isArray), isArray, 2, BOOL);
+    if(Ov_Fail(result)){
+    	return result;
+    }
     return OV_ERR_OK;
 }
 

@@ -25,86 +25,6 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_STRING* opcua_methodNode_inputNames_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_inputNames.veclen;
-    return pobj->v_inputNames.value;
-}
-
-OV_DLLFNCEXPORT OV_INT* opcua_methodNode_inputTypes_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_inputTypes.veclen;
-    return pobj->v_inputTypes.value;
-}
-
-OV_DLLFNCEXPORT OV_BOOL* opcua_methodNode_inputIsArray_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_inputIsArray.veclen;
-    return pobj->v_inputIsArray.value;
-}
-
-OV_DLLFNCEXPORT OV_UINT* opcua_methodNode_inputLengths_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_inputLengths.veclen;
-    return pobj->v_inputLengths.value;
-}
-
-OV_DLLFNCEXPORT OV_STRING* opcua_methodNode_inputDescriptions_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_inputDescriptions.veclen;
-    return pobj->v_inputDescriptions.value;
-}
-
-OV_DLLFNCEXPORT OV_STRING* opcua_methodNode_outputNames_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_outputNames.veclen;
-    return pobj->v_outputNames.value;
-}
-
-OV_DLLFNCEXPORT OV_INT* opcua_methodNode_outputTypes_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_outputTypes.veclen;
-    return pobj->v_outputTypes.value;
-}
-
-OV_DLLFNCEXPORT OV_BOOL* opcua_methodNode_outputIsArray_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_outputIsArray.veclen;
-    return pobj->v_outputIsArray.value;
-}
-
-OV_DLLFNCEXPORT OV_UINT* opcua_methodNode_outputLengths_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_outputLengths.veclen;
-    return pobj->v_outputLengths.value;
-}
-
-OV_DLLFNCEXPORT OV_STRING* opcua_methodNode_outputDescriptions_get(
-    OV_INSTPTR_opcua_methodNode          pobj,
-    OV_UINT *pveclen
-) {
-    *pveclen = pobj->v_outputDescriptions.veclen;
-    return pobj->v_outputDescriptions.value;
-}
-
 OV_DLLFNCEXPORT OV_RESULT opcua_methodNode_preCallMethod(
 	OV_INSTPTR_opcua_methodNode pobj
 ) {
@@ -153,7 +73,7 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_methodNode_getaccess(
     	}
     	return access;
     case OV_ET_VARIABLE:	/*	everything up to callable is READWRITE; after that its managed by ov_obect (everything with accessors is accessible)	*/
-    	if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo) && pelem->elemunion.pvar->v_offset <= offsetof(OV_INST_opcua_methodNode,v_callable)) {
+    	if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo) ) {
     		if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
     			return OV_AC_NONE;
     		else

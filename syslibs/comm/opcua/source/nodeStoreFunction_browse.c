@@ -127,6 +127,7 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 	//	this is mapped to ov/containment
 	if((browseDescription->browseDirection == UA_BROWSEDIRECTION_FORWARD)
 			|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
+		OV_INSTPTR_opcua_methodNode pMethod = Ov_DynamicPtrCast(opcua_methodNode, pNode->pobj);
 		// children
 		childPart.elemtype = OV_ET_NONE;
 		childPart.pobj = NULL;
@@ -149,10 +150,15 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 			maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&childPart, browseDescription->nodeClassMask, &access);
 			if(maskMatch && (access & OV_AC_READ)){
 				if(childPart.elemtype == OV_ET_OBJECT || childPart.elemtype == OV_ET_VARIABLE || childPart.elemtype == OV_ET_MEMBER){
-					if(fillDescription){
-						*statusCode = opcua_nsOv_fillReferenceDescription(&childPart, 0, UA_NODEID_Organizes, resultMask, &(dst[*refCount]));
+					/*	exclude the Arguments-parts of method nodes	*/
+					if(!pMethod || childPart.elemtype != OV_ET_OBJECT
+							|| (ov_string_compare(childPart.pobj->v_identifier, "InputArguments") != OV_STRCMP_EQUAL
+									&& ov_string_compare(childPart.pobj->v_identifier, "OutputArguments") != OV_STRCMP_EQUAL)){
+						if(fillDescription){
+							*statusCode = opcua_nsOv_fillReferenceDescription(&childPart, 0, UA_NODEID_Organizes, resultMask, &(dst[*refCount]));
+						}
+						(*refCount)++;
 					}
-					(*refCount)++;
 				}
 			}
 			ov_element_getnextpart(pNode, &childPart, OV_ET_OBJECT | OV_ET_VARIABLE);
@@ -341,12 +347,62 @@ UA_Int32 getReferenceDescriptions_HasProperty(const UA_BrowseDescription* browse
 	if((browseDescription->browseDirection == UA_BROWSEDIRECTION_FORWARD)
 			|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
 		if(pNode->elemtype == OV_ET_OBJECT){
+			/*	check if it is a methodNode	*/
+			OV_INSTPTR_opcua_methodNode pMethod = Ov_DynamicPtrCast(opcua_methodNode, pNode->pobj);
+			if(pMethod){
+				/*	add the hasproperty references for arguments	*/
+				referencedElement.elemtype = OV_ET_NONE;
+				ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
+				while(referencedElement.elemtype != OV_ET_NONE){
+					maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+					if(maskMatch && (access & OV_AC_READ)){
+						/*	check if we are handling the InputArguments or OutputArguments part, if so add reference hasProperty	*/
+						if(ov_string_compare(referencedElement.pobj->v_identifier, "InputArguments") == OV_STRCMP_EQUAL
+								|| ov_string_compare(referencedElement.pobj->v_identifier, "OutputArguments") == OV_STRCMP_EQUAL){
+							if(fillDescription){
+								/*	standard description fill	*/
+								*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasProperty, resultMask, &(dst[*refCount]));
+								/*	specific modifications	*/
+								if(resultMask & (1<<2)){
+									(dst[*refCount]).nodeClass = UA_NODECLASS_VARIABLE;
+								}
+								if(resultMask & (1<<5)){
+									(dst[*refCount]).typeDefinition.nodeId.namespaceIndex = 0;
+									(dst[*refCount]).typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+									(dst[*refCount]).typeDefinition.nodeId.identifier.numeric = 296;
+								}
+							}
+							(*refCount)++;
+						}
+					}
+					ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
+				}
+			}
+
 			referencedElement.elemtype = OV_ET_NONE;
 			ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
 			while(referencedElement.elemtype != OV_ET_NONE){
 				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
+						if(pMethod && referencedElement.elemtype == OV_ET_OBJECT){
+							/*	check if we are handling the InputArguments or OutputArguments part, if so add reference hasProperty	*/
+							if(ov_string_compare(referencedElement.pobj->v_identifier, "InputArguments") == OV_STRCMP_EQUAL
+									|| ov_string_compare(referencedElement.pobj->v_identifier, "OutputArguments") == OV_STRCMP_EQUAL){
+								/*	standard description fill	*/
+								*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasProperty, resultMask, &(dst[*refCount]));
+								/*	specific modifications	*/
+								if(resultMask & (1<<2)){
+									dst->nodeClass = UA_NODECLASS_VARIABLE;
+								}
+								if(resultMask & (1<<5)){
+									dst->typeDefinition.nodeId.namespaceIndex = 0;
+									dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+									dst->typeDefinition.nodeId.identifier.numeric = 296;
+								}
+								(*refCount)++;
+							}
+						}
 						*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasProperty, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
@@ -394,16 +450,22 @@ UA_Int32 getReferenceDescriptions_HasComponent(const UA_BrowseDescription* brows
 	//	maps to variables in objects
 	if((browseDescription->browseDirection == UA_BROWSEDIRECTION_FORWARD)
 			|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
+		OV_INSTPTR_opcua_methodNode pMethod = Ov_DynamicPtrCast(opcua_methodNode, pNode->pobj);
 		if(pNode->elemtype == OV_ET_OBJECT){
 			referencedElement.elemtype = OV_ET_NONE;
 			ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
 			while(referencedElement.elemtype != OV_ET_NONE){
 				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
-					if(fillDescription){
-						*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasComponent, resultMask, &(dst[*refCount]));
+					/*	exclude the Arguments-parts of method nodes	*/
+					if(!pMethod || referencedElement.elemtype != OV_ET_OBJECT
+							|| (ov_string_compare(referencedElement.pobj->v_identifier, "InputArguments") != OV_STRCMP_EQUAL
+									&& ov_string_compare(referencedElement.pobj->v_identifier, "OutputArguments") != OV_STRCMP_EQUAL)){
+						if(fillDescription){
+							*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasComponent, resultMask, &(dst[*refCount]));
+						}
+						(*refCount)++;
 					}
-					(*refCount)++;
 				}
 				ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
 			}
@@ -582,6 +644,12 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_browseNodes(
 		}
 		pNode = &(nodePath.elements[nodePath.size - 1]);
 		KS_logfile_debug(("nodeIdentifier: %s", pNode->pobj->v_identifier));
+		if(Ov_GetClassPtr(pNode->pobj) == pclass_opcua_arguments){
+			browseResults[indices[index]].references = UA_EMPTY_ARRAY_SENTINEL;
+			browseResults[indices[index]].referencesSize = 0;
+			ov_memstack_unlock();
+			continue;
+		}
 		for(j=0; j<UAREFS_LENGTH; j++){
 			uaReferences[j] = 0;
 		}
