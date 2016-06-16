@@ -1,6 +1,11 @@
 #include "ov.ovm"
 #include "ksbase.ovm"
 
+/*
+	TODO: introduce a uaReference class to mirror references to outside namespaces and adapt the browse functions accordingly (return nodeId should suffice, I hope)
+*/
+
+
 LIBRARY opcua
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
 	AUTHOR    = "Lars Evertz, Florian Palm";
@@ -169,6 +174,7 @@ LIBRARY opcua
 	OPERATIONS
 		addNodes		:	C_FUNCTION	<UA_FNC_ADDNODES>;
 		addReferences	:	C_FUNCTION	<UA_FNC_ADDREFERENCES>;
+		addOneWayReference	:	C_FUNCTION	<UA_FNC_ADDONEWAYREFERENCE>;
 		deleteNodes		:	C_FUNCTION	<UA_FNC_DELETENODES>;
 		deleteReferences :	C_FUNCTION	<UA_FNC_DELETEREFERENCES>;
 		readNodes		:	C_FUNCTION	<UA_FNC_READNODES>;
@@ -179,6 +185,7 @@ LIBRARY opcua
 		packCallArgs	:	C_FUNCTION	<UA_FNC_PACKARGS>;
 		unpackCallArgs	:	C_FUNCTION	<UA_FNC_UNPACKARGS>;
 		getCallArgs		:	C_FUNCTION	<UA_FNC_GETCALLARGS>;
+		setCallArgs		:	C_FUNCTION	<UA_FNC_SETCALLARGS>;
 	END_OPERATIONS;	
 	END_CLASS;
 	
@@ -228,7 +235,29 @@ LIBRARY opcua
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS testMethodNode	:	CLASS	opcua/methodNode
+	/*	the following nodes are just test-functions.
+		this library seems to need at least one instantiable methodNode child to compile.
+		So these ones are the ones that can serve as
+		1. TESTS for heavier variable types as arguments
+		2. functions having at least a bit of a purpose
+		Beware the shutDown function -> maybe it's better to delete  someday for security reasons ;-)	*/
+	CLASS getServerconfig	:	CLASS	opcua/methodNode
+		IS_INSTANTIABLE;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			calledMethod	:	C_FUNCTION	<UA_FNC_CALLEDMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS setServerconfig	:	CLASS	opcua/methodNode
+		IS_INSTANTIABLE;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			calledMethod	:	C_FUNCTION	<UA_FNC_CALLEDMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS shutDown	:	CLASS	opcua/methodNode
 		IS_INSTANTIABLE;
 		OPERATIONS
 			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;

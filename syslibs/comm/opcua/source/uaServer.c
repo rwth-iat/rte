@@ -197,6 +197,7 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	//Services on Namespace OV (1)
 	opcua_pUaServer->v_nodeStoreNsOV.addNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_addNodes;
 	opcua_pUaServer->v_nodeStoreNsOV.addReferences = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_addReferences;
+	opcua_pUaServer->v_nodeStoreNsOV.addOneWayReference = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_addOneWayReference;
 	opcua_pUaServer->v_nodeStoreNsOV.browseNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_browseNodes;
 	opcua_pUaServer->v_nodeStoreNsOV.deleteNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_deleteNodes;
 	opcua_pUaServer->v_nodeStoreNsOV.deleteReferences = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_deleteReferences;

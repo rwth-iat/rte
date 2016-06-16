@@ -392,6 +392,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 
 /*
  * resolves a path. if a variable is encountered it will NOT go on from there
+ * BIG TODO: consolidate with brose to reduce code-overlap and enhance maintainability
  */
 OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_translateBrowsePathsToNodeIDs(
 	void *ensHandle,
@@ -442,7 +443,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_translateBrowsePathsToNodeIDs(
 		/*	fill in DAta	*/
 		nodeCount = 0;
 		browsePathResults[indices[index]].statusCode = opcua_WalkPath(&(browsePath[indices[index]].relativePath), levelCounter, startingNode, &nodeCount, UA_TRUE, browsePathResults[indices[index]].targets);
-
+		ov_memstack_unlock();
 	}
     return UA_STATUSCODE_GOOD;
 }

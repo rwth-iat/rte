@@ -55,3 +55,14 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_addReferences(
 ) {
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
+
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_addOneWayReference(
+	void *ensHandle,
+	const UA_AddReferencesItem *item
+) {
+	/*	to make the stack happy
+	 * this one is needed for cross-ns references. It only creates one side.
+	 * on the long run, we need a uaReference object to handle these reference-sides
+	 * within the ov-system 	*/
+    return UA_STATUSCODE_GOOD;
+}

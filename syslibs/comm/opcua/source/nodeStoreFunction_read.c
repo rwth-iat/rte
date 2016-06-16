@@ -526,6 +526,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 			eventNotifer = UA_Byte_new();
 			if(!eventNotifer){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				ov_memstack_unlock();
 				break;
 			}
 			*eventNotifer = 0;

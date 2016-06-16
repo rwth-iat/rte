@@ -73,7 +73,7 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_arguments_getaccess(
     /*    
     *   local variables
     */
-	OV_INSTPTR_opcua_arguments pinst = Ov_StaticPtrCast(opcua_arguments, pobj);
+	//OV_INSTPTR_opcua_arguments pinst = Ov_StaticPtrCast(opcua_arguments, pobj);
 	switch(pelem->elemtype) {
 	case OV_ET_VARIABLE:	/*	we only have readOnly variables	*/
 		if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo) ) {

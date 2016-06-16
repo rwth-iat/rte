@@ -94,6 +94,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_writeNodes(
 						ov_memstack_lock();
 						writeNodesResults[indices[index]] = ov_VariantToAny(&(writeValues[indices[index]].value.value), &value);
 						if(writeNodesResults[indices[index]] != UA_STATUSCODE_GOOD){
+							ov_memstack_unlock();
 							break;
 						}
 						if(writeValues[indices[index]].value.hasSourceTimestamp == UA_TRUE){
@@ -116,6 +117,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_writeNodes(
 								tempTimeSpanVec.value = ov_memstack_alloc(value.value.valueunion.val_double_vec.veclen * sizeof(OV_TIME_SPAN));
 								if(!tempTimeSpanVec.value){
 									writeNodesResults[indices[index]] = UA_STATUSCODE_BADOUTOFMEMORY;
+									ov_memstack_unlock();
 									break;
 								}
 								tempTimeSpanVec.veclen = value.value.valueunion.val_double_vec.veclen;

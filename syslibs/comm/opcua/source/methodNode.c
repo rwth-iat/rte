@@ -43,11 +43,12 @@ OV_DLLFNCEXPORT OV_RESULT opcua_methodNode_calledMethod(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_methodNode_postCallMethod(
-	OV_INSTPTR_opcua_methodNode pobj
+OV_DLLFNCEXPORT void opcua_methodNode_postCallMethod(
+	OV_INSTPTR_opcua_methodNode pobj,
+	OV_BOOL methodFailed
 ) {
 
-    return OV_ERR_OK;
+    return;
 }
 
 OV_DLLFNCEXPORT OV_ACCESS opcua_methodNode_getaccess(

@@ -286,12 +286,14 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			value = tempBoolArray;
 			pVariant->type = &UA_TYPES[UA_TYPES_BOOLEAN];
 			if(!pVariant->data){
+				ov_memstack_unlock();
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_BOOLEAN]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -303,6 +305,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_BYTE];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_BYTE]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -315,6 +318,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_DOUBLE];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -327,6 +331,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_INT32];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -338,6 +343,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_INT32];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -350,6 +356,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_FLOAT];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_FLOAT]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -376,6 +383,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_STRING];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_STRING]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -397,6 +405,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_DATETIME];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DATETIME]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -419,6 +428,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_DOUBLE];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
@@ -431,12 +441,14 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 			pVariant->type = &UA_TYPES[UA_TYPES_UINT32];
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_UINT32]);
 			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		default:
+			ov_memstack_unlock();
 			UA_Variant_deleteMembers(pVariant);
 			return ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 		}
@@ -447,7 +459,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 
 UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 	OV_UINT iterator = 0;
-	if(pVariant->arrayLength != 0 && pVariant->data > UA_EMPTY_ARRAY_SENTINEL){
+	if(pVariant->arrayLength == 0 && pVariant->data > UA_EMPTY_ARRAY_SENTINEL){
 		/*	scalar values	*/
 		if(pVariant->type == &UA_TYPES[UA_TYPES_BOOLEAN]){
 			pAny->value.vartype = OV_VT_BOOL;
