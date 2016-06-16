@@ -1,6 +1,6 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
- * Git-Revision: v0.2.0-RC1-76-g407dce3-dirty
+ * Git-Revision: v0.2.0-RC1-106-g4989ea2
  */
 
 /*
@@ -2870,8 +2870,8 @@ void Service_DeleteSubscriptions(UA_Server *server, UA_Session *session,
 #ifdef UA_ENABLE_SUBSCRIPTIONS
 
 typedef struct UA_Client_NotificationsAckNumber_s {
-    UA_SubscriptionAcknowledgement subAck;
     LIST_ENTRY(UA_Client_NotificationsAckNumber_s) listEntry;
+    UA_SubscriptionAcknowledgement subAck;
 } UA_Client_NotificationsAckNumber;
 
 typedef struct UA_Client_MonitoredItem_s {
@@ -12898,6 +12898,9 @@ static const UA_NodeId nodeIdHasProperty = {
 static const UA_NodeId nodeIdOrganizes = {
     .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
     .identifier.numeric = UA_NS0ID_ORGANIZES};
+static const UA_NodeId nodeIdFolderType = {
+    .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
+    .identifier.numeric = UA_NS0ID_FOLDERTYPE};
 
 static const UA_ExpandedNodeId expandedNodeIdBaseDataVariabletype = {
     .nodeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
@@ -13054,6 +13057,18 @@ addNodeInternal(UA_Server *server, UA_Node *node, const UA_NodeId parentNodeId,
     UA_RCU_LOCK();
     Service_AddNodes_existing(server, &adminSession, node, &parentNodeId,
                               &referenceTypeId, &UA_NODEID_NULL, NULL, &res);
+    UA_RCU_UNLOCK();
+    return res;
+}
+
+static UA_AddNodesResult
+addNodeInternalWithType(UA_Server *server, UA_Node *node, const UA_NodeId parentNodeId,
+                        const UA_NodeId referenceTypeId, const UA_NodeId typeIdentifier) {
+    UA_AddNodesResult res;
+    UA_AddNodesResult_init(&res);
+    UA_RCU_LOCK();
+    Service_AddNodes_existing(server, &adminSession, node, &parentNodeId,
+                              &referenceTypeId, &typeIdentifier, NULL, &res);
     UA_RCU_UNLOCK();
     return res;
 }
@@ -13592,29 +13607,34 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     UA_NodeStore_insert(server->nodestore, (UA_Node*)baseobjtype);
     UA_RCU_UNLOCK();
 
+    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER), nodeIdHasTypeDefinition,
+                         UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
+
+    addObjectTypeNode(server, "FolderType", UA_NS0ID_FOLDERTYPE, UA_NS0ID_BASEOBJECTTYPE, UA_NS0ID_HASSUBTYPE);
+
     UA_ObjectNode *objects = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)objects, "Objects");
     objects->nodeId.identifier.numeric = UA_NS0ID_OBJECTSFOLDER;
-    addNodeInternal(server, (UA_Node*)objects, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER),
-                    nodeIdOrganizes);
+    addNodeInternalWithType(server, (UA_Node*)objects, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER),
+                            nodeIdOrganizes, nodeIdFolderType);
 
     UA_ObjectNode *types = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)types, "Types");
     types->nodeId.identifier.numeric = UA_NS0ID_TYPESFOLDER;
-    addNodeInternal(server, (UA_Node*)types, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER),
-                    nodeIdOrganizes);
+    addNodeInternalWithType(server, (UA_Node*)types, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER),
+                            nodeIdOrganizes, nodeIdFolderType);
 
     UA_ObjectNode *views = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)views, "Views");
     views->nodeId.identifier.numeric = UA_NS0ID_VIEWSFOLDER;
-    addNodeInternal(server, (UA_Node*)views, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER),
-                    nodeIdOrganizes);
+    addNodeInternalWithType(server, (UA_Node*)views, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER),
+                            nodeIdOrganizes, nodeIdFolderType);
 
     UA_ObjectNode *referencetypes = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)referencetypes, "ReferenceTypes");
     referencetypes->nodeId.identifier.numeric = UA_NS0ID_REFERENCETYPESFOLDER;
-    addNodeInternal(server, (UA_Node*)referencetypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER),
-                    nodeIdOrganizes);
+    addNodeInternalWithType(server, (UA_Node*)referencetypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER),
+                            nodeIdOrganizes, nodeIdFolderType);
 
     addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_REFERENCETYPESFOLDER), nodeIdOrganizes,
                          UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_REFERENCES), true);
@@ -13626,25 +13646,11 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     UA_ObjectNode *objecttypes = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)objecttypes, "ObjectTypes");
     objecttypes->nodeId.identifier.numeric = UA_NS0ID_OBJECTTYPESFOLDER;
-    addNodeInternal(server, (UA_Node*)objecttypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER),
-                    nodeIdOrganizes);
+    addNodeInternalWithType(server, (UA_Node*)objecttypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER),
+                            nodeIdOrganizes, nodeIdFolderType);
     /* Link in the bootstrapped baseobjecttype */
     addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTTYPESFOLDER), nodeIdOrganizes,
                          UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE), true);
-
-    addObjectTypeNode(server, "FolderType", UA_NS0ID_FOLDERTYPE, UA_NS0ID_BASEOBJECTTYPE, UA_NS0ID_HASSUBTYPE);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTTYPESFOLDER), nodeIdHasTypeDefinition,
-                         UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER), nodeIdHasTypeDefinition,
-                         UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER), nodeIdHasTypeDefinition,
-                         UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER), nodeIdHasTypeDefinition,
-                         UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_VIEWSFOLDER), nodeIdHasTypeDefinition,
-                         UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_REFERENCETYPESFOLDER),
-                         nodeIdHasTypeDefinition, UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
 
     addObjectTypeNode(server, "ServerType", UA_NS0ID_SERVERTYPE, UA_NS0ID_BASEOBJECTTYPE, UA_NS0ID_HASSUBTYPE);
     addObjectTypeNode(server, "ServerDiagnosticsType", UA_NS0ID_SERVERDIAGNOSTICSTYPE,
@@ -13663,9 +13669,8 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     UA_ObjectNode *datatypes = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)datatypes, "DataTypes");
     datatypes->nodeId.identifier.numeric = UA_NS0ID_DATATYPESFOLDER;
-    addNodeInternal(server, (UA_Node*)datatypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER), nodeIdOrganizes);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_DATATYPESFOLDER), nodeIdHasTypeDefinition,
-                         UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
+    addNodeInternalWithType(server, (UA_Node*)datatypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER),
+                            nodeIdOrganizes, nodeIdFolderType);
 
     addDataTypeNode(server, "BaseDataType", UA_NS0ID_BASEDATATYPE, UA_NS0ID_DATATYPESFOLDER);
     addDataTypeNode(server, "Boolean", UA_NS0ID_BOOLEAN, UA_NS0ID_BASEDATATYPE);
@@ -13703,10 +13708,8 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     UA_ObjectNode *variabletypes = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)variabletypes, "VariableTypes");
     variabletypes->nodeId.identifier.numeric = UA_NS0ID_VARIABLETYPESFOLDER;
-    addNodeInternal(server, (UA_Node*)variabletypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER),
-                    nodeIdOrganizes);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_VARIABLETYPESFOLDER),
-                         nodeIdHasTypeDefinition, UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
+    addNodeInternalWithType(server, (UA_Node*)variabletypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER),
+                            nodeIdOrganizes, nodeIdFolderType);
     addVariableTypeNode_organized(server, "BaseVariableType", UA_NS0ID_BASEVARIABLETYPE,
                                   UA_NS0ID_VARIABLETYPESFOLDER, true);
     addVariableTypeNode_subtype(server, "BaseDataVariableType", UA_NS0ID_BASEDATAVARIABLETYPE,
@@ -13721,9 +13724,8 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     UA_ObjectNode *eventtypes = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)eventtypes, "EventTypes");
     eventtypes->nodeId.identifier.numeric = UA_NS0ID_EVENTTYPESFOLDER;
-    addNodeInternal(server, (UA_Node*)eventtypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER), nodeIdOrganizes);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_EVENTTYPESFOLDER), nodeIdHasTypeDefinition,
-            UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
+    addNodeInternalWithType(server, (UA_Node*)eventtypes, UA_NODEID_NUMERIC(0, UA_NS0ID_TYPESFOLDER),
+                            nodeIdOrganizes, nodeIdFolderType);
 #endif
 
 #ifdef UA_ENABLE_GENERATE_NAMESPACE0
@@ -13738,10 +13740,8 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     UA_ObjectNode *servernode = UA_NodeStore_newObjectNode();
     copyNames((UA_Node*)servernode, "Server");
     servernode->nodeId.identifier.numeric = UA_NS0ID_SERVER;
-    addNodeInternal(server, (UA_Node*)servernode, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-                    nodeIdOrganizes);
-    addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER), nodeIdHasTypeDefinition,
-                         UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_SERVERTYPE), true);
+    addNodeInternalWithType(server, (UA_Node*)servernode, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+                            nodeIdOrganizes, UA_NODEID_NUMERIC(0, UA_NS0ID_SERVERTYPE));
 
     UA_VariableNode *namespaceArray = UA_NodeStore_newVariableNode();
     copyNames((UA_Node*)namespaceArray, "NamespaceArray");
@@ -14727,7 +14727,7 @@ processRequest(UA_SecureChannel *channel, UA_Server *server, UA_UInt32 requestId
     /* Set an anonymous, inactive session for services that need no session */
     UA_Session anonymousSession;
     if(!session) {
-        if(sessionRequired || !UA_NodeId_isNull(&requestHeader->authenticationToken)) {
+        if(sessionRequired) {
             UA_LOG_INFO_CHANNEL(server->config.logger, channel, "Service request %i without a valid session",
                                 requestTypeId.identifier.numeric - UA_ENCODINGOFFSET_BINARY);
             sendError(channel, msg, requestPos, responseType, requestId, UA_STATUSCODE_BADSESSIONIDINVALID);
@@ -15750,6 +15750,10 @@ static void completeMessages(UA_Server *server, UA_Job *job) {
     }
     if(realloced)
         job->type = UA_JOBTYPE_BINARYMESSAGE_ALLOCATED;
+
+    /* discard the job if message is empty - also no leak is possible here */
+    if(job->job.binaryMessage.message.length == 0)
+        job->type = UA_JOBTYPE_NOTHING;
 }
 
 UA_UInt16 UA_Server_run_iterate(UA_Server *server, UA_Boolean waitInternal) {
@@ -15872,6 +15876,17 @@ void UA_SecureChannelManager_deleteMembers(UA_SecureChannelManager *cm) {
     }
 }
 
+static void removeSecureChannel(UA_SecureChannelManager *cm, channel_list_entry *entry){
+    LIST_REMOVE(entry, pointers);
+    UA_SecureChannel_deleteMembersCleanup(&entry->channel);
+#ifndef UA_ENABLE_MULTITHREADING
+    cm->currentChannelCount--;
+    UA_free(entry);
+#else
+    cm->currentChannelCount = uatomic_add_return(&cm->currentChannelCount, -1);
+    UA_Server_delayedFree(cm->server, entry);
+#endif
+}
 /* remove channels that were not renewed or who have no connection attached */
 void UA_SecureChannelManager_cleanupTimedOut(UA_SecureChannelManager *cm, UA_DateTime now) {
     channel_list_entry *entry, *temp;
@@ -15881,19 +15896,25 @@ void UA_SecureChannelManager_cleanupTimedOut(UA_SecureChannelManager *cm, UA_Dat
             (UA_DateTime)(entry->channel.securityToken.revisedLifetime * UA_MSEC_TO_DATETIME);
         if(timeout < now || !entry->channel.connection) {
             UA_LOG_DEBUG_CHANNEL(cm->server->config.logger, (&entry->channel), "SecureChannel has timed out");
-            LIST_REMOVE(entry, pointers);
-            UA_SecureChannel_deleteMembersCleanup(&entry->channel);
-#ifndef UA_ENABLE_MULTITHREADING
-            cm->currentChannelCount--;
-            UA_free(entry);
-#else
-            cm->currentChannelCount = uatomic_add_return(&cm->currentChannelCount, -1);
-            UA_Server_delayedFree(cm->server, entry);
-#endif
+            removeSecureChannel(cm, entry);
         } else if(entry->channel.nextSecurityToken.tokenId > 0) {
             UA_SecureChannel_revolveTokens(&entry->channel);
         }
     }
+}
+
+/* remove the first channel that has no session attached */
+static UA_Boolean purgeFirstChannelWithoutSession(UA_SecureChannelManager *cm) {
+    channel_list_entry *entry;
+    LIST_FOREACH(entry, &cm->channels, pointers) {
+        if(LIST_EMPTY(&(entry->channel.sessions))){
+            UA_LOG_DEBUG_CHANNEL(cm->server->config.logger, (&entry->channel), "Channel was purged since maxSecureChannels was reached and channel had no session attached");
+            removeSecureChannel(cm, entry);
+            UA_assert(entry != LIST_FIRST(&cm->channels));
+            return true;
+        }
+    }
+    return false;
 }
 
 UA_StatusCode
@@ -15902,8 +15923,11 @@ UA_SecureChannelManager_open(UA_SecureChannelManager *cm, UA_Connection *conn,
                              UA_OpenSecureChannelResponse *response) {
     if(request->securityMode != UA_MESSAGESECURITYMODE_NONE)
         return UA_STATUSCODE_BADSECURITYMODEREJECTED;
-    if(cm->currentChannelCount >= cm->server->config.maxSecureChannels)
+    //check if there exists a free SC, otherwise try to purge one SC without a session
+    //the purge has been introduced to pass CTT, it is not clear what strategy is expected here
+    if(cm->currentChannelCount >= cm->server->config.maxSecureChannels && !purgeFirstChannelWithoutSession(cm)){
         return UA_STATUSCODE_BADOUTOFMEMORY;
+    }
     channel_list_entry *entry = UA_malloc(sizeof(channel_list_entry));
     if(!entry)
         return UA_STATUSCODE_BADOUTOFMEMORY;
@@ -16568,14 +16592,19 @@ getVariableNodeDataType(UA_Server *server, UA_Session *session,
                         const UA_VariableNode *vn, UA_DataValue *v) {
     UA_StatusCode retval = UA_STATUSCODE_GOOD;
     if(vn->valueSource == UA_VALUESOURCE_VARIANT) {
-        forceVariantSetScalar(&v->value, &vn->value.variant.value.type->typeId,
-                              &UA_TYPES[UA_TYPES_NODEID]);
+        if(vn->value.variant.value.type) {
+            forceVariantSetScalar(&v->value, &vn->value.variant.value.type->typeId, &UA_TYPES[UA_TYPES_NODEID]);
+        } else {
+            UA_NodeId nullid;
+            UA_NodeId_init(&nullid);
+            UA_Variant_setScalarCopy(&v->value, &nullid, &UA_TYPES[UA_TYPES_NODEID]);
+        }
     } else {
+        /* Read from the datasource to see the data type */
         if(!vn->value.dataSource.read) {
             UA_LOG_DEBUG_SESSION(server->config.logger, session, "DataSource cannot be read in ReadRequest");
             return UA_STATUSCODE_BADINTERNALERROR;
         }
-        /* Read from the datasource to see the data type */
         UA_DataValue val;
         UA_DataValue_init(&val);
         val.hasValue = false; // always assume we are not given a value by userspace
@@ -16619,10 +16648,11 @@ static const UA_String binEncoding = {sizeof("DefaultBinary")-1, (UA_Byte*)"Defa
 /* clang complains about unused variables */
 // static const UA_String xmlEncoding = {sizeof("DefaultXml")-1, (UA_Byte*)"DefaultXml"};
 
-/** Reads a single attribute from a node in the nodestore. */
+/* Reads a single attribute from a node in the nodestore */
 void Service_Read_single(UA_Server *server, UA_Session *session,
                          const UA_TimestampsToReturn timestamps,
                          const UA_ReadValueId *id, UA_DataValue *v) {
+    UA_LOG_DEBUG_SESSION(server->config.logger, session, "Read the attribute %i", id->attributeId);
     if(id->dataEncoding.name.length > 0 &&
        !UA_String_equal(&binEncoding, &id->dataEncoding.name)) {
            v->hasStatus = true;
@@ -16630,7 +16660,7 @@ void Service_Read_single(UA_Server *server, UA_Session *session,
            return;
     }
 
-    //index range for a non-value
+    /* index range for a non-value */
     if(id->indexRange.length > 0 && id->attributeId != UA_ATTRIBUTEID_VALUE){
         v->hasStatus = true;
         v->status = UA_STATUSCODE_BADINDEXRANGENODATA;
@@ -18737,7 +18767,7 @@ walkBrowsePath(UA_Server *server, UA_Session *session, const UA_Node *node, cons
     UA_NodeId *reftypes = NULL;
     size_t reftypes_count = 1; // all_refs or no subtypes => 1
     UA_Boolean all_refs = false;
-    if(UA_NodeId_isNull(&elem->referenceTypeId))
+    if(UA_NodeId_isNull(&elem->referenceTypeId) || UA_NodeId_isEmptyString(&elem->referenceTypeId) || UA_NodeId_isEmptyGUID(&elem->referenceTypeId) || UA_NodeId_isEmptyByteString(&elem->referenceTypeId))
         all_refs = true;
     else if(!elem->includeSubtypes)
         reftypes = (UA_NodeId*)(uintptr_t)&elem->referenceTypeId; // ptr magic due to const cast
@@ -18807,6 +18837,15 @@ void Service_TranslateBrowsePathsToNodeIds_single(UA_Server *server, UA_Session 
         return;
     }
         
+    //relativePath elements should not have an empty targetName
+    for(size_t i=0;i<path->relativePath.elementsSize;i++){
+        UA_QualifiedName *qname = &(path->relativePath.elements[i].targetName);
+        if(UA_QualifiedName_isNull(qname)){
+            result->statusCode = UA_STATUSCODE_BADBROWSENAMEINVALID;
+            return;
+        }
+    }
+
     size_t arraySize = 10;
     result->targets = UA_malloc(sizeof(UA_BrowsePathTarget) * arraySize);
     if(!result->targets) {
@@ -18821,10 +18860,12 @@ void Service_TranslateBrowsePathsToNodeIds_single(UA_Server *server, UA_Session 
         result->targets = NULL;
         return;
     }
+
     result->statusCode = walkBrowsePath(server, session, firstNode, &path->relativePath, 0,
                                         &result->targets, &arraySize, &result->targetsSize);
     if(result->targetsSize == 0 && result->statusCode == UA_STATUSCODE_GOOD)
         result->statusCode = UA_STATUSCODE_BADNOMATCH;
+
     if(result->statusCode != UA_STATUSCODE_GOOD) {
         UA_Array_delete(result->targets, result->targetsSize, &UA_TYPES[UA_TYPES_BROWSEPATHTARGET]);
         result->targets = NULL;
@@ -21061,7 +21102,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
             sub->state = UA_SUBSCRIPTIONSTATE_LATE;
         } else {
             sub->currentLifetimeCount++;
-            if(sub->currentLifetimeCount >= sub->lifeTimeCount) {
+            if(sub->currentLifetimeCount > sub->lifeTimeCount) {
                 UA_LOG_INFO(server->config.logger, UA_LOGCATEGORY_SERVER,
                     "Session %u | Subscription %u | End of lifetime for subscription",
                             sub->session->authenticationToken.identifier.numeric, sub->subscriptionID);
@@ -21070,6 +21111,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
         }
         return;
     }
+
     SIMPLEQ_REMOVE_HEAD(&sub->session->responseQueue, listEntry);
     UA_PublishResponse *response = &pre->response;
     UA_UInt32 requestId = pre->requestId;
@@ -21519,6 +21561,12 @@ void Service_DeleteSubscriptions(UA_Server *server, UA_Session *session,
                                  const UA_DeleteSubscriptionsRequest *request,
                                  UA_DeleteSubscriptionsResponse *response) {
     UA_LOG_DEBUG_SESSION(server->config.logger, session, "Processing DeleteSubscriptionsRequest");
+
+    if(request->subscriptionIdsSize == 0){
+        response->responseHeader.serviceResult = UA_STATUSCODE_BADNOTHINGTODO;
+        return;
+    }
+
     response->results = UA_malloc(sizeof(UA_StatusCode) * request->subscriptionIdsSize);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
@@ -21780,7 +21828,7 @@ UA_Client_Subscriptions_removeMonitoredItem(UA_Client *client, UA_UInt32 subscri
 }
 
 static void
-UA_Client_processPublishResponse(UA_Client *client, UA_PublishResponse *response) {
+UA_Client_processPublishResponse(UA_Client *client, UA_PublishRequest *request, UA_PublishResponse *response) {
     if(response->responseHeader.serviceResult != UA_STATUSCODE_GOOD)
         return;
 
@@ -21797,29 +21845,37 @@ UA_Client_processPublishResponse(UA_Client *client, UA_PublishResponse *response
                  "Processing a publish response on subscription %u with %u notifications",
                  sub->SubscriptionID, response->notificationMessage.notificationDataSize);
 
-    /* Check if the server has acknowledged any of our ACKS */
-    // TODO: The acks should be attached to the subscription
-    UA_Client_NotificationsAckNumber *ack, *tmpAck;
-    size_t i = 0;
-    LIST_FOREACH_SAFE(ack, &client->pendingNotificationsAcks, listEntry, tmpAck) {
-        if(response->results[i] == UA_STATUSCODE_GOOD ||
-           response->results[i] == UA_STATUSCODE_BADSEQUENCENUMBERUNKNOWN) {
-            LIST_REMOVE(ack, listEntry);
-            UA_free(ack);
+    /* Check if the server has acknowledged any of the sent ACKs */
+    for(size_t i = 0; i < response->resultsSize && i < request->subscriptionAcknowledgementsSize; i++) {
+        /* remove also acks that are unknown to the server */
+        if(response->results[i] != UA_STATUSCODE_GOOD &&
+           response->results[i] != UA_STATUSCODE_BADSEQUENCENUMBERUNKNOWN)
+            continue;
+
+        /* Remove the ack from the list */
+        UA_SubscriptionAcknowledgement *orig_ack = &request->subscriptionAcknowledgements[i];
+        UA_Client_NotificationsAckNumber *ack;
+        LIST_FOREACH(ack, &client->pendingNotificationsAcks, listEntry) {
+            if(ack->subAck.subscriptionId == orig_ack->subscriptionId &&
+               ack->subAck.sequenceNumber == orig_ack->sequenceNumber) {
+                LIST_REMOVE(ack, listEntry);
+                UA_free(ack);
+                UA_assert(ack != LIST_FIRST(&client->pendingNotificationsAcks));
+                break;
+            }
         }
-        i++;
     }
-    
+
     /* Process the notification messages */
     UA_NotificationMessage *msg = &response->notificationMessage;
     for(size_t k = 0; k < msg->notificationDataSize; k++) {
         if(msg->notificationData[k].encoding != UA_EXTENSIONOBJECT_DECODED)
             continue;
-        
+
         /* Currently only dataChangeNotifications are supported */
         if(msg->notificationData[k].content.decoded.type != &UA_TYPES[UA_TYPES_DATACHANGENOTIFICATION])
             continue;
-        
+
         UA_DataChangeNotification *dataChangeNotification = msg->notificationData[k].content.decoded.data;
         for(size_t j = 0; j < dataChangeNotification->monitoredItemsSize; j++) {
             UA_MonitoredItemNotification *mitemNot = &dataChangeNotification->monitoredItems[j];
@@ -21836,9 +21892,9 @@ UA_Client_processPublishResponse(UA_Client *client, UA_PublishResponse *response
                              mitemNot->clientHandle, sub->SubscriptionID);
         }
     }
-    
+
     /* Add to the list of pending acks */
-    tmpAck = UA_malloc(sizeof(UA_Client_NotificationsAckNumber));
+    UA_Client_NotificationsAckNumber *tmpAck = UA_malloc(sizeof(UA_Client_NotificationsAckNumber));
     tmpAck->subAck.sequenceNumber = msg->sequenceNumber;
     tmpAck->subAck.subscriptionId = sub->SubscriptionID;
     LIST_INSERT_HEAD(&client->pendingNotificationsAcks, tmpAck, listEntry);
@@ -21849,7 +21905,7 @@ UA_StatusCode UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *clie
         return UA_STATUSCODE_BADSERVERNOTCONNECTED;
 
     UA_Boolean moreNotifications = true;
-    while(moreNotifications == true) {
+    while(moreNotifications) {
         UA_PublishRequest request;
         UA_PublishRequest_init(&request);
         request.subscriptionAcknowledgementsSize = 0;
@@ -21864,7 +21920,7 @@ UA_StatusCode UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *clie
                 return UA_STATUSCODE_GOOD;
         }
         
-        int index = 0 ;
+        int index = 0;
         LIST_FOREACH(ack, &client->pendingNotificationsAcks, listEntry) {
             request.subscriptionAcknowledgements[index].sequenceNumber = ack->subAck.sequenceNumber;
             request.subscriptionAcknowledgements[index].subscriptionId = ack->subAck.subscriptionId;
@@ -21872,7 +21928,7 @@ UA_StatusCode UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *clie
         }
         
         UA_PublishResponse response = UA_Client_Service_publish(client, request);
-        UA_Client_processPublishResponse(client, &response);
+        UA_Client_processPublishResponse(client, &request, &response);
         moreNotifications = response.moreNotifications;
         
         UA_PublishResponse_deleteMembers(&response);
@@ -22564,9 +22620,9 @@ void Logger_Stdout(UA_LogLevel level, UA_LogCategory category, const char *msg, 
 /*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541/plugins/ua_config_standard.c" ***********************************/
 
 
-#define MANUFACTURER_NAME "open62541.org"
+#define MANUFACTURER_NAME "open62541"
 #define PRODUCT_NAME "open62541 OPC UA Server"
-#define PRODUCT_URI "urn:unconfigured:open62541"
+#define PRODUCT_URI "http://open62541.org"
 #define APPLICATION_NAME "open62541-based OPC UA Application"
 #define APPLICATION_URI "urn:unconfigured:application"
 
@@ -22586,8 +22642,8 @@ const UA_ServerConfig UA_ServerConfig_standard = {
         .productUri = UA_STRING_STATIC(PRODUCT_URI),
         .manufacturerName = UA_STRING_STATIC(MANUFACTURER_NAME),
         .productName = UA_STRING_STATIC(PRODUCT_NAME),
-        .softwareVersion = UA_STRING_STATIC("0"),
-        .buildNumber = UA_STRING_STATIC("0"),
+        .softwareVersion = UA_STRING_STATIC(UA_GIT_COMMIT_ID),
+        .buildNumber = UA_STRING_STATIC(__DATE__ " " __TIME__),
         .buildDate = 0 },
     .applicationDescription = {
         .applicationUri = UA_STRING_STATIC(APPLICATION_URI),
@@ -22612,7 +22668,7 @@ const UA_ServerConfig UA_ServerConfig_standard = {
     .usernamePasswordLoginsSize = 2,
 
     /* Limits for SecureChannels */
-    .maxSecureChannels = 100,
+    .maxSecureChannels = 40,
     .maxSecurityTokenLifetime = 10 * 60 * 1000, /* 10 minutes */
 
     /* Limits for Sessions */
