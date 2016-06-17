@@ -167,7 +167,7 @@ OV_DLLFNCEXPORT OV_RESULT opcuafb_Read_Execute_set(
 					Ov_SetAnyValue(&pinst->v_Variable, NULL);
 					//set length and type
 					Ov_SetDynamicVectorLength(&pinst->v_Variable.value.valueunion.val_string_vec, ReadResponse.results[0].value.arrayLength, STRING);
-					for(UA_UInt32 iterator = 0; iterator < ReadResponse.results[0].value.arrayLength;iterator++){
+					for(size_t iterator = 0; iterator < ReadResponse.results[0].value.arrayLength;iterator++){
 						pinst->v_Variable.value.valueunion.val_string = Ov_DbMalloc(((UA_String*)ReadResponse.results[0].value.data)[iterator].length);
 						if(pinst->v_Variable.value.valueunion.val_string != NULL){
 							memcpy(((UA_String*)ReadResponse.results[0].value.data)[iterator].data, pinst->v_Variable.value.valueunion.val_string_vec.value[iterator], ((UA_String*)ReadResponse.results[0].value.data)[iterator].length);
