@@ -99,9 +99,9 @@ OV_DLLFNCEXPORT OV_RESULT opcuafb_Connect_Execute_set(
 		return OV_ERR_OK;
 	}
 
-	pinst->v_Client = UA_Client_new(UA_ClientConfig_standard, NULL);
+	pinst->v_Client = UA_Client_new(UA_ClientConfig_standard);
 	//todo use TCPchannel which is a part of us
-	retval = UA_Client_connect(pinst->v_Client, ClientNetworkLayerTCP_connect, pinst->v_ServerEndpointUrl);
+	retval = UA_Client_connect(pinst->v_Client, pinst->v_ServerEndpointUrl);
 	if(retval != UA_STATUSCODE_GOOD) {
 		if(pinst->v_Client != NULL){
 			UA_Client_delete(pinst->v_Client);
@@ -153,8 +153,7 @@ OV_DLLFNCEXPORT void opcuafb_Connect_typemethod(
 		//internal error
 		return;
 	}
-	//will be UA_Client_manuallyRenewSecureChannel in a new release
-	UA_Client_renewSecureChannel(pinst->v_Client);
+	UA_Client_manuallyRenewSecureChannel(pinst->v_Client);
 
 	return;
 }

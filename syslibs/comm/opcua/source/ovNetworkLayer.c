@@ -60,7 +60,8 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     OV_INSTPTR_opcua_ovNetworkLayer	pNetworkLayer	=	NULL;
     OV_VTBLPTR_opcua_ovNetworkLayer	pVtblNetworkLayer	=	NULL;
     OV_RESULT							result;
-	UA_ServerNetworkLayer nl;
+	OV_STRING	tempstr = NULL;
+    UA_ServerNetworkLayer nl;
     memset(&nl, 0, sizeof(UA_ServerNetworkLayer));
 
     result = Ov_CreateIDedObject(opcua_ovNetworkLayer, pNetworkLayer, Ov_StaticPtrCast(ov_domain, Ov_GetFirstChild(ov_instantiation, pclass_opcua_uaServer)), "ovNetworkLayer");
@@ -72,9 +73,13 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     char hostname[256];
     gethostname(hostname, 255);
     if(*hostname){
-    UA_String_copyprintf("opc.tcp://%s:%d", &(pNetworkLayer->v_discoveryUrlInternal), hostname, port);
+    	ov_string_print(&tempstr, "opc.tcp://%s:%d", hostname, port);
     } else {
-    	UA_String_copyprintf("opc.tcp://%s:%d", &(pNetworkLayer->v_discoveryUrlInternal), "localhost", port);
+    	ov_string_print(&tempstr, "opc.tcp://%s:%d", "localhost", port);
+    }
+    if(tempstr){
+    	pNetworkLayer->v_discoveryUrlInternal = UA_String_fromChars(tempstr);
+    	ov_string_setvalue(&tempstr, NULL);
     }
     //UA_String_copy(&(pNetworkLayer->v_discoveryUrlInternal), &nl.discoveryUrl);
 
@@ -83,11 +88,11 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
 //    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for message buffer.");
 //    	return nl;
 //    }
-    UA_ByteString_newMembers(&(pNetworkLayer->v_sendBuffer), conf.maxMessageSize);
-    if(!pNetworkLayer->v_sendBuffer.data){
-    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for send buffer.");
-    	return nl;
-    }
+//    UA_ByteString_newMembers(&(pNetworkLayer->v_sendBuffer), conf.maxMessageSize);
+//    if(!pNetworkLayer->v_sendBuffer.data){
+//    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for send buffer.");
+//    	return nl;
+//    }
     pNetworkLayer->v_localConfig = conf;
     Ov_GetVTablePtr(opcua_ovNetworkLayer, pVtblNetworkLayer, pNetworkLayer);
     nl.handle = pNetworkLayer;
@@ -262,8 +267,8 @@ OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
 	counter = 0;
 	Ov_ForEachChild(opcua_networkLayerToConnection, this, pConnection){
 		if(pConnection->v_workNext == TRUE){
-			newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE;
-			UA_ByteString_newMembers(&(newJobs[counter].job.binaryMessage.message), pConnection->v_buffer.length);
+			newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE_NETWORKLAYER;
+			UA_ByteString_allocBuffer(&(newJobs[counter].job.binaryMessage.message), pConnection->v_buffer.length);
 			memcpy(newJobs[counter].job.binaryMessage.message.data, pConnection->v_buffer.data, pConnection->v_buffer.length);
 			ksbase_free_KSDATAPACKET(&(pConnection->v_buffer));
 			newJobs[counter].job.binaryMessage.connection = pConnection->v_connection;
@@ -276,7 +281,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
 		newJobs[counter].type = UA_JOBTYPE_DETACHCONNECTION;
 		newJobs[counter].job.closeConnection = this->v_connsToClose[closeConnCounter];
 		counter++;
-		newJobs[counter].type = UA_JOBTYPE_DELAYEDMETHODCALL;
+		newJobs[counter].type = UA_JOBTYPE_METHODCALL_DELAYED;
 		newJobs[counter].job.methodCall.method = FreeConnection;
 		newJobs[counter].job.methodCall.data = this->v_connsToClose[closeConnCounter];
 		counter++;
@@ -307,7 +312,7 @@ OV_DLLFNCEXPORT void opcua_ovNetworkLayer_delete(
 	struct UA_ServerNetworkLayer *nl
 ) {
 //	Ov_HeapFree(pOVNetworkLayer->v_messageBuffer.data);
-	UA_ByteString_deleteMembers(&(pOVNetworkLayer->v_sendBuffer));
+//	UA_ByteString_deleteMembers(&(pOVNetworkLayer->v_sendBuffer));
 	Ov_DeleteObject(pOVNetworkLayer);
 	pOVNetworkLayer = NULL;
     return;

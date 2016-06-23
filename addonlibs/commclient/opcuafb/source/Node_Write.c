@@ -184,7 +184,7 @@ OV_DLLFNCEXPORT OV_RESULT opcuafb_Write_Execute_set(
 		break;
 	}
 
-	WriteResponse = UA_Client_write(pConnect->v_Client, &WriteRequest);
+	WriteResponse = UA_Client_Service_write(pConnect->v_Client, WriteRequest);
 	if(WriteResponse.responseHeader.serviceResult != UA_STATUSCODE_GOOD){
 		pinst->v_Error = FALSE;
 		pinst->v_ErrorID = 0;

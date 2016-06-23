@@ -1,6 +1,11 @@
 #include "ov.ovm"
 #include "ksbase.ovm"
 
+/*
+	TODO: introduce a uaReference class to mirror references to outside namespaces and adapt the browse functions accordingly (return nodeId should suffice, I hope)
+*/
+
+
 LIBRARY opcua
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
 	AUTHOR    = "Lars Evertz, Florian Palm";
@@ -11,32 +16,34 @@ LIBRARY opcua
 		IS_INSTANTIABLE;
 		COMMENT = "Holds all necessarry data for a server - singleton. can only be instantiated once";
 		VARIABLES
+			NameSpaceIndex			:	UINT
+				COMMENT	=	"Index of the OV-namespace as assigned on init.";
 			LoginEnableAnonymous	:	BOOL
 				HAS_ACCESSORS
-				IS_DERIVED;
+				INITIALVALUE	=	TRUE;
  			LoginEnableUsernamePassword	:	BOOL
  				HAS_ACCESSORS
- 				IS_DERIVED;
+ 				INITIALVALUE	=	TRUE;
     		LoginUsernames []	:	STRING
-    			HAS_ACCESSORS
-    			IS_DERIVED;
+    			HAS_ACCESSORS;
     		LoginPasswords []	:	STRING
-    			HAS_ACCESSORS
-    			IS_DERIVED;
+    			HAS_ACCESSORS;
     		LoginLoginsCount	:	UINT
-    			HAS_GET_ACCESSOR
-    			IS_DERIVED;
+    			IS_DERIVED
+    			HAS_GET_ACCESSOR;
 			ApplicationURI	:	STRING
 				HAS_ACCESSORS
-				IS_DERIVED;
+				INITIALVALUE	=	"urn:acplt:open62541:acplt-iec2541Server";
     		ApplicationName	:	STRING
     			HAS_ACCESSORS
-    			IS_DERIVED;
+    			INITIALVALUE	=	"acplt-opcua";
 			serverConfig		:	C_TYPE	<UA_ServerConfig>
 				COMMENT =	"Stack-specific representation of server configuration";
 			serverData			:	C_TYPE	<OV_PTR_UA_Server>
 				COMMENT	=	"Stack-specific representation of server data";
 			nodeStoreNsOV		:	C_TYPE	<UA_ExternalNodeStore>;
+			networkLayerOv		:	C_TYPE	<UA_ServerNetworkLayer>
+				COMMENT	=	"Network layer within th ov-server";
 		END_VARIABLES;	
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -128,8 +135,8 @@ LIBRARY opcua
 			INITIALVALUE	=	0;
 	/*	messageBuffer	:	C_TYPE	<UA_ByteString>
 			COMMENT		=	"Receive buffer for messages (central buffer minimizes allocations)";*/
-		sendBuffer		:	C_TYPE	<UA_ByteString>
-			COMMENT			=	"Buffer for messages to send. Static.";	
+	/*	sendBuffer		:	C_TYPE	<UA_ByteString>
+			COMMENT			=	"Buffer for messages to send. Static.";	*/	
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -167,13 +174,95 @@ LIBRARY opcua
 	OPERATIONS
 		addNodes		:	C_FUNCTION	<UA_FNC_ADDNODES>;
 		addReferences	:	C_FUNCTION	<UA_FNC_ADDREFERENCES>;
+		addOneWayReference	:	C_FUNCTION	<UA_FNC_ADDONEWAYREFERENCE>;
 		deleteNodes		:	C_FUNCTION	<UA_FNC_DELETENODES>;
 		deleteReferences :	C_FUNCTION	<UA_FNC_DELETEREFERENCES>;
 		readNodes		:	C_FUNCTION	<UA_FNC_READNODES>;
 		writeNodes		:	C_FUNCTION	<UA_FNC_WRITENODES>;
 		browseNodes		:	C_FUNCTION	<UA_FNC_BROWSENODES>;
 		translateBrowsePathsToNodeIDs	:	C_FUNCTION	<UA_FNC_TRANSLATEBROWSEPATHSTONODEIDS>;
+		call		:	C_FUNCTION	<UA_FNC_CALL>;
+		packCallArgs	:	C_FUNCTION	<UA_FNC_PACKARGS>;
+		unpackCallArgs	:	C_FUNCTION	<UA_FNC_UNPACKARGS>;
+		getCallArgs		:	C_FUNCTION	<UA_FNC_GETCALLARGS>;
+		setCallArgs		:	C_FUNCTION	<UA_FNC_SETCALLARGS>;
 	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS arguments			:	CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT	=	"Contains variables to define arguments for a methodNode.";
+		VARIABLES
+			Names	[]	:	STRING
+				HAS_GET_ACCESSOR
+				COMMENT	=	"Names of input arguments in order";
+			Types	[]	:	INT
+				HAS_GET_ACCESSOR
+				COMMENT	=	"Types of input arguments in order";
+			isArray	[]	:	BOOL
+				HAS_GET_ACCESSOR
+				COMMENT	=	"TRUE means the corresponding argument is an array";
+			Lengths	[]	:	UINT
+				HAS_GET_ACCESSOR
+				COMMENT	=	"Length of the array for the corresponding argument";
+			Descriptions	[]	:	STRING
+				HAS_GET_ACCESSOR
+				COMMENT	=	"Descriptions of input arguments in order";
+		END_VARIABLES;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			getaccess		:	C_FUNCTION	<OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	CLASS methodNode		:	CLASS ov/domain
+		COMMENT	=	"Represents a methodNode in UA. Contains a callable method and some variables to define its signature.";
+		VARIABLES
+			callable	:	BOOL
+				COMMENT	=	"TRUE: Method can be called. FALSE method cannot be called (not initialized or whatever)"
+				INITIALVALUE	=	FALSE;			
+		END_VARIABLES;
+		PARTS
+			InputArguments	:	CLASS opcua/arguments;
+			OutputArguments	:	CLASS opcua/arguments;
+		END_PARTS;
+		OPERATIONS
+			preCallMethod	:	C_FUNCTION	<UA_FNC_PRECALLMETHOD>;	/*	use to check state of object before arg-parsing - probably not needed often	*/
+			calledMethod	:	C_FUNCTION	<UA_FNC_CALLEDMETHOD> IS_ABSTRACT;	/*	called method	*/
+			postCallMethod	:	C_FUNCTION	<UA_FNC_POSTCALLMETHOD>;/*	use to tidy up everything - probably not needed often	*/
+			getaccess		:	C_FUNCTION	<OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/*	the following nodes are just test-functions.
+		this library seems to need at least one instantiable methodNode child to compile.
+		So these ones are the ones that can serve as
+		1. TESTS for heavier variable types as arguments
+		2. functions having at least a bit of a purpose
+		Beware the shutDown function -> maybe it's better to delete  someday for security reasons ;-)	*/
+	CLASS getServerconfig	:	CLASS	opcua/methodNode
+		IS_INSTANTIABLE;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			calledMethod	:	C_FUNCTION	<UA_FNC_CALLEDMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS setServerconfig	:	CLASS	opcua/methodNode
+		IS_INSTANTIABLE;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			calledMethod	:	C_FUNCTION	<UA_FNC_CALLEDMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS shutDown	:	CLASS	opcua/methodNode
+		IS_INSTANTIABLE;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			calledMethod	:	C_FUNCTION	<UA_FNC_CALLEDMETHOD>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	/**

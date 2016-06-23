@@ -23,6 +23,11 @@ typedef UA_Int32 UA_FNC_ADDREFERENCES(
 	UA_DiagnosticInfo *diagnosticInfos
 );
 
+typedef UA_Int32 UA_FNC_ADDONEWAYREFERENCE(
+	void *ensHandle,
+	const UA_AddReferencesItem *item
+);
+
 typedef UA_Int32 UA_FNC_DELETENODES(
 	void *ensHandle,
 	const UA_RequestHeader *requestHeader,
@@ -83,6 +88,62 @@ typedef UA_Int32 UA_FNC_TRANSLATEBROWSEPATHSTONODEIDS(
 	UA_UInt32 indicesSize, 
 	UA_BrowsePathResult *browsePathResults, 
 	UA_DiagnosticInfo *diagnosticInfos
+);
+
+typedef UA_Int32 UA_FNC_CALL(
+	void *ensHandle,
+	const UA_RequestHeader *requestHeader,
+	UA_CallMethodRequest *request,
+	UA_UInt32 *indices,
+	UA_UInt32 indicesSize,
+	UA_CallMethodResult *results
+);
+
+/*	Pack a list of OV_ANYs of length numberofArgs into a list of UA_Variants of same size. UA_Variants are alloced within the UA server	*/
+typedef OV_RESULT UA_FNC_PACKARGS(
+	OV_UINT	numberofArgs,
+	const OV_ANY *argList,
+	UA_Variant **packedArgList
+);
+
+/*	Unpack a list of UA_Variants of length numberofArgs into a list of OV_ANYs of same size. OV_ANYs are alloced in the memstack.	*/
+typedef OV_RESULT UA_FNC_UNPACKARGS(
+	OV_UINT numberofArgs,
+	const UA_Variant *packedArgList,
+	OV_ANY	*argList
+);
+	
+typedef UA_StatusCode UA_FNC_GETCALLARGS(
+	OV_INSTPTR_opcua_arguments pobj,
+	OV_UINT	*numberofArgs,
+	UA_Argument	**argList
+);
+
+typedef OV_RESULT UA_FNC_SETCALLARGS(
+	OV_INSTPTR_opcua_arguments pobj,
+	OV_UINT	numberofArgs,
+	OV_STRING* names,
+    OV_STRING* descriptions,
+    OV_INT* types,
+    OV_BOOL* isArray,
+    OV_UINT* lengths	
+);
+		
+typedef OV_RESULT  UA_FNC_PRECALLMETHOD(
+	OV_INSTPTR_opcua_methodNode pobj
+);
+
+typedef OV_RESULT   UA_FNC_CALLEDMETHOD(
+	OV_INSTPTR_opcua_methodNode pobj,
+	size_t numberofInputArgs,
+	const UA_Variant *packedInputArgList,
+	size_t numberofOutputArgs,
+	UA_Variant **packedOutputArgList
+);
+
+typedef void  UA_FNC_POSTCALLMETHOD(
+	OV_INSTPTR_opcua_methodNode pobj,
+	OV_BOOL methodFailed
 );
 
 typedef UA_StatusCode UA_FNC_STARTNL(

@@ -31,6 +31,7 @@
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 
+extern OV_INSTPTR_opcua_uaServer opcua_pUaServer;
 
 OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 		void *ensHandle,
@@ -54,6 +55,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 
 
 	for(OV_UINT i = 0; i<indicesSize;i++){
+		KS_logfile_debug(("readNodes: iteration %u, index %u, attributeId %u...", i, indices[i], readValueIds[indices[i]].attributeId));
 		switch(readValueIds[indices[i]].attributeId){
 		/*******************************************************************************************************************************************
 		 * NODEID - every type of node has one. we return the full canonical path to this node (including a part's name)
@@ -85,7 +87,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 				switch(path.elements[path.size-1].elemtype){
 				case OV_ET_OBJECT:
 					nodeId->identifier.string = UA_String_fromChars(ov_path_getcanonicalpath(pobj, 2));
-					if(nodeId->identifier.string.length == -1){
+					if(nodeId->identifier.string.length == 0 && nodeId->identifier.string.data != UA_EMPTY_ARRAY_SENTINEL){
 						readNodesResults[indices[i]].status = UA_STATUSCODE_BADOUTOFMEMORY;
 					} else {
 						readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
@@ -111,7 +113,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					}
 					sprintf(tempStr2, "%s.%s", tempStr1, path.elements[path.size-1].elemunion.pobj->v_identifier);
 					nodeId->identifier.string = UA_String_fromChars(tempStr2);
-					if(nodeId->identifier.string.length == -1){
+					if(nodeId->identifier.string.length == 0 && nodeId->identifier.string.data != UA_EMPTY_ARRAY_SENTINEL){
 						readNodesResults[indices[i]].status = UA_STATUSCODE_BADOUTOFMEMORY;
 					} else {
 						readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
@@ -134,7 +136,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					}
 					sprintf(tempStr2, "%s.%s", tempStr1, path.elements[path.size-1].elemunion.passoc->v_parentrolename);
 					nodeId->identifier.string = UA_String_fromChars(tempStr2);
-					if(nodeId->identifier.string.length == -1){
+					if(nodeId->identifier.string.length == 0 && nodeId->identifier.string.data != UA_EMPTY_ARRAY_SENTINEL){
 						readNodesResults[indices[i]].status = UA_STATUSCODE_BADOUTOFMEMORY;
 					} else {
 						readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
@@ -157,7 +159,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					}
 					sprintf(tempStr2, "%s.%s", tempStr1, path.elements[path.size-1].elemunion.passoc->v_childrolename);
 					nodeId->identifier.string = UA_String_fromChars(tempStr2);
-					if(nodeId->identifier.string.length == -1){
+					if(nodeId->identifier.string.length == 0 && nodeId->identifier.string.data != UA_EMPTY_ARRAY_SENTINEL){
 						readNodesResults[indices[i]].status = UA_STATUSCODE_BADOUTOFMEMORY;
 					} else {
 						readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
@@ -168,9 +170,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					break;
 				}
 				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_NODEID];
-				readNodesResults[indices[i]].value.arrayLength = -1;
+				readNodesResults[indices[i]].value.arrayLength = 0;
 				readNodesResults[indices[i]].value.data = nodeId;
-				readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 				readNodesResults[indices[i]].value.arrayDimensions = NULL;
 				readNodesResults[indices[i]].hasStatus = UA_TRUE;
 				readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -211,7 +213,11 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						*nodeClass = UA_NODECLASS_VARIABLETYPE;
 					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
 						*nodeClass = UA_NODECLASS_REFERENCETYPE;
-					} else {
+					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						*nodeClass = UA_NODECLASS_VARIABLE;
+					} else if(Ov_CanCastTo(opcua_methodNode, pobj)){
+						*nodeClass = UA_NODECLASS_METHOD;
+					} else{
 						*nodeClass = UA_NODECLASS_OBJECT;
 					}
 					break;
@@ -230,9 +236,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 				}
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_INT32];
-				readNodesResults[indices[i]].value.arrayLength = -1;
+				readNodesResults[indices[i]].value.arrayLength = 0;
 				readNodesResults[indices[i]].value.data = nodeClass;
-				readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 				readNodesResults[indices[i]].value.arrayDimensions = NULL;
 				readNodesResults[indices[i]].hasStatus = UA_TRUE;
 				readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -264,7 +270,11 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					if(readValueIds[indices[i]].attributeId == UA_ATTRIBUTEID_BROWSENAME){
 						UA_QualifiedName* qName = UA_QualifiedName_new();
 						qName->name = UA_String_fromChars(pobj->v_identifier);
-						qName->namespaceIndex = 1;
+						if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
+							qName->namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+						} else {
+							qName->namespaceIndex = 0;
+						}
 						readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_QUALIFIEDNAME];
 						readNodesResults[indices[i]].value.data = qName;
 					} else {
@@ -274,8 +284,8 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_LOCALIZEDTEXT];
 						readNodesResults[indices[i]].value.data = lText;
 					}
-					readNodesResults[indices[i]].value.arrayLength = -1;
-					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayLength = 0;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 					readNodesResults[indices[i]].value.arrayDimensions = NULL;
 					readNodesResults[indices[i]].hasStatus = UA_TRUE;
 					readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -315,8 +325,8 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					}
 					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_LOCALIZEDTEXT];
 					readNodesResults[indices[i]].value.data = lText;
-					readNodesResults[indices[i]].value.arrayLength = -1;
-					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayLength = 0;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 					readNodesResults[indices[i]].value.arrayDimensions = NULL;
 					readNodesResults[indices[i]].hasStatus = UA_TRUE;
 					readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -367,9 +377,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 			}
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_UINT32];
-			readNodesResults[indices[i]].value.arrayLength = -1;
+			readNodesResults[indices[i]].value.arrayLength = 0;
 			readNodesResults[indices[i]].value.data = writeMask;
-			readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+			readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 			readNodesResults[indices[i]].value.arrayDimensions = NULL;
 			readNodesResults[indices[i]].hasStatus = UA_TRUE;
 			readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -434,9 +444,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 			}
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
-			readNodesResults[indices[i]].value.arrayLength = -1;
+			readNodesResults[indices[i]].value.arrayLength = 0;
 			readNodesResults[indices[i]].value.data = isAbstract;
-			readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+			readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 			readNodesResults[indices[i]].value.arrayDimensions = NULL;
 			readNodesResults[indices[i]].hasStatus = UA_TRUE;
 			readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -480,9 +490,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 			}
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
-			readNodesResults[indices[i]].value.arrayLength = -1;
+			readNodesResults[indices[i]].value.arrayLength = 0;
 			readNodesResults[indices[i]].value.data = isSymmetric;
-			readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+			readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 			readNodesResults[indices[i]].value.arrayDimensions = NULL;
 			readNodesResults[indices[i]].hasStatus = UA_TRUE;
 			readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -516,15 +526,16 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 			eventNotifer = UA_Byte_new();
 			if(!eventNotifer){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				ov_memstack_unlock();
 				break;
 			}
 			*eventNotifer = 0;
 
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BYTE];
-			readNodesResults[indices[i]].value.arrayLength = -1;
+			readNodesResults[indices[i]].value.arrayLength = 0;
 			readNodesResults[indices[i]].value.data = eventNotifer;
-			readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+			readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 			readNodesResults[indices[i]].value.arrayDimensions = NULL;
 			readNodesResults[indices[i]].hasStatus = UA_TRUE;
 			readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -566,6 +577,15 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						readNodesResults[indices[i]].status = ov_AnyToVariant(ov_variable_initialvalue_get(Ov_StaticPtrCast(ov_variable,pobj)), &(readNodesResults[indices[i]].value));
 						readNodesResults[indices[i]].hasStatus = UA_TRUE;
 						readNodesResults[indices[i]].hasValue = UA_TRUE;
+					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						size_t numberofArgs = 0;
+						UA_Argument *argArray = NULL;
+						readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getCallArgs((OV_INSTPTR_opcua_arguments)pobj, &numberofArgs, &argArray);
+						readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_ARGUMENT];
+						readNodesResults[indices[i]].value.arrayLength = numberofArgs;
+						readNodesResults[indices[i]].value.data = argArray;
+						readNodesResults[indices[i]].hasStatus = UA_TRUE;
+						readNodesResults[indices[i]].hasValue = UA_TRUE;
 					} else {
 						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 					}
@@ -604,25 +624,38 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 				case OV_ET_VARIABLE:
 					pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
 					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
-						dataType = ov_varTypeToNodeId(((OV_INSTPTR_ov_variable)pobj)->v_vartype);
+						dataType = UA_NodeId_new();
 						if(!dataType){
 							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 							break;
 						} else {
 							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							*dataType = ov_varTypeToNodeId(((OV_INSTPTR_ov_variable)pobj)->v_vartype);
 						}
 					}
 					break;
 				case OV_ET_OBJECT:
 					/*	Variables are defined by instances of ov/variable	*/
 					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
-						dataType = ov_varTypeToNodeId(ov_variable_vartype_get(Ov_StaticPtrCast(ov_variable,pobj)));
+						dataType = UA_NodeId_new();
 						if(!dataType){
 							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 							break;
 						} else {
 							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							*dataType = ov_varTypeToNodeId(ov_variable_vartype_get(Ov_StaticPtrCast(ov_variable,pobj)));
 						}
+					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						dataType = UA_NodeId_new();
+						if(!dataType){
+							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+						} else {
+							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							dataType->identifierType = UA_NODEIDTYPE_NUMERIC;
+							dataType->namespaceIndex = 0;
+							dataType->identifier.numeric = 296;
+						}
+						break;
 					} else {
 						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 						break;
@@ -636,9 +669,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 			}
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_NODEID];
-				readNodesResults[indices[i]].value.arrayLength = -1;
+				readNodesResults[indices[i]].value.arrayLength = 0;
 				readNodesResults[indices[i]].value.data = dataType;
-				readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 				readNodesResults[indices[i]].value.arrayDimensions = NULL;
 				readNodesResults[indices[i]].hasStatus = UA_TRUE;
 				readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -716,6 +749,15 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 							}
 							break;
 						}
+					} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						valueRank = UA_Int32_new();
+						if(!valueRank){
+							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+							break;
+						}
+						*valueRank = 1;	/*	one dimension	*/
+						readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+						break;
 					} else {
 						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 						break;
@@ -731,9 +773,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_INT32];
-				readNodesResults[indices[i]].value.arrayLength = -1;
+				readNodesResults[indices[i]].value.arrayLength = 0;
 				readNodesResults[indices[i]].value.data = valueRank;
-				readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 				readNodesResults[indices[i]].value.arrayDimensions = NULL;
 				readNodesResults[indices[i]].hasStatus = UA_TRUE;
 				readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -770,24 +812,24 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						case OV_VT_ANY:
 						case OV_VT_VOID:
 							arrayLength = 0;
-							arrayDimensions = UA_Array_new(&UA_TYPES[UA_TYPES_INT32], arrayLength);	/*	scalar or one dimension	*/
+							arrayDimensions = UA_Array_new(arrayLength, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 							break;
 						default:
 							if(((OV_INSTPTR_ov_variable)pobj)->v_veclen == 1){
 								/*	scalar	*/
 								arrayLength = 0;
-								arrayDimensions = UA_Array_new(&UA_TYPES[UA_TYPES_INT32], arrayLength);	/*	scalar or one dimension	*/
+								arrayDimensions = UA_Array_new(arrayLength, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 							} else {
 								/*	vector	*/
 								arrayLength = 1;
-								arrayDimensions = UA_Array_new(&UA_TYPES[UA_TYPES_INT32], arrayLength);	/*	scalar or one dimension	*/
+								arrayDimensions = UA_Array_new( arrayLength, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 								if(!arrayDimensions){
 									readNodesResults[indices[i]].status = UA_STATUSCODE_BADOUTOFMEMORY;
 									break;
 								} else {
 									readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 								}
-								readNodesResults[indices[i]].status = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), (void**)&arrayDimensions, &UA_TYPES[UA_TYPES_INT32], arrayLength);
+								readNodesResults[indices[i]].status = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), arrayLength, (void**)&arrayDimensions, &UA_TYPES[UA_TYPES_INT32]);
 								break;
 							}
 						}
@@ -800,27 +842,29 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						case OV_VT_ANY:
 						case OV_VT_VOID:
 							arrayLength = 0;
-							arrayDimensions = UA_Array_new(&UA_TYPES[UA_TYPES_INT32], arrayLength);	/*	scalar or one dimension	*/
+							arrayDimensions = UA_Array_new(arrayLength, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 							break;
 						default:
 							if(((OV_INSTPTR_ov_variable)pobj)->v_veclen == 1){
 								/*	scalar	*/
 								arrayLength = 0;
-								arrayDimensions = UA_Array_new(&UA_TYPES[UA_TYPES_INT32], arrayLength);	/*	scalar or one dimension	*/
+								arrayDimensions = UA_Array_new(arrayLength, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 							} else {
 								/*	vector	*/
 								arrayLength = 1;
-								arrayDimensions = UA_Array_new(&UA_TYPES[UA_TYPES_INT32], arrayLength);	/*	scalar or one dimension	*/
+								arrayDimensions = UA_Array_new(arrayLength, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 								if(!arrayDimensions){
 									readNodesResults[indices[i]].status = UA_STATUSCODE_BADOUTOFMEMORY;
 									break;
 								} else {
 									readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 								}
-								readNodesResults[indices[i]].status = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), (void**)&arrayDimensions, &UA_TYPES[UA_TYPES_INT32], arrayLength);
+								readNodesResults[indices[i]].status = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), arrayLength, (void**)&arrayDimensions, &UA_TYPES[UA_TYPES_INT32]);
 								break;
 							}
 						}
+					}else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+						arrayDimensions = 0;
 					} else {
 						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 						break;
@@ -834,7 +878,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_INT32];
 					readNodesResults[indices[i]].value.arrayLength = arrayLength;
 					readNodesResults[indices[i]].value.data = arrayDimensions;
-					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 					readNodesResults[indices[i]].value.arrayDimensions = NULL;
 					readNodesResults[indices[i]].hasStatus = UA_TRUE;
 					readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -885,9 +929,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BYTE];
-			readNodesResults[indices[i]].value.arrayLength = -1;
+			readNodesResults[indices[i]].value.arrayLength = 0;
 			readNodesResults[indices[i]].value.data = accessLevel;
-			readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+			readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 			readNodesResults[indices[i]].value.arrayDimensions = NULL;
 			readNodesResults[indices[i]].hasStatus = UA_TRUE;
 			readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -918,9 +962,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_DOUBLE];
-			readNodesResults[indices[i]].value.arrayLength = -1;
+			readNodesResults[indices[i]].value.arrayLength = 0;
 			readNodesResults[indices[i]].value.data = interval;
-			readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+			readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 			readNodesResults[indices[i]].value.arrayDimensions = NULL;
 			readNodesResults[indices[i]].hasStatus = UA_TRUE;
 			readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -950,9 +994,9 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
-			readNodesResults[indices[i]].value.arrayLength = -1;
+			readNodesResults[indices[i]].value.arrayLength = 0;
 			readNodesResults[indices[i]].value.data = historizing;
-			readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+			readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 			readNodesResults[indices[i]].value.arrayDimensions = NULL;
 			readNodesResults[indices[i]].hasStatus = UA_TRUE;
 			readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -960,7 +1004,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 		}
 		break;
 		/****************************************************************************************************************************************************
-		 * EXECUTABLE and USEREXECUTABLE - methods have it. methods (or operations) in ov are generally not accessable from the outside world
+		 * EXECUTABLE and USEREXECUTABLE - methods have it. methods (or operations) in ov are generally not accessible from the outside world
 		 * 		despite services are accessible from the outside world, they are specific instances of user-defined classes and not part of the ov-metamodel
 		 ****************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_EXECUTABLE:
@@ -983,9 +1027,28 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 				*executable = UA_FALSE;
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
-				readNodesResults[indices[i]].value.arrayLength = 1;
+				readNodesResults[indices[i]].value.arrayLength = 0;
 				readNodesResults[indices[i]].value.data = executable;
-				readNodesResults[indices[i]].value.arrayDimensionsSize = 1;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
+				readNodesResults[indices[i]].value.arrayDimensions = NULL;
+				readNodesResults[indices[i]].hasStatus = UA_TRUE;
+				readNodesResults[indices[i]].hasValue = UA_TRUE;
+				ov_memstack_unlock();
+			} else if(path.elements[path.size-1].elemtype == OV_ET_OBJECT && Ov_CanCastTo(opcua_methodNode, path.elements[path.size-1].pobj)){
+				/*	we have a methodNode	*/
+				OV_INSTPTR_opcua_methodNode pMethod = Ov_StaticPtrCast(opcua_methodNode, path.elements[path.size-1].pobj);
+				executable = UA_Boolean_new();
+				if(!executable){
+					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+					ov_memstack_unlock();
+					break;
+				}
+				*executable = pMethod->v_callable;
+				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
+				readNodesResults[indices[i]].value.arrayLength = 0;
+				readNodesResults[indices[i]].value.data = executable;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = 0;
 				readNodesResults[indices[i]].value.arrayDimensions = NULL;
 				readNodesResults[indices[i]].hasStatus = UA_TRUE;
 				readNodesResults[indices[i]].hasValue = UA_TRUE;
@@ -1011,6 +1074,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 			readNodesResults[indices[i]].hasValue = UA_FALSE;
 		}
 	}
+	KS_logfile_debug(("Done."));
 	return UA_STATUSCODE_GOOD;
 }
 

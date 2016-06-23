@@ -69,7 +69,7 @@ UA_StatusCode UA_Client_NamespaceGetIndex(UA_Client *client, UA_String *namespac
 	ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
 	ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY);
 
-	ReadResponse = UA_Client_read(client, &ReadRequest);
+	ReadResponse = UA_Client_Service_read(client, ReadRequest);
 	UA_ReadRequest_deleteMembers(&ReadRequest);
 
 	if(ReadResponse.responseHeader.serviceResult != UA_STATUSCODE_GOOD){

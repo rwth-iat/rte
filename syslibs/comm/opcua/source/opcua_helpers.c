@@ -5,7 +5,9 @@
  *      Author: lars
  */
 
-
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
+#endif
 
 #include "opcua_helpers.h"
 #include "libov/ov_string.h"
@@ -58,62 +60,59 @@ UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
 	}
 }
 
-UA_NodeId* ov_varTypeToNodeId(OV_VAR_TYPE type){
-	UA_NodeId *varType;
-	varType = UA_NodeId_new();
-	if(!varType){
-		return varType;
-	}
-	varType->namespaceIndex = 0;
-	varType->identifierType = UA_NODEIDTYPE_NUMERIC;
+UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type){
+	UA_NodeId varType;
+	UA_NodeId_init(&varType);
+	varType.namespaceIndex = 0;
+	varType.identifierType = UA_NODEIDTYPE_NUMERIC;
 	switch(type & (OV_VT_KSMASK & (~OV_VT_ISVECTOR))){
 	case OV_VT_ANY:
 	case OV_VT_VOID:
-		varType->identifier.numeric = 24;
+		varType.identifier.numeric = 24;
 		break;
 	case OV_VT_BOOL:
-		varType->identifier.numeric = 1;
+		varType.identifier.numeric = 1;
 		break;
 	case OV_VT_BYTE:
-		varType->identifier.numeric = 3;
+		varType.identifier.numeric = 3;
 		break;
 	case OV_VT_CTYPE:
 	case OV_VT_POINTER:
 	case OV_VT_STRUCT:
-		varType->identifier.numeric = 22;
+		varType.identifier.numeric = 22;
 		break;
 	case OV_VT_DOUBLE:
-		varType->identifier.numeric = 11;
+		varType.identifier.numeric = 11;
 		break;
 	case OV_VT_INT:
-		varType->identifier.numeric = 6;
+		varType.identifier.numeric = 6;
 		break;
 	case OV_VT_SINGLE:
-		varType->identifier.numeric = 10;
+		varType.identifier.numeric = 10;
 		break;
 	case OV_VT_STATE:
-		varType->identifier.numeric = 19;
+		varType.identifier.numeric = 19;
 		break;
 	case OV_VT_STRING:
-		varType->identifier.numeric = 12;
+		varType.identifier.numeric = 12;
 		break;
 	case OV_VT_TIME:
 	case OV_VT_TIME_SPAN:
-		varType->identifier.numeric = 13;
+		varType.identifier.numeric = 13;
 		break;
 	case OV_VT_UINT:
-		varType->identifier.numeric = 7;
+		varType.identifier.numeric = 7;
 		break;
 	default:
-		varType->identifier.numeric = 22;
+		varType.identifier.numeric = 22;
 		break;
 	}
 	return varType;
 }
 
-UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
+UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
-	void *value = NULL;
+	const void *value = NULL;
 	UA_Boolean tempBool;	/*	has different byte size in ov and ua hence we need a temp variable	*/
 	UA_String tempString = {.length = 0, .data = NULL};
 	UA_DateTime tempTime;
@@ -287,18 +286,29 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			value = tempBoolArray;
 			pVariant->type = &UA_TYPES[UA_TYPES_BOOLEAN];
 			if(!pVariant->data){
+				ov_memstack_unlock();
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
 				UA_Variant_deleteMembers(pVariant);
 				return result;
 			}
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_BOOLEAN], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_BOOLEAN]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_BYTE_VEC:
 			arrayLength = pAny->value.valueunion.val_byte_vec.veclen;
 			value = pAny->value.valueunion.val_byte_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_BYTE];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_BYTE], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_BYTE]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_DOUBLE_VEC:
@@ -306,7 +316,12 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			arrayLength = pAny->value.valueunion.val_double_vec.veclen;
 			value = pAny->value.valueunion.val_double_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_DOUBLE];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_INT_VEC:
@@ -314,14 +329,24 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			arrayLength = pAny->value.valueunion.val_int_vec.veclen;
 			value = pAny->value.valueunion.val_int_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_INT32];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_STATE_VEC:
 			arrayLength = pAny->value.valueunion.val_state_vec.veclen;
 			value = pAny->value.valueunion.val_state_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_INT32];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_SINGLE_VEC:
@@ -329,7 +354,12 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			arrayLength = pAny->value.valueunion.val_single_vec.veclen;
 			value = pAny->value.valueunion.val_single_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_FLOAT];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_FLOAT], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_FLOAT]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_STRING_VEC:
@@ -351,7 +381,12 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			}
 			value = tempStringArray;
 			pVariant->type = &UA_TYPES[UA_TYPES_STRING];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_STRING], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_STRING]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_TIME_VEC:
@@ -368,7 +403,12 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			}
 			value = tempTimeArray;
 			pVariant->type = &UA_TYPES[UA_TYPES_DATETIME];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_DATETIME], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DATETIME]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_TIME_SPAN_VEC:
@@ -386,7 +426,12 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			}
 			value = tempTimeArray;
 			pVariant->type = &UA_TYPES[UA_TYPES_DOUBLE];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		case OV_VT_UINT_VEC:
@@ -394,10 +439,16 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			arrayLength = pAny->value.valueunion.val_uint_vec.veclen;
 			value = pAny->value.valueunion.val_uint_vec.value;
 			pVariant->type = &UA_TYPES[UA_TYPES_UINT32];
-			UA_Array_copy(value, &(pVariant->data), &UA_TYPES[UA_TYPES_UINT32], arrayLength);
+			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_UINT32]);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				UA_Variant_deleteMembers(pVariant);
+				return result;
+			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		default:
+			ov_memstack_unlock();
 			UA_Variant_deleteMembers(pVariant);
 			return ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 		}
@@ -408,7 +459,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 
 UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 	OV_UINT iterator = 0;
-	if(pVariant->arrayLength == -1){
+	if(pVariant->arrayLength == 0 && pVariant->data > UA_EMPTY_ARRAY_SENTINEL){
 		/*	scalar values	*/
 		if(pVariant->type == &UA_TYPES[UA_TYPES_BOOLEAN]){
 			pAny->value.vartype = OV_VT_BOOL;
@@ -730,7 +781,11 @@ UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pA
 		} else if(Ov_GetParent(ov_instantiation, pElem->pobj) == pclass_ov_association){
 			return UA_NODECLASS_REFERENCETYPE;
 		} else {
-			return UA_NODECLASS_OBJECT;
+			if(Ov_CanCastTo(opcua_methodNode, pElem->pobj)){
+				return UA_NODECLASS_METHOD;
+			} else {
+				return UA_NODECLASS_OBJECT;
+			}
 		}
 	} else if(pElem->elemtype == OV_ET_VARIABLE || pElem->elemtype == OV_ET_MEMBER) {
 		return UA_NODECLASS_VARIABLE;

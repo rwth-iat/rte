@@ -109,6 +109,7 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPListener_constructor(
 	//start inactive at construction. Begin listening in typemethod
 	pinst->v_actimode = 0;
 	pinst->v_usesStreamProtocol = FALSE;
+	pinst->v_isLocal = TRUE;		//FIXME: this is NOT the clean way. It's just a workaournd to function as ks-MANAGER, knowing we would NOT recognize remote connections.
 	return OV_ERR_OK;
 }
 
@@ -460,6 +461,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 									ksbase_free_KSDATAPACKET(&(thisLi->v_outData));
 									return;
 								} else 	{
+									ksbase_free_KSDATAPACKET(&(thisLi->v_inData));
 									UDPbind_UDPListener_SendData(Ov_StaticPtrCast(ksbase_Channel, thisLi));
 									return;
 								}
