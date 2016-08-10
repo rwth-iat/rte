@@ -2179,7 +2179,7 @@ cshmi.prototype = {
 				}
 				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBVariableReference){
 					for (var item in TemplateObject.ResourceList.FBVariableReference){
-						if(typeof item == "string" && typeof TemplateObject.FBVariableReference[item] == "string"){
+						if(typeof item == "string" && typeof TemplateObject.ResourceList.FBVariableReference[item] == "string"){
 							if(BackupTarget === null){
 								//we have the first hit, remember
 								BackupTarget = TemplateObject;
