@@ -2,6 +2,9 @@
 #define TCPbind_OVT_INCLUDED
 
 #if !OV_SYSTEM_NT
+#ifndef __USE_XOPEN2K
+#define __USE_XOPEN2K
+#endif
 #include <netdb.h>
 #include <sys/socket.h>
 #else
