@@ -376,6 +376,7 @@ proc build_package {package args} {
 		set crossOverrideBitwidthFlags	"OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= "	
 		return [execute $args $ov_debug $ov_arch_bitwidth_str $crossOverrideBitwidthFlags]
 	} else {
+		#puts stderr "$args $ov_debug $ov_arch_bitwidth_str"
 		return [execute $args $ov_debug $ov_arch_bitwidth_str]
 	}
 }
@@ -559,6 +560,7 @@ proc release_lib_better {libname option} {
 	global targetOS
 	global CrossPrefix
 	global crossArch
+	global ov_arch_bitwidth_int
 
 	cd $releasedir/dev/
 	if { $compileonly != 1 } then {
@@ -606,7 +608,7 @@ proc release_lib_better {libname option} {
 			}
 			if {$cross == 1} {
 				if {$targetOS == "nt"} {
-					set MAKMAKOPTION "TARGETOS=--targetWindows"
+					set MAKMAKOPTION "TARGETOS=--targetWindows -m$ov_arch_bitwidth_int"
 				} else {
 					set MAKMAKOPTION "TARGETOS=--targetLinux"
 				}
@@ -813,19 +815,49 @@ proc remove_svn_dirs {dir} {
 }
 
 proc compress {archivename dir} {
-	global os
+	global targetOS
 	global ov_arch_bitwidth_int
+	global os
 	print_msg "Compressing"
 	if { $os == "linux" } then {
-		execute "tar -zcvf $archivename-linux$ov_arch_bitwidth_int.tar.gz $dir"
+		set compressor_tar "tar -zcvf"
+		set compressor_zip "zip -r"
 	} else {
-		execute "7z a $archivename-win$ov_arch_bitwidth_int.zip $dir"
+		set compressor_zip "7z a"
+	}
+	if { $targetOS == "linux" } then {
+		execute "$compressor_tar -zcvf $archivename-linux$ov_arch_bitwidth_int.tar.gz $dir"
+	} else {
+		execute "$compressor_zip $archivename-win$ov_arch_bitwidth_int.zip $dir"
 	}
 }
 
 # ============== MAIN STARTS HERE ==================
-set system_libs {syslibs/comm/ksbase syslibs/comm/TCPbind syslibs/comm/UDPbind syslibs/comm/ksxdr syslibs/comm/kshttp syslibs/comm/opcua syslibs/functionblock/fb syslibs/functionblock/ssc}
-set addon_libs {addonlibs/hmi/cshmi addonlibs/commclient/ksapi addonlibs/commclient/fbcomlib addonlibs/commclient/opcuafb addonlibs/functionblock/iec61131stdfb addonlibs/functionblock/vdivde3696 addonlibs/functionblock/ACPLTlab003lindyn addonlibs/functionblock/IOdriverlib addonlibs/field/modbusTcpLib addonlibs/comm/MessageSys addonlibs/comm/kshttpMsgExt addonlibs/processcontrol/cmdlib addonlibs/processcontrol/PCMsgParser addonlibs/processcontrol/PCMsgCreator addonlibs/functionblock/SSChelper}
+set system_libs {syslibs/comm/ksbase 
+				 syslibs/comm/TCPbind 
+				 syslibs/comm/UDPbind 
+				 syslibs/comm/ksxdr 
+				 syslibs/comm/kshttp 
+				 syslibs/comm/opcua 
+				 syslibs/functionblock/fb 
+				 syslibs/functionblock/ssc}
+
+set addon_libs {addonlibs/hmi/cshmi 
+				addonlibs/commclient/ksapi 
+				addonlibs/commclient/fbcomlib 
+				addonlibs/commclient/opcuafb 
+				addonlibs/functionblock/iec61131stdfb 
+				addonlibs/functionblock/vdivde3696 
+				addonlibs/functionblock/ACPLTlab003lindyn 
+				addonlibs/functionblock/IOdriverlib 
+				addonlibs/field/modbusTcpLib 
+				addonlibs/comm/MessageSys 
+				addonlibs/comm/kshttpMsgExt 
+				addonlibs/processcontrol/cmdlib 
+				addonlibs/processcontrol/PCMsgParser 
+				addonlibs/processcontrol/PCMsgCreator 
+				addonlibs/functionblock/SSChelper}
+				
 print_msg "checking out all libraries of the acplt system"
 
 if {$release != 1} {

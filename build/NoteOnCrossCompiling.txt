@@ -4,4 +4,4 @@ To do a cross build there are some prerequisites:
 	2. A cross-definitions File has to exist. Take a look at windows32.cross for an example.
 	3. CPATH has to be set according to your cross-toolchain (includes path).
 
-When these prerequisites are met you can invoke the build script with "tslch acplt_build.tcl cross cross-definitions-filename".
+When these prerequisites are met you can invoke the build script with "tclsh acplt_build.tcl cross cross-definitions-filename".

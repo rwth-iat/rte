@@ -1,11 +1,11 @@
 # tcl variable defs for cross-compiling
 #set CPATH for header include
 source set_cpath.tcl
-set_cpath "/usr/i686-w64-mingw32/include/"
+set_cpath "/usr/x86_64-w64-mingw32/include/"
 
 # set targetOS to "nt" for windows or "linux" for linux targets. Others are currently not supported
 set targetOS nt
 # set the prefix of your cross compiler. It has to be found by the OS. Absolute paths should work here but are not tested.
-set CrossPrefix i686-w64-mingw32-
+set CrossPrefix x86_64-w64-mingw32-
 # set arch to X86 or ARM - for ARM some flags are set differently
 set crossArch X86
