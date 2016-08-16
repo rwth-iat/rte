@@ -559,6 +559,7 @@ proc release_lib_better {libname option} {
 	global targetOS
 	global CrossPrefix
 	global crossArch
+	global ov_arch_bitwidth_int
 
 	cd $releasedir/dev/
 	if { $compileonly != 1 } then {
@@ -606,7 +607,7 @@ proc release_lib_better {libname option} {
 			}
 			if {$cross == 1} {
 				if {$targetOS == "nt"} {
-					set MAKMAKOPTION "TARGETOS=--targetWindows"
+					set MAKMAKOPTION "TARGETOS=--targetWindows -m$ov_arch_bitwidth_int"
 				} else {
 					set MAKMAKOPTION "TARGETOS=--targetLinux"
 				}
