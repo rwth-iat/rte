@@ -376,6 +376,7 @@ proc build_package {package args} {
 		set crossOverrideBitwidthFlags	"OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= "	
 		return [execute $args $ov_debug $ov_arch_bitwidth_str $crossOverrideBitwidthFlags]
 	} else {
+		#puts stderr "$args $ov_debug $ov_arch_bitwidth_str"
 		return [execute $args $ov_debug $ov_arch_bitwidth_str]
 	}
 }
@@ -816,11 +817,18 @@ proc remove_svn_dirs {dir} {
 proc compress {archivename dir} {
 	global targetOS
 	global ov_arch_bitwidth_int
+	global os
 	print_msg "Compressing"
-	if { $targetOS == "linux" } then {
-		execute "tar -zcvf $archivename-linux$ov_arch_bitwidth_int.tar.gz $dir"
+	if { $os == "linux" }{
+		set compressor_tar "tar -zcvf"
+		set compressor_zip "zip -r"
 	} else {
-		execute "7z a $archivename-win$ov_arch_bitwidth_int.zip $dir"
+		set compressor_zip "7z a"
+	}
+	if { $targetOS == "linux" } then {
+		execute "$compressor_tar -zcvf $archivename-linux$ov_arch_bitwidth_int.tar.gz $dir"
+	} else {
+		execute "$compressor_zip $archivename-win$ov_arch_bitwidth_int.zip $dir"
 	}
 }
 
