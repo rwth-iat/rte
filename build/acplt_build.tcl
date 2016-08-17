@@ -819,7 +819,7 @@ proc compress {archivename dir} {
 	global ov_arch_bitwidth_int
 	global os
 	print_msg "Compressing"
-	if { $os == "linux" }{
+	if { $os == "linux" } then {
 		set compressor_tar "tar -zcvf"
 		set compressor_zip "zip -r"
 	} else {
