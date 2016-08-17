@@ -1,0 +1,76 @@
+
+#CC = gcc -mno-cygwin
+CC = $(GCC_BIN_PREFIX)gcc
+AR = $(GCC_BIN_PREFIX)ar
+
+# If the rpc include directory is not included in the standard path
+# you have to give the path to it here.
+RPCINCLUDEPATH = ..
+
+# If the rpc library is not included in the standard lib path
+# you have to give the path to it here.
+RPCLIBPATH = ../bin//
+
+DEFINITION =    oncrpc.def
+
+OBJS =          clnt_raw.o \
+		xdr.o \
+		clnt_tcp.o \
+		clnt_udp.o \
+		pmap_rmt.o \
+		rpc_prot.o \
+		svc_autu.o \
+		svc_auth.o \
+		svc_raw.o \
+		svc_run.o \
+		svc_tcp.o \
+		svc_udp.o \
+		xdr_mem.o \
+		xdr_rec.o \
+		auth_non.o \
+		auth_uni.o \
+		authunix.o \
+		bindresv.o \
+		clnt_gen.o \
+		clnt_per.o \
+		clnt_sim.o \
+		get_myad.o \
+		getrpcen.o \
+		getrpcpo.o \
+		pmap_cln.o \
+		pmap_get.o \
+		pmap_gma.o \
+		pmap_pro.o \
+		pmap_pr.o \
+		rpc_call.o \
+		rpc_comm.o \
+		svc_simp.o \
+		xdr_arra.o \
+		xdr_floa.o \
+		xdr_refe.o \
+		xdr_stdi.o \
+		svc.o \
+		bcopy.o \
+		nt.o
+
+all: oncrpc.dll oncrpc.a #portmap.exe
+
+clean:
+	@rm $(OBJS) oncrpc.dll oncrpc.lib oncrpc.exp portmap.o portmap.exe ../rpcgen/oncrpc.dll *.pdb
+
+portmap.exe:    portmap.o oncrpc.dll 
+	$(CC) $(conlflags) $(ldebug) -o portmap.exe PORTMAP.o oncrpc.dll $(conlibsdll) -lwsock32
+	cp $@ ../bin/pm_ascii.exe
+
+oncrpc.a:     $(OBJS)
+	$(AR) crv $@ $(OBJS)
+	cp oncrpc.a ../bin
+
+oncrpc.dll:     $(OBJS)
+	$(CC) -shared -o oncrpc.dll -Wl,--output-def,oncrpc.def $(ldebug) $(OBJS) $(conlibsdll) -lwsock32 -ladvapi32
+	cp oncrpc.dll ../bin
+	cp oncrpc.dll ../rpcgen
+
+%.o: %.c
+	$(CC) -c -I$(RPCINCLUDEPATH) $(cdebug) $(cflags) $(cvarsdll) $*.c
+

@@ -10,12 +10,19 @@ A=.a
 # The following is not typically unix, but handy.
 EXE=.exe
 
+# 32/64 bit architecture
+ifdef OV_ARCH_BITWIDTH
+OV_ARCH_BITWIDTH_CFLAGS		=	-m$(OV_ARCH_BITWIDTH)
+else
+OV_ARCH_BITWIDTH_CFLAGS		=	-m32
+endif
+
 SRCDIR = ../../src/
 
 GCC_BIN_PREFIX =
 
 ### Compiler
-CXX = $(GCC_BIN_PREFIX)g++
+CXX = $(GCC_BIN_PREFIX)g++ $(OV_ARCH_BITWIDTH_CFLAGS)
 
 #CXX_EXTRA_FLAGS = -I. -I../../include 
 CXX_EXTRA_FLAGS = -I. -I../../include  -fno-implicit-templates

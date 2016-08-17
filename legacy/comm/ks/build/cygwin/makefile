@@ -82,7 +82,7 @@ A = .a
 
 
 
-CXX = g++
+CXX = $(GCC_BIN_PREFIX)g++
 
 
 

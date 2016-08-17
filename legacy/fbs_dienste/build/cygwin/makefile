@@ -42,7 +42,7 @@ SYSDIR = cygwin
 
 EXE = .exe
 
-WINDOWS_LIBS = -lwsock32 -lADVAPI32 -lUSER32
+WINDOWS_LIBS = -lwsock32 -ladvapi32 -luser32
 
 #   Include Unix generic part
 #   -------------------------

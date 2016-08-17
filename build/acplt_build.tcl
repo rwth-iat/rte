@@ -16,8 +16,11 @@ set libsuffix 0
 set exesuffix 0
 set notbuildedlibs 0
 set ov_debug "OV_DEBUG=1"
-set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=32"
-set ov_arch_bitwidth_int 32
+if {$tcl_platform(pointerSize) == 8} then {
+	set ov_arch_bitwidth_int 64
+} else {
+	set ov_arch_bitwidth_int 32
+}
 set cross 0
 set crossFilename ""
 set targetOS ""
@@ -41,11 +44,9 @@ foreach arg $argv {
 		set build_dbcommands 0
 	}
 	if {$arg == "32"} {
-		set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=32"
 		set ov_arch_bitwidth_int 32
 	}
 	if {$arg == "64"} {
-		set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=64"
 		set ov_arch_bitwidth_int 64
 	}
 	if {$crossFilename == 1} {
@@ -101,7 +102,7 @@ file delete -force $logfile
 if {$cross==1} {
 	source $crossFilename
 	if {$targetOS=="nt"} {
-		set build_dbcommands 0
+		#set build_dbcommands 0
 		set libsuffix ".dll"
 		set exesuffix ".exe"
 		set batsuffix ".bat"
@@ -115,7 +116,7 @@ if {$cross==1} {
 	set targetOS $os
 }
 
-
+set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=$ov_arch_bitwidth_int"
 
 ####################### PROCEDURES #######################
 
@@ -400,27 +401,28 @@ proc build_acplt_mingw {} {
 	global builddir
 	global build_dbcommands
 	
+	# oncrpc is needed on windows if dbcommands are used
 	if {$build_dbcommands == 1} {
 		print_msg "Building oncrpc for fb_dbcommands"
 		cd $builddir/oncrpc/
 		execute makemingw.bat
 	}
 	cd $builddir/base/ov/source/libml
-	build_cygwin libml make -f mingw.mk
+	build_cygwin libml $make -f mingw.mk
 	#cd $builddir/base/libmpm 
 	#build_cygwin libmpm make -f Makefile
 	cd $builddir/base/ov/build/cygwin
-	build_cygwin ov make -f makefile
+	build_cygwin ov $make -f makefile
 	#cd $builddir/base/acplt_makmak/build/cygwin
 	#build_cygwin acplt_makmak make -f makefile
 	#enabling plt and ks just for fb_dbcommands	
 	if {$build_dbcommands == 1} {
 		cd $builddir/base/plt/build/cygwin
-		build_cygwin plt make -f makefile
+		build_cygwin plt $make -f makefile
 		cd $builddir/base/ks/build/cygwin
-		build_cygwin ks make -f makefile
+		build_cygwin ks $make -f makefile
 		cd $builddir/base/fbs_dienste/build/cygwin
-		build_cygwin fb_dbcommands make -f makefile
+		build_cygwin fb_dbcommands $make -f makefile
 	}
 }
 
@@ -437,52 +439,67 @@ proc build_acplt {} {
 	global targetOS
 	global crossArch
 	variable crossArgs
+	global ov_arch_bitwidth_int
 
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
 #libml
-	if {$cross==1} { 
+	if {$cross==1} then { 
 		set crossArgs "GCC_BIN_PREFIX=$CrossPrefix"
 		if {$crossArch == "ARM"} {
-			build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
+			build_package libml $make -C $builddir/base/ov/source/libml -f $makefile $crossArgs OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
 		} else {
-			build_package libml make -C $builddir/base/ov/source/libml -f $makefile $crossArgs
+			build_package libml $make -C $builddir/base/ov/source/libml -f $makefile $crossArgs
 		}
 	} else {
-		build_package libml make -C $builddir/base/ov/source/libml -f $makefile
-	}
-
-	if { $os == "nt" && $build_dbcommands == 1 } then { 
-		cd $builddir/oncrpc
-		execute make.bat
-		cd $basedir
+		build_package libml $make -C $builddir/base/ov/source/libml -f $makefile
 	}
 	# build libmpm make -C $builddir/base/libmpm -f $makefile
+	
 	if { $os == "nt" } then {
-		if {$build_dbcommands == 1} {
+		#on 64bit nt target a 32bit .exe is copied in install_acplt proc
+		if {{$build_dbcommands == 1} && {$ov_arch_bitwidth_int==32}} {
+			# oncrpc is needed on windows if dbcommands are used
+			print_msg "Building oncrpc for fb_dbcommands"
+			cd $builddir/oncrpc
+			execute make.bat
+			cd $basedir
+		
 			#enabling plt and ks just for fb_dbcommands
 			cd $builddir/base/plt/build/ntvc
 			build_package plt nmake /f $makefile
 			cd $builddir/base/ks/build/ntvc
 			build_package ks nmake /f $makefile
 			cd $builddir/base/fb_dbcommands/build/ntvc
-			build_package fb_dbcommands make -f $makefile -k
+			build_package fb_dbcommands $make -f $makefile -k
 		}
 		cd $builddir/base/ov/build/ntvc
-		build_package ov make -f $makefile -k
+		build_package ov $make -f $makefile -k
 		cd $basedir
 	} else {
-		if {$build_dbcommands == 1} {
-			if {$cross==1} { 
-				set crossArgsPrefix "GCC_BIN_PREFIX=$CrossPrefix"
-				#enabling plt and ks just for fb_dbcommands
-				build_package plt make -C $builddir/base/plt/build/$os $crossArgsPrefix
-				build_package ks make -C $builddir/base/ks/build/$os $crossArgsPrefix
-				build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os $crossArgsPrefix
+		if {$build_dbcommands == 1} then {
+			if {$cross==1} {
+				#on 64bit nt target a 32bit .exe is copied in "proc install_acplt"
+				if {$targetOS!="nt" || $ov_arch_bitwidth_int!=64} {
+					set makedir $targetOS
+					if {$targetOS=="nt"} then {
+						set makedir "cygwin"
+						# oncrpc is needed on windows if dbcommands are used
+						print_msg "Building oncrpc for fb_dbcommands"
+						cd $builddir/oncrpc
+						execute ./makecross.sh $crossArgs
+						cd $basedir
+					}
+					set crossArgsPrefix "GCC_BIN_PREFIX=$CrossPrefix"
+					#enabling plt and ks just for fb_dbcommands
+					build_package plt $make -C $builddir/base/plt/build/$makedir $crossArgsPrefix 
+					build_package ks $make -C $builddir/base/ks/build/$makedir $crossArgsPrefix 
+					build_package fbs_dienste $make -C $builddir/base/fbs_dienste/build/$makedir $crossArgsPrefix
+				}
 			} else {
 				#enabling plt and ks just for fb_dbcommands
-				build_package plt make -C $builddir/base/plt/build/$os
-				build_package ks make -C $builddir/base/ks/build/$os
-				build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
+				build_package plt $make -C $builddir/base/plt/build/$os
+				build_package ks $make -C $builddir/base/ks/build/$os
+				build_package fbs_dienste $make -C $builddir/base/fbs_dienste/build/$os
 			}
 			
 		}
@@ -495,16 +512,16 @@ proc build_acplt {} {
 			set crossArgsCG	"OV_CODEGEN_EXE=ov_codegen"
 			if {$targetOS=="nt"} {
 				set crossWindresDefs "WINDRESDEFS=--define _WIN32"
-				build_package ov make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs 
+				build_package ov $make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs 
 			} else {
 				if {$crossArch == "ARM"} {
-					build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
+					build_package ov $make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
 				} else {
-					build_package ov make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
+					build_package ov $make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
 				}
 			}
 		} else {
-			build_package ov make -C $builddir/base/ov/build/$os
+			build_package ov $make -C $builddir/base/ov/build/$os
 		}
    }
    #if { $os == "nt" } then {
@@ -538,13 +555,20 @@ proc install_dir {dir} {
 proc install_acplt { target } {
 	global builddir
 	global build_dbcommands
+	global ov_arch_bitwidth_int
 	
 	if {$build_dbcommands == 1} {
 		#install solely fb_dbcommands executable
 		if { $target == "linux" } then {
 			file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands $builddir/bin
 		} else {
-			file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands.exe $builddir/bin
+			if {$ov_arch_bitwidth_int==32} {
+				file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands.exe $builddir/bin
+			} else {	
+				# oncrpc does not compile on 64bit use an 32bit .exe instead
+				print_msg "Getting 32bit fbs_dienste.exe"
+				execute svn co https://github.com/acplt/rte/trunk/legacy/fbs_dienste/source/32bit_exe $builddir/bin
+			}
 		}
 	}
 	install_dir $builddir/base/ov/build/$target
@@ -826,7 +850,7 @@ proc compress {archivename dir} {
 		set compressor_zip "7z a"
 	}
 	if { $targetOS == "linux" } then {
-		execute "$compressor_tar -zcvf $archivename-linux$ov_arch_bitwidth_int.tar.gz $dir"
+		execute "$compressor_tar $archivename-linux$ov_arch_bitwidth_int.tar.gz $dir"
 	} else {
 		execute "$compressor_zip $archivename-win$ov_arch_bitwidth_int.zip $dir"
 	}
