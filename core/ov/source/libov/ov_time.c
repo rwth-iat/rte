@@ -370,6 +370,8 @@ static OV_RESULT ov_time_asciitotime_internal(
 	if(uselocaltime){
 		//POSIX C
 		//time_t mktime (struct tm*);
+		tm.tm_isdst = -1; //setting DST as unknown, hopefuly mktime will make a successfull guess
+				  //TODO, we need a proper timezone info passed as a parameter to be fully sure
 		secs = mktime(&tm);
 	}else{
 		//POSIX forgot the UTC version of mktime
