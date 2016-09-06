@@ -512,7 +512,11 @@ proc build_acplt {} {
 			set crossArgsCG	"OV_CODEGEN_EXE=ov_codegen"
 			if {$targetOS=="nt"} {
 				set crossWindresDefs "WINDRESDEFS=--define _WIN32"
-				build_package ov $make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs 
+				build_package ov $make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs
+				#Rename ov_codegen to ov_codegen.exe , because OV_CODEGEN_EXE is used for executing codegen(linux executable) and for building codegen.exe
+				if { [file exists $builddir/base/ov/build/cygwin/ov_codegen] } {
+					file rename -force $builddir/base/ov/build/cygwin/ov_codegen $builddir/base/ov/build/cygwin/ov_codegen.exe
+				}
 			} else {
 				if {$crossArch == "ARM"} {
 					build_package ov $make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
