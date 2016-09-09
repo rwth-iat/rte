@@ -1,0 +1,641 @@
+<?xml version="1.0"?>
+<!--  
+ (c) 2013 Chair of Process Control Engineering,
+ RWTH Aachen University, Germany.
+ XML-based Encoding of the ACPLT/KS-Protokol
+**************************************************************************************************
+For KS Version 2.0            
+	19/10/2002     Original Version					Harald Albrecht
+	23/05/2013 	   Corrected and Completed Version	Ulrich Epple
+	11/06/2013     Additional simplifications 			Ulrich Epple
+
+**************************************************************************************************
+The defined services defined in ACPLT/KS.xml-2.0 are compatible 
+with the xdr-services specified in the ACPLT-Core Protocol Version 2.0 
+(see: http://acplt.org) except the following differences:
+        - the historyservice is not specified. 
+        	(History services will become part of the higher level ACPLT service system)
+        - the history-datatypes state-vec and time-series are deleted
+        - the data-exchange service is not specified
+        - the structure data type is not specified 
+        - the Flatten Feature in ep_Flags is not supported
+ -->
+<xs:schema targetNamespace="http://acplt.org/schemas/ksx/2.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:doc="http://acplt.org/schemas/doc/schema" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ksx="http://acplt.org/schemas/ksx/2.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- *******************************************************************************************  -->
+	<!-- ************     basic defs -->
+	<!-- *******************************************************************************************  -->
+	<xs:simpleType name="IdentifierType">
+		<xs:annotation>
+			<xs:documentation>
+				A local name of a KS-Objects (Domain, Object, Variable..) is denominated "identifier" or short: "id"). Paths base on hierarchical namespaces and consist of a series of identifiers separated by separators (usually "/" or ".").
+		The IdentifierType specifies the range(or pattern) of characters which are allowed in proper
+        ACPLTKS identifiers. Only the letters A through Z in both upper and lower case are valid, as are the digits from 0 to 9, and finally the underscore.If other characters need to be included in ACPLTKS; identifiers, they need to be encoded: instead of appearing verbatim within the identifier, they are instead represented by a percent sign followed by the hex code of the character itself.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([A-Za-z0-9_]|(%[0-9A-Fa-f][0-9A-Fa-f]))*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="RelOrAbsPathType">
+		<xs:annotation>
+			<xs:documentation>
+				Relative or absolute path in the name hierarchy, pointing to a domain or object. The path name consists of identifiers separated and eventually preceded by separators like "/" or ".".
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="CommentType">
+		<xs:annotation>
+			<xs:documentation>
+				comment 
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="HostAndServerIdentType">
+		<xs:annotation>
+			<xs:documentation>
+string to identify the receiving server. This can be the namepair host/server within a network or a channel-ID or any other 
+system-specific adress code.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value=".*/[A-Za-z0-9_]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="TimestampType">
+		<xs:annotation>
+			<xs:documentation>
+				date and time in standard xs: dateTime format
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:dateTime"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="TimespanType">
+		<xs:annotation>
+			<xs:documentation>
+				timespan in standard xs:duration format
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:duration"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="ObjectTypeType">
+		<xs:annotation>
+			<xs:documentation>
+				The ObjectTypeType simple type defines the enumeration of valid ACPLT/KS object type tokens. Valid
+          type tokens are those of the ACPLT/KS communication object types, namely for Domains, Variables, Links, and Structures. 			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="domain"/>
+			<xs:enumeration value="variable"/>
+			<xs:enumeration value="history"/>
+			<xs:enumeration value="link"/>
+			<xs:enumeration value="structure"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ObjectTypeListType">
+		<xs:annotation>
+			<xs:documentation>
+				xml-List of ObjectType-tokens
+				</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="ksx:ObjectTypeType"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="ScopeFlagType">
+		<xs:annotation>
+			<xs:documentation>
+				The ScopeFlagType defines the enumeration of valid ACPLT/KS ScopeFlags. They are used to differentiate between different kind of child of an object. 
+ 			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="parts"/>
+			<xs:enumeration value="children"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ScopeFlagsListType">
+		<xs:annotation>
+			<xs:documentation>
+				xml-List of ScopeFlag-tokens
+				</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="ksx:ScopeFlagType"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="VarTypeType">
+		<xs:annotation>
+			<xs:documentation>
+				This VarTypeType defines the enumeration of valid
+          ACPLT/KS datatype tokens.
+                    	</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="void"/>
+			<xs:enumeration value="bool"/>
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="uint"/>
+			<xs:enumeration value="single"/>
+			<xs:enumeration value="double"/>
+			<xs:enumeration value="string"/>
+			<xs:enumeration value="time"/>
+			<xs:enumeration value="timespan"/>
+			<xs:enumeration value="state"/>
+			<xs:enumeration value="struct"/>
+			<xs:enumeration value="bytevec"/>
+			<xs:enumeration value="boolvec"/>
+			<xs:enumeration value="intvec"/>
+			<xs:enumeration value="uintvec"/>
+			<xs:enumeration value="singlevec"/>
+			<xs:enumeration value="doublevec"/>
+			<xs:enumeration value="stringvec"/>
+			<xs:enumeration value="timestampvec"/>
+			<xs:enumeration value="timespanvec"/>
+			<xs:enumeration value="statevec"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="AccessModeType">
+		<xs:annotation>
+			<xs:documentation>
+				This AccessMode Type defines the enumeration of valid
+          ACPLT/KS AccessMode tokens.
+                    	</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="read"/>
+			<xs:enumeration value="write"/>
+			<xs:enumeration value="deleteable"/>
+			<xs:enumeration value="renameable"/>
+			<xs:enumeration value="linkable"/>
+			<xs:enumeration value="unlinkable"/>
+			<xs:enumeration value="instantiable"/>
+			<xs:enumeration value="part"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AccessModesListType">
+		<xs:annotation>
+			<xs:documentation>
+				xml-List of AccessMode-tokens
+				</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="ksx:AccessModeType"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="SemanticsType">
+		<xs:annotation>
+			<xs:documentation>
+				The SemanticsType allows to enumerate coded standard semantics (like i,o,n for input, output and internal variables of objects)
+                    	</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:unsignedInt"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="TechnicalUnitType">
+		<xs:annotation>
+			<xs:documentation>
+				Technical Units defined in the international ISO-standards. In this schema we do not list the allowed settings.                     	</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="LinkTypeType">
+		<xs:annotation>
+			<xs:documentation>
+				The ACPLT/KS link type indicates whether a particular
+          link belongs to a 1-to-1, 1-to-many, many-to-1 or
+          many-to-many link. In addition, the link type also
+          distinguishes between global and local links. In current implementations only local m:1 and 1:m- types are used.	
+          			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="local-1-1"/>
+			<xs:enumeration value="local-1-m"/>
+			<xs:enumeration value="local-m-m"/>
+			<xs:enumeration value="local-m-1"/>
+			<xs:enumeration value="global-1-1"/>
+			<xs:enumeration value="global-1-m"/>
+			<xs:enumeration value="global-m-m"/>
+			<xs:enumeration value="global-m-1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="AVTicketType">
+		<xs:annotation>
+			<xs:documentation>
+				The AVTicket contains authentication and verification codes          			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="avType" type="ksx:AVTicketTypeType" use="required"/>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="AVTicketTypeType">
+		<xs:annotation>
+			<xs:documentation>
+				The AVTicketTypeType describes the type of the authentication code. In the basic standard only two types are defined. The user can add own authentication types
+          			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="none"/>
+			<xs:enumeration value="simple"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- *******************************************************************************************  -->
+	<!-- ************     eng prop defs -->
+	<!-- *******************************************************************************************  -->
+	<xs:complexType name="EngPropsBaseType" abstract="true">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				<doc:p>The Engineered Properties represent a set of (meta)
+          information about a particular ACPLT/KS communication
+          object. This complex type contains the common set of
+          properties for all kind of communication objects. It is thus
+          the root for derived complex types which augment the
+          engineered properties by object type-specific
+          properties.</doc:p>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="identifier" type="ksx:IdentifierType"/>
+			<xs:element name="comment" type="ksx:CommentType"/>
+			<xs:element name="access" type="ksx:AccessModesListType"/>
+			<xs:element name="semantics" type="ksx:SemanticsType"/>
+			<xs:element name="creationtime" type="ksx:TimestampType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="VariableEngPropsType">
+		<xs:complexContent>
+			<xs:extension base="ksx:EngPropsBaseType">
+				<xs:sequence>
+					<xs:element name="type" type="ksx:VarTypeType"/>
+					<xs:element name="techunit" type="ksx:TechnicalUnitType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="DomainEngPropsType">
+		<xs:complexContent>
+			<xs:extension base="ksx:EngPropsBaseType">
+				<xs:sequence>
+					<xs:element name="classIdentifier" type="ksx:RelOrAbsPathType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="LinkEngPropsType">
+		<xs:complexContent>
+			<xs:extension base="ksx:EngPropsBaseType">
+				<xs:sequence>
+					<xs:element name="type" type="ksx:LinkTypeType"/>
+					<xs:element name="associationIdentifier" type="ksx:RelOrAbsPathType"/>
+					<xs:element name="oppositeRoleIdentifier" type="ksx:IdentifierType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:simpleType name="ValueStateType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="notsupported"/>
+			<xs:enumeration value="unknown"/>
+			<xs:enumeration value="bad"/>
+			<xs:enumeration value="questionable"/>
+			<xs:enumeration value="good"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="VoidType"/>
+	<xs:complexType name="ValueType">
+		<xs:choice>
+			<xs:element name="void" type="ksx:VoidType"/>
+			<xs:element name="bool" type="xs:boolean"/>
+			<xs:element name="int" type="xs:int"/>
+			<xs:element name="uint" type="xs:unsignedInt"/>
+			<xs:element name="single" type="xs:float"/>
+			<xs:element name="double" type="xs:double"/>
+			<xs:element name="string" type="xs:string"/>
+			<xs:element name="timestamp" type="ksx:TimestampType"/>
+			<xs:element name="timespan" type="ksx:TimespanType"/>
+			<xs:element name="state" type="ksx:ValueStateType"/>
+			<xs:element name="bytevec" type="xs:base64Binary"/>
+			<xs:element name="boolvec">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="bool" type="xs:boolean" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="intvec">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="int" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="uintvec">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="uint" type="xs:unsignedInt" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="singlevec">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="single" type="xs:float" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="doublevec">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="double" type="xs:double" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="stringvec">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="string" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+					<xs:attribute name="length" type="xs:unsignedInt"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="timestampvec">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="timestamp" type="ksx:TimestampType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="timespanvec">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="timespan" type="ksx:TimespanType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<!-- *******************************************************************************************  -->
+	<!-- ************     request types -->
+	<!-- *******************************************************************************************  -->
+	<xs:complexType name="GetEPRequestType">
+		<xs:annotation>
+			<xs:documentation>
+			The type of path reflect the ability to specify ACPLT/KS paths or an empty string (one possible way of
+          querying the root domain for its Engineered Properties). The correctness of the path-string is not checked in this schema.
+         The type of nameMask reflect the ability to specify simplified regular expressions. The correctness of the nameMask is not checked in this schema.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="path" type="xs:string"/>
+			<xs:element name="typeMask" type="ksx:ObjectTypeListType"/>
+			<xs:element name="nameMask" type="xs:string"/>
+			<xs:element name="scopeFlags" type="ksx:ScopeFlagsListType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="GetVarRequestType">
+		<xs:sequence>
+			<xs:element name="path" type="ksx:RelOrAbsPathType" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="SetVarRequestType">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="path" type="ksx:RelOrAbsPathType"/>
+			<xs:sequence>
+				<xs:annotation>
+					<xs:documentation>within the variable the value, the timestamp and the state can be set. Any combination of settings is allowed (for example only the value or only the state or all three elements together.) but there must be one setting at least. If the variable is set but no timestamp and state, the timestamp will be set by the server to the current time, the state will be set to "notsupported".</xs:documentation>
+				</xs:annotation>
+				<xs:element name="value" type="ksx:ValueType" minOccurs="0"/>
+				<xs:element name="timestamp" type="ksx:TimestampType" minOccurs="0"/>
+				<xs:element name="state" type="ksx:ValueStateType" minOccurs="0"/>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="LinkRequestType">
+		<xs:annotation>
+			<xs:documentation>
+				linkpath contains the full path of the object incl. the name of the association interface. The interface in linkpath has the role of a child-interface. (example: /TechUnits/add1.taskparent)
+elementpath contains the full name of the linkparent but without the parent-interface. (example: /UrTask)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="linkPath" type="ksx:RelOrAbsPathType"/>
+			<xs:element name="elementPath" type="ksx:RelOrAbsPathType"/>
+			<xs:element name="placementHint" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+				placementHint allows the positioning of a child element at a defined place in the parent list. If placementHint is not present, the default place is assumed, the default value is the end of the list. In case of BEFORE or AFTER a placePath to the reference element is required. If placePath is not set or the referenced Element is not part of the list, the link will not be created and the response will be an errormessage.
+			</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:enumeration value="PMH_DEFAULT"/>
+						<xs:enumeration value="PMH_BEGIN"/>
+						<xs:enumeration value="PMH_END"/>
+						<xs:enumeration value="PMH_BEFORE"/>
+						<xs:enumeration value="PMH_AFTER"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="placePath" type="ksx:RelOrAbsPathType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="UnLinkRequestType">
+		<xs:annotation>
+			<xs:documentation>
+				linkpath contains the full path of the object incl. the name of the association interface. The interface in linkpath has the role of a child-interface. (example: /TechUnits/add1.taskparent)
+elementpath contains the full name of the linkparent but without the parent-interface. (example: /UrTask)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="linkpath" type="ksx:RelOrAbsPathType"/>
+			<xs:element name="elementpath" type="ksx:RelOrAbsPathType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="RenameRequestType">
+		<xs:annotation>
+			<xs:documentation>
+				oldpath contains the full pathname of the object to be renamed (path+objectname). newpath contains the full pathname of the  object after the rename operation (new path+new objectname). newpath must exist, within new path new objectname must still be free. newpath can contain the relative pathname to oldpath too.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="oldpath" type="ksx:RelOrAbsPathType"/>
+			<xs:element name="newpath" type="ksx:RelOrAbsPathType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="GetServerRequestType">
+		<xs:annotation>
+			<xs:documentation>
+				request to a ks-manager to return the portnumber of a specific server
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="ksx:IdentifierType"/>
+			<xs:element name="minversion" type="xs:unsignedInt"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="RegisterRequestType">
+		<xs:annotation>
+			<xs:documentation>
+				registration 
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="ksx:IdentifierType"/>
+			<xs:element name="port" type="xs:string"/>
+			<xs:element name="version" type="xs:unsignedInt"/>
+			<xs:element name="timetolive" type="ksx:TimespanType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="UnregisterRequestType">
+		<xs:annotation>
+			<xs:documentation>
+				unregistration
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="ksx:IdentifierType"/>
+			<xs:element name="version" type="xs:unsignedInt"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- *******************************************************************************************  -->
+	<!-- ************     response types -->
+	<!-- *******************************************************************************************  -->
+	<xs:complexType name="ResponseVoidType">
+		<xs:annotation>
+			<xs:documentation>
+	ks failure codes for void responses (responses to link, unlink, create, delete, setvar, rename requests).
+	On purpose, the design of fault codes does not follow that of SOAP or similiar systems:
+       additional goodies, such as fault descriptions, have been left out because KSX is the XML-based cousin of the ACPLT/KS core protocol. And since the ACPLT/KS core protocol does not carry textual fault messages or similiar things, it currently makes no sense to have such elements only in the KSX incarnation of ACPLT/KS. Gateways would have to guess on the exact fault descriptions and just increase the amount of data transferred even more.			</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="success"/>
+			<xs:element name="mixed">
+				<xs:complexType>
+					<xs:choice minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="success"/>
+						<xs:element name="failure" type="xs:unsignedInt"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="failure" type="xs:unsignedInt"/>
+		</xs:choice>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="GetEPResponseType">
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="VariableEngProps" type="ksx:VariableEngPropsType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="DomainEngProps" type="ksx:DomainEngPropsType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="LinkEngProps" type="ksx:LinkEngPropsType" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:element name="failure" type="xs:unsignedInt"/>
+		</xs:choice>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="GetVarResponseType">
+		<xs:choice>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:choice>
+					<xs:element name="var">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="ksx:ValueType"/>
+								<xs:element name="timestamp" type="ksx:TimestampType"/>
+								<xs:element name="state" type="ksx:ValueStateType"/>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="failure" type="xs:unsignedInt"/>
+				</xs:choice>
+			</xs:sequence>
+			<xs:element name="failure" type="xs:unsignedInt"/>
+		</xs:choice>
+	</xs:complexType>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:complexType name="GetServerResponseType">
+		<xs:annotation>
+			<xs:documentation>
+				returns the servername, port
+ and version of a registered server		</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="servername" type="ksx:IdentifierType"/>
+				<xs:element name="port" type="xs:unsignedInt"/>
+				<xs:element name="version" type="xs:string"/>
+			</xs:sequence>
+			<xs:element name="failure" type="xs:unsignedInt"/>
+		</xs:choice>
+	</xs:complexType>
+	<!-- *******************************************************************************************  -->
+	<!-- ************     request and response elements  -->
+	<!-- *******************************************************************************************  -->
+	<xs:element name="request">
+		<xs:annotation>
+			<xs:documentation>request calls can be of exactly one type of the various ACPLTKS services each, but within a request call more than one request instances of this type (variables to read, objects to create..) can be invoked.
+ 			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="AVTicket" type="ksx:AVTicketType" minOccurs="0"/>
+				<xs:choice>
+					<xs:element name="getvar" type="ksx:GetVarRequestType"/>
+					<xs:element name="getep" type="ksx:GetEPRequestType"/>
+					<xs:element name="getserver" type="ksx:GetServerRequestType"/>
+					<xs:element name="setvar" type="ksx:SetVarRequestType"/>
+					<xs:element name="link" type="ksx:LinkRequestType"/>
+					<xs:element name="unlink" type="ksx:UnLinkRequestType"/>
+					<xs:element name="rename" type="ksx:RenameRequestType"/>
+					<xs:element name="register" type="ksx:RegisterRequestType"/>
+					<xs:element name="unregister" type="ksx:UnregisterRequestType"/>
+				</xs:choice>
+			</xs:sequence>
+			<xs:attribute name="destination" type="ksx:HostAndServerIdentType" use="optional">
+				<xs:annotation>
+					<xs:documentation>In cases were the receiving server is already connected to the client (for example within an http-Client), the destination can be omitted.	</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<xs:element name="response">
+		<xs:annotation>
+			<xs:documentation>response might either fail completely or succeed. In the case the service succeeded, there still might be problem indications within the service reply. For instance, although a GetVar service request can succeed, but still individual variables might not retrieved.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="AVTicket" type="ksx:AVTicketType" minOccurs="0"/>
+				<xs:choice>
+					<xs:element name="getvar" type="ksx:GetVarResponseType"/>
+					<xs:element name="getep" type="ksx:GetEPResponseType"/>
+					<xs:element name="getserver" type="ksx:GetServerResponseType"/>
+					<xs:element name="setvar" type="ksx:ResponseVoidType"/>
+					<xs:element name="create" type="ksx:ResponseVoidType"/>
+					<xs:element name="delete" type="ksx:ResponseVoidType"/>
+					<xs:element name="link" type="ksx:ResponseVoidType"/>
+					<xs:element name="unlink" type="ksx:ResponseVoidType"/>
+					<xs:element name="rename" type="ksx:ResponseVoidType"/>
+					<xs:element name="register" type="ksx:ResponseVoidType"/>
+					<xs:element name="unregister" type="ksx:ResponseVoidType"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
