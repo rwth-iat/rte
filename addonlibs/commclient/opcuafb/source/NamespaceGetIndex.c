@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2015
+*	Copyright (C) 2016
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -43,64 +43,6 @@
 #include "opcuafb.h"
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
-
-
-//remove the function if the open62541 files are updated!
-
-
-/**
- * Get the namespace-index of a namespace-URI
- *
- * @param client The UA_Client struct for this connection
- * @param namespaceUri The interested namespace URI
- * @param namespaceIndex The namespace index of the URI. The value is unchanged in case of an error
- * @return Indicates whether the operation succeeded or returns an error code
- */
-UA_StatusCode UA_EXPORT UA_Client_NamespaceGetIndex(UA_Client *client, UA_String *namespaceUri, UA_UInt16 *namespaceIndex);
-
-UA_StatusCode UA_Client_NamespaceGetIndex(UA_Client *client, UA_String *namespaceUri, UA_UInt16 *namespaceIndex){
-	UA_ReadRequest ReadRequest;
-	UA_ReadResponse ReadResponse;
-	UA_StatusCode retval = UA_STATUSCODE_BADUNEXPECTEDERROR;
-
-	UA_ReadRequest_init(&ReadRequest);
-	ReadRequest.nodesToRead = UA_ReadValueId_new();
-	ReadRequest.nodesToReadSize = 1;
-	ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
-	ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY);
-
-	ReadResponse = UA_Client_Service_read(client, ReadRequest);
-	UA_ReadRequest_deleteMembers(&ReadRequest);
-
-	if(ReadResponse.responseHeader.serviceResult != UA_STATUSCODE_GOOD){
-		retval = ReadResponse.responseHeader.serviceResult;
-		goto cleanup;
-	}
-
-	if(ReadResponse.resultsSize != 1 || !ReadResponse.results[0].hasValue){
-		retval = UA_STATUSCODE_BADNODEATTRIBUTESINVALID;
-		goto cleanup;
-	}
-
-	if(ReadResponse.results[0].value.type != &UA_TYPES[UA_TYPES_STRING]){
-		retval = UA_STATUSCODE_BADTYPEMISMATCH;
-		goto cleanup;
-	}
-
-	retval = UA_STATUSCODE_BADNOTFOUND;
-	for(UA_UInt16 iterator = 0; iterator < ReadResponse.results[0].value.arrayLength; iterator++){
-		if(UA_String_equal(namespaceUri, &((UA_String*)ReadResponse.results[0].value.data)[iterator] )){
-			*namespaceIndex = iterator;
-			retval = UA_STATUSCODE_GOOD;
-			break;
-		}
-	}
-
-	cleanup:
-	UA_ReadResponse_deleteMembers(&ReadResponse);
-
-	return retval;
-}
 
 OV_DLLFNCEXPORT OV_RESULT opcuafb_NamespaceGetIndex_Execute_set(
 		OV_INSTPTR_opcuafb_NamespaceGetIndex          pinst,
