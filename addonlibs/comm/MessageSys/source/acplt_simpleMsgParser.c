@@ -134,31 +134,36 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 			if(!strncmp(&(xmlString[i+1]), esc_qout, sizeof(esc_qout)-1))
 			{
 				(*targetString)[i] = '"';
-				xmlString += sizeof(esc_qout);
+				xmlString += sizeof(esc_qout)-1;
+				strLength -= sizeof(esc_qout)-1;
 			}
 			/*	'	*/
 			else if(!strncmp(&(xmlString[i+1]), esc_apos, sizeof(esc_apos)-1))
 			{
 				(*targetString)[i] = '\'';
-				xmlString += sizeof(esc_apos);
+				xmlString += sizeof(esc_apos)-1;
+				strLength -= sizeof(esc_apos)-1;
 			}
 			/*	<	*/
 			else if(!strncmp(&(xmlString[i+1]), esc_lt, sizeof(esc_lt)-1))
 			{
 				(*targetString)[i] = '<';
-				xmlString += sizeof(esc_lt);
+				xmlString += sizeof(esc_lt)-1;
+				strLength -= sizeof(esc_lt)-1;
 			}
 			/*	>	*/
 			else if(!strncmp(&(xmlString[i+1]), esc_gt, sizeof(esc_gt)-1))
 			{
 				(*targetString)[i] = '>';
-				xmlString += sizeof(esc_gt);
+				xmlString += sizeof(esc_gt)-1;
+				strLength -= sizeof(esc_gt)-1;
 			}
 			/*	&	*/
 			else if(!strncmp(&(xmlString[i+1]), esc_amp, sizeof(esc_amp)-1))
 			{
 				(*targetString)[i] = '&';
-				xmlString += sizeof(esc_amp);
+				xmlString += sizeof(esc_amp)-1;
+				strLength -= sizeof(esc_amp)-1;
 			}
 			else
 			{
@@ -170,7 +175,8 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 			if(!strncmp(&(xmlString[i+1]), c_DATA_start, sizeof(c_DATA_start)-1))
 			{	/*	CDATA element found; copy content only but care for nested CDATA elements	*/
 				cDataCount = 1;
-				for(xmlString += sizeof(c_DATA_start)+1-1; *xmlString && (cDataCount >= 1); i++)
+				strLength -= sizeof(c_DATA_start)-1;
+				for(xmlString += sizeof(c_DATA_start); *xmlString && (cDataCount >= 1); i++)
 				{
 					(*targetString)[i] = xmlString[i];
 					if(xmlString[i] == '<')
@@ -180,11 +186,10 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 					}
 					else if(!strncmp(&(xmlString[i]), c_DATA_end, sizeof(c_DATA_end)-1))
 						cDataCount--;
-
-
 				}
 
-				xmlString += sizeof(c_DATA_end);
+				xmlString += sizeof(c_DATA_end)-2;//one more from above
+				strLength -= sizeof(c_DATA_end)-1;
 			}
 			else
 				return OV_ERR_BADVALUE;
