@@ -13,6 +13,7 @@ addons:
     - texinfo
     - binutils-mingw-w64-i686
     - gcc-mingw-w64-i686
+    - g++-mingw-w64-i686
 env:
   matrix:
   - OV_ARCH_BITWIDTH=32 DB_COMMANDS=no_dbcommands
