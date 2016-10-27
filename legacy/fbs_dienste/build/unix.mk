@@ -4,8 +4,8 @@
 #*    #############                                                           *
 #*                                                                            *
 #*   L T S o f t                                                              *
-#*   Agentur f¸r Leittechnik Software GmbH                                    *
-#*   Heinrich-Hertz-Straﬂe 10                                                 *
+#*   Agentur f√ºr Leittechnik Software GmbH                                    *
+#*   Heinrich-Hertz-Stra√üe 10                                                 *
 #*   50170 Kerpen                                                             *
 #*   Tel      : 02273/9893-0                                                  *
 #*   Fax      : 02273/52526                                                   *
@@ -36,7 +36,7 @@
 #	Plattform
 #	---------
 
-#Hauptmakefile enth‰lt Definition der Form:
+#Hauptmakefile enth√§lt Definition der Form:
 #SYSTEM = LINUX
 #SYSDIR = linux
 
@@ -57,12 +57,17 @@ include ../generic.mk
 
 all: $(TARGETS)
 
-ifdef OV_ARCH_BITWIDTH
+# 32/64 bit architecture
+UNAME_M := $(shell uname -m)
+ifneq ($(filter arm%,$(UNAME_M)),)
+OV_ARCH_BITWIDTH_CFLAGS         =
+OV_ARCH_BITWIDTH_LDFLAGS	=	$(OV_ARCH_BITWIDTH_CFLAGS)
+else ifdef OV_ARCH_BITWIDTH
 OV_ARCH_BITWIDTH_CFLAGS		=	-m$(OV_ARCH_BITWIDTH)
-OV_ARCH_BITWIDTH_LDFLAGS	=	-m$(OV_ARCH_BITWIDTH)
+OV_ARCH_BITWIDTH_LDFLAGS	=	$(OV_ARCH_BITWIDTH_CFLAGS)
 else
 OV_ARCH_BITWIDTH_CFLAGS		=	-m32
-OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
+OV_ARCH_BITWIDTH_LDFLAGS	=	$(OV_ARCH_BITWIDTH_CFLAGS)
 endif
 
 #	Compiler
