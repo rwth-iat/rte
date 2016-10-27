@@ -708,11 +708,14 @@ if(new == 0){
 		fprintf(fd," -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
 	} else {
 		fprintf(fd,"LD		= $(CC) -shared");
+// remove the following #if to enable cross compiling on an ARM host system
+#if !__arm__
 		if(archBitwidth == 32){
 			fprintf(fd," -m32");
 		}else if(archBitwidth == 64){
 			fprintf(fd," -m64");
 		}
+#endif
 		fprintf(fd,"\n");
 	}
 
