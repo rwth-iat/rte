@@ -695,6 +695,7 @@ proc release_lib_better {libname option} {
 
 proc create_release {} {
 	global os
+	global targetOS
 	global releasedir
 	global builddir
 	global env
@@ -751,7 +752,7 @@ proc create_release {} {
 	file mkdir $releasedir/dev
 	#file mkdir $releasedir/user/libs
 	#download tclsh
-	if { $os == "nt" } then {
+	if { $targetOS == "nt" } then {
 		print_msg "Downloading tclsh.exe"
 		cd $releasedir/system/sysbin
 		execute "wget" "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/tclkit/tclkitsh-8.5.8-win32.upx.exe"
