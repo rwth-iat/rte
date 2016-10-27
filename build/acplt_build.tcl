@@ -754,7 +754,7 @@ proc create_release {} {
 	if { $os == "nt" } then {
 		print_msg "Downloading tclsh.exe"
 		cd $releasedir/system/sysbin
-		execute "wget" "http://tclkit.googlecode.com/files/tclkitsh-8.5.8-win32.upx.exe"
+		execute "wget" "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/tclkit/tclkitsh-8.5.8-win32.upx.exe"
 		file copy -force tclkitsh-8.5.8-win32.upx.exe tclsh.exe
 		file delete -force tclkitsh-8.5.8-win32.upx.exe
 	}
