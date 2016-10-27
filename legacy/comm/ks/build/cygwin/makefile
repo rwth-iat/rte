@@ -80,7 +80,7 @@ EXE = .exe
 
 A = .a
 
-
+GCC_BIN_PREFIX = 
 
 CXX = $(GCC_BIN_PREFIX)g++
 
@@ -93,7 +93,7 @@ CXX_COMPILE = $(CXX) $(CXX_EXTRA_FLAGS) $(CXX_PLATFORM_FLAGS) $(CXX_FLAGS) -c
 
 
 
-CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl g++ $(LD_FLAGS)
+CXX_LINK = MAKE=$(MAKE) perl $(PLT_DIR)/build/templ.pl $(GCC_BIN_PREFIX)g++ $(LD_FLAGS)
 
 
 
@@ -163,19 +163,19 @@ all: $(LIBKS) $(LIBKSSVR) $(LIBKSCLN)
 
 $(LIBKS): $(LIBKS_OBJECTS)
 
-	ar r $@ $?
+	$(GCC_BIN_PREFIX)ar r $@ $?
 
 
 
 $(LIBKSSVR): $(LIBKSSVR_OBJECTS)
 
-	ar r $@ $?
+	$(GCC_BIN_PREFIX)ar r $@ $?
 
 
 
 $(LIBKSCLN): $(LIBKSCLN_OBJECTS)
 
-	ar r $@ $?
+	$(GCC_BIN_PREFIX)ar r $@ $?
 
 
 
