@@ -11,7 +11,10 @@ A=.a
 EXE=.exe
 
 # 32/64 bit architecture
-ifdef OV_ARCH_BITWIDTH
+UNAME_M := $(shell uname -m)
+ifneq ($(filter arm%,$(UNAME_M)),)
+OV_ARCH_BITWIDTH_CFLAGS         =
+else ifdef OV_ARCH_BITWIDTH
 OV_ARCH_BITWIDTH_CFLAGS		=	-m$(OV_ARCH_BITWIDTH)
 else
 OV_ARCH_BITWIDTH_CFLAGS		=	-m32
