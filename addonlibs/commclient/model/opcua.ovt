@@ -1,0 +1,48 @@
+#ifndef opcua_OVT_INCLUDED
+#define opcua_OVT_INCLUDED
+
+
+/*	Needed to prevent redefined warnings :-S	*/
+#ifdef WIN32
+#undef WIN32
+#endif
+
+#include "open62541.h"
+
+
+/*	restore pre-anti-warning state	*/
+#ifndef WIN32
+#define WIN32
+#endif
+
+#define OV_UA_NAMESPACEURI "iec62541-ov.acplt.org"
+/* 
+	Define your data types here. 
+*/
+struct UA_NodeStore {
+    struct nodeEntry **entries;
+    UA_UInt32          size;
+    UA_UInt32          count;
+    UA_UInt32          sizePrimeIndex;
+};
+
+/*		
+	Never ever change the order of the items inside this struct!!!
+	Especially never ever put something in front of the UA_Connection!!!
+	This one is cast to UA_Connection when setting up the slientHandler.
+	It will be cast back to ov_UA_Connection by the free and appen functions as they are
+	the connection callbacks.
+*/
+/*typedef struct ov_UA_Connection {
+	UA_Connection connection;
+	OV_INSTPTR_ksbase_ClientHandler clientHandler;
+	KS_DATAPACKET* inData;
+	KS_DATAPACKET* outData;
+} ov_UA_Connection;
+*/
+
+typedef UA_Connection* UA_ConnectionPTR;
+typedef UA_Connection** UA_ConnectionPTRPTR;
+typedef UA_Server* OV_PTR_UA_Server;
+
+#endif
