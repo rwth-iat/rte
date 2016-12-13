@@ -3,7 +3,7 @@
 *
 *   Copyright (C) 2000
 *   Lehrstuhl fuer Prozessleittechnik,
-*   RWTH Aachen, D-52056 Aachen, Germany.
+*   D-52056 Aachen, Germany.
 *   All rights reserved.
 *
 *   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>

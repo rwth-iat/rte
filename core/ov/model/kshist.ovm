@@ -1,13 +1,14 @@
 /*
 *   $Id: kshist.ovm,v 1.1 2004-10-14 14:13:23 ansgar Exp $
 *
-*   Copyright (C) 1998-1999
+*   Copyright (C) 1998
 *   Lehrstuhl fuer Prozessleittechnik,
-*   RWTH Aachen, D-52056 Aachen, Germany.
+*   D-52056 Aachen, Germany.
 *   All rights reserved.
 *
 *   Author: Ansgar Münnemann <ansgar@plt.rwth-aachen.de>
 *
+*   
 *   This file is part of the ACPLT/OV Package 
 *   
 *   Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,9 +1,9 @@
 /*
 *   $Id: ov_ntservice.c,v 1.10 2004-10-29 09:08:24 ansgar Exp $
 *
-*   Copyright (C) 1998-1999
+*   Copyright (C) 1998
 *   Lehrstuhl fuer Prozessleittechnik,
-*   RWTH Aachen, D-52056 Aachen, Germany.
+*   D-52056 Aachen, Germany.
 *   All rights reserved.
 *
 *   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>

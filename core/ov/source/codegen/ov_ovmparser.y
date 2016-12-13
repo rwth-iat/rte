@@ -1,9 +1,9 @@
 /*
 *   $Id: ov_ovmparser.y,v 1.16 2005-08-17 09:40:10 markus Exp $
 *
-*   Copyright (C) 1998-1999
+*   Copyright (C) 1998
 *   Lehrstuhl fuer Prozessleittechnik,
-*   RWTH Aachen, D-52056 Aachen, Germany.
+*   D-52056 Aachen, Germany.
 *   All rights reserved.
 *
 *   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>

@@ -1,9 +1,9 @@
 /*
 *   $Id: ov_ovmscanner.lex,v 1.11 2002-08-29 11:03:56 ansgar Exp $
 *
-*   Copyright (C) 1998-1999
+*   Copyright (C) 1998
 *   Lehrstuhl fuer Prozessleittechnik,
-*   RWTH Aachen, D-52056 Aachen, Germany.
+*   D-52056 Aachen, Germany.
 *   All rights reserved.
 *
 *   Author: Dirk Meyer <dirk@plt.rwth-aachen.de>
