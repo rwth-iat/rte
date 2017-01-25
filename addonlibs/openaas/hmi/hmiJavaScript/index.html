@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!--
+/*
+*	Copyright (C) 2009
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*/
+/***********************************************************************
+*
+*	File:
+*	index.html
+*
+*	Editors:
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
+*	CVS:
+*	$Revision$
+*	$Date$
+*
+*	Hlistory:
+*	20-Mar-2008			Je
+*		-	Initial Release with Code from http://www.quirksmode.org/js/detect.html
+*
+*	20-Mar-2009			Je
+*		-	changed the SVG detection to support a renesis-only install
+*		-	IE8 has to be forced to the old behavior for this
+*
+***********************************************************************/
+-->
+<head>
+<!-- IE should render in standard mode. -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script type="text/javascript" src="JavaScript/adobesvgcheck.js"></script>
+<script type="text/javascript">
+var BrowserDetect = {
+	init: function () {
+		this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+		this.version = this.searchVersion(navigator.userAgent)
+			|| this.searchVersion(navigator.appVersion)
+			|| "an unknown version";
+		this.OS = this.searchString(this.dataOS) || "an unknown OS";
+	},
+	searchString: function (data) {
+		for (var i=0;i<data.length;i++)	{
+			var dataString = data[i].string;
+			var dataProp = data[i].prop;
+			this.versionSearchString = data[i].versionSearch || data[i].identity;
+			if (dataString) {
+				if (dataString.indexOf(data[i].subString) != -1)
+					return data[i].identity;
+			}
+			else if (dataProp)
+				return data[i].identity;
+		}
+	},
+	searchVersion: function (dataString) {
+		var index = dataString.indexOf(this.versionSearchString);
+		if (index == -1) return;
+		return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+	},
+	dataBrowser: [
+		{
+			string: navigator.userAgent,
+			subString: "Chrome",
+			identity: "Chrome"
+		},
+		{ 	string: navigator.userAgent,
+			subString: "OmniWeb",
+			versionSearch: "OmniWeb/",
+			identity: "OmniWeb"
+		},
+		{
+			string: navigator.vendor,
+			subString: "Apple",
+			identity: "Safari"
+		},
+		{
+			prop: window.opera,
+			identity: "Opera"
+		},
+		{
+			string: navigator.vendor,
+			subString: "iCab",
+			identity: "iCab"
+		},
+		{
+			string: navigator.vendor,
+			subString: "KDE",
+			identity: "Konqueror"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "Firefox",
+			identity: "Firefox"
+		},
+		{
+			string: navigator.vendor,
+			subString: "Camino",
+			identity: "Camino"
+		},
+		{		// for newer Netscapes (6+)
+			string: navigator.userAgent,
+			subString: "Netscape",
+			identity: "Netscape"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "MSIE",
+			identity: "Explorer",
+			versionSearch: "MSIE"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "Gecko",
+			identity: "Mozilla",
+			versionSearch: "rv"
+		},
+		{ 		// for older Netscapes (4-)
+			string: navigator.userAgent,
+			subString: "Mozilla",
+			identity: "Netscape",
+			versionSearch: "Mozilla"
+		}
+	],
+	dataOS : [
+		{
+			string: navigator.platform,
+			subString: "Win",
+			identity: "Windows"
+		},
+		{
+			string: navigator.platform,
+			subString: "Mac",
+			identity: "Mac"
+		},
+		{
+			string: navigator.platform,
+			subString: "Linux",
+			identity: "Linux"
+		}
+	]
+
+};
+	BrowserDetect.init();
+	if (window && window.location && window.location.search){
+		var urlparameter = window.location.search;
+	}else{
+		urlparameter = "";
+	}
+	if ("Explorer" == BrowserDetect.browser && 8 >= BrowserDetect.version ) {
+		//IE6, 7 and 8 needs a plugin (from Adobe)
+		var results = detectSVG();
+		if(results.support == "Builtin"){
+			//ie>=9 has buildin support and is able to use the gecko version
+			//This modern IE could get into this codepath if compatibility mode is active (in the intranet)
+			window.location.href = "hmi-gecko.xhtml"+urlparameter;
+		}else if(results.support){
+			window.location.href = "hmi-explorer.html"+urlparameter;
+		}else{
+			getSVGViewer();
+		}
+	}else if ("Explorer" == BrowserDetect.browser && 8 < BrowserDetect.version ) {
+		//IE9 can use the gecko.xhtml file
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
+	}else if ("Mozilla" == BrowserDetect.browser) {
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
+	}else if ("Firefox" == BrowserDetect.browser) {
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
+	}else if ("Opera" == BrowserDetect.browser) {
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
+	}else if ("Safari" == BrowserDetect.browser ) {
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
+	}else if ("Konqueror" == BrowserDetect.browser ) {
+		//Version 4.2 arbeitet mit dem HMI trotzdem nicht, parst das SVG als XML und zeigt die Textkomponenten an
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
+	}else{
+		window.location.href = "hmi-gecko.xhtml"+urlparameter;
+	}
+</script>
+	<title>HMI Browserweiche</title>
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+		<table width="100%">
+			<tr >
+				<td style="text-align:left;padding-left:5px;font-weight:bold;letter-spacing:0.5em;font-size:1.2em;font-family:sans-serif;">
+					HMI - Browsererkennung
+				</td>
+				<td style="text-align:center;">
+					<img src="ACPLT-Logo.gif" alt="Lehrstuhl für Prozessleittechnik">
+				</td>
+				<td style="text-align:center;font-size:8pt;">&#169; Lehrstuhl für Prozessleittechnik 2008</td>
+			</tr>
+		</table>
+		<noscript>
+			<h2>Leider haben sie in ihrem Browser kein Javascript aktiviert. </h2>
+			<p>Für die HMI Funktionalität ist jedoch zwingend aktiviertes Javascript nötig.</p>
+			<p><strong>Bitte aktivieren sie Javascript in ihrem Browser und laden sie die Seite neu.</strong></p>
+			<h3>Bei Firefox</h3>
+			<p>Klicken Sie in der obersten Men&uuml;leiste auf <b>Extras</b> / <b>Einstellungen</b>. Hier aktivieren Sie unter <b>Inhalt</b> bzw. <b>Web-Features</b> den Punkt <b>JavaScript aktivieren</b> und klicken Sie <b>OK</b>.</p>
+			<h3>Beim Internet Explorer</h3>
+			<p>Klicken Sie in der obersten Men&uuml;leiste auf <b>Extras</b> / <b>Internetoptionen</b>.<br>
+			Dort klicken Sie unter <b>Sicherheit</b> <i>entweder</i> auf <b>Standardstufe</b>, <i>oder</i> Sie w&auml;hlen <b>Stufe anpassen</b> und aktivieren dann unter <b>Scripting</b> den Punkt <b>Active Scripting Aktivieren</b>. Best&auml;tigen Sie mit <b>OK</b>.</p>
+			<h3>Bei Opera</h3>
+			<p>Klicken Sie in der obersten Men&uuml;leiste auf <b>Datei</b> / <b>Einstellungen</b>. Unter <b>Multimedia</b> setzen Sie ein H&auml;kchen bei <b>JavaScript aktivieren</b> und klicken Sie dann <b>OK</b>.</p>
+		</noscript>
+		<p>Für die HMI Funktionalität ist SVG Unterstützung des Browsers nötig.</p>
+		
+		<p>Wenn die Erkennung des Browsers nicht erfolgreich war, k&ouml;nnen sie hier die passende HMI Seite selber auswählen:</p>
+		<table>
+			<tr><td style="padding-right:30px;"><a href="hmi-gecko.xhtml" id="idW3CLink">W3C Standard Website</a></td><td><a href="hmi-explorer.html" id="idIELink">Internet Explorer 6 - 8 Website</a></td></tr>
+		</table>
+		<ul>
+			<li><a href="http://www.mozilla-europe.org/de/products/firefox/">Firefox</a> hat ab Version 2.0 SVG Support integiert.</li>
+			<li><a href="http://www.microsoft.com/germany/windows/internet-explorer/">alte Internet Explorer</a> benötigen ein SVG Plugin von 
+				<a href="http://www.adobe.com/svg/viewer/install/mainframed.html">Adobe (Adobe SVG Viewer)</a> (automatische 
+				<a href="http://www.adobe.com/svg/viewer/install/auto/">Installation</a>).</li>
+			<li><a href="http://www.opera.com/download/">Opera</a> unterstützt ab Version 9.0 SVG und Javascript</li>
+			<li><a href="http://www.apple.com/safari/">Safari</a> unterstützt ab Version 3.0 SVG und Javascript</li>
+			<li><a href="http://www.google.com/chrome">Google Chrome</a> unterstützt ab Version 1.0 SVG und Javascript</li>
+		</ul>
+		<script type="text/javascript">
+			//correct link
+			var aNode = document.getElementById("idIELink");
+			if(aNode && aNode.href){
+				aNode.href = aNode.href + urlparameter;
+			}
+			aNode = document.getElementById("idW3CLink");
+			if(aNode && aNode.href){
+				aNode.href = aNode.href + urlparameter;
+			}
+		</script>
+	</body>
+</html>

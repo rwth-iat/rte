@@ -1,0 +1,510 @@
+#include "ov.ovm"
+#include "ksbase.ovm"
+#include "fb.ovm"
+
+/*
+    TODO: introduce a uaReference class to mirror references to outside namespaces and adapt the browse functions accordingly (return nodeId should suffice, I hope)
+*/
+
+
+LIBRARY opcua
+    VERSION   = "V0.1 (DD-Mon-YYYY)";
+    AUTHOR    = "Lars Evertz, Florian Palm";
+    COPYRIGHT = "";
+    COMMENT   = "Implements an OPC UA server with access to the models in the ov system. Commandline Options: UA_CertPath - Path to the server certificate file. Absolute or relative to the config file; UA_Port - specify the portNumber on which the UA-Server will listen.";
+    
+    CLASS uaServer        :    CLASS ksbase/ComTask
+        IS_INSTANTIABLE;
+        COMMENT = "Holds all necessarry data for a server - singleton. can only be instantiated once";
+        VARIABLES
+            NameSpaceIndex            :    UINT
+                COMMENT    =    "Index of the OV-namespace as assigned on init.";
+            LoginEnableAnonymous    :    BOOL
+                HAS_ACCESSORS
+                INITIALVALUE    =    TRUE;
+             LoginEnableUsernamePassword    :    BOOL
+                 HAS_ACCESSORS
+                 INITIALVALUE    =    TRUE;
+            LoginUsernames []    :    STRING
+                HAS_ACCESSORS;
+            LoginPasswords []    :    STRING
+                HAS_ACCESSORS;
+            LoginLoginsCount    :    UINT
+                IS_DERIVED
+                HAS_GET_ACCESSOR;
+            ApplicationURI    :    STRING
+                HAS_ACCESSORS
+                INITIALVALUE    =    "urn:acplt:open62541:acplt-iec2541Server";
+            ApplicationName    :    STRING
+                HAS_ACCESSORS
+                INITIALVALUE    =    "acplt-opcua";
+            serverConfig        :    C_TYPE    <UA_ServerConfig>
+                COMMENT =    "Stack-specific representation of server configuration";
+            serverData            :    C_TYPE    <OV_PTR_UA_Server>
+                COMMENT    =    "Stack-specific representation of server data";
+           // nodeStoreNsOV        :    C_TYPE    <UA_ExternalNodeStore>;
+            networkLayerOv        :    C_TYPE    <UA_ServerNetworkLayer>
+                COMMENT    =    "Network layer within th ov-server";
+        END_VARIABLES;    
+        OPERATIONS
+            constructor            :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            destructor            :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
+            startup                :    C_FUNCTION <OV_FNC_STARTUP>;
+            shutdown            :    C_FUNCTION <OV_FNC_SHUTDOWN>;
+            getaccess            :    C_FUNCTION <OV_FNC_GETACCESS>;
+            typemethod            :    C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+
+    /**
+     *    Checks whether received data complies with a OPC UA opening of a connection
+     *    criteria are:    1.    "HEL" in first three bytes of message
+     *                    2.    ProtocolVersion is not larger than the highest specified version number of opcua                 
+     *                    3.    Message size (starting in byte 5) is larger than 32
+     *                    4.    Message size equals 32 + plus the given size in the EndpointUrl length field    
+     */
+    CLASS uaIdentificator : CLASS ksbase/ProtocolIdentificator
+        IS_INSTANTIABLE;
+        COMMENT = "class for identifing ua communication";
+        VARIABLES
+            ident                :    STRING
+                COMMENT            = "first bytes of initial package"
+                INITIALVALUE    = "HEL";
+            msgMinSize            :    UINT
+                COMMENT            = "Minimum size of a valid message"
+                INITIALVALUE    = 32;
+            highestOPCVersion    : UINT
+                COMMENT            = "Highest specified OPC UA Version number"
+                INITIALVALUE    = 0;
+        END_VARIABLES;
+        OPERATIONS
+            constructor        :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+            identify        :    C_FUNCTION    <KSBASE_FNC_IDENTIFY>;
+            createClientHandler    :    C_FUNCTION    <KSBASE_FNC_CREATECH>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    /**
+        Documentation of uaConnection.
+    */
+    CLASS uaConnection : CLASS ksbase/ClientHandler
+        IS_INSTANTIABLE;
+        VARIABLES
+            connection            :    C_TYPE    <UA_ConnectionPTR>
+                COMMENT            =    "Connection data for this connection";
+            workNext            :    BOOL
+                COMMENT            =    "If TRUE this connection has some work for the networkLayer"
+                INITIALVALUE    =    FALSE;
+            buffer                :    C_TYPE    <KS_DATAPACKET>
+                COMMENT            =    "Buffer to exchange date with the open62541-stack";
+        END_VARIABLES;
+        OPERATIONS
+            constructor            :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            destructor            :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
+            startup                :    C_FUNCTION <OV_FNC_STARTUP>;
+            shutdown            :    C_FUNCTION    <OV_FNC_SHUTDOWN>;
+            /**
+             *    The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+             *    As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+             *        1. If the input data could be processed or if it is invalid it should be freed.
+             *        2. The Writeptr of the received data may not be altered.
+             *        3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+             *        4. The readptr of the answer data may not be altered.
+             */
+            HandleRequest        :    C_FUNCTION    <KSBASE_FNC_HANDLEREQUEST>;
+            typemethod            :    C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    /**
+        Documentation of ovNetworkLayer.
+    */
+    CLASS ovNetworkLayer : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+        discoveryUrl    :    STRING
+            IS_DERIVED
+            HAS_GET_ACCESSOR
+            COMMENT        =    "Url for this server";
+        discoveryUrlInternal    :    C_TYPE    <UA_String>;
+        localConfig        :    C_TYPE <UA_ConnectionConfig>
+            COMMENT        =    "Configuration of connection";
+        connsToClose    :    C_TYPE <UA_ConnectionPTRPTR>
+            COMMENT        =    "List of Connections to close";
+        connsToCloseCount    :    UINT
+            COMMENT        =    "Number of Connections to close"
+            INITIALVALUE    =    0;
+    /*    messageBuffer    :    C_TYPE    <UA_ByteString>
+            COMMENT        =    "Receive buffer for messages (central buffer minimizes allocations)";*/
+    /*    sendBuffer        :    C_TYPE    <UA_ByteString>
+            COMMENT            =    "Buffer for messages to send. Static.";    */    
+        END_VARIABLES;
+        OPERATIONS
+            constructor            :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+            destructor            :    C_FUNCTION    <OV_FNC_DESTRUCTOR>;
+            startup                :    C_FUNCTION    <OV_FNC_STARTUP>;
+            shutdown            :    C_FUNCTION    <OV_FNC_SHUTDOWN>;
+            getaccess            :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            start                :    C_FUNCTION    <UA_FNC_STARTNL>;
+            getJobs                :    C_FUNCTION    <UA_FNC_NLGETWORK>;
+            stop                :    C_FUNCTION    <UA_FNC_STOPNL>;
+            delete                :    C_FUNCTION    <UA_FNC_DELETENL>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS uaSimpleTicketAuthenticator    :    CLASS ksbase/TicketAuthenticator
+    IS_INSTANTIABLE;
+    COMMENT    =    "Authenticator for simple tickets transportes via upc ua";
+    OPERATIONS
+        constructor        :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+         startup            :    C_FUNCTION    <OV_FNC_STARTUP>;
+         shutdown        :    C_FUNCTION    <OV_FNC_SHUTDOWN>;
+        /*
+         *    These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+         *    The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+         */
+         createticket    :    C_FUNCTION    <KSBASE_FNC_CREATETICKET>;
+         deleteticket    :    C_FUNCTION    <KSBASE_FNC_DELETETICKET>;
+        encodereply        :    C_FUNCTION    <KSBASE_FNC_ENCODEREPLY>;
+        TicketGetaccess        :    C_FUNCTION    <KSBASE_FNC_GETACCESS>;
+    END_OPERATIONS;    
+    END_CLASS;
+    
+    CLASS nodeStoreFunctions    :    CLASS ov/object
+    COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
+    OPERATIONS
+    	ovBaseNodeToOPCUA : C_FUNCTION <UA_FNC_OVBASENODETOOPCUA>;
+        ovObjectNodeToOPCUA : C_FUNCTION <UA_FNC_OVOBJECTNODETOOPCUA>;
+            	
+        ovObjectTypeNodeToOPCUA : C_FUNCTION <UA_FNC_OVOBJECTTYPENODETOOPCUA>;
+        ovVariableNodeToOPCUA : C_FUNCTION <UA_FNC_OVVARIABLENODETOOPCUA>;
+/*    	ovVariableTypeNodeToOPCUA : C_FUNCTION <UA_FNC_OVVARIABLETYPENODETOOPCUA>;
+    	ovReferenceTypeNodeToOPCUA : C_FUNCTION <UA_FNC_OVREFERENCETYPENODETOOPCUA>;
+    	ovDataTypeNodeToOPCUA : C_FUNCTION <UA_FNC_OVDATATYPENODETOOPCUA>;
+
+    	deleteNode : C_FUNCTION <UA_FNC_DELETENODE>;
+    	newNode : C_FUNCTION <UA_FNC_NEWNODE>;
+    	insertNode : C_FUNCTION <UA_FNC_INSERTNODE>;
+    	getNode : C_FUNCTION <UA_FNC_GETNODE>;
+    	replaceNode : C_FUNCTION <UA_FNC_REPLACENODE>;
+    	removeNode : C_FUNCTION <UA_FNC_REMOVENODE>;
+*/
+		opcuaBaseNodeToOv : C_FUNCTION <UA_FNC_OPCUABASENODETOOV>;
+		opcuaObjectNodeToOv : C_FUNCTION <UA_FNC_OPCUAOBJECTNODETOOV>;
+		opcuaObjectTypeNodeToOv : C_FUNCTION <UA_FNC_OPCUAOBJECTTYPENODETOOV>;
+		opcuaVariableNodeToOv : C_FUNCTION <UA_FNC_OPCUAVARIABLENODETOOV>;
+
+        //addNodes        :    C_FUNCTION    <UA_FNC_ADDNODES>;
+        addReferences    :    C_FUNCTION    <UA_FNC_ADDREFERENCES>;
+        addOneWayReference    :    C_FUNCTION    <UA_FNC_ADDONEWAYREFERENCE>;
+        deleteNodes        :    C_FUNCTION    <UA_FNC_DELETENODES>;
+        deleteReferences :    C_FUNCTION    <UA_FNC_DELETEREFERENCES>;
+        readNodes        :    C_FUNCTION    <UA_FNC_READNODES>;
+        writeNodes        :    C_FUNCTION    <UA_FNC_WRITENODES>;
+        browseNodes        :    C_FUNCTION    <UA_FNC_BROWSENODES>;
+        translateBrowsePathsToNodeIDs    :    C_FUNCTION    <UA_FNC_TRANSLATEBROWSEPATHSTONODEIDS>;
+        call        :    C_FUNCTION    <UA_FNC_CALL>;
+        packCallArgs    :    C_FUNCTION    <UA_FNC_PACKARGS>;
+        unpackCallArgs    :    C_FUNCTION    <UA_FNC_UNPACKARGS>;
+        getCallArgs        :    C_FUNCTION    <UA_FNC_GETCALLARGS>;
+        setCallArgs        :    C_FUNCTION    <UA_FNC_SETCALLARGS>;
+    END_OPERATIONS;    
+    END_CLASS;
+    
+    CLASS arguments            :    CLASS ov/object
+        IS_INSTANTIABLE;
+        COMMENT    =    "Contains variables to define arguments for a methodNode.";
+        VARIABLES
+            Names    []    :    STRING
+                HAS_GET_ACCESSOR
+                COMMENT    =    "Names of input arguments in order";
+            Types    []    :    INT
+                HAS_GET_ACCESSOR
+                COMMENT    =    "Types of input arguments in order";
+            isArray    []    :    BOOL
+                HAS_GET_ACCESSOR
+                COMMENT    =    "TRUE means the corresponding argument is an array";
+            Lengths    []    :    UINT
+                HAS_GET_ACCESSOR
+                COMMENT    =    "Length of the array for the corresponding argument";
+            Descriptions    []    :    STRING
+                HAS_GET_ACCESSOR
+                COMMENT    =    "Descriptions of input arguments in order";
+        END_VARIABLES;
+        OPERATIONS
+            constructor        :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    
+    CLASS methodNode        :    CLASS ov/domain
+        COMMENT    =    "Represents a methodNode in UA. Contains a callable method and some variables to define its signature.";
+        VARIABLES
+            callable    :    BOOL
+                COMMENT    =    "TRUE: Method can be called. FALSE method cannot be called (not initialized or whatever)"
+                INITIALVALUE    =    FALSE;            
+        END_VARIABLES;
+        PARTS
+            InputArguments    :    CLASS opcua/arguments;
+            OutputArguments    :    CLASS opcua/arguments;
+        END_PARTS;
+        OPERATIONS
+            preCallMethod    :    C_FUNCTION    <UA_FNC_PRECALLMETHOD>;    /*    use to check state of object before arg-parsing - probably not needed often    */
+            calledMethod    :    C_FUNCTION    <UA_FNC_CALLEDMETHOD> IS_ABSTRACT;    /*    called method    */
+            postCallMethod    :    C_FUNCTION    <UA_FNC_POSTCALLMETHOD>;/*    use to tidy up everything - probably not needed often    */
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+
+    /*    the following nodes are just test-functions.
+        this library seems to need at least one instantiable methodNode child to compile.
+        So these ones are the ones that can serve as
+        1. TESTS for heavier variable types as arguments
+        2. functions having at least a bit of a purpose
+        Beware the shutDown function -> maybe it's better to delete  someday for security reasons ;-)    */
+    CLASS getServerconfig    :    CLASS    opcua/methodNode
+        IS_INSTANTIABLE;
+        OPERATIONS
+            constructor        :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+            calledMethod    :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS setServerconfig    :    CLASS    opcua/methodNode
+        IS_INSTANTIABLE;
+        OPERATIONS
+            constructor        :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+            calledMethod    :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS shutDown    :    CLASS    opcua/methodNode
+        IS_INSTANTIABLE;
+        OPERATIONS
+            constructor        :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+            calledMethod    :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+/** OPC UA Metamodel **/
+    CLASS nodeId : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            id :    ANY
+                COMMENT            = "node's' identifier";
+            namespaceIndex            :    UINT
+                COMMENT            = "node's namespace index";
+            identifierType : INT
+                            COMMENT            = "0=Numeric; 3=String; 4=GUID; 5=ByteString";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS expandedNodeId : CLASS ov/domain IS_INSTANTIABLE;
+    	VARIABLES
+            namespaceUri : STRING;
+    		serverIndex : UINT;
+    	END_VARIABLES;
+    	PARTS
+    		nodeId : CLASS opcua/nodeId;
+    	END_PARTS;
+    END_CLASS;
+
+    CLASS qualifiedName : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            name :    STRING;
+            namespaceIndex :    UINT;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS localizedText : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            locale  :    STRING;
+            text            :    STRING;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+
+//TODO    
+    CLASS extensionObject : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            locale  :    STRING;
+            text            :    STRING;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+//TODO
+   
+    CLASS variant : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            locale  :    STRING;
+            text            :    STRING;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+  
+    CLASS dataValue : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            encodingMask  :    UINT;
+            status            :    UINT;
+            sourceTimestamp : INT;
+            sourcePicoseconds : UINT; //UINT16
+            serverTimestamp : INT;
+            serverPicoseconds : UINT; //UINT16
+        END_VARIABLES;
+        PARTS
+            value : CLASS opcua/variant;
+        END_PARTS;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+//TODO
+    CLASS diagnosticInfo : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            locale  :    STRING;
+            text            :    STRING;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    /**base Node **/
+    CLASS baseNode : CLASS ov/domain
+        VARIABLES
+            nodeClass : UINT;
+            writeMask : UINT;
+            userWriteMask : UINT;
+        END_VARIABLES;
+        PARTS
+            nodeId    : CLASS opcua/nodeId;
+            browseName : CLASS opcua/qualifiedName;
+            description : CLASS opcua/localizedText;
+            displayName : CLASS opcua/localizedText;
+            references : CLASS ov/domain;
+        END_PARTS;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+
+    CLASS variableNode : CLASS opcua/baseNode IS_INSTANTIABLE;
+        VARIABLES
+            valuerank : INT;
+            arrayDimensionsSize : UINT;
+            arrayDimensions[] : UINT;
+            value : ANY; //TODO datasource missing
+        END_VARIABLES;
+    END_CLASS;
+    
+    /**variable Node **/
+    CLASS variableTypeNode : CLASS opcua/variableNode IS_INSTANTIABLE;
+        VARIABLES
+            isAbstract : BOOL;
+            accessLevel : INT; /** datatype should be byte **/
+            userAccessLevel : INT; /** datatype should be byte **/
+            minimumSamplingInterval : DOUBLE;
+            historizing : BOOL;
+        END_VARIABLES;
+    END_CLASS;
+    
+    /**object Node **/
+    CLASS objectNode : CLASS opcua/baseNode
+        IS_INSTANTIABLE;
+        VARIABLES
+            eventNotifier : INT; /** datatype should be byte **/
+        END_VARIABLES;
+    END_CLASS;
+    
+    /**object type Node **/
+    CLASS objectTypeNode : CLASS opcua/objectNode IS_INSTANTIABLE;
+        VARIABLES
+            isAbstract : BOOL;
+        END_VARIABLES;
+    END_CLASS;
+    
+//    CLASS  methodNode : CLASS opcua/baseNode
+//    VARIABLES
+//        executable : BOOL;
+//        userExecutable : BOOL;
+//    END_VARIABLES;
+//    END_CLASS;    
+
+    CLASS referenceTypeNode : CLASS opcua/baseNode IS_INSTANTIABLE;
+        VARIABLES
+            isAbstract : BOOL;
+            symmetric : BOOL;
+        END_VARIABLES;
+        PARTS
+            inverseName : CLASS opcua/localizedText;
+        END_PARTS;     
+    END_CLASS;
+
+    CLASS reference : CLASS ov/domain IS_INSTANTIABLE;
+    	VARIABLES
+    		isInverse : BOOL;
+    	END_VARIABLES;
+    	PARTS
+    	   referenceTypeNodeId : CLASS opcua/nodeId;
+    	   targetNodeId : CLASS opcua/expandedNodeId;
+    	END_PARTS;   	
+    END_CLASS;
+    
+    CLASS dataTypeNode : CLASS opcua/baseNode IS_INSTANTIABLE;
+    	VARIABLES
+    		isAbstract : BOOL;
+    	END_VARIABLES;
+    END_CLASS;
+    
+    CLASS viewNode : CLASS opcua/baseNode IS_INSTANTIABLE;
+    	VARIABLES
+    		eventNotifier : INT;
+    		containNoLoops : BOOL;
+    	END_VARIABLES;
+    END_CLASS;
+    
+    CLASS testObject : CLASS fb/functionblock IS_INSTANTIABLE;
+        VARIABLES
+            var1 : INT FLAGS="o";
+        END_VARIABLES;
+        OPERATIONS
+            constructor            :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            destructor            :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
+            typemethod:    C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+
+            
+            
+    /**
+        Add associations and their documentation here.
+        Association syntax is:
+    */
+    ASSOCIATION networkLayerToConnection : ONE_TO_MANY
+        PARENT networkLayer        : CLASS opcua/ovNetworkLayer;
+        CHILD  connection    : CLASS opcua/uaConnection;
+    END_ASSOCIATION;
+    
+END_LIBRARY;
+

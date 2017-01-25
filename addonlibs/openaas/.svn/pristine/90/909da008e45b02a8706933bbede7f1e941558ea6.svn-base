@@ -1,0 +1,196 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xml:lang="en">
+<!--
+Ohne Doctype geht der IE in den Quirksmode und kann html und svg gemeinsam anzeigen...
+/*
+*	Copyright (C) 2011
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*/
+/***********************************************************************
+*
+*	File:
+*	hmi-explorer.html
+*
+*	Editors:
+*	St							Stefan Schmitz <StefanS@plt.rwth-aachen.de>
+*
+*	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
+*
+*	CVS:
+*	$Revision$
+*	$Date$
+*
+*	History:
+*
+*	26-March-2008			Je
+*		-	Header hidable
+*
+***********************************************************************/
+-->
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+		<meta http-equiv="Content-Style-Type" content="text/css">
+		<meta http-equiv="Content-Script-Type" content="text/javascript">
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+		<title>HMI-Startcenter - Internet Explorer Version</title>
+		<object id="AdobeSVG" classid="clsid:78156a80-c6a1-4bbf-8e6a-3cd390eeb4e2"></object>
+		<?import namespace="svg" implementation="#AdobeSVG"?>
+		<script type="text/javascript" src="./JavaScript/hmi-hub-loader.js" charset="ISO-8859-1" defer async></script>
+		<style type="text/css">
+			body{
+				margin:0;
+			}
+			#idHeaderLeft{
+				text-align:left;
+				padding-left:5px;
+				font-weight:bold;
+				letter-spacing:0.5em;
+				font-size:1.2em;
+				font-family:sans-serif;
+			}
+			#idHeaderMiddle{
+				text-align:center;
+			}
+			#idHeaderRight{
+				text-align:center;
+				font-size:8pt;
+			}
+			#idPlayground{
+				margin:3px;
+			}
+			#idHeaderRow{
+				cursor:pointer;
+				text-align:center;
+				margin:0;
+				padding:0;
+				background-color:#EEEEEE;
+			}
+			#idHeaderRow:hover{
+				background-color:#D1E1FA;
+			}
+			/*
+				style for printing
+			*/
+			@media print {
+				.doNotPrintThis{
+					display:none;
+				}
+			}
+		</style>
+	</head>
+	<!-- 
+		/*********************************
+			Body
+		*********************************/
+	-->
+	<body>
+		<div id="idHeaderRow" class="doNotPrintThis">
+			<div style="margin-left:10px;float:left;">
+				<svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="25" height="11">
+					<svg:polyline id="arrowup1"   points="0,10 4,05 8,10" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
+					<svg:polyline id="arrowup2"   points="0,05 4,00 8,05" style="fill:none;stroke:blue;stroke-width:1px;visibility:visible;"/>
+					<svg:polyline id="arrowdown1" points="0,00 4,05 8,00" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
+					<svg:polyline id="arrowdown2" points="0,05 4,10 8,05" style="fill:none;stroke:blue;stroke-width:1px;visibility:hidden;"/>
+				</svg:svg>
+			</div>
+			<small style="padding:0;margin:0;">click to toggle controls or press esc key</small>
+			<span style="clear:both;"></span>
+		</div>
+		<div id="idHideableHeader" class="doNotPrintThis">
+			<table style="width:100%;" class="doNotPrintThis">
+				<tr>
+					<td id="idHeaderLeft">
+						HMI - Startcenter
+					</td>
+					<td id="idHeaderMiddle">
+						<img src="ACPLT-Logo.gif" alt="">
+					</td>
+					<td id="idHeaderRight">
+					&#169; Lehrstuhl für Prozessleittechnik
+					<div id="idDateOutput"></div>
+					</td>
+				</tr>
+			</table>
+			<hr color="blue" style="height:2px;margin-top:0;" class="doNotPrintThis">
+			<table>
+				<tr>
+					<td style="text-align:right;"><label for="idHost">FB-Host:</label></td>
+					<td><input id="idHost" type="text" size="29" value="" tabindex="2" placeholder="as seen from gateway"></td>
+					<td style="text-align:center;"><label for="idRefreshTime">Refresh Time:</label></td>
+					<td><input id="idRefreshTime" type="text" size="5" value="1000" tabindex="4"><label for="idRefreshTime">ms</label>
+						<noscript>
+							<strong>Error: ACPLT/HMI needs activated JavaScript in your browser.</strong>
+						</noscript>
+						<span style="color:green;" id="idInfoOutput"> </span> <strong id="idErrorOutput"> </strong>
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align:right;"><label for="idServers">Server:</label></td>
+					<td><select id="idServers" name="Sheets" size="1" tabindex="3">
+							<option value="">please push "Show Servers"</option>
+						</select>
+					</td>
+					<td style="padding-left:20px;padding-right:20px;text-align:center;white-space:nowrap;">
+						<input type="button" value="Initialising HMI..." id="idShowServers" tabindex="1" disabled="disabled">
+					</td>
+					<td>
+						<img id="idThrobber" src="throbbler.gif" alt="">
+<!--
+						<input type="button" id="idRefresh" value="Refresh Sheet Now">
+						<input type="button" id="idStopRefresh" value="Stop Autorefresh">
+						<input type="button" id="idStartRefresh" value="Start Autorefresh">
+-->
+						<a id="idBookmark" href="" style="display:none;">Link to Sheet</a>
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align:right;"><label for="idSheets">Sheets:</label></td>
+					<td><select id="idSheets" name="Sheets" size="1" tabindex="5">
+							<option value="">please push "Show Servers"</option>
+						</select>
+					</td>
+					<td colspan="2">
+						<input type="checkbox" id="idKeepHeader" value="true"><label for="idKeepHeader"> keep this header visible</label>
+<!--
+						<input type="checkbox" id="idShowcomponents" value="true"> Show Components
+-->
+					</td>
+				</tr>
+			</table>
+			<hr color="blue" style="height:2px;margin-top:0;" class="doNotPrintThis">
+		</div>
+		<embed id="idPlayground" type="image/svg+xml" src="container.svg">
+		</embed>
+	</body>
+</html>

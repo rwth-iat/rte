@@ -1,0 +1,5104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>ACPLT/PF Software</title>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <meta content="Stefan Schmitz" name="author">
+  <link href="../docstyle.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+<p class="revision">Letzte &Auml;nderung: 2006/12/18 Stefan Schmitz. <a
+ href="../readme.html">Zur&uuml;ck zur &Uuml;bersicht</a></p>
+<table border="0" cellpadding="2" cellspacing="0" width="100%">
+  <tbody>
+    <tr>
+      <td bgcolor="#3060c0">&nbsp;</td>
+      <td bgcolor="#3060c0" width="100%"> <font color="#ffffff"
+ face="arial,helvetica" size="+2"> <b> vdivde3696 </b> </font> </td>
+      <td bgcolor="#3060c0">&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+<ul>
+  <li><a href="#BibInfo">Bibliotheksinformationen</a>: &Uuml;bersicht
+&uuml;ber die Bibliothek</li>
+  <p> </p>
+  <li><a href="#Klassen">Klassen</a>: Verf&uuml;gbare Klassen</li>
+   	<ol>
+		    <li type=I><a href="#Klassen::Alphabetisch">Alphabetisches</a> Verzeichnis der Standard-Funktionsbausteine</li>
+		    <li type=I><a href="#Klassen::Funktionsorientiert">Funktionsorientiertes </a>Verzeichnis der Standard-Funktionsbausteine</li>
+		</ol>
+</ul>
+<p></p>
+<hr color="#3060c0">
+<p></p>
+<h2><a name="BibInfo">Bibliotheks&uuml;bersicht</a></h2>
+<a name="BibInfo"> </a>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th width="20%">Name</th>
+      <td>vdivde3696<br>
+      </td>
+    </tr>
+    <tr align="left">
+      <th>letzte &Auml;nderung</th>
+      <td>15-April-2005</td>
+    </tr>
+    <tr align="left">
+      <th>Version</th>
+      <td>V0.5.2</td>
+    </tr>
+    <tr align="left">
+      <th>Autoren</th>
+      <td>Ansgar M&uuml;nnemann &lt;<a href="mailto:Ansgar@plt.rwth-aachen.de">Ansgar@plt.rwth-aachen.de</a>&gt;</td>
+    </tr>
+    <tr align="left">
+      <th>&nbsp;</th>
+      <td>Stefan Schmitz &lt;<a href="mailto:StefanS@plt.rwth-aachen.de">StefanS@plt.rwth-aachen.de</a>&gt;</td>
+    </tr>
+    <tr align="left">
+      <th>Funktion</th>
+      <td> Funktionsbausteine gemäß VDI/VDE 3696 </td>
+    </tr>
+  </tbody>
+</table>
+<a name="BibInfo"> </a>
+<p></p>
+<hr color="#3060c0">
+<h2><a name="Klassen">Verf&uuml;gbare Klassen</a></h2>
+<p> Für jeden Standard-Funktionsbaustein (SFB) sind nachfolgend Typname und ein Stichwort zur Funktionsbeschreibung 
+tabellarisch angegeben, und zwar in Abschnitt I in alphabetischer Reihenfolge, in Abschnitt II dagegen nach 
+funktionellen Gruppen geordnet. </p>
+<p></p>
+<hr color="#3060c0">
+<ol>
+	<h3><li type=I><a name="Klassen::Alphabetisch">Alphabetisches</a> Verzeichnis der Standard-Funktionsbausteine</li></h3>
+	<ul>
+		 <li><a href="#Klassen::abs">abs</a> (Betragsbildung)</li>
+		 <li><a href="#Klassen::acos">acos</a> (Arcuscosinus)</li>
+		 <li><a href="#Klassen::add">add</a> (Addition)</li>
+		 <li><a href="#Klassen::am">am</a> (Alarm-/Meldungsspeicher f&uuml;r BOOL-Gr&ouml;ße)</li>
+		 <li><a href="#Klassen::and">and</a> (UND-Verkn&uuml;pfung)</li>
+		 <li><a href="#Klassen::asin">asin</a> (Arcussinus)</li>
+		 <li><a href="#Klassen::atan">atan</a> (Arcustangens)</li>
+		 <li><a href="#Klassen::aver">aver</a> (laufender zeitlicher Mittelwert)</li>
+		 <li><a href="#Klassen::bitn">bitn</a> (Selektion durch 1-aus-n-bit)</li>
+		 <li><a href="#Klassen::c">c</a> (universeller Regler (PID-T1))</li>
+		 <li><a href="#Klassen::cos">cos</a> (Cosinus)</li>
+	    <li><a href="#Klassen::cs">cs</a> (Standard Regler (PID-T1))</li>
+	    <li><a href="#Klassen::ct">ct</a> (Auf-/Abw&auml;rtsz&auml;hler Mengenz&auml;hler)</li>
+	    <li><a href="#Klassen::deadt">deadt</a> (Totzeit)</li>
+	    <li><a href="#Klassen::demuxb">demuxb</a> (Demultiplexer f&uuml;r BOOL-Gr&ouml;ßen)</li>
+	    <li><a href="#Klassen::demuxn">demuxn</a> (Demultiplexer f&uuml;r ANY-NUM-Gr&ouml;ßen)</li>
+	    <li><a href="#Klassen::dif">dif</a> (Differentiation)</li>
+	    <li><a href="#Klassen::div">div</a> (Division)</li>
+	    <li><a href="#Klassen::eq">eq</a> (Vergleich auf gleich)</li>
+	    <li><a href="#Klassen::exp">exp</a> (Exponentialfunktion e**u)</li>
+	    <li><a href="#Klassen::expt">expt</a> ( Exponentiation u1**u2)</li>
+	    <li><a href="#Klassen::fio">fio</a> (allg. &Uuml;bertragungsglied 1. Ordnung)</li>
+	    <li><a href="#Klassen::ftrig">ftrig</a> (Erkennung fallender Flanke)</li>
+	    <li><a href="#Klassen::ge">ge</a> (Vergleich auf gr&ouml;ßer gleich)</li>
+	    <li><a href="#Klassen::gt">gt</a> (Vergleich auf gr&ouml;ßer)</li>
+	    <li><a href="#Klassen::hb">hb</a> (boolescher Handwert)</li>
+	    <li><a href="#Klassen::hn">hn</a> (numerischer Handwert)</li>
+	    <li><a href="#Klassen::integr">integr</a> (Integration)</li>
+	    <li><a href="#Klassen::le">le</a> (Vergleich auf kleiner gleich)</li>
+	    <li><a href="#Klassen::limit">limit</a> (Begrenzung)</li>
+	    <li><a href="#Klassen::ln">ln</a> (Logarithmus zur Basis e)</li>
+	    <li><a href="#Klassen::log">log</a> (Logarithmus zur Basis 10)</li>
+	    <li><a href="#Klassen::lt">lt</a> (Vergleich auf kleiner)</li>
+	    <li><a href="#Klassen::max">max</a> (Maximalwertauswahl)</li>
+	    <li><a href="#Klassen::min">min</a> (Minimalwertauswahl)</li>
+	    <li><a href="#Klassen::mod">mod</a> (Modulo)</li>
+	    <li><a href="#Klassen::mul">mul</a> (Multiplikation)</li>
+	    <li><a href="#Klassen::muxb">muxb</a> (Multiplexer f&uuml;r BOOL-Gr&ouml;ßen)</li>
+		 <li><a href="#Klassen::muxn">muxn</a> (Multiplexer f&uuml;r ANY-NUM-Gr&ouml;ßen)</li>
+		 <li><a href="#Klassen::ne">ne</a> (Vergleich auf ungleich)</li>
+		 <li><a href="#Klassen::nonlin">nonlin</a> (nichtlineare statische Kennlinie)</li>
+		 <li><a href="#Klassen::not">not</a> (logische Negation)</li>
+		 <li><a href="#Klassen::or">or</a> (ODER-Verkn&uuml;pfung)</li>
+		 <li><a href="#Klassen::rsff">rsff</a> (bistabiles Glied mit R&uuml;cksetzdominanz)</li>
+		 <li><a href="#Klassen::rtrig">rtrig</a> (Erkennung steigender Flanke)</li>
+		 <li><a href="#Klassen::sam">sam</a> (Grenzwertschalter)</li>
+		 <li><a href="#Klassen::scal">scal</a> (lineare Skalierung)</li>
+		 <li><a href="#Klassen::selb">selb</a> (Selektion einer BOOL-Gr&oumlße durch BOOL-Steuereingang)</li>
+		 <li><a href="#Klassen::seln">seln</a> (Selektion einer ANY-NUM-Gr&oumlße durch BOOL-Steuereingang)</li>
+		 <li><a href="#Klassen::seo">seo</a> (allg. &Uuml;bertragungsglied 2. Ordnung)</li>
+		 <li><a href="#Klassen::sin">sin</a> (Sinus)</li>
+		 <li><a href="#Klassen::sqrt">sqrt</a> (Quadratwurzel)</li>
+		 <li><a href="#Klassen::srff">srff</a> (bistabiles Glied mit Setzdominanz)</li>
+		 <li><a href="#Klassen::sub">sub</a> (Subtraktion)</li>
+		 <li><a href="#Klassen::tan">tan</a> (Tangens)</li>
+		 <li><a href="#Klassen::tof1">tof1</a> (Ausschaltverz&ouml;gerung)</li>
+		 <li><a href="#Klassen::ton1">ton1</a> (Einschaltverz&ouml;gerung)</li>
+		 <li><a href="#Klassen::tp1">tp1</a> (nicht wiedertriggerbares monostabiles Glied)</li>
+		 <li><a href="#Klassen::xor">xor</a> (exklusive ODER-Verkn&uuml;pfung)</li>
+	</ul>	 
+	<p></p>
+	<hr color="#3060c0">
+	<p></p>
+	<h3><li type=I><a name="Klassen::Funktionsorientiert">Funktionsorientiertes</a> Verzeichnis der Standard-Funktionsbausteine</li></h3>
+	<ul>
+		 <li><a href="#Klassen::BaseClass">BaseClass</a> (VDI/VDE3696-Basisklasse)</li>
+		 <p></p>
+		 <li><a href="#Klassen::Mathematische Ein-Operanden-Funktionen">Mathematische Ein-Operanden-Funktionen</a></li>
+		 <ul>
+		    <li><a href="#Klassen::abs">abs</a> (Betragsbildung)</li>
+		    <li><a href="#Klassen::acos">acos</a> (Arcuscosinus)</li>
+		    <li><a href="#Klassen::asin">asin</a> (Arcussinus)</li>
+		    <li><a href="#Klassen::atan">atan</a> (Arcustangens)</li>
+		    <li><a href="#Klassen::cos">cos</a> (Cosinus)</li>
+		    <li><a href="#Klassen::sin">sin</a> (Sinus)</li>
+		    <li><a href="#Klassen::tan">tan</a> (Tangens)</li>
+		    <li><a href="#Klassen::exp">exp</a> (Exponentialfunktion e**u)</li>
+		    <li><a href="#Klassen::ln">ln</a> (Logarithmus zur Basis e)</li>
+		    <li><a href="#Klassen::log">log</a> (Logarithmus zur Basis 10)</li>
+		    <li><a href="#Klassen::sqrt">sqrt</a> (Quadratwurzel)</li>
+		    <li><a href="#Klassen::limit">limit</a> (Begrenzung)</li>
+		    <li><a href="#Klassen::nonlin">nonlin</a> (nichtlineare statische Kennlinie)</li>
+		    <li><a href="#Klassen::scal">scal</a> (lineare Skalierung)</li>
+	   </ul>
+	 	<p></p>
+		<li><a href="#Klassen::Mathematische Mehr-Operanden-Funktionen">Mathematische Mehr-Operanden-Funktionen</a></li>
+		<ul>	 
+		  	 <li><a href="#Klassen::add">add</a> (Addition)</li>
+		    <li><a href="#Klassen::sub">sub</a> (Subtraktion)</li>
+		    <li><a href="#Klassen::mul">mul</a> (Multiplikation)</li>
+		    <li><a href="#Klassen::div">div</a> (Division)</li>
+		    <li><a href="#Klassen::mod">mod</a> (Modulo)</li>
+		    <li><a href="#Klassen::expt">expt</a> ( Exponentiation u1**u2)</li>
+	  	</ul>
+	  	<p></p>
+	  	<li><a href="#Klassen::Auswahlfunktionen">Auswahlfunktionen</a></li>
+	  	<ul>	   
+		    <li><a href="#Klassen::max">max</a> (Maximalwertauswahl)</li>
+		    <li><a href="#Klassen::min">min</a> (Minimalwertauswahl)</li>
+		    <li><a href="#Klassen::bitn">bitn</a> (Selektion durch 1-aus-n-bit)</li>
+		    <li><a href="#Klassen::demuxb">demuxb</a> (Demultiplexer f&uuml;r BOOL-Gr&ouml;ßen)</li>
+		    <li><a href="#Klassen::demuxn">demuxn</a> (Demultiplexer f&uuml;r ANY-NUM-Gr&ouml;ßen)</li>
+		    <li><a href="#Klassen::muxb">muxb</a> (Multiplexer f&uuml;r BOOL-Gr&ouml;ßen)</li>
+		    <li><a href="#Klassen::muxn">muxn</a> (Multiplexer f&uuml;r ANY-NUM-Gr&ouml;ßen)</li>
+		    <li><a href="#Klassen::selb">selb</a> (Selektion einer BOOL-Gr&oumlße durch BOOL-Steuereingang)</li>
+		    <li><a href="#Klassen::seln">seln</a> (Selektion einer ANY-NUM-Gr&oumlße durch BOOL-Steuereingang)</li>
+	  	</ul>
+	  	<p></p>
+	  	<li><a href="#Klassen::Vergleiche">Vergleiche</a></li>
+	  	<ul>
+		  	<li><a href="#Klassen::eq">eq</a> (Vergleich auf gleich)</li>
+		   <li><a href="#Klassen::ge">ge</a> (Vergleich auf gr&ouml;ßer gleich)</li>
+		   <li><a href="#Klassen::gt">gt</a> (Vergleich auf gr&ouml;ßer)</li>
+		   <li><a href="#Klassen::le">le</a> (Vergleich auf kleiner gleich)</li>
+		   <li><a href="#Klassen::lt">lt</a> (Vergleich auf kleiner)</li>
+		   <li><a href="#Klassen::ne">ne</a> (Vergleich auf ungleich)</li>
+		   <li><a href="#Klassen::sam">sam</a> (Grenzwertschalter)</li>
+	  	</ul>
+	  	<p></p>
+	  	<li><a href="#Klassen::Boolesche Ein-Operanden-Funktionen und Flankenerkennung">Boolesche Ein-Operanden-Funktionen und Flankenerkennung</a></li>
+	  	<ul>
+	  	 	<li><a href="#Klassen::not">not</a> (logische Negation)</li>
+	    	<li><a href="#Klassen::ftrig">ftrig</a> (Erkennung fallender Flanke)</li>
+	    	<li><a href="#Klassen::rtrig">rtrig</a> (Erkennung steigender Flanke)</li>
+	  	</ul>
+	  	<p></p>
+	  	<li><a href="#Klassen::Boolesche Mehr-Operanden-Funktionen">Boolesche Mehr-Operanden-Funktionen</a></li>
+	 	<ul>
+		  	<li><a href="#Klassen::and">and</a> (UND-Verkn&uuml;pfung)</li>
+		   <li><a href="#Klassen::or">or</a> (ODER-Verkn&uuml;pfung)</li>
+		   <li><a href="#Klassen::xor">xor</a> (exklusive ODER-Verkn&uuml;pfung)</li>
+		</ul>
+		<p></p>
+		<li><a href="#Klassen::Z&auml;hler mono-/bistabile Glieder Zeitglieder">Z&auml;hler mono-/bistabile Glieder Zeitglieder</a></li>
+	  	<ul>
+	  		<li><a href="#Klassen::ct">ct</a> (Auf-/Abw&auml;rtsz&auml;hler Mengenz&auml;hler)</li>
+		   <li><a href="#Klassen::rsff">rsff</a> (bistabiles Glied mit R&uuml;cksetzdominanz)</li>
+		   <li><a href="#Klassen::srff">srff</a> (bistabiles Glied mit Setzdominanz)</li>
+		   <li><a href="#Klassen::tof1">tof1</a> (Ausschaltverz&ouml;gerung)</li>
+		   <li><a href="#Klassen::ton1">ton1</a> (Einschaltverz&ouml;gerung)</li>
+		   <li><a href="#Klassen::tp1">tp1</a> (nicht wiedertriggerbares monostabiles Glied)</li>
+	  	</ul>
+	  	<p></p>
+	  	<li><a href="#Klassen::Dynamische Glieder und Regler">Dynamische Glieder und Regler</a></li>
+	  	<ul>
+	  	 	<li><a href="#Klassen::c">c</a> (universeller Regler (PID-T1))</li>
+	    	<li><a href="#Klassen::cs">cs</a> (Standard Regler (PID-T1))</li>
+	    	<li><a href="#Klassen::aver">aver</a> (laufender zeitlicher Mittelwert)</li>
+	    	<li><a href="#Klassen::deadt">deadt</a> (Totzeit)</li>
+	    	<li><a href="#Klassen::dif">dif</a> (Differentiation)</li>
+	    	<li><a href="#Klassen::integr">integr</a> (Integration)</li>
+	    	<li><a href="#Klassen::fio">fio</a> (allg. &Uuml;bertragungsglied 1. Ordnung)</li>
+	    	<li><a href="#Klassen::seo">seo</a> (allg. &Uuml;bertragungsglied 2. Ordnung)</li>
+	  	</ul>
+	  	<p></p>
+	 	<li><a href="#Klassen::Vor-/Nachbereitung f&uuml;r Anzeige und Bedienung">Vor-/Nachbereitung f&uuml;r Anzeige und Bedienung</a></li>
+	  	<ul>
+	  	 	<li><a href="#Klassen::sam">sam</a> (Grenzwertschalter und Alarm-/Meldungsspeicherung)</li>
+	    	<li><a href="#Klassen::am">am</a> (Alarm-/Meldungsspeicher f&uuml;r BOOL-Gr&ouml;ße)</li>
+	    	<li><a href="#Klassen::hb">hb</a> (boolescher Handwert)</li>
+	    	<li><a href="#Klassen::hn">hn</a> (numerischer Handwert)</li>
+	  	</ul>
+	</ul>
+</ol>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::BaseClass">BaseClass (VDI/VDE3696-Basisklasse)</a></h3>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">fb/functionblock</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>en</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>enable</td>
+    </tr>
+    <tr>
+      <td>eno</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>is enabled or not</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::Mathematische Ein-Operanden-Funktionen">Mathematische Ein-Operanden-Funktionen</a></h3>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::abs">ABS - Betrag (absolute value)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">abs</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>absoluter Betrag von Eingangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::acos">ACOS - Arcuscosinus (arcus cosine)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">acos</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>der Arcuscosinus von Eingangswert (Hauptwert 0° <= v <= 180°)</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::asin">ASIN - Arcussinus (arcus sine)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">asin</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>der Arcussinus von Eingangswert (Hauptwert -90° <= v <= 90°)</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::atan">ATAN - Arcustangens (arcus tangent)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">atan</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>der Arcustangens von Eingangswert (Hauptwert -90° <= v <= 90°)</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::cos">COS - Cosinus (cosine)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">cos</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>der Cosinus von Eingangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::sin">SIN - Sinus (sine)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">sin</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>der Sinus von Eingangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::tan">TAN - Tangens (tangent)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">tan</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>der Tangens von Eingangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::exp">EXP - Exponentialfunktion e**u (exponential function e**U)</a></h4>
+Der Baustein berechnet die Exponentialfunktion "e hoch u"
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">exp</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsvariable</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::ln">LN - natuerlicher Logarithmus (natural logarithm)</a></h4>
+Der Baustein berechnet der Logarithmus zur Basis e von Eingangswert u
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">ln</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsvariable</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::log">LOG - Logarithmus zur Basis 10 (base 10 logarithm)</a></h4>
+Der Baustein berechnet der Logarithmus zur Basis 10 von Eingangswert u
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">log</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsvariable</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::sqrt">SQRT - Quadratwurzel (square root)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">sqrt</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::limit">LIMIT - Begrenzung (limiter)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">limit</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>ll</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Begrenzung (low limit)</td>
+    </tr>
+     <tr>
+      <td>hl</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Begrenzung (high limit)</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert</td>
+    </tr>
+     <tr>
+      <td>qll</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>untere Begrenzung angesprochen (low limitation active)</td>
+    </tr>
+    <tr>
+      <td>qhl</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>obere Begrenzung angesprochen (high limitation active)</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::nonlin">NONLIN - nichtlineare statische Kennlinie (nonlinear static function)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">nonlin</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>n</td>
+      <td>Param</td>
+      <td>OV_INT</td>
+      <td>Eingangswert(number of relevant checkpoints)</td>
+    </tr>
+     <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 1 (u-value checkpoint 1)</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 2 (u-value checkpoint 2)</td>
+    </tr> 
+     <tr>
+      <td>u3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 3 (u-value checkpoint 3)</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 4 (u-value checkpoint 4)</td>
+    </tr> 
+    <tr>
+      <td>u5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 5 (u-value checkpoint 5)</td>
+    </tr>
+    <tr>
+      <td>u6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 6 (u-value checkpoint 6)</td>
+    </tr> 
+     <tr>
+      <td>u7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 7 (u-value checkpoint 7)</td>
+    </tr>
+    <tr>
+      <td>u8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 8 (u-value checkpoint 8)</td>
+    </tr>
+      <tr>
+      <td>u9</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 9 (u-value checkpoint 9)</td>
+    </tr>
+    <tr>
+      <td>u10</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>U-Wert St&uuml;tzpunk 10 (u-value checkpoint 10)</td>
+    </tr> 
+    <tr>
+      <td>v1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 1 (v-value checkpoint 1)</td>
+    </tr>
+    <tr>
+      <td>v2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 2 (v-value checkpoint 2)</td>
+    </tr> 
+     <tr>
+      <td>v3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 3 (v-value checkpoint 3)</td>
+    </tr>
+    <tr>
+      <td>v4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 4 (v-value checkpoint 4)</td>
+    </tr> 
+    <tr>
+      <td>v5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 5 (v-value checkpoint 5)</td>
+    </tr>
+    <tr>
+      <td>v6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 6 (v-value checkpoint 6)</td>
+    </tr> 
+    <tr>
+      <td>v7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 7 (v-value checkpoint 7)</td>
+    </tr>
+    <tr>
+      <td>v8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 8 (v-value checkpoint 8)</td>
+    </tr>
+      <tr>
+      <td>v9</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 9 (v-value checkpoint 9)</td>
+    </tr>
+    <tr>
+      <td>v10</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>V-Wert St&uuml;tzpunk 10 (v-value checkpoint 10)</td>
+    </tr> 
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsvariable</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::scal">SCAL - lineare Skalierung (linear scaling)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">scal</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert</td>
+    </tr>
+    <tr>
+      <td>scal</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Skalierungsfaktor (scaling factor)</td>
+    </tr>
+     <tr>
+      <td>offs</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Nullpunktverschiebung (offset)</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsvariable</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::Mathematische Mehr-Operanden-Funktionen">Mathematische Mehr-Operanden-Funktionen</a></h3>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::add">ADD - Addition (addition)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">add</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+     <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 2</td>
+    </tr> 
+     <tr>
+      <td>u3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 3</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 4</td>
+    </tr> 
+    <tr>
+      <td>u5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 5</td>
+    </tr>
+    <tr>
+      <td>u6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 6</td>
+    </tr> 
+     <tr>
+      <td>u7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 7</td>
+    </tr>
+    <tr>
+      <td>u8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 8</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsvariable</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::sub">SUB - Subtraktion (subtraction)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">sub</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+     <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 2</td>
+    </tr> 
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsvariable</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::mul">MUL - Multiplikator (multiplication)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">mul</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 2</td>
+    </tr> 
+     <tr>
+      <td>u3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 3</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 4</td>
+    </tr> 
+    <tr>
+      <td>u5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 5</td>
+    </tr>
+    <tr>
+      <td>u6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 6</td>
+    </tr> 
+     <tr>
+      <td>u7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 7</td>
+    </tr>
+    <tr>
+      <td>u8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 8</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsvariable</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::div">DIV - Division (division)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">div</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr>
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 1 (dividend)</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 2 (divisor)</td>
+    </tr> 
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::mod">MOD - Modulo (modulo)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">mod</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Dividend</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Divisor</td>
+    </tr> 
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert</td>
+    </tr>   
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::expt">EXPT - Exponentiation u1**u2 (exponentiation u1**u2)</a></h4>
+Der Baustein berechnet die Funktion "u1 hoch u2"
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">expt</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Basisfaktor (base factor)</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Der Exponent (exponent)</td>
+    </tr> 
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert</td>
+    </tr>   
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::Auswahlfunktionen">Auswahlfunktionen</a></h3>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::max">MAX - Maximalwertauswahl (maximum selection)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">max</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+   <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 2</td>
+    </tr> 
+     <tr>
+      <td>u3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 3</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 4</td>
+    </tr> 
+    <tr>
+      <td>u5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 5</td>
+    </tr>
+    <tr>
+      <td>u6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 6</td>
+    </tr> 
+     <tr>
+      <td>u7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 7</td>
+    </tr>
+    <tr>
+      <td>u8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 8</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Der Maximalwert von 8 Eingangswerts</td>
+    </tr>  
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::min">MIN - Minimalwertauswahl (minimum selection)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">min</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+   <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 2</td>
+    </tr> 
+     <tr>
+      <td>u3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 3</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 4</td>
+    </tr> 
+    <tr>
+      <td>u5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 5</td>
+    </tr>
+    <tr>
+      <td>u6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 6</td>
+    </tr> 
+     <tr>
+      <td>u7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 7</td>
+    </tr>
+    <tr>
+      <td>u8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 8</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Der Minimalwert von 8 Eingangswerts</td>
+    </tr>  
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::bitn">BIT_N - Selektion durch 1-aus-N Bit (selection by 1-of-N Bit)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">bitn</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+   <tr>
+      <td>i1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 1</td>
+    </tr>
+    <tr>
+      <td>i2</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>i3</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 3</td>
+    </tr>
+    <tr>
+      <td>i4</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 4</td>
+    </tr> 
+      <tr>
+      <td>i5</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 5</td>
+    </tr>
+    <tr>
+      <td>i6</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 6</td>
+    </tr>
+    <tr>
+      <td>i7</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 7</td>
+    </tr>
+    <tr>
+      <td>i8</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 8</td>
+    </tr>
+    <tr>
+      <td>u0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 0</td>
+    </tr>
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 2</td>
+    </tr> 
+     <tr>
+      <td>u3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 3</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 4</td>
+    </tr> 
+    <tr>
+      <td>u5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 5</td>
+    </tr>
+    <tr>
+      <td>u6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 6</td>
+    </tr> 
+     <tr>
+      <td>u7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 7</td>
+    </tr>
+    <tr>
+      <td>u8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert 8</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert</td>
+    </tr>  
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::demuxb">DEMUX_B - Demultiplexer f&uuml;r BOOL(demultiplexer for BOOL)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">demuxb</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+   <tr>
+      <td>k</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>Kanalnummer (channel number)</td>
+    </tr>
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>durchzuschaltender Eingang (output value for channel Qk)</td>
+    </tr>
+    <tr>
+      <td>i0</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q0 falls 1< k <8 </td>
+    </tr>
+    <tr>
+      <td>i1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q1 falls k!=1 </td>
+    </tr>
+    <tr>
+      <td>i2</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q2 falls k!=2</td>
+    </tr>
+    <tr>
+      <td>i3</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q3 falls k!=3</td>
+    </tr>
+    <tr>
+      <td>i4</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q4 falls k!=4</td>
+    </tr> 
+    <tr>
+      <td>i5</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q5 falls k!=5</td>
+    </tr>
+    <tr>
+      <td>i6</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q6 falls k!=6</td>
+    </tr>
+    <tr>
+      <td>i7</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q7 falls k!=7</td>
+    </tr>
+    <tr>
+      <td>i8</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Wert von Q8 falls k!=8</td>
+    </tr>
+    <tr>
+      <td>q0</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 0</td>
+    </tr>
+    <tr>
+      <td>q1</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 1</td>
+    </tr>
+    <tr>
+      <td>q2</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 2</td>
+    </tr> 
+    <tr>
+      <td>q3</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 3</td>
+    </tr>
+    <tr>
+      <td>q4</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 4</td>
+    </tr> 
+    <tr>
+      <td>q5</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 5</td>
+    </tr>
+    <tr>
+      <td>q6</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 6</td>
+    </tr> 
+    <tr>
+      <td>q7</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 7</td>
+    </tr>
+    <tr>
+      <td>q8</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert 8</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::demuxn">DEMUX_N - Demultiplexer f&uuml;r NUM (demultiplexer for NUM)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">demuxn</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+   <tr>
+      <td>k</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>Kanalnummer (channel number)</td>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>durchzuschaltender Eingang (output value for channel Qk)</td>
+    </tr>
+    <tr>
+      <td>u0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v0 falls 1< k <8 </td>
+    </tr>
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v1 falls k!=1 </td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v2 falls k!=2</td>
+    </tr>
+    <tr>
+      <td>u3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v3 falls k!=3</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v4 falls k!=4</td>
+    </tr> 
+    <tr>
+      <td>u5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v5 falls k!=5</td>
+    </tr>
+    <tr>
+      <td>u6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v6 falls k!=6</td>
+    </tr>
+    <tr>
+      <td>u7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v7 falls k!=7</td>
+    </tr>
+    <tr>
+      <td>u8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Wert von v8 falls k!=8</td>
+    </tr>
+    <tr>
+      <td>v0</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 0</td>
+    </tr>
+    <tr>
+      <td>v1</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 1</td>
+    </tr>
+    <tr>
+      <td>v2</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 2</td>
+    </tr> 
+    <tr>
+      <td>v3</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 3</td>
+    </tr>
+    <tr>
+      <td>v4</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 4</td>
+    </tr> 
+    <tr>
+      <td>v5</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 5</td>
+    </tr>
+    <tr>
+      <td>v6</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 6</td>
+    </tr> 
+    <tr>
+      <td>v7</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 7</td>
+    </tr>
+    <tr>
+      <td>v8</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert 8</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::muxb">MUX_B - Multiplexer f&uuml;r BOOL-Gr&ouml;ßen (multiplexer for BOOL)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">muxb</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+   <tr>
+      <td>k</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>Kanalnummer (channel number)</td>
+    </tr>
+    <tr>
+      <td>i0</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 0</td>
+    </tr>
+    <tr>
+      <td>i1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 1</td>
+    </tr>
+    <tr>
+      <td>i2</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>i3</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 3</td>
+    </tr>
+    <tr>
+      <td>i4</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 4</td>
+    </tr> 
+      <tr>
+      <td>i5</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 5</td>
+    </tr>
+    <tr>
+      <td>i6</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 6</td>
+    </tr>
+    <tr>
+      <td>i7</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 7</td>
+    </tr>
+    <tr>
+      <td>i8</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 8</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::muxn">MUX_N - Multiplexer f&uuml;r NUM (multiplexer for NUM)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">muxn</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+   <tr>
+      <td>k</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>Kanalnummer (channel number)</td>
+    </tr>
+    <tr>
+      <td>u0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 0</td>
+    </tr>
+   <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 1</td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 2</td>
+    </tr> 
+     <tr>
+      <td>u3</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 3</td>
+    </tr>
+    <tr>
+      <td>u4</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 4</td>
+    </tr> 
+    <tr>
+      <td>u5</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 5</td>
+    </tr>
+    <tr>
+      <td>u6</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 6</td>
+    </tr> 
+     <tr>
+      <td>u7</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 7</td>
+    </tr>
+    <tr>
+      <td>u8</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangswert 8</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert</td>
+    </tr> 
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::selb">SEL_B - bin&auml;re Selektion f&uuml;r BOOL (binary selection for BOOL)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">selb</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;rer Selektionseingang </td>
+    </tr>
+    <tr>
+      <td>i0</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert bei i=0</td>
+    </tr>
+    <tr>
+      <td>i1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert bei i=1</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::seln">SEL_N - bin&auml;re Selektion f&uuml;r NUM (binary selection for NUM)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">seln</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;rer Selektionseingang </td>
+    </tr>
+    <tr>
+      <td>u0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert bei i=0</td>
+    </tr>
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert bei i=1</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p></p>
+<h3><a name="Klassen::Vergleiche">Vergleiche</a></h3>
+<p> </p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::eq">EQ - Vergleich auf gleich (equal comparison)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">eq</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 1 </td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>tol</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Toleranz f&uuml;r Gleichheit</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;res Vergleichsergebnis</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::ge">GE - Vergleich auf gr&ouml;ßer gleich (greater equal comparison)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">ge</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 1 </td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>tol</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Toleranz f&uuml;r Gleichheit</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;res Vergleichsergebnis</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::gt">GT - Vergleich auf gr&ouml;ßer (greater comparison)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">gt</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 1 </td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>tol</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Toleranz f&uuml;r Gleichheit</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;res Vergleichsergebnis</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::le">LE - Vergleich auf kleiner gleich (less equal comparison)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">le</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 1 </td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>tol</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Toleranz f&uuml;r Gleichheit</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;res Vergleichsergebnis</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::lt">LT - Vergleich auf kleiner (less comparison)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">lt</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 1 </td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>tol</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Toleranz f&uuml;r Gleichheit</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;res Vergleichsergebnis</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::ne">NE - Vergleich auf ungleich (not equal comparison)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">ne</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 1 </td>
+    </tr>
+    <tr>
+      <td>u2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>tol</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Toleranz f&uuml;r Gleichheit</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;res Vergleichsergebnis</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::sam">SAM - Grenzwertschalter und Alarm- oder Meldespeicherung (limit switch and alarm or message storing)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">sam</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>amode</td>
+      <td>Param</td>
+      <td>OV_STRING</td>
+      <td>Betriebsart: 'A1'Alarm bei i=1;'A0'Alarm bei i=0;'MR' Meldung bei steig Flanke;'MF'Meldung bei fall Flanke;'MB' Meldung bei beiden Flanken. </td>
+    </tr>
+    <tr>
+      <td>pv</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangssignal</td>
+    </tr>
+    <tr>
+      <td>pvref</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Referenzwert</td>
+    </tr>
+    <tr>
+      <td>pvmode</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>Bildung des zu pr&uuml;fenden Werts: 0:pv;	1:pv-pnref;	2:pv/pvref.</td>
+    </tr>
+    <tr>
+      <td>low</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Art des Grenzwertes: 1: S ist unterer Grenzwert;	0: S ist oberer Grenzwert.</td>
+    </tr>
+    <tr>
+      <td>s</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Grenzwert</td>
+    </tr>
+    <tr>
+      <td>smin</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Begrenzung f&uuml;r S</td>
+    </tr>
+    <tr>
+      <td>smax</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Begrenzung f&uuml;r S</td>
+    </tr>
+    <tr>
+      <td>shys</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Schaltdifferenz (Hysterese)</td>
+    </tr>
+    <tr>
+      <td>aon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Alarm oder Meldung ein</td>
+    </tr>
+    <tr>
+      <td>aprio</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>Alarmpriorit&auml;t (h&ouml;here Zahl = h&ouml;here Prio.)</td>
+    </tr>
+    <tr>
+      <td>qsold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>letzter Zykluswert f&uuml;r qs (last cycle value of qs) </td>
+    </tr>
+    <tr>
+      <td>pvmod</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>auf Grenzen gepr&uuml;fter Wert (pv oder pv-pvref oder pv/pvref)</td>
+    </tr>
+    <tr>
+      <td>qs</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Grenzwert verletzt</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>alarm/message active</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::Boolesche Ein-Operanden-Funktionen und Flankenerkennung">Boolesche Ein-Operanden-Funktionen und Flankenerkennung</a></h3>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::not">NOT - logische Negation (not, negation)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">not</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgang</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::ftrig">FTRIG - Erkennung fallender Flanke (falling edge detection)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">ftrig</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingangssignal</td>
+    </tr>
+    <tr>
+      <td>iold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>letzter Zykluswert f&uuml;r i</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangssignal</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::rtrig">RTRIG - Erkennung steigender Flanke (rising edge detection)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">rtrig</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingangssignal</td>
+    </tr>
+    <tr>
+      <td>iold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>letzter Zykluswert f&uuml;r i</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangssignal</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::Boolesche Mehr-Operanden-Funktionen">Boolesche Mehr-Operanden-Funktionen</a></h3>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::and">AND - UND-Verknüpfung  (Boolean AND)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">and</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 1</td>
+    </tr>
+    <tr>
+      <td>i2</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>i3</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 3</td>
+    </tr>
+    <tr>
+      <td>i4</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 4</td>
+    </tr> 
+      <tr>
+      <td>i5</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 5</td>
+    </tr>
+    <tr>
+      <td>i6</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 6</td>
+    </tr>
+    <tr>
+      <td>i7</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 7</td>
+    </tr>
+    <tr>
+      <td>i8</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 8</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgang</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::or">OR - oder Verknüpfung (Boolean OR)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">or</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 1</td>
+    </tr>
+    <tr>
+      <td>i2</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>i3</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 3</td>
+    </tr>
+    <tr>
+      <td>i4</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 4</td>
+    </tr> 
+      <tr>
+      <td>i5</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 5</td>
+    </tr>
+    <tr>
+      <td>i6</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 6</td>
+    </tr>
+    <tr>
+      <td>i7</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 7</td>
+    </tr>
+    <tr>
+      <td>i8</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 8</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgang</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::xor">XOR - exklusive ODER-Verknüpfung (Boolean exclusive OR)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">xor</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 1</td>
+    </tr>
+    <tr>
+      <td>i2</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 2</td>
+    </tr>
+    <tr>
+      <td>i3</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 3</td>
+    </tr>
+    <tr>
+      <td>i4</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 4</td>
+    </tr> 
+      <tr>
+      <td>i5</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 5</td>
+    </tr>
+    <tr>
+      <td>i6</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 6</td>
+    </tr>
+    <tr>
+      <td>i7</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 7</td>
+    </tr>
+    <tr>
+      <td>i8</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingang 8</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgang</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::Z&auml;hler mono-/bistabile Glieder Zeitglieder">Z&auml;hler mono-/bistabile Glieder Zeitglieder</a></h3>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::ct">CT - Auf-/Abwärtszähler/Mengenzähler (counter, flow counter)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">ct</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>digits</td>
+      <td>Param</td>
+      <td>OV_INT</td>
+      <td>Aufl&ouml;sung in Dezimalstellen (wanted number of decimal places)</td>
+    </tr>
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>bin&auml;res Eingangssignal</td>
+    </tr>
+    <tr>
+      <td>v0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Anfangswert f&uuml;r v</td>
+    </tr>
+    <tr>
+      <td>ll</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Begrenzung f&uuml;r v</td>
+    </tr> 
+    <tr>
+      <td>hl</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Berenzung f&uuml;r v</td>
+    </tr>
+    <tr>
+      <td>lls</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Grenzwert f&uuml;r v</td>
+    </tr>
+    <tr>
+      <td>hhs</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Grenzwert f&uuml;r v</td>
+    </tr>
+    <tr>
+      <td>deltals</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Abstand des Vorgrenzwerts LS zu LLS</td>
+    </tr>
+    <tr>
+      <td>deltahs</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Abstand des Vorgrenzwerts HS zu HHS</td>
+    </tr>
+    <tr>
+      <td>incr</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Inkrement pro Impuls (Betrag)</td>
+    </tr>
+    <tr>
+      <td>reset</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>R&uuml;cksetzen auf Anfangswert</td>
+    </tr>
+    <tr>
+      <td>hold</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Einfrieren der Ausgangsgr&ouml;ße auf letzen Wert</td>
+    </tr>
+    <tr>
+      <td>down</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Abw&auml;rtsz&auml;hlung ein, 0: aufw&auml;rts; 1: abw&auml;rts;</td>
+    </tr>
+    <tr>
+      <td>iold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>last cycle value of i</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsgr&ouml;ße (z&auml;hlwert)</td>
+    </tr>
+    <tr>
+      <td>qv0</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>v steht auf Anfangswert v0</td>
+    </tr>
+    <tr>
+      <td>qll</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>v steht auf ll</td>
+    </tr>
+    <tr>
+      <td>qhl</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>v steht auf hl</td>
+    </tr>
+    <tr>
+      <td>qlls</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>lls ist unterschritten</td>
+    </tr>
+    <tr>
+      <td>qls</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>ls ist unterschritten</td>
+    </tr>
+    <tr>
+      <td>qhs</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>hs ist &uuml;berschritten</td>
+    </tr>
+    <tr>
+      <td>qhhs</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>hhs ist &uuml;berschritten</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::rsff">RSFF - RS- Flipflop (bistable element with reset dominance)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">rsff</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>s</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Setz-Eingang</td>
+    </tr>
+    <tr>
+      <td>r1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>R&uuml;cksetz-Eingang (mit Prio)</td>
+    </tr>
+    <tr>
+      <td>qold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>last cycle value of q</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangs</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::srff">SRFF - SR-Flipflop (bistable element with set dominance)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">srff</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>s1</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Setz-Eingang(mit Prio)</td>
+    </tr>
+    <tr>
+      <td>r</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>R&uuml;cksetz-Eingang</td>
+    </tr>
+    <tr>
+      <td>qold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>last cycle value of q</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangs</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::tof1">TOF1 - Ausschaltverzögerung (off delay)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">tof1</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingangssignal</td>
+    </tr>
+    <tr>
+      <td>time</td>
+      <td>Eingang</td>
+      <td>OV_TIME_SPAN</td>
+      <td>Verz&ouml;gerungszeit(s)(delay time)</td>
+    </tr> 
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangssignal</td>
+    </tr><tr>
+      <td>etime</td>
+      <td>Ausgang</td>
+      <td>OV_TIME_SPAN</td>
+      <td>vergangene Zeit(s)(elapsed time)</td>
+    </tr> 
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::ton1">TON1 - Einschaltverzögerung (on delay)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">ton1</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingangssignal</td>
+    </tr>
+    <tr>
+      <td>time</td>
+      <td>Eingang</td>
+      <td>OV_TIME_SPAN</td>
+      <td>Verz&ouml;gerungszeit(s)(delay time)</td>
+    </tr> 
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangssignal</td>
+    </tr><tr>
+      <td>etime</td>
+      <td>Ausgang</td>
+      <td>OV_TIME_SPAN</td>
+      <td>vergangene Zeit(s)(elapsed time)</td>
+    </tr> 
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::tp1">TP1 - monostabiles Glied (monostable element)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">tp1</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Eingangssignal</td>
+    </tr>
+    <tr>
+      <td>time</td>
+      <td>Eingang</td>
+      <td>OV_TIME_SPAN</td>
+      <td>Zeitdauer(s)(delay time)</td>
+    </tr> 
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Ausgangssignal</td>
+    </tr><tr>
+      <td>etime</td>
+      <td>Ausgang</td>
+      <td>OV_TIME_SPAN</td>
+      <td>vergangene Zeit(s)(elapsed time)</td>
+    </tr> 
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::Dynamische Glieder und Regler">Dynamische Glieder und Regler</a></h3>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::c">C - universeller PID-T1-Regler (universal controller)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">c</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>pv</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Iswert(Regelgr&ouml;ße)(process value)</td>
+    </tr>
+    <tr>
+      <td>spint</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>interner Sollwert(setpoint internal)</td>
+    </tr> 
+    <tr>
+      <td>spext</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>externer Sollwert(setpoint external)</td>
+    </tr> 
+    <tr>
+      <td>spexton</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Sollwertauswahl 1:extern, 0: intern</td>
+    </tr>
+    <tr>
+      <td>sptron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Nachf&uuml;hrung(track) f&uuml;r SPINT  1:Nachf&uuml;hrung auf SPEXT ein; 0:Nachf&uuml;hrung auf SPEXT aus</td>
+    </tr> 
+    <tr>
+      <td>spll</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Grenz f&uuml;r aktuelle F&uuml;hrungsgr&ouml;ße</td>
+    </tr> 
+   <tr>
+      <td>sphl</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Grenz f&uuml;r aktuelle F&uuml;hrungsgr&ouml;ße</td>
+    </tr> 
+    <tr>
+      <td>spdron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Sollwertanstiegsbegrenzung ein</td>
+    </tr>
+    <tr>
+      <td>spuron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Sollwertabstiegsbegrenzung ein</td>
+    </tr>
+    <tr>
+      <td>spdr</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Sollwertabstiegsbegrenzung(/s) (down rate limit)</td>
+    </tr> 
+   <tr>
+      <td>spur</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Sollwertanstiegsbegrenzung(/s)(up rate limit)</td>
+    </tr> 
+    <tr>
+      <td>deadz</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Tote Zone(dead zone) f&uuml;r SP-PV</td>
+    </tr> 
+   <tr>
+      <td>reserve</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Regelerwirkungssinn  1: revers (steigend/fallend) 0: direkt (steigend/steigend)</td>
+    </tr> 
+    <tr>
+      <td>dmode</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>zu differenzierendes Signal 0:SP-PV, 1:-PV, 2:SP</td>
+    </tr>
+    <tr>
+      <td>ireset</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>R&uuml;cksetzen i-Anteil(reset for integrator)</td>
+    </tr>
+    <tr>
+      <td>pon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>P-Anteil ein</td>
+    </tr> 
+    <tr>
+      <td>ion</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>I-Anteil ein</td>
+    </tr>
+    <tr>
+      <td>don</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>D-Anteil ein</td>
+    </tr>  
+   <tr>
+      <td>kp</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Proportionalbeiwert</td>
+    </tr> 
+    <tr>
+      <td>ti</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Nachstellzeit(s)</td>
+    </tr> 
+    <tr>
+      <td>td</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Vorstellzeit(s)</td>
+    </tr>
+    <tr>
+      <td>t1totd</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>T1/TD(T1 ist Zeitkonstante)</td>
+    </tr>
+    <tr>
+      <td>mvmanon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Betriebsart Auto/Hand 0:AUTO, 1:HAND(manual)</td>
+    </tr> 
+    <tr>
+      <td>mvmanfc</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Zwangshand(force to manual)</td>
+    </tr>
+    <tr>
+      <td>mvexton</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Auswahl Stellgr&ouml;ße 1:MVEXT, 0:Automatikwert oder MVMAN</td>
+    </tr>  
+   <tr>
+      <td>mvtron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Nachf&uuml;hrung von MVINT und MVMAN auf MVEXT ein</td>
+    </tr>
+    <tr>
+      <td>mvman</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Hand-Stellgr&ouml;ße</td>
+    </tr> 
+   <tr>
+      <td>mvext</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>externe Stellgr&ouml;ße</td>
+    </tr> 
+    <tr>
+      <td>mvll</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Grenze f&uuml;r aktuelle Stellgr&ouml;ße</td>
+    </tr>
+    <tr>
+      <td>mvhl</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Grenze f&uuml;r aktuelle Stellgr&ouml;ße</td>
+    </tr>  
+   <tr>
+      <td>mvdron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Stellgr&ouml;ßenabstiegsbegrenzung ein</td>
+    </tr> 
+    <tr>
+      <td>mvuron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Stellgr&ouml;ßenanstiegsbegrenzung ein</td>
+    </tr>
+    <tr>
+      <td>mvdr</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Stellgr&ouml;ßenabstiegsbegrenzung(/s) (down rate limit)</td>
+    </tr>
+    <tr>
+      <td>mvur</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Stellgr&ouml;ßenanstiegsbegrenzung(/s) (up rate limit)</td>
+    </tr> 
+    <tr>
+      <td>zon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>St&ouml;rgr&ouml;ßenaufschaltung ein</td>
+    </tr>
+    <tr>
+      <td>z</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>auf MV aufzuschaltende St&ouml;rgr&ouml;ße</td>
+    </tr>  
+   <tr>
+      <td>spold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>last cycle value of setpoint</td>
+    </tr> 
+    <tr>
+      <td>pvold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>process value in last cycle</td>
+    </tr> 
+    <tr>
+      <td>edzold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>edz value in last cycle</td>
+    </tr>
+    <tr>
+      <td>mvold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>control value in last cycle</td>
+    </tr>
+    <tr>
+      <td>mviold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>intergative component in last cycle</td>
+    </tr> 
+    <tr>
+      <td>mvpido</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>mv_pid value in last cycle</td>
+    </tr>
+    <tr>
+      <td>mv</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>aktuelle Stellgr&ouml;ße</td>
+    </tr>  
+   <tr>
+      <td>e</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Regeldifferenz E=SP-PV</td>
+    </tr>
+    <tr>
+      <td>sp</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>aktueller Sollwert</td>
+    </tr>
+    <tr>
+      <td>qspint</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>interner Sollwert aktiv</td>
+    </tr> 
+    <tr>
+      <td>qmvman</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Betriebsart HAND aktiv</td>
+    </tr> 
+    <tr>
+      <td>qmvext</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>externe Stellgr&ouml;ße aktiv</td>
+    </tr>
+    <tr>
+      <td>qspll</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Sollwert untere Grenze angesprochen</td>
+    </tr>  
+   <tr>
+      <td>qsphl</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Sollwert obere Grenze angesprochen</td>
+    </tr>
+    <tr>
+      <td>qmvll</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Stellwert untere Grenze angesprochen</td>
+    </tr>
+    <tr>
+      <td>qmvhl</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Stellwert obere Grenze angesprochen</td>
+    </tr> 
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::cs">CS - Standard-PID-T1-Regler (standard controller)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">cs</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>pv</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Iswert(Regelgr&ouml;ße)</td>
+    </tr>
+    <tr>
+      <td>spint</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>interner Sollwert</td>
+    </tr> 
+    <tr>
+      <td>spext</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>externer Sollwert</td>
+    </tr> 
+    <tr>
+      <td>spexton</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Sollwertauswahl 1:extern, 0: intern</td>
+    </tr>
+    <tr>
+      <td>reserve</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Regelerwirkungssinn  1: revers (steigend/fallend) 0: direkt (steigend/steigend)</td>
+    </tr> 
+    <tr>
+      <td>dmode</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>zu differenzierendes Signal 0:SP-PV, 1:-PV, 2:SP</td>
+    </tr>
+    <tr>
+      <td>ion</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>I-Anteil ein</td>
+    </tr>
+    <tr>
+      <td>kp</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Proportionalbeiwert</td>
+    </tr> 
+    <tr>
+      <td>ti</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Nachstellzeit(s)</td>
+    </tr> 
+    <tr>
+      <td>td</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Vorstellzeit(s)</td>
+    </tr>
+    <tr>
+      <td>t1totd</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>T1/TD(T1 ist Zeitkonstante)</td>
+    </tr>
+    <tr>
+      <td>mvmanon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Betriebsart Auto/Hand 0:AUTO, 1:HAND(manual)</td>
+    </tr> 
+    <tr>
+      <td>mvman</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Hand-Stellgr&ouml;ße</td>
+    </tr> 
+    <tr>
+      <td>mvll</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Grenze f&uuml;r aktuelle Stellgr&ouml;ße</td>
+    </tr>
+    <tr>
+      <td>mvhl</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obtere Grenze f&uuml;r aktuelle Stellgr&ouml;ße</td>
+    </tr>   
+    <tr>
+      <td>mvold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>control value in last cycle</td>
+    </tr>
+    <tr>
+      <td>mviold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>intergative component in last cycle</td>
+    </tr> 
+    <tr>
+      <td>mvpido</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>mv-pid value in last cycle</td>
+    </tr>
+    <tr>
+      <td>counter</td>
+      <td>Intern</td>
+      <td>OV_INT</td>
+      <td>cycle counter</td>
+    </tr>
+    <tr>
+      <td>spold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>last cycle value of setpoint</td>
+    </tr> 
+    <tr>
+      <td>pvold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>process value in last cycle</td>
+    </tr> 
+    <tr>
+      <td>eold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>e value in last cycle</td>
+    </tr>
+    <tr>
+      <td>mv</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>aktuelle Stellgr&ouml;ße</td>
+    </tr>  
+   <tr>
+      <td>e</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Regeldifferenz E=SP-PV</td>
+    </tr>
+    <tr>
+      <td>sp</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>aktueller Sollwert</td>
+    </tr>
+    <tr>
+      <td>qspint</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>interner Sollwert aktiv</td>
+    </tr> 
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::aver">AVER - laufender Zeitlicher Mittelwert (moving window average)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">aver</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>mxtatotc</td>
+      <td>Param</td>
+      <td>OV_SINGLE</td>
+      <td>maximales ta/tcycle</td>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang</td>
+    </tr> 
+    <tr>
+      <td>ta</td>
+      <td>Eingang</td>
+      <td>OV_TIME_SPAN</td>
+      <td>Zeit, &uuml;ber die gemittelt wird</td>
+    </tr> 
+    <tr>
+      <td>averon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Mittelwertbildung ein (input average value)</td>
+    </tr>
+    <tr>
+      <td>averonold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>averon value in last cycle</td>
+    </tr> 
+    <tr>
+      <td>ringbuffer[10]</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>stores up to 10 cycle values</td>
+    </tr>
+    <tr>
+      <td>k</td>
+      <td>Intern</td>
+      <td>OV_INT</td>
+      <td>ringbuffer index</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert output value</td>
+    </tr>  
+   <tr>
+      <td>qon</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Mittelwertbildung aktiv</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::deadt">DEADT - Totzeitelement (dead time)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">deadt</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>mxtdtotc</td>
+      <td>Param</td>
+      <td>OV_SINGLE</td>
+      <td>maximales td/tcycle</td>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang</td>
+    </tr> 
+    <tr>
+      <td>td</td>
+      <td>Eingang</td>
+      <td>OV_TIME_SPAN</td>
+      <td>Totzeit(s)</td>
+    </tr> 
+    <tr>
+      <td>deadton</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Totzeit ein (dead time activator)</td>
+    </tr>
+    <tr>
+      <td>deadtono</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>deadton value in last cycle</td>
+    </tr> 
+    <tr>
+      <td>ringbuffer[10]</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>stores up to 10 cycle input values</td>
+    </tr>
+    <tr>
+      <td>k</td>
+      <td>Intern</td>
+      <td>OV_INT</td>
+      <td>ringbuffer index</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert output value</td>
+    </tr>  
+   <tr>
+      <td>qon</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>Totzeit aktiv</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::dif">DIF - Differentiation; D-T1-Glied (differentation with lag)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">dif</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang</td>
+    </tr> 
+    <tr>
+      <td>td</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Differenzierbeiwert(s)(derivative action coefficient)</td>
+    </tr> 
+    <tr>
+      <td>t1totd</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>t1/td (mit Zeitkonstante t1)</td>
+    </tr>
+    <tr>
+      <td>vold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>v value in last cycle</td>
+    </tr> 
+    <tr>
+      <td>uold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>u value in last cycle</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangswert output value</td>
+    </tr>  
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::integr">INTEGR - Integration (integrator)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">integr</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>digits</td>
+      <td>Param</td>
+      <td>OV_INT</td>
+      <td>geforderte Mindestaufl&ouml;sung in Dezimalstellen</td>
+    </tr>
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingangsgr&ouml;ße</td>
+    </tr> 
+    <tr>
+      <td>thron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Schleichmengen unterdr&uuml;ckung ein</td>
+    </tr> 
+    <tr>
+      <td>thr</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Schwellwert f&uuml;r Schleichmenge (threshold)</td>
+    </tr>
+    <tr>
+      <td>v0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Anfangswert f&uuml;r v nach RESET</td>
+    </tr> 
+    <tr>
+      <td>ll</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Begrenzung f&uuml;r v</td>
+    </tr>
+    <tr>
+      <td>hl</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Begrenzung f&uuml;r v</td>
+    </tr>
+    <tr>
+      <td>lls</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Grenzwert f&uuml;r v</td>
+    </tr>
+    <tr>
+      <td>hhs</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Grenzwert f&uuml;r v</td>
+    </tr>
+    <tr>
+      <td>deltals</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Abstand des Vorgrenzwerts LS zu LLS</td>
+    </tr> 
+    <tr>
+      <td>dealtahs</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Abstand des Vorgrenzwerts HS zu HHS</td>
+    </tr> 
+    <tr>
+      <td>ki</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Integrierbeiwert</td>
+    </tr>
+    <tr>
+      <td>reset</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>R&uuml;cksetzen auf Anfangswert(priorit&auml;t vor HOLD/TRACK)</td>
+    </tr>
+    <tr>
+      <td>hold</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Einfrieren von Y auf letzem Wert(priorit&auml;t vor TRACK)</td>
+    </tr> 
+    <tr>
+      <td>track</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Track-Modus (Y=X)</td>
+    </tr>
+    <tr>
+      <td>iold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>i value in last cycle</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgangsgr&ouml;ße</td>
+    </tr>
+    <tr>
+      <td>qv0</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>V steht auf Anfangswert v0</td>
+    </tr>
+    <tr>
+      <td>qll</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>V steht auf ll</td>
+    </tr> 
+    <tr>
+      <td>qhl</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>V steht auf hl</td>
+    </tr>
+    <tr>
+      <td>qlls</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>LLS ist unterschritten</td>
+    </tr>
+    <tr>
+      <td>qls</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>LS ist unterschritten</td>
+    </tr>
+    <tr>
+      <td>qhs</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>HS ist &uuml;berschritten</td>
+    </tr>
+    <tr>
+      <td>qhhs</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>HHS ist &uuml;berschritten</td>
+    </tr>  
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::fio">FIO - Allgemeines Übertragungsglied 1.Ordnung PD-T1 (1st order, lead lag))</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">fio</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang</td>
+    </tr> 
+    <tr>
+      <td>kp</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Proportionalbeiwert</td>
+    </tr> 
+    <tr>
+      <td>t1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Zeitkonstante (s)</td>
+    </tr>
+    <tr>
+      <td>td</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Vorhaltzeit(s)</td>
+    </tr> 
+    <tr>
+      <td>v0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Anfangswert nach reset</td>
+    </tr>
+    <tr>
+      <td>reset</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>r&uuml;cksetzen auf v0</td>
+    </tr>
+    <tr>
+      <td>vold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>v value in last cycle</td>
+    </tr>
+    <tr>
+      <td>uold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>u value in last cycle</td>
+    </tr>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgang</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::seo">SEO - Allgemeines Übertragungsglied 2. Ordnung (2nd order)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">seo</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClassCyc</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>u</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Eingang</td>
+    </tr> 
+    <tr>
+      <td>kp</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Proportionalbeiwert</td>
+    </tr> 
+    <tr>
+      <td>omega0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Kennkreisfrequenz(1/s)(characteristic angular frequency)</td>
+    </tr>
+    <tr>
+      <td>theta</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>D&auml;mpfungsgrad (attenuation ratio)</td>
+    </tr> 
+    <tr>
+      <td>b1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Vorhaltzeit(s)</td>
+    </tr>
+    <tr>
+      <td>b2</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>2. Z&auml;hlerkoeffizient (s*s)</td>
+    </tr> 
+    <tr>
+      <td>v0</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Anfangswert v(0) nach RESET</td>
+    </tr>
+    <tr>
+      <td>vm1</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Anfangswert v(-1) nach RESET<</td>
+    </tr> 
+    <tr>
+      <td>reset</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>r&uuml;cksetzen auf v0, vm1</td>
+    </tr>
+    <tr>
+      <td>vold1</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>v value in last cycle</td>
+    </tr>
+    <tr>
+      <td>vold2</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>v value in pre-last cycle</td>
+    </tr>
+    <tr>
+      <td>uold1</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>u value in last cycle</td>
+    </tr>
+    <tr>
+      <td>uold2</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>u value in pre-last cycle</td>
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>Ausgang</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h3><a name="Klassen::Vor-/Nachbereitung f&uuml;r Anzeige und Bedienung">Vor-/Nachbereitung f&uuml;r Anzeige und Bedienung</a></h3>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::am">AM - Alarm- oder Meldungsspeicherung (alarm or message storing)</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">am</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+     <tr>
+      <td>amode</td>
+      <td>Param</td>
+      <td>OV_STRING</td>
+      <td>Betriebsart: 'A1'Alarm bei i=1;'A0'Alarm bei i=0;'MR' Meldung bei steig Flanke;'MF'Meldung bei fall. Flanke;'MB' Meldung bei beiden Flanken </td>
+    </tr>
+    <tr>
+      <td>i</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>zu &uuml;berwachendes bin&auml;res Signal</td>
+    </tr>
+    <tr>
+      <td>aon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Alarm oder Meldung ein</td>
+    </tr>
+    <tr>
+      <td>aprio</td>
+      <td>Eingang</td>
+      <td>OV_INT</td>
+      <td>Alarm-/Meldungs-priorit&auml;t (h&ouml;here Zahl = h&ouml;here Prio.)</td>
+    </tr>
+    <tr>
+      <td>iold</td>
+      <td>Intern</td>
+      <td>OV_BOOL</td>
+      <td>letzter Zykluswert f&uuml;r i (last cycle value of i) </td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>alarm/message output</td>
+    </tr>
+    <tr>
+      <td>qa</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>alarm or message</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::hb">H_B - boolescher Handwert mit Umschalter</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">hb</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>qman</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Handwert</td>
+    </tr>
+    <tr>
+      <td>qexton</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Auswahl externer Wert</td>
+    </tr>
+    <tr>
+      <td>qext</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>externer Wert</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>aktueller Wert</td>
+    </tr>
+    <tr>
+      <td>qqext</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>externer Wert angew&auml;hlt</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>
+<h4><a name="Klassen::hn">H_N - Handstation mit Umschalter und Begrenzung</a></h4>
+<p>
+<table border="1" cellpadding="3" cellspacing="1" width="100%">
+  <tbody>
+    <tr align="left">
+      <th colspan="2">Bausteinname</th>
+      <td colspan="2">hn</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">letzte &Auml;nderung</th>
+      <td colspan="2">Dienstag, 31st-Mai-2005</td>
+    </tr>
+    <tr align="left">
+      <th colspan="2">abgeleitet von</th>
+      <td colspan="2">vdivde3696/BaseClass</td>
+    </tr>
+    <tr align="left">
+      <th colspan="4"><br>
+      </th>
+    </tr>
+    <tr align="left">
+      <th width="10%">Port</th>
+      <th width="10%">Art</th>
+      <th width="20%">Datentyp</th>
+      <th width="60%">Kommentar</th>
+    </tr> 
+    <tr>
+      <td>vman</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Handwert</td>
+    </tr>
+    <tr>
+      <td>vexton</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Auswahl externer Wert</td>
+    </tr>
+    <tr>
+      <td>vext</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>externer Wert</td>
+    </tr>
+    <tr>
+      <td>llon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>untere Begrenzung ein</td>
+    </tr>
+    <tr>
+      <td>hlon</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>obere Begrenzung ein</td>
+    </tr>
+    <tr>
+      <td>ll</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>untere Begrenzung</td>
+    </tr>
+    <tr>
+      <td>hl</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>obere Begrenzung</td>
+    </tr>
+    <tr>
+      <td>dron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Abstiegsbegrenzung ein</td>
+    </tr>
+    <tr>
+      <td>uron</td>
+      <td>Eingang</td>
+      <td>OV_BOOL</td>
+      <td>Anstiegsbegrenzung ein</td>
+    </tr>
+    <tr>
+      <td>dr</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Abstiegsbegrenzung(/s) (down rate limit)</td>
+    </tr>
+    <tr>
+      <td>ur</td>
+      <td>Eingang</td>
+      <td>OV_SINGLE</td>
+      <td>Anstiegsbegrenzung(/s) (up rate limit)</td>
+    </tr> 
+    <tr>
+      <td>vold</td>
+      <td>Intern</td>
+      <td>OV_SINGLE</td>
+      <td>last cycle value of v</td>
+    </tr> 
+    <tr>
+      <td>v</td>
+      <td>Ausgang</td>
+      <td>OV_SINGLE</td>
+      <td>aktueller Wert</td>
+    </tr>
+    <tr>
+      <td>qvext</td>
+      <td>Ausgang</td>
+      <td>OV_BOOL</td>
+      <td>externer Wert angew&auml;hlt</td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p></p>
+<hr color="#3060c0">
+<p> </p>

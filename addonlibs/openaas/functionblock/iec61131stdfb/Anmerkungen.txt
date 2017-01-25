@@ -1,0 +1,20 @@
+Anmerkungen zu den mathematischen Blöcken:
+
+- Wird im DIV-Block eine Division einer Fließkommazahl durch 0 erkannt, so wird +INFINITY bzw. -INFINITY, jenach Vorzeichen des Dividenden zurückgegeben
+- wird im DIV-Block eine Division eines integers durch 0 erkannt, so wird je nach Vorzeichen des Dividenden die höchste oder niedrigste darstellbare integer-Zahl ausgegeben
+
+- wird in einem MOD-Block durch 0 geteilt, so wird die größte darstellbare Integerzahl zurückgegeben
+
+- kommt es bei einer Addition, Subtraktion oer Multiplikation einer Fließkommazahl zu einem Überlauf oder Unterlauf so wird +INFINITY bzw. -INFINITY zurückgegeben
+- Werteüberläufe bei Integerzahlen werden nicht erkannt (Erkennung würde die Rechenzeit erheblich erhöhen und ein Auweichen auf Integer verliert dann an Sinn)
+
+- kommt bei einem EXP- oder EXPT-Block ein Werteüberlauf vor, so wird vorzeichenbehaftet INFINITY bzw. die größte / kleinste darstellbare Integerzahl zurückgegeben (Rechnung erfolgt hier ohnehin mit Fließkommazahlen, so dass die Erkennung auch für Integer keinen großen Aufwand erfordert)
+
+- ASIN und ACOS geben bei Eingabewerten außerhalb des Definitionsbereichs NaN zurück
+
+- SQRT gibt bei Wurzeln einer negativen zahl NaN zurück
+
+- LN und LOG geben bei 0 als Parameter -INFINITY zurück, bei negativen Parametern NaN
+
+
+- bei allen angegebenen Sonderfällen, und wenn andere Fehler bei berechnungen in diesen Blöcken auftreten (z.B. Vektoren nicht gleich lang) wird der Status der Ausgangsvariable auf BAD gesetzt

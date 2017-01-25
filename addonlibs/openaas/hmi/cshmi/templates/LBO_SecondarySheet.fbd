@@ -1,0 +1,3053 @@
+/************************************************************
+* Sicherung der Datenbasis
+* Erstellt: 2014-04-30 16:20:00
+* 
+* HOST   : DEV:7509
+* SERVER : processcontrol
+************************************************************/
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1675.000000;
+      height : INPUT SINGLE = 1020.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "//demo/fb_lbo_ProcessControl/";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/headerFrame :
+    CLASS /acplt/cshmi/Rectangle;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 5.000000;
+      y : INPUT SINGLE = 5.000000;
+      width : INPUT SINGLE = 1665.000000;
+      height : INPUT SINGLE = 75.000000;
+      strokeWidth : INPUT SINGLE = 1.500000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "lightgray";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 5.000000;
+      y : INPUT SINGLE = 5.000000;
+      width : INPUT SINGLE = 1670.000000;
+      height : INPUT SINGLE = 1015.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubButton :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 5.000000;
+      y : INPUT SINGLE = 5.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/statusButton";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"title:AlarmMeldung" , "SheetNumber:Two"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 80.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = FALSE;
+      TemplateDefinition : INPUT STRING = "ELBO/bubFrame";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"title:AlarmMeldung" , "SheetNumber:Two"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 20.000000;
+      y : INPUT SINGLE = 60.000000;
+      width : INPUT SINGLE = 1.000000;
+      height : INPUT SINGLE = 1.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/Ofentemperatur :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = -10.000000;
+      content : INPUT STRING = "Ofentemperatur";
+      fontSize : INPUT STRING = "medium";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T007A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T007A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:0" , "TagName:10.10 T007A" , "Description:Temperatur Ofengefäß Segment 1 links (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T007B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T007B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:2" , "TagName:10.10 T007B" , "Description:Temperatur Ofengefäß Segment 1 links (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T008A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T008A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:4" , "TagName:10.10 T008A" , "Description:Temperatur Ofengefäß Segment 1 links (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T008B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T008B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:6" , "TagName:10.10 T008B" , "Description:Temperatur Ofengefäß Segment 1 links (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T009A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T009A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:8" , "TagName:10.10 T009A" , "Description:Temperatur Ofengefäß Segment 1 links (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T009B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T009B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:10" , "TagName:10.10 T009B" , "Description:Temperatur Ofengefäß Segment 1 links (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T010A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T010A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:12" , "TagName:10.10 T010A" , "Description:Temperatur Ofengefäß Segment 1 links (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T010B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T010B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:14" , "TagName:10.10 T010B" , "Description:Temperatur Ofengefäß Segment 1 links (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T011A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T011A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:16" , "TagName:10.10 T011A" , "Description:Temperatur Ofengefäß Segment 1 rechts (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T011B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T011B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:18" , "TagName:10.10 T011B" , "Description:Temperatur Ofengefäß Segment 1 rechts (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T012A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T012A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:20" , "TagName:10.10 T012A" , "Description:Temperatur Ofengefäß Segment 1 rechts (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FirstStack/T012B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T012B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:22" , "TagName:10.10 T012B" , "Description:Temperatur Ofengefäß Segment 1 rechts (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 400.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T013A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T013A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:0" , "TagName:10.10 T013A" , "Description:Temperatur Ofengefäß Segment 1 rechts (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T013B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T013B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:2" , "TagName:10.10 T013B" , "Description:Temperatur Ofengefäß Segment 1 rechts (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T014A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T014A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:4" , "TagName:10.10 T014A" , "Description:Temperatur Ofengefäß Segment 2 I unten (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T014B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T014B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:6" , "TagName:10.10 T014B" , "Description:Temperatur Ofengefäß Segment 2 I unten (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T015A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T015A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:8" , "TagName:10.10 T015A" , "Description:Temperatur Ofengefäß Segment 2 I oben (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T015B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T015B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:10" , "TagName:10.10 T015B" , "Description:Temperatur Ofengefäß Segment 2 I oben (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T016A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T016A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:12" , "TagName:10.10 T016A" , "Description:Temperatur Ofengefäß Segment 2 II unten (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T016B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T016B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:14" , "TagName:10.10 T016B" , "Description:Temperatur Ofengefäß Segment 2 II unten (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T017A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T017A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:16" , "TagName:10.10 T017A" , "Description:Temperatur Ofengefäß Segment 2 II oben (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T017B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T017B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:18" , "TagName:10.10 T017B" , "Description:Temperatur Ofengefäß Segment 2 II oben (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T018A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T018A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:20" , "TagName:10.10 T018A" , "Description:Temperatur Ofengefäß Segment 3 I unten (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/SecondStack/T018B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T018B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:22" , "TagName:10.10 T018B" , "Description:Temperatur Ofengefäß Segment 3 I unten (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 800.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T019A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T019A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:0" , "TagName:10.10 T019A" , "Description:Temperatur Ofengefäß Segment 3 I oben (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T019B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T019B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:2" , "TagName:10.10 T019B" , "Description:Temperatur Ofengefäß Segment 3 I oben (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T020A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T020A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:4" , "TagName:10.10 T020A" , "Description:Temperatur Ofengefäß Segment 3 II unten (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T020B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T020B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:6" , "TagName:10.10 T020B" , "Description:Temperatur Ofengefäß Segment 3 II unten (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T021A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T021A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:8" , "TagName:10.10 T021A" , "Description:Temperatur Ofengefäß Segment 3 II oben (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T021B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T021B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:10" , "TagName:10.10 T021B" , "Description:Temperatur Ofengefäß Segment 3 II oben (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T023A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T023A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:12" , "TagName:10.10 T023A" , "Description:Temperatur Ofengefäß Segment 4 I (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T023B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T023B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:14" , "TagName:10.10 T023B" , "Description:Temperatur Ofengefäß Segment 4 I (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T024A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T024A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:16" , "TagName:10.10 T024A" , "Description:Temperatur Ofengefäß Segment 4 II (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T024B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T024B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:18" , "TagName:10.10 T024B" , "Description:Temperatur Ofengefäß Segment 4 II (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T025A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T025A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:20" , "TagName:10.10 T025A" , "Description:Temperatur Ofengefäß Segment 4 III (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/ThirdStack/T025B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T025B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:22" , "TagName:10.10 T025B" , "Description:Temperatur Ofengefäß Segment 4 III (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FourthStack :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 1200.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FourthStack/T026A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T026A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:0" , "TagName:10.10 T026A" , "Description:Temperatur Ofengefäß Segment 5 (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FourthStack/T026B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T026B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:2" , "TagName:10.10 T026B" , "Description:Temperatur Ofengefäß Segment 5 (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FourthStack/T027A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T027A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:4" , "TagName:10.10 T027A" , "Description:Temperatur Ofengefäß Segment 6I (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FourthStack/T027B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T027B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:6" , "TagName:10.10 T027B" , "Description:Temperatur Ofengefäß Segment 6 I (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FourthStack/T028A :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T028A/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:8" , "TagName:10.10 T028A" , "Description:Temperatur Ofengefäß Segment 6 II (lang)" , "SignalType:H"};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Ofentemperatur/FourthStack/T028B :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/DoubleAlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/T028B/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:10" , "TagName:10.10 T028B" , "Description:Temperatur Ofengefäß Segment 6 II oben (kurz)" , "SignalType:H"};
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 20.000000;
+      y : INPUT SINGLE = 500.000000;
+      width : INPUT SINGLE = 1.000000;
+      height : INPUT SINGLE = 1.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/HydraulikPumpenStation :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = -10.000000;
+      content : INPUT STRING = "Hydraulik Pumpenstation";
+      fontSize : INPUT STRING = "medium";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/TankFuellstand_L :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/L051/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:0" , "TagName:10.20 L051" , "Description:Tank Füllstand" , "SignalType:L" , "Fixme:True"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/TankFuellstand_LL :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/L051/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:1" , "TagName:10.20 L051" , "Description:Tank Füllstand" , "SignalType:LL" , "Fixme:True"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/TankTemperatur_L :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/T061/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:2" , "TagName:10.20 T061" , "Description:Tank Temperatur" , "SignalType:L"};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/TankTemperatur_H :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/T061/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:3" , "TagName:10.20 T061" , "Description:Tank Temperatur" , "SignalType:H"};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/Ruecklauffilter :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/P060/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:4" , "TagName:10.20 P060" , "Description:Rücklauffilter verschmutzt" , "SignalType:H" , "Fixme:True"};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/Sammelstoerung_Druckpumpe :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/N053/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:5" , "TagName:10.20 N053" , "Description:Sammelstörung Druckpumpe" , "SignalType:H" , "Fixme:True"};
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/Systemdruck_zu_klein :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/P055/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:6" , "TagName:10.20 P055" , "Description:Systemdruck kleiner 55 bar" , "SignalType:L"};
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/Systemdruck_nicht_erreich :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/N056/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:7" , "TagName:10.20 N056" , "Description:Sys-Druck nicht erreicht nach Start Druckerzeugung" , "SignalType:H" , "Fixme:True"};
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/HydraulikPumpenstation/FirstStack/Filter_Druckleitung_verschmutzt :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/P054/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:8" , "TagName:10.20 P054" , "Description:Filter in Druckleitung verschmutzt" , "SignalType:L" , "Fixme:True"};
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 420.000000;
+      y : INPUT SINGLE = 500.000000;
+      width : INPUT SINGLE = 1.000000;
+      height : INPUT SINGLE = 1.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/ElektrodenRegulierZylinder :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = -10.000000;
+      content : INPUT STRING = "Elektrodenregulierzylinder";
+      fontSize : INPUT STRING = "medium";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_eins_Betriebsdruck_H :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/P057/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:0" , "TagName:10.20 P057" , "Description:Elektrode 1 Betriebsdruck" , "SignalType:H" , "Fixme:True"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_eins_Betriebsdruck_HH :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/P057/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:1" , "TagName:10.20 P057" , "Description:Elektrode 1 Betriebsdruck" , "SignalType:HH" , "Fixme:True"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_eins_Betriebsdruck_LL :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/P057/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:2" , "TagName:10.20 P057" , "Description:Elektrode 1 Betriebsdruck" , "SignalType:LL" , "Fixme:True"};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_eins_Position_L :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/Z043/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:3" , "TagName:10.20 Z043" , "Description:Elektrode 1 Position Regulierzylinder" , "SignalType:L"};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_eins_Position_H :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/Z043/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:4" , "TagName:10.20 Z043" , "Description:Elektrode 1 Position Regulierzylinder" , "SignalType:H"};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_zwei_Betriebsdruck_H :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/P058/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:5" , "TagName:10.20 P058" , "Description:Elektrode 2 Betriebsdruck" , "SignalType:H" , "Fixme:True"};
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_zwei_Betriebsdruck_HH :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/P058/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:6" , "TagName:10.20 P058" , "Description:Elektrode 2 Betriebsdruck" , "SignalType:HH" , "Fixme:True"};
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_zwei_Betriebsdruck_LL :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/P058/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:7" , "TagName:10.20 P058" , "Description:Elektrode 2 Betriebsdruck" , "SignalType:LL" , "Fixme:True"};
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_zwei_Position_L :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/Z044/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:8" , "TagName:10.20 Z044" , "Description:Elektrode 2 Position Regulierzylinder" , "SignalType:L"};
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_zwei_Position_H :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/Z044/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:9" , "TagName:10.20 Z044" , "Description:Elektrode 2 Position Regulierzylinder" , "SignalType:H"};
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_drei_Betriebsdruck_H :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/P059/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:10" , "TagName:10.20 P059" , "Description:Elektrode 3 Betriebsdruck" , "SignalType:H" , "Fixme:True"};
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_drei_Betriebsdruck_HH :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/P059/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:11" , "TagName:10.20 P059" , "Description:Elektrode 3 Betriebsdruck" , "SignalType:HH" , "Fixme:True"};
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_drei_Betriebsdruck_LL :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/P059/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:12" , "TagName:10.20 P059" , "Description:Elektrode 3 Betriebsdruck" , "SignalType:LL" , "Fixme:True"};
+      zindex : INPUT UINT = 12;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_drei_Position_L :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/Z045/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:13" , "TagName:10.20 Z044" , "Description:Elektrode 3 Position Regulierzylinder" , "SignalType:L"};
+      zindex : INPUT UINT = 13;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Elektrodenregulierzylinder/FirstStack/Elektrode_drei_Position_H :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS10/Z045/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[4] : INPUT STRING = {"yID:14" , "TagName:10.20 Z045" , "Description:Elektrode 3 Position Regulierzylinder" , "SignalType:H"};
+      zindex : INPUT UINT = 14;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 820.000000;
+      y : INPUT SINGLE = 500.000000;
+      width : INPUT SINGLE = 1.000000;
+      height : INPUT SINGLE = 1.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/Leistung_und_Elektrodenregelung :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = -10.000000;
+      content : INPUT STRING = "Leistung und Elektrodenregelung";
+      fontSize : INPUT STRING = "medium";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Sammelstoerung :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:0" , "TagName:90.20 E109" , "Description:Stromrichter Sammelstörung" , "SignalType:XX" , "Fixme:True"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Ueberstrom :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:1" , "TagName:90.20 E110" , "Description:Stromrichter Überstrom" , "SignalType:HH" , "Fixme:True"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Wasserfluss :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"TechUnits/P30/IC10/PU10/PS30/F101/PV_Surveillance"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:2" , "TagName:90.20 F101" , "Description:Stromrichter Wasserfluss Störung" , "SignalType:LL" , "Fixme:True"};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Wassertemperatur :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:3" , "TagName:90.20 T101" , "Description:Stromrichter Wassertemperatur Störung" , "SignalType:HH" , "Fixme:True"};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Wasserdruck :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:4" , "TagName:90.20 P101" , "Description:Stromrichter Wasserdruck Störung" , "SignalType:LL" , "Fixme:True"};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Phasenfehler :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:5" , "TagName:90.20 E112" , "Description:Stromrichter Phasenfehler" , "SignalType:XX" , "Fixme:True"};
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Steuersatzfehler :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:6" , "TagName:90.20 E113" , "Description:Stromrichter Steuersatzfehler" , "SignalType:XX" , "Fixme:True"};
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Wasserpumpe_Stoerung :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:7" , "TagName:90.20 N001" , "Description:Stromrichter Wasserpumpe Störung" , "SignalType:XX" , "Fixme:True"};
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Transformatortemp :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:8" , "TagName:90.20 T102" , "Description:Stromrichter Transformatortemperatur" , "SignalType:HH" , "Fixme:True"};
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Thyristortemp :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:9" , "TagName:90.20 T103" , "Description:Stromrichter Thyristortemperatur" , "SignalType:HH" , "Fixme:True"};
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Diodentemp :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:10" , "TagName:90.20 T104" , "Description:Stromrichter Diodentemperatur" , "SignalType:HH" , "Fixme:True"};
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Mittelspannung_Transformatortemp :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:11" , "TagName:90.30 T102" , "Description:Mittelspannung Transformatortemperatur" , "SignalType:H" , "Fixme:True"};
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Umschalten :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:12" , "TagName:90.30 E105" , "Description:Stromrichter Umschalten während Betrieb" , "SignalType:XX" , "Fixme:True"};
+      zindex : INPUT UINT = 12;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Wassertemp_Einlauf :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:13" , "TagName:90.30 T183" , "Description:Stromrichter Wassertemperatur Einlauf" , "SignalType:H" , "Fixme:True"};
+      zindex : INPUT UINT = 13;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/Leistung_Elektrodenregelung/FirstStack/Stromrichter_Wasserdruck_Einlauf :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/AlarmCell";
+      FBReference[1] : INPUT STRING = {"undefined"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[5] : INPUT STRING = {"yID:14" , "TagName:90.30 P184" , "Description:Stromrichter Wasserdruck Einlauf" , "SignalType:L" , "Fixme:True"};
+      zindex : INPUT UINT = 14;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse :
+    CLASS /acplt/cshmi/TimeEvent;
+    VARIABLE_VALUES
+      cyctime : INPUT SINGLE = 0.500000;
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.if/comp :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.if/comp.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "AlarmPulse";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.if/comp.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "red";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.then/Set_darkred :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "AlarmPulse";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.then/Set_darkred.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "darkred";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.else/Set_red :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "AlarmPulse";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/AlarmMeldung/bubFrame/AlarmPulse/If_PulseAlarm_red.else/Set_red.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "red";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 5.000000;
+      y : INPUT SINGLE = 5.000000;
+      width : INPUT SINGLE = 1670.000000;
+      height : INPUT SINGLE = 1015.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubButton :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 5.000000;
+      y : INPUT SINGLE = 40.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/statusButton";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"title:Netzwerk" , "SheetNumber:Two"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 80.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = FALSE;
+      TemplateDefinition : INPUT STRING = "ELBO/bubFrame";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"title:Netzwerk" , "SheetNumber:Two"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/title :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 1150.000000;
+      y : INPUT SINGLE = 50.000000;
+      content : INPUT STRING = "";
+      fontSize : INPUT STRING = "36px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "bold";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "middle";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/NetworkIntranet :
+    CLASS /acplt/cshmi/Path;
+    VARIABLE_VALUES
+      d : INPUT STRING = "M50,200 H1000  M120,200 v-40  M170,200 v40";
+      strokeWidth : INPUT SINGLE = 6.000000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "#4B0082";
+      fill : INPUT STRING = "none";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/NetworkIntranetLabel :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 50.000000;
+      y : INPUT SINGLE = 190.000000;
+      content : INPUT STRING = "TCP/IP";
+      fontSize : INPUT STRING = "medium";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "bold";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "auto";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "#4B0082";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/NetworkIntranetLabel2 :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 1000.000000;
+      y : INPUT SINGLE = 190.000000;
+      content : INPUT STRING = "IME Intranet";
+      fontSize : INPUT STRING = "medium";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "bold";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "end";
+      verAlignment : INPUT STRING = "auto";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/NetworkProfibus :
+    CLASS /acplt/cshmi/Path;
+    VARIABLE_VALUES
+      d : INPUT STRING = "M50,400 H1350 V600 H50  M170,400 v-40  M140,400 v40  M340,400 v40  M600,400 v40  M840,400 v40  M1090,400 v40  M840,600 v40  M1090,600 v40";
+      strokeWidth : INPUT SINGLE = 6.000000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "purple";
+      fill : INPUT STRING = "none";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/NetworkProfibusLabel :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 50.000000;
+      y : INPUT SINGLE = 390.000000;
+      content : INPUT STRING = "PROFIBUS/DP";
+      fontSize : INPUT STRING = "medium";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "bold";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "auto";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "purple";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/OperatorStation :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 50.000000;
+      y : INPUT SINGLE = 50.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:" , "name:Operator-Station" , "ort:"};
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/OperatorStation/ImageOS :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 10.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 118.000000;
+      height : INPUT SINGLE = 104.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QCsRXhpZgAATU0AKgAAAAgACQEaAAUAAAABAAAAegEbAAUA AAABAAAAggEoAAMAAAABAAIAAAExAAIAAAASAAAAigMBAAUAAAABAAAAnAMDAAEAAAABAAAAAFEQ AAEAAAABAQAAAFERAAQAAAABAAAOw1ESAAQAAAABAAAOwwAAAAAAAXbyAAAD6AABdvIAAAPoUGFp bnQuTkVUIHYzLjUuMTAAAAGGoAAAsY//2wBDAAwICQoJBwwKCgoNDQwOEh4TEhAQEiQaGxUeKyYt LComKSkvNUQ6LzJAMykpO1E8QEZJTE1MLjlUWlNKWURLTEn/2wBDAQ0NDRIQEiMTEyNJMSkxSUlJ SUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSUn/wAARCABoAHYD ASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUF BAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0 NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKj pKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QA HwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEE BSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZH SElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0 tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDt 6KKKACiiigAoorO1ppRHEIpHTO7dtJGencUJXBlq5vLa1H7+dEPoTyfw61kXfii3j4toHlPq3yj/ ABrLktPmJ7nqfWoHtjzkVfKQ5DrrXtSuWC+aIUP8MQx+vX9arLfTxoqx5M27hzIwJJPGTntz7801 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 Gf/2Q==";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/AutomationServer :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 100.000000;
+      y : INPUT SINGLE = 250.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:" , "name:Automation-Server" , "ort:"};
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/AutomationServer/ImageAS :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 141.000000;
+      height : INPUT SINGLE = 100.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QGmRXhpZgAATU0AKgAAAAgAEAEAAAMAAAABFUAAAAEBAAMA AAABD/AAAAECAAMAAAADAAAAzgEDAAMAAAABAAUAAAEGAAMAAAABAAIAAAEPAAIAAAAJAAAA1AEQ AAIAAAAfAAAA3gEVAAMAAAABAAMAAAEaAAUAAAABAAAA/gEbAAUAAAABAAABBgEcAAMAAAABAAEA AAEoAAMAAAABAAIAAAExAAIAAAASAAABDgEyAAIAAAAUAAABIAE7AAIAAAAPAAABNIdpAAQAAAAB AAABRAAAAWQACAAIAAhTaW5hciBBRwAAU2luYXJiYWNrIDU0IEZXLCBTaW5hciBwMyAvIGYzAAAA AAEsAAAAAQAAASwAAAABUGFpbnQuTkVUIHYzLjUuMTAAMjAwOTowNjoxOSAxNDozNzo1MABXb2xm Z2FuZyBHZXllcgAAAAKgAgAEAAAAAQAAASygAwAEAAAAAQAAASwAAAAAAAAAAwEaAAUAAAABAAAB jgEbAAUAAAABAAABlgEoAAMAAAABAAIAAAAAAAAAAABIAAAAAQAAAEgAAAAB/+IB6ElDQ19QUk9G SUxFAAEBAAAB2EFEQkUCEAAAbW50clJHQiBYWVogB88AAgAWAAwAAwAPYWNzcEFQUEwAAgAAbm9u ZQAAAAAAAAAAAAAAAAAAAAAAAPbWAAEAAAAA0y1BREJFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKY3BydAAAAPwAAAAkZGVzYwAAAbQAAAAkd3RwdAAAASAA AAAUYmtwdAAAATQAAAAUclRSQwAAAUgAAAAOZ1RSQwAAAVgAAAAOYlRSQwAAAWgAAAAOclhZWgAA AXgAAAAUZ1hZWgAAAYwAAAAUYlhZWgAAAaAAAAAUdGV4dAAAAAAoYykgMTk5OSBBZG9iZSBTeXN0 ZW1zIEluYy4AWFlaIAAAAAAAAPbcAAEAAAAA0zpYWVogAAAAAAAAAAAAAAAAAAAAAGN1cnYAAAAA AAAAAQHNAABjdXJ2AAAAAAAAAAEBzQAAY3VydgAAAAAAAAABAc0AAFhZWiAAAAAAAACmeAAAUf4A AAAAWFlaIAAAAAAAAC2UAACaIAAAEV1YWVogAAAAAAAAIskAABPiAADB0GRlc2MAAAAAAAAADEVD SS1SR0IuaWNjAAAAAAAAAAAAAAABAP/bAEMADQkKCwoIDQsLCw8ODRAUIRUUEhIUKB0eGCEwKjIx LyouLTQ7S0A0OEc5LS5CWUJHTlBUVVQzP11jXFJiS1NUUf/bAEMBDg8PFBEUJxUVJ1E2LjZRUVFR UVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUf/AABEIAGQAjQMB IgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUE BAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1 Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOk paanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAf AQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQF ITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdI SUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1 tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2gAMAwEAAhEDEQA/AOul ureFwksyIxGQpPJFULnVZFH+j2rvn+Ign6cD/EVl+JZTFqWAFO+ALk9uTWEpKn5SQfagDpzrlwjH dDHj34/r0NTJrozh7fkddrE/XtXMJd3SfduJRj/aNPF/cggko/8AvRqf5igR1Ka3bk4eKVP++T/W p4tUtJSArPk4wPLPOfoK5yC68yEF4Yyf9nK/yNPaSFjkwlT1yr9/XnNOzJ50dYOenNFcqkkS42vP HjoAR2+mKkF8UdY1v5QTjAKsfr3PWizGpJnTUVzyapP0XUICfR+Oc+6jp/nNWF1S7JO1IJV5PyuM +w4akUbNFZiapNkeZZMB/eGfTk9P/re9A1qDjzIZUJA4JXv0HJoA06Kzn1ZM5iiaRMlc5x83p/nF Kmr27cYYdejKeB1PXpQBoUVWW+gZc/vF6dYz36dKcL21bpcRjr1bHTr1oAnopquj/cdW78HNOoA5 PxV/yE4/+uQ/maxq2fFX/ITj/wCuQ/maxqAAUtJS0xF2DJtuOvOKcCAPmWYfQg022/1IqWrRzy3G BvnADMeeQyY/WoZ5GiuUkQ4ZRwatKMnFU7v/AFg+lJ7Dp7kBySSaMUUVJuOWSRDlJGX6HFTrqN6m Nt1Lx6tn+dVqKALser3qZAKEe8a/0qwuvT7SstvBID13A/41lUGkBft7+1ibc1o7EtuyZc8+oyOK uRX1lJE+IrhQq84bgDPsw/SsOlEjojKrEK4wwB60WA6/TooJIhdoS4kO9S4GR2zWlHzmsvQv+QJa /wC5/U1pw/xfWmBzHin/AJCcf/XIfzNYtbXin/kJR/8AXIfzNY1IYlLRRTEXLf8A1IqSo4P9SKkq 0c8tx6ct3/Cqd1/rB9KuR/eqndf6wfSk9iobkFFFFSbBRRRQAUUUlABQaKKAOu0L/kCWv+6f5mtK H+KszQv+QJa/7p/ma04P4qAOZ8U/8hKP/rkP5msatrxR/wAhKP8A65D+ZrGxSGGKKWimItQf6oU+ mQ/6oU+rRzy3HRkBuelVbn74+lWk+9VeUAyc8gLmk9iobleinnyyejD8c094VUZ8wEZxUmxBRUxt 5MZAByM0zy3/ALpP05oAZRSkEdQRSUAFIaU0lAHXaJt/sa12nI2n+ZrSg/irM0D/AJAdt9G/9CNa UH8VAGD4kjP2xZSF2mIJljjBJOKxRDIRlV3f7pz/ACrqdcsJr2NRAkbncuRISAAGznisI6E0eSbO 4BIHIIccybsY/X6elIZRKspwykH3FGKuPG8SPi4ZOCf3qMoH7z2I47Z/Wm3CzYkMaQSEGXuBjHQH j+o/GgBsP+qFPqItco202BK7mGYyegTd79+KcZ41aNWWRGdkTbjO0spPPT07Zq00YODuSocNk1Cw BmwQTx0HekjubeVUKTL84UgMCDycD9RShVllQqVkXqQjAnAODxn1oew4RaepGUiHXzE+op8ufL6/ KCMe9SwxOitvjZOTweDTcbpNhLEDk7gCak1IxcHdk7voDxTomjVCwwr5/TNEjeUdoRGX0K9KIwku cxLx6MRQApZYpVVSGVhk5pHZGcDywC3TjpTWSIdUlQ+44pYtkbExupbsX4GKAHmGFs4GDjPWoZIV ABBPPepgrFmOd2cZ7gdemKikLAqpBAzjkYoA6Tw//wAgK2/4F/6Ea04OrfhWboXGiW/0b/0I1pQd W/CgCWiiikMQgEYIBHvWbrGmG8szHbLDHMSfmdeMH7w6d606KAMDTNClVJDfsvmE/KYWIH3cZ6VP NozecJIrqXG5WKs2c7RjH49TWxRQBzJ0S7RUDCGUqEGWiAJw2SeP0oh0BJISJomglIZf3JPCl93f vxXTUUAYa2EkJOJHkDT+ad7Y2jHTjqPaq8dheJOTIYZIi8jE4+YA8qPwrpKQop6qKAOTdZ/tAjWA Mnlox5Ktktg5HOOPapU00vGsoWRGaTBUYOBnqelbc+lWc8zSvF+8baCwJBIByB9M1JDZr BHsSR25 Jy7ZPP8ASgDj22x3Ulul3iRJREQwIyxGfftSG1ld2CMkjY3Ha4PHr+ldZLpttK2+S2iZt27OBnOM ZqjJ4dsCpVIpIvkVPkY/dByB+dMRzsltPH9+F1/4DRHlg4eUptUkDPU+lbr6C4uFnhv5VkUyld/z YLjH5DHFIdN1IMoaS3nTMSnenO0D5z9SaQy/o+3+x7YqoUbTwPqauwdW/Cq9ioSyjiQdMgAduTVu NNgPOSaYh9FFFIYUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUmB6UUUANiijhTZGgRck4A9eafRRQ B//Z";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/ET200_Ofen :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 50.000000;
+      y : INPUT SINGLE = 450.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:Address 11" , "name:ET200 Ofen" , "ort:"};
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/ET200_Ofen/ImageET200 :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 40.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 91.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/4QBoRXhpZgAATU0AKgAAAAgABAEaAAUAAAABAAAAPgEbAAUA AAABAAAARgEoAAMAAAABAAIAAAExAAIAAAASAAAATgAAAAAAAABIAAAAAQAAAEgAAAABUGFpbnQu TkVUIHYzLjUuMTAA/9sAQwANCQoLCggNCwsLDw4NEBQhFRQSEhQoHR4YITAqMjEvKi4tNDtLQDQ4 RzktLkJZQkdOUFRVVDM/XWNcUmJLU1RR/9sAQwEODw8UERQnFRUnUTYuNlFRUVFRUVFRUVFRUVFR UVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFR/8AAEQgAWwBkAwEiAAIRAQMRAf/E AB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAE EQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZH SElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1 tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEB AQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXET IjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFla Y2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXG x8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A6G5uL+WSSOziQKjF SxOWz7D8ayribUbFx51xICxzhnyT9BirusxIs8RRQrPksR3rMMERzleT1OTk/jWmljK076vQn/tm aEgyXTMT0UqvP4AVMNXuGUMHVFH99OT+Rqj9mt4o2aNCGxnrmmmygmVJGZ2OASN3GaVi7lybxHKk iRRrBNI4yFU4J/WpF8RXAHz6c+T91VbJNZbafFNGjSTyYA4TAwPYY/zxUI01H8pxKqgDgKnI/H8q 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";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/ET200_Bedienung :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 250.000000;
+      y : INPUT SINGLE = 450.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:Address 12" , "name:ET200 Bedienung" , "ort:"};
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/ET200_Bedienung/ImageET200 :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 40.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 91.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/4QBoRXhpZgAATU0AKgAAAAgABAEaAAUAAAABAAAAPgEbAAUA AAABAAAARgEoAAMAAAABAAIAAAExAAIAAAASAAAATgAAAAAAAABIAAAAAQAAAEgAAAABUGFpbnQu TkVUIHYzLjUuMTAA/9sAQwANCQoLCggNCwsLDw4NEBQhFRQSEhQoHR4YITAqMjEvKi4tNDtLQDQ4 RzktLkJZQkdOUFRVVDM/XWNcUmJLU1RR/9sAQwEODw8UERQnFRUnUTYuNlFRUVFRUVFRUVFRUVFR UVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFR/8AAEQgAWwBkAwEiAAIRAQMRAf/E AB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAE EQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZH SElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1 tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEB AQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXET IjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFla Y2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXG x8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A6G5uL+WSSOziQKjF SxOWz7D8ayribUbFx51xICxzhnyT9BirusxIs8RRQrPksR3rMMERzleT1OTk/jWmljK076vQn/tm aEgyXTMT0UqvP4AVMNXuGUMHVFH99OT+Rqj9mt4o2aNCGxnrmmmygmVJGZ2OASN3GaVi7lybxHKk iRRrBNI4yFU4J/WpF8RXAHz6c+T91VbJNZbafFNGjSTyYA4TAwPYY/zxUI01H8pxKqgDgKnI/H8q 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";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/13Motor :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 530.000000;
+      y : INPUT SINGLE = 450.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:Address 13" , "name:Motor" , "ort:Vibrorinne 1"};
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/13Motor/ImageRio :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 140.000000;
+      height : INPUT SINGLE = 82.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QD6RXhpZgAATU0AKgAAAAgABgEaAAUAAAABAAAAVgEbAAUA AAABAAAAXgEoAAMAAAABAAIAAAExAAIAAAASAAAAZgEyAAIAAAAUAAAAeIdpAAQAAAABAAAAjAAA ALgAAABgAAAAAQAAAGAAAAABUGFpbnQuTkVUIHYzLjUuMTAAMjAwNDowODoyNSAxMDo1NzoxOQAA A6ABAAMAAAAB//8AAKACAAQAAAABAAABkKADAAQAAAABAAABLAAAAAAAAAADARoABQAAAAEAAADi ARsABQAAAAEAAADqASgAAwAAAAEAAgAAAAAAAAAAAEgAAAABAAAASAAAAAH/2wBDAA0JCgsKCA0L CwsPDg0QFCEVFBISFCgdHhghMCoyMS8qLi00O0tANDhHOS0uQllCR05QVFVUMz9dY1xSYktTVFH/ 2wBDAQ4PDxQRFCcVFSdRNi42UVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFR UVFRUVFRUVFRUVH/wAARCABSAIwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQF BgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS 0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4 eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi 4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREA AgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl 8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImK kpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP0 9fb3+Pn6/9oADAMBAAIRAxEAPwDr5riGAZlkVPqeTWdda1HEuYomfjhmO0frz+lZV3MRqNySASHI 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 yQigDPrRRQA+iiigD//Z";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/14Motor :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 770.000000;
+      y : INPUT SINGLE = 450.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:Address 14" , "name:Motor" , "ort:Vibrorinne 2"};
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/14Motor/ImageRio :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 140.000000;
+      height : INPUT SINGLE = 82.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QD6RXhpZgAATU0AKgAAAAgABgEaAAUAAAABAAAAVgEbAAUA AAABAAAAXgEoAAMAAAABAAIAAAExAAIAAAASAAAAZgEyAAIAAAAUAAAAeIdpAAQAAAABAAAAjAAA ALgAAABgAAAAAQAAAGAAAAABUGFpbnQuTkVUIHYzLjUuMTAAMjAwNDowODoyNSAxMDo1NzoxOQAA A6ABAAMAAAAB//8AAKACAAQAAAABAAABkKADAAQAAAABAAABLAAAAAAAAAADARoABQAAAAEAAADi ARsABQAAAAEAAADqASgAAwAAAAEAAgAAAAAAAAAAAEgAAAABAAAASAAAAAH/2wBDAA0JCgsKCA0L CwsPDg0QFCEVFBISFCgdHhghMCoyMS8qLi00O0tANDhHOS0uQllCR05QVFVUMz9dY1xSYktTVFH/ 2wBDAQ4PDxQRFCcVFSdRNi42UVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFR UVFRUVFRUVFRUVH/wAARCABSAIwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQF BgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS 0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4 eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi 4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREA AgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl 8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImK kpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP0 9fb3+Pn6/9oADAMBAAIRAxEAPwDr5riGAZlkVPqeTWdda1HEuYomfjhmO0frz+lZV3MRqNySASHI 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 yQigDPrRRQA+iiigD//Z";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/15Janitza :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 1020.000000;
+      y : INPUT SINGLE = 450.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:Address 15" , "name:Janitza-Meßgerät" , "ort:Eingangskreis"};
+      zindex : INPUT UINT = 12;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/15Janitza/ImageRio :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 140.000000;
+      height : INPUT SINGLE = 82.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QD6RXhpZgAATU0AKgAAAAgABgEaAAUAAAABAAAAVgEbAAUA AAABAAAAXgEoAAMAAAABAAIAAAExAAIAAAASAAAAZgEyAAIAAAAUAAAAeIdpAAQAAAABAAAAjAAA ALgAAABgAAAAAQAAAGAAAAABUGFpbnQuTkVUIHYzLjUuMTAAMjAwNDowODoyNSAxMDo1NzoxOQAA A6ABAAMAAAAB//8AAKACAAQAAAABAAABkKADAAQAAAABAAABLAAAAAAAAAADARoABQAAAAEAAADi ARsABQAAAAEAAADqASgAAwAAAAEAAgAAAAAAAAAAAEgAAAABAAAASAAAAAH/2wBDAA0JCgsKCA0L CwsPDg0QFCEVFBISFCgdHhghMCoyMS8qLi00O0tANDhHOS0uQllCR05QVFVUMz9dY1xSYktTVFH/ 2wBDAQ4PDxQRFCcVFSdRNi42UVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFR UVFRUVFRUVFRUVH/wAARCABSAIwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQF BgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS 0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4 eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi 4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREA AgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl 8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImK kpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP0 9fb3+Pn6/9oADAMBAAIRAxEAPwDr5riGAZlkVPqeTWdda1HEuYomfjhmO0frz+lZV3MRqNySASHI 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 yQigDPrRRQA+iiigD//Z";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/16CPU :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 1020.000000;
+      y : INPUT SINGLE = 650.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:Address 16" , "name:CPU314-2DP" , "ort:Stromrichter"};
+      zindex : INPUT UINT = 13;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/16CPU/ImageRio :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 140.000000;
+      height : INPUT SINGLE = 82.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QD6RXhpZgAATU0AKgAAAAgABgEaAAUAAAABAAAAVgEbAAUA AAABAAAAXgEoAAMAAAABAAIAAAExAAIAAAASAAAAZgEyAAIAAAAUAAAAeIdpAAQAAAABAAAAjAAA ALgAAABgAAAAAQAAAGAAAAABUGFpbnQuTkVUIHYzLjUuMTAAMjAwNDowODoyNSAxMDo1NzoxOQAA A6ABAAMAAAAB//8AAKACAAQAAAABAAABkKADAAQAAAABAAABLAAAAAAAAAADARoABQAAAAEAAADi ARsABQAAAAEAAADqASgAAwAAAAEAAgAAAAAAAAAAAEgAAAABAAAASAAAAAH/2wBDAA0JCgsKCA0L CwsPDg0QFCEVFBISFCgdHhghMCoyMS8qLi00O0tANDhHOS0uQllCR05QVFVUMz9dY1xSYktTVFH/ 2wBDAQ4PDxQRFCcVFSdRNi42UVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFR UVFRUVFRUVFRUVH/wAARCABSAIwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQF BgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS 0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4 eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi 4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREA AgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl 8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImK kpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP0 9fb3+Pn6/9oADAMBAAIRAxEAPwDr5riGAZlkVPqeTWdda1HEuYomfjhmO0frz+lZV3MRqNySASHI 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 yQigDPrRRQA+iiigD//Z";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/17Bedienkasten :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 770.000000;
+      y : INPUT SINGLE = 650.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/NetworkItem";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[3] : INPUT STRING = {"address:Address 17" , "name:Bedienkasten" , "ort:Hydraulik"};
+      zindex : INPUT UINT = 14;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Network/bubFrame/17Bedienkasten/ImageRio :
+    CLASS /acplt/cshmi/Image;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 140.000000;
+      height : INPUT SINGLE = 82.000000;
+      SVGcontent : INPUT STRING = "";
+      Bitmapcontent : INPUT STRING = "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QD6RXhpZgAATU0AKgAAAAgABgEaAAUAAAABAAAAVgEbAAUA AAABAAAAXgEoAAMAAAABAAIAAAExAAIAAAASAAAAZgEyAAIAAAAUAAAAeIdpAAQAAAABAAAAjAAA ALgAAABgAAAAAQAAAGAAAAABUGFpbnQuTkVUIHYzLjUuMTAAMjAwNDowODoyNSAxMDo1NzoxOQAA A6ABAAMAAAAB//8AAKACAAQAAAABAAABkKADAAQAAAABAAABLAAAAAAAAAADARoABQAAAAEAAADi ARsABQAAAAEAAADqASgAAwAAAAEAAgAAAAAAAAAAAEgAAAABAAAASAAAAAH/2wBDAA0JCgsKCA0L CwsPDg0QFCEVFBISFCgdHhghMCoyMS8qLi00O0tANDhHOS0uQllCR05QVFVUMz9dY1xSYktTVFH/ 2wBDAQ4PDxQRFCcVFSdRNi42UVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFR UVFRUVFRUVFRUVH/wAARCABSAIwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQF BgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS 0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4 eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi 4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREA AgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl 8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImK kpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP0 9fb3+Pn6/9oADAMBAAIRAxEAPwDr5riGAZlkVPqeTWdda1HEuYomfjhmO0frz+lZV3MRqNySASHI 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 yQigDPrRRQA+iiigD//Z";
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Archive :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 5.000000;
+      y : INPUT SINGLE = 5.000000;
+      width : INPUT SINGLE = 1670.000000;
+      height : INPUT SINGLE = 1015.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Archive/bubButton :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 260.000000;
+      y : INPUT SINGLE = 5.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/statusButton";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"title:Archive" , "SheetNumber:Two"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Archive/bubFrame :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 80.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = FALSE;
+      TemplateDefinition : INPUT STRING = "ELBO/bubFrame";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"title:Archive" , "SheetNumber:Two"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Archive/bubFrame/InfoText :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 500.000000;
+      y : INPUT SINGLE = 30.000000;
+      content : INPUT STRING = "Die Seite Archive wird noch erstellt.";
+      fontSize : INPUT STRING = "20px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "bold";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "middle";
+      verAlignment : INPUT STRING = "auto";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Testbaustelle :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 5.000000;
+      y : INPUT SINGLE = 5.000000;
+      width : INPUT SINGLE = 1670.000000;
+      height : INPUT SINGLE = 1015.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Testbaustelle/bubButton :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 260.000000;
+      y : INPUT SINGLE = 40.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "ELBO/statusButton";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"title:Testbaustelle" , "SheetNumber:Two"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Testbaustelle/bubFrame :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 80.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = FALSE;
+      TemplateDefinition : INPUT STRING = "ELBO/bubFrame";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"title:Testbaustelle" , "SheetNumber:Two"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/Testbaustelle/bubFrame/Template :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 50.000000;
+      y : INPUT SINGLE = 50.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "Processcontrol/SensorSimple";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[1] : INPUT STRING = {"SensorValueVar://DEV/ov_hmidemo7/TechUnits/fbtarget.IN"};
+      ConfigValues[2] : INPUT STRING = {"SignalName:Var 42" , "PhysicalUnit:°C"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.if/comp :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.if/comp.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "elementvisible";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.if/comp.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.then/setActiveFrame :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "elementvisible";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.then/setActiveFrame.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "Netzwerk";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.else/resetActiveFrame :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "elementvisible";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboSecondarySheet/onload/if.else/resetActiveFrame.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "elementvisible";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LIBRARY
+    /acplt/cshmi
+ END_LIBRARY;

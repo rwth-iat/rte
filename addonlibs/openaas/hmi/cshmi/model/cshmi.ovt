@@ -1,0 +1,110 @@
+/*
+*	Copyright (C) 2015
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*
+***********************************************************************/
+
+#ifndef cshmi_OVT_INCLUDED
+#define cshmi_OVT_INCLUDED
+
+/**
+ *	Cache information for every single object
+ */
+typedef struct{
+	OV_BOOL cacheDirty;			//status of this cache. Will be set TRUE on a variable change of all objects
+	OV_STRING asJSON;			//own config as JSON in heap. Will be updated on request of downloadApplication singleton
+	OV_STRING identifier;		//holds the full name of the object, to detect renaming of its own or a parent
+	OV_POINTER parentObject;	//holds the pointer to the parent, to detect moving
+} CSHMI_INSTANCECACHE;
+
+/**
+ *	Cache information for every single object in heap memory
+ */
+typedef struct{
+	OV_BOOL cacheGroupDirty;
+	OV_STRING strGroup;
+	OV_BOOL cacheTemplateDefinitionDirty;
+	OV_STRING strTemplateDefinition;
+	OV_BOOL cacheInstantiateTemplateDirty;
+	OV_STRING strInstantiateTemplate;
+	OV_BOOL cacheRectangleDirty;
+	OV_STRING strRectangle;
+	OV_BOOL cacheCircleDirty;
+	OV_STRING strCircle;
+	OV_BOOL cacheTextDirty;
+	OV_STRING strText;
+	OV_BOOL cacheLineDirty;
+	OV_STRING strLine;
+	OV_BOOL cachePolylineDirty;
+	OV_STRING strPolyline;
+	OV_BOOL cachePolygonDirty;
+	OV_STRING strPolygon;
+	OV_BOOL cachePathDirty;
+	OV_STRING strPath;
+	OV_BOOL cacheEllipseDirty;
+	OV_STRING strEllipse;
+	OV_BOOL cacheSetValueDirty;
+	OV_STRING strSetValue;
+	OV_BOOL cacheSetConcatValueDirty;
+	OV_STRING strSetConcatValue;
+	OV_BOOL cacheSetMathValueDirty;
+	OV_STRING strSetMathValue;
+	OV_BOOL cacheGetValueDirty;
+	OV_STRING strGetValue;
+	OV_BOOL cacheChildrenIteratorDirty;
+	OV_STRING strChildrenIterator;
+	OV_BOOL cacheIfThenElseDirty;
+	OV_STRING strIfThenElse;
+	OV_BOOL cacheCompareDirty;
+	OV_STRING strCompare;
+	OV_BOOL cacheCompareIteratedChildDirty;
+	OV_STRING strCompareIteratedChild;
+	OV_BOOL cacheTimeEventDirty;
+	OV_STRING strTimeEvent;
+	OV_BOOL cacheRoutePolylineDirty;
+	OV_STRING strRoutePolyline;
+	OV_BOOL cacheTranslationSourceDirty;
+	OV_STRING strTranslationSource;
+	OV_BOOL cacheCreateObjectDirty;
+	OV_STRING strCreateObject;
+	OV_BOOL cacheVibrateDirty;
+	OV_STRING strVibrate;
+	
+	OV_BOOL cacheChildlistDirty;
+	OV_STRING strChildlist;
+} CSHMI_CLASSCACHE;
+ 
+#endif //cshmi_OVT_INCLUDED
+ 	

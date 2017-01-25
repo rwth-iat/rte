@@ -1,0 +1,10 @@
+#ifndef IOdriverlib_OVF_INCLUDED
+#define IOdriverlib_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef void MY_FUNC(
+		OV_STRING varName
+	);
+*/

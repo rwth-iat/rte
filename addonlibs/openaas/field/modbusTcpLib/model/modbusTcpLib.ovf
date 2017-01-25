@@ -1,0 +1,48 @@
+#ifndef modbusTcpLib_OVF_INCLUDED
+#define modbusTcpLib_OVF_INCLUDED
+
+typedef OV_INT MBTCP_FNC_GETREQID(
+);
+
+
+typedef OV_RESULT MBTCP_FNC_HANDLERESPONSE(
+	OV_INSTPTR_modbusTcpLib_Request	thisReq,
+	OV_UINT		dataLength,
+	OV_BYTE*	dataToHandle
+);
+
+
+typedef OV_INT MBTCP_FNC_READWORD(
+		OV_BYTE* pData
+);
+
+typedef void MBTCP_FNC_WRITEWORD(
+		OV_INT	data,
+		OV_BYTE* dst
+);
+
+typedef OV_BOOL MBTCP_FNC_READBIT(
+		OV_BYTE* pData,
+		OV_UINT bitNumber
+);
+
+typedef void MBTCP_FNC_WRITEBIT(
+		OV_BOOL data,
+		OV_UINT bitNumber,
+		OV_BYTE* dst	
+);
+
+typedef OV_RESULT MBTCP_FNC_ADDITEM(
+		OV_INSTPTR_modbusTcpLib_Request	pRequest,
+		OV_INT	address	
+);
+
+typedef void MBTCP_FNC_SETERRORTEXT(
+		OV_INSTPTR_modbusTcpLib_IOChannel this
+);
+
+typedef OV_RESULT MBTCP_FNC_SENDREQUEST(
+		OV_INSTPTR_modbusTcpLib_Request thisReq
+);
+
+#endif

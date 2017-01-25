@@ -1,0 +1,74 @@
+#ifndef openaas_OVT_INCLUDED
+#define openaas_OVT_INCLUDED
+/* 
+	Define your data types here. 
+*/
+
+
+
+typedef enum ExpressionSemanticEnum{
+    ASSURANCE,
+    SETTING,
+    MEASUREMENT,
+    REQUIREMENT
+}ExpressionSemanticEnum;
+
+typedef enum RelationalExpressionEnum{
+    GREATER_THAN,
+    GREATER_EQUAL,
+    EQUAL,
+    NOT_EQUAL,
+    LESS_EQUAL,
+    LESS_THAN
+}RelationalExpressionEnum;
+
+
+typedef enum ViewEnum{
+    BUSINESS,
+    CONSTRUCTION,
+    POWER,
+    FUNCTIONAL,
+    LOCATION,
+    SECURITY,
+    NETWORK,
+    LIFECYCLE,
+    HUMAN
+}ViewEnum;
+
+
+typedef struct IdentificationType{
+    OV_STRING IdSpec;
+    enum IdType{
+        URI,
+        ISO
+    }IdType;
+}IdentificationType;
+
+typedef struct DataValue{
+    OV_ANY Value;
+    OV_UINT64 TimeStamp;
+}DataValue;
+
+typedef struct AASConvertListType{
+    IdentificationType AASId;
+    OV_STRING AASPath;
+}AASConvertListType;
+
+typedef struct AASConvertListContainerType{
+	AASConvertListType* AASConvertList;
+	OV_UINT AASConvertListSize;
+}AASConvertListContainerType;
+
+typedef int64_t DateTime;
+
+typedef OV_UINT64 AASStatusCode;
+#define AASSTATUSCODE_GOOD                  0x0;
+#define AASSTATUSCODE_BADUNEXPECTEDERROR    0x1;
+#define AASSTATUSCODE_BADAASID              0x2;
+#define AASSTATUSCODE_BADAASNAME            0x3;
+#define AASSTATUSCODE_BADPVSLNAME           0x4;
+#define AASSTATUSCODE_BADPVSNAME            0x5;
+#define AASSTATUSCODE_BADLCEID              0x6;
+
+#endif
+

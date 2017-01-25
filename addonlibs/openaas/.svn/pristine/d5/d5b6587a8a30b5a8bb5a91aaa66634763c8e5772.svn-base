@@ -1,0 +1,210 @@
+/*
+*	Copyright (C) 2015
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+***********************************************************************/
+
+#include "fb.ovm"
+#include "opcua.ovm"
+// # include "TCPbind.ovm"
+
+/**
+This Library implements the OPC-UA Client FUNCTION BLOCKS for IEC61131-3 Release 1.0 published by PLCopen and OPC Foundation
+*/
+
+LIBRARY opcuafb
+	VERSION   = "V0.1 (27-Aug-2015)";
+	AUTHOR    = "Holger Jeromin";
+	COPYRIGHT = "";
+	COMMENT   = "OPC-UA Client FUNCTION BLOCKS for IEC61131-3";
+	
+	CLASS object : CLASS fb/functionblock
+		COMMENT = "baseclass for communication";
+		VARIABLES
+			Done				:	BOOL	FLAGS = "o" COMMENT="Signals a connection has been initially established.";
+			Busy				:	BOOL	FLAGS = "o" COMMENT="The FB is not finished and new output values are to be expected.";
+			Error				:	BOOL	FLAGS = "o" COMMENT="Signals that an error has occurred within the FB.";
+			ErrorID				:	UINT	FLAGS = "o" COMMENT="Error code."; /* DWORD in the standard*/
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS Connect : CLASS opcuafb/object
+		IS_INSTANTIABLE;
+		COMMENT = "This Function Block is used to create a (optional secure) transport connection and an OPC-UA session. The connection shall be terminated by calling the UA_Disconnect after establishing the connection.";
+		VARIABLES
+			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge connection is started.";
+			ServerEndpointUrl	:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)" INITIALVALUE= "opc.tcp://localhost:16664";
+/* NOT IMPLEMENTED			SessionConnectInfo :	STRING	FLAGS = "i" COMMENT="";	*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to establish the connection.";
+
+			Client				:	C_TYPE <OV_PTR_UA_Client>	COMMENT="Client pointer.";
+
+			ConnectionHdl		:	UINT	FLAGS = "o" COMMENT="Connection handle – is valid until UA_Disconnect is called  (the value is not important, the connection itself is used)."; /* DWORD in the standard*/
+		END_VARIABLES;
+/*
+		PARTS
+			channel : CLASS TCPbind/TCPChannel;
+		END_PARTS;
+*/
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS Disconnect : CLASS opcuafb/object
+		IS_INSTANTIABLE;
+		COMMENT = "This Function Block is used to close a transport connection and an OPC-UA session.";
+		VARIABLES
+			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge connection is terminated.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle of connection to be closed."; /* DWORD in the standard*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to close the connection.";
+		END_VARIABLES;
+	END_CLASS;
+ 
+	CLASS NamespaceGetIndex : CLASS opcuafb/object
+		IS_INSTANTIABLE;
+		COMMENT = "This Function Block is used to get the namespace-index of a namespace-URI.";
+		VARIABLES
+			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NamespaceUri		:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Namespace URI.";
+
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to response.";
+			
+			NamespaceIndex		:	UINT	FLAGS = "o" COMMENT="Namespace Index";
+		END_VARIABLES;
+		OPERATIONS
+			constructor				:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/*	TranslatePath	*/
+	
+	CLASS NodeGetHandle : CLASS opcuafb/object
+		IS_INSTANTIABLE;
+		COMMENT = "This Function Block is used to get the node handle.";
+		VARIABLES
+			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeID				:	C_TYPE <UANodeID>	FLAGS = "i" COMMENT="Node Identification.";
+			NodeIDIdentifier	:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Identifier for the node" INITIALVALUE="the.answer"; /*	mapping for KS manipulation and database consistency on startup	*/
+			NodeIDNSindex		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Namespace index for the node" INITIALVALUE=1; /*	mapping for KS manipulation and database consistency on startup	*/
+			NodeIDIdType		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="IdentifierType for the node (supported is String: 1, Numeric: 2, GUID: 3, Opaque: 4)" INITIALVALUE=1; /*	mapping for KS manipulation and database consistency on startup	*/
+
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
+			
+			NodeHdl				:	UINT	FLAGS = "o" COMMENT="Node handle (the value is not important, the connection itself is used)."; /* DWORD in the standard*/
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/*	NodeGetHandleList	*/
+	
+	CLASS NodeReleaseHandle : CLASS opcuafb/object
+		IS_INSTANTIABLE;
+		COMMENT = "This Function Block is used to release the node handle.";
+		VARIABLES
+			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Node handle to be released."; /* DWORD in the standard*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
+		END_VARIABLES;
+	END_CLASS;
+	
+	/*	NodeReleaseHandleList	*/
+	/*	NodeGetInfo	*/
+	
+	/*	SubscriptionCreate	*/
+	/*	SubscriptionDelete	*/
+	/*	SubscriptionOperate	*/
+	/*	MonitoredItemAdd	*/
+	/*	MonitoredItemRemove	*/
+	/*	MonitoredItemOperate	*/
+
+	CLASS Read : CLASS opcuafb/object
+		IS_INSTANTIABLE;
+		COMMENT = "This Function Block is used to get the node information.";
+		VARIABLES
+			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge node information will be read.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Node handle."; /* DWORD in the standard*/
+/*			NodeAddInfo			:	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";	*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
+			
+			TimeStamp			:	TIME	FLAGS = "o"	COMMENT="Timestamp";
+			
+			Variable			:	ANY		FLAGS = "o" COMMENT="read value";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/*	ReadList	*/
+
+	CLASS Write : CLASS opcuafb/object
+		IS_INSTANTIABLE;
+		COMMENT = "This Function Block is used to get the node information.";
+		VARIABLES
+			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge node information will be written.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Node handle."; /* DWORD in the standard*/
+/*			NodeAddInfo			:	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";	*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
+			
+			Variable			:	ANY		HAS_SET_ACCESSOR FLAGS = "i" COMMENT="write value";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/*	WriteList	*/
+	/*	MethodGetHandle	*/
+	/*	MethodReleaseHandle	*/
+	/*	MethodCall	*/
+	
+	/*	ConnectionGetStatus	*/
+	
+END_LIBRARY;

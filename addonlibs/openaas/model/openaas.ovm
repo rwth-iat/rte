@@ -1,0 +1,223 @@
+#include "ov.ovm"
+//#include "ksbase.ovm"
+#include "fb.ovm"
+#include "opcua.ovm"
+
+LIBRARY openaas
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of aas.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	 
+	CLASS PropertyValueStatement : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+        	ExpressionSemantic : UINT 
+        	   COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+        	RelationalExpression : UINT 
+        	   COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+            Unit                   : STRING;
+            Value                  : ANY;
+            PropertyReferenceString : STRING;
+            PropertyReferenceType : UINT;
+            View                   : UINT
+                COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURITY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+        END_VARIABLES;
+        OPERATIONS
+        	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    
+    CLASS LifeCycleEntry : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+            CreatingInstanceString  : STRING;
+            CreatingInstanceType    : UINT;
+            WritingInstanceString   : STRING;
+            WritingInstanceType     : UINT;
+            Data                    : ANY;
+            TimeStamp               : UINT;
+            Subject                 : STRING;
+			EventClass              : STRING;
+			//View                    : UINT;
+        END_VARIABLES;
+        OPERATIONS
+        	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS PropertyValueStatementList : CLASS ov/domain
+    	IS_INSTANTIABLE;
+        VARIABLES
+            CarrierString  : STRING;
+            CarrierType    : UINT;
+        END_VARIABLES;
+        OPERATIONS
+        	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS LifeCycleArchive : CLASS ov/domain
+    	IS_INSTANTIABLE;
+    	VARIABLES
+    		LifeCycleEntrySize : UINT;
+    	END_VARIABLES;
+    	OPERATIONS
+    		getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS Header : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        PARTS
+        	Config : CLASS openaas/PropertyValueStatementList;
+        END_PARTS;
+        OPERATIONS
+        END_OPERATIONS;
+    END_CLASS;
+	
+	 
+	CLASS aas : CLASS ov/domain
+		IS_INSTANTIABLE;
+		VARIABLES   
+			postoffice       : STRING HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "JSON String as message communication";
+		END_VARIABLES;
+		PARTS
+			Header           : CLASS openaas/Header;
+			Body             : CLASS ov/domain;
+			LifeCycleArchive : CLASS openaas/LifeCycleArchive;
+			Views            : CLASS ov/domain;			
+		END_PARTS;
+		OPERATIONS
+			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS; 
+	
+
+    CLASS nodeStoreFunctions    :    CLASS ov/object
+    	IS_INSTANTIABLE;
+        COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
+    VARIABLES
+    	NameSpaceIndexInformationModel : UINT;
+        NameSpaceIndexNodeStoreInterface : UINT;  
+        NodeStoreInterface : C_TYPE <UA_NodestoreInterface>;
+    END_VARIABLES;
+    OPERATIONS
+    	ovModelManagerNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERNODETOOPCUA>;
+    	ovModelManagerMethodNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA>;
+        ovOpenAASNodeToOPCUA : C_FUNCTION <UA_FNC_OVOPENAASNODETOOPCUA>;
+        ovOpenAASFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVOPENAASFOLDERNODETOOPCUA>;
+        ovLifeCycleArchiveNodeToOPCUA : C_FUNCTION <UA_FNC_OVLIFECYCLEARCHIVENODETOOPCUA>;
+        ovLifeCycleEntryNodeToOPCUA : C_FUNCTION <UA_FNC_OVLIFECYCLEENTRYNODETOOPCUA>;
+        ovPropertyValueStatementListNodeToOPCUA : C_FUNCTION <UA_FNC_OVPROPERTYVALUESTATEMENTLISTNODETOOPCUA>;
+        ovPropertyValueStatementNodeToOPCUA : C_FUNCTION <UA_FNC_OVPROPERTYVALUESTATEMENTNODETOOPCUA>;
+        ovViewsNodeToOPCUA : C_FUNCTION <UA_FNC_OVVIEWSNODETOOPCUA>;
+        ovBodyNodeToOPCUA : C_FUNCTION <UA_FNC_OVBODYNODETOOPCUA>;
+        ovHeaderNodeToOPCUA : C_FUNCTION <UA_FNC_OVHEADERNODETOOPCUA>;
+        ovCarrierNodeToOPCUA : C_FUNCTION <UA_FNC_OVCARRIERNODETOOPCUA>;
+         
+        ovNodeStoreInterfaceOpenAASNew : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASNEW>;
+        ovNodeStoreInterfaceOpenAASDelete : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASDELETE>;
+        MethodCallbackStandard  : C_FUNCTION <UA_FNC_METHODCALLBACKSTANDARD>;
+        
+        constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+        startup: C_FUNCTION <OV_FNC_STARTUP>;
+    END_OPERATIONS;    
+    END_CLASS;
+    
+    CLASS modelmanager    :    CLASS ov/object
+        IS_INSTANTIABLE;
+        COMMENT    =    "Implementations of model functions to act like a factory";
+    VARIABLES 
+    	AASIdString                     : STRING;
+    	AASIdTypeId                     : UINT;
+    	AASName                         : STRING;
+    	AASAssetIdString                : STRING;
+        AASAssetIdTypeId                : UINT;    	
+        AASStatus                       : UINT; 
+    	AASCreate                       : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create an AAS";
+    	AASDelete                       : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete an AAS";   
+    	 
+    	PVSLAASIdString                 : STRING;
+        PVSLAASIdTypeId                 : UINT;
+    	PVSLName                        : STRING;
+    	PVSLCarrierString               : STRING;
+    	PVSLCarrierTypeId               : UINT;    
+    	PVSLStatus                      : UINT; 
+    	PVSLCreate                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVSL";
+	    PVSLDelete                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVSL"; 
+	    
+	    PVSAASIdString                  : STRING;
+        PVSAASIdTypeId                  : UINT;
+        PVSPVSLName                     : STRING;
+	    PVSName                         : STRING;
+	    PVSRelationalExpression         : UINT     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+	    PVSExpressionSemantic           : UINT     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+	    PVSValue                        : ANY;
+	    PVSUnit                         : STRING;
+        PVSPropertyReferenceIdString    : STRING;
+        PVSPropertyReferenceIdType      : UINT;
+        PVSView                         : UINT;     
+        PVSStatus                       : UINT;  
+	    PVSCreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVS";
+        PVSDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVS";
+	    
+	    LCEAASIdString                  : STRING;
+        LCEAASIdTypeId                  : UINT;
+        LCEId                           : UINT;
+	    LCECreatingInstanceString       : STRING;
+        LCECreatingInstanceType         : UINT;
+        LCEWritingInstanceString        : STRING;
+        LCEWritingInstanceType          : UINT;
+        LCEEventClass                   : STRING;
+        LCESubject                      : STRING;
+        LCEValue                        : ANY;
+        LCETimeStamp                    : UINT;
+        LCEStatus                       : UINT;
+        LCECreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a LCE";
+        LCEDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a LCE";
+        
+        JSONMSE                         : STRING;
+        DeliverJSONMSG                  : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Process the JSONRequest";
+               
+	    Status                          : UINT; 
+	    
+        Container                       : C_TYPE <AASConvertListContainerType>; 
+    END_VARIABLES;
+    OPERATIONS
+        createAAS  : C_FUNCTION <UA_FNC_CREATEAAS>;
+        deleteAAS  : C_FUNCTION <UA_FNC_DELETEAAS>;
+        createPVSL : C_FUNCTION <UA_FNC_CREATEPVSL>; 
+        deletePVSL : C_FUNCTION <UA_FNC_DELETEPVSL>;
+        createPVS  : C_FUNCTION <UA_FNC_CREATEPVS>; 
+        deletePVS  : C_FUNCTION <UA_FNC_DELETEPVS>;
+        getPVS     : C_FUNCTION <UA_FNC_GETPVS>;
+        setPVS     : C_FUNCTION <UA_FNC_SETPVS>;
+        createLCE  : C_FUNCTION <UA_FNC_CREATELCE>;
+        deleteLCE  : C_FUNCTION <UA_FNC_DELETELCE>;
+        getLCE     : C_FUNCTION <UA_FNC_GETLCE>;
+        setLCE     : C_FUNCTION <UA_FNC_SETLCE>;
+        
+        ovresultToAASStatusCode : C_FUNCTION <UA_FNC_OVRESULTTOAASSTATUSCODE>;
+        AASConvertListGet : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTGET>;
+        AASConvertListAdd : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTADD>;
+        AASConvertListDelete : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTDELETE>;
+        IdentificationTypeEqual : C_FUNCTION <OPENAAS_FNC_IDENTIFICATIONTYPEEQUAL>;
+        
+        getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+        destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;
+        startup : C_FUNCTION <OV_FNC_STARTUP>;
+    END_OPERATIONS;    
+    END_CLASS;
+  	
+END_LIBRARY;

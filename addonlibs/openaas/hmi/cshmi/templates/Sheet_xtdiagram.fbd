@@ -1,0 +1,112 @@
+/************************************************************
+* Sicherung der Datenbasis
+* Erstellt: 2013-11-25 17:23:32
+* 
+* HOST   : LOCALHOST:7509
+* SERVER : MANAGER
+************************************************************/
+
+ INSTANCE  /TechUnits/TU :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/TU/rampe :
+    CLASS /Libraries/demolib/Rampe;
+    VARIABLE_VALUES
+      Periode : INPUT INT = 5;
+      Amplitude : INPUT SINGLE = 1.000000;
+      MaxPos : INPUT INT = 50;
+      OutS : OUTPUT SINGLE = 0.800000;
+      OutD : OUTPUT DOUBLE = 0.800000;
+      count : OUTPUT INT = 3;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 7218;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2013-11-25 15:23:11.870241;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/TU/rampe};
+ END_LINK;
+
+
+ INSTANCE  /TechUnits/cshmi/xtshowcase :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 500.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/xtshowcase/FBview :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 550.000000;
+      y : INPUT SINGLE = 50.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "Engineering/FBv1";
+      FBReference[1] : INPUT STRING = {"/TechUnits/TU/rampe"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/xtshowcase/xtdiagram :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 1000.000000;
+      height : INPUT SINGLE = 900.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "xtdiagram";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[1] : INPUT STRING = {"data1:/TechUnits/TU/rampe.OutS"};
+      ConfigValues[4] : INPUT STRING = {"minValue:0" , "maxValue:1" , "velocity:10" , "cycTime:0.05"};
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LIBRARY
+    /Libraries/cshmi
+ END_LIBRARY;
+
+
+ LIBRARY
+    /Libraries/demolib
+ END_LIBRARY;

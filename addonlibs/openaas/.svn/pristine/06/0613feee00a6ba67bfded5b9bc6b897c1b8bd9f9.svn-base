@@ -1,0 +1,265 @@
+/*
+*	Copyright (C) 2007
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*/
+/***********************************************************************
+*
+*	File
+*	-----
+*	kbuslib.ovm
+*
+*	Autoren:
+*	--------
+*	LE						Lars Evertz <l.evertz@plt.rwth-aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 
+*	$Date: 
+*
+*	Historie:
+*	--------
+*	07th-February-2011	LE
+*		-	file created
+*	
+***********************************************************************/
+
+
+#include "fb.ovm"
+
+
+LIBRARY kbuslib
+
+	VERSION   = "1.0";
+	AUTHOR    = "Lars Evertz";
+	COPYRIGHT = "Copyright (C) 2011, ACPLT";
+	COMMENT   = "kbuslib";
+
+	CLASS BusManager : CLASS fb/functionblock
+		COMMENT = "Baseclass for Bus Managers";
+		VARIABLES
+			nrAI 	:	UINT	FLAGS = "o"
+				COMMENT = "Number of analog inputs"
+				INITIALVALUE = 0;
+			nrAO	:	UINT	FLAGS = "o"
+				COMMENT = "Number of analog outputs"
+				INITIALVALUE = 0;
+			nrDI	:	UINT	FLAGS = "o"
+				COMMENT = "Number of digital inputs"
+				INITIALVALUE = 0;
+			nrDO	:	UINT	FLAGS = "o"
+				COMMENT = "Number of digital outputs"
+				INITIALVALUE = 0;
+			nrSP	:	UINT	FLAGS = "o"
+				COMMENT = "Number of specialized clamps"
+				INITIALVALUE = 0;
+			LastRead	:	TIME	FLAGS = "o"
+				COMMENT = "Time of Last successfull read of ProcessImage";
+			LastWrite	:	TIME	FLAGS = "o"
+				COMMENT = "Time of Last successfull write of ProcessImage";	
+			Error	:	BOOL	FLAGS = "o"
+				COMMENT = "Error state (TRUE = Good)"
+				INITIALVALUE = TRUE;
+			ErrorCode	:	INT	FLAGS = "o"
+				COMMENT = "Error Code"
+				INITIALVALUE = 0;
+			ErrorString	:	STRING	FLAGS = "o"
+				COMMENT = "Textual Error Message";
+			autodetect	:	BOOL	FLAGS = "p"
+				COMMENT = "Autodetect mode on"
+				INITIALVALUE = FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			checkinit	:	C_FUNCTION	<OV_FNC_CHECKINIT>;
+			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+		
+	END_CLASS;
+	
+	
+	CLASS Clamp	:	CLASS fb/functionblock
+		COMMENT = "Baseclass for Clamps";
+		VARIABLES
+			ByteAddress	:	UINT	HAS_SET_ACCESSOR
+				FLAGS = "i"
+				COMMENT = "Specifies Address in Bus"
+				INITIALVALUE = 0;
+			BitOffset	:	UINT	HAS_SET_ACCESSOR
+				FLAGS = "i"
+				COMMENT = "Bit-Offset. Only used by digital clamps. Otherweise 0"
+				INITIALVALUE = 0;
+			ByteWidth	:	UINT	HAS_SET_ACCESSOR
+				FLAGS = "i"
+				COMMENT = "Set only for specialized Clamps. Otherwise determined automatic."
+				INITIALVALUE = 0;
+			Enabled	:	BOOL
+				FLAGS = "i"
+				COMMENT = "Clamp enabled"
+				INITIALVALUE = FALSE;
+			Error	:	BOOL	FLAGS = "o"
+				COMMENT = "Error state (TRUE = Good)"
+				INITIALVALUE = TRUE;
+			ErrorCode	:	INT	FLAGS = "o"
+				COMMENT = "Error Code"
+				INITIALVALUE = 0;
+			ErrorString	:	STRING	FLAGS = "o"
+				COMMENT = "Textual Error Message";
+		END_VARIABLES;
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS AnalogIN	:	CLASS kbuslib/Clamp
+		IS_INSTANTIABLE;
+		COMMENT = "Analog input clamp";
+		VARIABLES
+			TimeStamp	:	TIME
+				FLAGS = "o"
+				COMMENT = "Last sync with ProcessImage.";
+			Value	:	SINGLE	FLAGS = "o"
+				COMMENT = "Analog value"
+				INITIALVALUE = 0.0;
+			ValuePV	:	SINGLE_PV FLAGS = "o"
+				COMMENT = "Analog Value with state and Timestamp";
+		END_VARIABLES;
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;	
+	
+	
+	CLASS AnalogOUT	:	CLASS kbuslib/Clamp
+		IS_INSTANTIABLE;
+		COMMENT = "Analog output clamp";
+		VARIABLES
+			Value	:	SINGLE	HAS_SET_ACCESSOR
+				FLAGS = "i"
+				COMMENT = "Analog value"
+				INITIALVALUE = 0.0;
+			ReadBackOnly	:	BOOL	FLAGS = "i"
+				COMMENT = "TRUE = Do not change Output"
+				INITIALVALUE = FALSE;
+			RBValue	:	SINGLE FLAGS = "o"
+				COMMENT = "Read Back Value"
+				INITIALVALUE = 0.0;
+		END_VARIABLES;
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;	
+	
+	
+	CLASS DigitalIN	:	CLASS kbuslib/Clamp
+		IS_INSTANTIABLE;
+		COMMENT = "Digital input clamp";
+		VARIABLES
+			Value	:	BOOL	FLAGS = "o"
+				COMMENT = "Digital value"
+				INITIALVALUE = FALSE;
+			ValuePV	:	BOOL_PV	FLAGS = "o"
+				COMMENT = "Digital Value with state and Timestamp";
+			TimeStamp	:	TIME
+				FLAGS = "o"
+				COMMENT = "Last sync with ProcessImage.";
+		END_VARIABLES;
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;	
+	
+	
+	CLASS DigitalOUT	:	CLASS kbuslib/Clamp
+		IS_INSTANTIABLE;
+		COMMENT = "Digital output clamp";
+		VARIABLES
+			Value	:	BOOL	FLAGS = "i"
+			COMMENT = "Digital value"
+			INITIALVALUE = FALSE;
+		ReadBackOnly	:	BOOL	FLAGS = "i"
+			COMMENT = "TRUE = Do not change Output"
+			INITIALVALUE = FALSE;
+		RBValue	:	BOOL	FLAGS = "o"
+			COMMENT = "Read Back Value"
+			INITIALVALUE = FALSE;
+		END_VARIABLES;
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;	
+	
+	CLASS SpecialIN	:	CLASS kbuslib/Clamp
+		IS_INSTANTIABLE;
+		COMMENT = "Not Standart IN-Clamp";
+		VARIABLES
+		Value	:	ANY	FLAGS = "o"
+			COMMENT = "Value read from bus";
+		TimeStamp	:	TIME
+				FLAGS = "o"
+				COMMENT = "Last sync with ProcessImage.";
+		END_VARIABLES;
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS SpecialOUT	:	CLASS kbuslib/Clamp
+		IS_INSTANTIABLE;
+		COMMENT = "Not Standart OUT-Clamp";
+		VARIABLES
+		Value	:	ANY	HAS_SET_ACCESSOR
+			FLAGS = "i"
+			COMMENT = "Value written to bus";
+		RbValue		:	ANY	FLAGS = "o"
+			COMMENT = "ReadBack Value";
+		ReadBackOnly	:	BOOL	FLAGS = "i"
+			COMMENT = "Read Back Value from image only";
+		END_VARIABLES;
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+
+
+END_LIBRARY;

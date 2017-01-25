@@ -1,0 +1,102 @@
+#ifndef _KSAPI_OVF
+#define _KSAPI_OVF
+
+typedef void KSAPI_FNC_SUBMIT(
+		OV_INSTPTR_ksapi_KSApiCommon	 			pobj
+);
+
+typedef OV_RESULT KSAPI_FNC_PREPSUBMIT(
+		OV_INSTPTR_ksapi_KSApiCommon	 			pobj,
+		OV_INSTPTR_ksbase_ClientBase*				pClient,
+		OV_VTBLPTR_ksbase_ClientBase*				pVtblClient
+);
+
+typedef OV_RESULT KSAPI_FNC_GENSETFSUBMIT(
+		OV_INSTPTR_ksapi_KSApiCommon	 			pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path
+);
+
+typedef void KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT(
+		OV_INSTPTR_ksapi_createObject	 		pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path,
+		OV_STRING									factorypath,
+		OV_INT										position,
+		OV_STRING									place
+);
+
+
+typedef void KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT(
+		OV_INSTPTR_ksapi_deleteObject	 		pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path
+);
+
+
+typedef void KSAPI_FNC_SETANDSUBMIT_GETVAR(
+		OV_INSTPTR_ksapi_getVar			 			pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path
+);
+
+typedef void KSAPI_FNC_SETANDSUBMIT_SETVAR(
+		OV_INSTPTR_ksapi_setVar	 			pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path,
+		OV_ANY	 									setVar
+);
+
+//definitions for getEPidentifiers
+
+typedef void KSAPI_FNC_SETANDSUBMIT_EP_GETID(
+		OV_INSTPTR_ksapi_getEPidentifiers	pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path,
+		OV_STRING 									namemask
+);
+
+typedef void KSAPI_FNC_SETANDSUBMIT_GETEP(
+		OV_INSTPTR_ksapi_getEP	pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path,
+		OV_OBJ_TYPE									typemask,
+		OV_STRING 									namemask,
+		OV_EP_FLAGS									scopeFlags
+);
+
+typedef void KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT(
+		OV_INSTPTR_ksapi_renameObject	 		pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path,
+		OV_STRING 									newpath
+);
+
+typedef void KSAPI_FNC_SETANDSUBMIT_LINKOBJECT(
+		OV_INSTPTR_ksapi_linkObject			pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path,
+		OV_STRING 									elementpath,
+		OV_INT										position,
+		OV_STRING									place
+);
+
+typedef void KSAPI_FNC_SETANDSUBMIT_UNLINKOBJECT(
+		OV_INSTPTR_ksapi_unlinkObject			pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path,
+		OV_STRING 									elementpath
+);
+
+
+#endif //_KSAPI_OVF
