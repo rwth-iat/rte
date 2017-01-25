@@ -1,9 +1,0 @@
-#ifndef _fbcomlib_OVF
-#define _fbcomlib_OVF
-
-typedef void FBCOM_FNC_RESET(OV_INSTPTR_fbcomlib_FBComCommon this);
-
-#endif
-
-
-
