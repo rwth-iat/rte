@@ -786,12 +786,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		newNode->nodeId.identifier.byteString = nodeId->identifier.byteString;
 		break;
 	}
-//
-//	UA_NodeId tmpNodeId;
-//	UA_NodeId_init(&tmpNodeId);
-//	UA_NodeId_copy(nodeId, &tmpNodeId);
-//	newNode->nodeId = tmpNodeId;
-//	//UA_NodeId_copy(nodeId, &(newNode->nodeId));
 
 	// NodeClass
 	newNode->nodeClass 	= *nodeClass;
@@ -851,16 +845,15 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		switch(path.elements[path.size-1].elemtype) {
 		case OV_ET_MEMBER:
 		case OV_ET_VARIABLE:
-			pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
-			if(Ov_CanCastTo(ov_variable, pobj)){
-				switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
+			if(Ov_CanCastTo(ov_variable, pobjtemp)){
+				switch((((OV_INSTPTR_ov_variable)pobjtemp)->v_vartype) & OV_VT_KSMASK){
 				case OV_VT_ANY:
 				case OV_VT_VOID:
 					((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
 					((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 					break;
 				default:
-					if(((OV_INSTPTR_ov_variable)pobj)->v_veclen == 1){
+					if(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen == 1){
 						/*	scalar	*/
 						((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
 						((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
@@ -874,23 +867,23 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 						} else {
 							result = UA_STATUSCODE_GOOD;
 						}
-						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
+						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
 						break;
 					}
 				}
 			}
 			break;
 		case OV_ET_OBJECT:
-			pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].pobj);
-			if(Ov_CanCastTo(ov_variable, pobj)){
-				switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
+			pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].pobj);
+			if(Ov_CanCastTo(ov_variable, pobjtemp)){
+				switch((((OV_INSTPTR_ov_variable)pobjtemp)->v_vartype) & OV_VT_KSMASK){
 				case OV_VT_ANY:
 				case OV_VT_VOID:
 					((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
 					((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 					break;
 				default:
-					if(((OV_INSTPTR_ov_variable)pobj)->v_veclen == 1){
+					if(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen == 1){
 						/*	scalar	*/
 						((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
 						((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
@@ -904,11 +897,11 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 						} else {
 							result = UA_STATUSCODE_GOOD;
 						}
-						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
+						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
 						break;
 					}
 				}
-			}else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+			}else if(Ov_GetParent(ov_instantiation, pobjtemp) == pclass_opcua_arguments){
 				((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
 			} else {
 				result = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
@@ -945,7 +938,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 				}
 				break;
 			}
-		}else  if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+		}else  if(Ov_GetParent(ov_instantiation, pobjtemp) == pclass_opcua_arguments){
 			((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
 			result = UA_STATUSCODE_GOOD;
 			break;
@@ -953,7 +946,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			result = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 			break;
 		}
-		// value
+		// value & dataType
 		pobjtemp = path.elements[path.size-1].pobj;
 		Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
 		if((!pVtblObj) || (ov_activitylock)){
@@ -966,6 +959,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			value.value.vartype &= OV_VT_KSMASK;
 			if(result == UA_STATUSCODE_GOOD){
 				result = ov_AnyToVariant(&value, &(((UA_VariableNode*)newNode)->value.data.value.value));
+				((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(value.value.vartype);
 				value = emptyAny;
 			}
 			break;
@@ -975,6 +969,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 				UA_Argument *argArray = NULL;
 				result = opcua_nodeStoreFunctions_getCallArgs((OV_INSTPTR_opcua_arguments)pobjtemp, &numberofArgs, &argArray);
 				((UA_VariableNode*)newNode)->value.data.value.value.data = argArray;
+				((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(value.value.vartype);
 			} else {
 				result = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 			}
@@ -996,29 +991,15 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		((UA_VariableNode*)newNode)->minimumSamplingInterval = -1;
 		// historizing
 		((UA_VariableNode*)newNode)->historizing = UA_FALSE;
-		// dataType
-		pobjtemp = path.elements[path.size-1].pobj;
-		Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
-		if((!pVtblObj) || (ov_activitylock)){
-			pVtblObj = pclass_ov_object->v_pvtable;
-		}
-		if (path.elements[path.size-1].elemtype == OV_ET_VARIABLE){
-			((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(((OV_INSTPTR_ov_variable)pobjtemp)->v_vartype);;
-		}else{
-			((UA_VariableNode*)newNode)->dataType.identifierType = UA_NODEIDTYPE_NUMERIC;
-			((UA_VariableNode*)newNode)->dataType.namespaceIndex = 0;
-			((UA_VariableNode*)newNode)->dataType.identifier.numeric = 296;
-		}
 		break;
 	case UA_NODECLASS_VARIABLETYPE:
 		// arrayDimensionsSize & arrayDimensions
-		pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
 		switch(path.elements[path.size-1].elemtype) {
 		case OV_ET_MEMBER:
 		case OV_ET_VARIABLE:
-			pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
-			if(Ov_CanCastTo(ov_variable, pobj)){
-				switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
+			pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
+			if(Ov_CanCastTo(ov_variable, pobjtemp)){
+				switch((((OV_INSTPTR_ov_variable)pobjtemp)->v_vartype) & OV_VT_KSMASK){
 				case OV_VT_ANY:
 				case OV_VT_VOID:
 					((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
@@ -1039,15 +1020,15 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 						} else {
 							result = UA_STATUSCODE_GOOD;
 						}
-						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
+						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
 						break;
 					}
 				}
 			}
 			break;
 		case OV_ET_OBJECT:
-			pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].pobj);
-			if(Ov_CanCastTo(ov_variable, pobj)){
+			pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].pobj);
+			if(Ov_CanCastTo(ov_variable, pobjtemp)){
 				switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
 				case OV_VT_ANY:
 				case OV_VT_VOID:
@@ -1069,11 +1050,11 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 						} else {
 							result = UA_STATUSCODE_GOOD;
 						}
-						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
+						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
 						break;
 					}
 				}
-			}else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
+			}else if(Ov_GetParent(ov_instantiation, pobjtemp) == pclass_opcua_arguments){
 				((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
 			} else {
 				result = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
