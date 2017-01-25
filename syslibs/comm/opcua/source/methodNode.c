@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2016-06-13   File created
+*   2016-12-19   File created
 *
 *******************************************************************************
 *
@@ -32,17 +32,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_methodNode_preCallMethod(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_methodNode_calledMethod(
-	OV_INSTPTR_opcua_methodNode pobj,
-	size_t numberofInputArgs,
-	const UA_Variant *packedInputArgList,
-	size_t numberofOutputArgs,
-	UA_Variant **packedOutputArgList
-) {
-
-    return OV_ERR_NOTIMPLEMENTED;
-}
-
 OV_DLLFNCEXPORT void opcua_methodNode_postCallMethod(
 	OV_INSTPTR_opcua_methodNode pobj,
 	OV_BOOL methodFailed
@@ -56,36 +45,11 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_methodNode_getaccess(
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
 ) {
-    /*
+    /*    
     *   local variables
     */
-    OV_INSTPTR_opcua_methodNode pinst = Ov_StaticPtrCast(opcua_methodNode, pobj);
-    OV_ACCESS           access;
+    //OV_INSTPTR_opcua_methodNode pinst = Ov_StaticPtrCast(opcua_methodNode, pobj);
 
-    /*
-     *	switch based on the element's type
-     */
-    switch(pelem->elemtype) {
-    case OV_ET_OBJECT:
-    	/* Default access */
-    	access = (OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE);
-    	if(pinst->v_callable){	/*	we use writable to check if the method can be called in opcua	*/
-    		access |= OV_AC_WRITE;
-    	}
-    	return access;
-    case OV_ET_VARIABLE:	/*	everything up to callable is READWRITE; after that its managed by ov_obect (everything with accessors is accessible)	*/
-    	if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo) ) {
-    		if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-    			return OV_AC_NONE;
-    		else
-    			return OV_AC_READWRITE;
-    	} else {
-    		return ov_object_getaccess(pobj, pelem, pticket);
-    	}
-    	break;
-    default:
-    	break;
-    }
-    return ov_object_getaccess(pobj, pelem, pticket);
+    return (OV_ACCESS)0;
 }
 

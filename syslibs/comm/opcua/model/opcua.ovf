@@ -2,17 +2,55 @@
 #define opcua_OVF_INCLUDED
 
 #include "opcua.ovt"
+#include "open62541.h"
+#include "libov/ov_macros.h"
+#include "libov/ov_path.h"
 
-typedef UA_Int32 UA_FNC_ADDNODES(
-	void *ensHandle,
-	const UA_RequestHeader *requestHeader,
-	UA_AddNodesItem *nodesToAdd,
-	UA_UInt32 *indices,
-	UA_UInt32 indicesSize,
-	UA_AddNodesResult* addNodesResults,
-	UA_DiagnosticInfo *diagnosticInfos
-);
+/* mapping functions */
+// BaseNode
+typedef UA_StatusCode UA_FNC_OVBASENODETOOPCUA(void *handle, OV_INSTPTR_opcua_baseNode ovNode, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OPCUABASENODETOOV(void *handle, UA_Node* opcuaNode, OV_INSTPTR_opcua_baseNode* ovNode, UA_NodeId *parrentNode);
+// ObjectTypeNode
+typedef UA_StatusCode UA_FNC_OVOBJECTTYPENODETOOPCUA(void *handle, OV_INSTPTR_opcua_objectTypeNode ovNode, UA_ObjectTypeNode** opcuaNode);
+typedef UA_StatusCode UA_FNC_OPCUAOBJECTTYPENODETOOV(void *handle, UA_ObjectTypeNode* opcuaNode, OV_INSTPTR_opcua_objectTypeNode* ovNode, UA_NodeId *parrentNode);
+// ObjectNode	
+typedef UA_StatusCode UA_FNC_OVOBJECTNODETOOPCUA(void *handle, OV_INSTPTR_opcua_objectNode ovNode, UA_ObjectNode** opcuaNode);
+typedef UA_StatusCode UA_FNC_OPCUAOBJECTNODETOOV(void *handle, UA_ObjectNode* opcuaNode, OV_INSTPTR_opcua_objectNode* ovNode, UA_NodeId *parrentNode);
+// VariableNode    
+typedef UA_StatusCode UA_FNC_OVVARIABLENODETOOPCUA(void *handle, OV_INSTPTR_opcua_variableNode ovNode, UA_VariableNode** opcuaNode);    
+typedef UA_StatusCode UA_FNC_OPCUAVARIABLENODETOOV(void *handle, UA_VariableNode* opcuaNode, OV_INSTPTR_opcua_variableNode* ovNode, UA_NodeId *parrentNode);
+// VariableTypeNode
+typedef UA_StatusCode UA_FNC_OVVARIABLETYPENODETOOPCUA(void *handle, OV_INSTPTR_opcua_variableTypeNode ovNode, UA_VariableTypeNode** opcuaNode);
+typedef UA_StatusCode UA_FNC_OPCUAVARIABLETYPENODETOOV(void *handle, UA_VariableTypeNode* opcuaNode, OV_INSTPTR_opcua_variableTypeNode* ovNode, UA_NodeId *parrentNode);
+// ReferenceTypeNode
+typedef UA_StatusCode UA_FNC_OVREFERENCETYPENODETOOPCUA(void *handle, OV_INSTPTR_opcua_referenceTypeNode ovNode, UA_ReferenceTypeNode** opcuaNode);    
+typedef UA_StatusCode UA_FNC_OPCUAREFERENCETYPENODETOOV(void *handle, UA_ReferenceTypeNode* opcuaNode, OV_INSTPTR_opcua_referenceTypeNode* ovNode, UA_NodeId *parrentNode);
+// DataTypeNode
+typedef UA_StatusCode UA_FNC_OVDATATYPENODETOOPCUA(void *handle, OV_INSTPTR_opcua_dataTypeNode ovNode, UA_DataTypeNode** opcuaNode);  
+typedef UA_StatusCode UA_FNC_OPCUADATATYPENODETOOV(void *handle, UA_DataTypeNode* opcuaNode, OV_INSTPTR_opcua_dataTypeNode* ovNode, UA_NodeId *parrentNode);
+// ViewNode
+typedef UA_StatusCode UA_FNC_OVVIEWNODETOOPCUA(void *handle, OV_INSTPTR_opcua_viewNode ovNode, UA_ViewNode** opcuaNode); 	
+typedef UA_StatusCode UA_FNC_OPCUAVIEWNODETOOV(void *handle, UA_ViewNode* opcuaNode, OV_INSTPTR_opcua_viewNode* ovNode, UA_NodeId *parrentNode);
+// MethodNode
+typedef UA_StatusCode UA_FNC_OVMETHODNODETOOPCUA(void *handle, OV_INSTPTR_opcua_methodNode ovNode, UA_MethodNode** opcuaNode);    
+typedef UA_StatusCode UA_FNC_OPCUAMETHODNODETOOV(void *handle, UA_MethodNode* opcuaNode, OV_INSTPTR_opcua_methodNode* ovNode, UA_NodeId *parrentNode);
 
+
+/* nodestore interfacing functions */
+typedef void UA_FNC_DELETENODE(UA_Node* node);
+typedef UA_Node* UA_FNC_NEWNODE(UA_NodeClass nodeClass);
+typedef UA_StatusCode UA_FNC_INSERTNODE(void* handle, UA_Node* node, UA_NodeId *parrentNode);
+typedef UA_Node * UA_FNC_GETNODE(void* handle, UA_NodeId* nodeId);
+typedef UA_StatusCode UA_FNC_REPLACENODE(void* handle, UA_Node* node);
+typedef UA_StatusCode UA_FNC_REMOVENODE(void* handle, UA_NodeId* nodeId);
+typedef UA_NodestoreInterface* UA_FNC_OVNODESTOREINTERFACENEW(void);
+typedef void UA_FNC_OVNODESTOREINTERFACEDELETE(UA_NodestoreInterface * nodestoreInterface);
+typedef void UA_FNC_OVNODESTOREINTERFACE2NEW(UA_NodestoreInterface*);
+typedef void UA_FNC_OVNODESTOREINTERFACE2DELETE(UA_NodestoreInterface * nodestoreInterface);
+	
+/* opcua-Server functions */
+typedef UA_StatusCode UA_FNC_ADDINFORMATIONMODEL(UA_NodestoreInterface *nsi, OV_STRING NameSpaceUri, OV_STRING StartFolder, opcua_loadInformationModel loadInfoModel, OV_UINT *NameSpaceIndexInformationModel, OV_UINT *NameSpaceIndexNodeStoreInterface, const UA_DataType *customDataTypes, OV_UINT customDataTypesSize);
+	
 typedef UA_Int32 UA_FNC_ADDREFERENCES(
 	void *ensHandle,
 	const UA_RequestHeader *requestHeader,
@@ -146,7 +184,7 @@ typedef void  UA_FNC_POSTCALLMETHOD(
 	OV_BOOL methodFailed
 );
 
-typedef UA_StatusCode UA_FNC_STARTNL(
+/*typedef UA_StatusCode UA_FNC_STARTNL(
 	struct UA_ServerNetworkLayer *nl, 
 	UA_Logger *logger
 );
@@ -164,7 +202,7 @@ typedef UA_Int32 UA_FNC_STOPNL(
 
 typedef void UA_FNC_DELETENL(
 	struct UA_ServerNetworkLayer *nl
-);
+);*/
 
 	
 #endif

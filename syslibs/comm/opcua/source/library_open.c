@@ -44,7 +44,6 @@ OV_RESULT ov_library_setglobalvars_opcua_new(void) {
 	OV_INSTPTR_ov_domain pcommunication = NULL;
 	OV_INSTPTR_ov_domain pDomOpcUa = NULL;
 	OV_INSTPTR_ov_domain pDomTicketAuths = NULL;
-	OV_INSTPTR_opcua_uaIdentificator pIdentificator = NULL;
 	OV_INSTPTR_opcua_uaServer pServer = NULL;
 
 	result = ov_library_setglobalvars_opcua();
@@ -81,19 +80,6 @@ OV_RESULT ov_library_setglobalvars_opcua_new(void) {
 	{
 		ov_logfile_error("Fatal: OPC_UA object found but not domain (or derived)");
 		return OV_ERR_GENERIC;
-	}
-
-	/*	create protocol identificator for OPCUA	*/
-	pIdentificator = Ov_StaticPtrCast(opcua_uaIdentificator, Ov_SearchChild(ov_containment, pDomOpcUa, "Identificator"));
-	if(pIdentificator)
-		Ov_DeleteObject(pIdentificator);
-	pIdentificator = NULL;
-
-	result = Ov_CreateObject(opcua_uaIdentificator, pIdentificator, pDomOpcUa, "Identificator");
-	if(Ov_Fail(result))
-	{
-		ov_logfile_error("Fatal: could not create Identificator object");
-		return result;
 	}
 
 	/*	create uaServer	*/

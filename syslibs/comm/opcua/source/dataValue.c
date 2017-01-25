@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   QualifiedName.c
+*   dataValue.c
 *
 *   History
 *   -------
-*   2016-10-19   File created
+*   2016-11-08   File created
 *
 *******************************************************************************
 *
@@ -25,7 +25,7 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_ACCESS opcua_qualifiedName_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS opcua_dataValue_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -33,7 +33,8 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_qualifiedName_getaccess(
     /*    
     *   local variables
     */
+    //OV_INSTPTR_opcua_dataValue pinst = Ov_StaticPtrCast(opcua_dataValue, pobj);
 
-    return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
+    return (OV_ACCESS)0;
 }
 

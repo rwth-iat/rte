@@ -8,6 +8,14 @@
 #ifndef OV_COMPILE_LIBRARY_opcua
 #define OV_COMPILE_LIBRARY_opcua
 #endif
+//
+//#ifdef MOZ_VALGRIND
+//#  define JS_VALGRIND
+//#endif
+//#ifdef JS_VALGRIND
+//#  include <valgrind/valgrind.h>
+//#endif
+
 
 #include "opcua_helpers.h"
 #include "libov/ov_string.h"
@@ -459,6 +467,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 
 UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 	OV_UINT iterator = 0;
+	ov_memstack_lock();
 	if(pVariant->arrayLength == 0 && pVariant->data > UA_EMPTY_ARRAY_SENTINEL){
 		/*	scalar values	*/
 		if(pVariant->type == &UA_TYPES[UA_TYPES_BOOLEAN]){
@@ -680,11 +689,144 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 		} else {
 			return UA_STATUSCODE_BADDATATYPEIDUNKNOWN;
 		}
-	}
 
+	}
+	ov_memstack_unlock();
 	return UA_STATUSCODE_GOOD;
 }
 
+OV_RESULT copyOvStringToOPCUA(OV_STRING src, UA_String* dst) {
+	if(!src)
+		return OV_ERR_OK;
+	*dst = UA_STRING_ALLOC(src);
+	return OV_ERR_OK;
+}
+
+
+OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst) {
+	if(src.data == NULL)
+		return OV_ERR_OK;
+	*dst = ov_database_malloc(sizeof(char)*(src.length+1));
+	if (*dst == NULL)
+		return OV_ERR_HEAPOUTOFMEMORY;
+	memcpy(*dst, src.data, src.length);
+	*(*dst + src.length) = '\0';
+	return OV_ERR_OK;
+}
+
+
+OV_RESULT copyOvNodeIdToOPCUA(OV_INSTPTR_opcua_nodeId src, UA_NodeId *dst) {
+	switch (src->v_identifierType) {
+	case UA_NODEIDTYPE_NUMERIC:
+		*dst = UA_NODEID_NUMERIC(src->v_namespaceIndex, src->v_id.value.valueunion.val_uint);
+		break;
+	case UA_NODEIDTYPE_STRING:
+		*dst = UA_NODEID_STRING_ALLOC(src->v_namespaceIndex, src->v_id.value.valueunion.val_string);
+		break;
+	default:
+		return OV_ERR_BADPARAM;
+	}
+	return OV_ERR_OK;
+}
+
+OV_RESULT copyOPCUANodeIdToOV(UA_NodeId *src, OV_INSTPTR_opcua_nodeId dst) {
+
+	dst->v_namespaceIndex = src->namespaceIndex;
+	switch (src->identifierType) {
+	case UA_NODEIDTYPE_NUMERIC:
+		dst->v_identifierType = UA_NODEIDTYPE_NUMERIC;
+		dst->v_id.value.valueunion.val_uint = src->identifier.numeric;
+		break;
+	case UA_NODEIDTYPE_STRING:
+		dst->v_identifierType = UA_NODEIDTYPE_STRING;
+		copyOPCUAStringToOV(src->identifier.string, &dst->v_id.value.valueunion.val_string);
+		break;
+	default:
+		return OV_ERR_BADPARAM;
+	}
+	return OV_ERR_OK;
+}
+
+
+OV_RESULT copyOvExpandedNodeIdToOPCUA(OV_INSTPTR_opcua_expandedNodeId src,
+		UA_ExpandedNodeId *dst) {
+	*dst = UA_EXPANDEDNODEID_NUMERIC(src->p_nodeId.v_namespaceIndex, src->p_nodeId.v_id.value.valueunion.val_uint);
+	return OV_ERR_OK;
+}
+
+OV_RESULT copyOPCUAExpandedNodeIdToOV(UA_ExpandedNodeId *src,
+		OV_INSTPTR_opcua_expandedNodeId dst) {
+	OV_RESULT res = copyOPCUAStringToOV(src->namespaceUri,
+			&dst->v_namespaceUri);
+	dst->v_serverIndex = src->serverIndex;
+	res |= copyOPCUANodeIdToOV(&src->nodeId, &dst->p_nodeId);
+	return res;
+}
+
+OV_RESULT copyOvQualifiedNameToOPCUA(OV_INSTPTR_opcua_qualifiedName src,
+		UA_QualifiedName *dst) {
+	if(!src->v_name)
+		return OV_ERR_OK;
+	*dst = UA_QUALIFIEDNAME_ALLOC(src->v_namespaceIndex, src->v_name);
+	return OV_ERR_OK;
+}
+
+
+OV_RESULT copyOPCUAQualifiedNameToOV(UA_QualifiedName *src,
+		OV_INSTPTR_opcua_qualifiedName dst) {
+	dst->v_namespaceIndex = src->namespaceIndex;
+	return copyOPCUAStringToOV(src->name, &dst->v_name);
+}
+
+void deleteUAString(UA_String *ptr) {
+	if (!ptr)
+		return;
+	if (ptr->length > 0)
+		ov_database_free(ptr->data);
+	return;
+}
+
+OV_RESULT copyOvLocalizedTextToOPCUA(OV_INSTPTR_opcua_localizedText src,
+		UA_LocalizedText *dst) {
+
+	*dst = UA_LOCALIZEDTEXT_ALLOC(src->v_locale ? src->v_locale : "", src->v_text ? src->v_text : "");
+	return OV_ERR_OK;
+}
+
+OV_RESULT copyOPCUALocalizedTextToOV(UA_LocalizedText *src,
+		OV_INSTPTR_opcua_localizedText dst) {
+	OV_RESULT res = copyOPCUAStringToOV(src->locale, &dst->v_locale);
+	res |= copyOPCUAStringToOV(src->text, &dst->v_text);
+	return res;
+}
+
+
+OV_RESULT copyOvReferenceNodeToOPCUA(OV_INSTPTR_opcua_reference src,
+		UA_ReferenceNode *dst) {
+	dst->isInverse = src->v_isInverse;
+	OV_RESULT res = copyOvNodeIdToOPCUA(&src->p_referenceTypeNodeId,
+			&dst->referenceTypeId);
+	res |= copyOvExpandedNodeIdToOPCUA(&src->p_targetNodeId, &dst->targetId);
+	return res;
+}
+
+OV_RESULT copyOPCUAReferenceNodeToOV(UA_ReferenceNode *src,
+		OV_INSTPTR_opcua_reference dst) {
+	dst->v_isInverse = src->isInverse;
+	OV_RESULT res = copyOPCUANodeIdToOV(&src->referenceTypeId,
+			&dst->p_referenceTypeNodeId);
+	res |= copyOPCUAExpandedNodeIdToOV(&src->targetId, &dst->p_targetNodeId);
+	return res;
+}
+
+
+OV_RESULT createOpcuaReferenceNode(OV_INSTPTR_ov_domain location, OV_INSTPTR_opcua_reference *newReferenceNode, OV_STRING name){
+	OV_INSTPTR_opcua_reference tmpRef = NULL;
+	OV_RESULT result = 0;
+	result = Ov_CreateObject(opcua_reference, tmpRef, location, name);
+	*newReferenceNode = tmpRef;
+	return result;
+}
 /**
  * resolves a UA-nodeId to an OV_PATH object
  * the nodeId has to be of type STRING or NUMERIC
@@ -696,34 +838,72 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
 	OV_STRING tmpString = NULL;
 	OV_RESULT result;
+	ov_memstack_lock();
 	switch(nodeId.identifierType){
 	case UA_NODEIDTYPE_STRING:
 		tmpString = ov_memstack_alloc(nodeId.identifier.string.length + 1);
 		if(!tmpString){
+			ov_memstack_unlock();
 			return UA_STATUSCODE_BADOUTOFMEMORY;
 		}
 		memcpy(tmpString,nodeId.identifier.string.data,nodeId.identifier.string.length);
 		tmpString[nodeId.identifier.string.length] = 0;
 		result = ov_path_resolve(pPath,NULL,tmpString, 2);
 		if(Ov_Fail(result)){
+			ov_memstack_unlock();
 			return ov_resultToUaStatusCode(result);
 		}
 		break;
 	case UA_NODEIDTYPE_NUMERIC:
 		tmpString = ov_memstack_alloc(32);
 		if(!tmpString){
+			ov_memstack_unlock();
 			return UA_STATUSCODE_BADOUTOFMEMORY;
 		}
 		snprintf(tmpString, 31, "/.%u", nodeId.identifier.numeric);
 		result = ov_path_resolve(pPath,NULL,tmpString, 2);
 		if(Ov_Fail(result)){
+			ov_memstack_unlock();
 			return ov_resultToUaStatusCode(result);
 		}
 		break;
 	default:
+		ov_memstack_unlock();
 		return UA_STATUSCODE_BADNODEIDREJECTED;
 	}
+	ov_memstack_unlock();
 	return UA_STATUSCODE_GOOD;
+}
+
+OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvObject(UA_NodeId *nodeId){
+	OV_STRING tmpString = NULL;
+	OV_INSTPTR_ov_object ptr = NULL;
+	ov_memstack_lock();
+	switch(nodeId->identifierType){
+	case UA_NODEIDTYPE_STRING:
+		tmpString = ov_database_malloc(nodeId->identifier.string.length + 1);
+		if(!tmpString){
+			ov_memstack_unlock();
+			return NULL;
+		}
+		memcpy(tmpString,nodeId->identifier.string.data,nodeId->identifier.string.length);
+		tmpString[nodeId->identifier.string.length] = 0;
+		ptr = ov_path_getobjectpointer(tmpString, 2);
+		break;
+	case UA_NODEIDTYPE_NUMERIC:
+		tmpString = ov_memstack_alloc(sizeof(nodeId->identifier.numeric)+12);
+		if(!tmpString){
+			ov_memstack_unlock();
+			return NULL;
+		}
+		snprintf(tmpString, 99, "/TechUnits/%u", nodeId->identifier.numeric);
+		ptr = ov_path_getobjectpointer(tmpString, 2);
+		break;
+	default:
+		break;
+	}
+	ov_memstack_unlock();
+	return ptr;
 }
 
 
@@ -820,3 +1000,4 @@ OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UI
 		return FALSE;
 	}
 }
+

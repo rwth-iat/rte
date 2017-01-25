@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   QualifiedName.c
+*   viewNode.c
 *
 *   History
 *   -------
-*   2016-10-19   File created
+*   2016-11-23   File created
 *
 *******************************************************************************
 *
@@ -24,16 +24,4 @@
 #include "opcua.h"
 #include "libov/ov_macros.h"
 
-
-OV_DLLFNCEXPORT OV_ACCESS opcua_qualifiedName_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
-) {
-    /*    
-    *   local variables
-    */
-
-    return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
-}
 

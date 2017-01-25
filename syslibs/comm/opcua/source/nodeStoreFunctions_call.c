@@ -221,7 +221,6 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_call(
 	OV_PATH path;
 	OV_INSTPTR_opcua_methodNode pMethodNode = NULL;
 	OV_VTBLPTR_opcua_methodNode pVtblMethodNode = NULL;
-	OV_INSTPTR_ov_object pParentObject = NULL;
 	OV_INSTPTR_opcua_arguments pArgObject	=	NULL;
 	UA_Argument* pArgs = NULL;
 	size_t argCount = 0;
@@ -263,7 +262,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_call(
 			ov_memstack_unlock();
 			continue;
 		}
-		pParentObject = path.elements[path.size-1].pobj;
+		//pParentObject = path.elements[path.size-1].pobj;
 		if(opcua_nsOv_getNodeClassAndAccess(&(path.elements[path.size-1]), NULL) != UA_NODECLASS_OBJECT){
 			results[indices[i]].statusCode = UA_STATUSCODE_BADNODECLASSINVALID;
 			ov_memstack_unlock();

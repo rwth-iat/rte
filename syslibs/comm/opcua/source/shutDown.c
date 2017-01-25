@@ -64,9 +64,8 @@ OV_DLLFNCEXPORT OV_RESULT opcua_shutDown_calledMethod(
 	 *   local variables
 	 */
 	OV_ANY inputs[1];
-	OV_RESULT result;
 	OV_ANY switchOff;
-
+	OV_RESULT result;
 	switchOff.value.vartype = OV_VT_BOOL;
 	switchOff.value.valueunion.val_bool = FALSE;
 	/*	set	- error handling is omitted here	*/
@@ -81,6 +80,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_shutDown_calledMethod(
 	}
 
 	/*	no outputs...	*/
-	return OV_ERR_OK;
+	return result;
 }
 
