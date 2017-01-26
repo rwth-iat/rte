@@ -1,0 +1,51 @@
+#include "ov.ovm"
+#include "fb.ovm"
+
+LIBRARY openAASDiscoveryServer
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of DiscoveryServer.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	
+	
+	CLASS OVDataForAAS : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			ServerHost   :   STRING  
+                COMMENT         =   "Host (or IP Address or whatever type of address) of target machine."
+                INITIALVALUE    =   "";
+            ServerName  :   STRING
+                COMMENT         =   "KS-Name of the target ks-server. (This may not be necessarry for all types of communication.)"
+                INITIALVALUE    =   ""; 
+            Path        :   STRING
+                COMMENT         =   "Target Path"
+                INITIALVALUE    =   "";
+		END_VARIABLES;
+		OPERATIONS
+			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	CLASS DiscoveryServer : CLASS ov/domain
+		IS_INSTANTIABLE;
+		VARIABLES
+			AddOVDataForAAS[4] : STRING HAS_SET_ACCESSOR FLAGS = "i"
+			    COMMENT         =   "Add the ComCo Data to this AAS"
+                INITIALVALUE    =   {"","","",""};
+            DeleteOVDataForAAS : STRING HAS_SET_ACCESSOR FLAGS = "i"
+                COMMENT         =   "Delete the ComCo Data to this AAS"
+                INITIALVALUE    =   "";
+		END_VARIABLES;
+		OPERATIONS
+			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+END_LIBRARY;
