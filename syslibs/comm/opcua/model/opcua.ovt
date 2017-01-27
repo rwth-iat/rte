@@ -47,6 +47,7 @@ typedef struct UA_CustomDataTypes{
 */
 
 typedef UA_Server* OV_PTR_UA_Server;
+typedef UA_Client* OV_PTR_UA_Client;
 	
 typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_UInt16 **oldNameSpaceIndices,
                                                 UA_UInt16 **newNameSpaceIndices, UA_String **nameSpaceUri);

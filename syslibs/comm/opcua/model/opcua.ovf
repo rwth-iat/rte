@@ -50,6 +50,7 @@ typedef void UA_FNC_OVNODESTOREINTERFACE2DELETE(UA_NodestoreInterface * nodestor
 	
 /* opcua-Server functions */
 typedef UA_StatusCode UA_FNC_ADDINFORMATIONMODEL(UA_NodestoreInterface *nsi, OV_STRING NameSpaceUri, OV_STRING StartFolder, opcua_loadInformationModel loadInfoModel, OV_UINT *NameSpaceIndexInformationModel, OV_UINT *NameSpaceIndexNodeStoreInterface, const UA_DataType *customDataTypes, OV_UINT customDataTypesSize);
+
 	
 typedef UA_Int32 UA_FNC_ADDREFERENCES(
 	void *ensHandle,

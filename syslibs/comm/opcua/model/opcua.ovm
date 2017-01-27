@@ -1,6 +1,5 @@
 #include "ov.ovm"
 #include "ksbase.ovm"
-#include "fb.ovm"
 
 /*
     TODO: introduce a uaReference class to mirror references to outside namespaces and adapt the browse functions accordingly (return nodeId should suffice, I hope)
@@ -416,17 +415,8 @@ LIBRARY opcua
             calledMethod    :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
         END_OPERATIONS;
     END_CLASS;     
-            
-    CLASS testObject : CLASS fb/functionblock IS_INSTANTIABLE;
-        VARIABLES
-            var1 : INT FLAGS="o";
-        END_VARIABLES;
-        OPERATIONS
-            constructor            :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            destructor            :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
-            typemethod:    C_FUNCTION <FB_FNC_TYPEMETHOD>;
-        END_OPERATIONS;
-    END_CLASS;
+    
+
     
 END_LIBRARY;
 
