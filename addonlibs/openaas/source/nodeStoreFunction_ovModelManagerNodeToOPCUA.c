@@ -133,6 +133,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerNodeToOPC
 
 	size_references = size_references + 2;// get/setLifceCycleEntry
 
+	size_references = size_references + 1;// getAASNodeId
+
 
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
@@ -266,6 +268,16 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerNodeToOPC
 	ov_string_append(&tmpString, "||");
 	ov_string_append(&tmpString, "setLCE");
 	newNode->references[13].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+
+	// getAASNodeId
+	newNode->references[14].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[14].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "getAASNodeId");
+	newNode->references[14].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+
 
 	*opcuaNode = newNode;
 	ov_memstack_unlock();

@@ -28,7 +28,19 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 	AASStatusCode result = AASSTATUSCODE_GOOD;
 	OV_STRING funcName = (OV_STRING)methodHandle;
 
-	if (ov_string_compare(funcName, "createAAS") == OV_STRCMP_EQUAL){
+	if (ov_string_compare(funcName, "getAASNodeId") == OV_STRCMP_EQUAL){
+		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
+
+		IdentificationType tmpOVAASId;
+		tmpOVAASId.IdSpec = NULL;
+		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
+		tmpOVAASId.IdType = tmpUAAASId->idType;
+
+		UA_NodeId tmpNodeId = openaas_modelmanager_getAASNodeId(tmpOVAASId);
+
+		output->data = &tmpNodeId;
+		resultOV = OV_ERR_OK;
+	}else if (ov_string_compare(funcName, "createAAS") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_String *tmpUAName = (UA_String*)(input[1].data);
 		UA_Identification *tmpUAAssetId = (UA_Identification*)(input[2].data);
@@ -477,8 +489,11 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			return NULL;
 	}
 
-	if (ov_string_compare(plist[len-1], "AASFolder") == OV_STRCMP_EQUAL){
-		if (openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+	if (ov_string_compare(plist[len-1], "openAAS") == OV_STRCMP_EQUAL){
+			if (openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				return opcuaNode;
+	}else if (ov_string_compare(plist[len-1], "AASFolder") == OV_STRCMP_EQUAL){
+		if (openaas_nodeStoreFunctions_ovAASFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			return opcuaNode;
 	}else if (ov_string_compare(plist2[len2-1], "Views") == OV_STRCMP_EQUAL){
 		if (openaas_nodeStoreFunctions_ovViewsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)

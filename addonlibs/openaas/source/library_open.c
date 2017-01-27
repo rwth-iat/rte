@@ -172,7 +172,6 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 
 	// Create Folder for AAS
 	OV_INSTPTR_ov_domain pTechUnits = NULL;
-	OV_INSTPTR_ov_domain pAASFolder = NULL;
 	pTechUnits = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "TechUnits"));
 	if(!pTechUnits) {
 		result = Ov_CreateObject(ov_domain, pTechUnits, &(pdb->root), "TechUnits");
@@ -185,9 +184,25 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 		ov_logfile_error("Fatal: pTechUnits object found but not domain (or derived)");
 		return OV_ERR_GENERIC;
 	}
-	pAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pTechUnits, "AASFolder"));
+
+	OV_INSTPTR_ov_domain popenAASFolder = NULL;
+	popenAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pTechUnits, "openAAS"));
+	if(!popenAASFolder) {
+		result = Ov_CreateObject(ov_domain, popenAASFolder, pTechUnits, "openAAS");
+		if(Ov_Fail(result))	{
+			ov_logfile_error("Fatal: could not create openAAS domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) popenAASFolder)){
+		ov_logfile_error("Fatal: openAAS object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	OV_INSTPTR_ov_domain pAASFolder = NULL;
+	pAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, popenAASFolder, "AASFolder"));
 	if(!pAASFolder) {
-		result = Ov_CreateObject(ov_domain, pAASFolder, pTechUnits, "AASFolder");
+		result = Ov_CreateObject(ov_domain, pAASFolder, popenAASFolder, "AASFolder");
 		if(Ov_Fail(result))	{
 			ov_logfile_error("Fatal: could not create AASFolder domain");
 			return result;
@@ -212,7 +227,7 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 	// create modelmanager
 	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
 	if(!pmodelmanager){
-		result = Ov_CreateObject(openaas_modelmanager, pmodelmanager, popenAAS, "ModelmanagerOpenAAS");
+		result = Ov_CreateObject(openaas_modelmanager, pmodelmanager, popenAASFolder, "ModelmanagerOpenAAS");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create modelmanager object - reason: %s", ov_result_getresulttext(result));
 			return result;

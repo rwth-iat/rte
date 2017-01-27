@@ -32,7 +32,7 @@ extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
 
 
 
-OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOPCUA(
+OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovAASFolderNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -115,9 +115,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOP
 	((UA_ObjectNode*)newNode)->eventNotifier = 0;
 
 	// References
+	OV_INSTPTR_ov_object pchild = NULL;
 	size_t size_references = 0;
-
-	size_references = size_references + 2;// For ModelManager & AASFolder
+	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
+		size_references++;
+	}
 
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
@@ -126,7 +128,18 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOP
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 	newNode->references[0].isInverse = UA_TRUE;
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
+	OV_UINT len = 0;
+	OV_STRING *plist = NULL;
+	OV_STRING tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	plist = ov_string_split(tmpString, "/", &len);
+	tmpString = "";
+	for (OV_UINT i = 0; i < len-1; i++){
+		if (i != 0)
+			ov_string_append(&tmpString, "/");
+		ov_string_append(&tmpString, plist[i]);
+	}
+	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
 
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
@@ -134,22 +147,30 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOP
 	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE);
 
 
-	// ModelManager
-	newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-	newNode->references[2].isInverse = UA_FALSE;
-	OV_STRING tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "/ModelmanagerOpenAAS");
-	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+	size_t i = 1;
+	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
+		i++;
+		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+		newNode->references[i].isInverse = UA_FALSE;
+		if(Ov_CanCastTo(openaas_aas, pchild)){
+			OV_INSTPTR_openaas_aas pref =
+						Ov_DynamicPtrCast(openaas_aas,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+		}else if (Ov_CanCastTo(openaas_modelmanager, pchild)){
+			OV_INSTPTR_openaas_modelmanager pref =
+						Ov_DynamicPtrCast(openaas_modelmanager,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+		}
 
-	// AASFolder
-	newNode->references[3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-	newNode->references[3].isInverse = UA_FALSE;
-	tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "/AASFolder");
-	newNode->references[3].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
-
+	}
 
 	*opcuaNode = newNode;
 	ov_memstack_unlock();

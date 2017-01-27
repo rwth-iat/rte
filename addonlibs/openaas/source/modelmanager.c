@@ -173,6 +173,12 @@ OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 }
 
 
+
+OV_DLLFNCEXPORT UA_NodeId openaas_modelmanager_getAASNodeId(IdentificationType aasId) {
+    return UA_NODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, openaas_modelmanager_AASConvertListGet(aasId));;
+}
+
+
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_ovresultToAASStatusCode(OV_RESULT result) {
 	switch(result){
 	case OV_ERR_OK:
@@ -429,7 +435,7 @@ OV_DLLFNCEXPORT void openaas_modelmanager_startup(
     UA_StatusCode ret = UA_STATUSCODE_GOOD;
     OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
     pNodeStoreFunctions = Ov_StaticPtrCast(openaas_nodeStoreFunctions, Ov_GetFirstChild(ov_instantiation, pclass_openaas_nodeStoreFunctions));
-    ret = opcua_uaServer_addInformationModel(&pNodeStoreFunctions->v_NodeStoreInterface, "http://acplt.org/AAS/Ov", "/TechUnits/AASFolder", nodeset_returnIndices, &pNodeStoreFunctions->v_NameSpaceIndexInformationModel, &pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, UA_OPENAAS, UA_OPENAAS_COUNT);
+    ret = opcua_uaServer_addInformationModel(&pNodeStoreFunctions->v_NodeStoreInterface, "http://acplt.org/AAS/Ov", "/TechUnits/openAAS", nodeset_returnIndices, &pNodeStoreFunctions->v_NameSpaceIndexInformationModel, &pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, UA_OPENAAS, UA_OPENAAS_COUNT);
 	if (ret != UA_STATUSCODE_GOOD){
 		ov_logfile_error("openaas: Fatal: Couldn't add InformationModel");
 	}

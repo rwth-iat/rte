@@ -30,6 +30,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 	if (ptr2)
 		return AASSTATUSCODE_BADAASID;
 	ptr = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &pdb->root, "TechUnits"));
+	ptr = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, ptr, "openAAS"));
 	ptr = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, ptr, "AASFolder"));
 	if(ptr){
 		paas = Ov_StaticPtrCast(openaas_aas, Ov_SearchChild(ov_containment, ptr, aasName));

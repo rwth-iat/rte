@@ -31,7 +31,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_nodeStoreFunctions_constructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_openaas_nodeStoreFunctions pinst = Ov_StaticPtrCast(openaas_nodeStoreFunctions, pobj);
+    //OV_INSTPTR_openaas_nodeStoreFunctions pinst = Ov_StaticPtrCast(openaas_nodeStoreFunctions, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */
