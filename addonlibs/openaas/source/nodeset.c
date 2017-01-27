@@ -1123,7 +1123,6 @@ for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("Name");
 inputArguments[1].valueRank = -1;
@@ -1131,7 +1130,6 @@ inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[2].name = UA_STRING("AssetId");
 inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
 outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -1139,7 +1137,6 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createAAS");
@@ -1172,15 +1169,12 @@ for (inputArgumentCnt=0; inputArgumentCnt<6; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("CreatingInstanceId");
 inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[2].name = UA_STRING("WritingInstanceId");
 inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[3].name = UA_STRING("EventClass");
 inputArguments[3].valueRank = -1;
@@ -1200,7 +1194,6 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createLCE");
@@ -1233,7 +1226,6 @@ for (inputArgumentCnt=0; inputArgumentCnt<9; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("PVSLName");
 inputArguments[1].valueRank = -1;
@@ -1245,11 +1237,9 @@ inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[3].name = UA_STRING("RelationalExpression");
 inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3003);
 inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[4].name = UA_STRING("ExpressionSemantic");
 inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3004);
 inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[5].name = UA_STRING("Value");
 inputArguments[5].valueRank = -1;
@@ -1261,11 +1251,9 @@ inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 inputArguments[7].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[7].name = UA_STRING("PropertyReference");
 inputArguments[7].valueRank = -1;
-inputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[8].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[8].name = UA_STRING("View");
 inputArguments[8].valueRank = -1;
-inputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3007);
 
 outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -1273,7 +1261,6 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createPVS");
@@ -1306,7 +1293,6 @@ for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("Name");
 inputArguments[1].valueRank = -1;
@@ -1314,7 +1300,6 @@ inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[2].name = UA_STRING("Carrier");
 inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
 outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -1322,7 +1307,6 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createPVSL");
@@ -1355,7 +1339,6 @@ for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
 outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -1363,7 +1346,6 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deleteAAS");
@@ -1396,7 +1378,6 @@ for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("LCEId");
 inputArguments[1].valueRank = -1;
@@ -1408,7 +1389,6 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deleteLCE");
@@ -1441,7 +1421,6 @@ for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("PVSLName");
 inputArguments[1].valueRank = -1;
@@ -1457,7 +1436,6 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deletePVS");
@@ -1490,11 +1468,9 @@ for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("Name");
 inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 
 outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -1502,7 +1478,6 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deletePVSL");
@@ -1525,144 +1500,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6040), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=2;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=2;i=7009), 1:setLCE
-UA_Argument *inputArguments = NULL;
-UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 7);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<7; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("LCEId");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 9);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("CreatingInstanceId");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("WritingInstanceId");
-inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("EventClass");
-inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("Subject");
-inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[6].name = UA_STRING("Data");
-inputArguments[6].valueRank = -1;
-inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
-UA_MethodAttributes attr;
-UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "setLCE");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.executable = true;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 7009);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "setLCE");
-UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 7, inputArguments,  1, outputArguments, NULL);
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6051), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6052), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6051), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6052), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=2;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=2;i=7011), 1:setPVS
-UA_Argument *inputArguments = NULL;
-UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 9);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<9; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("PVSLName");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("Name");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("RelationalExpression");
-inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3003);
-inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("ExpressionSemantic");
-inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3004);
-inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("Value");
-inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[6].name = UA_STRING("Unit");
-inputArguments[6].valueRank = -1;
-inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[7].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[7].name = UA_STRING("PropertyReference");
-inputArguments[7].valueRank = -1;
-inputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[8].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[8].name = UA_STRING("View");
-inputArguments[8].valueRank = -1;
-inputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3007);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
-UA_MethodAttributes attr;
-UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "setPVS");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.executable = true;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 7011);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "setPVS");
-UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 9, inputArguments,  1, outputArguments, NULL);
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6049), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6050), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6049), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6050), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=2;i=1005/1:AASFactoryType using i=47/HasComponent
 // Node: opcua_node_method_t(ns=2;i=7012), 1:getLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
@@ -1673,9 +1510,8 @@ for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("LCEId2");
+inputArguments[1].name = UA_STRING("LCEId");
 inputArguments[1].valueRank = -1;
 inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 9);
 
@@ -1685,11 +1521,9 @@ for (outputArgumentCnt=0; outputArgumentCnt<6; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("CreatingInstanceId");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[1].name = UA_STRING("WritingInstanceId");
 outputArguments[1].valueRank = -1;
-outputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 outputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[2].name = UA_STRING("EventClass");
 outputArguments[2].valueRank = -1;
@@ -1705,7 +1539,6 @@ outputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
 outputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[5].name = UA_STRING("Status");
 outputArguments[5].valueRank = -1;
-outputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "getLCE");
@@ -1738,7 +1571,6 @@ for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_ini
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("PVSLName");
 inputArguments[1].valueRank = -1;
@@ -1754,11 +1586,9 @@ for (outputArgumentCnt=0; outputArgumentCnt<7; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("RelationalExpression");
 outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3003);
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[1].name = UA_STRING("ExpressionSemantic");
 outputArguments[1].valueRank = -1;
-outputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3004);
 outputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[2].name = UA_STRING("Value");
 outputArguments[2].valueRank = -1;
@@ -1770,15 +1600,12 @@ outputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 outputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[4].name = UA_STRING("PropertyReference");
 outputArguments[4].valueRank = -1;
-outputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 outputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[5].name = UA_STRING("View");
 outputArguments[5].valueRank = -1;
-outputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3007);
 outputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[6].name = UA_STRING("Status");
 outputArguments[6].valueRank = -1;
-outputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "getPVS");
@@ -1800,6 +1627,134 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6056), UA_NODEID_NUMER
 } while(0);
 
 do {
+// Referencing node found and declared as parent: ns=2;i=1005/1:AASFactoryType using i=47/HasComponent
+// Node: opcua_node_method_t(ns=2;i=7009), 1:setLCE
+UA_Argument *inputArguments = NULL;
+UA_Argument *outputArguments = NULL;
+
+inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 7);
+int inputArgumentCnt;
+for (inputArgumentCnt=0; inputArgumentCnt<7; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[0].name = UA_STRING("AASId");
+inputArguments[0].valueRank = -1;
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("LCEId");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 9);
+inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[2].name = UA_STRING("CreatingInstanceId");
+inputArguments[2].valueRank = -1;
+inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[3].name = UA_STRING("WritingInstanceId");
+inputArguments[3].valueRank = -1;
+inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[4].name = UA_STRING("EventClass");
+inputArguments[4].valueRank = -1;
+inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[5].name = UA_STRING("Subject");
+inputArguments[5].valueRank = -1;
+inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[6].name = UA_STRING("Data");
+inputArguments[6].valueRank = -1;
+inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
+
+outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+int outputArgumentCnt;
+for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
+outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
+outputArguments[0].name = UA_STRING("Status");
+outputArguments[0].valueRank = -1;
+UA_MethodAttributes attr;
+UA_MethodAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "setLCE");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.executable = true;
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 7009);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "setLCE");
+UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , attr, (UA_MethodCallback) NULL, NULL, 7, inputArguments,  1, outputArguments, NULL);
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6051), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6052), true);
+//  Creating this node has resolved the following open references:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6051), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6052), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=1005/1:AASFactoryType using i=47/HasComponent
+// Node: opcua_node_method_t(ns=2;i=7011), 1:setPVS
+UA_Argument *inputArguments = NULL;
+UA_Argument *outputArguments = NULL;
+
+inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 9);
+int inputArgumentCnt;
+for (inputArgumentCnt=0; inputArgumentCnt<9; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[0].name = UA_STRING("AASId");
+inputArguments[0].valueRank = -1;
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("PVSLName");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[2].name = UA_STRING("Name");
+inputArguments[2].valueRank = -1;
+inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[3].name = UA_STRING("RelationalExpression");
+inputArguments[3].valueRank = -1;
+inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[4].name = UA_STRING("ExpressionSemantic");
+inputArguments[4].valueRank = -1;
+inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[5].name = UA_STRING("Value");
+inputArguments[5].valueRank = -1;
+inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
+inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[6].name = UA_STRING("Unit");
+inputArguments[6].valueRank = -1;
+inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[7].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[7].name = UA_STRING("PropertyReference");
+inputArguments[7].valueRank = -1;
+inputArguments[8].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[8].name = UA_STRING("View");
+inputArguments[8].valueRank = -1;
+
+outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+int outputArgumentCnt;
+for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
+outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
+outputArguments[0].name = UA_STRING("Status");
+outputArguments[0].valueRank = -1;
+UA_MethodAttributes attr;
+UA_MethodAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "setPVS");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.executable = true;
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 7011);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "setPVS");
+UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , attr, (UA_MethodCallback) NULL, NULL, 9, inputArguments,  1, outputArguments, NULL);
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6049), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6050), true);
+//  Creating this node has resolved the following open references:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6049), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6050), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
+} while(0);
+
+do {
 // Referencing node found and declared as parent: i=58/BaseObjectType using i=45/HasSubtype
 // Node: opcua_node_objectType_t(ns=2;i=1004), 1:AssetAdministrationShellType
 UA_ObjectTypeAttributes attr;
@@ -1815,6 +1770,27 @@ UA_Server_addObjectTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId,
 } while(0);
 
 do {
+// Referencing node found and declared as parent: ns=2;i=1004/1:AssetAdministrationShellType using i=47/HasComponent
+// Node: opcua_node_object_t(ns=2;i=5010), 1:Body
+UA_ObjectAttributes attr;
+UA_ObjectAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "Body");
+attr.description = UA_LOCALIZEDTEXT("", "");
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 5010);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 61);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1004);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "Body");
+UA_Server_addObjectNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 58), true); //remove HasTypeDefinition refs generated by addObjectNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 5010), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 61), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 5010), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+} while(0);
+
+do {
 // Referencing node found and declared as parent: i=58/BaseObjectType using i=45/HasSubtype
 // Node: opcua_node_objectType_t(ns=2;i=1002), 1:PropertyValueStatementListType
 UA_ObjectTypeAttributes attr;
@@ -1827,73 +1803,6 @@ UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 45);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "PropertyValueStatementListType");
 UA_Server_addObjectTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, NULL, NULL);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=2;i=1004/1:AssetAdministrationShellType using i=47/HasComponent
-// Node: opcua_node_object_t(ns=2;i=5010), 1:Asset
-UA_ObjectAttributes attr;
-UA_ObjectAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "Asset");
-attr.description = UA_LOCALIZEDTEXT("", "");
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 5010);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_2, 1002);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1004);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "Asset");
-UA_Server_addObjectNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 58), true); //remove HasTypeDefinition refs generated by addObjectNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 5010), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 5010), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 1002), true);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=2;i=5010/1:Asset using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6021), 1:CarrierId
-UA_VariableAttributes attr;
-UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "CarrierId");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.accessLevel = 3;
-attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6021);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 5010);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "CarrierId");
-UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6021), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6021), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=2;i=5010/1:Asset using i=47/HasComponent
-// Node: opcua_node_variable_t(ns=2;i=6026), 1:PropertyValueStatements
-UA_VariableAttributes attr;
-UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "PropertyValueStatements");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.accessLevel = 3;
-attr.valueRank = 1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6026);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 63);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 5010);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "PropertyValueStatements");
-UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 63), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
 } while(0);
 
 do {

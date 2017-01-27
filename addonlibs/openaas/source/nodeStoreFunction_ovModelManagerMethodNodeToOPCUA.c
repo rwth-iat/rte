@@ -86,17 +86,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 
 	OV_ELEMENT tmpElement;
 	tmpElement.elemtype = OV_ET_NONE;
-	do {
-		if (ov_element_getnextpart(&(path.elements[path.size-1]), &tmpElement, OV_ET_OPERATION) == OV_ERR_OK){
-			if (tmpElement.elemtype == OV_ET_NONE){
-				ov_memstack_unlock();
-				return OV_ERR_BADPATH;
-			}
-
-			if (ov_string_compare(tmpElement.elemunion.pop->v_identifier, plist2[0]) == OV_STRCMP_EQUAL)
-				break;
-		}
-	} while(true);
+	if (Ov_Fail(ov_element_searchpart(&(path.elements[path.size-1]), &tmpElement, OV_ET_OPERATION, plist2[0]))){
+		ov_memstack_unlock();
+		return OV_ERR_BADPATH;
+	}
 
 	// Basic Attribute
 	// BrowseName

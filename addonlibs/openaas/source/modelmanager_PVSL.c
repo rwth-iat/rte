@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType
 			return AASSTATUSCODE_BADPVSLNAME;
 		}
 	}else{
-		return AASSTATUSCODE_BADUNEXPECTEDERROR
+		return AASSTATUSCODE_BADUNEXPECTEDERROR;
 	}
 	return AASSTATUSCODE_GOOD;
 }
@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVSL(IdentificationType
 			return AASSTATUSCODE_BADPVSLNAME;
 		}
 	}else{
-		return AASSTATUSCODE_BADUNEXPECTEDERROR
+		return AASSTATUSCODE_BADUNEXPECTEDERROR;
 	}
 	return AASSTATUSCODE_GOOD;
 }

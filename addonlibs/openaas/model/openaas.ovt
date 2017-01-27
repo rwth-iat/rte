@@ -61,14 +61,16 @@ typedef struct AASConvertListContainerType{
 
 typedef int64_t DateTime;
 
-typedef OV_UINT64 AASStatusCode;
-#define AASSTATUSCODE_GOOD                  0x0;
-#define AASSTATUSCODE_BADUNEXPECTEDERROR    0x1;
-#define AASSTATUSCODE_BADAASID              0x2;
-#define AASSTATUSCODE_BADAASNAME            0x3;
-#define AASSTATUSCODE_BADPVSLNAME           0x4;
-#define AASSTATUSCODE_BADPVSNAME            0x5;
-#define AASSTATUSCODE_BADLCEID              0x6;
+ENUMDEF(AASStatusCode)
+#define AASSTATUSCODE_GOOD                  ENUMVAL(OV_VAR_TYPE, 0x00)
+#define AASSTATUSCODE_BADUNEXPECTEDERROR    ENUMVAL(OV_VAR_TYPE, 0x01)
+#define AASSTATUSCODE_BADAASID              ENUMVAL(OV_VAR_TYPE, 0x02)
+#define AASSTATUSCODE_BADAASNAME            ENUMVAL(OV_VAR_TYPE, 0x03)
+#define AASSTATUSCODE_BADPVSLNAME           ENUMVAL(OV_VAR_TYPE, 0x04)
+#define AASSTATUSCODE_BADPVSNAME            ENUMVAL(OV_VAR_TYPE, 0x05)
+#define AASSTATUSCODE_BADLCEID              ENUMVAL(OV_VAR_TYPE, 0x06)
+#define AASSTATUSCODE_OK(result)   ((result) == AASSTATUSCODE_GOOD)
+#define AASSTATUSCODE_FAIL(result) ((result) != AASSTATUSCODE_GOOD)
 
 #endif
 

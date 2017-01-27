@@ -1,271 +1,296 @@
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/Documents/openAAS_workshop/external/open62541/tools/generate_datatypes.py
- * on host opcua-VirtualBox by user opcua at 2017-01-13 11:20:30 */
+ * on host opcua-VirtualBox by user opcua at 2017-01-26 07:12:03 */
 
 #include "stddef.h"
 #include "ua_openaas_generated.h"
 
 /* ExpressionSemanticEnum */
 static UA_DataTypeMember ExpressionSemanticEnum_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ViewEnum */
 static UA_DataTypeMember ViewEnum_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* RelationalExpressionEnum */
 static UA_DataTypeMember RelationalExpressionEnum_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* IdEnum */
 static UA_DataTypeMember IdEnum_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Identification */
 static UA_DataTypeMember Identification_members[2] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "idSpec",
+    "idSpec", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_OPENAAS_IDENUM,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "idType",
+    "idType", /* .memberName */
 #endif
-    .namespaceZero = false,
-    .padding = offsetof(UA_Identification, idType) - offsetof(UA_Identification, idSpec) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_OPENAAS_IDENUM, /* .memberTypeIndex */
+    offsetof(UA_Identification, idType) - offsetof(UA_Identification, idSpec) - sizeof(UA_String), /* .padding */
+    false, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* LifeCycleEntry */
 static UA_DataTypeMember LifeCycleEntry_members[6] = {
-  { .memberTypeIndex = UA_OPENAAS_IDENTIFICATION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "creatingInstance",
+    "creatingInstance", /* .memberName */
 #endif
-    .namespaceZero = false,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_OPENAAS_IDENTIFICATION,
+    UA_OPENAAS_IDENTIFICATION, /* .memberTypeIndex */
+    0, /* .padding */
+    false, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writingInstance",
+    "writingInstance", /* .memberName */
 #endif
-    .namespaceZero = false,
-    .padding = offsetof(UA_LifeCycleEntry, writingInstance) - offsetof(UA_LifeCycleEntry, creatingInstance) - sizeof(UA_Identification),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATAVALUE,
+    UA_OPENAAS_IDENTIFICATION, /* .memberTypeIndex */
+    offsetof(UA_LifeCycleEntry, writingInstance) - offsetof(UA_LifeCycleEntry, creatingInstance) - sizeof(UA_Identification), /* .padding */
+    false, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "data",
+    "data", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_LifeCycleEntry, data) - offsetof(UA_LifeCycleEntry, writingInstance) - sizeof(UA_Identification),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_DATAVALUE, /* .memberTypeIndex */
+    offsetof(UA_LifeCycleEntry, data) - offsetof(UA_LifeCycleEntry, writingInstance) - sizeof(UA_Identification), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subject",
+    "subject", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_LifeCycleEntry, subject) - offsetof(UA_LifeCycleEntry, data) - sizeof(UA_DataValue),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_LifeCycleEntry, subject) - offsetof(UA_LifeCycleEntry, data) - sizeof(UA_DataValue), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "eventClass",
+    "eventClass", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_LifeCycleEntry, eventClass) - offsetof(UA_LifeCycleEntry, subject) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_OPENAAS_VIEWENUM,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_LifeCycleEntry, eventClass) - offsetof(UA_LifeCycleEntry, subject) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "view",
+    "view", /* .memberName */
 #endif
-    .namespaceZero = false,
-    .padding = offsetof(UA_LifeCycleEntry, view) - offsetof(UA_LifeCycleEntry, eventClass) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_OPENAAS_VIEWENUM, /* .memberTypeIndex */
+    offsetof(UA_LifeCycleEntry, view) - offsetof(UA_LifeCycleEntry, eventClass) - sizeof(UA_String), /* .padding */
+    false, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* PropertyValueStatement */
 static UA_DataTypeMember PropertyValueStatement_members[6] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "expressionSemantic",
+    "expressionSemantic", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "relationalExpression",
+    "relationalExpression", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PropertyValueStatement, relationalExpression) - offsetof(UA_PropertyValueStatement, expressionSemantic) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_PropertyValueStatement, relationalExpression) - offsetof(UA_PropertyValueStatement, expressionSemantic) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "unit",
+    "unit", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PropertyValueStatement, unit) - offsetof(UA_PropertyValueStatement, relationalExpression) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_VARIANT,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_PropertyValueStatement, unit) - offsetof(UA_PropertyValueStatement, relationalExpression) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "value",
+    "value", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PropertyValueStatement, value) - offsetof(UA_PropertyValueStatement, unit) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_OPENAAS_IDENTIFICATION,
+    UA_TYPES_VARIANT, /* .memberTypeIndex */
+    offsetof(UA_PropertyValueStatement, value) - offsetof(UA_PropertyValueStatement, unit) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "propertyReference",
+    "propertyReference", /* .memberName */
 #endif
-    .namespaceZero = false,
-    .padding = offsetof(UA_PropertyValueStatement, propertyReference) - offsetof(UA_PropertyValueStatement, value) - sizeof(UA_Variant),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_OPENAAS_VIEWENUM,
+    UA_OPENAAS_IDENTIFICATION, /* .memberTypeIndex */
+    offsetof(UA_PropertyValueStatement, propertyReference) - offsetof(UA_PropertyValueStatement, value) - sizeof(UA_Variant), /* .padding */
+    false, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "view",
+    "view", /* .memberName */
 #endif
-    .namespaceZero = false,
-    .padding = offsetof(UA_PropertyValueStatement, view) - offsetof(UA_PropertyValueStatement, propertyReference) - sizeof(UA_Identification),
-    .isArray = false
-  },};
+    UA_OPENAAS_VIEWENUM, /* .memberTypeIndex */
+    offsetof(UA_PropertyValueStatement, view) - offsetof(UA_PropertyValueStatement, propertyReference) - sizeof(UA_Identification), /* .padding */
+    false, /* .namespaceZero */
+    false /* .isArray */
+},};
 const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
 
 /* ExpressionSemanticEnum */
-{ .typeId = {.namespaceIndex = 2, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3004},
-  .typeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ExpressionSemanticEnum",
+    "ExpressionSemanticEnum", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ExpressionSemanticEnum),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = ExpressionSemanticEnum_members },
+    {2, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_ExpressionSemanticEnum), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ExpressionSemanticEnum_members /* .members */ },
 
 /* ViewEnum */
-{ .typeId = {.namespaceIndex = 2, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3007},
-  .typeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ViewEnum",
+    "ViewEnum", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ViewEnum),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = ViewEnum_members },
+    {2, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_ViewEnum), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ViewEnum_members /* .members */ },
 
 /* RelationalExpressionEnum */
-{ .typeId = {.namespaceIndex = 2, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3003},
-  .typeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RelationalExpressionEnum",
+    "RelationalExpressionEnum", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RelationalExpressionEnum),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = RelationalExpressionEnum_members },
+    {2, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_RelationalExpressionEnum), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    RelationalExpressionEnum_members /* .members */ },
 
 /* IdEnum */
-{ .typeId = {.namespaceIndex = 2, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3002},
-  .typeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "IdEnum",
+    "IdEnum", /* .typeName */
 #endif
-  .memSize = sizeof(UA_IdEnum),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = IdEnum_members },
+    {2, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_IdEnum), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    IdEnum_members /* .members */ },
 
 /* Identification */
-{ .typeId = {.namespaceIndex = 2, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3005},
-  .typeIndex = UA_OPENAAS_IDENTIFICATION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Identification",
+    "Identification", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Identification),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 5001,
-  .membersSize = 2,
-  .members = Identification_members },
+    {2, UA_NODEIDTYPE_NUMERIC, {3005}}, /* .typeId */
+    sizeof(UA_Identification), /* .memSize */
+    UA_OPENAAS_IDENTIFICATION, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    5001, /* .binaryEncodingId */
+    Identification_members /* .members */ },
 
 /* LifeCycleEntry */
-{ .typeId = {.namespaceIndex = 2, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3008},
-  .typeIndex = UA_OPENAAS_LIFECYCLEENTRY,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "LifeCycleEntry",
+    "LifeCycleEntry", /* .typeName */
 #endif
-  .memSize = sizeof(UA_LifeCycleEntry),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 5008,
-  .membersSize = 6,
-  .members = LifeCycleEntry_members },
+    {2, UA_NODEIDTYPE_NUMERIC, {3008}}, /* .typeId */
+    sizeof(UA_LifeCycleEntry), /* .memSize */
+    UA_OPENAAS_LIFECYCLEENTRY, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    5008, /* .binaryEncodingId */
+    LifeCycleEntry_members /* .members */ },
 
 /* PropertyValueStatement */
-{ .typeId = {.namespaceIndex = 2, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3006},
-  .typeIndex = UA_OPENAAS_PROPERTYVALUESTATEMENT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "PropertyValueStatement",
+    "PropertyValueStatement", /* .typeName */
 #endif
-  .memSize = sizeof(UA_PropertyValueStatement),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 5006,
-  .membersSize = 6,
-  .members = PropertyValueStatement_members },
+    {2, UA_NODEIDTYPE_NUMERIC, {3011}}, /* .typeId */
+    sizeof(UA_PropertyValueStatement), /* .memSize */
+    UA_OPENAAS_PROPERTYVALUESTATEMENT, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    5006, /* .binaryEncodingId */
+    PropertyValueStatement_members /* .members */ },
 };
 
