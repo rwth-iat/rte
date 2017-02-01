@@ -91,7 +91,7 @@ static UA_ByteString loadCertificate(void) {
 
 		fseek(fp, 0, SEEK_END);
 		certificate.length = ftell(fp);
-		certificate.data = malloc(certificate.length*sizeof(UA_Byte));
+		certificate.data = UA_malloc(certificate.length*sizeof(UA_Byte));
 		if(!certificate.data){
 			fclose(fp);
 			return certificate;
@@ -493,7 +493,8 @@ OV_DLLFNCEXPORT void opcua_uaServer_destructor(
 
     /* destroy object */
 	ksbase_ComTask_destructor(pobj);
-	ov_database_free(pinst->v_customDataTypes.DataTypes);
+	if (pinst->v_customDataTypes.DataTypes)
+		ov_database_free(pinst->v_customDataTypes.DataTypes);
 
     return;
 }

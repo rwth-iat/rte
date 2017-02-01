@@ -416,7 +416,30 @@ LIBRARY opcua
         END_OPERATIONS;
     END_CLASS;     
     
-
+    CLASS uaClient        :    CLASS ov/object
+        IS_INSTANTIABLE;
+        COMMENT = "Holds all necessarry data for a client";
+        VARIABLES
+        	endpointUrl    : STRING FLAGS = "i";
+        	connect        : BOOL HAS_SET_ACCESSOR FLAGS = "i";
+        	disconnect     : BOOL HAS_SET_ACCESSOR FLAGS = "i";
+        	connected      : BOOL;
+        	status         : UINT;
+            clientConfig        :    C_TYPE    <UA_ClientConfig>
+                COMMENT =    "Stack-specific representation of client configuration";
+            clientData            :    C_TYPE    <OV_PTR_UA_Client>
+                COMMENT    =    "Stack-specific representation of client data";
+           customDataTypes      : C_TYPE <UA_CustomDataTypes>;
+        END_VARIABLES;    
+        OPERATIONS
+            startup     : C_FUNCTION <OV_FNC_STARTUP>;
+            shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+            connectTo   : C_FUNCTION <UA_FNC_CONNECTTO>;
+            readValue   : C_FUNCTION <UA_FNC_READVALUE>;
+            disconnectfnc  : C_FUNCTION <UA_FNC_DISCONNECT>;
+        END_OPERATIONS;
+    END_CLASS;
     
 END_LIBRARY;
 

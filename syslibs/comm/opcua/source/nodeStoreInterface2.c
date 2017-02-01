@@ -658,6 +658,7 @@ static void OV_NodeStore2_deleteNodestore(void *handle){
 }
 
 static void OV_NodeStore2_deleteNode(UA_Node *node){
+	//UA_Node_deleteMembersAnyNodeClass(node);
 	ov_database_free(node);
 }
 static void OV_NodeStore2_releaseNode(void *handle, const UA_Node *node){
@@ -771,7 +772,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 
 	// NodeId
 	newNode->nodeId.identifierType = nodeId->identifierType;
-	newNode->nodeId.namespaceIndex = 2;//nodeId->namespaceIndex;
+	newNode->nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
 	switch(newNode->nodeId.identifierType){
 	case UA_NODEIDTYPE_NUMERIC:
 		newNode->nodeId.identifier.numeric = nodeId->identifier.numeric;
@@ -1473,7 +1474,7 @@ opcua_nodeStoreFunctions_ovNodeStoreInterface2New(UA_NodestoreInterface* nsi) {
 }
 void
 opcua_nodeStoreFunctions_ovNodeStoreInterface2Delete(UA_NodestoreInterface * nodestoreInterface){
-    UA_free(nodestoreInterface->handle);
-    ov_database_free(nodestoreInterface);
+	if (nodestoreInterface->handle)
+		UA_free(nodestoreInterface->handle);
 }
 

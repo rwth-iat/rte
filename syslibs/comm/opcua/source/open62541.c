@@ -27694,7 +27694,6 @@ static const UA_StatusCodeDescription statusCodeDescriptions[229] =
  {UA_STATUSCODE_BADSHUTDOWN, "BadShutdown", "The operation was cancelled because the application is shutting down."},
  {UA_STATUSCODE_BADSERVERNOTCONNECTED, "BadServerNotConnected", "The operation could not complete because the client is not connected to the server."},
  {UA_STATUSCODE_BADSERVERHALTED, "BadServerHalted", "The server has stopped and cannot process any requests."},
- {UA_STATUSCODE_BADNOTHINGTODO, "BadNothingToDo", "There was nothing to do because the client passed a list of operations with no elements."},
  {UA_STATUSCODE_BADTOOMANYOPERATIONS, "BadTooManyOperations", "The request could not be processed because it specified too many operations."},
  {UA_STATUSCODE_BADTOOMANYMONITOREDITEMS, "BadTooManyMonitoredItems", "The request could not be processed because there are too many monitored items in the subscription."},
  {UA_STATUSCODE_BADDATATYPEIDUNKNOWN, "BadDataTypeIdUnknown", "The extension object cannot be (de)serialized because the data type id is not recognized."},
@@ -27922,3 +27921,11 @@ void addDataTypes(UA_Server* server, const UA_DataType *customDataTypes, size_t 
 	server->config.customDataTypes = customDataTypes;
 	server->config.customDataTypesSize = customDataTypesSize;
 }
+
+/*
+void* ov_database_calloc(OV_UINT num, OV_UINT size){
+	size_t total = num * size;
+	void *p = ov_database_malloc(total);
+	if (!p) return NULL;
+	return memset(p, 0, total);
+}*/
