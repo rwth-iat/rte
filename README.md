@@ -2,8 +2,27 @@ This is the source code of a runtime environment for the process control domain.
 It is well known in the German process control community under the name of the core technology ACPLT/OV.
 
 #Compiling
-You need tcl, bison, flex for compiling the runtime environment. Just change into the build directory and call 
-`tclsh ./acplt_build.tcl no_dbcommands 64`
+You need tcl, bison and flex 
+tcl:
+```sh
+sudo apt-get install tcl
+```
+bison:
+```sh
+sudo apt-get install bison
+```
+flex:
+```sh
+sudo apt-get install flex
+```
+to compile the runtime environment. Navigate to build folder and run the build command:
+```sh
+cd build && tclsh acplt_build.tcl
+```
+or
+```sh
+cd build && tclsh acplt_build.tcl no_dbcommands 64
+```
 for a 64 bit build.
 
 The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
@@ -15,7 +34,7 @@ An API Reference can be found here: [API Reference](http://acplt.github.io/rte-w
 A Release list can be found here: [Releases](http://acplt.github.io/rte-www/releases/)
 
 #Using the environment
-TODO
+
 
 The runtime environment is used at industry scale in the petro chemical plants at INEOS in Cologne.
 
