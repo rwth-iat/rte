@@ -35,6 +35,19 @@ A Release list can be found here: [Releases](http://acplt.github.io/rte-www/rele
 
 #Using the environment
 
+##start the Runtime Environment:
+build a new database file:
+```sh
+./build/acplt/servers/MANAGER/build_database.sh
+```
+start up:
+```sh
+./build/acplt/servers/MANAGER/start_server.sh
+```
+further settings(e.g., which libs should be loaded at start up) of the RTE can be made within the configuration file that can be found here
+```sh
+./build/acplt/servers/MANAGER/ov_server.conf
+```
 
 The runtime environment is used at industry scale in the petro chemical plants at INEOS in Cologne.
 
