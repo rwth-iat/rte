@@ -23,7 +23,12 @@ or
 ```sh
 cd build && tclsh acplt_build.tcl no_dbcommands 64
 ```
-for a 64 bit build.
+for a 64 bit build and
+
+```sh
+cd build && tclsh acplt_build.tcl no_dbcommands
+```
+on Raspberry Pi.
 
 The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
 
