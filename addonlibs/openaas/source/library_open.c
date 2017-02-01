@@ -213,7 +213,6 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 		return OV_ERR_GENERIC;
 	}
 
-
 	// create nodeStoreFunctions
 	pNodeStoreFunctions = Ov_StaticPtrCast(openaas_nodeStoreFunctions, Ov_GetFirstChild(ov_instantiation, pclass_openaas_nodeStoreFunctions));
 	if(!pNodeStoreFunctions){

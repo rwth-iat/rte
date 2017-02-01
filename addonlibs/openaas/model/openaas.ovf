@@ -47,14 +47,15 @@ typedef AASStatusCode UA_FNC_CREATEAAS(IdentificationType aasId, OV_STRING aasNa
 typedef AASStatusCode UA_FNC_DELETEAAS(IdentificationType aasId);
 typedef AASStatusCode UA_FNC_CREATEPVSL(IdentificationType aasId, OV_STRING pvslName, IdentificationType carrier);
 typedef AASStatusCode UA_FNC_DELETEPVSL(IdentificationType aasId, OV_STRING pvslName);
-typedef AASStatusCode UA_FNC_CREATEPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum relationalExpression, ExpressionSemanticEnum ExpressionSemantic, OV_ANY value, OV_STRING unit, IdentificationType propertyReference, ViewEnum view);
+typedef AASStatusCode UA_FNC_CREATEPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum relationalExpression, ExpressionSemanticEnum ExpressionSemantic, OV_ANY value, OV_STRING unit, IdentificationType propertyReference, ViewEnum view, OV_BOOL IsPublic);
 typedef AASStatusCode UA_FNC_DELETEPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName);
-typedef AASStatusCode UA_FNC_SETPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum relationalExpression, ExpressionSemanticEnum ExpressionSemantic, OV_ANY value, OV_STRING unit, IdentificationType propertyReference, ViewEnum view);
-typedef AASStatusCode UA_FNC_GETPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum *relationalExpression, ExpressionSemanticEnum *ExpressionSemantic, OV_ANY *value, OV_STRING *unit, IdentificationType *propertyReference, ViewEnum *view);
+typedef AASStatusCode UA_FNC_SETPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum relationalExpression, ExpressionSemanticEnum ExpressionSemantic, OV_ANY value, OV_STRING unit, IdentificationType propertyReference, ViewEnum view, OV_BOOL IsPublic);
+typedef AASStatusCode UA_FNC_GETPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum *relationalExpression, ExpressionSemanticEnum *ExpressionSemantic, OV_ANY *value, OV_STRING *unit, IdentificationType *propertyReference, ViewEnum *view, OV_BOOL *IsPublic);
 typedef AASStatusCode UA_FNC_CREATELCE(IdentificationType aasId, IdentificationType creatingInstance, IdentificationType writingInstance, OV_STRING eventClass, OV_STRING subject, DataValue data);
 typedef AASStatusCode UA_FNC_DELETELCE(IdentificationType aasId, OV_UINT64 lceId);
 typedef AASStatusCode UA_FNC_SETLCE(IdentificationType aasId, OV_UINT64 lceId, IdentificationType creatingInstance, IdentificationType writingInstance, OV_STRING eventClass, OV_STRING subject, DataValue data);
 typedef AASStatusCode UA_FNC_GETLCE(IdentificationType aasId, OV_UINT64 lceId, IdentificationType *creatingInstance, IdentificationType *writingInstance, OV_STRING *eventClass, OV_STRING *subject, DataValue *data);
+typedef AASStatusCode UA_FNC_GETLASTLCES(IdentificationType aasId, OV_UINT count, IdentificationType **creatingInstance, IdentificationType **writingInstance, OV_STRING **eventClass, OV_STRING **subject, DataValue **data, OV_UINT *arrayDimension);
 typedef UA_NodeId UA_FNC_GETAASNODEID(IdentificationType aasId);
 typedef AASStatusCode UA_FNC_OVRESULTTOAASSTATUSCODE(OV_RESULT result);
 typedef void OPENAAS_FNC_AASCONVERTLISTADD(IdentificationType aasId, OV_STRING aasName);

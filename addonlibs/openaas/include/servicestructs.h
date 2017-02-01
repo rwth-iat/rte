@@ -73,7 +73,9 @@ typedef enum {
 	SRV_getLCEReq,
 	SRV_getLCERsp,
 	SRV_setLCEReq,
-	SRV_setLCERsp
+	SRV_setLCERsp,
+	SRV_getCoreDataReq,
+	SRV_getCoreDataRsp
 } SRV_service_t;
 
 typedef enum {
@@ -119,14 +121,6 @@ typedef struct {
 } SRV_ident_t;
 
 typedef struct {
-	SRV_String name;
-	SRV_ident_t carrierId;
-	bool hasName;
-	//PVS_t* pvs;
-	//uint8_t numPvs;
-} PVSL_t;
-
-typedef struct {
 	SRV_exprSemEnum_t expressionSemantic;
 	SRV_relExprEnum_t relationalExpression;
 	SRV_String name;
@@ -135,9 +129,19 @@ typedef struct {
 	SRV_ident_t propertyReference;
 	SRV_valType_t valType;
 	void* value;
+	bool isPublic;
 	bool hasName;
 	bool hasUnit;
+	bool hasIsPublic;
 } PVS_t;
+
+typedef struct {
+	SRV_String name;
+	SRV_ident_t carrierId;
+	bool hasName;
+	PVS_t* pvs;
+	uint32_t numPvs;
+} PVSL_t;
 
 typedef struct {
 	uint64_t lceId;
@@ -287,6 +291,15 @@ typedef struct {
 	status_t status;
 } setLCERsp_t;
 
+typedef struct {
+	uint8_t dummy;
+} getCoreDataReq_t;
+
+typedef struct {
+	status_t status;
+	PVSL_t* pvsl;
+	uint32_t numPvsl;
+} getCoreDataRsp_t;
 
 SRV_String* SRV_String_new();
 SRV_String* SRV_String_copy(SRV_String* to, const SRV_String* from);
@@ -331,6 +344,8 @@ getLCEReq_t* getLCEReq_t_new();
 getLCERsp_t* getLCERsp_t_new();
 setLCEReq_t* setLCEReq_t_new();
 setLCERsp_t* setLCERsp_t_new();
+getCoreDataReq_t* getCoreDataReq_t_new();
+getCoreDataRsp_t* getCoreDataRsp_t_new();
 
 void SRV_ident_t_init (SRV_ident_t* this);
 void PVSL_t_init (PVSL_t* this);
@@ -365,6 +380,8 @@ void getLCEReq_t_init (getLCEReq_t* this);
 void getLCERsp_t_init (getLCERsp_t* this);
 void setLCEReq_t_init (setLCEReq_t* this);
 void setLCERsp_t_init (setLCERsp_t* this);
+void getCoreDataReq_t_init(getCoreDataReq_t* this);
+void getCoreDataRsp_t_init(getCoreDataRsp_t* this);
 
 void SRV_ident_t_deleteMembers (SRV_ident_t* this);
 void PVSL_t_deleteMembers (PVSL_t* this);
@@ -399,6 +416,8 @@ void getLCEReq_t_deleteMembers (getLCEReq_t* this);
 void getLCERsp_t_deleteMembers (getLCERsp_t* this);
 void setLCEReq_t_deleteMembers (setLCEReq_t* this);
 void setLCERsp_t_deleteMembers (setLCERsp_t* this);
+void getCoreDataReq_t_deleteMembers(getCoreDataReq_t* this);
+void getCoreDataRsp_t_deleteMembers(getCoreDataRsp_t* this);
 
 void SRV_ident_t_delete (SRV_ident_t* this);
 void PVSL_t_delete (PVSL_t* this);
@@ -433,5 +452,7 @@ void getLCEReq_t_delete (getLCEReq_t* this);
 void getLCERsp_t_delete (getLCERsp_t* this);
 void setLCEReq_t_delete (setLCEReq_t* this);
 void setLCERsp_t_delete (setLCERsp_t* this);
+void getCoreDataReq_t_delete(getCoreDataReq_t* this);
+void getCoreDataRsp_t_delete(getCoreDataRsp_t* this);
 
 #endif /* SERVICESTRUCTS_H_ */

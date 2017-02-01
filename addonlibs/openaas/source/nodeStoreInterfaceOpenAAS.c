@@ -18,6 +18,7 @@
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "ua_openaas_generated.h"
+#include "ua_openaas_generated_handling.h"
 
 
 OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(void *methodHandle, const UA_NodeId *objectId,
@@ -36,9 +37,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
 		tmpOVAASId.IdType = tmpUAAASId->idType;
 
-		UA_NodeId tmpNodeId = openaas_modelmanager_getAASNodeId(tmpOVAASId);
+		UA_NodeId tmpNodeId;
+		UA_NodeId_init(&tmpNodeId);
+		tmpNodeId = openaas_modelmanager_getAASNodeId(tmpOVAASId);
 
-		output->data = &tmpNodeId;
+		UA_Variant_setScalarCopy(&output[0], &tmpNodeId, &UA_TYPES[UA_TYPES_NODEID]);
+		UA_NodeId_deleteMembers(&tmpNodeId);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createAAS") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -60,7 +64,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		result = openaas_modelmanager_createAAS(tmpOVAASId, tmpOVName, tmpOVAssetId);
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deleteAAS") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -72,7 +76,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		result = openaas_modelmanager_deleteAAS(tmpOVAASId);
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createPVSL") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -94,7 +98,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		result = openaas_modelmanager_createPVSL(tmpOVAASId, tmpOVPVSLName, tmpOVCarrier);
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deletePVSL") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -110,7 +114,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		result = openaas_modelmanager_deletePVSL(tmpOVAASId, tmpOVPVSLName);
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createLCE") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -147,7 +151,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		result = openaas_modelmanager_createLCE(tmpOVAASId, tmpOVCreatingInstance, tmpOVWritingInstance, tmpOVEventClass, tmpOVSubject, tmpOVDataValue);
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deleteLCE") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -163,7 +167,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		result = openaas_modelmanager_deleteLCE(tmpOVAASId, tmpOVLCEId);
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "getLCE") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -192,29 +196,113 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		result = openaas_modelmanager_getLCE(tmpOVAASId, tmpOVLCEId, &tmpOVCreatingInstance, &tmpOVWritingInstance, &tmpOVEventClass, &tmpOVSubject, &tmpOVDataValue);
 
 		UA_Identification tmpUACreatingInstance;
+		UA_Identification_init(&tmpUACreatingInstance);
 		copyOvStringToOPCUA(tmpOVCreatingInstance.IdSpec, &tmpUACreatingInstance.idSpec);
 		tmpUACreatingInstance.idType = tmpOVCreatingInstance.IdType;
 
 		UA_Identification tmpUAWritingInstance;
+		UA_Identification_init(&tmpUAWritingInstance);
 		copyOvStringToOPCUA(tmpOVWritingInstance.IdSpec, &tmpUAWritingInstance.idSpec);
 		tmpUAWritingInstance.idType = tmpOVWritingInstance.IdType;
 
 		UA_String tmpUAEventClass;
+		UA_String_init(&tmpUAEventClass);
 		copyOvStringToOPCUA(tmpOVEventClass, &tmpUAEventClass);
 
 		UA_String tmpUASubject;
+		UA_String_init(&tmpUASubject);
 		copyOvStringToOPCUA(tmpOVSubject, &tmpUASubject);
 
 		UA_DataValue tmpUAValue;
+		UA_DataValue_init(&tmpUAValue);
 		ov_AnyToVariant(&tmpOVDataValue.Value, &tmpUAValue.value);
 		tmpUAValue.sourceTimestamp = tmpOVDataValue.TimeStamp;
 
-		output[0].data = &tmpUACreatingInstance;
-		output[1].data = &tmpUAWritingInstance;
-		output[2].data = &tmpUAEventClass;
-		output[3].data = &tmpUASubject;
-		output[4].data = &tmpUAValue;
-		output[5].data = &result;
+		UA_Variant_setScalarCopy(&output[0], &tmpUACreatingInstance, &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
+		UA_Variant_setScalarCopy(&output[1], &tmpUAWritingInstance, &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
+		UA_Variant_setScalarCopy(&output[2], &tmpUAEventClass, &UA_TYPES[UA_TYPES_STRING]);
+		UA_Variant_setScalarCopy(&output[3], &tmpUASubject, &UA_TYPES[UA_TYPES_STRING]);
+		UA_Variant_setScalarCopy(&output[4], &tmpUAValue, &UA_TYPES[UA_TYPES_DATAVALUE]);
+		UA_Variant_setScalarCopy(&output[5], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+
+		UA_Identification_deleteMembers(&tmpUACreatingInstance);
+		UA_Identification_deleteMembers(&tmpUAWritingInstance);
+		UA_String_deleteMembers(&tmpUAEventClass);
+		UA_String_deleteMembers(&tmpUASubject);
+		UA_DataValue_deleteMembers(&tmpUAValue);
+		resultOV = OV_ERR_OK;
+	}else if (ov_string_compare(funcName, "getLastLCEs") == OV_STRCMP_EQUAL){
+		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
+		UA_UInt32 *tmpUACount = (UA_UInt32*)(input[1].data);
+
+		IdentificationType tmpOVAASId;
+		tmpOVAASId.IdSpec = NULL;
+		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
+		tmpOVAASId.IdType = tmpUAAASId->idType;
+
+		OV_UINT tmpOVCount;
+		tmpOVCount = *tmpUACount;
+
+		IdentificationType *tmpOVCreatingInstance = NULL;
+
+		OV_STRING *tmpOVEventClass = NULL;
+
+		OV_STRING *tmpOVSubject = NULL;
+
+		IdentificationType *tmpOVWritingInstance = NULL;
+
+		DataValue *tmpOVDataValue;
+
+		OV_UINT arrayDimension;
+
+		result = openaas_modelmanager_getLastLCEs(tmpOVAASId, tmpOVCount, &tmpOVCreatingInstance, &tmpOVWritingInstance, &tmpOVEventClass, &tmpOVSubject, &tmpOVDataValue, &arrayDimension);
+
+		UA_Identification *tmpUACreatingInstance = UA_malloc(sizeof(UA_Identification)*arrayDimension);
+		UA_Identification *tmpUAWritingInstance = UA_malloc(sizeof(UA_Identification)*arrayDimension);
+		UA_String *tmpUAEventClass = UA_malloc(sizeof(UA_String)*arrayDimension);
+		UA_String *tmpUASubject = UA_malloc(sizeof(UA_String)*arrayDimension);
+		UA_DataValue *tmpUAValue = UA_malloc(sizeof(UA_DataValue)*arrayDimension);
+
+		for (OV_UINT i = 0; i < arrayDimension; i++){
+			UA_Identification_init(&tmpUACreatingInstance[i]);
+			copyOvStringToOPCUA(tmpOVCreatingInstance[i].IdSpec, &tmpUACreatingInstance[i].idSpec);
+			tmpUACreatingInstance[i].idType = tmpOVCreatingInstance[i].IdType;
+
+			UA_Identification_init(&tmpUAWritingInstance[i]);
+			copyOvStringToOPCUA(tmpOVWritingInstance[i].IdSpec, &tmpUAWritingInstance[i].idSpec);
+			tmpUAWritingInstance[i].idType = tmpOVWritingInstance[i].IdType;
+
+			UA_String_init(&tmpUAEventClass[i]);
+			copyOvStringToOPCUA(tmpOVEventClass[i], &tmpUAEventClass[i]);
+
+			UA_String_init(&tmpUASubject[i]);
+			copyOvStringToOPCUA(tmpOVSubject[i], &tmpUASubject[i]);
+
+			UA_DataValue_init(&tmpUAValue[i]);
+			ov_AnyToVariant(&tmpOVDataValue[i].Value, &tmpUAValue[i].value);
+			tmpUAValue[i].sourceTimestamp = tmpOVDataValue[i].TimeStamp;
+		}
+
+
+		UA_Variant_setArrayCopy(&output[0], &tmpUACreatingInstance, arrayDimension, &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
+		UA_Variant_setArrayCopy(&output[1], &tmpUAWritingInstance, arrayDimension, &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
+		UA_Variant_setArrayCopy(&output[2], &tmpUAEventClass, arrayDimension, &UA_TYPES[UA_TYPES_STRING]);
+		UA_Variant_setArrayCopy(&output[3], &tmpUASubject, arrayDimension, &UA_TYPES[UA_TYPES_STRING]);
+		UA_Variant_setArrayCopy(&output[4], &tmpUAValue, arrayDimension, &UA_TYPES[UA_TYPES_DATAVALUE]);
+		UA_Variant_setScalarCopy(&output[5], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+
+		for (OV_UINT i = 0; i < arrayDimension; i++){
+			UA_Identification_deleteMembers(&tmpUACreatingInstance[i]);
+			UA_Identification_deleteMembers(&tmpUAWritingInstance[i]);
+			UA_String_deleteMembers(&tmpUAEventClass[i]);
+			UA_String_deleteMembers(&tmpUASubject[i]);
+			UA_DataValue_deleteMembers(&tmpUAValue[i]);
+		}
+		UA_free(tmpUACreatingInstance);
+		UA_free(tmpUAWritingInstance);
+		UA_free(tmpUAEventClass);
+		UA_free(tmpUASubject);
+		UA_free(tmpUAValue);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "setLCE") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -255,7 +343,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		result = openaas_modelmanager_setLCE(tmpOVAASId, tmpOVLCEId, tmpOVCreatingInstance, tmpOVWritingInstance, tmpOVEventClass, tmpOVSubject, tmpOVDataValue);
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createPVS") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -267,6 +355,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		UA_String *tmpUAUnit = (UA_String*)(input[6].data);
 		UA_Identification *tmpUAPropertyReference = (UA_Identification*)(input[7].data);
 		UA_ViewEnum *tmpUAView = (UA_ViewEnum*)(input[8].data);
+		UA_Boolean *tmpIsPublic = (UA_Boolean*)(input[9].data);
 
 		IdentificationType tmpOVAASId;
 		tmpOVAASId.IdSpec = NULL;
@@ -299,9 +388,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		ViewEnum tmpOVView;
 		tmpOVView = *tmpUAView;
 
-		result = openaas_modelmanager_createPVS(tmpOVAASId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView);
+		OV_BOOL tmpOVIsPublic;
+		tmpOVIsPublic = *tmpIsPublic;
 
-		output->data = &result;
+		result = openaas_modelmanager_createPVS(tmpOVAASId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView, tmpOVIsPublic);
+
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deletePVS") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -321,7 +413,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		result = openaas_modelmanager_deletePVS(tmpOVAASId, tmpOVPVSLName, tmpOVPVSName);
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 
 	}else if (ov_string_compare(funcName, "getPVS") == OV_STRCMP_EQUAL){
@@ -353,7 +445,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		ViewEnum tmpOVView;
 
-		result = openaas_modelmanager_getPVS(tmpOVAASId, tmpOVPVSLName, tmpOVPVSName, &tmpOVRelationalExpression, &tmpOVExpressionSemantic, &tmpOVValue, &tmpOVUnit, &tmpOVProperyReference, &tmpOVView);
+		OV_BOOL tmpOVIsPublic;
+
+		result = openaas_modelmanager_getPVS(tmpOVAASId, tmpOVPVSLName, tmpOVPVSName, &tmpOVRelationalExpression, &tmpOVExpressionSemantic, &tmpOVValue, &tmpOVUnit, &tmpOVProperyReference, &tmpOVView, &tmpOVIsPublic);
 
 		UA_RelationalExpressionEnum tmpUARelationalExpression;
 		tmpUARelationalExpression = tmpOVRelationalExpression;
@@ -362,27 +456,36 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		tmpUAExpressionSemantic = tmpOVExpressionSemantic;
 
 		UA_DataValue tmpUAValue;
+		UA_DataValue_init(&tmpUAValue);
 		ov_AnyToVariant(&tmpOVValue, &tmpUAValue.value);
 
 		UA_String tmpUAUnit;
+		UA_String_init(&tmpUAUnit);
 		copyOvStringToOPCUA(tmpOVUnit, &tmpUAUnit);
 
 		UA_Identification tmpUAPropertyReference;
+		UA_Identification_init(&tmpUAPropertyReference);
 		copyOvStringToOPCUA(tmpOVProperyReference.IdSpec, &tmpUAPropertyReference.idSpec);
 		tmpUAPropertyReference.idType = tmpOVProperyReference.IdType;
 
 		UA_ViewEnum tmpUAView;
 		tmpUAView = tmpOVView;
 
-		output[0].data = &tmpUARelationalExpression;
-		output[1].data = &tmpUAExpressionSemantic;
-		output[2].data = &tmpUAValue;
-		output[3].data = &tmpUAUnit;
-		output[4].data = &tmpUAPropertyReference;
-		output[5].data = &tmpUAView;
-		output[6].data = &result;
+		UA_Boolean tmpUAIsPublic;
+		tmpUAIsPublic = tmpOVIsPublic;
 
-		output->data = &result;
+		UA_Variant_setScalarCopy(&output[0], &tmpUARelationalExpression, &UA_OPENAAS[UA_OPENAAS_RELATIONALEXPRESSIONENUM]);
+		UA_Variant_setScalarCopy(&output[1], &tmpUAExpressionSemantic, &UA_OPENAAS[UA_OPENAAS_EXPRESSIONSEMANTICENUM]);
+		UA_Variant_setScalarCopy(&output[2], &tmpUAValue, &UA_TYPES[UA_TYPES_DATAVALUE]);
+		UA_Variant_setScalarCopy(&output[3], &tmpUAUnit, &UA_TYPES[UA_TYPES_STRING]);
+		UA_Variant_setScalarCopy(&output[4], &tmpUAPropertyReference, &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
+		UA_Variant_setScalarCopy(&output[5], &tmpUAView, &UA_OPENAAS[UA_OPENAAS_VIEWENUM]);
+		UA_Variant_setScalarCopy(&output[6], &tmpUAIsPublic, &UA_TYPES[UA_TYPES_BOOLEAN]);
+		UA_Variant_setScalarCopy(&output[7], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+
+		UA_DataValue_deleteMembers(&tmpUAValue);
+		UA_String_deleteMembers(&tmpUAUnit);
+		UA_Identification_deleteMembers(&tmpUAPropertyReference);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "setPVS") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
@@ -394,6 +497,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		UA_String *tmpUAUnit = (UA_String*)(input[6].data);
 		UA_Identification *tmpUAPropertyReference = (UA_Identification*)(input[7].data);
 		UA_ViewEnum *tmpUAView = (UA_ViewEnum*)(input[8].data);
+		UA_Boolean *tmpUAIsPublic = (UA_Boolean*)(input[9].data);
 
 		IdentificationType tmpOVAASId;
 		tmpOVAASId.IdSpec = NULL;
@@ -426,9 +530,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		ViewEnum tmpOVView;
 		tmpOVView = *tmpUAView;
 
-		result = openaas_modelmanager_setPVS(tmpOVAASId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView);
+		OV_BOOL tmpOVIsPublic;
+		tmpOVIsPublic = *tmpUAIsPublic;
 
-		output->data = &result;
+		result = openaas_modelmanager_setPVS(tmpOVAASId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView, tmpOVIsPublic);
+
+		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else{
 		resultOV = OV_ERR_BADPARAM;
@@ -442,6 +549,7 @@ static void OV_NodeStore_deleteNodestore(void *handle){
 }
 
 static void OV_NodeStore_deleteNode(UA_Node *node){
+	//UA_Node_deleteMembersAnyNodeClass(node);
 	ov_database_free(node);
 }
 static void OV_NodeStore_releaseNode(UA_Node *node){
@@ -540,7 +648,6 @@ static UA_StatusCode OV_NodeStore_removeNode(void *handle, const UA_NodeId *node
     //return UA_STATUSCODE_GOOD;
 }
 static UA_StatusCode OV_NodeStore_insertNode(void *handle, UA_Node *node, UA_NodeId *parrentNode){
-	OV_NodeStore_releaseNode(node);
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 	//OV_INSTPTR_ov_object pobj = opcua_nodeStoreFunctions_resolveNodeIdToOvObject(&(node->nodeId));
 	//if (pobj != NULL)
@@ -687,6 +794,6 @@ openaas_nodeStoreFunctions_ovNodeStoreInterfaceOpenAASNew(UA_NodestoreInterface*
 
 void
 openaas_nodeStoreFunctions_ovNodeStoreInterfaceOpenAASDelete(UA_NodestoreInterface * nsi){
-    UA_free(nsi->handle);
-    ov_database_free(nsi);
+	if (nsi->handle)
+		UA_free(nsi->handle);
 }

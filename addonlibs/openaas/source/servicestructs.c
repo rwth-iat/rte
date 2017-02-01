@@ -161,6 +161,10 @@ void* SRV_serviceGeneric_new(SRV_service_t type){
 		return setLCEReq_t_new();
 	case SRV_setLCERsp:
 		return setLCERsp_t_new();
+	case SRV_getCoreDataReq:
+		return getCoreDataReq_t_new();
+	case SRV_getCoreDataRsp:
+		return getCoreDataRsp_t_new();
 	case SRV_undefined:default:
 		return NULL;
 	}
@@ -310,7 +314,16 @@ setPVSRsp_t* setPVSRsp_t_new(){
 	return this;
 }
 
-
+getCoreDataReq_t* getCoreDataReq_t_new(){
+	getCoreDataReq_t* this = malloc(sizeof(getCoreDataReq_t));
+	getCoreDataReq_t_init(this);
+	return this;
+}
+getCoreDataRsp_t* getCoreDataRsp_t_new(){
+	getCoreDataRsp_t* this = malloc(sizeof(getCoreDataRsp_t));
+	getCoreDataRsp_t_init(this);
+	return this;
+}
 
 void SRV_ident_t_init (SRV_ident_t* this){
 	this->idType = SRV_IDT_undefined;
@@ -320,6 +333,8 @@ void SRV_ident_t_init (SRV_ident_t* this){
 void PVSL_t_init (PVSL_t* this){
 	SRV_ident_t_init(&this->carrierId);
 	SRV_String_init(&this->name);
+	this->pvs = NULL;
+	this->numPvs = 0;
 	this->hasName = false;
 }
 
@@ -332,8 +347,10 @@ void PVS_t_init (PVS_t* this){
 	this->valType = SRV_VT_undefined;
 	this->value = malloc(SRV_VALUEMEMSIZE);
 	this->view = SRV_VIEW_undefined;
+	this->isPublic = false;
 	this->hasName = false;
 	this->hasUnit =false;
+	this->hasIsPublic = false;
 
 }
 
@@ -432,7 +449,13 @@ void SRV_serviceGeneric_init(void* this, SRV_service_t type){
 	case SRV_setLCERsp:
 		setLCERsp_t_init(this);
 		break;
-	case SRV_undefined:default:
+	case SRV_getCoreDataReq:
+		getCoreDataReq_t_init(this);
+		break;
+	case SRV_getCoreDataRsp:
+		getCoreDataRsp_t_init(this);
+		break;
+	case SRV_undefined:
 		break;
 	}
 	return;
@@ -522,7 +545,14 @@ void setLCERsp_t_init (setLCERsp_t* this){
 	this->status = 0;
 }
 
-
+void getCoreDataReq_t_init(getCoreDataReq_t* this){
+	this->dummy = 42;
+}
+void getCoreDataRsp_t_init(getCoreDataRsp_t* this){
+	this->status = 0;
+	this->numPvsl = 0;
+	this->pvsl = NULL;
+}
 
 void SRV_ident_t_deleteMembers (SRV_ident_t* this){
 	SRV_String_deleteMembers(&this->idSpec);
@@ -531,6 +561,14 @@ void SRV_ident_t_deleteMembers (SRV_ident_t* this){
 void PVSL_t_deleteMembers (PVSL_t* this){
 	SRV_ident_t_deleteMembers(&this->carrierId);
 	SRV_String_deleteMembers(&this->name);
+	if(this->pvs){
+		for(uint i = 0; i<this->numPvs; i++){
+			PVS_t_deleteMembers(&this->pvs[i]);
+		}
+		free(this->pvs);
+		this->pvs = NULL;
+	}
+	this->numPvs = 0;
 }
 
 void PVS_t_deleteMembers (PVS_t* this){
@@ -638,7 +676,13 @@ void SRV_serviceGeneric_deleteMembers(void* this, SRV_service_t type){
 	case SRV_setLCERsp:
 		//setLCERsp_t_deleteMembers(this);
 		break;
-	case SRV_undefined:default:
+	case SRV_getCoreDataReq:
+		//getCoreDataReq_t_deleteMembers(this);
+		break;
+	case SRV_getCoreDataRsp:
+		getCoreDataRsp_t_deleteMembers(this);
+		break;
+	case SRV_undefined:
 		break;
 	}
 	return;
@@ -689,7 +733,6 @@ void getPVSRsp_t_deleteMembers (getPVSRsp_t* this){
 void setPVSReq_t_deleteMembers (setPVSReq_t* this){
 	PVS_t_deleteMembers(&this->pvs);
 	SRV_String_deleteMembers(&this->pvslName);
-	//SRV_String_deleteMembers(&this->pvsName);
 }
 void setPVSRsp_t_deleteMembers (setPVSRsp_t* this){}
 void getLCEReq_t_deleteMembers (getLCEReq_t* this){}
@@ -701,6 +744,17 @@ void setLCEReq_t_deleteMembers (setLCEReq_t* this){
 }
 void setLCERsp_t_deleteMembers (setLCERsp_t* this){}
 
+void getCoreDataReq_t_deleteMembers(getCoreDataReq_t* this){}
+void getCoreDataRsp_t_deleteMembers(getCoreDataRsp_t* this){
+	if(this->pvsl){
+		for(uint i = 0; i<this->numPvsl; i++){
+			PVSL_t_deleteMembers(&this->pvsl[i]);
+		}
+		free(this->pvsl);
+		this->pvsl = NULL;
+	}
+	this->numPvsl = 0;
+}
 
 
 void SRV_ident_t_delete (SRV_ident_t* this){
@@ -826,5 +880,13 @@ void setLCEReq_t_delete (setLCEReq_t* this){
 }
 void setLCERsp_t_delete (setLCERsp_t* this){
 	//setLCERsp_t_deleteMembers(this);
+	free(this);
+}
+void getCoreDataReq_t_delete(getCoreDataReq_t* this){
+	//getCoreDataReq_t_deleteMembers(this);
+	free(this);
+}
+void getCoreDataRsp_t_delete(getCoreDataRsp_t* this){
+	getCoreDataRsp_t_deleteMembers(this);
 	free(this);
 }

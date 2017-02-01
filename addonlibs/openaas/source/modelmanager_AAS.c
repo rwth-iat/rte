@@ -42,6 +42,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 			return openaas_modelmanager_ovresultToAASStatusCode(result);
 		}
 		openaas_modelmanager_AASConvertListAdd(aasId, aasName);
+		paas->p_Header.p_Config.v_CarrierString = NULL;
 		ov_string_setvalue(&paas->p_Header.p_Config.v_CarrierString, aasId.IdSpec);
 		paas->p_Header.p_Config.v_CarrierType = aasId.IdType;
 
@@ -57,6 +58,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 		ov_string_print(&tmpString, "%i", assetId.IdType);
 		ov_string_append(&tmpString, assetId.IdSpec);
 		OV_ANY tmpAny;
+		tmpAny.value.valueunion.val_string = NULL;
 		ov_string_setvalue(&tmpAny.value.valueunion.val_string, tmpString);
 		tmpAny.value.vartype = OV_VT_STRING;
 		Ov_SetAnyValue(&pPropertyValueStatement->v_Value, &tmpAny);

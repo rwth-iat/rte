@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include <inttypes.h>
 
 #include "jsmn.h"
 #include "servicestructs.h"
@@ -83,6 +84,8 @@ JSON_RC jsonparseGetLCEReq(getLCEReq_t* gLceReq, const jsmntok_t* t, const SRV_S
 JSON_RC jsonparseGetLCERsp(getLCERsp_t* gLceRsp, const jsmntok_t* t, const SRV_String* js, int n, int start);
 JSON_RC jsonparseSetLCEReq(setLCEReq_t* sLceReq, const jsmntok_t* t, const SRV_String* js, int n, int start);
 JSON_RC jsonparseSetLCERsp(setLCERsp_t* sLceRsp, const jsmntok_t* t, const SRV_String* js, int n, int start);
+JSON_RC jsonparseGetCoreDataReq(getCoreDataReq_t* gCDReq, const jsmntok_t* t, const SRV_String* js, int n, int start);
+JSON_RC jsonparseGetCoreDataRsp(getCoreDataRsp_t* gCDRsp, const jsmntok_t* t, const SRV_String* js, int n, int start);
 
 // generating functions
 JSON_RC jsonGenGeneric(SRV_String* json, int* length,const SRV_msgHeader* header, const void* srvStruct, SRV_service_t srvType);
@@ -116,7 +119,19 @@ JSON_RC jsonGenGetLCEReq(SRV_String* json, int* length, const getLCEReq_t* gLceR
 JSON_RC jsonGenGetLCERsp(SRV_String* json, int* length, const getLCERsp_t* gLceRsp);
 JSON_RC jsonGenSetLCEReq(SRV_String* json, int* length, const setLCEReq_t* sLceReq);
 JSON_RC jsonGenSetLCERsp(SRV_String* json, int* length, const setLCERsp_t* sLceRsp);
+JSON_RC jsonGenGetCoreDataReq(SRV_String* json, int* length, const getCoreDataReq_t* gCDReq);
+JSON_RC jsonGenGetCoreDataRsp(SRV_String* json, int* length, const getCoreDataRsp_t* gCDRsp);
 
 char* strptime(const char *s, const char *fmt, struct tm *tp);
+
+extern const SRV_String JSON_RE_STR[];
+
+extern const SRV_String JSON_ES_STR[];
+
+extern const SRV_String JSON_ID_STR[];
+
+extern const SRV_String JSON_VIEW_STR[];
+
+extern const SRV_String JSON_VT_STR[];
 
 #endif /* JSONPARSING_H_ */

@@ -29,6 +29,7 @@ LIBRARY openaas
             PropertyReferenceType : UINT;
             View                   : UINT
                 COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURITY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+            IsPublic                : BOOL;
         END_VARIABLES;
         OPERATIONS
         	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
@@ -160,7 +161,7 @@ LIBRARY openaas
         PVSLAASIdTypeId                 : UINT;
     	PVSLName                        : STRING INITIALVALUE    =   "";
     	PVSLCarrierString               : STRING INITIALVALUE    =   "";
-    	PVSLCarrierTypeId               : UINT;    
+    	PVSLCarrierTypeId               : UINT;   
     	PVSLStatus                      : UINT; 
     	PVSLCreate                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVSL";
 	    PVSLDelete                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVSL"; 
@@ -176,6 +177,7 @@ LIBRARY openaas
         PVSPropertyReferenceIdString    : STRING INITIALVALUE    =   "";
         PVSPropertyReferenceIdType      : UINT;
         PVSView                         : UINT;     
+        PVSIsPublic                     : BOOL;
         PVSStatus                       : UINT;  
 	    PVSCreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVS";
         PVSDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVS";
@@ -211,6 +213,7 @@ LIBRARY openaas
         createLCE  : C_FUNCTION <UA_FNC_CREATELCE>;
         deleteLCE  : C_FUNCTION <UA_FNC_DELETELCE>;
         getLCE     : C_FUNCTION <UA_FNC_GETLCE>;
+        getLastLCEs: C_FUNCTION <UA_FNC_GETLASTLCES>;
         setLCE     : C_FUNCTION <UA_FNC_SETLCE>;
         getAASNodeId : C_FUNCTION <UA_FNC_GETAASNODEID>;
         

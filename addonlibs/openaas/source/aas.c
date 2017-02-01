@@ -114,6 +114,7 @@ OV_RESULT serviceValueToOVDataValue(DataValue* value, SRV_valType_t valueType, v
 		break;
 	case SRV_VT_STRING:
 		value->Value.value.vartype = OV_VT_STRING;
+		value->Value.value.valueunion.val_string = NULL;
 		ov_string_setvalue(&value->Value.value.valueunion.val_string, (char*)serviceValue);
 		break;
 	default:
@@ -129,22 +130,22 @@ OV_RESULT OVDataValueToserviceValue(DataValue value, SRV_valType_t* valueType, v
 	switch(value.Value.value.vartype){
 	case OV_VT_BOOL:
 		*valueType = SRV_VT_BOOL;
-		*serviceValue = malloc(sizeof(bool));
+		*serviceValue = ov_database_malloc(sizeof(bool));
 		*(bool*)*serviceValue = value.Value.value.valueunion.val_bool;
 		break;
 	case OV_VT_DOUBLE:
 		*valueType = SRV_VT_DOUBLE;
-		*serviceValue = malloc(sizeof(double));
+		*serviceValue = ov_database_malloc(sizeof(double));
 		*(double*)*serviceValue = value.Value.value.valueunion.val_double;
 		break;
 	case OV_VT_INT:
 		*valueType = SRV_VT_INT32;
-		*serviceValue = malloc(sizeof(int));
+		*serviceValue = ov_database_malloc(sizeof(int));
 		*(int*)*serviceValue = value.Value.value.valueunion.val_int;
 		break;
 	case OV_VT_UINT:
 		*valueType = SRV_VT_UINT32;
-		*serviceValue = malloc(sizeof(unsigned int));
+		*serviceValue = ov_database_malloc(sizeof(unsigned int));
 		*(unsigned int*)*serviceValue = value.Value.value.valueunion.val_uint;
 	case OV_VT_STRING:
 		*valueType = SRV_VT_STRING;
@@ -537,7 +538,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			ViewEnum tmpOVView;
 			tmpOVView = createPVSReq->pvs.view;
 
-			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView);
+			OV_BOOL tmpOVIsPublic;
+			tmpOVIsPublic = createPVSReq->pvs.isPublic;
+
+			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView, tmpOVIsPublic);
 
 			createPVSRsp_t createPVSRsp;
 			createPVSRsp_t_init(&createPVSRsp);
@@ -611,7 +615,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			ViewEnum tmpOVView;
 			tmpOVView = setPVSReq->pvs.view;
 
-			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView);
+			OV_BOOL tmpOVIsPublic;
+			tmpOVIsPublic = setPVSReq->pvs.isPublic;
+
+			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView, tmpOVIsPublic);
 
 			setPVSRsp_t setPVSRsp;
 			setPVSRsp_t_init(&setPVSRsp);
@@ -650,7 +657,9 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 			ViewEnum tmpOVView;
 
-			result = openaas_modelmanager_getPVS(aasId, tmpOVPVSLName, tmpOVPVSName, &tmpOVRelationalExpression, &tmpOVExpressionSemantic, &tmpOVValue, &tmpOVUnit, &tmpOVProperyReference, &tmpOVView);
+			OV_BOOL tmpOVIsPublic;
+
+			result = openaas_modelmanager_getPVS(aasId, tmpOVPVSLName, tmpOVPVSName, &tmpOVRelationalExpression, &tmpOVExpressionSemantic, &tmpOVValue, &tmpOVUnit, &tmpOVProperyReference, &tmpOVView, &tmpOVIsPublic);
 
 			getPVSRsp_t getPVSRsp;
 			getPVSRsp_t_init(&getPVSRsp);
@@ -670,6 +679,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			getPVSRsp.pvs.propertyReference.idType = tmpOVProperyReference.IdType;
 
 			getPVSRsp.pvs.view = tmpOVView;
+
+			getPVSRsp.pvs.isPublic = tmpOVIsPublic;
 
 			getPVSRsp.status = result;
 

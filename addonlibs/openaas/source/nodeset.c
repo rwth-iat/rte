@@ -554,7 +554,7 @@ attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of 
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_ByteString *opcua_node_variable_t_ns_2_i_6001_variant_DataContents =  UA_ByteString_new();
-*opcua_node_variable_t_ns_2_i_6001_variant_DataContents = UA_STRING_ALLOC("PG9wYzpUeXBlRGljdGlvbmFyeSB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZ        W1hLWluc3RhbmNlIiB4bWxuczp0bnM9Imh0dHA6Ly9vcGVuQUFTLm9yZy9BQVMvIiBEZWZhd        Wx0Qnl0ZU9yZGVyPSJMaXR0bGVFbmRpYW4iIHhtbG5zOm9wYz0iaHR0cDovL29wY2ZvdW5kY        XRpb24ub3JnL0JpbmFyeVNjaGVtYS8iIHhtbG5zOnVhPSJodHRwOi8vb3BjZm91bmRhdGlvb        i5vcmcvVUEvIiBUYXJnZXROYW1lc3BhY2U9Imh0dHA6Ly9vcGVuQUFTLm9yZy9BQVMvIj4KI        DxvcGM6SW1wb3J0IE5hbWVzcGFjZT0iaHR0cDovL29wY2ZvdW5kYXRpb24ub3JnL1VBLyIvP        gogPG9wYzpTdHJ1Y3R1cmVkVHlwZSBCYXNlVHlwZT0idWE6RXh0ZW5zaW9uT2JqZWN0IiBOY        W1lPSJJZGVudGlmaWNhdGlvbiI+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZT0ib3BjOkNoYXJBc        nJheSIgTmFtZT0iSWRTcGVjIi8+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZT0idG5zOklkRW51b        SIgTmFtZT0iSWRUeXBlIi8+CiA8L29wYzpTdHJ1Y3R1cmVkVHlwZT4KIDxvcGM6U3RydWN0d        XJlZFR5cGUgQmFzZVR5cGU9InVhOkV4dGVuc2lvbk9iamVjdCIgTmFtZT0iTGlmZUN5Y2xlR        W50cnkiPgogIDxvcGM6RmllbGQgVHlwZU5hbWU9InRuczpJZGVudGlmaWNhdGlvbiIgTmFtZ        T0iQ3JlYXRpbmdJbnN0YW5jZSIvPgogIDxvcGM6RmllbGQgVHlwZU5hbWU9InRuczpJZGVud        GlmaWNhdGlvbiIgTmFtZT0iV3JpdGluZ0luc3RhbmNlIi8+CiAgPG9wYzpGaWVsZCBUeXBlT        mFtZT0idWE6RGF0YVZhbHVlIiBOYW1lPSJEYXRhIi8+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZ        T0ib3BjOkNoYXJBcnJheSIgTmFtZT0iU3ViamVjdCIvPgogIDxvcGM6RmllbGQgVHlwZU5hb        WU9Im9wYzpDaGFyQXJyYXkiIE5hbWU9IkV2ZW50Q2xhc3MiLz4KIDwvb3BjOlN0cnVjdHVyZ        WRUeXBlPgogPG9wYzpTdHJ1Y3R1cmVkVHlwZSBCYXNlVHlwZT0idWE6RXh0ZW5zaW9uT2JqZ        WN0IiBOYW1lPSJQcm9wZXJ0eVZhbHVlU3RhdGVtZW50Ij4KICA8b3BjOkZpZWxkIFR5cGVOY        W1lPSJ0bnM6RXhwcmVzc2lvblNlbWFudGljRW51bSIgTmFtZT0iRXhwcmVzc2lvblNlbWFud        GljIi8+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZT0idG5zOlJlbGF0aW9uYWxFeHByZXNzaW9uR        W51bSIgTmFtZT0iUmVsYXRpb25hbEV4cHJlc3Npb24iLz4KICA8b3BjOkZpZWxkIFR5cGVOY        W1lPSJvcGM6Q2hhckFycmF5IiBOYW1lPSJVbml0Ii8+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZ        T0idWE6VmFyaWFudCIgTmFtZT0iVmFsdWUiLz4KICA8b3BjOkZpZWxkIFR5cGVOYW1lPSJ0b        nM6SWRlbnRpZmljYXRpb24iIE5hbWU9IlByb3BlcnR5UmVmZXJlbmNlIi8+CiAgPG9wYzpGa        WVsZCBUeXBlTmFtZT0idG5zOlZpZXdFbnVtIiBOYW1lPSJWaWV3Ii8+CiA8L29wYzpTdHJ1Y        3R1cmVkVHlwZT4KIDxvcGM6RW51bWVyYXRlZFR5cGUgTGVuZ3RoSW5CaXRzPSIzMiIgTmFtZ        T0iRXhwcmVzc2lvblNlbWFudGljRW51bSI+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZ        T0iQVNTVVJBTkNFIiBWYWx1ZT0iMCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9I        lNFVFRJTkciIFZhbHVlPSIxIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTUVBU        1VSRU1FTlQiIFZhbHVlPSIyIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iUkVRV        UlSRU1FTlQiIFZhbHVlPSIzIi8+CiA8L29wYzpFbnVtZXJhdGVkVHlwZT4KIDxvcGM6RW51b        WVyYXRlZFR5cGUgTGVuZ3RoSW5CaXRzPSIzMiIgTmFtZT0iSWRFbnVtIj4KICA8b3BjOkVud        W1lcmF0ZWRWYWx1ZSBOYW1lPSJVUkkiIFZhbHVlPSIwIi8+CiAgPG9wYzpFbnVtZXJhdGVkV        mFsdWUgTmFtZT0iSVNPIiBWYWx1ZT0iMSIvPgogPC9vcGM6RW51bWVyYXRlZFR5cGU+CiA8b        3BjOkVudW1lcmF0ZWRUeXBlIExlbmd0aEluQml0cz0iMzIiIE5hbWU9IlJlbGF0aW9uYWxFe        HByZXNzaW9uRW51bSI+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iR1JFQVRFUl9US        EFOIiBWYWx1ZT0iMCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkdSRUFURVJfR        VFVQUwiIFZhbHVlPSIxIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iRVFVQUwiI        FZhbHVlPSIyIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTk9UX0VRVUFMIiBWY        Wx1ZT0iMyIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkxFU1NfRVFVQUwiIFZhb        HVlPSI0Ii8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTEVTU19USEFOIiBWYWx1Z        T0iNSIvPgogPC9vcGM6RW51bWVyYXRlZFR5cGU+CiA8b3BjOkVudW1lcmF0ZWRUeXBlIExlb        md0aEluQml0cz0iMzIiIE5hbWU9IlZpZXdFbnVtIj4KICA8b3BjOkVudW1lcmF0ZWRWYWx1Z        SBOYW1lPSJCVVNJTkVTUyIgVmFsdWU9IjAiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOY        W1lPSJDT05TVFJVQ1RJT04iIFZhbHVlPSIxIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgT        mFtZT0iUE9XRVIiIFZhbHVlPSIyIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iR        lVOQ1RJT05BTCIgVmFsdWU9IjMiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJMT        0NBVElPTiIgVmFsdWU9IjQiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJTRUNVU        klUWSIgVmFsdWU9IjUiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJORVRXT1JLI        iBWYWx1ZT0iNiIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkxJRkVDWUNMRSIgV        mFsdWU9IjciLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJIVU1BTiIgVmFsdWU9I        jgiLz4KIDwvb3BjOkVudW1lcmF0ZWRUeXBlPgo8L29wYzpUeXBlRGljdGlvbmFyeT4K");
+*opcua_node_variable_t_ns_2_i_6001_variant_DataContents = UA_STRING_ALLOC("PG9wYzpUeXBlRGljdGlvbmFyeSB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZ        W1hLWluc3RhbmNlIiB4bWxuczp0bnM9Imh0dHA6Ly9vcGVuQUFTLm9yZy9BQVMvIiBEZWZhd        Wx0Qnl0ZU9yZGVyPSJMaXR0bGVFbmRpYW4iIHhtbG5zOm9wYz0iaHR0cDovL29wY2ZvdW5kY        XRpb24ub3JnL0JpbmFyeVNjaGVtYS8iIHhtbG5zOnVhPSJodHRwOi8vb3BjZm91bmRhdGlvb        i5vcmcvVUEvIiBUYXJnZXROYW1lc3BhY2U9Imh0dHA6Ly9vcGVuQUFTLm9yZy9BQVMvIj4KI        DxvcGM6SW1wb3J0IE5hbWVzcGFjZT0iaHR0cDovL29wY2ZvdW5kYXRpb24ub3JnL1VBLyIvP        gogPG9wYzpTdHJ1Y3R1cmVkVHlwZSBCYXNlVHlwZT0idWE6RXh0ZW5zaW9uT2JqZWN0IiBOY        W1lPSJJZGVudGlmaWNhdGlvbiI+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZT0ib3BjOkNoYXJBc        nJheSIgTmFtZT0iSWRTcGVjIi8+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZT0idG5zOklkRW51b        SIgTmFtZT0iSWRUeXBlIi8+CiA8L29wYzpTdHJ1Y3R1cmVkVHlwZT4KIDxvcGM6U3RydWN0d        XJlZFR5cGUgQmFzZVR5cGU9InVhOkV4dGVuc2lvbk9iamVjdCIgTmFtZT0iTGlmZUN5Y2xlR        W50cnkiPgogIDxvcGM6RmllbGQgVHlwZU5hbWU9InRuczpJZGVudGlmaWNhdGlvbiIgTmFtZ        T0iQ3JlYXRpbmdJbnN0YW5jZSIvPgogIDxvcGM6RmllbGQgVHlwZU5hbWU9InRuczpJZGVud        GlmaWNhdGlvbiIgTmFtZT0iV3JpdGluZ0luc3RhbmNlIi8+CiAgPG9wYzpGaWVsZCBUeXBlT        mFtZT0idWE6RGF0YVZhbHVlIiBOYW1lPSJEYXRhIi8+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZ        T0ib3BjOkNoYXJBcnJheSIgTmFtZT0iU3ViamVjdCIvPgogIDxvcGM6RmllbGQgVHlwZU5hb        WU9Im9wYzpDaGFyQXJyYXkiIE5hbWU9IkV2ZW50Q2xhc3MiLz4KIDwvb3BjOlN0cnVjdHVyZ        WRUeXBlPgogPG9wYzpTdHJ1Y3R1cmVkVHlwZSBCYXNlVHlwZT0idWE6RXh0ZW5zaW9uT2JqZ        WN0IiBOYW1lPSJQcm9wZXJ0eVZhbHVlU3RhdGVtZW50Ij4KICA8b3BjOkZpZWxkIFR5cGVOY        W1lPSJ0bnM6RXhwcmVzc2lvblNlbWFudGljRW51bSIgTmFtZT0iRXhwcmVzc2lvblNlbWFud        GljIi8+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZT0idG5zOlJlbGF0aW9uYWxFeHByZXNzaW9uR        W51bSIgTmFtZT0iUmVsYXRpb25hbEV4cHJlc3Npb24iLz4KICA8b3BjOkZpZWxkIFR5cGVOY        W1lPSJvcGM6Q2hhckFycmF5IiBOYW1lPSJVbml0Ii8+CiAgPG9wYzpGaWVsZCBUeXBlTmFtZ        T0idWE6VmFyaWFudCIgTmFtZT0iVmFsdWUiLz4KICA8b3BjOkZpZWxkIFR5cGVOYW1lPSJ0b        nM6SWRlbnRpZmljYXRpb24iIE5hbWU9IlByb3BlcnR5UmVmZXJlbmNlIi8+CiAgPG9wYzpGa        WVsZCBUeXBlTmFtZT0idG5zOlZpZXdFbnVtIiBOYW1lPSJWaWV3Ii8+CiAgPG9wYzpGaWVsZ        CBUeXBlTmFtZT0ib3BjOkJvb2xlYW4iIE5hbWU9IklzUHVibGljIi8+CiA8L29wYzpTdHJ1Y        3R1cmVkVHlwZT4KIDxvcGM6RW51bWVyYXRlZFR5cGUgTGVuZ3RoSW5CaXRzPSIzMiIgTmFtZ        T0iRXhwcmVzc2lvblNlbWFudGljRW51bSI+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZ        T0iQVNTVVJBTkNFIiBWYWx1ZT0iMCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9I        lNFVFRJTkciIFZhbHVlPSIxIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTUVBU        1VSRU1FTlQiIFZhbHVlPSIyIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iUkVRV        UlSRU1FTlQiIFZhbHVlPSIzIi8+CiA8L29wYzpFbnVtZXJhdGVkVHlwZT4KIDxvcGM6RW51b        WVyYXRlZFR5cGUgTGVuZ3RoSW5CaXRzPSIzMiIgTmFtZT0iSWRFbnVtIj4KICA8b3BjOkVud        W1lcmF0ZWRWYWx1ZSBOYW1lPSJVUkkiIFZhbHVlPSIwIi8+CiAgPG9wYzpFbnVtZXJhdGVkV        mFsdWUgTmFtZT0iSVNPIiBWYWx1ZT0iMSIvPgogPC9vcGM6RW51bWVyYXRlZFR5cGU+CiA8b        3BjOkVudW1lcmF0ZWRUeXBlIExlbmd0aEluQml0cz0iMzIiIE5hbWU9IlJlbGF0aW9uYWxFe        HByZXNzaW9uRW51bSI+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iR1JFQVRFUl9US        EFOIiBWYWx1ZT0iMCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkdSRUFURVJfR        VFVQUwiIFZhbHVlPSIxIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iRVFVQUwiI        FZhbHVlPSIyIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTk9UX0VRVUFMIiBWY        Wx1ZT0iMyIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkxFU1NfRVFVQUwiIFZhb        HVlPSI0Ii8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTEVTU19USEFOIiBWYWx1Z        T0iNSIvPgogPC9vcGM6RW51bWVyYXRlZFR5cGU+CiA8b3BjOkVudW1lcmF0ZWRUeXBlIExlb        md0aEluQml0cz0iMzIiIE5hbWU9IlZpZXdFbnVtIj4KICA8b3BjOkVudW1lcmF0ZWRWYWx1Z        SBOYW1lPSJCVVNJTkVTUyIgVmFsdWU9IjAiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOY        W1lPSJDT05TVFJVQ1RJT04iIFZhbHVlPSIxIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgT        mFtZT0iUE9XRVIiIFZhbHVlPSIyIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iR        lVOQ1RJT05BTCIgVmFsdWU9IjMiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJMT        0NBVElPTiIgVmFsdWU9IjQiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJTRUNVU        klUWSIgVmFsdWU9IjUiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJORVRXT1JLI        iBWYWx1ZT0iNiIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkxJRkVDWUNMRSIgV        mFsdWU9IjciLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJIVU1BTiIgVmFsdWU9I        jgiLz4KIDwvb3BjOkVudW1lcmF0ZWRUeXBlPgo8L29wYzpUeXBlRGljdGlvbmFyeT4K");
 UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_2_i_6001_variant_DataContents, &UA_TYPES[UA_TYPES_BYTESTRING]);
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6001);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 72);
@@ -604,7 +604,7 @@ attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of 
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_ByteString *opcua_node_variable_t_ns_2_i_6003_variant_DataContents =  UA_ByteString_new();
-*opcua_node_variable_t_ns_2_i_6003_variant_DataContents = UA_STRING_ALLOC("PHhzOnNjaGVtYSBlbGVtZW50Rm9ybURlZmF1bHQ9InF1YWxpZmllZCIgdGFyZ2V0TmFtZXNwYWNlPSJod        HRwOi8vb3BlbkFBUy5vcmcvQUFTL1R5cGVzLnhzZCIgeG1sbnM6dG5zPSJodHRwOi8vb3Blb        kFBUy5vcmcvQUFTL1R5cGVzLnhzZCIgeG1sbnM6dWE9Imh0dHA6Ly9vcGNmb3VuZGF0aW9uL        m9yZy9VQS8yMDA4LzAyL1R5cGVzLnhzZCIgeG1sbnM6eHM9Imh0dHA6Ly93d3cudzMub3JnL        zIwMDEvWE1MU2NoZW1hIj4KIDx4czppbXBvcnQgbmFtZXNwYWNlPSJodHRwOi8vb3BjZm91b        mRhdGlvbi5vcmcvVUEvMjAwOC8wMi9UeXBlcy54c2QiLz4KIDx4czpzaW1wbGVUeXBlIG5hb        WU9IkV4cHJlc3Npb25TZW1hbnRpY0VudW0iPgogIDx4czpyZXN0cmljdGlvbiBiYXNlPSJ4c        zpzdHJpbmciPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkFTU1VSQU5DRV8wIi8+CiAgI        Dx4czplbnVtZXJhdGlvbiB2YWx1ZT0iU0VUVElOR18xIi8+CiAgIDx4czplbnVtZXJhdGlvb        iB2YWx1ZT0iTUVBU1VSRU1FTlRfMiIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IlJFU        VVJUkVNRU5UXzMiLz4KICA8L3hzOnJlc3RyaWN0aW9uPgogPC94czpzaW1wbGVUeXBlPgogP        HhzOmVsZW1lbnQgdHlwZT0idG5zOkV4cHJlc3Npb25TZW1hbnRpY0VudW0iIG5hbWU9IkV4c        HJlc3Npb25TZW1hbnRpY0VudW0iLz4KIDx4czpjb21wbGV4VHlwZSBuYW1lPSJMaXN0T2ZFe        HByZXNzaW9uU2VtYW50aWNFbnVtIj4KICA8eHM6c2VxdWVuY2U+CiAgIDx4czplbGVtZW50I        G1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9InRuczpFeHByZXNza        W9uU2VtYW50aWNFbnVtIiBuYW1lPSJFeHByZXNzaW9uU2VtYW50aWNFbnVtIiBuaWxsYWJsZ        T0idHJ1ZSIvPgogIDwveHM6c2VxdWVuY2U+CiA8L3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZ        W1lbnQgdHlwZT0idG5zOkxpc3RPZkV4cHJlc3Npb25TZW1hbnRpY0VudW0iIG5hbWU9Ikxpc        3RPZkV4cHJlc3Npb25TZW1hbnRpY0VudW0iIG5pbGxhYmxlPSJ0cnVlIi8+CiA8eHM6c2ltc        GxlVHlwZSBuYW1lPSJJZEVudW0iPgogIDx4czpyZXN0cmljdGlvbiBiYXNlPSJ4czpzdHJpb        mciPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IlVSSV8wIi8+CiAgIDx4czplbnVtZXJhd        GlvbiB2YWx1ZT0iSVNPXzEiLz4KICA8L3hzOnJlc3RyaWN0aW9uPgogPC94czpzaW1wbGVUe        XBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOklkRW51bSIgbmFtZT0iSWRFbnVtIi8+CiA8e        HM6Y29tcGxleFR5cGUgbmFtZT0iTGlzdE9mSWRFbnVtIj4KICA8eHM6c2VxdWVuY2U+CiAgI        Dx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9I        nRuczpJZEVudW0iIG5hbWU9IklkRW51bSIgbmlsbGFibGU9InRydWUiLz4KICA8L3hzOnNlc        XVlbmNlPgogPC94czpjb21wbGV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpMaXN0T        2ZJZEVudW0iIG5hbWU9Ikxpc3RPZklkRW51bSIgbmlsbGFibGU9InRydWUiLz4KIDx4czpza        W1wbGVUeXBlIG5hbWU9IlJlbGF0aW9uYWxFeHByZXNzaW9uRW51bSI+CiAgPHhzOnJlc3Rya        WN0aW9uIGJhc2U9InhzOnN0cmluZyI+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iR1JFQ        VRFUl9USEFOXzAiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJHUkVBVEVSX0VRVUFMX        zEiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJFUVVBTF8yIi8+CiAgIDx4czplbnVtZ        XJhdGlvbiB2YWx1ZT0iTk9UX0VRVUFMXzMiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlP        SJMRVNTX0VRVUFMXzQiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJMRVNTX1RIQU5fN        SIvPgogIDwveHM6cmVzdHJpY3Rpb24+CiA8L3hzOnNpbXBsZVR5cGU+CiA8eHM6ZWxlbWVud        CB0eXBlPSJ0bnM6UmVsYXRpb25hbEV4cHJlc3Npb25FbnVtIiBuYW1lPSJSZWxhdGlvbmFsR        XhwcmVzc2lvbkVudW0iLz4KIDx4czpjb21wbGV4VHlwZSBuYW1lPSJMaXN0T2ZSZWxhdGlvb        mFsRXhwcmVzc2lvbkVudW0iPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT        2NjdXJzPSIwIiBtYXhPY2N1cnM9InVuYm91bmRlZCIgdHlwZT0idG5zOlJlbGF0aW9uYWxFe        HByZXNzaW9uRW51bSIgbmFtZT0iUmVsYXRpb25hbEV4cHJlc3Npb25FbnVtIiBuaWxsYWJsZ        T0idHJ1ZSIvPgogIDwveHM6c2VxdWVuY2U+CiA8L3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZ        W1lbnQgdHlwZT0idG5zOkxpc3RPZlJlbGF0aW9uYWxFeHByZXNzaW9uRW51bSIgbmFtZT0iT        GlzdE9mUmVsYXRpb25hbEV4cHJlc3Npb25FbnVtIiBuaWxsYWJsZT0idHJ1ZSIvPgogPHhzO        nNpbXBsZVR5cGUgbmFtZT0iVmlld0VudW0iPgogIDx4czpyZXN0cmljdGlvbiBiYXNlPSJ4c        zpzdHJpbmciPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkJVU0lORVNTXzAiLz4KICAgP        HhzOmVudW1lcmF0aW9uIHZhbHVlPSJDT05TVFJVQ1RJT05fMSIvPgogICA8eHM6ZW51bWVyY        XRpb24gdmFsdWU9IlBPV0VSXzIiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJGVU5DV        ElPTkFMXzMiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJMT0NBVElPTl80Ii8+CiAgI        Dx4czplbnVtZXJhdGlvbiB2YWx1ZT0iU0VDVVJJVFlfNSIvPgogICA8eHM6ZW51bWVyYXRpb        24gdmFsdWU9Ik5FVFdPUktfNiIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkxJRkVDW        UNMRV83Ii8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iSFVNQU5fOCIvPgogIDwveHM6c        mVzdHJpY3Rpb24+CiA8L3hzOnNpbXBsZVR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlPSJ0bnM6V        mlld0VudW0iIG5hbWU9IlZpZXdFbnVtIi8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZT0iTGlzd        E9mVmlld0VudW0iPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzP        SIwIiBtYXhPY2N1cnM9InVuYm91bmRlZCIgdHlwZT0idG5zOlZpZXdFbnVtIiBuYW1lPSJWa        WV3RW51bSIgbmlsbGFibGU9InRydWUiLz4KICA8L3hzOnNlcXVlbmNlPgogPC94czpjb21wb        GV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpMaXN0T2ZWaWV3RW51bSIgbmFtZT0iT        GlzdE9mVmlld0VudW0iIG5pbGxhYmxlPSJ0cnVlIi8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZ        T0iSWRlbnRpZmljYXRpb24iPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT        2NjdXJzPSIwIiBtYXhPY2N1cnM9IjEiIHR5cGU9InhzOnN0cmluZyIgbmFtZT0iSWRTcGVjI        i8+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ0b        nM6SWRFbnVtIiBuYW1lPSJJZFR5cGUiLz4KICA8L3hzOnNlcXVlbmNlPgogPC94czpjb21wb        GV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpJZGVudGlmaWNhdGlvbiIgbmFtZT0iS        WRlbnRpZmljYXRpb24iLz4KIDx4czpjb21wbGV4VHlwZSBuYW1lPSJMaXN0T2ZJZGVudGlma        WNhdGlvbiI+CiAgPHhzOnNlcXVlbmNlPgogICA8eHM6ZWxlbWVudCBtaW5PY2N1cnM9IjAiI        G1heE9jY3Vycz0idW5ib3VuZGVkIiB0eXBlPSJ0bnM6SWRlbnRpZmljYXRpb24iIG5hbWU9I        klkZW50aWZpY2F0aW9uIiBuaWxsYWJsZT0idHJ1ZSIvPgogIDwveHM6c2VxdWVuY2U+CiA8L        3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOkxpc3RPZklkZW50aWZpY        2F0aW9uIiBuYW1lPSJMaXN0T2ZJZGVudGlmaWNhdGlvbiIgbmlsbGFibGU9InRydWUiLz4KI        Dx4czpjb21wbGV4VHlwZSBuYW1lPSJMaWZlQ3ljbGVFbnRyeSI+CiAgPHhzOnNlcXVlbmNlP        gogICA8eHM6ZWxlbWVudCBtaW5PY2N1cnM9IjAiIG1heE9jY3Vycz0iMSIgdHlwZT0idG5zO        klkZW50aWZpY2F0aW9uIiBuYW1lPSJDcmVhdGluZ0luc3RhbmNlIi8+CiAgIDx4czplbGVtZ        W50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ0bnM6SWRlbnRpZmljYXRpb        24iIG5hbWU9IldyaXRpbmdJbnN0YW5jZSIvPgogICA8eHM6ZWxlbWVudCBtaW5PY2N1cnM9I        jAiIG1heE9jY3Vycz0iMSIgdHlwZT0idWE6RGF0YVZhbHVlIiBuYW1lPSJEYXRhIi8+CiAgI        Dx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ4czpzdHJpb        mciIG5hbWU9IlN1YmplY3QiLz4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzPSIwIiBtYXhPY        2N1cnM9IjEiIHR5cGU9InhzOnN0cmluZyIgbmFtZT0iRXZlbnRDbGFzcyIvPgogIDwveHM6c        2VxdWVuY2U+CiA8L3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOkxpZ        mVDeWNsZUVudHJ5IiBuYW1lPSJMaWZlQ3ljbGVFbnRyeSIvPgogPHhzOmNvbXBsZXhUeXBlI        G5hbWU9Ikxpc3RPZkxpZmVDeWNsZUVudHJ5Ij4KICA8eHM6c2VxdWVuY2U+CiAgIDx4czplb        GVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9InRuczpMa        WZlQ3ljbGVFbnRyeSIgbmFtZT0iTGlmZUN5Y2xlRW50cnkiIG5pbGxhYmxlPSJ0cnVlIi8+C        iAgPC94czpzZXF1ZW5jZT4KIDwveHM6Y29tcGxleFR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlP        SJ0bnM6TGlzdE9mTGlmZUN5Y2xlRW50cnkiIG5hbWU9Ikxpc3RPZkxpZmVDeWNsZUVudHJ5I        iBuaWxsYWJsZT0idHJ1ZSIvPgogPHhzOmNvbXBsZXhUeXBlIG5hbWU9IlByb3BlcnR5VmFsd        WVTdGF0ZW1lbnQiPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzP        SIwIiBtYXhPY2N1cnM9IjEiIHR5cGU9InRuczpFeHByZXNzaW9uU2VtYW50aWNFbnVtIiBuY        W1lPSJFeHByZXNzaW9uU2VtYW50aWMiLz4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzPSIwI        iBtYXhPY2N1cnM9IjEiIHR5cGU9InRuczpSZWxhdGlvbmFsRXhwcmVzc2lvbkVudW0iIG5hb        WU9IlJlbGF0aW9uYWxFeHByZXNzaW9uIi8+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iM        CIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ4czpzdHJpbmciIG5hbWU9IlVuaXQiLz4KICAgPHhzO        mVsZW1lbnQgbWluT2NjdXJzPSIwIiBtYXhPY2N1cnM9IjEiIHR5cGU9InVhOlZhcmlhbnQiI        G5hbWU9IlZhbHVlIi8+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzP        SIxIiB0eXBlPSJ0bnM6SWRlbnRpZmljYXRpb24iIG5hbWU9IlByb3BlcnR5UmVmZXJlbmNlI        i8+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ0b        nM6Vmlld0VudW0iIG5hbWU9IlZpZXciLz4KICA8L3hzOnNlcXVlbmNlPgogPC94czpjb21wb        GV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpQcm9wZXJ0eVZhbHVlU3RhdGVtZW50I        iBuYW1lPSJQcm9wZXJ0eVZhbHVlU3RhdGVtZW50Ii8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZ        T0iTGlzdE9mUHJvcGVydHlWYWx1ZVN0YXRlbWVudCI+CiAgPHhzOnNlcXVlbmNlPgogICA8e        HM6ZWxlbWVudCBtaW5PY2N1cnM9IjAiIG1heE9jY3Vycz0idW5ib3VuZGVkIiB0eXBlPSJ0b        nM6UHJvcGVydHlWYWx1ZVN0YXRlbWVudCIgbmFtZT0iUHJvcGVydHlWYWx1ZVN0YXRlbWVud        CIgbmlsbGFibGU9InRydWUiLz4KICA8L3hzOnNlcXVlbmNlPgogPC94czpjb21wbGV4VHlwZ        T4KIDx4czplbGVtZW50IHR5cGU9InRuczpMaXN0T2ZQcm9wZXJ0eVZhbHVlU3RhdGVtZW50I        iBuYW1lPSJMaXN0T2ZQcm9wZXJ0eVZhbHVlU3RhdGVtZW50IiBuaWxsYWJsZT0idHJ1ZSIvP        go8L3hzOnNjaGVtYT4K");
+*opcua_node_variable_t_ns_2_i_6003_variant_DataContents = UA_STRING_ALLOC("PHhzOnNjaGVtYSBlbGVtZW50Rm9ybURlZmF1bHQ9InF1YWxpZmllZCIgdGFyZ2V0TmFtZXNwYWNlPSJod        HRwOi8vb3BlbkFBUy5vcmcvQUFTL1R5cGVzLnhzZCIgeG1sbnM6dG5zPSJodHRwOi8vb3Blb        kFBUy5vcmcvQUFTL1R5cGVzLnhzZCIgeG1sbnM6dWE9Imh0dHA6Ly9vcGNmb3VuZGF0aW9uL        m9yZy9VQS8yMDA4LzAyL1R5cGVzLnhzZCIgeG1sbnM6eHM9Imh0dHA6Ly93d3cudzMub3JnL        zIwMDEvWE1MU2NoZW1hIj4KIDx4czppbXBvcnQgbmFtZXNwYWNlPSJodHRwOi8vb3BjZm91b        mRhdGlvbi5vcmcvVUEvMjAwOC8wMi9UeXBlcy54c2QiLz4KIDx4czpzaW1wbGVUeXBlIG5hb        WU9IkV4cHJlc3Npb25TZW1hbnRpY0VudW0iPgogIDx4czpyZXN0cmljdGlvbiBiYXNlPSJ4c        zpzdHJpbmciPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkFTU1VSQU5DRV8wIi8+CiAgI        Dx4czplbnVtZXJhdGlvbiB2YWx1ZT0iU0VUVElOR18xIi8+CiAgIDx4czplbnVtZXJhdGlvb        iB2YWx1ZT0iTUVBU1VSRU1FTlRfMiIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IlJFU        VVJUkVNRU5UXzMiLz4KICA8L3hzOnJlc3RyaWN0aW9uPgogPC94czpzaW1wbGVUeXBlPgogP        HhzOmVsZW1lbnQgdHlwZT0idG5zOkV4cHJlc3Npb25TZW1hbnRpY0VudW0iIG5hbWU9IkV4c        HJlc3Npb25TZW1hbnRpY0VudW0iLz4KIDx4czpjb21wbGV4VHlwZSBuYW1lPSJMaXN0T2ZFe        HByZXNzaW9uU2VtYW50aWNFbnVtIj4KICA8eHM6c2VxdWVuY2U+CiAgIDx4czplbGVtZW50I        G1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9InRuczpFeHByZXNza        W9uU2VtYW50aWNFbnVtIiBuYW1lPSJFeHByZXNzaW9uU2VtYW50aWNFbnVtIiBuaWxsYWJsZ        T0idHJ1ZSIvPgogIDwveHM6c2VxdWVuY2U+CiA8L3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZ        W1lbnQgdHlwZT0idG5zOkxpc3RPZkV4cHJlc3Npb25TZW1hbnRpY0VudW0iIG5hbWU9Ikxpc        3RPZkV4cHJlc3Npb25TZW1hbnRpY0VudW0iIG5pbGxhYmxlPSJ0cnVlIi8+CiA8eHM6c2ltc        GxlVHlwZSBuYW1lPSJJZEVudW0iPgogIDx4czpyZXN0cmljdGlvbiBiYXNlPSJ4czpzdHJpb        mciPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IlVSSV8wIi8+CiAgIDx4czplbnVtZXJhd        GlvbiB2YWx1ZT0iSVNPXzEiLz4KICA8L3hzOnJlc3RyaWN0aW9uPgogPC94czpzaW1wbGVUe        XBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOklkRW51bSIgbmFtZT0iSWRFbnVtIi8+CiA8e        HM6Y29tcGxleFR5cGUgbmFtZT0iTGlzdE9mSWRFbnVtIj4KICA8eHM6c2VxdWVuY2U+CiAgI        Dx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9I        nRuczpJZEVudW0iIG5hbWU9IklkRW51bSIgbmlsbGFibGU9InRydWUiLz4KICA8L3hzOnNlc        XVlbmNlPgogPC94czpjb21wbGV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpMaXN0T        2ZJZEVudW0iIG5hbWU9Ikxpc3RPZklkRW51bSIgbmlsbGFibGU9InRydWUiLz4KIDx4czpza        W1wbGVUeXBlIG5hbWU9IlJlbGF0aW9uYWxFeHByZXNzaW9uRW51bSI+CiAgPHhzOnJlc3Rya        WN0aW9uIGJhc2U9InhzOnN0cmluZyI+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iR1JFQ        VRFUl9USEFOXzAiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJHUkVBVEVSX0VRVUFMX        zEiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJFUVVBTF8yIi8+CiAgIDx4czplbnVtZ        XJhdGlvbiB2YWx1ZT0iTk9UX0VRVUFMXzMiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlP        SJMRVNTX0VRVUFMXzQiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJMRVNTX1RIQU5fN        SIvPgogIDwveHM6cmVzdHJpY3Rpb24+CiA8L3hzOnNpbXBsZVR5cGU+CiA8eHM6ZWxlbWVud        CB0eXBlPSJ0bnM6UmVsYXRpb25hbEV4cHJlc3Npb25FbnVtIiBuYW1lPSJSZWxhdGlvbmFsR        XhwcmVzc2lvbkVudW0iLz4KIDx4czpjb21wbGV4VHlwZSBuYW1lPSJMaXN0T2ZSZWxhdGlvb        mFsRXhwcmVzc2lvbkVudW0iPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT        2NjdXJzPSIwIiBtYXhPY2N1cnM9InVuYm91bmRlZCIgdHlwZT0idG5zOlJlbGF0aW9uYWxFe        HByZXNzaW9uRW51bSIgbmFtZT0iUmVsYXRpb25hbEV4cHJlc3Npb25FbnVtIiBuaWxsYWJsZ        T0idHJ1ZSIvPgogIDwveHM6c2VxdWVuY2U+CiA8L3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZ        W1lbnQgdHlwZT0idG5zOkxpc3RPZlJlbGF0aW9uYWxFeHByZXNzaW9uRW51bSIgbmFtZT0iT        GlzdE9mUmVsYXRpb25hbEV4cHJlc3Npb25FbnVtIiBuaWxsYWJsZT0idHJ1ZSIvPgogPHhzO        nNpbXBsZVR5cGUgbmFtZT0iVmlld0VudW0iPgogIDx4czpyZXN0cmljdGlvbiBiYXNlPSJ4c        zpzdHJpbmciPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkJVU0lORVNTXzAiLz4KICAgP        HhzOmVudW1lcmF0aW9uIHZhbHVlPSJDT05TVFJVQ1RJT05fMSIvPgogICA8eHM6ZW51bWVyY        XRpb24gdmFsdWU9IlBPV0VSXzIiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJGVU5DV        ElPTkFMXzMiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJMT0NBVElPTl80Ii8+CiAgI        Dx4czplbnVtZXJhdGlvbiB2YWx1ZT0iU0VDVVJJVFlfNSIvPgogICA8eHM6ZW51bWVyYXRpb        24gdmFsdWU9Ik5FVFdPUktfNiIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkxJRkVDW        UNMRV83Ii8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iSFVNQU5fOCIvPgogIDwveHM6c        mVzdHJpY3Rpb24+CiA8L3hzOnNpbXBsZVR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlPSJ0bnM6V        mlld0VudW0iIG5hbWU9IlZpZXdFbnVtIi8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZT0iTGlzd        E9mVmlld0VudW0iPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzP        SIwIiBtYXhPY2N1cnM9InVuYm91bmRlZCIgdHlwZT0idG5zOlZpZXdFbnVtIiBuYW1lPSJWa        WV3RW51bSIgbmlsbGFibGU9InRydWUiLz4KICA8L3hzOnNlcXVlbmNlPgogPC94czpjb21wb        GV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpMaXN0T2ZWaWV3RW51bSIgbmFtZT0iT        GlzdE9mVmlld0VudW0iIG5pbGxhYmxlPSJ0cnVlIi8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZ        T0iSWRlbnRpZmljYXRpb24iPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT        2NjdXJzPSIwIiBtYXhPY2N1cnM9IjEiIHR5cGU9InhzOnN0cmluZyIgbmFtZT0iSWRTcGVjI        i8+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ0b        nM6SWRFbnVtIiBuYW1lPSJJZFR5cGUiLz4KICA8L3hzOnNlcXVlbmNlPgogPC94czpjb21wb        GV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpJZGVudGlmaWNhdGlvbiIgbmFtZT0iS        WRlbnRpZmljYXRpb24iLz4KIDx4czpjb21wbGV4VHlwZSBuYW1lPSJMaXN0T2ZJZGVudGlma        WNhdGlvbiI+CiAgPHhzOnNlcXVlbmNlPgogICA8eHM6ZWxlbWVudCBtaW5PY2N1cnM9IjAiI        G1heE9jY3Vycz0idW5ib3VuZGVkIiB0eXBlPSJ0bnM6SWRlbnRpZmljYXRpb24iIG5hbWU9I        klkZW50aWZpY2F0aW9uIiBuaWxsYWJsZT0idHJ1ZSIvPgogIDwveHM6c2VxdWVuY2U+CiA8L        3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOkxpc3RPZklkZW50aWZpY        2F0aW9uIiBuYW1lPSJMaXN0T2ZJZGVudGlmaWNhdGlvbiIgbmlsbGFibGU9InRydWUiLz4KI        Dx4czpjb21wbGV4VHlwZSBuYW1lPSJMaWZlQ3ljbGVFbnRyeSI+CiAgPHhzOnNlcXVlbmNlP        gogICA8eHM6ZWxlbWVudCBtaW5PY2N1cnM9IjAiIG1heE9jY3Vycz0iMSIgdHlwZT0idG5zO        klkZW50aWZpY2F0aW9uIiBuYW1lPSJDcmVhdGluZ0luc3RhbmNlIi8+CiAgIDx4czplbGVtZ        W50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ0bnM6SWRlbnRpZmljYXRpb        24iIG5hbWU9IldyaXRpbmdJbnN0YW5jZSIvPgogICA8eHM6ZWxlbWVudCBtaW5PY2N1cnM9I        jAiIG1heE9jY3Vycz0iMSIgdHlwZT0idWE6RGF0YVZhbHVlIiBuYW1lPSJEYXRhIi8+CiAgI        Dx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ4czpzdHJpb        mciIG5hbWU9IlN1YmplY3QiLz4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzPSIwIiBtYXhPY        2N1cnM9IjEiIHR5cGU9InhzOnN0cmluZyIgbmFtZT0iRXZlbnRDbGFzcyIvPgogIDwveHM6c        2VxdWVuY2U+CiA8L3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOkxpZ        mVDeWNsZUVudHJ5IiBuYW1lPSJMaWZlQ3ljbGVFbnRyeSIvPgogPHhzOmNvbXBsZXhUeXBlI        G5hbWU9Ikxpc3RPZkxpZmVDeWNsZUVudHJ5Ij4KICA8eHM6c2VxdWVuY2U+CiAgIDx4czplb        GVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9InRuczpMa        WZlQ3ljbGVFbnRyeSIgbmFtZT0iTGlmZUN5Y2xlRW50cnkiIG5pbGxhYmxlPSJ0cnVlIi8+C        iAgPC94czpzZXF1ZW5jZT4KIDwveHM6Y29tcGxleFR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlP        SJ0bnM6TGlzdE9mTGlmZUN5Y2xlRW50cnkiIG5hbWU9Ikxpc3RPZkxpZmVDeWNsZUVudHJ5I        iBuaWxsYWJsZT0idHJ1ZSIvPgogPHhzOmNvbXBsZXhUeXBlIG5hbWU9IlByb3BlcnR5VmFsd        WVTdGF0ZW1lbnQiPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzP        SIwIiBtYXhPY2N1cnM9IjEiIHR5cGU9InRuczpFeHByZXNzaW9uU2VtYW50aWNFbnVtIiBuY        W1lPSJFeHByZXNzaW9uU2VtYW50aWMiLz4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzPSIwI        iBtYXhPY2N1cnM9IjEiIHR5cGU9InRuczpSZWxhdGlvbmFsRXhwcmVzc2lvbkVudW0iIG5hb        WU9IlJlbGF0aW9uYWxFeHByZXNzaW9uIi8+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iM        CIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ4czpzdHJpbmciIG5hbWU9IlVuaXQiLz4KICAgPHhzO        mVsZW1lbnQgbWluT2NjdXJzPSIwIiBtYXhPY2N1cnM9IjEiIHR5cGU9InVhOlZhcmlhbnQiI        G5hbWU9IlZhbHVlIi8+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzP        SIxIiB0eXBlPSJ0bnM6SWRlbnRpZmljYXRpb24iIG5hbWU9IlByb3BlcnR5UmVmZXJlbmNlI        i8+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSIxIiB0eXBlPSJ0b        nM6Vmlld0VudW0iIG5hbWU9IlZpZXciLz4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzPSIwI        iBtYXhPY2N1cnM9IjEiIHR5cGU9InhzOmJvb2xlYW4iIG5hbWU9IklzUHVibGljIi8+CiAgP        C94czpzZXF1ZW5jZT4KIDwveHM6Y29tcGxleFR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlPSJ0b        nM6UHJvcGVydHlWYWx1ZVN0YXRlbWVudCIgbmFtZT0iUHJvcGVydHlWYWx1ZVN0YXRlbWVud        CIvPgogPHhzOmNvbXBsZXhUeXBlIG5hbWU9Ikxpc3RPZlByb3BlcnR5VmFsdWVTdGF0ZW1lb        nQiPgogIDx4czpzZXF1ZW5jZT4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzPSIwIiBtYXhPY        2N1cnM9InVuYm91bmRlZCIgdHlwZT0idG5zOlByb3BlcnR5VmFsdWVTdGF0ZW1lbnQiIG5hb        WU9IlByb3BlcnR5VmFsdWVTdGF0ZW1lbnQiIG5pbGxhYmxlPSJ0cnVlIi8+CiAgPC94czpzZ        XF1ZW5jZT4KIDwveHM6Y29tcGxleFR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlPSJ0bnM6TGlzd        E9mUHJvcGVydHlWYWx1ZVN0YXRlbWVudCIgbmFtZT0iTGlzdE9mUHJvcGVydHlWYWx1ZVN0Y        XRlbWVudCIgbmlsbGFibGU9InRydWUiLz4KPC94czpzY2hlbWE+Cg==");
 UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_2_i_6003_variant_DataContents, &UA_TYPES[UA_TYPES_BYTESTRING]);
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6003);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 72);
@@ -1142,30 +1142,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7001), 1:createAAS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("Name");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("AssetId");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createAAS");
@@ -1176,14 +1152,199 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "createAAS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 3, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7001), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6033), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7001), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7001), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6034), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6033), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7001), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6034), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7001), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7001/1:createAAS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6033), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6033_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6033_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6033_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6033_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6033_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6033_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6033_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.Name = UA_STRING_ALLOC("Name");
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6033_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6033_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6033_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6033_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6033_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6033_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6033_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6033_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.Name = UA_STRING_ALLOC("AssetId");
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6033_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6033_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6033_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6033_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6033_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6033_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6033_Argument_2_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6033_variant_DataContents[3];
+opcua_node_variable_t_ns_2_i_6033_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6033_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6033_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6033_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6033_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6033_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6033_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6033_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6033_Argument_2_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6033_variant_DataContents, (UA_Int32) 3, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6033);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7001);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6033), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6033), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7001/1:createAAS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6034), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6034_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6034_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6034_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6034_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6034_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6034_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6034_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6034_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6034_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6034_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6034_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6034_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6034);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7001);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6034), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6034), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1191,42 +1352,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7007), 1:createLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 6);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<6; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("CreatingInstanceId");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("WritingInstanceId");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("EventClass");
-inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("Subject");
-inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("Data");
-inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createLCE");
@@ -1237,14 +1362,304 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "createLCE");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 6, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7007), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6045), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7007), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7007), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6046), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6045), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7007), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6046), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7007), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7007/1:createLCE using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6045), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6045_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6045_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6045_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6045_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.Name = UA_STRING_ALLOC("CreatingInstanceId");
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6045_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6045_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6045_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6045_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.Name = UA_STRING_ALLOC("WritingInstanceId");
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6045_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6045_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6045_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6045_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_2_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct;
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.Name = UA_STRING_ALLOC("EventClass");
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6045_Argument_3_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_3_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset);
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_3_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6045_Argument_3_0_newBody, opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6045_Argument_3_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_3_0_oldBody = opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6045_Argument_3_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6045_Argument_3_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_3_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct;
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.Name = UA_STRING_ALLOC("Subject");
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6045_Argument_4_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_4_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset);
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_4_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6045_Argument_4_0_newBody, opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6045_Argument_4_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_4_0_oldBody = opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6045_Argument_4_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6045_Argument_4_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_4_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct;
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.Name = UA_STRING_ALLOC("Data");
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0, 23);
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6045_Argument_5_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6045_Argument_5_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset);
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_5_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6045_Argument_5_0_newBody, opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6045_Argument_5_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6045_Argument_5_0_oldBody = opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6045_Argument_5_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6045_Argument_5_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_5_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6045_variant_DataContents[6];
+opcua_node_variable_t_ns_2_i_6045_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6045_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6045_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6045_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6045_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6045_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_2_0);
+opcua_node_variable_t_ns_2_i_6045_variant_DataContents[3] = *opcua_node_variable_t_ns_2_i_6045_Argument_3_0;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_3_0);
+opcua_node_variable_t_ns_2_i_6045_variant_DataContents[4] = *opcua_node_variable_t_ns_2_i_6045_Argument_4_0;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_4_0);
+opcua_node_variable_t_ns_2_i_6045_variant_DataContents[5] = *opcua_node_variable_t_ns_2_i_6045_Argument_5_0;
+UA_free(opcua_node_variable_t_ns_2_i_6045_Argument_5_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6045_variant_DataContents, (UA_Int32) 6, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6045);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7007);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6045), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6045), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7007/1:createLCE using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6046), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6046_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6046_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6046_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6046_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6046_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6046_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6046_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6046_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6046_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6046_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6046_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6046_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6046);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7007);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6046), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6046), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1252,54 +1667,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7005), 1:createPVS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 9);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<9; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("PVSLName");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("Name");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("RelationalExpression");
-inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3003);
-inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("ExpressionSemantic");
-inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3004);
-inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("Value");
-inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[6].name = UA_STRING("Unit");
-inputArguments[6].valueRank = -1;
-inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[7].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[7].name = UA_STRING("PropertyReference");
-inputArguments[7].valueRank = -1;
-inputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[8].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[8].name = UA_STRING("View");
-inputArguments[8].valueRank = -1;
-inputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3007);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createPVS");
@@ -1310,14 +1677,444 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "createPVS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 9, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7005), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6041), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7005), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7005), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6042), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6041), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7005), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6042), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7005), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7005/1:createPVS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6041), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.Name = UA_STRING_ALLOC("PVSLName");
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.Name = UA_STRING_ALLOC("Name");
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_2_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.Name = UA_STRING_ALLOC("RelationalExpression");
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_3_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_3_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_3_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_3_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_3_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_3_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_3_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.Name = UA_STRING_ALLOC("ExpressionSemantic");
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_4_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_4_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_4_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_4_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_4_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_4_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_4_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.Name = UA_STRING_ALLOC("Value");
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0, 23);
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_5_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_5_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_5_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_5_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_5_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_5_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_5_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_5_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_5_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.Name = UA_STRING_ALLOC("Unit");
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_6_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_6_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_6_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_6_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_6_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_6_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_6_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_6_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_6_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.Name = UA_STRING_ALLOC("PropertyReference");
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_7_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_7_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_7_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_7_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_7_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_7_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_7_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.Name = UA_STRING_ALLOC("View");
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_8_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_8_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_8_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_8_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_8_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_8_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_8_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct;
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.Name = UA_STRING_ALLOC("IsPublic");
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.DataType = UA_NODEID_NUMERIC(0, 1);
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6041_Argument_9_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6041_Argument_9_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset);
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_9_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6041_Argument_9_0_newBody, opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6041_Argument_9_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6041_Argument_9_0_oldBody = opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6041_Argument_9_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6041_Argument_9_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_9_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6041_variant_DataContents[10];
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6041_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6041_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6041_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_2_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[3] = *opcua_node_variable_t_ns_2_i_6041_Argument_3_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_3_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[4] = *opcua_node_variable_t_ns_2_i_6041_Argument_4_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_4_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[5] = *opcua_node_variable_t_ns_2_i_6041_Argument_5_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_5_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[6] = *opcua_node_variable_t_ns_2_i_6041_Argument_6_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_6_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[7] = *opcua_node_variable_t_ns_2_i_6041_Argument_7_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_7_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[8] = *opcua_node_variable_t_ns_2_i_6041_Argument_8_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_8_0);
+opcua_node_variable_t_ns_2_i_6041_variant_DataContents[9] = *opcua_node_variable_t_ns_2_i_6041_Argument_9_0;
+UA_free(opcua_node_variable_t_ns_2_i_6041_Argument_9_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6041_variant_DataContents, (UA_Int32) 10, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6041);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7005);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6041), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6041), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7005/1:createPVS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6042), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6042_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6042_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6042_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6042_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6042_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6042_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6042_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6042_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6042_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6042_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6042_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6042_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6042);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7005);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6042), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6042), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1325,30 +2122,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7003), 1:createPVSL
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("Name");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("Carrier");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createPVSL");
@@ -1359,14 +2132,199 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "createPVSL");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 3, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7003), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6035), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7003), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7003), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6036), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6035), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7003), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6036), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7003), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7003/1:createPVSL using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6035), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6035_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6035_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6035_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6035_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6035_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6035_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6035_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.Name = UA_STRING_ALLOC("Name");
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6035_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6035_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6035_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6035_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6035_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6035_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6035_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6035_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.Name = UA_STRING_ALLOC("Carrier");
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6035_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6035_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6035_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6035_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6035_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6035_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6035_Argument_2_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6035_variant_DataContents[3];
+opcua_node_variable_t_ns_2_i_6035_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6035_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6035_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6035_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6035_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6035_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6035_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6035_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6035_Argument_2_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6035_variant_DataContents, (UA_Int32) 3, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6035);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7003);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6035), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6035), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7003/1:createPVSL using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6036), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6036_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6036_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6036_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6036_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6036_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6036_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6036_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6036_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6036_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6036_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6036_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6036_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6036);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7003);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6036), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6036), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1374,22 +2332,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7002), 1:deleteAAS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deleteAAS");
@@ -1400,14 +2342,129 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "deleteAAS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7002), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6037), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7002), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7002), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6038), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6037), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7002), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6038), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7002), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7002/1:deleteAAS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6037), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6037_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6037_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6037_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6037_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6037_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6037_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6037_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6037_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6037_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6037_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6037_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6037_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6037);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7002);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6037), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6037), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7002/1:deleteAAS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6038), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6038_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6038_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6038_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6038_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6038_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6038_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6038_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6038_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6038_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6038_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6038_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6038_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6038);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7002);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6038), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6038), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1415,26 +2472,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7008), 1:deleteLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 2);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("LCEId");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 9);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deleteLCE");
@@ -1445,14 +2482,164 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "deleteLCE");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7008), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6047), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7008), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7008), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6048), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6047), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7008), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6048), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7008), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7008/1:deleteLCE using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6047), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6047_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6047_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6047_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6047_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6047_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6047_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6047_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.Name = UA_STRING_ALLOC("LCEId");
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 9);
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6047_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6047_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6047_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6047_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6047_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6047_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6047_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6047_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6047_Argument_1_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6047_variant_DataContents[2];
+opcua_node_variable_t_ns_2_i_6047_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6047_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6047_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6047_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6047_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6047_Argument_1_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6047_variant_DataContents, (UA_Int32) 2, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6047);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7008);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6047), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6047), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7008/1:deleteLCE using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6048), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6048_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6048_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6048_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6048_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6048_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6048_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6048_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6048_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6048_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6048_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6048_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6048_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6048);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7008);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6048), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6048), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1460,30 +2647,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7006), 1:deletePVS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("PVSLName");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("Name");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deletePVS");
@@ -1494,14 +2657,199 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "deletePVS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 3, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7006), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6043), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7006), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7006), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6044), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6043), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7006), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6044), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7006), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7006/1:deletePVS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6043), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6043_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6043_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6043_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6043_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6043_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6043_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6043_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.Name = UA_STRING_ALLOC("PVSLName");
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6043_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6043_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6043_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6043_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6043_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6043_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6043_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6043_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.Name = UA_STRING_ALLOC("Name");
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6043_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6043_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6043_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6043_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6043_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6043_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6043_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6043_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6043_Argument_2_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6043_variant_DataContents[3];
+opcua_node_variable_t_ns_2_i_6043_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6043_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6043_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6043_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6043_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6043_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6043_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6043_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6043_Argument_2_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6043_variant_DataContents, (UA_Int32) 3, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6043);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7006);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6043), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6043), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7006/1:deletePVS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6044), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6044_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6044_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6044_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6044_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6044_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6044_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6044_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6044_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6044_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6044_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6044_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6044_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6044);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7006);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6044), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6044), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1509,26 +2857,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7004), 1:deletePVSL
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 2);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("Name");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deletePVSL");
@@ -1539,14 +2867,164 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "deletePVSL");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7004), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6039), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7004), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7004), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6040), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6039), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7004), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6040), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7004), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7004/1:deletePVSL using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6039), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6039_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6039_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6039_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6039_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6039_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6039_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6039_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.Name = UA_STRING_ALLOC("Name");
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6039_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6039_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6039_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6039_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6039_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6039_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6039_Argument_1_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6039_variant_DataContents[2];
+opcua_node_variable_t_ns_2_i_6039_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6039_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6039_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6039_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6039_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6039_Argument_1_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6039_variant_DataContents, (UA_Int32) 2, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6039);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7004);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6039), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6039), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7004/1:deletePVSL using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6040), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6040_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6040_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6040_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6040_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6040_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6040_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6040_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6040_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6040_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6040_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6040_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6040_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6040);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7004);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6040), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6040), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1554,22 +3032,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7013), 1:getAASNodeId
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("AASNodeId");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_0, 17);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "getAASNodeId");
@@ -1580,14 +3042,129 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "getAASNodeId");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7013), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6026), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7013), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7013), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6057), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7013), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6057), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7013), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7013/1:getAASNodeId using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6026), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6026_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6026_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6026_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6026_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6026_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6026_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6026_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6026_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6026_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6026_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6026_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6026_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6026);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7013);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7013/1:getAASNodeId using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6057), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASNodeId");
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0, 17);
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6057_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6057_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6057_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6057_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6057_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6057_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6057_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6057_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6057_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6057_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6057_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6057_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6057_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6057_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6057);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7013);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6057), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6057), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1595,46 +3172,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7012), 1:getLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 2);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("LCEId");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 9);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 6);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<6; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("CreatingInstanceId");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[1].name = UA_STRING("WritingInstanceId");
-outputArguments[1].valueRank = -1;
-outputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-outputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[2].name = UA_STRING("EventClass");
-outputArguments[2].valueRank = -1;
-outputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-outputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[3].name = UA_STRING("Subject");
-outputArguments[3].valueRank = -1;
-outputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-outputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[4].name = UA_STRING("Data");
-outputArguments[4].valueRank = -1;
-outputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-outputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[5].name = UA_STRING("Status");
-outputArguments[5].valueRank = -1;
-outputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "getLCE");
@@ -1645,14 +3182,689 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "getLCE");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  6, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7012), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6053), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7012), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7012), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6054), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6053), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7012), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6054), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7012), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7012/1:getLCE using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6053), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6053_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6053_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6053_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6053_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6053_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6053_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6053_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.Name = UA_STRING_ALLOC("LCEId");
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 9);
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6053_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6053_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6053_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6053_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6053_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6053_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6053_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6053_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6053_Argument_1_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6053_variant_DataContents[2];
+opcua_node_variable_t_ns_2_i_6053_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6053_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6053_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6053_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6053_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6053_Argument_1_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6053_variant_DataContents, (UA_Int32) 2, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6053);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7012);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6053), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6053), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7012/1:getLCE using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6054), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.Name = UA_STRING_ALLOC("CreatingInstanceId");
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6054_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6054_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6054_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6054_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.Name = UA_STRING_ALLOC("WritingInstanceId");
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6054_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6054_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6054_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6054_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.Name = UA_STRING_ALLOC("EventClass");
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6054_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6054_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6054_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6054_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6054_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_2_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct;
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.Name = UA_STRING_ALLOC("Subject");
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6054_Argument_3_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_3_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset);
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_3_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6054_Argument_3_0_newBody, opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6054_Argument_3_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_3_0_oldBody = opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6054_Argument_3_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6054_Argument_3_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_3_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct;
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.Name = UA_STRING_ALLOC("Data");
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0, 23);
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6054_Argument_4_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_4_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset);
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_4_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6054_Argument_4_0_newBody, opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6054_Argument_4_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_4_0_oldBody = opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6054_Argument_4_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6054_Argument_4_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_4_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct;
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6054_Argument_5_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset);
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_5_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6054_Argument_5_0_newBody, opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6054_Argument_5_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6054_Argument_5_0_oldBody = opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6054_Argument_5_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_5_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6054_variant_DataContents[6];
+opcua_node_variable_t_ns_2_i_6054_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6054_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6054_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6054_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6054_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6054_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_2_0);
+opcua_node_variable_t_ns_2_i_6054_variant_DataContents[3] = *opcua_node_variable_t_ns_2_i_6054_Argument_3_0;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_3_0);
+opcua_node_variable_t_ns_2_i_6054_variant_DataContents[4] = *opcua_node_variable_t_ns_2_i_6054_Argument_4_0;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_4_0);
+opcua_node_variable_t_ns_2_i_6054_variant_DataContents[5] = *opcua_node_variable_t_ns_2_i_6054_Argument_5_0;
+UA_free(opcua_node_variable_t_ns_2_i_6054_Argument_5_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6054_variant_DataContents, (UA_Int32) 6, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6054);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7012);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6054), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6054), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=1005/1:AASFactoryType using i=47/HasComponent
+// Node: opcua_node_method_t(ns=2;i=7014), 1:getLastLCEs
+UA_Argument *inputArguments = NULL;
+UA_Argument *outputArguments = NULL;
+UA_MethodAttributes attr;
+UA_MethodAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "getLastLCEs");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.executable = true;
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 7014);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "getLastLCEs");
+UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7014), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7014/1:getLastLCEs using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6058), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6058_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6058_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6058_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6058_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6058_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6058_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6058_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.Name = UA_STRING_ALLOC("Count");
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 7);
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6058_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6058_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6058_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6058_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6058_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6058_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6058_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6058_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6058_Argument_1_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6058_variant_DataContents[2];
+opcua_node_variable_t_ns_2_i_6058_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6058_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6058_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6058_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6058_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6058_Argument_1_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6058_variant_DataContents, (UA_Int32) 2, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6058);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7014);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6058), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6058), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7014/1:getLastLCEs using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6059), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.Name = UA_STRING_ALLOC("CreatingInstanceId");
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ValueRank = (UA_Int32) 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6059_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6059_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6059_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6059_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.Name = UA_STRING_ALLOC("WritingInstanceId");
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ValueRank = (UA_Int32) 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6059_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6059_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6059_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6059_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.Name = UA_STRING_ALLOC("EventClass");
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.ValueRank = (UA_Int32) 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6059_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6059_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6059_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6059_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6059_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_2_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct;
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.Name = UA_STRING_ALLOC("Subject");
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.ValueRank = (UA_Int32) 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6059_Argument_3_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_3_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset);
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_3_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6059_Argument_3_0_newBody, opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6059_Argument_3_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_3_0_oldBody = opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6059_Argument_3_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6059_Argument_3_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_3_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct;
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.Name = UA_STRING_ALLOC("Data");
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0, 23);
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.ValueRank = (UA_Int32) 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6059_Argument_4_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_4_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset);
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_4_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6059_Argument_4_0_newBody, opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6059_Argument_4_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_4_0_oldBody = opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6059_Argument_4_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6059_Argument_4_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_4_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct;
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6059_Argument_5_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset);
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_5_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6059_Argument_5_0_newBody, opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6059_Argument_5_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6059_Argument_5_0_oldBody = opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6059_Argument_5_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_5_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6059_variant_DataContents[6];
+opcua_node_variable_t_ns_2_i_6059_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6059_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6059_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6059_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6059_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6059_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_2_0);
+opcua_node_variable_t_ns_2_i_6059_variant_DataContents[3] = *opcua_node_variable_t_ns_2_i_6059_Argument_3_0;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_3_0);
+opcua_node_variable_t_ns_2_i_6059_variant_DataContents[4] = *opcua_node_variable_t_ns_2_i_6059_Argument_4_0;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_4_0);
+opcua_node_variable_t_ns_2_i_6059_variant_DataContents[5] = *opcua_node_variable_t_ns_2_i_6059_Argument_5_0;
+UA_free(opcua_node_variable_t_ns_2_i_6059_Argument_5_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6059_variant_DataContents, (UA_Int32) 6, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6059);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7014);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6059), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6059), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1660,54 +3872,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7010), 1:getPVS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("PVSLName");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("Name");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 7);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<7; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("RelationalExpression");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3003);
-outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[1].name = UA_STRING("ExpressionSemantic");
-outputArguments[1].valueRank = -1;
-outputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3004);
-outputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[2].name = UA_STRING("Value");
-outputArguments[2].valueRank = -1;
-outputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-outputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[3].name = UA_STRING("Unit");
-outputArguments[3].valueRank = -1;
-outputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-outputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[4].name = UA_STRING("PropertyReference");
-outputArguments[4].valueRank = -1;
-outputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-outputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[5].name = UA_STRING("View");
-outputArguments[5].valueRank = -1;
-outputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3007);
-outputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[6].name = UA_STRING("Status");
-outputArguments[6].valueRank = -1;
-outputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "getPVS");
@@ -1718,14 +3882,444 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "getPVS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 3, inputArguments,  7, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7010), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6055), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7010), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7010), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6056), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6055), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7010), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6056), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7010), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7010/1:getPVS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6055), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6055_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6055_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6055_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6055_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6055_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6055_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6055_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.Name = UA_STRING_ALLOC("PVSLName");
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6055_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6055_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6055_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6055_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6055_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6055_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6055_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6055_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.Name = UA_STRING_ALLOC("Name");
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6055_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6055_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6055_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6055_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6055_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6055_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6055_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6055_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6055_Argument_2_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6055_variant_DataContents[3];
+opcua_node_variable_t_ns_2_i_6055_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6055_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6055_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6055_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6055_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6055_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6055_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6055_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6055_Argument_2_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6055_variant_DataContents, (UA_Int32) 3, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6055);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7010);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6055), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6055), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7010/1:getPVS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6056), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.Name = UA_STRING_ALLOC("RelationalExpression");
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6056_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6056_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6056_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6056_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.Name = UA_STRING_ALLOC("ExpressionSemantic");
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6056_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6056_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6056_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6056_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.Name = UA_STRING_ALLOC("Value");
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0, 23);
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6056_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6056_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6056_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6056_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6056_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_2_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct;
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.Name = UA_STRING_ALLOC("Unit");
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6056_Argument_3_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_3_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset);
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_3_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6056_Argument_3_0_newBody, opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6056_Argument_3_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_3_0_oldBody = opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6056_Argument_3_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6056_Argument_3_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_3_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct;
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.Name = UA_STRING_ALLOC("PropertyReference");
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6056_Argument_4_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset);
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_4_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6056_Argument_4_0_newBody, opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6056_Argument_4_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_4_0_oldBody = opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6056_Argument_4_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_4_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct;
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.Name = UA_STRING_ALLOC("View");
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6056_Argument_5_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset);
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_5_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6056_Argument_5_0_newBody, opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6056_Argument_5_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_5_0_oldBody = opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6056_Argument_5_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_5_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct;
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.Name = UA_STRING_ALLOC("IsPublic");
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.DataType = UA_NODEID_NUMERIC(0, 1);
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6056_Argument_6_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_6_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset);
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_6_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6056_Argument_6_0_newBody, opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6056_Argument_6_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_6_0_oldBody = opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6056_Argument_6_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6056_Argument_6_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_6_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct;
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6056_Argument_7_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset);
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_7_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6056_Argument_7_0_newBody, opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6056_Argument_7_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6056_Argument_7_0_oldBody = opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6056_Argument_7_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_7_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6056_variant_DataContents[8];
+opcua_node_variable_t_ns_2_i_6056_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6056_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6056_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6056_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6056_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6056_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_2_0);
+opcua_node_variable_t_ns_2_i_6056_variant_DataContents[3] = *opcua_node_variable_t_ns_2_i_6056_Argument_3_0;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_3_0);
+opcua_node_variable_t_ns_2_i_6056_variant_DataContents[4] = *opcua_node_variable_t_ns_2_i_6056_Argument_4_0;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_4_0);
+opcua_node_variable_t_ns_2_i_6056_variant_DataContents[5] = *opcua_node_variable_t_ns_2_i_6056_Argument_5_0;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_5_0);
+opcua_node_variable_t_ns_2_i_6056_variant_DataContents[6] = *opcua_node_variable_t_ns_2_i_6056_Argument_6_0;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_6_0);
+opcua_node_variable_t_ns_2_i_6056_variant_DataContents[7] = *opcua_node_variable_t_ns_2_i_6056_Argument_7_0;
+UA_free(opcua_node_variable_t_ns_2_i_6056_Argument_7_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6056_variant_DataContents, (UA_Int32) 8, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6056);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7010);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6056), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6056), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1733,46 +4327,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7009), 1:setLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 7);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<7; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("LCEId");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 9);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("CreatingInstanceId");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("WritingInstanceId");
-inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("EventClass");
-inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("Subject");
-inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[6].name = UA_STRING("Data");
-inputArguments[6].valueRank = -1;
-inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "setLCE");
@@ -1783,14 +4337,339 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "setLCE");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 7, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6051), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6052), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6051), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6052), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7009/1:setLCE using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6051), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6051_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6051_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6051_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6051_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.Name = UA_STRING_ALLOC("LCEId");
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 9);
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6051_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6051_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6051_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6051_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6051_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.Name = UA_STRING_ALLOC("CreatingInstanceId");
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6051_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6051_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6051_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6051_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_2_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct;
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.Name = UA_STRING_ALLOC("WritingInstanceId");
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6051_Argument_3_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset);
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_3_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6051_Argument_3_0_newBody, opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6051_Argument_3_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_3_0_oldBody = opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6051_Argument_3_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_3_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct;
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.Name = UA_STRING_ALLOC("EventClass");
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6051_Argument_4_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_4_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset);
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_4_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6051_Argument_4_0_newBody, opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6051_Argument_4_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_4_0_oldBody = opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6051_Argument_4_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6051_Argument_4_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_4_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct;
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.Name = UA_STRING_ALLOC("Subject");
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6051_Argument_5_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_5_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset);
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_5_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6051_Argument_5_0_newBody, opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6051_Argument_5_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_5_0_oldBody = opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6051_Argument_5_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6051_Argument_5_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_5_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct;
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.Name = UA_STRING_ALLOC("Data");
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.DataType = UA_NODEID_NUMERIC(0, 23);
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6051_Argument_6_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6051_Argument_6_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset);
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_6_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6051_Argument_6_0_newBody, opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6051_Argument_6_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6051_Argument_6_0_oldBody = opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6051_Argument_6_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6051_Argument_6_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_6_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6051_variant_DataContents[7];
+opcua_node_variable_t_ns_2_i_6051_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6051_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6051_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6051_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6051_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6051_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_2_0);
+opcua_node_variable_t_ns_2_i_6051_variant_DataContents[3] = *opcua_node_variable_t_ns_2_i_6051_Argument_3_0;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_3_0);
+opcua_node_variable_t_ns_2_i_6051_variant_DataContents[4] = *opcua_node_variable_t_ns_2_i_6051_Argument_4_0;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_4_0);
+opcua_node_variable_t_ns_2_i_6051_variant_DataContents[5] = *opcua_node_variable_t_ns_2_i_6051_Argument_5_0;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_5_0);
+opcua_node_variable_t_ns_2_i_6051_variant_DataContents[6] = *opcua_node_variable_t_ns_2_i_6051_Argument_6_0;
+UA_free(opcua_node_variable_t_ns_2_i_6051_Argument_6_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6051_variant_DataContents, (UA_Int32) 7, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6051);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7009);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6051), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6051), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7009/1:setLCE using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6052), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6052_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6052_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6052_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6052_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6052_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6052_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6052_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6052_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6052_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6052_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6052_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6052_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6052);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7009);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6052), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6052), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
@@ -1798,54 +4677,6 @@ do {
 // Node: opcua_node_method_t(ns=2;i=7011), 1:setPVS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 9);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<9; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("PVSLName");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("Name");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("RelationalExpression");
-inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3003);
-inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("ExpressionSemantic");
-inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3004);
-inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("Value");
-inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[6].name = UA_STRING("Unit");
-inputArguments[6].valueRank = -1;
-inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[7].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[7].name = UA_STRING("PropertyReference");
-inputArguments[7].valueRank = -1;
-inputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
-inputArguments[8].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[8].name = UA_STRING("View");
-inputArguments[8].valueRank = -1;
-inputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3007);
-
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3009);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "setPVS");
@@ -1856,14 +4687,444 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "setPVS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 9, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 0, inputArguments,  0, outputArguments, NULL);
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6049), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 6050), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6049), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6050), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7011/1:setPVS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6049), InputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "InputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_0_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.Name = UA_STRING_ALLOC("PVSLName");
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_1_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_1_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_1_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_1_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_1_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_1_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_1_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_1_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_1_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.Name = UA_STRING_ALLOC("Name");
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_2_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_2_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_2_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_2_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_2_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_2_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_2_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_2_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_2_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.Name = UA_STRING_ALLOC("RelationalExpression");
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_3_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_3_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_3_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_3_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_3_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_3_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_3_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.Name = UA_STRING_ALLOC("ExpressionSemantic");
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_4_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_4_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_4_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_4_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_4_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_4_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_4_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.Name = UA_STRING_ALLOC("Value");
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0, 23);
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_5_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_5_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_5_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_5_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_5_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_5_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_5_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_5_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_5_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.Name = UA_STRING_ALLOC("Unit");
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.DataType = UA_NODEID_NUMERIC(0, 12);
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_6_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_6_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_6_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_6_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_6_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_6_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_6_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_6_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_6_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.Name = UA_STRING_ALLOC("PropertyReference");
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_7_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_7_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_7_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_7_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_7_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_7_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_7_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.Name = UA_STRING_ALLOC("View");
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_8_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_8_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_8_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_8_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_8_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_8_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_8_0_oldBody);
+
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct;
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.Name = UA_STRING_ALLOC("IsPublic");
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.DataType = UA_NODEID_NUMERIC(0, 1);
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6049_Argument_9_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6049_Argument_9_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset);
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_9_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6049_Argument_9_0_newBody, opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6049_Argument_9_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6049_Argument_9_0_oldBody = opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6049_Argument_9_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6049_Argument_9_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_9_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6049_variant_DataContents[10];
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6049_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_0_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[1] = *opcua_node_variable_t_ns_2_i_6049_Argument_1_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_1_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[2] = *opcua_node_variable_t_ns_2_i_6049_Argument_2_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_2_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[3] = *opcua_node_variable_t_ns_2_i_6049_Argument_3_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_3_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[4] = *opcua_node_variable_t_ns_2_i_6049_Argument_4_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_4_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[5] = *opcua_node_variable_t_ns_2_i_6049_Argument_5_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_5_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[6] = *opcua_node_variable_t_ns_2_i_6049_Argument_6_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_6_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[7] = *opcua_node_variable_t_ns_2_i_6049_Argument_7_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_7_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[8] = *opcua_node_variable_t_ns_2_i_6049_Argument_8_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_8_0);
+opcua_node_variable_t_ns_2_i_6049_variant_DataContents[9] = *opcua_node_variable_t_ns_2_i_6049_Argument_9_0;
+UA_free(opcua_node_variable_t_ns_2_i_6049_Argument_9_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6049_variant_DataContents, (UA_Int32) 10, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6049);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7011);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "InputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6049), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6049), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=2;i=7011/1:setPVS using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=2;i=6050), OutputArguments
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "OutputArguments");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = 1;
+
+struct {
+  UA_String Name;
+  UA_NodeId DataType;
+  UA_Int32 ValueRank;
+  UA_Int32 ArrayDimensionsSize;
+  UA_UInt32 *ArrayDimensions;
+  UA_LocalizedText Description;
+} opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct;
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ArrayDimensionsSize = 1;
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ArrayDimensions[0]  = (UA_UInt32) 0;
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.Description = UA_LOCALIZEDTEXT("en_US", "");
+UA_ExtensionObject *opcua_node_variable_t_ns_2_i_6050_Argument_0_0 =  UA_ExtensionObject_new();
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.typeId = UA_NODEID_NUMERIC(0, 296+ UA_ENCODINGOFFSET_BINARY);
+if(UA_ByteString_allocBuffer(&opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body, 65000) != UA_STATUSCODE_GOOD) {}
+size_t opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset = 0;
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.Name, &UA_TYPES[UA_TYPES_STRING], NULL, NULL, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.DataType, &UA_TYPES[UA_TYPES_NODEID], NULL, NULL, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ValueRank, &UA_TYPES[UA_TYPES_INT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ArrayDimensions[0], &UA_TYPES[UA_TYPES_UINT32], NULL, NULL, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset);
+retval |= UA_encodeBinary(&opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.Description, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT], NULL, NULL, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body, &opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset);
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body.length = opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset;
+UA_Byte *opcua_node_variable_t_ns_2_i_6050_Argument_0_0_newBody = (UA_Byte *) UA_malloc(opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset );
+memcpy(opcua_node_variable_t_ns_2_i_6050_Argument_0_0_newBody, opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body.data, opcua_node_variable_t_ns_2_i_6050_Argument_0_0_encOffset);
+UA_Byte *opcua_node_variable_t_ns_2_i_6050_Argument_0_0_oldBody = opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body.data;
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0->content.encoded.body.data = opcua_node_variable_t_ns_2_i_6050_Argument_0_0_newBody;
+UA_free(opcua_node_variable_t_ns_2_i_6050_Argument_0_0_oldBody);
+
+UA_ExtensionObject opcua_node_variable_t_ns_2_i_6050_variant_DataContents[1];
+opcua_node_variable_t_ns_2_i_6050_variant_DataContents[0] = *opcua_node_variable_t_ns_2_i_6050_Argument_0_0;
+UA_free(opcua_node_variable_t_ns_2_i_6050_Argument_0_0);
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6050_variant_DataContents, (UA_Int32) 1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6050);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 7011);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "OutputArguments");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6050), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6050), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {

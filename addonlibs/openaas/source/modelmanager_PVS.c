@@ -22,7 +22,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_result.h"
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum relationalExpression, ExpressionSemanticEnum ExpressionSemantic, OV_ANY value, OV_STRING unit, IdentificationType propertyReference, ViewEnum view) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum relationalExpression, ExpressionSemanticEnum ExpressionSemantic, OV_ANY value, OV_STRING unit, IdentificationType propertyReference, ViewEnum view, OV_BOOL IsPublic) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
@@ -47,6 +47,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 			ov_string_setvalue(&(ppvs->v_PropertyReferenceString), propertyReference.IdSpec);
 			ppvs->v_PropertyReferenceType = propertyReference.IdType;
 			ppvs->v_View = view;
+			ppvs->v_IsPublic = IsPublic;
 		}else{
 			return AASSTATUSCODE_BADPVSLNAME;
 		}
@@ -91,7 +92,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType 
 }
 
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum *relationalExpression, ExpressionSemanticEnum *ExpressionSemantic, OV_ANY *value, OV_STRING *unit, IdentificationType *propertyReference, ViewEnum *view) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum *relationalExpression, ExpressionSemanticEnum *ExpressionSemantic, OV_ANY *value, OV_STRING *unit, IdentificationType *propertyReference, ViewEnum *view, OV_BOOL *IsPublic) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
@@ -114,6 +115,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aas
 				ov_string_setvalue(&propertyReference->IdSpec, ppvs->v_PropertyReferenceString);
 				propertyReference->IdType = ppvs->v_PropertyReferenceType;
 				*view = ppvs->v_View;
+				*IsPublic = ppvs->v_IsPublic;
 			}else{
 				return AASSTATUSCODE_BADPVSNAME;
 			}
@@ -126,7 +128,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aas
 	return AASSTATUSCODE_GOOD;
 }
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum relationalExpression, ExpressionSemanticEnum ExpressionSemantic, OV_ANY value, OV_STRING unit, IdentificationType propertyReference, ViewEnum view) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, RelationalExpressionEnum relationalExpression, ExpressionSemanticEnum ExpressionSemantic, OV_ANY value, OV_STRING unit, IdentificationType propertyReference, ViewEnum view, OV_BOOL IsPublic) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
@@ -149,6 +151,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aas
 				ov_string_setvalue(&(ppvs->v_PropertyReferenceString), propertyReference.IdSpec);
 				ppvs->v_PropertyReferenceType = propertyReference.IdType;
 				ppvs->v_View = view;
+				ppvs->v_IsPublic = IsPublic;
 			}else{
 				return AASSTATUSCODE_BADPVSNAME;
 			}

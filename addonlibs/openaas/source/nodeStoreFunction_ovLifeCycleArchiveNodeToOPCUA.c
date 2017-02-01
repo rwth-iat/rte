@@ -135,7 +135,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleArchiveNodeT
 	OV_STRING tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "/", &len);
-	tmpString = "";
+	ov_string_setvalue(&tmpString, "");
 	for (OV_UINT i = 0; i < len-1; i++){
 		if (i != 0)
 			ov_string_append(&tmpString, "/");

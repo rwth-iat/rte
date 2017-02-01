@@ -48,12 +48,18 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 			ov_string_setvalue(&(tmpAASConvertList[i].AASId.IdSpec), (pmodelmanager->v_Container.AASConvertList)[i].AASId.IdSpec);
 			ov_string_setvalue(&(tmpAASConvertList[i].AASPath), (pmodelmanager->v_Container.AASConvertList)[i].AASPath);
 		}
+		for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
+			ov_database_free(pmodelmanager->v_Container.AASConvertList[i].AASId.IdSpec);
+			ov_database_free(pmodelmanager->v_Container.AASConvertList[i].AASPath);
+		}
 		ov_database_free(pmodelmanager->v_Container.AASConvertList);
+		pmodelmanager->v_Container.AASConvertList = NULL;
 	}
 	tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASId.IdSpec = NULL;
 	ov_string_setvalue(&(tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASId.IdSpec), aasId.IdSpec);
 	tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASId.IdType = aasId.IdType;
-	OV_STRING tmpString = "/TechUnits/AASFolder/";
+	OV_STRING tmpString = NULL;
+	ov_string_setvalue(&tmpString, "/TechUnits/openAAS/AASFolder/");
 	ov_string_append(&tmpString, aasName);
 	tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASPath = NULL;
 	ov_string_setvalue(&(tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASPath), tmpString);
@@ -110,7 +116,10 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 	AASConvertListType* tmpAASConvertList = NULL;
 	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
 	if (pmodelmanager->v_Container.AASConvertListSize == 1){
+		ov_database_free(pmodelmanager->v_Container.AASConvertList[0].AASId.IdSpec);
+		ov_database_free(pmodelmanager->v_Container.AASConvertList[0].AASPath);
 		ov_database_free(pmodelmanager->v_Container.AASConvertList);
+		pmodelmanager->v_Container.AASConvertList = NULL;
 		pmodelmanager->v_Container.AASConvertListSize = 0;
 		return;
 	}
@@ -120,11 +129,18 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 		if (openaas_modelmanager_IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId))
 			continue;
 		tmpAASConvertList[j].AASId.IdType = (pmodelmanager->v_Container.AASConvertList)[i].AASId.IdType;
+		tmpAASConvertList[i].AASId.IdSpec = NULL;
+		tmpAASConvertList[i].AASPath = NULL;
 		ov_string_setvalue(&(tmpAASConvertList[j].AASId.IdSpec), (pmodelmanager->v_Container.AASConvertList)[i].AASId.IdSpec);
 		ov_string_setvalue(&(tmpAASConvertList[j].AASPath), (pmodelmanager->v_Container.AASConvertList)[i].AASPath);
 		j++;
 	}
+	for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
+		ov_database_free(pmodelmanager->v_Container.AASConvertList[i].AASId.IdSpec);
+		ov_database_free(pmodelmanager->v_Container.AASConvertList[i].AASPath);
+	}
 	ov_database_free(pmodelmanager->v_Container.AASConvertList);
+	pmodelmanager->v_Container.AASConvertList = NULL;
 	pmodelmanager->v_Container.AASConvertList = tmpAASConvertList;
 	pmodelmanager->v_Container.AASConvertListSize -= 1;
 
@@ -166,8 +182,9 @@ OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 		return "";
 	}
 	for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
-		if (openaas_modelmanager_IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId))
+		if (openaas_modelmanager_IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId)){
 			return (pmodelmanager->v_Container.AASConvertList)[i].AASPath;
+		}
 	}
 	return "";
 }
@@ -175,7 +192,7 @@ OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 
 
 OV_DLLFNCEXPORT UA_NodeId openaas_modelmanager_getAASNodeId(IdentificationType aasId) {
-    return UA_NODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, openaas_modelmanager_AASConvertListGet(aasId));;
+    return UA_NODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, openaas_modelmanager_AASConvertListGet(aasId));;
 }
 
 
@@ -283,7 +300,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSCreate_set(
 		tmpPropertyRefereceId.IdSpec = pobj->v_PVSPropertyReferenceIdString;
 		tmpPropertyRefereceId.IdType = pobj->v_PVSPropertyReferenceIdType;
 
-		result = openaas_modelmanager_createPVS(tmpAASId, pobj->v_PVSPVSLName, pobj->v_PVSName, pobj->v_PVSRelationalExpression, pobj->v_PVSExpressionSemantic, pobj->v_PVSValue, pobj->v_PVSUnit, tmpPropertyRefereceId, pobj->v_PVSView);
+		result = openaas_modelmanager_createPVS(tmpAASId, pobj->v_PVSPVSLName, pobj->v_PVSName, pobj->v_PVSRelationalExpression, pobj->v_PVSExpressionSemantic, pobj->v_PVSValue, pobj->v_PVSUnit, tmpPropertyRefereceId, pobj->v_PVSView, pobj->v_PVSIsPublic);
 	}
 	pobj->v_PVSCreate = false;
 	pobj->v_PVSStatus = result;
