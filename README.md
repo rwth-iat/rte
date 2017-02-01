@@ -38,7 +38,7 @@ A Release list can be found here: [Releases](http://acplt.github.io/rte-www/rele
 ##start the Runtime Environment:
 build a new database file:
 ```sh
-./build/acplt/servers/MANAGER/build_database.sh
+cd &&./build/acplt/servers/MANAGER/build_database.sh
 ```
 start up:
 ```sh
