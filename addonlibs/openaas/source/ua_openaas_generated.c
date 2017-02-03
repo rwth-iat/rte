@@ -179,7 +179,7 @@ static UA_DataTypeMember PropertyValueStatement_members[7] = {
 const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
 
 /* ExpressionSemanticEnum */
-{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
+{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3004},
   .typeIndex = UA_TYPES_INT32,
 #ifdef UA_ENABLE_TYPENAMES
   .typeName = "ExpressionSemanticEnum",
@@ -193,7 +193,7 @@ const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
   .members = ExpressionSemanticEnum_members },
 
 /* ViewEnum */
-{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
+{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3007},
   .typeIndex = UA_TYPES_INT32,
 #ifdef UA_ENABLE_TYPENAMES
   .typeName = "ViewEnum",
@@ -207,7 +207,7 @@ const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
   .members = ViewEnum_members },
 
 /* RelationalExpressionEnum */
-{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
+{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3003},
   .typeIndex = UA_TYPES_INT32,
 #ifdef UA_ENABLE_TYPENAMES
   .typeName = "RelationalExpressionEnum",
@@ -221,7 +221,7 @@ const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
   .members = RelationalExpressionEnum_members },
 
 /* IdEnum */
-{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
+{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3002},
   .typeIndex = UA_TYPES_INT32,
 #ifdef UA_ENABLE_TYPENAMES
   .typeName = "IdEnum",
