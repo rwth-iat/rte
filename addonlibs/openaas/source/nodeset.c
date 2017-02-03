@@ -1176,7 +1176,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6033_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1242,7 +1242,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct;
 opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.Name = UA_STRING_ALLOC("AssetId");
-opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6033_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1306,7 +1306,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6034_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1386,7 +1386,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6045_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1419,7 +1419,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct;
 opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.Name = UA_STRING_ALLOC("CreatingInstanceId");
-opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6045_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1452,7 +1452,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct;
 opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.Name = UA_STRING_ALLOC("WritingInstanceId");
-opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6045_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1621,7 +1621,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6046_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1701,7 +1701,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6041_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1800,7 +1800,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct;
 opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.Name = UA_STRING_ALLOC("RelationalExpression");
-opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_RELATIONALEXPRESSIONENUM);
 opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6041_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1833,7 +1833,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct;
 opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.Name = UA_STRING_ALLOC("ExpressionSemantic");
-opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_EXPRESSIONSEMANTICENUM);
 opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6041_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1932,7 +1932,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct;
 opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.Name = UA_STRING_ALLOC("PropertyReference");
-opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6041_Argument_7_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -1965,7 +1965,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct;
 opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.Name = UA_STRING_ALLOC("View");
-opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_VIEWENUM);
 opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6041_Argument_8_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2076,7 +2076,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6042_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2156,7 +2156,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6035_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2222,7 +2222,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct;
 opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.Name = UA_STRING_ALLOC("Carrier");
-opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6035_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2286,7 +2286,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6036_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2366,7 +2366,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6037_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2426,7 +2426,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6038_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2506,7 +2506,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6047_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2601,7 +2601,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6048_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2681,7 +2681,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6043_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2811,7 +2811,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6044_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2891,7 +2891,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6039_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2924,7 +2924,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct;
 opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.Name = UA_STRING_ALLOC("Name");
-opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,12);
 opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6039_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -2986,7 +2986,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6040_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3066,7 +3066,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6026_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3206,7 +3206,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6053_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3301,7 +3301,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.Name = UA_STRING_ALLOC("CreatingInstanceId");
-opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6054_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3334,7 +3334,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct;
 opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.Name = UA_STRING_ALLOC("WritingInstanceId");
-opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6054_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3466,7 +3466,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct;
 opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6054_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3556,7 +3556,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6058_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3651,7 +3651,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.Name = UA_STRING_ALLOC("CreatingInstanceId");
-opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ValueRank = (UA_Int32) 1;
 opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6059_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3684,7 +3684,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct;
 opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.Name = UA_STRING_ALLOC("WritingInstanceId");
-opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ValueRank = (UA_Int32) 1;
 opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6059_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3816,7 +3816,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct;
 opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6059_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -3906,7 +3906,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6055_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4036,7 +4036,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.Name = UA_STRING_ALLOC("RelationalExpression");
-opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_RELATIONALEXPRESSIONENUM);
 opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6056_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4069,7 +4069,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct;
 opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.Name = UA_STRING_ALLOC("ExpressionSemantic");
-opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_EXPRESSIONSEMANTICENUM);
 opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6056_Argument_1_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4168,7 +4168,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct;
 opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.Name = UA_STRING_ALLOC("PropertyReference");
-opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6056_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4201,7 +4201,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct;
 opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.Name = UA_STRING_ALLOC("View");
-opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_VIEWENUM);
 opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6056_Argument_5_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4267,7 +4267,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct;
 opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6056_Argument_7_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4361,7 +4361,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6051_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4427,7 +4427,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct;
 opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.Name = UA_STRING_ALLOC("CreatingInstanceId");
-opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6051_Argument_2_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4460,7 +4460,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct;
 opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.Name = UA_STRING_ALLOC("WritingInstanceId");
-opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6051_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4631,7 +4631,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6052_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4711,7 +4711,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.Name = UA_STRING_ALLOC("AASId");
-opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6049_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4810,7 +4810,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct;
 opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.Name = UA_STRING_ALLOC("RelationalExpression");
-opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_RELATIONALEXPRESSIONENUM);
 opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6049_Argument_3_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4843,7 +4843,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct;
 opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.Name = UA_STRING_ALLOC("ExpressionSemantic");
-opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_EXPRESSIONSEMANTICENUM);
 opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6049_Argument_4_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4942,7 +4942,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct;
 opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.Name = UA_STRING_ALLOC("PropertyReference");
-opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_IDENTIFICATION);
 opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6049_Argument_7_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -4975,7 +4975,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct;
 opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.Name = UA_STRING_ALLOC("View");
-opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_VIEWENUM);
 opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6049_Argument_8_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));
@@ -5086,7 +5086,7 @@ struct {
   UA_LocalizedText Description;
 } opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct;
 opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.Name = UA_STRING_ALLOC("Status");
-opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(0,0);
+opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.DataType = UA_NODEID_NUMERIC(nsIdx_2,UA_NS2ID_AASSTATUSCODE);
 opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ValueRank = (UA_Int32) -1;
 opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ArrayDimensionsSize = 1;
 opcua_node_variable_t_ns_2_i_6050_Argument_0_0_struct.ArrayDimensions = (UA_UInt32 *) UA_malloc(sizeof(UA_UInt32));

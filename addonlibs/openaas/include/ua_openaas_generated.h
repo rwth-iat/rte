@@ -1,5 +1,5 @@
-/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/openAAS_workshop/external/open62541/tools/generate_datatypes.py
- * on host opcua-VirtualBox by user opcua at 2017-01-31 04:43:57 */
+/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/Documents/openAAS_workshop/external/open62541/tools/generate_datatypes.py
+ * on host opcua-VirtualBox by user opcua at 2017-02-03 12:43:52 */
 
 #ifndef UA_OPENAAS_GENERATED_H_
 #define UA_OPENAAS_GENERATED_H_
@@ -111,6 +111,7 @@ typedef struct {
     UA_Variant value;
     UA_Identification propertyReference;
     UA_ViewEnum view;
+    UA_Boolean isPublic;
 } UA_PropertyValueStatement;
 
 #define UA_OPENAAS_PROPERTYVALUESTATEMENT 6

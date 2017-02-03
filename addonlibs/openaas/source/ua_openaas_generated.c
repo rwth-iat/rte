@@ -1,5 +1,5 @@
-/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/openAAS_workshop/external/open62541/tools/generate_datatypes.py
- * on host opcua-VirtualBox by user opcua at 2017-01-31 04:43:57 */
+/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/Documents/openAAS_workshop/external/open62541/tools/generate_datatypes.py
+ * on host opcua-VirtualBox by user opcua at 2017-02-03 12:43:52 */
 
 #include "stddef.h"
 #include "ua_openaas_generated.h"
@@ -119,7 +119,7 @@ static UA_DataTypeMember LifeCycleEntry_members[6] = {
   },};
 
 /* PropertyValueStatement */
-static UA_DataTypeMember PropertyValueStatement_members[6] = {
+static UA_DataTypeMember PropertyValueStatement_members[7] = {
   { .memberTypeIndex = UA_TYPES_UINT32,
 #ifdef UA_ENABLE_TYPENAMES
     .memberName = "expressionSemantic",
@@ -166,6 +166,14 @@ static UA_DataTypeMember PropertyValueStatement_members[6] = {
 #endif
     .namespaceZero = false,
     .padding = offsetof(UA_PropertyValueStatement, view) - offsetof(UA_PropertyValueStatement, propertyReference) - sizeof(UA_Identification),
+    .isArray = false
+  },
+  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+#ifdef UA_ENABLE_TYPENAMES
+    .memberName = "isPublic",
+#endif
+    .namespaceZero = true,
+    .padding = offsetof(UA_PropertyValueStatement, isPublic) - offsetof(UA_PropertyValueStatement, view) - sizeof(UA_ViewEnum),
     .isArray = false
   },};
 const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
@@ -265,7 +273,7 @@ const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
   .pointerFree = false,
   .overlayable = false,
   .binaryEncodingId = 5006,
-  .membersSize = 6,
+  .membersSize = 7,
   .members = PropertyValueStatement_members },
 };
 
