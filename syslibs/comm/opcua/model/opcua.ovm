@@ -8,7 +8,7 @@
 
 LIBRARY opcua
     VERSION   = "V0.1 (DD-Mon-YYYY)";
-    AUTHOR    = "Lars Evertz, Florian Palm";
+    AUTHOR    = "Lars Evertz, Florian Palm, Torben Deppe";
     COPYRIGHT = "";
     COMMENT   = "Implements an OPC UA server with access to the models in the ov system. Commandline Options: UA_CertPath - Path to the server certificate file. Absolute or relative to the config file; UA_Port - specify the portNumber on which the UA-Server will listen.";
     
@@ -438,6 +438,7 @@ LIBRARY opcua
             connectTo   : C_FUNCTION <UA_FNC_CONNECTTO>;
             readValue   : C_FUNCTION <UA_FNC_READVALUE>;
             disconnectfnc  : C_FUNCTION <UA_FNC_DISCONNECT>;
+            browse      : C_FUNCTION <UA_FNC_BROWSE>;
         END_OPERATIONS;
     END_CLASS;
     
