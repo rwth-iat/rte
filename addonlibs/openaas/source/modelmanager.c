@@ -25,15 +25,9 @@
 #include "libov/ov_macros.h"
 #include "nodeset.h"
 #include "ua_openaas_generated.h"
-extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
+#include "openaas_helpers.h"
 
-OV_BOOL openaas_modelmanager_IdentificationTypeEqual(IdentificationType *aasId, IdentificationType *aasId2){
-	if (aasId->IdType == aasId2->IdType){
-		if (ov_string_compare(aasId->IdSpec, aasId2->IdSpec) == OV_STRCMP_EQUAL)
-			return true;
-	}
-	return false;
-}
+extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
 
 void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING aasName){
 	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
@@ -126,7 +120,7 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 	tmpAASConvertList = ov_database_malloc(sizeof(AASConvertListType)*(pmodelmanager->v_Container.AASConvertListSize-1));
 	OV_UINT j = 0;
 	for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
-		if (openaas_modelmanager_IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId))
+		if (IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId))
 			continue;
 		tmpAASConvertList[j].AASId.IdType = (pmodelmanager->v_Container.AASConvertList)[i].AASId.IdType;
 		tmpAASConvertList[i].AASId.IdSpec = NULL;
@@ -182,7 +176,7 @@ OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 		return "";
 	}
 	for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
-		if (openaas_modelmanager_IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId)){
+		if (IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId)){
 			return (pmodelmanager->v_Container.AASConvertList)[i].AASPath;
 		}
 	}
@@ -205,183 +199,6 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_ovresultToAASStatusCode(OV_RE
 	}
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASCreate_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-    pobj->v_AASCreate = value;
-    if (pobj->v_AASCreate == true){
-    	IdentificationType tmpAASId;
-    	tmpAASId.IdSpec = pobj->v_AASIdString;
-    	tmpAASId.IdType = pobj->v_AASIdTypeId;
-
-    	IdentificationType tmpAssetId;
-    	tmpAssetId.IdSpec = pobj->v_AASAssetIdString;
-    	tmpAssetId.IdType = pobj->v_AASAssetIdTypeId;
-
-    	result = openaas_modelmanager_createAAS(tmpAASId, pobj->v_AASName, tmpAssetId);
-    }
-    pobj->v_AASCreate = false;
-    pobj->v_AASStatus = result;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASDelete_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-    pobj->v_AASDelete = value;
-    if (pobj->v_AASDelete == true){
-    	IdentificationType tmpAASId;
-    	tmpAASId.IdSpec = pobj->v_AASIdString;
-		tmpAASId.IdType = pobj->v_AASIdTypeId;
-    	result = openaas_modelmanager_deleteAAS(tmpAASId);
-    }
-    pobj->v_AASDelete = false;
-    pobj->v_AASStatus = result;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreate_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-	pobj->v_PVSLCreate = value;
-	if (pobj->v_PVSLCreate == true){
-		IdentificationType tmpAASId;
-		tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
-		tmpAASId.IdType = pobj->v_PVSLAASIdTypeId;
-
-		IdentificationType tmpCarrier;
-		tmpCarrier.IdSpec = pobj->v_PVSLCarrierString;
-		tmpCarrier.IdType = pobj->v_PVSLCarrierTypeId;
-
-		result = openaas_modelmanager_createPVSL(tmpAASId, pobj->v_PVSLName, tmpCarrier);
-	}
-	pobj->v_PVSLCreate = false;
-	pobj->v_PVSLStatus = result;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLDelete_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-	pobj->v_PVSLDelete = value;
-	if (pobj->v_PVSLDelete == true){
-		IdentificationType tmpAASId;
-		tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
-		tmpAASId.IdType = pobj->v_PVSLAASIdTypeId;
-
-		result = openaas_modelmanager_deletePVSL(tmpAASId, pobj->v_PVSLName);
-	}
-	pobj->v_PVSLDelete = false;
-	pobj->v_PVSLStatus = result;
-	return OV_ERR_OK;
-}
-
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSCreate_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-	pobj->v_PVSCreate = value;
-	if (pobj->v_PVSCreate == true){
-		IdentificationType tmpAASId;
-		tmpAASId.IdSpec = pobj->v_PVSAASIdString;
-		tmpAASId.IdType = pobj->v_PVSAASIdTypeId;
-
-		IdentificationType tmpPropertyRefereceId;
-		tmpPropertyRefereceId.IdSpec = pobj->v_PVSPropertyReferenceIdString;
-		tmpPropertyRefereceId.IdType = pobj->v_PVSPropertyReferenceIdType;
-
-		result = openaas_modelmanager_createPVS(tmpAASId, pobj->v_PVSPVSLName, pobj->v_PVSName, pobj->v_PVSRelationalExpression, pobj->v_PVSExpressionSemantic, pobj->v_PVSValue, pobj->v_PVSUnit, tmpPropertyRefereceId, pobj->v_PVSView, pobj->v_PVSIsPublic);
-	}
-	pobj->v_PVSCreate = false;
-	pobj->v_PVSStatus = result;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSDelete_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-	pobj->v_PVSDelete = value;
-	if (pobj->v_PVSDelete == true){
-		IdentificationType tmpAASId;
-		tmpAASId.IdSpec = pobj->v_PVSAASIdString;
-		tmpAASId.IdType = pobj->v_PVSAASIdTypeId;
-
-		result = openaas_modelmanager_deletePVS(tmpAASId, pobj->v_PVSPVSLName, pobj->v_PVSName);
-	}
-	pobj->v_PVSDelete = false;
-	pobj->v_PVSStatus = result;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_LCECreate_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-	pobj->v_LCECreate = value;
-	if (pobj->v_LCECreate == true){
-		IdentificationType tmpAASId;
-		tmpAASId.IdSpec = pobj->v_LCEAASIdString;
-		tmpAASId.IdType = pobj->v_LCEAASIdTypeId;
-
-		IdentificationType tmpcreatingInstance;
-		tmpcreatingInstance.IdSpec = pobj->v_LCECreatingInstanceString;
-		tmpcreatingInstance.IdType = pobj->v_LCECreatingInstanceType;
-
-		IdentificationType tmpwritingInstance;
-		tmpwritingInstance.IdSpec = pobj->v_LCEWritingInstanceString;
-		tmpwritingInstance.IdType = pobj->v_LCEWritingInstanceType;
-
-		DataValue tmpDataValue;
-		tmpDataValue.Value = pobj->v_LCEValue;
-		tmpDataValue.TimeStamp = pobj->v_LCETimeStamp;
-
-		result = openaas_modelmanager_createLCE(tmpAASId, tmpcreatingInstance, tmpwritingInstance, pobj->v_LCEEventClass, pobj->v_LCESubject, tmpDataValue);
-	}
-	pobj->v_LCECreate = false;
-	pobj->v_LCEStatus = result;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_LCEDelete_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-	pobj->v_LCEDelete = value;
-	if (pobj->v_LCEDelete == true){
-		IdentificationType tmpAASId;
-		tmpAASId.IdSpec = pobj->v_LCEAASIdString;
-		tmpAASId.IdType = pobj->v_LCEAASIdTypeId;
-
-		result = openaas_modelmanager_deleteLCE(tmpAASId, pobj->v_LCEId);
-	}
-	pobj->v_LCEDelete = false;
-	pobj->v_LCEStatus = result;
-	return OV_ERR_OK;
-}
-
-/*
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_ProcessJSONRequest_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_BOOL  value
-) {
-    pobj->v_ProcessJSONRequest = value;
-    return OV_ERR_OK;
-}
-*/
 
 
 
@@ -393,7 +210,7 @@ OV_DLLFNCEXPORT OV_ACCESS openaas_modelmanager_getaccess(
     /*
     *   local variables
     */
-    return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
+    return (OV_ACCESS)(OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE);
 }
 
 

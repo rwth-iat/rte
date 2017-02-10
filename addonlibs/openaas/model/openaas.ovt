@@ -13,14 +13,14 @@ typedef enum ExpressionSemanticEnum{
     REQUIREMENT
 }ExpressionSemanticEnum;
 
-typedef enum RelationalExpressionEnum{
+typedef enum ExpressionLogicEnum{
     GREATER_THAN,
     GREATER_EQUAL,
     EQUAL,
     NOT_EQUAL,
     LESS_EQUAL,
     LESS_THAN
-}RelationalExpressionEnum;
+}ExpressionLogicEnum;
 
 
 typedef enum ViewEnum{
@@ -35,7 +35,13 @@ typedef enum ViewEnum{
     HUMAN
 }ViewEnum;
 
-
+typedef enum VisibilityEnum{
+    PRIVAT,
+    CONTRACT,
+    PUBLIC
+}VisibilityEnum;
+ 
+ 
 typedef struct IdentificationType{
     OV_STRING IdSpec;
     enum IdType{
@@ -46,8 +52,38 @@ typedef struct IdentificationType{
 
 typedef struct DataValue{
     OV_ANY Value;
-    OV_UINT64 TimeStamp;
+    OV_TIME TimeStamp;
 }DataValue;
+
+typedef struct PropertyValueStatement{
+    OV_STRING pvsName;
+    ExpressionLogicEnum ExpressionLogic;
+    ExpressionSemanticEnum ExpressionSemantic;
+    DataValue value;
+    OV_STRING unit;
+    IdentificationType ID;
+    ViewEnum view;
+    OV_INT Visibility;	
+}PropertyValueStatement;
+
+typedef struct LifeCycleEntry{
+    OV_UINT64 lceId;
+    IdentificationType creatingInstance;
+    IdentificationType writingInstance;
+    OV_STRING eventClass;
+    OV_STRING subject;
+    DataValue data;
+}LifeCycleEntry;
+
+
+typedef struct PropertyValueStatementList{
+	IdentificationType Carrier;
+	IdentificationType CreatingInstance;
+	OV_TIME CreationTime;
+	OV_STRING pvslName;
+	PropertyValueStatement *pvs;
+	OV_UINT pvsNumber;	
+}PropertyValueStatementList;
 
 typedef struct AASConvertListType{
     IdentificationType AASId;
@@ -58,8 +94,6 @@ typedef struct AASConvertListContainerType{
 	AASConvertListType* AASConvertList;
 	OV_UINT AASConvertListSize;
 }AASConvertListContainerType;
-
-typedef int64_t DateTime;
 
 ENUMDEF(AASStatusCode)
 #define AASSTATUSCODE_GOOD                  ENUMVAL(OV_VAR_TYPE, 0x00)

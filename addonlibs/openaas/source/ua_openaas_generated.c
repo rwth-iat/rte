@@ -1,11 +1,22 @@
-/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/Documents/openAAS_workshop/external/open62541/tools/generate_datatypes.py
- * on host opcua-VirtualBox by user opcua at 2017-02-03 12:43:52 */
+/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/parser/tools/generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2017-02-09 10:14:25 */
 
 #include "stddef.h"
 #include "ua_openaas_generated.h"
 
 /* ExpressionSemanticEnum */
 static UA_DataTypeMember ExpressionSemanticEnum_members[1] = {
+  { .memberTypeIndex = UA_TYPES_INT32,
+#ifdef UA_ENABLE_TYPENAMES
+    .memberName = "",
+#endif
+    .namespaceZero = true,
+    .padding = 0,
+    .isArray = false
+  },};
+
+/* ExpressionLogicEnum */
+static UA_DataTypeMember ExpressionLogicEnum_members[1] = {
   { .memberTypeIndex = UA_TYPES_INT32,
 #ifdef UA_ENABLE_TYPENAMES
     .memberName = "",
@@ -26,8 +37,8 @@ static UA_DataTypeMember ViewEnum_members[1] = {
     .isArray = false
   },};
 
-/* RelationalExpressionEnum */
-static UA_DataTypeMember RelationalExpressionEnum_members[1] = {
+/* VisibilityEnum */
+static UA_DataTypeMember VisibilityEnum_members[1] = {
   { .memberTypeIndex = UA_TYPES_INT32,
 #ifdef UA_ENABLE_TYPENAMES
     .memberName = "",
@@ -109,31 +120,31 @@ static UA_DataTypeMember LifeCycleEntry_members[6] = {
     .padding = offsetof(UA_LifeCycleEntry, eventClass) - offsetof(UA_LifeCycleEntry, subject) - sizeof(UA_String),
     .isArray = false
   },
-  { .memberTypeIndex = UA_OPENAAS_VIEWENUM,
+  { .memberTypeIndex = UA_TYPES_INT64,
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "view",
+    .memberName = "id",
 #endif
-    .namespaceZero = false,
-    .padding = offsetof(UA_LifeCycleEntry, view) - offsetof(UA_LifeCycleEntry, eventClass) - sizeof(UA_String),
+    .namespaceZero = true,
+    .padding = offsetof(UA_LifeCycleEntry, id) - offsetof(UA_LifeCycleEntry, eventClass) - sizeof(UA_String),
     .isArray = false
   },};
 
 /* PropertyValueStatement */
 static UA_DataTypeMember PropertyValueStatement_members[7] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+  { .memberTypeIndex = UA_OPENAAS_EXPRESSIONSEMANTICENUM,
 #ifdef UA_ENABLE_TYPENAMES
     .memberName = "expressionSemantic",
 #endif
-    .namespaceZero = true,
+    .namespaceZero = false,
     .padding = 0,
     .isArray = false
   },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+  { .memberTypeIndex = UA_OPENAAS_EXPRESSIONLOGICENUM,
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "relationalExpression",
+    .memberName = "expressionLogic",
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PropertyValueStatement, relationalExpression) - offsetof(UA_PropertyValueStatement, expressionSemantic) - sizeof(UA_UInt32),
+    .namespaceZero = false,
+    .padding = offsetof(UA_PropertyValueStatement, expressionLogic) - offsetof(UA_PropertyValueStatement, expressionSemantic) - sizeof(UA_ExpressionSemanticEnum),
     .isArray = false
   },
   { .memberTypeIndex = UA_TYPES_STRING,
@@ -141,7 +152,7 @@ static UA_DataTypeMember PropertyValueStatement_members[7] = {
     .memberName = "unit",
 #endif
     .namespaceZero = true,
-    .padding = offsetof(UA_PropertyValueStatement, unit) - offsetof(UA_PropertyValueStatement, relationalExpression) - sizeof(UA_UInt32),
+    .padding = offsetof(UA_PropertyValueStatement, unit) - offsetof(UA_PropertyValueStatement, expressionLogic) - sizeof(UA_ExpressionLogicEnum),
     .isArray = false
   },
   { .memberTypeIndex = UA_TYPES_VARIANT,
@@ -154,10 +165,10 @@ static UA_DataTypeMember PropertyValueStatement_members[7] = {
   },
   { .memberTypeIndex = UA_OPENAAS_IDENTIFICATION,
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "propertyReference",
+    .memberName = "iD",
 #endif
     .namespaceZero = false,
-    .padding = offsetof(UA_PropertyValueStatement, propertyReference) - offsetof(UA_PropertyValueStatement, value) - sizeof(UA_Variant),
+    .padding = offsetof(UA_PropertyValueStatement, iD) - offsetof(UA_PropertyValueStatement, value) - sizeof(UA_Variant),
     .isArray = false
   },
   { .memberTypeIndex = UA_OPENAAS_VIEWENUM,
@@ -165,18 +176,18 @@ static UA_DataTypeMember PropertyValueStatement_members[7] = {
     .memberName = "view",
 #endif
     .namespaceZero = false,
-    .padding = offsetof(UA_PropertyValueStatement, view) - offsetof(UA_PropertyValueStatement, propertyReference) - sizeof(UA_Identification),
+    .padding = offsetof(UA_PropertyValueStatement, view) - offsetof(UA_PropertyValueStatement, iD) - sizeof(UA_Identification),
     .isArray = false
   },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+  { .memberTypeIndex = UA_OPENAAS_VISIBILITYENUM,
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isPublic",
+    .memberName = "visibility",
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PropertyValueStatement, isPublic) - offsetof(UA_PropertyValueStatement, view) - sizeof(UA_ViewEnum),
+    .namespaceZero = false,
+    .padding = offsetof(UA_PropertyValueStatement, visibility) - offsetof(UA_PropertyValueStatement, view) - sizeof(UA_ViewEnum),
     .isArray = false
   },};
-const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
+UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
 
 /* ExpressionSemanticEnum */
 { .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3004},
@@ -192,6 +203,20 @@ const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
   .membersSize = 1,
   .members = ExpressionSemanticEnum_members },
 
+/* ExpressionLogicEnum */
+{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3003},
+  .typeIndex = UA_TYPES_INT32,
+#ifdef UA_ENABLE_TYPENAMES
+  .typeName = "ExpressionLogicEnum",
+#endif
+  .memSize = sizeof(UA_ExpressionLogicEnum),
+  .builtin = true,
+  .pointerFree = true,
+  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
+  .binaryEncodingId = 0,
+  .membersSize = 1,
+  .members = ExpressionLogicEnum_members },
+
 /* ViewEnum */
 { .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3007},
   .typeIndex = UA_TYPES_INT32,
@@ -206,19 +231,19 @@ const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT] = {
   .membersSize = 1,
   .members = ViewEnum_members },
 
-/* RelationalExpressionEnum */
-{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3003},
+/* VisibilityEnum */
+{ .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3006},
   .typeIndex = UA_TYPES_INT32,
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RelationalExpressionEnum",
+  .typeName = "VisibilityEnum",
 #endif
-  .memSize = sizeof(UA_RelationalExpressionEnum),
+  .memSize = sizeof(UA_VisibilityEnum),
   .builtin = true,
   .pointerFree = true,
   .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
   .binaryEncodingId = 0,
   .membersSize = 1,
-  .members = RelationalExpressionEnum_members },
+  .members = VisibilityEnum_members },
 
 /* IdEnum */
 { .typeId = {.namespaceIndex = 3, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3002},

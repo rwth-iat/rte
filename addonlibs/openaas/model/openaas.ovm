@@ -6,10 +6,10 @@
 
 LIBRARY openaas
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
-	AUTHOR    = "";
-	COPYRIGHT = "";
-	COMMENT   = "";
-	
+    AUTHOR    = "Torben Deppe";
+    COPYRIGHT = "";
+    COMMENT   = "";
+    
 	/**
 		Documentation of aas.
 		@note Javadoc syntax is allowed here.
@@ -19,36 +19,37 @@ LIBRARY openaas
 	CLASS PropertyValueStatement : CLASS ov/object
         IS_INSTANTIABLE;
         VARIABLES
-        	ExpressionSemantic : UINT 
+        	ExpressionSemantic : INT 
         	   COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
-        	RelationalExpression : UINT 
+        	ExpressionLogic : INT 
         	   COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
             Unit                   : STRING INITIALVALUE    =   "";
             Value                  : ANY;
-            PropertyReferenceString : STRING INITIALVALUE    =   "";
-            PropertyReferenceType : UINT;
-            View                   : UINT
+            TimeStamp              : TIME;
+            IDIdString               : STRING INITIALVALUE    =   "";
+            IDIdType                 : UINT;
+            View                   : INT
                 COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURITY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
-            IsPublic                : BOOL;
+            Visibility             : INT COMMENT = "0:PRIVAT,1:CONTRACT,2:PUBLIC";
         END_VARIABLES;
         OPERATIONS
         	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
         END_OPERATIONS;
-    END_CLASS;
+    END_CLASS; 
     
     
     CLASS LifeCycleEntry : CLASS ov/object
         IS_INSTANTIABLE;
         VARIABLES
-            CreatingInstanceString  : STRING INITIALVALUE    =   "";
-            CreatingInstanceType    : UINT;
-            WritingInstanceString   : STRING INITIALVALUE    =   "";
-            WritingInstanceType     : UINT;
+            CreatingInstanceIdString  : STRING INITIALVALUE    =   "";
+            CreatingInstanceIdType    : UINT;
+            WritingInstanceIdString   : STRING INITIALVALUE    =   "";
+            WritingInstanceIdType     : UINT;
             Data                    : ANY;
-            TimeStamp               : UINT;
+            TimeStamp               : TIME;
             Subject                 : STRING INITIALVALUE    =   "";
 			EventClass              : STRING INITIALVALUE    =   "";
-			//View                    : UINT;
+            Id                      : UINT;
         END_VARIABLES;
         OPERATIONS
         	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
@@ -58,8 +59,11 @@ LIBRARY openaas
     CLASS PropertyValueStatementList : CLASS ov/domain
     	IS_INSTANTIABLE;
         VARIABLES
-            CarrierString  : STRING;
-            CarrierType    : UINT;
+            CarrierIdString  : STRING;
+            CarrierIdType    : UINT;
+            CreatingInstanceIdString : STRING;
+            CreatingInstanceIdType : UINT;
+            CreationTime : TIME;
         END_VARIABLES;
         OPERATIONS
         	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
@@ -148,51 +152,55 @@ LIBRARY openaas
         IS_INSTANTIABLE;
         COMMENT    =    "Implementations of model functions to act like a factory";
     VARIABLES 
-    	AASIdString                     : STRING INITIALVALUE    =   "";
-    	AASIdTypeId                     : UINT;
-    	AASName                         : STRING INITIALVALUE    =   "";
-    	AASAssetIdString                : STRING INITIALVALUE    =   "";
-        AASAssetIdTypeId                : UINT;    	
+    	AASIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+    	AASIdType                       : UINT HAS_SET_ACCESSOR;
+    	AASName                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+    	AASAssetIdString                : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        AASAssetIdType                  : UINT HAS_SET_ACCESSOR;    	
         AASStatus                       : UINT; 
     	AASCreate                       : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create an AAS";
     	AASDelete                       : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete an AAS";   
     	 
     	PVSLAASIdString                 : STRING INITIALVALUE    =   "";
-        PVSLAASIdTypeId                 : UINT;
-    	PVSLName                        : STRING INITIALVALUE    =   "";
-    	PVSLCarrierString               : STRING INITIALVALUE    =   "";
-    	PVSLCarrierTypeId               : UINT;   
+        PVSLAASIdType                   : UINT HAS_SET_ACCESSOR;
+    	PVSLName                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+    	PVSLCarrierIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+    	PVSLCarrierIdType               : UINT HAS_SET_ACCESSOR;
+    	PVSLCreatingInstanceIdString    : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLCreatingInstanceIdType      : UINT HAS_SET_ACCESSOR;   
+        PVSLCreationTime                : TIME HAS_SET_ACCESSOR;      
     	PVSLStatus                      : UINT; 
     	PVSLCreate                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVSL";
 	    PVSLDelete                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVSL"; 
 	    
-	    PVSAASIdString                  : STRING INITIALVALUE    =   "";
-        PVSAASIdTypeId                  : UINT;
-        PVSPVSLName                     : STRING INITIALVALUE    =   "";
-	    PVSName                         : STRING INITIALVALUE    =   "";
-	    PVSRelationalExpression         : UINT     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
-	    PVSExpressionSemantic           : UINT     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
-	    PVSValue                        : ANY;
-	    PVSUnit                         : STRING INITIALVALUE    =   "";
-        PVSPropertyReferenceIdString    : STRING INITIALVALUE    =   "";
-        PVSPropertyReferenceIdType      : UINT;
-        PVSView                         : UINT;     
-        PVSIsPublic                     : BOOL;
+	    PVSAASIdString                  : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSAASIdType                    : UINT HAS_SET_ACCESSOR;
+        PVSPVSLName                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	    PVSName                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	    PVSExpressionLogic              : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+	    PVSExpressionSemantic           : INT HAS_SET_ACCESSOR     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+	    PVSValue                        : ANY HAS_SET_ACCESSOR;
+	    PVSTimeStamp                    : TIME HAS_SET_ACCESSOR;
+	    PVSUnit                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSIDIdString                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSIDIdType                     : UINT HAS_SET_ACCESSOR;
+        PVSView                         : INT HAS_SET_ACCESSOR;     
+        PVSVisibility                   : INT HAS_SET_ACCESSOR;
         PVSStatus                       : UINT;  
 	    PVSCreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVS";
         PVSDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVS";
 	    
-	    LCEAASIdString                  : STRING INITIALVALUE    =   "";
-        LCEAASIdTypeId                  : UINT;
-        LCEId                           : UINT;
-	    LCECreatingInstanceString       : STRING INITIALVALUE    =   "";
-        LCECreatingInstanceType         : UINT;
-        LCEWritingInstanceString        : STRING INITIALVALUE    =   "";
-        LCEWritingInstanceType          : UINT;
-        LCEEventClass                   : STRING INITIALVALUE    =   "";
-        LCESubject                      : STRING INITIALVALUE    =   "";
-        LCEValue                        : ANY;
-        LCETimeStamp                    : UINT;
+	    LCEAASIdString                  : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCEAASIdType                    : UINT HAS_SET_ACCESSOR;
+        LCEId                           : UINT HAS_SET_ACCESSOR;
+	    LCECreatingInstanceIdString     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCECreatingInstanceIdType       : UINT HAS_SET_ACCESSOR;
+        LCEWritingInstanceIdString      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCEWritingInstanceIdType        : UINT HAS_SET_ACCESSOR;
+        LCEEventClass                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCESubject                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCEValue                        : ANY HAS_SET_ACCESSOR;
+        LCETimeStamp                    : TIME HAS_SET_ACCESSOR;
         LCEStatus                       : UINT;
         LCECreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a LCE";
         LCEDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a LCE";
@@ -204,9 +212,11 @@ LIBRARY openaas
     OPERATIONS
         createAAS  : C_FUNCTION <UA_FNC_CREATEAAS>;
         deleteAAS  : C_FUNCTION <UA_FNC_DELETEAAS>;
-        createPVSL : C_FUNCTION <UA_FNC_CREATEPVSL>; 
+        createPVSL : C_FUNCTION <UA_FNC_CREATEPVSL>;
+        createPVSLTime : C_FUNCTION <UA_FNC_CREATEPVSLTIME>; 
         deletePVSL : C_FUNCTION <UA_FNC_DELETEPVSL>;
-        createPVS  : C_FUNCTION <UA_FNC_CREATEPVS>; 
+        createPVS  : C_FUNCTION <UA_FNC_CREATEPVS>;
+        createPVSTime  : C_FUNCTION <UA_FNC_CREATEPVSTIME>;  
         deletePVS  : C_FUNCTION <UA_FNC_DELETEPVS>;
         getPVS     : C_FUNCTION <UA_FNC_GETPVS>;
         setPVS     : C_FUNCTION <UA_FNC_SETPVS>;
@@ -216,17 +226,38 @@ LIBRARY openaas
         getLastLCEs: C_FUNCTION <UA_FNC_GETLASTLCES>;
         setLCE     : C_FUNCTION <UA_FNC_SETLCE>;
         getAASNodeId : C_FUNCTION <UA_FNC_GETAASNODEID>;
+        getCoreData : C_FUNCTION <UA_FNC_GETCOREDATA>;
+        triggerGetCoreData : C_FUNCTION <UA_FNC_TRIGGERGETCOREDATA>;
+        startGetAssetLCEData : C_FUNCTION <UA_FNC_STARTGETASSETLCEDATA>;
+        stopGetAssetLCEData : C_FUNCTION <UA_FNC_STOPGETASSETLCEDATA>;
         
         ovresultToAASStatusCode : C_FUNCTION <UA_FNC_OVRESULTTOAASSTATUSCODE>;
         AASConvertListGet : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTGET>;
         AASConvertListAdd : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTADD>;
-        AASConvertListDelete : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTDELETE>;
-        IdentificationTypeEqual : C_FUNCTION <OPENAAS_FNC_IDENTIFICATIONTYPEEQUAL>;
+        AASConvertListDelete : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTDELETE>;       
         
         getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
         constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
         destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;
         startup : C_FUNCTION <OV_FNC_STARTUP>;
+    END_OPERATIONS;    
+    END_CLASS;
+    
+   CLASS aasDI    :    CLASS fb/functionblock 
+        IS_INSTANTIABLE;
+    VARIABLES
+        AssetIPAddress                  : STRING HAS_SET_ACCESSOR  INITIALVALUE    =   "";
+        AssetAASIdString                : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        AssetAASIdType                  : UINT HAS_SET_ACCESSOR;
+        AASIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        AASIdType                       : UINT HAS_SET_ACCESSOR;
+        StartAASDI                      : BOOL HAS_SET_ACCESSOR;
+        StopAASDI                       : BOOL HAS_SET_ACCESSOR;
+        Status                          : UINT;
+    END_VARIABLES;
+    OPERATIONS
+        getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
+        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
     END_OPERATIONS;    
     END_CLASS;
   	

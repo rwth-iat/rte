@@ -244,12 +244,12 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 	if(!pComCo){
 		IdentificationType aasId;
 		aasId.IdSpec = NULL;
-		ov_string_setvalue(&aasId.IdSpec, "");
+		ov_string_setvalue(&aasId.IdSpec, "http://acplt.org/ComCo");
 		aasId.IdType = 0;
 
 		IdentificationType assetId;
 		assetId.IdSpec = NULL;
-		ov_string_setvalue(&assetId.IdSpec, "");
+		ov_string_setvalue(&assetId.IdSpec, "http://acplt.org/Manager");
 		assetId.IdType = 0;
 
 		if (AASSTATUSCODE_FAIL(openaas_modelmanager_createAAS(aasId, "ComCo", assetId))){

@@ -331,32 +331,35 @@ void SRV_ident_t_init (SRV_ident_t* this){
 }
 
 void PVSL_t_init (PVSL_t* this){
-	SRV_ident_t_init(&this->carrierId);
+	SRV_ident_t_init(&this->carrier);
+	SRV_ident_t_init(&this->creatingInstance);
 	SRV_String_init(&this->name);
+	this->creationTime = 0;
 	this->pvs = NULL;
 	this->numPvs = 0;
+	this->hasCreationTime = false;
 	this->hasName = false;
 }
 
 void PVS_t_init (PVS_t* this){
 	SRV_String_init(&this->name);
+	this->hasName = false;
 	SRV_String_init(&this->unit);
-	SRV_ident_t_init(&this->propertyReference);
+	this->hasUnit =false;
+	SRV_ident_t_init(&this->ID);
 	this->expressionSemantic = SRV_ES_undefined;
-	this->relationalExpression = SRV_RE_undefined;
+	this->expressionLogic = SRV_EL_undefined;
+	this->valTime = 0;
+	this->hasValTime = false;
 	this->valType = SRV_VT_undefined;
 	this->value = malloc(SRV_VALUEMEMSIZE);
 	this->view = SRV_VIEW_undefined;
-	this->isPublic = false;
-	this->hasName = false;
-	this->hasUnit =false;
-	this->hasIsPublic = false;
-
+	this->visibility = SRV_VIS_undefined;
 }
 
 void LCE_t_init (LCE_t* this){
-	SRV_ident_t_init(&this->creatingInstanceId);
-	SRV_ident_t_init(&this->writingInstanceId);
+	SRV_ident_t_init(&this->creatingInstance);
+	SRV_ident_t_init(&this->writingInstance);
 	SRV_String_init(&this->eventClass);
 	SRV_String_init(&this->subject);
 	this->data = malloc(SRV_VALUEMEMSIZE);
@@ -559,7 +562,8 @@ void SRV_ident_t_deleteMembers (SRV_ident_t* this){
 }
 
 void PVSL_t_deleteMembers (PVSL_t* this){
-	SRV_ident_t_deleteMembers(&this->carrierId);
+	SRV_ident_t_deleteMembers(&this->carrier);
+	SRV_ident_t_deleteMembers(&this->creatingInstance);
 	SRV_String_deleteMembers(&this->name);
 	if(this->pvs){
 		for(uint i = 0; i<this->numPvs; i++){
@@ -574,7 +578,7 @@ void PVSL_t_deleteMembers (PVSL_t* this){
 void PVS_t_deleteMembers (PVS_t* this){
 	SRV_String_deleteMembers(&this->name);
 	SRV_String_deleteMembers(&this->unit);
-	SRV_ident_t_deleteMembers(&this->propertyReference);
+	SRV_ident_t_deleteMembers(&this->ID);
 	if(this->value){
 		if(this->valType==SRV_VT_STRING)
 			SRV_String_deleteMembers(this->value);
@@ -584,8 +588,8 @@ void PVS_t_deleteMembers (PVS_t* this){
 }
 
 void LCE_t_deleteMembers (LCE_t* this){
-	SRV_ident_t_deleteMembers(&this->creatingInstanceId);
-	SRV_ident_t_deleteMembers(&this->writingInstanceId);
+	SRV_ident_t_deleteMembers(&this->creatingInstance);
+	SRV_ident_t_deleteMembers(&this->writingInstance);
 	SRV_String_deleteMembers(&this->eventClass);
 	SRV_String_deleteMembers(&this->subject);
 	if(this->data){

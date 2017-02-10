@@ -1,5 +1,5 @@
-/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/Documents/openAAS_workshop/external/open62541/tools/generate_datatypes.py
- * on host opcua-VirtualBox by user opcua at 2017-02-03 12:43:52 */
+/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/parser/tools/generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2017-02-09 10:14:25 */
 
 #ifndef UA_OPENAAS_GENERATED_H_
 #define UA_OPENAAS_GENERATED_H_
@@ -8,27 +8,48 @@
 extern "C" {
 #endif
 
-#include "openaas.h"
+#ifdef UA_NO_AMALGAMATION
+#include "ua_types.h"
+ #include "ua_types_generated.h"
+
+#else
+ #include "open62541.h"
+#endif
 
 /**
  * Every type is assigned an index in an array containing the type descriptions.
  * These descriptions are used during type handling (copying, deletion,
  * binary encoding, ...). */
-#define UA_OPENAAS_COUNT 7
-extern UA_EXPORT const UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT];
+#define UA_OPENAAS_COUNT 8
+extern UA_EXPORT UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT];
 
 /**
  * ExpressionSemanticEnum
  * ^^^^^^^^^^^^^^^^^^^^^^
  * Specifies the semantic of the property value statement */
 typedef enum {
-    UA_EXPRESSIONSEMANTICENUM_ASSURANCE = 0,
+    UA_EXPRESSIONSEMANTICENUM_CONFIRMATION = 0,
     UA_EXPRESSIONSEMANTICENUM_SETTING = 1,
     UA_EXPRESSIONSEMANTICENUM_MEASUREMENT = 2,
     UA_EXPRESSIONSEMANTICENUM_REQUIREMENT = 3
 } UA_ExpressionSemanticEnum;
 
 #define UA_OPENAAS_EXPRESSIONSEMANTICENUM 0
+
+/**
+ * ExpressionLogicEnum
+ * ^^^^^^^^^^^^^^^^^^^
+ */
+typedef enum {
+    UA_EXPRESSIONLOGICENUM_GREATER_THAN = 0,
+    UA_EXPRESSIONLOGICENUM_GREATER_EQUAL = 1,
+    UA_EXPRESSIONLOGICENUM_EQUAL = 2,
+    UA_EXPRESSIONLOGICENUM_NOT_EQUAL = 3,
+    UA_EXPRESSIONLOGICENUM_LESS_EQUAL = 4,
+    UA_EXPRESSIONLOGICENUM_LESS_THAN = 5
+} UA_ExpressionLogicEnum;
+
+#define UA_OPENAAS_EXPRESSIONLOGICENUM 1
 
 /**
  * ViewEnum
@@ -46,22 +67,19 @@ typedef enum {
     UA_VIEWENUM_HUMAN = 8
 } UA_ViewEnum;
 
-#define UA_OPENAAS_VIEWENUM 1
+#define UA_OPENAAS_VIEWENUM 2
 
 /**
- * RelationalExpressionEnum
- * ^^^^^^^^^^^^^^^^^^^^^^^^
- * Specifies the relational semantic of the expression */
+ * VisibilityEnum
+ * ^^^^^^^^^^^^^^
+ * Kind of Visibilty */
 typedef enum {
-    UA_RELATIONALEXPRESSIONENUM_GREATER_THAN = 0,
-    UA_RELATIONALEXPRESSIONENUM_GREATER_EQUAL = 1,
-    UA_RELATIONALEXPRESSIONENUM_EQUAL = 2,
-    UA_RELATIONALEXPRESSIONENUM_NOT_EQUAL = 3,
-    UA_RELATIONALEXPRESSIONENUM_LESS_EQUAL = 4,
-    UA_RELATIONALEXPRESSIONENUM_LESS_THAN = 5
-} UA_RelationalExpressionEnum;
+    UA_VISIBILITYENUM_PRIVATE = 0,
+    UA_VISIBILITYENUM_CONTRACT = 1,
+    UA_VISIBILITYENUM_PUBLIC = 2
+} UA_VisibilityEnum;
 
-#define UA_OPENAAS_RELATIONALEXPRESSIONENUM 2
+#define UA_OPENAAS_VISIBILITYENUM 3
 
 /**
  * IdEnum
@@ -72,7 +90,7 @@ typedef enum {
     UA_IDENUM_ISO = 1
 } UA_IdEnum;
 
-#define UA_OPENAAS_IDENUM 3
+#define UA_OPENAAS_IDENUM 4
 
 /**
  * Identification
@@ -83,7 +101,7 @@ typedef struct {
     UA_IdEnum idType;
 } UA_Identification;
 
-#define UA_OPENAAS_IDENTIFICATION 4
+#define UA_OPENAAS_IDENTIFICATION 5
 
 /**
  * LifeCycleEntry
@@ -95,26 +113,26 @@ typedef struct {
     UA_DataValue data;
     UA_String subject;
     UA_String eventClass;
-    UA_ViewEnum view;
+    UA_Int64 id;
 } UA_LifeCycleEntry;
 
-#define UA_OPENAAS_LIFECYCLEENTRY 5
+#define UA_OPENAAS_LIFECYCLEENTRY 6
 
 /**
  * PropertyValueStatement
  * ^^^^^^^^^^^^^^^^^^^^^^
  * Property Value Statement */
 typedef struct {
-    UA_UInt32 expressionSemantic;
-    UA_UInt32 relationalExpression;
+    UA_ExpressionSemanticEnum expressionSemantic;
+    UA_ExpressionLogicEnum expressionLogic;
     UA_String unit;
     UA_Variant value;
-    UA_Identification propertyReference;
+    UA_Identification iD;
     UA_ViewEnum view;
-    UA_Boolean isPublic;
+    UA_VisibilityEnum visibility;
 } UA_PropertyValueStatement;
 
-#define UA_OPENAAS_PROPERTYVALUESTATEMENT 6
+#define UA_OPENAAS_PROPERTYVALUESTATEMENT 7
 
 #ifdef __cplusplus
 } // extern "C"

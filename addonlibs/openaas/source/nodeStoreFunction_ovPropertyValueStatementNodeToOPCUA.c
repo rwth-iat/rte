@@ -131,20 +131,34 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
 		if (tmpPart.elemtype == OV_ET_NONE)
 			break;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "ExpressionSemantic") == OV_STRCMP_EQUAL)
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "ExpressionSemantic") == OV_STRCMP_EQUAL){
 			tmpPropertyValueStatement.expressionSemantic = *(UA_UInt32*)tmpPart.pvalue;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "RelationalExpression") == OV_STRCMP_EQUAL)
-			tmpPropertyValueStatement.relationalExpression = *(UA_UInt32*)tmpPart.pvalue;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Unit") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "ExpressionLogic") == OV_STRCMP_EQUAL){
+			tmpPropertyValueStatement.expressionLogic = *(UA_UInt32*)tmpPart.pvalue;
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Unit") == OV_STRCMP_EQUAL){
 			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpPropertyValueStatement.unit);
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Value") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Value") == OV_STRCMP_EQUAL){
 			ov_AnyToVariant((OV_ANY*)tmpPart.pvalue, &tmpPropertyValueStatement.value);
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "PropertyReferenceString") == OV_STRCMP_EQUAL)
-			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpPropertyValueStatement.propertyReference.idSpec);
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "PropertyReferenceType") == OV_STRCMP_EQUAL)
-			tmpPropertyValueStatement.propertyReference.idType = *(UA_UInt32*)tmpPart.pvalue;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "View") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "IDIdString") == OV_STRCMP_EQUAL){
+			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpPropertyValueStatement.iD.idSpec);
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "IDIdType") == OV_STRCMP_EQUAL){
+			tmpPropertyValueStatement.iD.idType = *(UA_UInt32*)tmpPart.pvalue;
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "View") == OV_STRCMP_EQUAL){
 			tmpPropertyValueStatement.view = *(UA_UInt32*)tmpPart.pvalue;
+			continue;
+		}
 	} while(true);
 
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_OPENAAS[UA_OPENAAS_PROPERTYVALUESTATEMENT];

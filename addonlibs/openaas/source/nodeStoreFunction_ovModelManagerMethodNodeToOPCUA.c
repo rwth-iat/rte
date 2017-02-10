@@ -230,6 +230,18 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLASTLCES);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLASTLCES_INPUTARGUMENTS);
 		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLASTLCES_OUTPUTARGUMENTS);
+	}else if (ov_string_compare(plist[1], "triggerGetCoreData") == OV_STRCMP_EQUAL){
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_TRIGGERGETCOREDATA);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_TRIGGERGETCOREDATA_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_TRIGGERGETCOREDATA_OUTPUTARGUMENTS);
+	}else if (ov_string_compare(plist[1], "startGetAssetLCEData") == OV_STRCMP_EQUAL){
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STARTGETASSETLCEDATA);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STARTGETASSETLCEDATA_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STARTGETASSETLCEDATA_OUTPUTARGUMENTS);
+	}else if (ov_string_compare(plist[1], "stopGetAssetLCEData") == OV_STRCMP_EQUAL){
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STOPGETASSETLCEDATA);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STOPGETASSETLCEDATA_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STOPGETASSETLCEDATA_OUTPUTARGUMENTS);
 	}
 
 	*opcuaNode = newNode;

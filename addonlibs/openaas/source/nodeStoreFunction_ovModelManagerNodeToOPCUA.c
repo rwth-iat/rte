@@ -137,9 +137,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerNodeToOPC
 
 	size_references = size_references + 1;// getAASNodeId
 
+	size_references = size_references + 1;// triggerGetCoreData
 
-
-
+	size_references = size_references + 2;// start/stopGetAssetLCEData
 
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
@@ -291,6 +291,33 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerNodeToOPC
 	ov_string_append(&tmpString, "||");
 	ov_string_append(&tmpString, "getLastLCEs");
 	newNode->references[15].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+
+	// triggerGetCoreData
+	newNode->references[16].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[16].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "triggerGetCoreData");
+	newNode->references[16].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+
+	// startGetAssetLCEData
+	newNode->references[17].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[17].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "startGetAssetLCEData");
+	newNode->references[17].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+
+	// stopGetAssetLCEData
+	newNode->references[18].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[18].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "stopGetAssetLCEData");
+	newNode->references[18].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
 
 	*opcuaNode = newNode;
 	ov_memstack_unlock();

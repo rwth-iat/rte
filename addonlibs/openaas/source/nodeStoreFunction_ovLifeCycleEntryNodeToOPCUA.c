@@ -131,29 +131,46 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 	tmpParrent.pobj = pobj;
 	tmpParrent.elemtype = OV_ET_OBJECT;
 	UA_LifeCycleEntry tmpLifeCycleEntry;
+	UA_LifeCycleEntry_init(&tmpLifeCycleEntry);
 	do {
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
 		if (tmpPart.elemtype == OV_ET_NONE)
 			break;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceString") == OV_STRCMP_EQUAL)
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceIdString") == OV_STRCMP_EQUAL){
 			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpLifeCycleEntry.creatingInstance.idSpec);
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceType") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceIdType") == OV_STRCMP_EQUAL){
 			tmpLifeCycleEntry.creatingInstance.idType = *(UA_UInt32*)tmpPart.pvalue;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceString") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceIdString") == OV_STRCMP_EQUAL){
 			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpLifeCycleEntry.writingInstance.idSpec);
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceType") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceIdType") == OV_STRCMP_EQUAL){
 			tmpLifeCycleEntry.writingInstance.idType = *(UA_UInt32*)tmpPart.pvalue;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Data") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Data") == OV_STRCMP_EQUAL){
 			ov_AnyToVariant((OV_ANY*)tmpPart.pvalue, &tmpLifeCycleEntry.data.value);
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "TimeStamp") == OV_STRCMP_EQUAL)
-			tmpLifeCycleEntry.data.sourceTimestamp = *(UA_DateTime*)tmpPart.pvalue;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Subject") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "TimeStamp") == OV_STRCMP_EQUAL){
+			tmpLifeCycleEntry.data.sourceTimestamp = ov_ovTimeTo1601nsTime(*(OV_TIME*)tmpPart.pvalue);
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Subject") == OV_STRCMP_EQUAL){
 			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpLifeCycleEntry.subject);
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "EventClass") == OV_STRCMP_EQUAL)
+			continue;
+		}
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "EventClass") == OV_STRCMP_EQUAL){
 			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpLifeCycleEntry.eventClass);
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "View") == OV_STRCMP_EQUAL)
-			tmpLifeCycleEntry.view = *(UA_UInt32*)tmpPart.pvalue;
+			continue;
+		}
+		tmpLifeCycleEntry.id =  atoi(tmpPart.elemunion.pvar->v_identifier);
 	} while(true);
+
 
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_OPENAAS[UA_OPENAAS_LIFECYCLEENTRY];
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_LifeCycleEntry_new();
@@ -163,6 +180,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 		return result;
 	}
 	UA_LifeCycleEntry_copy(&tmpLifeCycleEntry, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
+	UA_LifeCycleEntry_deleteMembers(&tmpLifeCycleEntry);
 
 	// accessLevel
 	UA_Byte accessLevel = 0;

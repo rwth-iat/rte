@@ -38,7 +38,7 @@ JSON_RC tok2SrvStr(const char* js, const jsmntok_t* t, SRV_String* str);
 JSON_RC tok2Prim(const char* js, const jsmntok_t* t, SRV_valType_t* type, void* value);
 JSON_RC tok2Int(const char* js, const jsmntok_t* t, void* value, int force32);
 JSON_RC tok2Double(const char* js, const jsmntok_t* t, double* value);
-JSON_RC tok2Bool(const char* js, const jsmntok_t* t, uint8_t* value);
+JSON_RC tok2Bool(const char* js, const jsmntok_t* t, bool* value);
 
 int json_append(SRV_String* js, int start, const char* str, int len, int maxLen);
 int json_appendKey(SRV_String* js, int start, const char* str, int len, int maxLen, int* first);
@@ -124,7 +124,7 @@ JSON_RC jsonGenGetCoreDataRsp(SRV_String* json, int* length, const getCoreDataRs
 
 char* strptime(const char *s, const char *fmt, struct tm *tp);
 
-extern const SRV_String JSON_RE_STR[];
+extern const SRV_String JSON_EL_STR[];
 
 extern const SRV_String JSON_ES_STR[];
 
@@ -133,5 +133,7 @@ extern const SRV_String JSON_ID_STR[];
 extern const SRV_String JSON_VIEW_STR[];
 
 extern const SRV_String JSON_VT_STR[];
+
+extern const SRV_String JSON_VIS_STR[];
 
 #endif /* JSONPARSING_H_ */

@@ -11,13 +11,14 @@
 #define MAX_DATEBUFFER 30
 
 // maximal index of constant arrays
-#define JSON_RE_MAX 6
+#define JSON_EL_MAX 6
 #define JSON_ES_MAX 5
 #define JSON_ID_MAX 2
 #define JSON_VIEW_MAX 9
 #define JSON_VT_MAX 9
+#define JSON_VIS_MAX 3
 
-const SRV_String JSON_RE_STR [JSON_RE_MAX+1] = {
+const SRV_String JSON_EL_STR [JSON_EL_MAX+1] = {
 		{.data = ">" , .length = 1},
 		{.data = ">=", .length = 2},
 		{.data = "==", .length = 2},
@@ -27,10 +28,10 @@ const SRV_String JSON_RE_STR [JSON_RE_MAX+1] = {
 		{.data = ""  , .length = 0}
 };
 const SRV_String JSON_ES_STR [JSON_ES_MAX+1] = {
-		{.data = "Assurance"  , .length = 9},
-		{.data = "Setting"	  , .length = 7},
-		{.data = "Measurement", .length = 11},
-		{.data = "Requirement", .length = 11},
+		{.data = "Confirmation",	.length = 12},
+		{.data = "Setting",			.length =  7},
+		{.data = "Measurement", 	.length = 11},
+		{.data = "Requirement", 	.length = 11},
 		{.data = "" , .length = 0}
 };
 
@@ -66,6 +67,13 @@ const SRV_String JSON_VT_STR [JSON_VT_MAX+1] = {
 		{.data = "STRING",	.length = 6}
 };
 
+const SRV_String JSON_VIS_STR [JSON_VIS_MAX+1] = {
+		{.data = "Private",		.length = 7},
+		{.data = "Contract",	.length = 8},
+		{.data = "Public",		.length = 6},
+		{.data = "",	.length = 0}
+};
+
 static int jsoneq(const char *json, const jsmntok_t *tok, const char *s) {
 	if (tok->type == JSMN_STRING && (int) strlen(s) == tok->end - tok->start &&
 			strncmp(json + tok->start, s, tok->end - tok->start) == 0) {
@@ -83,6 +91,8 @@ static int srvStrEq(const SRV_String* str1, const SRV_String* str2) {
 JSON_RC tok2SrvStr(const char* js, const jsmntok_t* t, SRV_String* str){
 	if(!(t->type==JSMN_STRING))
 		return JSON_RC_WRONG_TYPE;
+	if(!str)
+		return JSON_RC_UNDEF;
 
 	SRV_String_setCopy(str, js+t->start, t->end-t->start);
 
@@ -236,7 +246,7 @@ JSON_RC tok2Double(const char* js, const jsmntok_t* t, double* value){
 	return 0;
 }
 
-JSON_RC tok2Bool(const char* js, const jsmntok_t* t, uint8_t* value){
+JSON_RC tok2Bool(const char* js, const jsmntok_t* t, bool* value){
 	SRV_valType_t type = SRV_VT_undefined;
 	if(!(t->type==JSMN_PRIMITIVE))
 		return JSON_RC_WRONG_TYPE;
@@ -248,6 +258,10 @@ JSON_RC tok2Bool(const char* js, const jsmntok_t* t, uint8_t* value){
 	tok2Prim(js, t, &type, value);
 
 	return 0;
+}
+
+JSON_RC tok2Status(const char* js, const jsmntok_t* t, status_t* status){
+	return tok2Int(js, t, status, 1);
 }
 
 int json_append(SRV_String* js, int start, const char* str, int len, int maxLen){
@@ -363,6 +377,10 @@ int json_appendAny(SRV_String* js, int start, const void* value, SRV_valType_t t
 	return pos;
 }
 
+int json_appendStatus(SRV_String* js, int start, const status_t* status, int maxLen){
+	return json_appendAny(js, start, status, SRV_VT_INT32, maxLen);
+}
+
 int dateTimeToISO(SRV_DateTime t, char* iso, int maxLen){
 	int len;
 	int psec = t % JSON_SEC_TO_DATETIME; // micro sec
@@ -374,7 +392,7 @@ int dateTimeToISO(SRV_DateTime t, char* iso, int maxLen){
 	} else {
 		len = strftime(iso, maxLen, "%Y-%m-%dT%H:%M:%S.", tm);
 		if(len)
-			len += snprintf(iso+len, maxLen, "%06iZ", psec);
+			len += snprintf(iso+len, maxLen-len, "%06iZ", psec);
 	}
 
 	return len;
@@ -423,7 +441,7 @@ JSON_RC ISOToDateTime(char* iso, int len, SRV_DateTime* jsonTime){
 		}
 	}
 
-	unixTime = mktime(&tm);
+	unixTime = mktime(&tm) + tm.tm_gmtoff;
 
 	*jsonTime = unixTime * JSON_SEC_TO_DATETIME + psec;
 
@@ -712,46 +730,55 @@ JSON_RC jsonparsePVSL(const jsmntok_t* t, const SRV_String* str, int start, int 
 		return JSON_RC_WRONG_TYPE;
 
 	int j = start+1;
-	int fields = 0;
 
 	while(j < n && t[j].start<=t[start].end){
-		if(jsoneq(str->data, &t[j], "CarrierId")==0){
+		if(jsoneq(str->data, &t[j], "Carrier")==0){
 			j++;
-			rc = jsonparseId(t, str, j, n, &pvsl->carrierId, &j);
+			rc = jsonparseId(t, str, j, n, &pvsl->carrier, &j);
 			if(rc)
 				return rc;
-			fields |= 1;
 		} else if(jsoneq(str->data, &t[j], "Name")==0){
 			j++;
 			rc = tok2SrvStr(str->data, &t[j], &pvsl->name);
 			if(rc)
 				return rc;
 			pvsl->hasName = true;
-			fields |= 2;
+		} else if(jsoneq(str->data, &t[j], "CreatingInstance")==0){
+			j++;
+			rc = jsonparseId(t, str, j, n, &pvsl->creatingInstance, &j);
+			if(rc)
+				return rc;
+		} else if(jsoneq(str->data, &t[j], "CreationTime")==0){
+			j++;
+			SRV_String time;
+			rc = tok2SrvStr(str->data, &t[j], &time);
+			if(rc)
+				return rc;
+			rc =  ISOToDateTime(time.data, time.length, &pvsl->creationTime);
+			SRV_String_deleteMembers(&time);
+			if(rc)
+				return rc;
+			pvsl->hasCreationTime = true;
 		} else if(jsoneq(str->data, &t[j], "PVS")==0){
 			j++;
 			if(t[j].type==JSMN_ARRAY){
 				pvsl->numPvs = t[j].size;
 				j++;
-
 			} else {
 				pvsl->numPvs = 1;
 			}
 			pvsl->pvs = malloc(sizeof(PVS_t)*pvsl->numPvs);
 			for(uint k = 0; k<pvsl->numPvs; k++ ){
+				PVS_t_init(&pvsl->pvs[k]);
 				rc = jsonparsePVS(t, str, j, n, &pvsl->pvs[k], &j);
 				if(rc)
 					return rc;
 				j++;
 			}
-			fields |= 4;
 			j--; //one to far
 		}
 		j++;
 	}
-
-	if(fields!=7)
-		return JSON_RC_MISSING_FIELD;
 
 	*last = j - 1;
 
@@ -792,20 +819,20 @@ JSON_RC jsonparsePVS(const jsmntok_t* t, const SRV_String* str, int start, int n
 			SRV_String_deleteMembers(&tmpStr);
 			if(pvs->expressionSemantic==SRV_ES_undefined)
 				return JSON_RC_WRONG_VALUE;
-		} else if(jsoneq(str->data, &t[j], "RelationalExpression")==0){
+		} else if(jsoneq(str->data, &t[j], "ExpressionLogic")==0){
 			j++;
 			SRV_String tmpStr;
 			rc = tok2SrvStr(str->data, &t[j], &tmpStr);
 			if(rc)
 				return rc;
-			pvs->relationalExpression = SRV_RE_undefined;
-			for(int i = 0; i < JSON_RE_MAX && pvs->relationalExpression == SRV_RE_undefined; i++){
-				if(srvStrEq(&tmpStr, &JSON_RE_STR[i])==0){
-					pvs->relationalExpression = i;
+			pvs->expressionLogic = SRV_EL_undefined;
+			for(int i = 0; i < JSON_EL_MAX && pvs->expressionLogic == SRV_EL_undefined; i++){
+				if(srvStrEq(&tmpStr, &JSON_EL_STR[i])==0){
+					pvs->expressionLogic = i;
 				}
 			}
 			SRV_String_deleteMembers(&tmpStr);
-			if(pvs->relationalExpression==SRV_RE_undefined)
+			if(pvs->expressionLogic==SRV_EL_undefined)
 				return JSON_RC_WRONG_VALUE;
 		} else if(jsoneq(str->data, &t[j], "View")==0){
 			j++;
@@ -827,11 +854,35 @@ JSON_RC jsonparsePVS(const jsmntok_t* t, const SRV_String* str, int start, int n
 			if(rc)
 				return rc;
 			pvs->hasUnit = true;
-		} else if(jsoneq(str->data, &t[j], "PropertyReference")==0){
+		} else if(jsoneq(str->data, &t[j], "ID")==0){
 			j++;
-			rc = jsonparseId(t, str, j, n, &pvs->propertyReference, &j);
+			rc = jsonparseId(t, str, j, n, &pvs->ID, &j);
 			if(rc)
 				return rc;
+		} else if(jsoneq(str->data, &t[j], "Visibility")==0){
+			j++;
+			SRV_String tmpStr;
+			rc = tok2SrvStr(str->data, &t[j], &tmpStr);
+			if(rc)
+				return rc;
+			pvs->visibility = SRV_VIS_undefined;
+			for(int i=0; i < JSON_VIS_MAX && pvs->visibility == SRV_VIS_undefined; i++){
+				if(srvStrEq(&tmpStr, &JSON_VIS_STR[i])==0)
+					pvs->visibility = i;
+			}
+			SRV_String_deleteMembers(&tmpStr);
+			if(pvs->view==SRV_VIEW_undefined)
+				return JSON_RC_WRONG_VALUE;
+		} else if(jsoneq(str->data, &t[j], "ValueTime")==0){
+			j++;
+			SRV_String time;
+			rc = tok2SrvStr(str->data, &t[j], &time);
+			if(rc)
+				return rc;
+			rc = ISOToDateTime(time.data, time.length, &pvs->valTime);
+			if(rc)
+				return rc;
+			pvs->hasValTime = true;
 		} else if(jsoneq(str->data, &t[j], "ValueType")==0){
 			j++;
 			SRV_String tmpStr;
@@ -899,8 +950,6 @@ JSON_RC jsonparseLCE(const jsmntok_t* t, const SRV_String* str, int start, int n
 	if(t[start].type!=JSMN_OBJECT)
 		return JSON_RC_WRONG_TYPE;
 
-	SRV_String time;
-
 	int j = start + 1;
 	//int intLast = 0;
 
@@ -913,12 +962,12 @@ JSON_RC jsonparseLCE(const jsmntok_t* t, const SRV_String* str, int start, int n
 			lce->hasLceId = true;
 		} else if(jsoneq(str->data, &t[j], "CreatingInstanceId")==0){
 			j++;
-			rc = jsonparseId(t, str, j, n, &lce->creatingInstanceId, &j);
+			rc = jsonparseId(t, str, j, n, &lce->creatingInstance, &j);
 			if(rc)
 				return rc;
 		} else if(jsoneq(str->data, &t[j], "WritingInstanceId")==0){
 			j++;
-			rc = jsonparseId(t, str, j, n, &lce->writingInstanceId, &j);
+			rc = jsonparseId(t, str, j, n, &lce->writingInstance, &j);
 			if(rc)
 				return rc;
 		} else if(jsoneq(str->data, &t[j], "EventClass")==0){
@@ -935,6 +984,7 @@ JSON_RC jsonparseLCE(const jsmntok_t* t, const SRV_String* str, int start, int n
 			lce->hasSubject = true;
 		} else if(jsoneq(str->data, &t[j], "DataTime")==0){
 			j++;
+			SRV_String time;
 			rc = tok2SrvStr(str->data, &t[j], &time);
 			if(rc){
 				return rc;
@@ -973,7 +1023,7 @@ JSON_RC jsonparseStatusRsp(status_t* status, const jsmntok_t* t, const SRV_Strin
 	while(i < n && t[i].end<=t[start].end){
 		if(jsoneq(js->data, &t[i], "Status")==0){
 			i++;
-			rc = tok2Int(js->data, &t[i], status, 1);
+			rc = tok2Status(js->data, &t[i], status);
 			if(rc)
 				return rc;
 			fields |= 1;
@@ -1176,8 +1226,8 @@ JSON_RC jsonparseCreatePVSReq(createPVSReq_t* cPvsReq, const jsmntok_t* t, const
 				return rc;
 			if(cPvsReq->pvs.hasName && cPvsReq->pvs.hasUnit &&
 					cPvsReq->pvs.expressionSemantic!=SRV_ES_undefined &&
-					cPvsReq->pvs.propertyReference.idType!=SRV_IDT_undefined &&
-					cPvsReq->pvs.relationalExpression!=SRV_RE_undefined &&
+					cPvsReq->pvs.ID.idType!=SRV_IDT_undefined &&
+					cPvsReq->pvs.expressionLogic!=SRV_EL_undefined &&
 					cPvsReq->pvs.valType!=SRV_VT_undefined &&
 					cPvsReq->pvs.view!=SRV_VIEW_undefined)
 				fields |= 2;
@@ -1258,8 +1308,8 @@ JSON_RC jsonparseCreateLCEReq(createLCEReq_t* cLceReq, const jsmntok_t* t, const
 				return rc;
 			// check if all necessary sub fields are set
 			if(cLceReq->lce.hasEventClass && cLceReq->lce.hasSubject && cLceReq->lce.hastDataTime &&
-					cLceReq->lce.creatingInstanceId.idType!=SRV_IDT_undefined &&
-					cLceReq->lce.writingInstanceId.idType!=SRV_IDT_undefined &&
+					cLceReq->lce.creatingInstance.idType!=SRV_IDT_undefined &&
+					cLceReq->lce.writingInstance.idType!=SRV_IDT_undefined &&
 					cLceReq->lce.dataType!=SRV_VT_undefined)
 				fields |= 1;
 		}
@@ -1364,7 +1414,7 @@ JSON_RC jsonparseGetPVSRsp(getPVSRsp_t* gPvsRsp, const jsmntok_t* t, const SRV_S
 	while(i < n && t[i].end<=t[start].end){
 		if(jsoneq(js->data, &t[i], "Status")==0){
 			i++;
-			rc = tok2Int(js->data, &t[i], &gPvsRsp->status, 1);
+			rc = tok2Status(js->data, &t[i], &gPvsRsp->status);
 			if(rc)
 				return rc;
 			fields |= 1;
@@ -1374,9 +1424,9 @@ JSON_RC jsonparseGetPVSRsp(getPVSRsp_t* gPvsRsp, const jsmntok_t* t, const SRV_S
 			if(rc)
 				return rc;
 			if(gPvsRsp->pvs.hasName && gPvsRsp->pvs.hasUnit && gPvsRsp->pvs.valType!=SRV_VT_undefined &&
-					gPvsRsp->pvs.propertyReference.idType!=SRV_IDT_undefined &&
+					gPvsRsp->pvs.ID.idType!=SRV_IDT_undefined &&
 					gPvsRsp->pvs.expressionSemantic!=SRV_ES_undefined &&
-					gPvsRsp->pvs.relationalExpression!=SRV_RE_undefined &&
+					gPvsRsp->pvs.expressionLogic!=SRV_EL_undefined &&
 					gPvsRsp->pvs.view!=SRV_VIEW_undefined)
 				fields |= 2;
 
@@ -1424,9 +1474,9 @@ JSON_RC jsonparseSetPVSReq(setPVSReq_t* sPvsReq, const jsmntok_t* t, const SRV_S
 				return rc;
 			// check if all necessary sub fields are set
 			if(sPvsReq->pvs.hasName && sPvsReq->pvs.hasUnit &&
-					sPvsReq->pvs.propertyReference.idType!=SRV_IDT_undefined &&
+					sPvsReq->pvs.ID.idType!=SRV_IDT_undefined &&
 					sPvsReq->pvs.expressionSemantic!=SRV_ES_undefined &&
-					sPvsReq->pvs.relationalExpression!=SRV_RE_undefined &&
+					sPvsReq->pvs.expressionLogic!=SRV_EL_undefined &&
 					sPvsReq->pvs.valType!=SRV_VT_undefined &&
 					sPvsReq->pvs.view!=SRV_VIEW_undefined)
 				fields |= 2;
@@ -1491,7 +1541,7 @@ JSON_RC jsonparseGetLCERsp(getLCERsp_t* gLceRsp, const jsmntok_t* t, const SRV_S
 	while(i < n && t[i].end<=t[start].end){
 		if(jsoneq(js->data, &t[i], "Status")==0){
 			i++;
-			rc = tok2Int(js->data, &t[i], &gLceRsp->status, 1);
+			rc = tok2Status(js->data, &t[i], &gLceRsp->status);
 			if(rc)
 				return rc;
 			fields |= 1;
@@ -1502,8 +1552,8 @@ JSON_RC jsonparseGetLCERsp(getLCERsp_t* gLceRsp, const jsmntok_t* t, const SRV_S
 				return rc;
 			if(gLceRsp->lce.hasEventClass && gLceRsp->lce.hasLceId && gLceRsp->lce.hasSubject &&
 					gLceRsp->lce.hastDataTime && gLceRsp->lce.dataType!=SRV_VT_undefined &&
-					gLceRsp->lce.creatingInstanceId.idType!=SRV_IDT_undefined &&
-					gLceRsp->lce.writingInstanceId.idType!=SRV_IDT_undefined)
+					gLceRsp->lce.creatingInstance.idType!=SRV_IDT_undefined &&
+					gLceRsp->lce.writingInstance.idType!=SRV_IDT_undefined)
 				fields |= 2;
 		}
 		i++;
@@ -1544,8 +1594,8 @@ JSON_RC jsonparseSetLCEReq(setLCEReq_t* sLceReq, const jsmntok_t* t, const SRV_S
 				return rc;
 			if(sLceReq->lce.hasLceId && sLceReq->lce.hasEventClass && sLceReq->lce.hasSubject &&
 					sLceReq->lce.hastDataTime &&
-					sLceReq->lce.creatingInstanceId.idType!=SRV_IDT_undefined &&
-					sLceReq->lce.writingInstanceId.idType!=SRV_IDT_undefined &&
+					sLceReq->lce.creatingInstance.idType!=SRV_IDT_undefined &&
+					sLceReq->lce.writingInstance.idType!=SRV_IDT_undefined &&
 					sLceReq->lce.dataType!=SRV_VT_undefined)
 			fields |= 1;
 		}
@@ -1585,7 +1635,7 @@ JSON_RC jsonparseGetCoreDataRsp(getCoreDataRsp_t* gCDRsp, const jsmntok_t* t, co
 	while(i < n && t[i].end<=t[start].end){
 		if(jsoneq(js->data, &t[i], "Status")==0){
 			i++;
-			rc = tok2Int(js->data, &t[i], &gCDRsp->status, 1);
+			rc = tok2Status(js->data, &t[i], &gCDRsp->status);
 			if(rc)
 				return rc;
 			fields |=1;
@@ -1760,16 +1810,28 @@ JSON_RC jsonGenPVSL(SRV_String* json, int* length, int* ppos, const PVSL_t* p){
 		pos = json_appendKey(json, pos, "Name", -1, *length, &first);
 		pos = json_appendSrvStr(json, pos, &p->name, *length);
 	}
-	if(p->carrierId.idType!=SRV_IDT_undefined){
-		pos = json_appendKey(json, pos, "IdSpec", -1, *length, &first);
-		rc = jsonGenId(json, length, &pos, &p->carrierId);
+	if(p->carrier.idType!=SRV_IDT_undefined){
+		pos = json_appendKey(json, pos, "Carrier", -1, *length, &first);
+		rc = jsonGenId(json, length, &pos, &p->carrier);
 		if(rc)
 			return rc;
+	}
+	if(p->creatingInstance.idType!=SRV_IDT_undefined){
+		pos = json_appendKey(json, pos, "CreatingInstance", -1, *length, &first);
+		rc = jsonGenId(json, length, &pos, &p->creatingInstance);
+		if(rc)
+			return rc;
+	}
+	if(p->hasCreationTime){
+		pos = json_appendKey(json, pos, "CreationTime", -1, *length, &first);
+		pos = json_appendIsoTime(json, pos, *length, p->creationTime);
 	}
 	pos = json_appendKey(json, pos, "PVS", 3, *length, &first);
 	pos = json_append(json, pos, "[", 1, *length);
 	if(p->pvs){
 		for(uint k = 0; k < p->numPvs ; k++){
+			if(k!=0)
+				pos = json_append(json, pos, ",", 1, *length);
 			rc = jsonGenPVS(json, length, &pos, &p->pvs[k]);
 			if(rc)
 				return rc;
@@ -1801,9 +1863,9 @@ JSON_RC jsonGenPVS(SRV_String* json, int* length, int* ppos, const PVS_t* p){
 		pos = json_appendKey(json, pos, "ExpressionSemantic", -1, *length, &first);
 		pos = json_appendSrvStr(json, pos, &JSON_ES_STR[p->expressionSemantic], *length);
 	}
-	if(p->relationalExpression!=SRV_RE_undefined){
-		pos = json_appendKey(json, pos, "RelationalExpression", -1, *length, &first);
-		pos = json_appendSrvStr(json, pos, &JSON_RE_STR[p->relationalExpression], *length);
+	if(p->expressionLogic!=SRV_EL_undefined){
+		pos = json_appendKey(json, pos, "ExpressionLogic", -1, *length, &first);
+		pos = json_appendSrvStr(json, pos, &JSON_EL_STR[p->expressionLogic], *length);
 	}
 	if(p->valType!=SRV_VT_undefined){
 		pos = json_appendKey(json, pos, "ValueType", -1, *length, &first);
@@ -1811,20 +1873,30 @@ JSON_RC jsonGenPVS(SRV_String* json, int* length, int* ppos, const PVS_t* p){
 
 		pos = json_appendKey(json, pos, "Value", -1, *length, &first);
 		pos = json_appendAny(json, pos, p->value, p->valType, *length);
+
+		if(p->hasValTime){
+			pos = json_appendKey(json, pos, "ValueTime", 9, *length, &first);
+			pos = json_appendIsoTime(json, pos, *length, p->valTime);
+		}
+
 	}
 	if(p->hasUnit){
 		pos = json_appendKey(json, pos, "Unit", -1, *length, &first);
 		pos = json_appendSrvStr(json, pos, &p->unit, *length);
 	}
-	if(p->propertyReference.idType!=SRV_IDT_undefined){
-		pos = json_appendKey(json, pos, "PropertyReference", -1, *length, &first);
-		rc = jsonGenId(json, length, &pos, &p->propertyReference);
+	if(p->ID.idType!=SRV_IDT_undefined){
+		pos = json_appendKey(json, pos, "ID", -1, *length, &first);
+		rc = jsonGenId(json, length, &pos, &p->ID);
 		if(rc)
 			return rc;
 	}
 	if(p->view!=SRV_VIEW_undefined){
 		pos = json_appendKey(json, pos, "View", -1, *length, &first);
 		pos = json_appendSrvStr(json, pos, &JSON_VIEW_STR[p->view], *length);
+	}
+	if(p->visibility!=SRV_VIS_undefined){
+		pos = json_appendKey(json, pos, "Visibility", 10, *length, &first);
+		pos = json_appendSrvStr(json, pos, &JSON_VIS_STR[p->visibility], *length);
 	}
 
 	pos = json_append(json, pos, "}",-1, *length);
@@ -1845,13 +1917,13 @@ JSON_RC jsonGenLCE(SRV_String* json, int* length, int* ppos, const LCE_t* l){
 		pos = json_appendKey(json, pos, "LCEId", -1, *length, &first);
 		pos = json_appendAny(json, pos, &l->lceId, SRV_VT_INT64, *length);
 	}
-	if(l->creatingInstanceId.idType!=SRV_IDT_undefined){
+	if(l->creatingInstance.idType!=SRV_IDT_undefined){
 		pos = json_appendKey(json, pos, "CreatingInstanceId", -1, *length, &first);
-		pos = jsonGenId(json, length, &pos, &l->creatingInstanceId);
+		pos = jsonGenId(json, length, &pos, &l->creatingInstance);
 	}
-	if(l->writingInstanceId.idType!=SRV_IDT_undefined){
+	if(l->writingInstance.idType!=SRV_IDT_undefined){
 		pos = json_appendKey(json, pos, "WritingInstanceId", -1, *length, &first);
-		pos = jsonGenId(json, length, &pos, &l->writingInstanceId);
+		pos = jsonGenId(json, length, &pos, &l->writingInstance);
 	}
 	if(l->hasEventClass){
 		pos = json_appendKey(json, pos, "EventClass", -1, *length, &first);
@@ -1914,7 +1986,7 @@ JSON_RC jsonGenStatusRsp(SRV_String* json, int* length, const char* serviceName,
 
 	// add serviceParameter
 	pos = json_append(json, pos, "{\"Status\":", -1, *length);
-	pos = json_appendAny(json, pos, &status, SRV_VT_INT32, *length);
+	pos = json_appendStatus(json, pos, &status, *length);
 	pos = json_append(json, pos, "}", 1, *length);
 
 	if(pos<0)
@@ -2215,7 +2287,7 @@ JSON_RC jsonGenGetPVSRsp(SRV_String* json, int* length, const getPVSRsp_t* gPvsR
 	// add serviceParameter
 	pos = json_append(json, pos, "{\"Status\":", -1, *length);
 
-	pos = json_appendAny(json, pos, &gPvsRsp->status, SRV_VT_INT32, *length);
+	pos = json_appendStatus(json, pos, &gPvsRsp->status, *length);
 
 	pos = json_append(json, pos, ",\"PVS\":",-1, *length);
 
@@ -2303,7 +2375,7 @@ JSON_RC jsonGenGetLCERsp(SRV_String* json, int* length, const getLCERsp_t* gLceR
 
 	// add serviceParameter
 	pos = json_append(json, pos, "{\"Status\":", -1, *length);
-	pos = json_appendAny(json, pos, &gLceRsp->status, SRV_VT_INT32, *length);
+	pos = json_appendStatus(json, pos, &gLceRsp->status, *length);
 
 	pos = json_append(json, pos, "\"LCE\":", -1, *length);
 	rc = jsonGenLCE(json, length, &pos, &gLceRsp->lce);
@@ -2382,12 +2454,14 @@ JSON_RC jsonGenGetCoreDataRsp(SRV_String* json, int* length, const getCoreDataRs
 
 	// add serviceParameter
 	pos = json_appendKey(json, pos, "Status", 6, *length, &first);
-	pos = json_appendAny(json, pos, &gCDRsp->status, SRV_VT_INT32, *length);
+	pos = json_appendStatus(json, pos, &gCDRsp->status, *length);
 
 	pos = json_appendKey(json, pos, "PVSL", 4, *length, &first);
 	pos = json_append(json, pos, "[", 1, *length);
 
 	for(uint i = 0; i<gCDRsp->numPvsl;i++){
+		if(i!=0)
+			pos = json_append(json, pos, ",", 1, *length);
 		rc = jsonGenPVSL(json, length, &pos, &gCDRsp->pvsl[i]);
 		if(rc)
 			return rc;

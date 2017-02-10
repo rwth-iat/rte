@@ -28,136 +28,11 @@
 
 #include "openaas.h"
 #include "libov/ov_macros.h"
+#include "openaas_helpers.h"
 #include "jsonparsing.h"
 
 extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
 
-OV_RESULT decodeMSG(const SRV_String* str, SRV_msgHeader** header, void** srvStruct, SRV_service_t* srvType, SRV_encoding_t *encoding){
-
-	if (strncmp(str->data, "JSON", 4) == 0){ // JSON Encoding
-		JSON_RC resultJSON = parseJson(str, header, srvStruct, srvType);
-		if (resultJSON){
-			return resultJSON;
-		}
-		*encoding = SRV_JSON;
-	}else if (strncmp(str->data, "OPCB", 4) == 0){ // OPC UA binary Encoding
-		return OV_ERR_NOTIMPLEMENTED;
-	}else if (strncmp(str->data, "XMLT", 4) == 0){ // XML text Encoding
-		return OV_ERR_NOTIMPLEMENTED;
-	}else if (strncmp(str->data, "XMLB", 4) == 0){ // XML binary Encoding
-		return OV_ERR_NOTIMPLEMENTED;
-	}else{
-		return OV_ERR_NOTIMPLEMENTED;
-	}
-	return OV_ERR_OK;
-}
-
-OV_RESULT encodeMSG(SRV_String** str, const SRV_msgHeader *header, const void* srvStruct, SRV_service_t srvType, SRV_encoding_t encoding){
-	SRV_String* strtmp = NULL;
-	switch(encoding){
-	case SRV_JSON:{ // JSON Encoding
-		JSON_RC resultJSON = genJson(&strtmp, header, srvStruct, srvType);
-		if (resultJSON){
-			return resultJSON;
-		}
-		ov_string_setvalue(&(*str)->data, "JSON");
-		(*str)->length = 4;
-		ov_string_append(&(*str)->data, strtmp->data);
-		(*str)->length += strtmp->length;
-	}break;
-	case SRV_OPCB: // OPC UA binary Encoding
-		ov_string_setvalue(&(*str)->data, "OPCB");
-		(*str)->length = 4;
-		ov_string_append(&(*str)->data, strtmp->data);
-		(*str)->length += strtmp->length;
-		break;
-	case SRV_XMLT: // XML text Encoding
-		ov_string_setvalue(&(*str)->data, "XMLT");
-		(*str)->length = 4;
-		ov_string_append(&(*str)->data, strtmp->data);
-		(*str)->length += strtmp->length;
-		break;
-	case SRV_XMLB: // XML binary Encoding
-		ov_string_setvalue(&(*str)->data, "XMLB");
-		(*str)->length = 4;
-		ov_string_append(&(*str)->data, strtmp->data);
-		(*str)->length += strtmp->length;
-		break;
-	default:
-		return OV_ERR_BADTYPE;
-		break;
-	}
-	return OV_ERR_OK;
-}
-
-OV_RESULT serviceValueToOVDataValue(DataValue* value, SRV_valType_t valueType, void* serviceValue, SRV_DateTime dateTime){
-	switch(valueType){
-	case SRV_VT_BOOL:
-		value->Value.value.vartype = OV_VT_BOOL;
-		value->Value.value.valueunion.val_bool = *(bool*)serviceValue;
-		break;
-	case SRV_VT_DOUBLE:
-		value->Value.value.vartype = OV_VT_DOUBLE;
-		value->Value.value.valueunion.val_double = *(double*)serviceValue;
-		break;
-	case SRV_VT_INT32:
-		value->Value.value.vartype = OV_VT_INT;
-		value->Value.value.valueunion.val_int = *(int*)serviceValue;
-		break;
-	case SRV_VT_UINT32:
-		value->Value.value.vartype = OV_VT_UINT;
-		value->Value.value.valueunion.val_uint = *(int*)serviceValue;
-		break;
-	case SRV_VT_INT64:
-	case SRV_VT_UINT64:
-		return OV_ERR_NOTIMPLEMENTED;
-		break;
-	case SRV_VT_STRING:
-		value->Value.value.vartype = OV_VT_STRING;
-		value->Value.value.valueunion.val_string = NULL;
-		ov_string_setvalue(&value->Value.value.valueunion.val_string, (char*)serviceValue);
-		break;
-	default:
-		return OV_ERR_VARDEFMISMATCH;
-		break;
-	}
-	value->TimeStamp = dateTime;
-	return OV_ERR_OK;
-}
-
-OV_RESULT OVDataValueToserviceValue(DataValue value, SRV_valType_t* valueType, void** serviceValue, SRV_DateTime* dateTime){
-
-	switch(value.Value.value.vartype){
-	case OV_VT_BOOL:
-		*valueType = SRV_VT_BOOL;
-		*serviceValue = ov_database_malloc(sizeof(bool));
-		*(bool*)*serviceValue = value.Value.value.valueunion.val_bool;
-		break;
-	case OV_VT_DOUBLE:
-		*valueType = SRV_VT_DOUBLE;
-		*serviceValue = ov_database_malloc(sizeof(double));
-		*(double*)*serviceValue = value.Value.value.valueunion.val_double;
-		break;
-	case OV_VT_INT:
-		*valueType = SRV_VT_INT32;
-		*serviceValue = ov_database_malloc(sizeof(int));
-		*(int*)*serviceValue = value.Value.value.valueunion.val_int;
-		break;
-	case OV_VT_UINT:
-		*valueType = SRV_VT_UINT32;
-		*serviceValue = ov_database_malloc(sizeof(unsigned int));
-		*(unsigned int*)*serviceValue = value.Value.value.valueunion.val_uint;
-	case OV_VT_STRING:
-		*valueType = SRV_VT_STRING;
-		ov_string_setvalue((char**)serviceValue, value.Value.value.valueunion.val_string);
-		break;
-	default:
-		return OV_ERR_VARDEFMISMATCH;
-		break;
-	}
-	*dateTime = value.TimeStamp;
-	return OV_ERR_OK;
-}
 
 OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
     OV_INSTPTR_openaas_aas          pobj,
@@ -209,13 +84,12 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 	IdentificationType aasId;
 	aasId.IdSpec = NULL;
-	ov_string_setvalue(&aasId.IdSpec, pobj->p_Header.p_Config.v_CarrierString);
-	aasId.IdType = pobj->p_Header.p_Config.v_CarrierType;
+	ov_string_setvalue(&aasId.IdSpec, pobj->p_Header.p_Config.v_CarrierIdString);
+	aasId.IdType = pobj->p_Header.p_Config.v_CarrierIdType;
 
 
 
-	if (openaas_modelmanager_IdentificationTypeEqual(&receiver, &aasId)){ // MSG is for this AAS
-		// Todo: Switch Sender and Receiver in Header
+	if (IdentificationTypeEqual(&receiver, &aasId)){ // MSG is for this AAS
 		headerSend = SRV_msgHeader_t_reverseCopy(headerReceive);
 		switch (srvTypeReceive){
 		case SRV_createAASReq:{
@@ -223,7 +97,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				createAASReq_t *createAASReq = (createAASReq_t*)srvStructReceive;
 
 				IdentificationType tmpOVAASId;
-				tmpOVAASId.IdSpec = NULL;
+				IdentificationType_init(&tmpOVAASId);
 				ov_string_setvalue(&tmpOVAASId.IdSpec, createAASReq->aasId.idSpec.data);
 				tmpOVAASId.IdType = createAASReq->aasId.idType;
 
@@ -231,7 +105,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				ov_string_setvalue(&tmpOVName, createAASReq->aasName.data);
 
 				IdentificationType tmpOVAssetId;
-				tmpOVAssetId.IdSpec= NULL;
+				IdentificationType_init(&tmpOVAssetId);
 				ov_string_setvalue(&tmpOVAssetId.IdSpec, createAASReq->assetId.idSpec.data);
 				tmpOVAssetId.IdType = createAASReq->assetId.idType;
 
@@ -248,6 +122,9 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				createAASRsp_t_deleteMembers(&createAASRsp);
+				IdentificationType_deleteMembers(&tmpOVAASId);
+				IdentificationType_deleteMembers(&tmpOVAssetId);
+				free(tmpOVName);
 			}else{
 				createAASRsp_t createAASRsp;
 				createAASRsp_t_init(&createAASRsp);
@@ -270,7 +147,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				deleteAASReq_t *deleteAASReq = (deleteAASReq_t*)srvStructReceive;
 
 				IdentificationType tmpOVAASId;
-				tmpOVAASId.IdSpec = NULL;
+				IdentificationType_init(&tmpOVAASId);
 				ov_string_setvalue(&tmpOVAASId.IdSpec, deleteAASReq->aasId.idSpec.data);
 				tmpOVAASId.IdType = deleteAASReq->aasId.idType;
 
@@ -288,6 +165,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				deleteAASRsp_t_deleteMembers(&deleteAASRsp);
+				IdentificationType_deleteMembers(&tmpOVAASId);
 			}else{
 				deleteAASRsp_t deleteAASRsp;
 				deleteAASRsp_t_init(&deleteAASRsp);
@@ -312,11 +190,16 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			ov_string_setvalue(&tmpOVPVSLName, createPVSLReq->pvslName.data);
 
 			IdentificationType tmpOVCarrier;
-			tmpOVCarrier.IdSpec = NULL;
+			IdentificationType_init(&tmpOVCarrier);
 			ov_string_setvalue(&tmpOVCarrier.IdSpec, createPVSLReq->carrier.idSpec.data);
 			tmpOVCarrier.IdType = createPVSLReq->carrier.idType;
 
-			result = openaas_modelmanager_createPVSL(aasId, tmpOVPVSLName, tmpOVCarrier);
+			IdentificationType tmpOVCreatingInstance;
+			IdentificationType_init(&tmpOVCreatingInstance);
+			ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, createPVSLReq->carrier.idSpec.data);
+			tmpOVCreatingInstance.IdType = createPVSLReq->carrier.idType;
+
+			result = openaas_modelmanager_createPVSL(aasId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance);
 
 			createPVSLRsp_t createPVSLRsp;
 			createPVSLRsp_t_init(&createPVSLRsp);
@@ -329,6 +212,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			createPVSLRsp_t_deleteMembers(&createPVSLRsp);
+			IdentificationType_deleteMembers(&tmpOVCarrier);
+			free(tmpOVPVSLName);
 		}break;
 		case SRV_createPVSLRsp:{
 			// TODO: Check the answer
@@ -352,6 +237,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			deletePVSLRsp_t_deleteMembers(&deletePVSLRsp);
+			ov_database_free(tmpOVPVSLName);
 		}break;
 		case SRV_deletePVSLRsp:{
 			// TODO: Check the answer
@@ -359,26 +245,25 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		case SRV_createLCEReq:{
 			createLCEReq_t *createLCEReq = (createLCEReq_t*)srvStructReceive;
 
-			IdentificationType tmpOVCreatingInstance;
-			tmpOVCreatingInstance.IdSpec = NULL;
-			ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, createLCEReq->lce.creatingInstanceId.idSpec.data);
-			tmpOVCreatingInstance.IdType = createLCEReq->lce.creatingInstanceId.idType;
+			LifeCycleEntry lce;
+			LifeCycleEntry_init(&lce);
 
-			IdentificationType tmpOVWritingInstance;
-			tmpOVWritingInstance.IdSpec = NULL;
-			ov_string_setvalue(&tmpOVWritingInstance.IdSpec, createLCEReq->lce.writingInstanceId.idSpec.data);
-			tmpOVWritingInstance.IdType = createLCEReq->lce.writingInstanceId.idType;
+			ov_string_setvalue(&lce.creatingInstance.IdSpec, createLCEReq->lce.creatingInstance.idSpec.data);
+			lce.creatingInstance.IdType = createLCEReq->lce.creatingInstance.idType;
 
-			OV_STRING tmpOVEventClass = NULL;
-			ov_string_setvalue(&tmpOVEventClass, createLCEReq->lce.eventClass.data);
+			ov_string_setvalue(&lce.writingInstance.IdSpec, createLCEReq->lce.writingInstance.idSpec.data);
+			lce.writingInstance.IdType = createLCEReq->lce.writingInstance.idType;
 
-			OV_STRING tmpOVSubject = NULL;
-			ov_string_setvalue(&tmpOVSubject, createLCEReq->lce.subject.data);
+			ov_string_setvalue(&lce.eventClass, createLCEReq->lce.eventClass.data);
+			createLCEReq->lce.hasEventClass = true;
 
-			DataValue tmpOVDataValue;
-			serviceValueToOVDataValue(&tmpOVDataValue, createLCEReq->lce.dataType, createLCEReq->lce.data, createLCEReq->lce.dataTime);
+			ov_string_setvalue(&lce.subject, createLCEReq->lce.subject.data);
+			createLCEReq->lce.hasSubject = true;
 
-			result = openaas_modelmanager_createLCE(aasId, tmpOVCreatingInstance, tmpOVWritingInstance, tmpOVEventClass, tmpOVSubject, tmpOVDataValue);
+			serviceValueToOVDataValue(&lce.data, createLCEReq->lce.dataType, createLCEReq->lce.data, createLCEReq->lce.dataTime);
+			createLCEReq->lce.hastDataTime = true;
+
+			result = openaas_modelmanager_createLCE(aasId, lce);
 
 			createLCERsp_t createLCERsp;
 			createLCERsp_t_init(&createLCERsp);
@@ -391,6 +276,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			createLCERsp_t_deleteMembers(&createLCERsp);
+			LifeCycleEntry_deleteMembers(&lce);
 		}break;
 		case SRV_createLCERsp:{
 			// TODO: Check the answer
@@ -421,29 +307,23 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		case SRV_setLCEReq:{
 			setLCEReq_t *setLCEReq = (setLCEReq_t*)srvStructReceive;
 
-			OV_UINT64 tmpOVLCEId;
-			tmpOVLCEId = setLCEReq->lce.lceId;
+			LifeCycleEntry lce;
+			LifeCycleEntry_init(&lce);
 
-			IdentificationType tmpOVCreatingInstance;
-			tmpOVCreatingInstance.IdSpec = NULL;
-			ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, setLCEReq->lce.creatingInstanceId.idSpec.data);
-			tmpOVCreatingInstance.IdType = setLCEReq->lce.creatingInstanceId.idType;
+			lce.lceId = setLCEReq->lce.lceId;
 
-			IdentificationType tmpOVWritingInstance;
-			tmpOVWritingInstance.IdSpec = NULL;
-			ov_string_setvalue(&tmpOVWritingInstance.IdSpec, setLCEReq->lce.writingInstanceId.idSpec.data);
-			tmpOVWritingInstance.IdType = setLCEReq->lce.writingInstanceId.idType;
+			ov_string_setvalue(&lce.creatingInstance.IdSpec, setLCEReq->lce.creatingInstance.idSpec.data);
+			lce.creatingInstance.IdType = setLCEReq->lce.creatingInstance.idType;
 
-			OV_STRING tmpOVEventClass = NULL;
-			ov_string_setvalue(&tmpOVEventClass, setLCEReq->lce.eventClass.data);
+			ov_string_setvalue(&lce.writingInstance.IdSpec, setLCEReq->lce.writingInstance.idSpec.data);
+			lce.writingInstance.IdType = setLCEReq->lce.writingInstance.idType;
 
-			OV_STRING tmpOVSubject = NULL;
-			ov_string_setvalue(&tmpOVSubject, setLCEReq->lce.subject.data);
+			ov_string_setvalue(&lce.eventClass, setLCEReq->lce.eventClass.data);
 
-			DataValue tmpOVDataValue;
-			serviceValueToOVDataValue(&tmpOVDataValue, setLCEReq->lce.dataType, setLCEReq->lce.data, setLCEReq->lce.dataTime);
+			ov_string_setvalue(&lce.subject, setLCEReq->lce.subject.data);
 
-			result = openaas_modelmanager_setLCE(aasId, tmpOVLCEId, tmpOVCreatingInstance, tmpOVWritingInstance, tmpOVEventClass, tmpOVSubject, tmpOVDataValue);
+			serviceValueToOVDataValue(&lce.data, setLCEReq->lce.dataType, setLCEReq->lce.data, setLCEReq->lce.dataTime);
+			result = openaas_modelmanager_setLCE(aasId, lce);
 
 			setLCERsp_t setLCERsp;
 			setLCERsp_t_init(&setLCERsp);
@@ -456,6 +336,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			setLCERsp_t_deleteMembers(&setLCERsp);
+			LifeCycleEntry_deleteMembers(&lce);
 		}break;
 		case SRV_setLCERsp:{
 			// TODO: Check the answer
@@ -466,34 +347,28 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			OV_UINT64 tmpOVLCEId;
 			tmpOVLCEId = getLCEReq->lceId;
 
-			IdentificationType tmpOVCreatingInstance;
-			tmpOVCreatingInstance.IdSpec = NULL;
+			LifeCycleEntry lce;
+			LifeCycleEntry_init(&lce);
 
-			IdentificationType tmpOVWritingInstance;
-			tmpOVWritingInstance.IdSpec = NULL;
-
-			OV_STRING tmpOVEventClass = NULL;
-
-			OV_STRING tmpOVSubject = NULL;
-
-			DataValue tmpOVDataValue;
-
-			result = openaas_modelmanager_getLCE(aasId, tmpOVLCEId, &tmpOVCreatingInstance, &tmpOVWritingInstance, &tmpOVEventClass, &tmpOVSubject, &tmpOVDataValue);
+			result = openaas_modelmanager_getLCE(aasId, tmpOVLCEId, &lce);
 
 			getLCERsp_t getLCERsp;
 			getLCERsp_t_init(&getLCERsp);
 
-			ov_string_setvalue(&getLCERsp.lce.creatingInstanceId.idSpec.data, tmpOVCreatingInstance.IdSpec);
-			getLCERsp.lce.creatingInstanceId.idType = tmpOVCreatingInstance.IdType;
+			ov_string_setvalue(&getLCERsp.lce.creatingInstance.idSpec.data, lce.creatingInstance.IdSpec);
+			getLCERsp.lce.creatingInstance.idType = lce.creatingInstance.IdType;
 
-			ov_string_setvalue(&getLCERsp.lce.writingInstanceId.idSpec.data, tmpOVWritingInstance.IdSpec);
-			getLCERsp.lce.writingInstanceId.idType = tmpOVWritingInstance.IdType;
+			ov_string_setvalue(&getLCERsp.lce.writingInstance.idSpec.data, lce.writingInstance.IdSpec);
+			getLCERsp.lce.writingInstance.idType = lce.writingInstance.IdType;
 
-			ov_string_setvalue(&getLCERsp.lce.eventClass.data, tmpOVEventClass);
+			ov_string_setvalue(&getLCERsp.lce.eventClass.data, lce.eventClass);
+			getLCERsp.lce.hasEventClass = true;
 
-			ov_string_setvalue(&getLCERsp.lce.subject.data, tmpOVSubject);
+			ov_string_setvalue(&getLCERsp.lce.subject.data, lce.subject);
+			getLCERsp.lce.hasSubject = true;
 
-			OVDataValueToserviceValue(tmpOVDataValue, &getLCERsp.lce.dataType, &getLCERsp.lce.data, &getLCERsp.lce.dataTime);
+			OVDataValueToserviceValue(lce.data, &getLCERsp.lce.dataType, &getLCERsp.lce.data, &getLCERsp.lce.dataTime);
+			getLCERsp.lce.hastDataTime = true;
 
 			getLCERsp.status = result;
 
@@ -503,6 +378,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			getLCERsp_t_deleteMembers(&getLCERsp);
+			LifeCycleEntry_deleteMembers(&lce);
 		}break;
 		case SRV_getLCERsp:{
 			// TODO: Check the answer
@@ -513,35 +389,27 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			OV_STRING tmpOVPVSLName = NULL;
 			ov_string_setvalue(&tmpOVPVSLName, createPVSReq->pvslName.data);
 
-			OV_STRING tmpOVPVSName = NULL;
-			ov_string_setvalue(&tmpOVPVSName, createPVSReq->pvs.name.data);
+			PropertyValueStatement pvs;
+			PropertyValueStatement_init(&pvs);
 
-			RelationalExpressionEnum tmpOVRelationalExpression;
-			tmpOVRelationalExpression = createPVSReq->pvs.relationalExpression;
+			ov_string_setvalue(&pvs.pvsName, createPVSReq->pvs.name.data);
 
-			ExpressionSemanticEnum tmpOVExpressionSemantic;
-			tmpOVExpressionSemantic = createPVSReq->pvs.expressionSemantic;
+			pvs.ExpressionLogic = createPVSReq->pvs.expressionSemantic;
 
-			OV_ANY tmpOVValue;
-			DataValue tmpOVDataValue;
-			serviceValueToOVDataValue(&tmpOVDataValue, createPVSReq->pvs.valType, createPVSReq->pvs.value, 0);
-			tmpOVValue = tmpOVDataValue.Value;
+			pvs.ExpressionSemantic = createPVSReq->pvs.expressionSemantic;
 
-			OV_STRING tmpOVUnit = NULL;
-			ov_string_setvalue(&tmpOVUnit, createPVSReq->pvs.unit.data);
+			serviceValueToOVDataValue(&pvs.value, createPVSReq->pvs.valType, createPVSReq->pvs.value, 0);
 
-			IdentificationType tmpOVProperyReference;
-			tmpOVProperyReference.IdSpec = NULL;
-			ov_string_setvalue(&tmpOVProperyReference.IdSpec, createPVSReq->pvs.propertyReference.idSpec.data);
-			tmpOVProperyReference.IdType = createPVSReq->pvs.propertyReference.idType;
+			ov_string_setvalue(&pvs.unit, createPVSReq->pvs.unit.data);
 
-			ViewEnum tmpOVView;
-			tmpOVView = createPVSReq->pvs.view;
+			ov_string_setvalue(&pvs.ID.IdSpec, createPVSReq->pvs.ID.idSpec.data);
+			pvs.ID.IdType = createPVSReq->pvs.ID.idType;
 
-			OV_BOOL tmpOVIsPublic;
-			tmpOVIsPublic = createPVSReq->pvs.isPublic;
+			pvs.view = createPVSReq->pvs.view;
 
-			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView, tmpOVIsPublic);
+			pvs.Visibility = createPVSReq->pvs.visibility;
+
+			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, pvs);
 
 			createPVSRsp_t createPVSRsp;
 			createPVSRsp_t_init(&createPVSRsp);
@@ -554,6 +422,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			createPVSRsp_t_deleteMembers(&createPVSRsp);
+			ov_database_free(tmpOVPVSLName);
+			PropertyValueStatement_deleteMembers(&pvs);
 		}break;
 		case SRV_createPVSRsp:{
 			// TODO: Check the answer
@@ -580,6 +450,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			deletePVSRsp_t_deleteMembers(&deletePVSRsp);
+			ov_database_free(tmpOVPVSLName);
+			ov_database_free(tmpOVPVSName);
 		}break;
 		case SRV_deletePVSRsp:{
 			// TODO: Check the answer
@@ -590,35 +462,27 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			OV_STRING tmpOVPVSLName = NULL;
 			ov_string_setvalue(&tmpOVPVSLName, setPVSReq->pvslName.data);
 
-			OV_STRING tmpOVPVSName = NULL;
-			ov_string_setvalue(&tmpOVPVSName, setPVSReq->pvs.name.data);
+			PropertyValueStatement pvs;
+			PropertyValueStatement_init(&pvs);
 
-			RelationalExpressionEnum tmpOVRelationalExpression;
-			tmpOVRelationalExpression = setPVSReq->pvs.relationalExpression;
+			ov_string_setvalue(&pvs.pvsName, setPVSReq->pvs.name.data);
 
-			ExpressionSemanticEnum tmpOVExpressionSemantic;
-			tmpOVExpressionSemantic = setPVSReq->pvs.expressionSemantic;
+			pvs.ExpressionLogic = setPVSReq->pvs.expressionLogic;
 
-			OV_ANY tmpOVValue;
-			DataValue tmpOVDataValue;
-			serviceValueToOVDataValue(&tmpOVDataValue, setPVSReq->pvs.valType, setPVSReq->pvs.value, 0);
-			tmpOVValue = tmpOVDataValue.Value;
+			pvs.ExpressionSemantic = setPVSReq->pvs.expressionSemantic;
 
-			OV_STRING tmpOVUnit = NULL;
-			ov_string_setvalue(&tmpOVUnit, setPVSReq->pvs.unit.data);
+			serviceValueToOVDataValue(&pvs.value, setPVSReq->pvs.valType, setPVSReq->pvs.value, 0);
 
-			IdentificationType tmpOVProperyReference;
-			tmpOVProperyReference.IdSpec = NULL;
-			ov_string_setvalue(&tmpOVProperyReference.IdSpec, setPVSReq->pvs.propertyReference.idSpec.data);
-			tmpOVProperyReference.IdType = setPVSReq->pvs.propertyReference.idType;
+			ov_string_setvalue(&pvs.unit, setPVSReq->pvs.unit.data);
 
-			ViewEnum tmpOVView;
-			tmpOVView = setPVSReq->pvs.view;
+			ov_string_setvalue(&pvs.ID.IdSpec, setPVSReq->pvs.ID.idSpec.data);
+			pvs.ID.IdType = setPVSReq->pvs.ID.idType;
 
-			OV_BOOL tmpOVIsPublic;
-			tmpOVIsPublic = setPVSReq->pvs.isPublic;
+			pvs.view = setPVSReq->pvs.view;
 
-			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, tmpOVPVSName, tmpOVRelationalExpression, tmpOVExpressionSemantic, tmpOVValue, tmpOVUnit, tmpOVProperyReference, tmpOVView, tmpOVIsPublic);
+			pvs.Visibility = setPVSReq->pvs.visibility;
+
+			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, pvs);
 
 			setPVSRsp_t setPVSRsp;
 			setPVSRsp_t_init(&setPVSRsp);
@@ -631,6 +495,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			setPVSRsp_t_deleteMembers(&setPVSRsp);
+			ov_database_free(tmpOVPVSLName);
+			PropertyValueStatement_deleteMembers(&pvs);
 		}break;
 		case SRV_setPVSRsp:{
 			// TODO: Check the answer
@@ -644,43 +510,29 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			OV_STRING tmpOVPVSName = NULL;
 			ov_string_setvalue(&tmpOVPVSName, getPVSReq->pvsName.data);
 
-			RelationalExpressionEnum tmpOVRelationalExpression;
+			PropertyValueStatement pvs;
+			PropertyValueStatement_init(&pvs);
 
-			ExpressionSemanticEnum tmpOVExpressionSemantic;
-
-			OV_ANY tmpOVValue;
-
-			OV_STRING tmpOVUnit = NULL;
-
-			IdentificationType tmpOVProperyReference;
-			tmpOVProperyReference.IdSpec = NULL;
-
-			ViewEnum tmpOVView;
-
-			OV_BOOL tmpOVIsPublic;
-
-			result = openaas_modelmanager_getPVS(aasId, tmpOVPVSLName, tmpOVPVSName, &tmpOVRelationalExpression, &tmpOVExpressionSemantic, &tmpOVValue, &tmpOVUnit, &tmpOVProperyReference, &tmpOVView, &tmpOVIsPublic);
+			result = openaas_modelmanager_getPVS(aasId, tmpOVPVSLName, tmpOVPVSName, &pvs);
 
 			getPVSRsp_t getPVSRsp;
 			getPVSRsp_t_init(&getPVSRsp);
 
-			getPVSRsp.pvs.relationalExpression = tmpOVRelationalExpression;
+			getPVSRsp.pvs.expressionLogic = pvs.ExpressionLogic;
 
-			getPVSRsp.pvs.expressionSemantic = tmpOVExpressionSemantic;
+			getPVSRsp.pvs.expressionSemantic = pvs.ExpressionSemantic;
 
-			DataValue tmpOVDataValue;
-			tmpOVDataValue.Value = tmpOVValue;
-			SRV_DateTime tmpDateTime;
-			OVDataValueToserviceValue(tmpOVDataValue, &getPVSRsp.pvs.valType, &getPVSRsp.pvs.value, &tmpDateTime);
+			OVDataValueToserviceValue(pvs.value, &getPVSRsp.pvs.valType, &getPVSRsp.pvs.value, &getPVSRsp.pvs.valTime);
 
-			ov_string_setvalue(&getPVSRsp.pvs.unit.data, tmpOVUnit);
+			ov_string_setvalue(&getPVSRsp.pvs.unit.data, pvs.unit);
+			getPVSRsp.pvs.hasUnit = true;
 
-			ov_string_setvalue(&getPVSRsp.pvs.propertyReference.idSpec.data, tmpOVProperyReference.IdSpec);
-			getPVSRsp.pvs.propertyReference.idType = tmpOVProperyReference.IdType;
+			ov_string_setvalue(&getPVSRsp.pvs.ID.idSpec.data, pvs.ID.IdSpec);
+			getPVSRsp.pvs.ID.idType = pvs.ID.IdType;
 
-			getPVSRsp.pvs.view = tmpOVView;
+			getPVSRsp.pvs.view = pvs.view;
 
-			getPVSRsp.pvs.isPublic = tmpOVIsPublic;
+			getPVSRsp.pvs.visibility = pvs.Visibility;
 
 			getPVSRsp.status = result;
 
@@ -690,9 +542,131 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 			getPVSRsp_t_deleteMembers(&getPVSRsp);
+			ov_database_free(tmpOVPVSLName);
+			ov_database_free(tmpOVPVSName);
+			PropertyValueStatement_deleteMembers(&pvs);
 		}break;
 		case SRV_getPVSRsp:{
 			// TODO: Check the answer
+		}break;
+		case SRV_getCoreDataReq:{
+			OV_UINT tmpNumber = 0;
+
+			PropertyValueStatementList *ppvs = NULL;
+
+			result = openaas_modelmanager_getCoreData(aasId, &tmpNumber, &ppvs);
+
+			getCoreDataRsp_t getCoreDataRsp;
+			getCoreDataRsp_t_init(&getCoreDataRsp);
+
+			if (result){
+				getCoreDataRsp.status = result;
+			}else{
+				getCoreDataRsp.numPvsl = tmpNumber;
+				getCoreDataRsp.pvsl = malloc(sizeof(PVSL_t)*tmpNumber);
+				for (OV_UINT i = 0; i < tmpNumber; i++){
+					ov_string_setvalue(&getCoreDataRsp.pvsl[i].carrier.idSpec.data, ppvs[i].Carrier.IdSpec);
+					getCoreDataRsp.pvsl[i].carrier.idSpec.length = ov_string_getlength(ppvs[i].Carrier.IdSpec);
+					getCoreDataRsp.pvsl[i].carrier.idType = ppvs[i].Carrier.IdType;
+					ov_string_setvalue(&getCoreDataRsp.pvsl[i].creatingInstance.idSpec.data, ppvs[i].CreatingInstance.IdSpec);
+					getCoreDataRsp.pvsl[i].creatingInstance.idType = ppvs[i].CreatingInstance.IdType;
+					getCoreDataRsp.pvsl[i].creatingInstance.idSpec.length = ov_string_getlength(ppvs[i].CreatingInstance.IdSpec);
+					getCoreDataRsp.pvsl[i].creationTime = ov_ovTimeTo1601nsTime(ppvs[i].CreationTime);
+					getCoreDataRsp.pvsl[i].hasCreationTime = true;
+					ov_string_setvalue(&getCoreDataRsp.pvsl[i].name.data, ppvs[i].pvslName);
+					getCoreDataRsp.pvsl[i].name.length = ov_string_getlength(ppvs[i].pvslName);
+					getCoreDataRsp.pvsl[i].hasName = true;
+					getCoreDataRsp.pvsl[i].numPvs = ppvs[i].pvsNumber;
+					getCoreDataRsp.pvsl[i].pvs = malloc(sizeof(PVS_t)*ppvs[i].pvsNumber);
+					for (OV_UINT j = 0; j < ppvs[i].pvsNumber; j++){
+						getCoreDataRsp.pvsl[i].pvs[j].expressionLogic = ppvs[i].pvs[j].ExpressionLogic;
+						getCoreDataRsp.pvsl[i].pvs[j].expressionSemantic = ppvs[i].pvs[j].ExpressionSemantic;
+						ov_string_setvalue(&getCoreDataRsp.pvsl[i].pvs[j].ID.idSpec.data, ppvs[i].pvs[j].ID.IdSpec);
+						getCoreDataRsp.pvsl[i].pvs[j].ID.idSpec.length = ov_string_getlength(ppvs[i].pvs[j].ID.IdSpec);
+						getCoreDataRsp.pvsl[i].pvs[j].ID.idType = ppvs[i].pvs[j].ID.IdType;
+						ov_string_setvalue(&getCoreDataRsp.pvsl[i].pvs[j].name.data, ppvs[i].pvs[j].pvsName);
+						getCoreDataRsp.pvsl[i].pvs[j].name.length = ov_string_getlength(ppvs[i].pvs[j].pvsName);
+						getCoreDataRsp.pvsl[i].pvs[j].hasName = true;
+						ov_string_setvalue(&getCoreDataRsp.pvsl[i].pvs[j].unit.data, ppvs[i].pvs[j].unit);
+						getCoreDataRsp.pvsl[i].pvs[j].unit.length = ov_string_getlength(ppvs[i].pvs[j].unit);
+						getCoreDataRsp.pvsl[i].pvs[j].hasUnit = true;
+						OVDataValueToserviceValue(ppvs[i].pvs[j].value, &getCoreDataRsp.pvsl[i].pvs[j].valType, &getCoreDataRsp.pvsl[i].pvs[j].value, &getCoreDataRsp.pvsl[i].pvs[j].valTime);
+						getCoreDataRsp.pvsl[i].pvs[j].view = ppvs[i].pvs[j].view;
+						getCoreDataRsp.pvsl[i].pvs[j].visibility = ppvs[i].pvs[j].Visibility;
+					}
+					PropertyValueStatementList_deleteMembers(&ppvs[i]);
+				}
+				ov_database_free(ppvs);
+			}
+
+			srvStructSend = &getCoreDataRsp;
+			srvTypeSend = SRV_getCoreDataRsp;
+
+			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
+
+			getCoreDataRsp_t_deleteMembers(&getCoreDataRsp);
+		}break;
+		case SRV_getCoreDataRsp:{
+			getCoreDataRsp_t *getCoreDataRsp = (getCoreDataRsp_t*)srvStructReceive;
+
+			if (!getCoreDataRsp->status){
+				for (OV_UINT i = 0; i < getCoreDataRsp->numPvsl; i++){
+					OV_STRING tmpOVPVSLName = NULL;
+					ov_string_setvalue(&tmpOVPVSLName, getCoreDataRsp->pvsl[i].name.data);
+
+					IdentificationType tmpOVCarrier;
+					IdentificationType_init(&tmpOVCarrier);
+					ov_string_setvalue(&tmpOVCarrier.IdSpec, getCoreDataRsp->pvsl[i].carrier.idSpec.data);
+					tmpOVCarrier.IdType = getCoreDataRsp->pvsl[i].carrier.idType;
+
+					IdentificationType tmpOVCreatingInstance;
+					IdentificationType_init(&tmpOVCreatingInstance);
+					ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, getCoreDataRsp->pvsl[i].creatingInstance.idSpec.data);
+					tmpOVCreatingInstance.IdType = getCoreDataRsp->pvsl[i].creatingInstance.idType;
+
+					OV_TIME tmpOVCreatingTime  = ov_1601nsTimeToOvTime(getCoreDataRsp->pvsl[i].creationTime);
+
+					result = openaas_modelmanager_createPVSLTime(aasId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance, tmpOVCreatingTime);
+					for (OV_UINT j = 0; j < getCoreDataRsp->pvsl[i].numPvs; j++){
+						OV_STRING tmpOVPVSLName = NULL;
+						ov_string_setvalue(&tmpOVPVSLName, getCoreDataRsp->pvsl[i].name.data);
+
+						PropertyValueStatement pvs;
+						PropertyValueStatement_init(&pvs);
+
+						ov_string_setvalue(&pvs.pvsName, getCoreDataRsp->pvsl[i].pvs[j].name.data);
+
+						pvs.ExpressionLogic = getCoreDataRsp->pvsl[i].pvs[j].expressionSemantic;
+
+						pvs.ExpressionSemantic = getCoreDataRsp->pvsl[i].pvs[j].expressionSemantic;
+
+						serviceValueToOVDataValue(&pvs.value, getCoreDataRsp->pvsl[i].pvs[j].valType, getCoreDataRsp->pvsl[i].pvs[j].value, getCoreDataRsp->pvsl[i].pvs[j].valTime);
+
+						ov_string_setvalue(&pvs.unit, getCoreDataRsp->pvsl[i].pvs[j].unit.data);
+
+						ov_string_setvalue(&pvs.ID.IdSpec, getCoreDataRsp->pvsl[i].pvs[j].ID.idSpec.data);
+						pvs.ID.IdType = getCoreDataRsp->pvsl[i].pvs[j].ID.idType;
+
+						pvs.view = getCoreDataRsp->pvsl[i].pvs[j].view;
+
+						pvs.Visibility = getCoreDataRsp->pvsl[i].pvs[j].visibility;
+
+						result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, pvs);
+						PropertyValueStatement_deleteMembers(&pvs);
+					}
+					ov_database_free(tmpOVPVSLName);
+					IdentificationType_deleteMembers(&tmpOVCarrier);
+					IdentificationType_deleteMembers(&tmpOVCreatingInstance);
+				}
+			}
+
+			SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
+			SRV_msgHeader_t_delete(headerReceive);
+			SRV_String_delete(srvStringReceive);
+
+			SRV_msgHeader_t_delete(headerSend);
+			SRV_String_delete(srvStringSend);
+			return resultOV;
 		}break;
 		default:
 			break;
@@ -877,7 +851,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 	}else{ // This AAS is not the ComCo => send message to ComCoAAS
 		ov_string_setvalue(&psendAASMessage->v_serverHost, "localhost");
 		ov_string_setvalue(&psendAASMessage->v_serverName, "MANAGER");
-		ov_string_setvalue(&psendAASMessage->v_path, "/TechUnits/AASFolder/ComCo.postoffice");
+		ov_string_setvalue(&psendAASMessage->v_path, "/TechUnits/openAAS/AASFolder/ComCo.postoffice");
 	}
 
 	// send message
@@ -902,7 +876,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		return OV_ERR_BADPARAM;
 
 	return resultOV;
-
 }
 
 OV_DLLFNCEXPORT OV_ACCESS openaas_aas_getaccess(

@@ -21,7 +21,106 @@
 #include "openaas.h"
 
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType aasId, OV_STRING pvslName, IdentificationType carrier) {
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLAASIdType_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_PVSLAASIdType = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLName_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_PVSLName,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCarrierIdString_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_PVSLCarrierIdString,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCarrierIdType_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_PVSLCarrierIdType = value;
+    return OV_ERR_OK;
+}
+
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreatingInstanceIdString_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_PVSLCreatingInstanceIdString,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreatingInstanceIdType_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_PVSLCreatingInstanceIdType = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreationTime_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_PVSLCreationTime = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreate_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_BOOL  value
+) {
+	AASStatusCode result = AASSTATUSCODE_GOOD;
+	pobj->v_PVSLCreate = value;
+	if (pobj->v_PVSLCreate == true){
+		IdentificationType tmpAASId;
+		tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
+		tmpAASId.IdType = pobj->v_PVSLAASIdType;
+
+		IdentificationType tmpCarrier;
+		tmpCarrier.IdSpec = pobj->v_PVSLCarrierIdString;
+		tmpCarrier.IdType = pobj->v_PVSLCarrierIdType;
+
+		IdentificationType tmpCreatingInstance;
+		tmpCreatingInstance.IdSpec = pobj->v_PVSLCreatingInstanceIdString;
+		tmpCreatingInstance.IdType = pobj->v_PVSLCreatingInstanceIdType;
+
+		result = openaas_modelmanager_createPVSL(tmpAASId, pobj->v_PVSLName, tmpCarrier, tmpCreatingInstance);
+	}
+	pobj->v_PVSLCreate = false;
+	pobj->v_PVSLStatus = result;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLDelete_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_BOOL  value
+) {
+	AASStatusCode result = AASSTATUSCODE_GOOD;
+	pobj->v_PVSLDelete = value;
+	if (pobj->v_PVSLDelete == true){
+		IdentificationType tmpAASId;
+		tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
+		tmpAASId.IdType = pobj->v_PVSLAASIdType;
+
+		result = openaas_modelmanager_deletePVSL(tmpAASId, pobj->v_PVSLName);
+	}
+	pobj->v_PVSLDelete = false;
+	pobj->v_PVSLStatus = result;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType aasId, OV_STRING pvslName, IdentificationType carrier, IdentificationType creatingInstance) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
@@ -38,8 +137,42 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType
 				ov_logfile_error("Fatal: could not create PVSL object - reason: %s", ov_result_getresulttext(result));
 				return openaas_modelmanager_ovresultToAASStatusCode(result);
 			}
-			ov_string_setvalue(&(ppvsl->v_CarrierString), carrier.IdSpec);
-			ppvsl->v_CarrierType = carrier.IdType;
+			ov_string_setvalue(&(ppvsl->v_CarrierIdString), carrier.IdSpec);
+			ppvsl->v_CarrierIdType = carrier.IdType;
+			ov_string_setvalue(&(ppvsl->v_CreatingInstanceIdString), creatingInstance.IdSpec);
+			ppvsl->v_CreatingInstanceIdType = creatingInstance.IdType;
+			ov_time_gettime(&ppvsl->v_CreationTime);
+		}else{
+			return AASSTATUSCODE_BADPVSLNAME;
+		}
+	}else{
+		return AASSTATUSCODE_BADUNEXPECTEDERROR;
+	}
+	return AASSTATUSCODE_GOOD;
+}
+
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSLTime(IdentificationType aasId, OV_STRING pvslName, IdentificationType carrier, IdentificationType creatingInstance, OV_TIME creatingTime) {
+	OV_RESULT result = OV_ERR_OK;
+	OV_INSTPTR_openaas_aas paas = NULL;
+	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
+	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
+	if (!ptr)
+		return AASSTATUSCODE_BADAASID;
+	paas = Ov_StaticPtrCast(openaas_aas, ptr);
+	if (paas){
+		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		if(!ppvsl){
+			result = Ov_CreateObject(openaas_PropertyValueStatementList, ppvsl, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName);
+			if(Ov_Fail(result)){
+				ov_logfile_error("Fatal: could not create PVSL object - reason: %s", ov_result_getresulttext(result));
+				return openaas_modelmanager_ovresultToAASStatusCode(result);
+			}
+			ov_string_setvalue(&(ppvsl->v_CarrierIdString), carrier.IdSpec);
+			ppvsl->v_CarrierIdType = carrier.IdType;
+			ov_string_setvalue(&(ppvsl->v_CreatingInstanceIdString), creatingInstance.IdSpec);
+			ppvsl->v_CreatingInstanceIdType = creatingInstance.IdType;
+			ppvsl->v_CreationTime = creatingTime;
 		}else{
 			return AASSTATUSCODE_BADPVSLNAME;
 		}

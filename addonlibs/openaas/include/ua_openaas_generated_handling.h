@@ -1,5 +1,5 @@
-/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/Documents/openAAS_workshop/external/open62541/tools/generate_datatypes.py
- * on host opcua-VirtualBox by user opcua at 2017-02-03 12:43:52 */
+/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/parser/tools/generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2017-02-09 10:14:25 */
 
 #ifndef UA_OPENAAS_GENERATED_HANDLING_H_
 #define UA_OPENAAS_GENERATED_HANDLING_H_
@@ -42,6 +42,31 @@ UA_ExpressionSemanticEnum_delete(UA_ExpressionSemanticEnum *p) {
     UA_delete(p, &UA_OPENAAS[UA_OPENAAS_EXPRESSIONSEMANTICENUM]);
 }
 
+/* ExpressionLogicEnum */
+static UA_INLINE void
+UA_ExpressionLogicEnum_init(UA_ExpressionLogicEnum *p) {
+    memset(p, 0, sizeof(UA_ExpressionLogicEnum));
+}
+
+static UA_INLINE UA_ExpressionLogicEnum *
+UA_ExpressionLogicEnum_new(void) {
+    return (UA_ExpressionLogicEnum*)UA_new(&UA_OPENAAS[UA_OPENAAS_EXPRESSIONLOGICENUM]);
+}
+
+static UA_INLINE UA_StatusCode
+UA_ExpressionLogicEnum_copy(const UA_ExpressionLogicEnum *src, UA_ExpressionLogicEnum *dst) {
+    *dst = *src;
+    return UA_STATUSCODE_GOOD;
+}
+
+static UA_INLINE void
+UA_ExpressionLogicEnum_deleteMembers(UA_ExpressionLogicEnum *p) { }
+
+static UA_INLINE void
+UA_ExpressionLogicEnum_delete(UA_ExpressionLogicEnum *p) {
+    UA_delete(p, &UA_OPENAAS[UA_OPENAAS_EXPRESSIONLOGICENUM]);
+}
+
 /* ViewEnum */
 static UA_INLINE void
 UA_ViewEnum_init(UA_ViewEnum *p) {
@@ -67,29 +92,29 @@ UA_ViewEnum_delete(UA_ViewEnum *p) {
     UA_delete(p, &UA_OPENAAS[UA_OPENAAS_VIEWENUM]);
 }
 
-/* RelationalExpressionEnum */
+/* VisibilityEnum */
 static UA_INLINE void
-UA_RelationalExpressionEnum_init(UA_RelationalExpressionEnum *p) {
-    memset(p, 0, sizeof(UA_RelationalExpressionEnum));
+UA_VisibilityEnum_init(UA_VisibilityEnum *p) {
+    memset(p, 0, sizeof(UA_VisibilityEnum));
 }
 
-static UA_INLINE UA_RelationalExpressionEnum *
-UA_RelationalExpressionEnum_new(void) {
-    return (UA_RelationalExpressionEnum*)UA_new(&UA_OPENAAS[UA_OPENAAS_RELATIONALEXPRESSIONENUM]);
+static UA_INLINE UA_VisibilityEnum *
+UA_VisibilityEnum_new(void) {
+    return (UA_VisibilityEnum*)UA_new(&UA_OPENAAS[UA_OPENAAS_VISIBILITYENUM]);
 }
 
 static UA_INLINE UA_StatusCode
-UA_RelationalExpressionEnum_copy(const UA_RelationalExpressionEnum *src, UA_RelationalExpressionEnum *dst) {
+UA_VisibilityEnum_copy(const UA_VisibilityEnum *src, UA_VisibilityEnum *dst) {
     *dst = *src;
     return UA_STATUSCODE_GOOD;
 }
 
 static UA_INLINE void
-UA_RelationalExpressionEnum_deleteMembers(UA_RelationalExpressionEnum *p) { }
+UA_VisibilityEnum_deleteMembers(UA_VisibilityEnum *p) { }
 
 static UA_INLINE void
-UA_RelationalExpressionEnum_delete(UA_RelationalExpressionEnum *p) {
-    UA_delete(p, &UA_OPENAAS[UA_OPENAAS_RELATIONALEXPRESSIONENUM]);
+UA_VisibilityEnum_delete(UA_VisibilityEnum *p) {
+    UA_delete(p, &UA_OPENAAS[UA_OPENAAS_VISIBILITYENUM]);
 }
 
 /* IdEnum */

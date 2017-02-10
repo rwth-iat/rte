@@ -45,7 +45,8 @@ typedef enum {
 	SRV_VT_INT64,	// int64
 	SRV_VT_UINT32,	// uint32
 	SRV_VT_UINT64,	// uint64
-	SRV_VT_STRING	// SRV_String
+	SRV_VT_STRING,	// SRV_String
+	SRV_VT_DATETIME //int64
 } SRV_valType_t;
 
 typedef enum {
@@ -79,7 +80,7 @@ typedef enum {
 } SRV_service_t;
 
 typedef enum {
-	SRV_ES_assurance	= 0,
+	SRV_ES_confirmation	= 0,
 	SRV_ES_setting		= 1,
 	SRV_ES_measurement	= 2,
 	SRV_ES_requirement	= 3,
@@ -87,14 +88,14 @@ typedef enum {
 } SRV_exprSemEnum_t;
 
 typedef enum {
-	SRV_RE_GT	= 0,
-	SRV_RE_GE	= 1,
-	SRV_RE_EQ	= 2,
-	SRV_RE_NE	= 3,
-	SRV_RE_LE	= 4,
-	SRV_RE_LT	= 5,
-	SRV_RE_undefined = 6,
-} SRV_relExprEnum_t;
+	SRV_EL_GT	= 0,
+	SRV_EL_GE	= 1,
+	SRV_EL_EQ	= 2,
+	SRV_EL_NE	= 3,
+	SRV_EL_LE	= 4,
+	SRV_EL_LT	= 5,
+	SRV_EL_undefined = 6,
+} SRV_exprLogEnum_t;
 
 typedef enum {
 	SRV_VIEW_BUSINESS,
@@ -110,6 +111,13 @@ typedef enum {
 } SRV_viewEnum_t;
 
 typedef enum {
+	SRV_VIS_PRIVATE,
+	SRV_VIS_CONTRACT,
+	SRV_VIS_PUBLIC,
+	SRV_VIS_undefined
+} SRV_visibilityEnum_t;
+
+typedef enum {
 	SRV_IDT_URI	= 0,
 	SRV_IDT_ISO	= 1,
 	SRV_IDT_undefined 	= 2
@@ -122,31 +130,35 @@ typedef struct {
 
 typedef struct {
 	SRV_exprSemEnum_t expressionSemantic;
-	SRV_relExprEnum_t relationalExpression;
+	SRV_exprLogEnum_t expressionLogic;
 	SRV_String name;
 	SRV_String unit;
 	SRV_viewEnum_t view;
-	SRV_ident_t propertyReference;
+	SRV_visibilityEnum_t visibility;
+	SRV_ident_t ID;
+	SRV_DateTime valTime;
 	SRV_valType_t valType;
 	void* value;
-	bool isPublic;
 	bool hasName;
 	bool hasUnit;
-	bool hasIsPublic;
+	bool hasValTime;
 } PVS_t;
 
 typedef struct {
 	SRV_String name;
-	SRV_ident_t carrierId;
+	SRV_ident_t carrier;
+	SRV_ident_t creatingInstance;
+	SRV_DateTime creationTime;
 	bool hasName;
+	bool hasCreationTime;
 	PVS_t* pvs;
 	uint32_t numPvs;
 } PVSL_t;
 
 typedef struct {
 	uint64_t lceId;
-	SRV_ident_t creatingInstanceId;
-	SRV_ident_t writingInstanceId;
+	SRV_ident_t creatingInstance;
+	SRV_ident_t writingInstance;
 	SRV_String eventClass;
 	SRV_String subject;
 	SRV_DateTime dataTime;
@@ -195,7 +207,6 @@ typedef struct {
 typedef struct {
 	status_t status;
 } createPVSLRsp_t;
-
 
 
 typedef struct {

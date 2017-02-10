@@ -1,6 +1,9 @@
-/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/opcua/Documents/openAAS_workshop/external/open62541/tools/generate_datatypes.py
- * on host opcua-VirtualBox by user opcua at 2017-02-03 12:43:52 */
+/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/parser/tools/generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2017-02-09 10:14:25 */
 
+#ifdef UA_NO_AMALGAMATION
+#include "ua_types_encoding_binary.h"
+#endif
 #include "ua_openaas_generated.h"
 
 /* ExpressionSemanticEnum */
@@ -13,6 +16,16 @@ UA_ExpressionSemanticEnum_decodeBinary(const UA_ByteString *src, size_t *offset,
     return UA_decodeBinary(src, offset, dst, &UA_OPENAAS[UA_OPENAAS_EXPRESSIONSEMANTICENUM], 0, NULL);
 }
 
+/* ExpressionLogicEnum */
+static UA_INLINE UA_StatusCode
+UA_ExpressionLogicEnum_encodeBinary(const UA_ExpressionLogicEnum *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_OPENAAS[UA_OPENAAS_EXPRESSIONLOGICENUM], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_ExpressionLogicEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_ExpressionLogicEnum *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_OPENAAS[UA_OPENAAS_EXPRESSIONLOGICENUM], 0, NULL);
+}
+
 /* ViewEnum */
 static UA_INLINE UA_StatusCode
 UA_ViewEnum_encodeBinary(const UA_ViewEnum *src, UA_ByteString *dst, size_t *offset) {
@@ -23,14 +36,14 @@ UA_ViewEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_ViewEnum *
     return UA_decodeBinary(src, offset, dst, &UA_OPENAAS[UA_OPENAAS_VIEWENUM], 0, NULL);
 }
 
-/* RelationalExpressionEnum */
+/* VisibilityEnum */
 static UA_INLINE UA_StatusCode
-UA_RelationalExpressionEnum_encodeBinary(const UA_RelationalExpressionEnum *src, UA_ByteString *dst, size_t *offset) {
-    return UA_encodeBinary(src, &UA_OPENAAS[UA_OPENAAS_RELATIONALEXPRESSIONENUM], NULL, NULL, dst, offset);
+UA_VisibilityEnum_encodeBinary(const UA_VisibilityEnum *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_OPENAAS[UA_OPENAAS_VISIBILITYENUM], NULL, NULL, dst, offset);
 }
 static UA_INLINE UA_StatusCode
-UA_RelationalExpressionEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_RelationalExpressionEnum *dst) {
-    return UA_decodeBinary(src, offset, dst, &UA_OPENAAS[UA_OPENAAS_RELATIONALEXPRESSIONENUM], 0, NULL);
+UA_VisibilityEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_VisibilityEnum *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_OPENAAS[UA_OPENAAS_VISIBILITYENUM], 0, NULL);
 }
 
 /* IdEnum */
