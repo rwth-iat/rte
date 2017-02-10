@@ -15,7 +15,11 @@ flex:
 ```sh
 sudo apt-get install flex
 ```
-to compile the runtime environment. Navigate to build folder and run the build command:
+to compile the runtime environment. Navigate to build folder and make the script executable
+```sh
+cd build && sudo chmod +x tclsh acplt_build.tcl
+```
+and run the build command:
 ```sh
 cd build && tclsh acplt_build.tcl
 ```
