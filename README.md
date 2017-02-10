@@ -51,7 +51,7 @@ start up:
 ```
 further settings(e.g., which libs should be loaded at start up) of the RTE can be made within the configuration file that can be found here
 ```sh
-./build/acplt/servers/MANAGER/ov_server.conf
+/build/acplt/servers/MANAGER/ov_server.conf
 ```
 
 The runtime environment is used at industry scale in the petro chemical plants at INEOS in Cologne.
