@@ -15,7 +15,11 @@ flex:
 ```sh
 sudo apt-get install flex
 ```
-to compile the runtime environment. Navigate to build folder and run the build command:
+to compile the runtime environment. Navigate to build folder and make the script executable
+```sh
+cd build && sudo chmod +x tclsh acplt_build.tcl
+```
+and run the build command:
 ```sh
 cd build && tclsh acplt_build.tcl
 ```
@@ -51,7 +55,7 @@ start up:
 ```
 further settings(e.g., which libs should be loaded at start up) of the RTE can be made within the configuration file that can be found here
 ```sh
-./build/acplt/servers/MANAGER/ov_server.conf
+/build/acplt/servers/MANAGER/ov_server.conf
 ```
 
 The runtime environment is used at industry scale in the petro chemical plants at INEOS in Cologne.
