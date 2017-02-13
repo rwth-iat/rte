@@ -15,7 +15,7 @@
 #define JSON_ES_MAX 5
 #define JSON_ID_MAX 2
 #define JSON_VIEW_MAX 9
-#define JSON_VT_MAX 9
+#define JSON_VT_MAX 10
 #define JSON_VIS_MAX 3
 
 const SRV_String JSON_EL_STR [JSON_EL_MAX+1] = {
@@ -64,7 +64,8 @@ const SRV_String JSON_VT_STR [JSON_VT_MAX+1] = {
 		{.data = "INT64",	.length = 5},
 		{.data = "UINT32",	.length = 6},
 		{.data = "UINT64",	.length = 6},
-		{.data = "STRING",	.length = 6}
+		{.data = "STRING",	.length = 6},
+		{.data = "DATETIME",.length = 8}
 };
 
 const SRV_String JSON_VIS_STR [JSON_VIS_MAX+1] = {
@@ -214,6 +215,33 @@ JSON_RC tok2Prim(const char* js, const jsmntok_t* t, SRV_valType_t* type, void* 
 	return JSON_RC_OK;
 }
 
+JSON_RC tok2Any(const char* js, const jsmntok_t* t, SRV_valType_t* type, void* value){
+	JSON_RC rc;
+
+	if(t->type==JSMN_STRING){
+		if(*type==SRV_VT_DATETIME){
+			SRV_String time;
+			rc = tok2SrvStr(js, t, &time);
+			if(rc)
+				return rc;
+			rc = ISOToDateTime(time.data, time.length, (SRV_DateTime*)value);
+			SRV_String_deleteMembers(&time);
+			if(rc)
+				return rc;
+		} else {
+			rc = tok2SrvStr(js, t, (SRV_String*)value);
+			if(rc)
+				return rc;
+			*type = SRV_VT_STRING;
+		}
+	} else if(t->type==JSMN_PRIMITIVE){
+		rc = tok2Prim(js, t, type, value);
+		if(rc)
+			return rc;
+	}
+	return JSON_RC_OK;
+}
+
 JSON_RC tok2Int(const char* js, const jsmntok_t* t, void* value, int force32){
 	SRV_valType_t type = SRV_VT_undefined;
 	if(t->type!=JSMN_PRIMITIVE)
@@ -333,6 +361,9 @@ int json_appendAny(SRV_String* js, int start, const void* value, SRV_valType_t t
 		break;
 	case SRV_VT_STRING:
 		pos = json_appendString(js, start, ((SRV_String*)value)->data, ((SRV_String*)value)->length, maxLen);
+		break;
+	case SRV_VT_DATETIME:
+		pos = json_appendIsoTime(js, start, maxLen, *(SRV_DateTime*)value);
 		break;
 	case SRV_VT_INT32:
 		bufLen = snprintf(numbuffer, MAX_NUMBUFFER, "%"PRIi32, *(int32_t*)value);
@@ -902,14 +933,14 @@ JSON_RC jsonparsePVS(const jsmntok_t* t, const SRV_String* str, int start, int n
 			j++;
 			if(pvs->valType==SRV_VT_undefined){
 				//search rest of pvs for value type field
-				for(int k = j+1; k < n && t[k].start<=t[start].end; k++){
+				for(int k = j+1; k<n && t[k].start<=t[start].end; k++){
 					if(jsoneq(str->data, &t[k], "ValueType")==0){
 						k++;
 						SRV_String tmpStr;
 						rc = tok2SrvStr(str->data, &t[k], &tmpStr);
 						if(rc)
 							return rc;
-						for(int i = 1; i <= JSON_VT_MAX && pvs->valType == SRV_VT_undefined; i++){
+						for(int i = 1; i<=JSON_VT_MAX && pvs->valType==SRV_VT_undefined; i++){
 							if(srvStrEq(&tmpStr, &JSON_VT_STR[i])==0)
 								pvs->valType = i;
 						}
@@ -920,17 +951,9 @@ JSON_RC jsonparsePVS(const jsmntok_t* t, const SRV_String* str, int start, int n
 				}
 			}
 
-			// parse value with type
-			if(t[j].type==JSMN_STRING){
-				rc = tok2SrvStr(str->data, &t[j], pvs->value);
-				if(rc)
-					return rc;
-				pvs->valType = SRV_VT_STRING;
-			} else if(t[j].type==JSMN_PRIMITIVE){
-				rc = tok2Prim(str->data, &t[j], &pvs->valType, pvs->value);
-				if(rc)
-					return rc;
-			}
+			rc = tok2Any(str->data, &t[j], &pvs->valType, pvs->value);
+			if(rc)
+				return rc;
 		}
 		j++;
 	}
@@ -994,9 +1017,41 @@ JSON_RC jsonparseLCE(const jsmntok_t* t, const SRV_String* str, int start, int n
 			if(rc)
 				return rc;
 			lce->hastDataTime = true;
+		} else if(jsoneq(str->data, &t[j], "DataType")==0){
+			j++;
+			SRV_String tmpStr;
+			rc = tok2SrvStr(str->data, &t[j], &tmpStr);
+			if(rc)
+				return rc;
+			for(int i = 1; i<=JSON_VT_MAX && lce->dataType!=SRV_VT_undefined; i++){
+				if(srvStrEq(&tmpStr, &JSON_VT_STR[i])==0)
+					lce->dataType = i;
+			}
+			SRV_String_deleteMembers(&tmpStr);
+			if(lce->dataType==SRV_VT_undefined)
+				return JSON_RC_WRONG_VALUE;
 		} else if(jsoneq(str->data, &t[j], "Data")==0){
 			j++;
-			rc = tok2Prim(str->data, &t[j], &lce->dataType, lce->data);
+			if(lce->dataType==SRV_VT_undefined){
+				for(int k = j+1; k < n && t[k].start<=t[start].end; k++){
+					if(jsoneq(str->data, &t[k], "DataType")==0){
+						k++;
+						SRV_String tmpStr;
+						rc = tok2SrvStr(str->data, &t[k], &tmpStr);
+						if(rc)
+							return rc;
+						for(int i = 1; i<=JSON_VT_MAX && lce->dataType==SRV_VT_undefined; i++){
+							if(srvStrEq(&tmpStr, &JSON_VT_STR[i])==0)
+								lce->dataType = i;
+						}
+						SRV_String_deleteMembers(&tmpStr);
+						if(lce->dataType==SRV_VT_undefined)
+							return JSON_RC_WRONG_VALUE;
+					}
+				}
+			}
+
+			rc = tok2Any(str->data, &t[j], &lce->dataType, lce->data);
 			if(rc)
 				return rc;
 		}
@@ -1934,13 +1989,19 @@ JSON_RC jsonGenLCE(SRV_String* json, int* length, int* ppos, const LCE_t* l){
 		pos = json_appendSrvStr(json, pos, &l->subject, *length);
 	}
 	if(l->dataType!=SRV_VT_undefined){
+		pos = json_appendKey(json, pos, "DataType", -1, *length, &first);
+		pos = json_appendSrvStr(json, pos, &JSON_VT_STR[l->dataType], *length);
+
 		pos = json_appendKey(json, pos, "Data", -1, *length, &first);
 		pos = json_appendAny(json, pos, l->data, l->dataType, *length);
+
+		//TODO data time without data?
+		if(l->hastDataTime){
+			pos = json_appendKey(json, pos, "DataTime", -1, *length, &first);
+			pos = json_appendIsoTime(json, pos, *length, l->dataTime);
+		}
 	}
-	if(l->hastDataTime){
-		pos = json_appendKey(json, pos, "DataTime", -1, *length, &first);
-		pos = json_appendIsoTime(json, pos, *length, l->dataTime);
-	}
+
 
 	if(pos<0)
 		return pos;

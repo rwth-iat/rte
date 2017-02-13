@@ -279,9 +279,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		for (OV_UINT i = 0; i < arrayDimension; i++){
 			UA_LifeCycleEntry_deleteMembers(&tmpUALifeCycleEntry[i]);
-			LifeCycleEntry_deleteMembers(&lce[i]);
+			ov_database_free(lce[i].creatingInstance.IdSpec);
+			ov_database_free(lce[i].eventClass);
+			ov_database_free(lce[i].subject);
+			ov_database_free(lce[i].writingInstance.IdSpec);
+			ov_database_free(&lce[i]);
 		}
-		ov_database_free(lce);
 		UA_free(tmpUALifeCycleEntry);
 		IdentificationType_deleteMembers(&tmpOVAASId);
 		resultOV = OV_ERR_OK;

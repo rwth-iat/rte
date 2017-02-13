@@ -86,17 +86,15 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(IdentificationType sourceAASId, IdentificationType targetAASId) {
 	OV_RESULT resultOV = 0;
 	AASStatusCode result = 0;
-	SRV_String *srvStringSend = SRV_String_new();
+	SRV_String *srvStringSend = NULL;
 	SRV_msgHeader *headerSend = SRV_msgHeader_t_new();
 	void *srvStructSend = NULL;
 	SRV_service_t srvTypeSend;
 
-	headerSend->sender.idSpec.data = sourceAASId.IdSpec;
-	headerSend->sender.idSpec.length = ov_string_getlength(sourceAASId.IdSpec);
-	headerSend->sender.idType = sourceAASId.IdType;
-	headerSend->receiver.idSpec.data = targetAASId.IdSpec;
-	headerSend->receiver.idSpec.length = ov_string_getlength(targetAASId.IdSpec);
-	headerSend->receiver.idType = targetAASId.IdType;
+	SRV_String_setCopy(&headerSend->sender.idSpec, targetAASId.IdSpec, ov_string_getlength(targetAASId.IdSpec));
+	headerSend->sender.idType = targetAASId.IdType;
+	SRV_String_setCopy(&headerSend->receiver.idSpec, sourceAASId.IdSpec, ov_string_getlength(sourceAASId.IdSpec));
+	headerSend->receiver.idType = sourceAASId.IdType;
 
 	getCoreDataReq_t getCoreDataReq;
 	getCoreDataReq_t_init(&getCoreDataReq);
@@ -122,16 +120,21 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(Identifica
 	ov_string_setvalue(&psendAASMessage->v_path, "/TechUnits/openAAS/AASFolder/ComCo.postoffice");
 
 	// send message
+	psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, srvStringSend->data);
 	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
 
-	psendAASMessage->v_Submit = TRUE;
+	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
+	ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
+	ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
+	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
+	ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 
-	SRV_serviceGeneric_delete(srvStructSend, srvTypeSend);
+	SRV_serviceGeneric_deleteMembers(srvStructSend, srvTypeSend);
+	srvStructSend = NULL;
 	SRV_msgHeader_t_delete(headerSend);
-	SRV_String_delete(srvStringSend);
+	SRV_String_deleteMembers(srvStringSend);
+	free(srvStringSend);
 
-	if (psendAASMessage->v_status != 2)
-		result = AASSTATUSCODE_BADUNEXPECTEDERROR;
     return result;
 }

@@ -46,7 +46,7 @@ typedef enum {
 	SRV_VT_UINT32,	// uint32
 	SRV_VT_UINT64,	// uint64
 	SRV_VT_STRING,	// SRV_String
-	SRV_VT_DATETIME //int64
+	SRV_VT_DATETIME // uint64
 } SRV_valType_t;
 
 typedef enum {
@@ -314,7 +314,7 @@ typedef struct {
 } getCoreDataRsp_t;
 
 SRV_String* SRV_String_new();
-SRV_String* SRV_String_copy(SRV_String* to, const SRV_String* from);
+void SRV_String_copy(SRV_String* to, const SRV_String* from);
 void SRV_String_init(SRV_String* this);
 void SRV_String_setCopy(SRV_String* srvstr, const char* str, int len);
 void SRV_String_deleteMembers(SRV_String* this);
@@ -326,8 +326,8 @@ PVS_t* PVS_t_new();
 LCE_t* LCE_t_new();
 
 SRV_msgHeader* SRV_msgHeader_t_new();
-SRV_msgHeader* SRV_msgHeader_t_copy(SRV_msgHeader* header);
-SRV_msgHeader* SRV_msgHeader_t_reverseCopy(SRV_msgHeader* header);
+void SRV_msgHeader_t_copy(SRV_msgHeader* to, const SRV_msgHeader* from);
+void SRV_msgHeader_t_reverseCopy(SRV_msgHeader* to, const SRV_msgHeader* from);
 
 
 void* SRV_serviceGeneric_new(SRV_service_t type);

@@ -49,7 +49,7 @@ void PropertyValueStatementList_deleteMembers(PropertyValueStatementList *this){
 	IdentificationType_delete(&this->Carrier);
 	IdentificationType_delete(&this->CreatingInstance);
 	for (OV_UINT i = 0; i < this->pvsNumber; i++){
-		PropertyValueStatement_delete(&(this->pvs)[i]);
+		PropertyValueStatement_deleteMembers(&(this->pvs)[i]);
 	}
 	PropertyValueStatementList_init(this);
 }
@@ -112,11 +112,17 @@ void LifeCycleEntry_delete(LifeCycleEntry *this){
 OV_RESULT decodeMSG(const SRV_String* str, SRV_msgHeader** header, void** srvStruct, SRV_service_t* srvType, SRV_encoding_t *encoding){
 
 	if (strncmp(str->data, "JSON", 4) == 0){ // JSON Encoding
-		JSON_RC resultJSON = parseJson(str, header, srvStruct, srvType);
+		SRV_String *tmpStr = SRV_String_new();
+		tmpStr->data = malloc((str->length-4+1)*sizeof(char));
+		tmpStr->length = str->length-4;
+		memcpy(tmpStr->data, (str->data+4), (str->length-4)*sizeof(char));
+		tmpStr->data[tmpStr->length] = '\0';
+		JSON_RC resultJSON = parseJson(tmpStr, header, srvStruct, srvType);
+		*encoding = SRV_JSON;
 		if (resultJSON){
 			return resultJSON;
 		}
-		*encoding = SRV_JSON;
+		SRV_String_delete(tmpStr);
 	}else if (strncmp(str->data, "OPCB", 4) == 0){ // OPC UA binary Encoding
 		return OV_ERR_NOTIMPLEMENTED;
 	}else if (strncmp(str->data, "XMLT", 4) == 0){ // XML text Encoding
@@ -137,28 +143,33 @@ OV_RESULT encodeMSG(SRV_String** str, const SRV_msgHeader *header, const void* s
 		if (resultJSON){
 			return resultJSON;
 		}
-		ov_string_setvalue(&(*str)->data, "JSON");
-		(*str)->length = 4;
-		ov_string_append(&(*str)->data, strtmp->data);
-		(*str)->length += strtmp->length;
+		*str = malloc(sizeof(SRV_String));
+		(*str)->data = malloc(strtmp->length+4+1);
+		(*str)->length = strtmp->length+4;
+		memcpy((*str)->data, "JSON", 4*sizeof(char));
+		memcpy((*str)->data+4, strtmp->data, (strtmp->length)*sizeof(char));
+		(*str)->data[(*str)->length] = '\0';
 	}break;
 	case SRV_OPCB: // OPC UA binary Encoding
-		ov_string_setvalue(&(*str)->data, "OPCB");
-		(*str)->length = 4;
-		ov_string_append(&(*str)->data, strtmp->data);
-		(*str)->length += strtmp->length;
+		*str = malloc(sizeof(SRV_String));
+		(*str)->data = malloc(strtmp->length+4);
+		(*str)->length = strtmp->length+4;
+		memcpy((*str)->data, "OPCB", 4*sizeof(char));
+		memcpy((*str)->data+4, strtmp->data, (strtmp->length)*sizeof(char));
 		break;
 	case SRV_XMLT: // XML text Encoding
-		ov_string_setvalue(&(*str)->data, "XMLT");
-		(*str)->length = 4;
-		ov_string_append(&(*str)->data, strtmp->data);
-		(*str)->length += strtmp->length;
+		*str = malloc(sizeof(SRV_String));
+		(*str)->data = malloc(strtmp->length+4);
+		(*str)->length = strtmp->length+4;
+		memcpy((*str)->data, "XMLT", 4*sizeof(char));
+		memcpy((*str)->data+4, strtmp->data, (strtmp->length)*sizeof(char));
 		break;
 	case SRV_XMLB: // XML binary Encoding
-		ov_string_setvalue(&(*str)->data, "XMLB");
-		(*str)->length = 4;
-		ov_string_append(&(*str)->data, strtmp->data);
-		(*str)->length += strtmp->length;
+		*str = malloc(sizeof(SRV_String));
+		(*str)->data = malloc(strtmp->length+4);
+		(*str)->length = strtmp->length+4;
+		memcpy((*str)->data, "XMLB", 4*sizeof(char));
+		memcpy((*str)->data+4, strtmp->data, (strtmp->length)*sizeof(char));
 		break;
 	default:
 		return OV_ERR_BADTYPE;
@@ -210,30 +221,31 @@ OV_RESULT OVDataValueToserviceValue(DataValue value, SRV_valType_t* valueType, v
 	switch(value.Value.value.vartype){
 	case OV_VT_BOOL:
 		*valueType = SRV_VT_BOOL;
-		*serviceValue = ov_database_malloc(sizeof(bool));
+		*serviceValue = malloc(sizeof(bool));
 		*(bool*)*serviceValue = value.Value.value.valueunion.val_bool;
 		break;
 	case OV_VT_DOUBLE:
 		*valueType = SRV_VT_DOUBLE;
-		*serviceValue = ov_database_malloc(sizeof(double));
+		*serviceValue = malloc(sizeof(double));
 		*(double*)*serviceValue = value.Value.value.valueunion.val_double;
 		break;
 	case OV_VT_INT:
 		*valueType = SRV_VT_INT32;
-		*serviceValue = ov_database_malloc(sizeof(int));
+		*serviceValue = malloc(sizeof(int));
 		*(int*)*serviceValue = value.Value.value.valueunion.val_int;
 		break;
 	case OV_VT_UINT:
 		*valueType = SRV_VT_UINT32;
-		*serviceValue = ov_database_malloc(sizeof(unsigned int));
+		*serviceValue = malloc(sizeof(unsigned int));
 		*(unsigned int*)*serviceValue = value.Value.value.valueunion.val_uint;
 	case OV_VT_STRING:
 		*valueType = SRV_VT_STRING;
-		ov_string_setvalue((char**)serviceValue, value.Value.value.valueunion.val_string);
+		*serviceValue = SRV_String_new();
+		SRV_String_setCopy((SRV_String*)serviceValue, value.Value.value.valueunion.val_string, ov_string_getlength(value.Value.value.valueunion.val_string));
 		break;
 	case OV_VT_TIME:
 		*valueType = SRV_VT_DATETIME;
-		*serviceValue = ov_database_malloc(sizeof(SRV_DateTime));
+		*serviceValue = malloc(sizeof(SRV_DateTime));
 		*(SRV_DateTime*)*serviceValue = ov_ovTimeTo1601nsTime(value.Value.value.valueunion.val_time);
 	default:
 		return OV_ERR_VARDEFMISMATCH;

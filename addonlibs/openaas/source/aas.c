@@ -51,7 +51,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 	// Decoding the Message
 	SRV_String *srvStringReceive = SRV_String_new();
-	srvStringReceive->data = value;
+	srvStringReceive->data = malloc(ov_string_getlength(value)*sizeof(char));
+	memcpy(srvStringReceive->data, value, ov_string_getlength(value)*sizeof(char));
 	srvStringReceive->length = ov_string_getlength(value);
 	SRV_msgHeader *headerReceive = NULL;
 	void *srvStructReceive = NULL;
@@ -67,30 +68,30 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 	// For encoding the message
 	SRV_String *srvStringSend = SRV_String_new();
-	SRV_msgHeader *headerSend = NULL;
+	SRV_msgHeader *headerSend = SRV_msgHeader_t_new();
 	void *srvStructSend = NULL;
 	SRV_service_t srvTypeSend;
 
 	// check the message
 	IdentificationType sender;
-	sender.IdSpec = NULL;
+	IdentificationType_init(&sender);
 	ov_string_setvalue(&sender.IdSpec, headerReceive->sender.idSpec.data);
 	sender.IdType = headerReceive->sender.idType;
 
 	IdentificationType receiver;
-	receiver.IdSpec = NULL;
+	IdentificationType_init(&receiver);
 	ov_string_setvalue(&receiver.IdSpec, headerReceive->receiver.idSpec.data);
 	receiver.IdType = headerReceive->receiver.idType;
 
 	IdentificationType aasId;
-	aasId.IdSpec = NULL;
+	IdentificationType_init(&aasId);
 	ov_string_setvalue(&aasId.IdSpec, pobj->p_Header.p_Config.v_CarrierIdString);
 	aasId.IdType = pobj->p_Header.p_Config.v_CarrierIdType;
 
 
 
 	if (IdentificationTypeEqual(&receiver, &aasId)){ // MSG is for this AAS
-		headerSend = SRV_msgHeader_t_reverseCopy(headerReceive);
+		SRV_msgHeader_t_reverseCopy(headerSend, headerReceive);
 		switch (srvTypeReceive){
 		case SRV_createAASReq:{
 			if (ov_string_compare(pobj->v_identifier, "ComCo") == OV_STRCMP_EQUAL){ // This AAS is the ComCo
@@ -565,36 +566,37 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				getCoreDataRsp.numPvsl = tmpNumber;
 				getCoreDataRsp.pvsl = malloc(sizeof(PVSL_t)*tmpNumber);
 				for (OV_UINT i = 0; i < tmpNumber; i++){
-					ov_string_setvalue(&getCoreDataRsp.pvsl[i].carrier.idSpec.data, ppvs[i].Carrier.IdSpec);
-					getCoreDataRsp.pvsl[i].carrier.idSpec.length = ov_string_getlength(ppvs[i].Carrier.IdSpec);
+					SRV_String_setCopy(&getCoreDataRsp.pvsl[i].carrier.idSpec, ppvs[i].Carrier.IdSpec, ov_string_getlength(ppvs[i].Carrier.IdSpec));
 					getCoreDataRsp.pvsl[i].carrier.idType = ppvs[i].Carrier.IdType;
-					ov_string_setvalue(&getCoreDataRsp.pvsl[i].creatingInstance.idSpec.data, ppvs[i].CreatingInstance.IdSpec);
+					SRV_String_setCopy(&getCoreDataRsp.pvsl[i].creatingInstance.idSpec, ppvs[i].CreatingInstance.IdSpec, ov_string_getlength(ppvs[i].CreatingInstance.IdSpec));
 					getCoreDataRsp.pvsl[i].creatingInstance.idType = ppvs[i].CreatingInstance.IdType;
-					getCoreDataRsp.pvsl[i].creatingInstance.idSpec.length = ov_string_getlength(ppvs[i].CreatingInstance.IdSpec);
 					getCoreDataRsp.pvsl[i].creationTime = ov_ovTimeTo1601nsTime(ppvs[i].CreationTime);
 					getCoreDataRsp.pvsl[i].hasCreationTime = true;
-					ov_string_setvalue(&getCoreDataRsp.pvsl[i].name.data, ppvs[i].pvslName);
-					getCoreDataRsp.pvsl[i].name.length = ov_string_getlength(ppvs[i].pvslName);
+					SRV_String_setCopy(&getCoreDataRsp.pvsl[i].name, ppvs[i].pvslName, ov_string_getlength(ppvs[i].pvslName));
 					getCoreDataRsp.pvsl[i].hasName = true;
 					getCoreDataRsp.pvsl[i].numPvs = ppvs[i].pvsNumber;
 					getCoreDataRsp.pvsl[i].pvs = malloc(sizeof(PVS_t)*ppvs[i].pvsNumber);
 					for (OV_UINT j = 0; j < ppvs[i].pvsNumber; j++){
 						getCoreDataRsp.pvsl[i].pvs[j].expressionLogic = ppvs[i].pvs[j].ExpressionLogic;
 						getCoreDataRsp.pvsl[i].pvs[j].expressionSemantic = ppvs[i].pvs[j].ExpressionSemantic;
-						ov_string_setvalue(&getCoreDataRsp.pvsl[i].pvs[j].ID.idSpec.data, ppvs[i].pvs[j].ID.IdSpec);
-						getCoreDataRsp.pvsl[i].pvs[j].ID.idSpec.length = ov_string_getlength(ppvs[i].pvs[j].ID.IdSpec);
+						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].ID.idSpec, ppvs[i].pvs[j].ID.IdSpec, ov_string_getlength(ppvs[i].pvs[j].ID.IdSpec));
 						getCoreDataRsp.pvsl[i].pvs[j].ID.idType = ppvs[i].pvs[j].ID.IdType;
-						ov_string_setvalue(&getCoreDataRsp.pvsl[i].pvs[j].name.data, ppvs[i].pvs[j].pvsName);
-						getCoreDataRsp.pvsl[i].pvs[j].name.length = ov_string_getlength(ppvs[i].pvs[j].pvsName);
+						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].name, ppvs[i].pvs[j].pvsName, ov_string_getlength(ppvs[i].pvs[j].pvsName));
 						getCoreDataRsp.pvsl[i].pvs[j].hasName = true;
-						ov_string_setvalue(&getCoreDataRsp.pvsl[i].pvs[j].unit.data, ppvs[i].pvs[j].unit);
-						getCoreDataRsp.pvsl[i].pvs[j].unit.length = ov_string_getlength(ppvs[i].pvs[j].unit);
+						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].unit, ppvs[i].pvs[j].unit, ov_string_getlength(ppvs[i].pvs[j].unit));
 						getCoreDataRsp.pvsl[i].pvs[j].hasUnit = true;
 						OVDataValueToserviceValue(ppvs[i].pvs[j].value, &getCoreDataRsp.pvsl[i].pvs[j].valType, &getCoreDataRsp.pvsl[i].pvs[j].value, &getCoreDataRsp.pvsl[i].pvs[j].valTime);
+						getCoreDataRsp.pvsl[i].pvs[j].hasValTime = true;
 						getCoreDataRsp.pvsl[i].pvs[j].view = ppvs[i].pvs[j].view;
 						getCoreDataRsp.pvsl[i].pvs[j].visibility = ppvs[i].pvs[j].Visibility;
+						ov_database_free(ppvs[i].pvs[j].ID.IdSpec);
+						ov_database_free(ppvs[i].pvs[j].pvsName);
+						ov_database_free(ppvs[i].pvs[j].unit);
 					}
-					PropertyValueStatementList_deleteMembers(&ppvs[i]);
+					ov_database_free(ppvs[i].pvs);
+					ov_database_free(ppvs[i].Carrier.IdSpec);
+					ov_database_free(ppvs[i].CreatingInstance.IdSpec);
+					ov_database_free(ppvs[i].pvslName);
 				}
 				ov_database_free(ppvs);
 			}
@@ -603,7 +605,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			srvTypeSend = SRV_getCoreDataRsp;
 
 			resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
 			getCoreDataRsp_t_deleteMembers(&getCoreDataRsp);
 		}break;
 		case SRV_getCoreDataRsp:{
@@ -651,7 +652,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 						pvs.Visibility = getCoreDataRsp->pvsl[i].pvs[j].visibility;
 
-						result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, pvs);
+						result = openaas_modelmanager_createPVSTime(aasId, tmpOVPVSLName, pvs);
 						PropertyValueStatement_deleteMembers(&pvs);
 					}
 					ov_database_free(tmpOVPVSLName);
@@ -676,14 +677,15 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		srvStructSend = srvStructReceive;
 		srvTypeSend = srvTypeReceive;
 
-		headerSend = SRV_msgHeader_t_copy(headerReceive);
+		SRV_msgHeader_t_copy(headerSend, headerReceive);
 		resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 	}
 
 	IdentificationType receiverNew;
-	receiverNew.IdSpec = NULL;
-	ov_string_setvalue(&receiverNew.IdSpec, headerSend->receiver.idSpec.data);
+	IdentificationType_init(&receiverNew);
 	receiverNew.IdType = headerSend->receiver.idType;
+	ov_string_setvalue(&receiverNew.IdSpec, headerSend->receiver.idSpec.data);
+
 
 	// Get the pointer to object for send the Message
 	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
@@ -692,7 +694,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			break;
 		}
 	}
-
+	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
 
 	if (ov_string_compare(pobj->v_identifier, "ComCo") == OV_STRCMP_EQUAL){ // This AAS is the ComCo
 		OV_INSTPTR_ov_object ptr = NULL;
@@ -701,17 +703,23 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		if(ptr){ // receiverAASId is in this network => directly send message to it
 			paas = Ov_StaticPtrCast(openaas_aas, ptr);
 			if (paas){
-				ov_string_setvalue(&psendAASMessage->v_serverHost, pNodeStoreFunctions->v_IPAddressServer);
+				ov_string_setvalue(&psendAASMessage->v_serverHost, "localhost");
 				OV_ANY tmpServername;
 				ov_vendortree_getservername(&tmpServername, NULL);
 				ov_string_setvalue(&psendAASMessage->v_serverName, tmpServername.value.valueunion.val_string);
 				ov_memstack_lock();
 				ov_string_setvalue(&psendAASMessage->v_path, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, paas), 2));
+				ov_string_append(&psendAASMessage->v_path, ".postoffice");
 				ov_memstack_unlock();
 			}else{
-				SRV_serviceGeneric_delete(srvStructSend, srvTypeSend);
+				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
+				SRV_msgHeader_t_delete(headerReceive);
 				SRV_msgHeader_t_delete(headerSend);
+				SRV_String_delete(srvStringReceive);
 				SRV_String_delete(srvStringSend);
+				IdentificationType_deleteMembers(&aasId);
+				IdentificationType_deleteMembers(&sender);
+				IdentificationType_deleteMembers(&receiver);
 				return OV_ERR_BADPATH;
 			}
 		}else{ // receiverAASId is not in this network => send it to the ComCo of the receiverAAS network
@@ -743,7 +751,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
 			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".ServerHost");
 
-			pGetComCoAddressFromAASDiscoveryServer->v_Submit = TRUE;
+			ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
+			ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
+			ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
+			ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 
 			OV_UINT waitforanswercounter = 0;
 			while (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
@@ -760,8 +771,17 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				waitforanswercounter++;
 			};
 
-			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2)
+			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
+				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
+				SRV_msgHeader_t_delete(headerReceive);
+				SRV_msgHeader_t_delete(headerSend);
+				SRV_String_delete(srvStringReceive);
+				SRV_String_delete(srvStringSend);
+				IdentificationType_deleteMembers(&aasId);
+				IdentificationType_deleteMembers(&sender);
+				IdentificationType_deleteMembers(&receiver);
 				return OV_ERR_NOACCESS;
+			}
 
 			OV_STRING tmpServerHost = NULL;
 			ov_string_setvalue(&tmpServerHost, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
@@ -781,7 +801,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
 			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".ServerName");
 
-			pGetComCoAddressFromAASDiscoveryServer->v_Submit = TRUE;
+			ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
+			ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
+			ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
+			ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 
 			waitforanswercounter = 0;
 			while (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
@@ -798,8 +821,17 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				waitforanswercounter++;
 			};
 
-			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2)
+			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
+				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
+				SRV_msgHeader_t_delete(headerReceive);
+				SRV_msgHeader_t_delete(headerSend);
+				SRV_String_delete(srvStringReceive);
+				SRV_String_delete(srvStringSend);
+				IdentificationType_deleteMembers(&aasId);
+				IdentificationType_deleteMembers(&sender);
+				IdentificationType_deleteMembers(&receiver);
 				return OV_ERR_NOACCESS;
+			}
 
 			OV_STRING tmpManagereName = NULL;
 			ov_string_setvalue(&tmpManagereName, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
@@ -819,7 +851,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
 			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".Path");
 
-			pGetComCoAddressFromAASDiscoveryServer->v_Submit = TRUE;
+			ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
+			ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
+			ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
+			ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 
 			waitforanswercounter = 0;
 			while (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
@@ -836,8 +871,17 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				waitforanswercounter++;
 			};
 
-			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2)
+			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
+				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
+				SRV_msgHeader_t_delete(headerReceive);
+				SRV_msgHeader_t_delete(headerSend);
+				SRV_String_delete(srvStringReceive);
+				SRV_String_delete(srvStringSend);
+				IdentificationType_deleteMembers(&aasId);
+				IdentificationType_deleteMembers(&sender);
+				IdentificationType_deleteMembers(&receiver);
 				return OV_ERR_NOACCESS;
+			}
 
 			OV_STRING tmpPath = NULL;
 			ov_string_setvalue(&tmpPath, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
@@ -858,7 +902,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, srvStringSend->data);
 	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
 
-	psendAASMessage->v_Submit = TRUE;
+	ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
+	ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
+	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
+	ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 
 	ov_string_setvalue(&pobj->v_lastReceivedMessage, srvStringReceive->data);
 	ov_string_setvalue(&pobj->v_lastSendMessage, srvStringSend->data);
@@ -866,14 +913,12 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 	SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
 	SRV_msgHeader_t_delete(headerReceive);
-	SRV_String_delete(srvStringReceive);
-
-	SRV_serviceGeneric_delete(srvStructSend, srvTypeSend);
 	SRV_msgHeader_t_delete(headerSend);
+	SRV_String_delete(srvStringReceive);
 	SRV_String_delete(srvStringSend);
-
-	if (psendAASMessage->v_status != 2)
-		return OV_ERR_BADPARAM;
+	IdentificationType_deleteMembers(&aasId);
+	IdentificationType_deleteMembers(&sender);
+	IdentificationType_deleteMembers(&receiver);
 
 	return resultOV;
 }
