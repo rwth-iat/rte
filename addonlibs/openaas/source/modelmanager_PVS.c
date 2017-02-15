@@ -188,20 +188,25 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 	if (paas){
 		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,&paas->p_Body), pvslName));
 		if(ppvsl){
-			result = Ov_CreateObject(openaas_PropertyValueStatement, ppvs, ppvsl, pvs.pvsName);
-			if(Ov_Fail(result)){
-				ov_logfile_error("Fatal: could not create PVS object - reason: %s", ov_result_getresulttext(result));
-				return openaas_modelmanager_ovresultToAASStatusCode(result);
+			ppvs = Ov_StaticPtrCast(openaas_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), pvs.pvsName));
+			if(ppvs){
+				result = Ov_CreateObject(openaas_PropertyValueStatement, ppvs, ppvsl, pvs.pvsName);
+				if(Ov_Fail(result)){
+					ov_logfile_error("Fatal: could not create PVS object - reason: %s", ov_result_getresulttext(result));
+					return openaas_modelmanager_ovresultToAASStatusCode(result);
+				}
+				ppvs->v_ExpressionLogic = pvs.ExpressionLogic;
+				ppvs->v_ExpressionSemantic = pvs.ExpressionSemantic;
+				ov_variable_setanyvalue(&(ppvs->v_Value), &pvs.value.Value);
+				ov_time_gettime(&ppvs->v_TimeStamp);
+				ov_string_setvalue(&(ppvs->v_Unit), pvs.unit);
+				ov_string_setvalue(&(ppvs->v_IDIdString), pvs.ID.IdSpec);
+				ppvs->v_IDIdType = pvs.ID.IdType;
+				ppvs->v_View = pvs.view;
+				ppvs->v_Visibility = pvs.Visibility;
 			}
-			ppvs->v_ExpressionLogic = pvs.ExpressionLogic;
-			ppvs->v_ExpressionSemantic = pvs.ExpressionSemantic;
-			ov_variable_setanyvalue(&(ppvs->v_Value), &pvs.value.Value);
-			ov_time_gettime(&ppvs->v_TimeStamp);
-			ov_string_setvalue(&(ppvs->v_Unit), pvs.unit);
-			ov_string_setvalue(&(ppvs->v_IDIdString), pvs.ID.IdSpec);
-			ppvs->v_IDIdType = pvs.ID.IdType;
-			ppvs->v_View = pvs.view;
-			ppvs->v_Visibility = pvs.Visibility;
+			else
+				return AASSTATUSCODE_BADPVSNAME;
 		}else{
 			return AASSTATUSCODE_BADPVSLNAME;
 		}

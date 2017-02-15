@@ -44,9 +44,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 	OV_PATH 				path2;
 	UA_NodeClass 			*nodeClass = NULL;
 	OV_STRING 				tmpString = NULL;
-	OV_STRING 				tmpString2 = NULL;
 	OV_UINT 				len = 0;
 	OV_STRING 				*plist = NULL;
+	OV_ELEMENT				element;
+	OV_ELEMENT				element2;
 
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "|", &len);
@@ -55,9 +56,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 	UA_NodeId_init(&tmpNodeId);
 	tmpNodeId.namespaceIndex = nodeId->namespaceIndex;
 	tmpNodeId.identifierType = nodeId->identifierType;
-	ov_string_setvalue(&tmpString2, plist[0]);
-	ov_string_append(&tmpString2, ".CarrierString");
-	copyOvStringToOPCUA(tmpString2, &(tmpNodeId.identifier.string));
+	ov_string_setvalue(&tmpString, plist[0]);
+	ov_string_append(&tmpString, ".CarrierString");
+	copyOvStringToOPCUA(tmpString, &(tmpNodeId.identifier.string));
 
 	ov_memstack_lock();
 	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
@@ -65,26 +66,31 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 		ov_memstack_unlock();
 		return result;
 	}
+	element = path.elements[path.size-1];
+	ov_memstack_unlock();
 
-	ov_string_setvalue(&tmpString2, plist[0]);
-	ov_string_append(&tmpString2, ".CarrierType");
-	copyOvStringToOPCUA(tmpString2, &(tmpNodeId.identifier.string));
+	ov_string_setvalue(&tmpString, plist[0]);
+	ov_string_append(&tmpString, ".CarrierType");
+	copyOvStringToOPCUA(tmpString, &(tmpNodeId.identifier.string));
+	ov_database_free(tmpString);
 
+	ov_memstack_lock();
 	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path2);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
 	}
+	element2 = path2.elements[path2.size-1];
+	ov_memstack_unlock();
 
 	nodeClass = UA_NodeClass_new();
 	if(!nodeClass){
 		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		ov_memstack_unlock();
 		return result;
 	}
 
 	*nodeClass = UA_NODECLASS_VARIABLE;
-	newNode = (UA_Node*)ov_database_malloc(sizeof(UA_VariableNode));
+	newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
 
 	// Basic Attribute
 	// BrowseName
@@ -123,14 +129,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 	// value
 	UA_Identification tmpIdentification;
 	UA_Identification_init(&tmpIdentification);
-	copyOvStringToOPCUA(*(OV_STRING*)path.elements[path.size-1].pvalue, &tmpIdentification.idSpec);
-	tmpIdentification.idType = *(UA_IdEnum*)path2.elements[path.size-1].pvalue;
+	copyOvStringToOPCUA(*(OV_STRING*)element.pvalue, &tmpIdentification.idSpec);
+	tmpIdentification.idType = *(UA_IdEnum*)element2.pvalue;
 
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION];
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_Identification_new();
 	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
-		ov_memstack_unlock();
 		return result;
 	}
 	UA_Identification_copy(&tmpIdentification, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
@@ -154,7 +159,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 	// References
 	OV_INSTPTR_ov_object pchild = NULL;
 	size_t size_references = 0;
-	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,path.elements[path.size-1].elemunion.pobj), pchild) {
+	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,element.elemunion.pobj), pchild) {
 		size_references++;
 	}
 
@@ -164,12 +169,17 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 	newNode->references[0].isInverse = UA_TRUE;
+	for (OV_UINT i = 0; i < len; i++)
+		ov_database_free(plist[i]);
 	len = 0;
 	*plist = NULL;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "|", &len);
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, plist[0]);
+	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, plist[0]);
+	for (OV_UINT i = 0; i < len; i++)
+		ov_database_free(plist[i]);
+	ov_database_free(tmpString);
 
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
@@ -178,12 +188,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 
 	size_t i = 1;
 
-	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,path.elements[path.size-1].elemunion.pobj), pchild) {
+	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,element.elemunion.pobj), pchild) {
 		i++;
 	}
 
 	*opcuaNode = newNode;
-	ov_memstack_unlock();
 	return UA_STATUSCODE_GOOD;
 }
 

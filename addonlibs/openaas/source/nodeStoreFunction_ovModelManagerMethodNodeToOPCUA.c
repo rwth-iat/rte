@@ -49,6 +49,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	OV_UINT 				len2 = 0;
 	OV_STRING 				*plist = NULL;
 	OV_STRING 				*plist2 = NULL;
+	OV_ELEMENT				element;
 
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
@@ -66,28 +67,28 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 		ov_memstack_unlock();
 		return result;
 	}
+	element = path.elements[path.size-1];
+	ov_memstack_unlock();
 
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&element, pTicket, &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
-		ov_memstack_unlock();
 		return result;
 	}
+
 
 	nodeClass = UA_NodeClass_new();
 	if(!nodeClass){
 		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		ov_memstack_unlock();
 		return result;
 	}
 
 
 	*nodeClass = UA_NODECLASS_METHOD;
-	newNode = (UA_Node*)ov_database_malloc(sizeof(UA_MethodNode));
+	newNode = (UA_Node*)UA_malloc(sizeof(UA_MethodNode));
 
 	OV_ELEMENT tmpElement;
 	tmpElement.elemtype = OV_ET_NONE;
-	if (Ov_Fail(ov_element_searchpart(&(path.elements[path.size-1]), &tmpElement, OV_ET_OPERATION, plist2[0]))){
-		ov_memstack_unlock();
+	if (Ov_Fail(ov_element_searchpart(&element, &tmpElement, OV_ET_OPERATION, plist2[0]))){
 		return OV_ERR_BADPATH;
 	}
 
@@ -103,7 +104,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	newNode->browseName = qName;
 
 	// Description
-	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &(path.elements[path.size-1]));
+	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &element);
 	UA_LocalizedText lText;
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
@@ -126,7 +127,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 
 	// WriteMask
 	UA_UInt32 writeMask = 0;
-	if(path.elements[path.size-1].elemtype != OV_ET_VARIABLE){
+	if(element.elemtype != OV_ET_VARIABLE){
 		if(access & OV_AC_WRITE){
 			writeMask |= (1<<2);	//	BrowseName
 			writeMask |= (1<<6);	//	DisplayName
@@ -154,12 +155,19 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[0].isInverse = UA_TRUE;
+	for (OV_UINT i = 0; i < len; i++)
+		ov_database_free(plist[i]);
+	for (OV_UINT i = 0; i < len2; i++)
+		ov_database_free(plist2[i]);
 	len = 0;
 	*plist = NULL;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, plist[0]);
+	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, plist[0]);
+	for (OV_UINT i = 0; i < len; i++)
+		ov_database_free(plist[i]);
+	ov_database_free(tmpString);
 
 	// Type
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
@@ -245,7 +253,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	}
 
 	*opcuaNode = newNode;
-	ov_memstack_unlock();
 	return UA_STATUSCODE_GOOD;
 }
 

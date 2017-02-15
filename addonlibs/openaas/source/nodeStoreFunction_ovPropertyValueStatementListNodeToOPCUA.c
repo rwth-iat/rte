@@ -44,6 +44,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			*nodeClass = NULL;
+	OV_ELEMENT				element;
 
 	ov_memstack_lock();
 	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &path);
@@ -51,21 +52,21 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 		ov_memstack_unlock();
 		return result;
 	}
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+	element = path.elements[path.size-1];
+	ov_memstack_unlock();
+	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
-		ov_memstack_unlock();
 		return result;
 	}
 
 	nodeClass = UA_NodeClass_new();
 	if(!nodeClass){
 		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		ov_memstack_unlock();
 		return result;
 	}
 
 	*nodeClass = UA_NODECLASS_OBJECT;
-	newNode = (UA_Node*)ov_database_malloc(sizeof(UA_ObjectNode));
+	newNode = (UA_Node*)UA_malloc(sizeof(UA_ObjectNode));
 
 
 	// Basic Attribute
@@ -80,7 +81,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	newNode->browseName = qName;
 
 	// Description
-	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &(path.elements[path.size-1]));
+	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &(element));
 	UA_LocalizedText lText;
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
@@ -103,7 +104,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 
 	// WriteMask
 	UA_UInt32 writeMask = 0;
-	if(path.elements[path.size-1].elemtype != OV_ET_VARIABLE){
+	if(element.elemtype != OV_ET_VARIABLE){
 		if(access & OV_AC_WRITE){
 			writeMask |= (1<<2);	//	BrowseName
 			writeMask |= (1<<6);	//	DisplayName
@@ -144,7 +145,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 			ov_string_append(&tmpString, "/");
 		ov_string_append(&tmpString, plist[i]);
 	}
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+	for (OV_UINT i = 0; i < len; i++)
+		ov_database_free(plist[i]);
+	ov_database_free(tmpString);
 
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
@@ -158,7 +162,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "|");
 	ov_string_append(&tmpString, "Carrier");
-	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+	ov_database_free(tmpString);
 
 	i = 2;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
@@ -173,10 +178,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 			ov_string_append(&tmpString, "/");
 			ov_string_append(&tmpString, pref->v_identifier);
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+			ov_database_free(tmpString);
 		}
 	}
 	*opcuaNode = newNode;
-	ov_memstack_unlock();
 	return UA_STATUSCODE_GOOD;
 }
 

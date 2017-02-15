@@ -838,46 +838,48 @@ OV_RESULT createOpcuaReferenceNode(OV_INSTPTR_ov_domain location, OV_INSTPTR_opc
 UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
 	OV_STRING tmpString = NULL;
 	OV_RESULT result;
-	ov_memstack_lock();
 	switch(nodeId.identifierType){
 	case UA_NODEIDTYPE_STRING:
 		tmpString = ov_memstack_alloc(nodeId.identifier.string.length + 1);
 		if(!tmpString){
-			ov_memstack_unlock();
 			return UA_STATUSCODE_BADOUTOFMEMORY;
 		}
 		memcpy(tmpString,nodeId.identifier.string.data,nodeId.identifier.string.length);
 		tmpString[nodeId.identifier.string.length] = 0;
 		result = ov_path_resolve(pPath,NULL,tmpString, 2);
 		if(Ov_Fail(result)){
-			ov_memstack_unlock();
 			return ov_resultToUaStatusCode(result);
 		}
 		break;
 	case UA_NODEIDTYPE_NUMERIC:
 		tmpString = ov_memstack_alloc(32);
 		if(!tmpString){
-			ov_memstack_unlock();
 			return UA_STATUSCODE_BADOUTOFMEMORY;
 		}
 		snprintf(tmpString, 31, "/.%u", nodeId.identifier.numeric);
 		result = ov_path_resolve(pPath,NULL,tmpString, 2);
 		if(Ov_Fail(result)){
-			ov_memstack_unlock();
 			return ov_resultToUaStatusCode(result);
 		}
 		break;
 	default:
 		return UA_STATUSCODE_BADNODEIDREJECTED;
 	}
-	ov_memstack_unlock();
+
 	return UA_STATUSCODE_GOOD;
 }
+
+/**
+ * resolves a UA-nodeId to an object
+ * the nodeId has to be of type STRING or NUMERIC
+ * in the latter case only objects can be addressed (no variables)
+ * the STRING nodeIds are treated as a usual path, so the ov-id can be part of them (/.xxx)
+ * call ov_memstack_lock() /_unlock() around this one
+ */
 
 OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvObject(UA_NodeId *nodeId){
 	OV_STRING tmpString = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	ov_memstack_lock();
 	switch(nodeId->identifierType){
 	case UA_NODEIDTYPE_STRING:
 		tmpString = ov_database_malloc(nodeId->identifier.string.length + 1);
@@ -899,7 +901,6 @@ OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvObject(UA_NodeId 
 	default:
 		break;
 	}
-	ov_memstack_unlock();
 	return ptr;
 }
 

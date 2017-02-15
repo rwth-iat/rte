@@ -254,7 +254,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		LifeCycleEntry *lce = NULL;
 
-		OV_UINT arrayDimension;
+		OV_UINT arrayDimension = 0;
 
 		result = openaas_modelmanager_getLastLCEs(tmpOVAASId, tmpOVCount, &lce, &arrayDimension);
 
@@ -278,14 +278,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		UA_Variant_setScalarCopy(&output[2], &arrayDimension, &UA_TYPES[UA_TYPES_UINT32]);
 
 		for (OV_UINT i = 0; i < arrayDimension; i++){
-			UA_LifeCycleEntry_deleteMembers(&tmpUALifeCycleEntry[i]);
 			ov_database_free(lce[i].creatingInstance.IdSpec);
 			ov_database_free(lce[i].eventClass);
 			ov_database_free(lce[i].subject);
 			ov_database_free(lce[i].writingInstance.IdSpec);
 			ov_database_free(&lce[i]);
 		}
-		UA_free(tmpUALifeCycleEntry);
+		UA_Array_delete(tmpUALifeCycleEntry,arrayDimension,&UA_OPENAAS[UA_OPENAAS_LIFECYCLEENTRY]);
 		IdentificationType_deleteMembers(&tmpOVAASId);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "setLCE") == OV_STRCMP_EQUAL){
@@ -579,8 +578,9 @@ static void OV_NodeStore_deleteNodestore(void *handle){
 }
 
 static void OV_NodeStore_deleteNode(UA_Node *node){
-	//UA_Node_deleteMembersAnyNodeClass(node);
-	ov_database_free(node);
+	if (node)
+		UA_Node_deleteMembersAnyNodeClass(node);
+	UA_free(node);
 }
 static void OV_NodeStore_releaseNode(UA_Node *node){
 	OV_NodeStore_deleteNode(node);
@@ -664,6 +664,16 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 		if (openaas_nodeStoreFunctions_ovModelManagerNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			return (UA_Node*) opcuaNode;
 	}
+
+	for (OV_UINT i = 0; i < len; i++)
+		ov_database_free(plist[i]);
+	for (OV_UINT i = 0; i < len2; i++)
+		ov_database_free(plist2[i]);
+	for (OV_UINT i = 0; i < len3; i++)
+		ov_database_free(plist3[i]);
+	for (OV_UINT i = 0; i < len4; i++)
+		ov_database_free(plist4[i]);
+	ov_database_free(tmpString);
 	return NULL;
 }
 static UA_Node * OV_NodeStore_getCopyNode(void *handle, const UA_NodeId *nodeId){
@@ -731,6 +741,7 @@ static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
 
 		copyOPCUAStringToOV(tmpIdentification->idSpec, ((OV_STRING*)(path.elements[path.size-1].pvalue)));
 		*((UA_IdEnum*)path2.elements[path.size-1].pvalue) = tmpIdentification->idType;
+		ov_memstack_unlock();
 	}else { // PVS or LCE
 		ov_memstack_lock();
 		result = opcua_nodeStoreFunctions_resolveNodeIdToPath(node->nodeId, &path);
@@ -799,8 +810,13 @@ static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
 					copyOPCUAStringToOV(tmpLifeCycleEntry->eventClass, (OV_STRING*)tmpPart.pvalue);
 			} while(true);
 		}
+		ov_memstack_unlock();
 	}
 
+	for (OV_UINT i = 0; i < len; i++)
+		ov_database_free(plist[i]);
+	ov_database_free(tmpString);
+	ov_database_free(tmpString2);
 	return UA_STATUSCODE_GOOD;
 }
 
