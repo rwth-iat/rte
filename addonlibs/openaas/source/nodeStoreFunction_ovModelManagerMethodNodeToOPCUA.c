@@ -89,7 +89,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	OV_ELEMENT tmpElement;
 	tmpElement.elemtype = OV_ET_NONE;
 	tmpElement.pobj = NULL;
-	ov_element_searchpart(&element, &tmpElement, OV_ET_OPERATION, plist2[0])
+	ov_element_searchpart(&element, &tmpElement, OV_ET_OPERATION, plist2[0]);
 	if (tmpElement.pobj == NULL){
 		return OV_ERR_BADPATH;
 	}

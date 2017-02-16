@@ -47,7 +47,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		return resultOV;
 
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
-		&pobj->v_result = OV_ERR_OK;
+		pobj->v_result = OV_ERR_OK;
 		return OV_ERR_OK;
 	}
 
@@ -65,7 +65,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
 		SRV_msgHeader_t_delete(headerReceive);
 		SRV_String_delete(srvStringReceive);
-		&pobj->v_result = resultOV;
+		pobj->v_result = resultOV;
 		return OV_ERR_OK;
 	}
 
@@ -670,7 +670,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 			SRV_msgHeader_t_delete(headerSend);
 			SRV_String_delete(srvStringSend);
-			&pobj->v_result = resultOV;
+			pobj->v_result = resultOV;
 			return OV_ERR_OK;
 		}break;
 		default:
@@ -724,7 +724,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				IdentificationType_deleteMembers(&aasId);
 				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
-				&pobj->v_result = OV_ERR_BADPATH;
+				pobj->v_result = OV_ERR_BADPATH;
 				return OV_ERR_OK;
 			}
 		}else{ // receiverAASId is not in this network => send it to the ComCo of the receiverAAS network
@@ -785,7 +785,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				IdentificationType_deleteMembers(&aasId);
 				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
-				&pobj->v_result = OV_ERR_NOACCESS;
+				pobj->v_result = OV_ERR_NOACCESS;
 				return OV_ERR_OK;
 			}
 
@@ -836,7 +836,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				IdentificationType_deleteMembers(&aasId);
 				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
-				&pobj->v_result = OV_ERR_NOACCESS;
+				pobj->v_result = OV_ERR_NOACCESS;
 				return OV_ERR_OK;
 			}
 
@@ -887,7 +887,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				IdentificationType_deleteMembers(&aasId);
 				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
-				&pobj->v_result = OV_ERR_NOACCESS;
+				pobj->v_result = OV_ERR_NOACCESS;
 				return OV_ERR_OK;
 			}
 
@@ -928,7 +928,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 	IdentificationType_deleteMembers(&sender);
 	IdentificationType_deleteMembers(&receiver);
 
-	&pobj->v_result = resultOV;
+	pobj->v_result = resultOV;
 	return OV_ERR_OK;
 }
 
