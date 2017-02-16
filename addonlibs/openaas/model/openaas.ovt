@@ -85,15 +85,6 @@ typedef struct PropertyValueStatementList{
 	OV_UINT pvsNumber;	
 }PropertyValueStatementList;
 
-typedef struct AASConvertListType{
-    IdentificationType AASId;
-    OV_STRING AASPath;
-}AASConvertListType;
-
-typedef struct AASConvertListContainerType{
-	AASConvertListType* AASConvertList;
-	OV_UINT AASConvertListSize;
-}AASConvertListContainerType;
 
 ENUMDEF(AASStatusCode)
 #define AASSTATUSCODE_GOOD                  ENUMVAL(OV_VAR_TYPE, 0x00)

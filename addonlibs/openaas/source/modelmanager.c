@@ -31,34 +31,31 @@ extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
 
 void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING aasName){
 	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
-	AASConvertListType* tmpAASConvertList = NULL;
+	OV_INSTPTR_openaas_AASConvertListType pListElement = NULL;
+
 	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
-	tmpAASConvertList = ov_database_malloc(sizeof(AASConvertListType)*(pmodelmanager->v_Container.AASConvertListSize+1));
-	if (pmodelmanager->v_Container.AASConvertListSize != 0){
-		for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
-			tmpAASConvertList[i].AASId.IdType = (pmodelmanager->v_Container.AASConvertList)[i].AASId.IdType;
-			tmpAASConvertList[i].AASId.IdSpec = NULL;
-			tmpAASConvertList[i].AASPath = NULL;
-			ov_string_setvalue(&(tmpAASConvertList[i].AASId.IdSpec), (pmodelmanager->v_Container.AASConvertList)[i].AASId.IdSpec);
-			ov_string_setvalue(&(tmpAASConvertList[i].AASPath), (pmodelmanager->v_Container.AASConvertList)[i].AASPath);
-		}
-		for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
-			ov_database_free(pmodelmanager->v_Container.AASConvertList[i].AASId.IdSpec);
-			ov_database_free(pmodelmanager->v_Container.AASConvertList[i].AASPath);
-		}
-		ov_database_free(pmodelmanager->v_Container.AASConvertList);
-		pmodelmanager->v_Container.AASConvertList = NULL;
+
+	Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, pmodelmanager), pListElement, openaas_AASConvertListType){
+		if (ov_string_compare(pListElement->v_AASIdString, aasId.IdSpec) == OV_STRCMP_EQUAL && pListElement->v_AASIdType == aasId.IdType)
+			return;
 	}
-	tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASId.IdSpec = NULL;
-	ov_string_setvalue(&(tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASId.IdSpec), aasId.IdSpec);
-	tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASId.IdType = aasId.IdType;
+
 	OV_STRING tmpString = NULL;
+	ov_string_print(&tmpString, "%i", pmodelmanager->v_ListCount+1);
+	if (Ov_Fail(Ov_CreateObject(openaas_AASConvertListType, pListElement, Ov_StaticPtrCast(ov_domain, pmodelmanager), tmpString))){
+		ov_database_free(tmpString);
+		return;
+	}
+	ov_database_free(tmpString);
+	pmodelmanager->v_ListSize += 1;
+	pmodelmanager->v_ListCount += 1;
+	ov_string_setvalue(&pListElement->v_AASIdString, aasId.IdSpec);
+	pListElement->v_AASIdType = aasId.IdType;
+	tmpString = NULL;
 	ov_string_setvalue(&tmpString, "/TechUnits/openAAS/AASFolder/");
 	ov_string_append(&tmpString, aasName);
-	tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASPath = NULL;
-	ov_string_setvalue(&(tmpAASConvertList[pmodelmanager->v_Container.AASConvertListSize].AASPath), tmpString);
-	pmodelmanager->v_Container.AASConvertList = tmpAASConvertList;
-	pmodelmanager->v_Container.AASConvertListSize += 1;
+	ov_string_setvalue(&pListElement->v_AASPath, tmpString);
+	ov_database_free(tmpString);
 
 	// Get the pointer to object for send the Message
 	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
@@ -87,6 +84,7 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 		OV_STRING tmpHexString2 = NULL;
 		ov_string_print(&tmpHexString2, "%x", aasId.IdSpec[i]);
 		ov_string_append(&tmpHexString, tmpHexString2);
+		ov_database_free(tmpHexString2);
 	}
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[0] = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[0], tmpHexString);
@@ -98,6 +96,7 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[2], tmpServername.value.valueunion.val_string);
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3] = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3], "/TechUnits/AASFolder/ComCo");
+	ov_database_free(tmpHexString);
 
 	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
 	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
@@ -107,77 +106,63 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 
 void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
-	AASConvertListType* tmpAASConvertList = NULL;
-	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
-	if (pmodelmanager->v_Container.AASConvertListSize == 1){
-		ov_database_free(pmodelmanager->v_Container.AASConvertList[0].AASId.IdSpec);
-		ov_database_free(pmodelmanager->v_Container.AASConvertList[0].AASPath);
-		ov_database_free(pmodelmanager->v_Container.AASConvertList);
-		pmodelmanager->v_Container.AASConvertList = NULL;
-		pmodelmanager->v_Container.AASConvertListSize = 0;
-		return;
-	}
-	tmpAASConvertList = ov_database_malloc(sizeof(AASConvertListType)*(pmodelmanager->v_Container.AASConvertListSize-1));
-	OV_UINT j = 0;
-	for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
-		if (IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId))
-			continue;
-		tmpAASConvertList[j].AASId.IdType = (pmodelmanager->v_Container.AASConvertList)[i].AASId.IdType;
-		tmpAASConvertList[i].AASId.IdSpec = NULL;
-		tmpAASConvertList[i].AASPath = NULL;
-		ov_string_setvalue(&(tmpAASConvertList[j].AASId.IdSpec), (pmodelmanager->v_Container.AASConvertList)[i].AASId.IdSpec);
-		ov_string_setvalue(&(tmpAASConvertList[j].AASPath), (pmodelmanager->v_Container.AASConvertList)[i].AASPath);
-		j++;
-	}
-	for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
-		ov_database_free(pmodelmanager->v_Container.AASConvertList[i].AASId.IdSpec);
-		ov_database_free(pmodelmanager->v_Container.AASConvertList[i].AASPath);
-	}
-	ov_database_free(pmodelmanager->v_Container.AASConvertList);
-	pmodelmanager->v_Container.AASConvertList = NULL;
-	pmodelmanager->v_Container.AASConvertList = tmpAASConvertList;
-	pmodelmanager->v_Container.AASConvertListSize -= 1;
+	OV_INSTPTR_openaas_AASConvertListType pListElement = NULL;
 
-	// Get the pointer to object for send the Message
-	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
-	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
-		if(ov_string_compare(psendAASMessage->v_identifier, "SendAASMessage") == OV_STRCMP_EQUAL){
-			break;
+	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
+
+	Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, pmodelmanager), pListElement, openaas_AASConvertListType){
+		if (ov_string_compare(pListElement->v_AASIdString, aasId.IdSpec) == OV_STRCMP_EQUAL && pListElement->v_AASIdType == aasId.IdType){
+			if (Ov_Fail(Ov_DeleteObject(pListElement)))
+				return;
+			// Get the pointer to object for send the Message
+			OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
+			Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
+				if(ov_string_compare(psendAASMessage->v_identifier, "SendAASMessage") == OV_STRCMP_EQUAL){
+					break;
+				}
+			}
+
+			ov_string_setvalue(&psendAASMessage->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
+			ov_string_setvalue(&psendAASMessage->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
+			ov_string_setvalue(&psendAASMessage->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+			ov_string_append(&psendAASMessage->v_path, ".DeleteOVDataForAAS");
+
+			psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
+			OV_STRING tmpHexString = NULL;
+			ov_string_print(&tmpHexString, "%x", aasId.IdType);
+
+			for (OV_UINT i = 0; i < ov_string_getlength(aasId.IdSpec); i++){
+				OV_STRING tmpHexString2 = NULL;
+				ov_string_print(&tmpHexString2, "%x", aasId.IdSpec[i]);
+				ov_string_append(&tmpHexString, tmpHexString2);
+				ov_database_free(tmpHexString2);
+			}
+			psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
+			ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, tmpHexString);
+			ov_database_free(tmpHexString);
+
+			OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
+			ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
+			ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
+			pmodelmanager->v_ListSize -= 1;
+			return;
 		}
 	}
-
-	ov_string_setvalue(&psendAASMessage->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-	ov_string_setvalue(&psendAASMessage->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-	ov_string_setvalue(&psendAASMessage->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
-	ov_string_append(&psendAASMessage->v_path, ".DeleteOVDataForAAS");
-
-	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
-	OV_STRING tmpHexString = NULL;
-	ov_string_print(&tmpHexString, "%x", aasId.IdType);
-
-	for (OV_UINT i = 0; i < ov_string_getlength(aasId.IdSpec); i++){
-		OV_STRING tmpHexString2 = NULL;
-		ov_string_print(&tmpHexString2, "%x", aasId.IdSpec[i]);
-		ov_string_append(&tmpHexString, tmpHexString2);
-	}
-	psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, tmpHexString);
-
-	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
-	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
-	ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 	return;
 }
 
 OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
+	OV_INSTPTR_openaas_AASConvertListType pListElement = NULL;
 	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
-	if (pmodelmanager->v_Container.AASConvertListSize == 0){
+
+	if (pmodelmanager->v_ListSize == 0){
 		return "";
 	}
-	for (OV_UINT i = 0; i < pmodelmanager->v_Container.AASConvertListSize; i++){
-		if (IdentificationTypeEqual(&((pmodelmanager->v_Container.AASConvertList)[i].AASId), &aasId)){
-			return (pmodelmanager->v_Container.AASConvertList)[i].AASPath;
+
+	Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, pmodelmanager), pListElement, openaas_AASConvertListType){
+		if (ov_string_compare(pListElement->v_AASIdString, aasId.IdSpec) == OV_STRCMP_EQUAL && pListElement->v_AASIdType == aasId.IdType){
+			return pListElement->v_AASPath;
 		}
 	}
 	return "";

@@ -231,8 +231,6 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			ov_logfile_error("Fatal: could not create modelmanager object - reason: %s", ov_result_getresulttext(result));
 			return result;
 		}
-		pmodelmanager->v_Container.AASConvertListSize = 0;
-		pmodelmanager->v_Container.AASConvertList = NULL;
 	}
 
 	// create ComCo

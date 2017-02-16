@@ -1617,7 +1617,7 @@ inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("Name");
 inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 
 outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;

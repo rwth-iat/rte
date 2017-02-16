@@ -149,7 +149,19 @@ LIBRARY openaas
     END_OPERATIONS;    
     END_CLASS;
     
-    CLASS modelmanager    :    CLASS ov/object
+    CLASS AASConvertListType : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+        	AASIdString : STRING;
+            AASIdType   : UINT;
+            AASPath     : STRING; 
+        END_VARIABLES;
+        OPERATIONS
+        	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;     
+    
+    CLASS modelmanager    :    CLASS ov/domain
         IS_INSTANTIABLE;
         COMMENT    =    "Implementations of model functions to act like a factory";
     VARIABLES 
@@ -207,8 +219,8 @@ LIBRARY openaas
         LCEDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a LCE";
                
 	    Status                          : UINT; 
-	    
-        Container                       : C_TYPE <AASConvertListContainerType>; 
+	    ListSize                        : UINT;
+	    ListCount                       : UINT;           
     END_VARIABLES;
     OPERATIONS
         createAAS  : C_FUNCTION <UA_FNC_CREATEAAS>;
