@@ -18,7 +18,7 @@
 
 #ifndef OV_COMPILE_LIBRARY_openaas
 #define OV_COMPILE_LIBRARY_openaas
-#endif
+#endif.2
 
 
 #include "openaas.h"

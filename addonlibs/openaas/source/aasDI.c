@@ -26,6 +26,9 @@
 #include "opcua_interface.h"
 #include "openaas_helpers.h"
 #include "opcua_helpers.h"
+#include "ua_openaas_generated.h"
+#include "ua_openaas_generated_handling.h"
+#include "ua_openaas_generated_encoding_binary.h"
 
 OV_DLLFNCEXPORT OV_RESULT openaas_aasDI_AssetIPAddress_set(
     OV_INSTPTR_openaas_aasDI          pobj,
@@ -146,38 +149,80 @@ OV_DLLFNCEXPORT void openaas_aasDI_typemethod(
 	ov_string_setvalue(&aasId.IdSpec, pinst->v_AASIdString);
 	aasId.IdType = pinst->v_AASIdType;
 
+	IdentificationType assetAASId;
+	IdentificationType_init(&assetAASId);
+	ov_string_setvalue(&assetAASId.IdSpec, pinst->v_AssetAASIdString);
+	assetAASId.IdType = pinst->v_AssetAASIdType;
+
 	if (retval == UA_STATUSCODE_GOOD) {
 		if (argOutSize == 3){
 			//UA_StatusCode *tmpUAStatusCode = (UA_StatusCode*)(output[0].data);
-			UA_LifeCycleEntry *tmpUALifeCycleEntry = (UA_LifeCycleEntry*)(output[1].data);
+			//UA_LifeCycleEntry *tmpUALifeCycleEntry = (UA_LifeCycleEntry*)(output[1].data);
 			UA_UInt32 *tmpUAarrayDimension = (UA_UInt32*)(output[2].data);
 
 			for (OV_UINT i = 0; i < *tmpUAarrayDimension; i++){
 				LifeCycleEntry lce;
 				LifeCycleEntry_init(&lce);
+				UA_LifeCycleEntry tmpUALifeCycleEntry;
+				UA_LifeCycleEntry_init(&tmpUALifeCycleEntry);
 
-				copyOPCUAStringToOV(tmpUALifeCycleEntry[i].creatingInstance.idSpec, &lce.creatingInstance.IdSpec);
-				lce.creatingInstance.IdType = tmpUALifeCycleEntry[i].creatingInstance.idType;
+				UA_ExtensionObject ext = ((UA_ExtensionObject*) output[1].data)[i];
+				size_t offset = 0;
+				UA_LifeCycleEntry_decodeBinary(&ext.content.encoded.body, &offset,
+						&tmpUALifeCycleEntry);
 
-				copyOPCUAStringToOV(tmpUALifeCycleEntry[i].writingInstance.idSpec, &lce.writingInstance.IdSpec);
-				lce.writingInstance.IdType = tmpUALifeCycleEntry[i].writingInstance.idType;
+				copyOPCUAStringToOV(tmpUALifeCycleEntry.creatingInstance.idSpec, &lce.creatingInstance.IdSpec);
+				lce.creatingInstance.IdType = tmpUALifeCycleEntry.creatingInstance.idType;
 
-				copyOPCUAStringToOV(tmpUALifeCycleEntry[i].eventClass, &lce.eventClass);
+				copyOPCUAStringToOV(tmpUALifeCycleEntry.writingInstance.idSpec, &lce.writingInstance.IdSpec);
+				lce.writingInstance.IdType = tmpUALifeCycleEntry.writingInstance.idType;
 
-				copyOPCUAStringToOV(tmpUALifeCycleEntry[i].subject, &lce.subject);
+				copyOPCUAStringToOV(tmpUALifeCycleEntry.eventClass, &lce.eventClass);
 
-				ov_VariantToAny(&tmpUALifeCycleEntry[i].data.value, &lce.data.Value);
-				lce.data.TimeStamp = ov_1601nsTimeToOvTime(tmpUALifeCycleEntry[i].data.sourceTimestamp);
+				copyOPCUAStringToOV(tmpUALifeCycleEntry.subject, &lce.subject);
+
+				ov_VariantToAny(&tmpUALifeCycleEntry.data.value, &lce.data.Value);
+				lce.data.TimeStamp = ov_1601nsTimeToOvTime(tmpUALifeCycleEntry.data.sourceTimestamp);
 
 				openaas_modelmanager_createLCE(aasId, lce);
-				openaas_modelmanager_deleteLCE(aasId, tmpUALifeCycleEntry[i].id);
+
+				size_t argInSize2 = 2;
+				size_t argOutSize2 = 0;
+				UA_Variant *inputArgs2 = UA_Array_new(argInSize,
+						&UA_TYPES[UA_TYPES_VARIANT]);
+				for (size_t i = 0; i < argInSize2; i++) {
+					UA_Variant_init(&inputArgs[i]);
+				}
+
+				UA_UInt64 lceId = tmpUALifeCycleEntry.id;
+
+				UA_Variant_setScalarCopy(&inputArgs2[0], &AASId,
+						&UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
+				UA_Variant_setScalarCopy(&inputArgs2[1], &lceId, &UA_TYPES[UA_TYPES_UINT64]);
+
+				UA_NodeId methNodeId2 = UA_NODEID_STRING(4,
+						"/TechUnits/openAAS/ModelmanagerOpenAAS||deleteLCE");
+				UA_NodeId objectId2 = UA_NODEID_STRING(4,
+						"/TechUnits/openAAS/ModelmanagerOpenAAS");
+
+				UA_Variant *output2 = NULL;
+				retval = UA_Client_call(client, objectId2, methNodeId2, argInSize2, inputArgs2,
+						&argOutSize2, &output2);
+
+
+				UA_Array_delete(output2, argOutSize2, &UA_TYPES[UA_TYPES_VARIANT]);
+				UA_Array_delete(inputArgs2, argInSize2, &UA_TYPES[UA_TYPES_VARIANT]);
+				UA_LifeCycleEntry_deleteMembers(&tmpUALifeCycleEntry);
 				LifeCycleEntry_deleteMembers(&lce);
 			}
 		}
 		UA_Array_delete(output, argOutSize, &UA_TYPES[UA_TYPES_VARIANT]);
 	} else {
 	}
+	UA_Identification_deleteMembers(&AASId);
 	UA_Array_delete(inputArgs, argInSize, &UA_TYPES[UA_TYPES_VARIANT]);
+	IdentificationType_deleteMembers(&aasId);
+	IdentificationType_deleteMembers(&assetAASId);
 	UA_Client_disconnect(client);
 	UA_Client_delete(client);
     return;
