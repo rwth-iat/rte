@@ -26,8 +26,6 @@
 
 
 
-
-
 OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_DiscoveryServer_AddOVDataForAAS_set(
 	OV_INSTPTR_openAASDiscoveryServer_DiscoveryServer          pobj,
 	const OV_STRING*  value,
@@ -36,17 +34,20 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_DiscoveryServer_AddOVDataForAAS
 
 	OV_RESULT result;
 	OV_INSTPTR_openAASDiscoveryServer_OVDataForAAS pOvDataForAAS = NULL;
-	pOvDataForAAS = Ov_StaticPtrCast(openAASDiscoveryServer_OVDataForAAS, Ov_SearchChild(ov_containment, pobj, value[0]));
+	pOvDataForAAS = Ov_StaticPtrCast(openAASDiscoveryServer_OVDataForAAS, Ov_SearchChild(ov_containment,  Ov_StaticPtrCast(ov_domain, pobj), value[0]));
 	if(!pOvDataForAAS){
-		result = Ov_CreateObject(openAASDiscoveryServer_OVDataForAAS, pOvDataForAAS, pobj, value[0]);
-		if (result)
-			return result;
+		result = Ov_CreateObject(openAASDiscoveryServer_OVDataForAAS, pOvDataForAAS, Ov_StaticPtrCast(ov_domain, pobj), value[0]);
+		if (result){
+			ov_string_setvalue(&pobj->v_result,"Error in function Ov_CreateObject");
+			return Ov_SetStaticVectorValue(pobj->v_AddOVDataForAAS,value,veclen,STRING);
+		}
 	}
 	ov_string_setvalue(&pOvDataForAAS->v_ServerHost, value[1]);
 	ov_string_setvalue(&pOvDataForAAS->v_ServerName, value[2]);
 	ov_string_setvalue(&pOvDataForAAS->v_Path, value[3]);
 
 	return Ov_SetStaticVectorValue(pobj->v_AddOVDataForAAS,value,veclen,STRING);
+
 }
 
 OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_DiscoveryServer_DeleteOVDataForAAS_set(
@@ -56,11 +57,11 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_DiscoveryServer_DeleteOVDataFor
 
 	OV_RESULT result;
 	OV_INSTPTR_openAASDiscoveryServer_OVDataForAAS pOvDataForAAS = NULL;
-	pOvDataForAAS = Ov_StaticPtrCast(openAASDiscoveryServer_OVDataForAAS, Ov_SearchChild(ov_containment, pobj, value));
+	pOvDataForAAS = Ov_StaticPtrCast(openAASDiscoveryServer_OVDataForAAS, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pobj), value));
 	if(pOvDataForAAS){
 		result = Ov_DeleteObject(pOvDataForAAS);
 		if (result)
-			return result;
+			ov_string_setvalue(&pobj->v_result,"Error in function Ov_DeleteObject");
 	}
 	return ov_string_setvalue(&pobj->v_DeleteOVDataForAAS,value);
 }
