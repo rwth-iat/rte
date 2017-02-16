@@ -15,11 +15,19 @@ SRV_String* SRV_String_new(){
 	return this;
 }
 
-void SRV_String_copy(SRV_String* to, const SRV_String* from){
+SRV_String* SRV_String_copy(SRV_String* to, const SRV_String* from){
+	// allocate memory if no destination was given
+	if(!to){
+		to = malloc(sizeof(SRV_String));
+		if(!to)
+			return NULL;
+	}
+
 	to->length = from->length;
 	to->data = malloc(from->length+1);
 	memcpy(to->data, from->data, from->length);
 	to->data[to->length] = '\0';
+	return to;
 }
 
 void SRV_String_init(SRV_String* this){
@@ -79,24 +87,28 @@ SRV_msgHeader* SRV_msgHeader_t_new(){
 	return this;
 }
 
-void SRV_msgHeader_t_copy(SRV_msgHeader* to, const SRV_msgHeader* from){
-	to->msgNo = from->msgNo;
+SRV_msgHeader* SRV_msgHeader_t_copy(SRV_msgHeader* header){
+	SRV_msgHeader* this = SRV_msgHeader_t_new();
+	memcpy(this, header, sizeof(SRV_msgHeader));
 
-	to->sender.idType = from->sender.idType;
-	SRV_String_copy(&to->sender.idSpec, &from->sender.idSpec);
+	SRV_String_copy(&this->sender.idSpec, &header->sender.idSpec);
 
-	to->receiver.idType = from->receiver.idType;
-	SRV_String_copy(&to->receiver.idSpec, &from->receiver.idSpec);
+	SRV_String_copy(&this->receiver.idSpec, &header->receiver.idSpec);
+
+	return this;
 }
 
-void SRV_msgHeader_t_reverseCopy(SRV_msgHeader* to, const SRV_msgHeader* from){
-	to->msgNo = from->msgNo;
+SRV_msgHeader* SRV_msgHeader_t_reverseCopy(SRV_msgHeader* header){
+	SRV_msgHeader* this = SRV_msgHeader_t_new();
+	this->msgNo = header->msgNo;
 
-	to->sender.idType = from->receiver.idType;
-	SRV_String_copy(&to->sender.idSpec, &from->receiver.idSpec);
+	this->sender.idType = header->receiver.idType;
+	SRV_String_copy(&this->sender.idSpec, &header->receiver.idSpec);
 
-	to->receiver.idType = from->sender.idType;
-	SRV_String_copy(&to->receiver.idSpec, &from->sender.idSpec);
+	this->receiver.idType = header->sender.idType;
+	SRV_String_copy(&this->receiver.idSpec, &header->sender.idSpec);
+
+	return this;
 }
 
 void* SRV_serviceGeneric_new(SRV_service_t type){

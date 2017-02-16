@@ -223,7 +223,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		UA_DataValue tmpUAValue;
 		UA_DataValue_init(&tmpUAValue);
 		ov_AnyToVariant(&lce.data.Value, &tmpUAValue.value);
+		tmpUAValue.hasValue = true;
 		tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(lce.data.TimeStamp);
+		tmpUAValue.hasSourceTimestamp = true;
 
 		UA_Variant_setScalarCopy(&output[0], &tmpUACreatingInstance, &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
 		UA_Variant_setScalarCopy(&output[1], &tmpUAWritingInstance, &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
@@ -269,7 +271,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 			copyOvStringToOPCUA(lce[i].eventClass, &tmpUALifeCycleEntry[i].eventClass);
 			copyOvStringToOPCUA(lce[i].subject, &tmpUALifeCycleEntry[i].subject);
 			ov_AnyToVariant(&lce[i].data.Value, &tmpUALifeCycleEntry[i].data.value);
+			tmpUALifeCycleEntry[i].data.hasValue = true;
 			tmpUALifeCycleEntry[i].data.sourceTimestamp = ov_ovTimeTo1601nsTime(lce[i].data.TimeStamp);
+			tmpUALifeCycleEntry[i].data.hasSourceTimestamp = true;
 			tmpUALifeCycleEntry[i].id = lce[i].lceId;
 			}
 
@@ -282,7 +286,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 			ov_database_free(lce[i].eventClass);
 			ov_database_free(lce[i].subject);
 			ov_database_free(lce[i].writingInstance.IdSpec);
-			ov_database_free(&lce[i]);
 		}
 		UA_Array_delete(tmpUALifeCycleEntry,arrayDimension,&UA_OPENAAS[UA_OPENAAS_LIFECYCLEENTRY]);
 		IdentificationType_deleteMembers(&tmpOVAASId);
@@ -427,7 +430,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		UA_DataValue tmpUAValue;
 		UA_DataValue_init(&tmpUAValue);
 		ov_AnyToVariant(&pvs.value.Value, &tmpUAValue.value);
+		tmpUAValue.hasValue = true;
 		tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(pvs.value.TimeStamp);
+		tmpUAValue.hasSourceTimestamp = true;
 
 		UA_String tmpUAUnit;
 		UA_String_init(&tmpUAUnit);

@@ -415,7 +415,7 @@ int json_appendStatus(SRV_String* js, int start, const status_t* status, int max
 int dateTimeToISO(SRV_DateTime t, char* iso, int maxLen){
 	int len;
 	int psec = t % JSON_SEC_TO_DATETIME; // micro sec
-	time_t sec = t / JSON_SEC_TO_DATETIME;
+	time_t sec = (t - JSON_DATETIME_UNIXEPOCH) / JSON_SEC_TO_DATETIME;
 	struct tm* tm = gmtime(&sec);
 
 	if(!psec){
@@ -423,7 +423,7 @@ int dateTimeToISO(SRV_DateTime t, char* iso, int maxLen){
 	} else {
 		len = strftime(iso, maxLen, "%Y-%m-%dT%H:%M:%S.", tm);
 		if(len)
-			len += snprintf(iso+len, maxLen-len, "%06iZ", psec);
+			len += snprintf(iso+len, maxLen-len, "%07iZ", psec);
 	}
 
 	return len;
@@ -462,10 +462,10 @@ JSON_RC ISOToDateTime(char* iso, int len, SRV_DateTime* jsonTime){
 		psec = strtol(res, &tail, 10);
 		int i = tail-res;
 		if(i<6)
-			for(;i<6;i++){
+			for(;i<7;i++){
 				psec = psec * 10;
 			}
-		else if (i>6) {
+		else if (i>7) {
 			for(;i>6;i--){
 				psec = psec / 10;
 			}
@@ -474,7 +474,7 @@ JSON_RC ISOToDateTime(char* iso, int len, SRV_DateTime* jsonTime){
 
 	unixTime = mktime(&tm) + tm.tm_gmtoff;
 
-	*jsonTime = unixTime * JSON_SEC_TO_DATETIME + psec;
+	*jsonTime = (unixTime * JSON_SEC_TO_DATETIME) + JSON_DATETIME_UNIXEPOCH + psec;
 
 	if(buf!=iso)
 		free(buf);

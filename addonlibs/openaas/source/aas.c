@@ -46,8 +46,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 	if (resultOV)
 		return resultOV;
 
-	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL)
+	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		&pobj->v_result = OV_ERR_OK;
 		return OV_ERR_OK;
+	}
 
 	// Decoding the Message
 	SRV_String *srvStringReceive = SRV_String_new();
@@ -63,7 +65,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
 		SRV_msgHeader_t_delete(headerReceive);
 		SRV_String_delete(srvStringReceive);
-		return resultOV;
+		&pobj->v_result = resultOV;
+		return OV_ERR_OK;
 	}
 
 	// For encoding the message
@@ -91,7 +94,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 
 	if (IdentificationTypeEqual(&receiver, &aasId)){ // MSG is for this AAS
-		SRV_msgHeader_t_reverseCopy(headerSend, headerReceive);
+		headerSend = SRV_msgHeader_t_reverseCopy(headerReceive);
 		switch (srvTypeReceive){
 		case SRV_createAASReq:{
 			if (ov_string_compare(pobj->v_identifier, "ComCo") == OV_STRCMP_EQUAL){ // This AAS is the ComCo
@@ -667,7 +670,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 			SRV_msgHeader_t_delete(headerSend);
 			SRV_String_delete(srvStringSend);
-			return resultOV;
+			&pobj->v_result = resultOV;
+			return OV_ERR_OK;
 		}break;
 		default:
 			break;
@@ -677,7 +681,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		srvStructSend = srvStructReceive;
 		srvTypeSend = srvTypeReceive;
 
-		SRV_msgHeader_t_copy(headerSend, headerReceive);
+		headerSend = SRV_msgHeader_t_copy(headerReceive);
 		resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 	}
 
@@ -720,7 +724,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				IdentificationType_deleteMembers(&aasId);
 				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
-				return OV_ERR_BADPATH;
+				&pobj->v_result = OV_ERR_BADPATH;
+				return OV_ERR_OK;
 			}
 		}else{ // receiverAASId is not in this network => send it to the ComCo of the receiverAAS network
 			// GetAddress of ComCo of the receiverAAS network from AASDiscoveryServer
@@ -780,7 +785,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				IdentificationType_deleteMembers(&aasId);
 				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
-				return OV_ERR_NOACCESS;
+				&pobj->v_result = OV_ERR_NOACCESS;
+				return OV_ERR_OK;
 			}
 
 			OV_STRING tmpServerHost = NULL;
@@ -830,7 +836,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				IdentificationType_deleteMembers(&aasId);
 				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
-				return OV_ERR_NOACCESS;
+				&pobj->v_result = OV_ERR_NOACCESS;
+				return OV_ERR_OK;
 			}
 
 			OV_STRING tmpManagereName = NULL;
@@ -880,7 +887,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				IdentificationType_deleteMembers(&aasId);
 				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
-				return OV_ERR_NOACCESS;
+				&pobj->v_result = OV_ERR_NOACCESS;
+				return OV_ERR_OK;
 			}
 
 			OV_STRING tmpPath = NULL;
@@ -920,7 +928,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 	IdentificationType_deleteMembers(&sender);
 	IdentificationType_deleteMembers(&receiver);
 
-	return resultOV;
+	&pobj->v_result = resultOV;
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_ACCESS openaas_aas_getaccess(

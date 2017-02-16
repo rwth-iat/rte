@@ -15,7 +15,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#define JSON_SEC_TO_DATETIME 1000000LL
+#define JSON_SEC_TO_DATETIME 10000000LL
+#define JSON_DATETIME_UNIXEPOCH (11644473600LL * JSON_SEC_TO_DATETIME)
 
 
 // types for sub-structures
@@ -314,7 +315,7 @@ typedef struct {
 } getCoreDataRsp_t;
 
 SRV_String* SRV_String_new();
-void SRV_String_copy(SRV_String* to, const SRV_String* from);
+SRV_String* SRV_String_copy(SRV_String* to, const SRV_String* from);
 void SRV_String_init(SRV_String* this);
 void SRV_String_setCopy(SRV_String* srvstr, const char* str, int len);
 void SRV_String_deleteMembers(SRV_String* this);
@@ -326,8 +327,8 @@ PVS_t* PVS_t_new();
 LCE_t* LCE_t_new();
 
 SRV_msgHeader* SRV_msgHeader_t_new();
-void SRV_msgHeader_t_copy(SRV_msgHeader* to, const SRV_msgHeader* from);
-void SRV_msgHeader_t_reverseCopy(SRV_msgHeader* to, const SRV_msgHeader* from);
+SRV_msgHeader* SRV_msgHeader_t_copy(SRV_msgHeader* header);
+SRV_msgHeader* SRV_msgHeader_t_reverseCopy(SRV_msgHeader* header);
 
 
 void* SRV_serviceGeneric_new(SRV_service_t type);

@@ -38,9 +38,9 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_startGetAssetLCEData(Identifi
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		paasDi = Ov_StaticPtrCast(openaas_aasDI, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas), "AASDI"));
+		paasDi = Ov_StaticPtrCast(openaas_aasDI, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, paas), "AASDI"));
 		if(!paasDi){
-			ovResult = Ov_CreateObject(openaas_aasDI, paasDi, Ov_StaticPtrCast(ov_domain, &paas), "AASDI");
+			ovResult = Ov_CreateObject(openaas_aasDI, paasDi, Ov_StaticPtrCast(ov_domain, paas), "AASDI");
 			if(Ov_Fail(ovResult)){
 				ov_logfile_error("Fatal: could not create AASDI object - reason: %s", ov_result_getresulttext(ovResult));
 				return openaas_modelmanager_ovresultToAASStatusCode(ovResult);
@@ -67,7 +67,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_stopGetAssetLCEData(Identific
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		paasDi = Ov_StaticPtrCast(openaas_aasDI, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas), "AASDI"));
+		paasDi = Ov_StaticPtrCast(openaas_aasDI, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, paas), "AASDI"));
 		if(paasDi){
 			openaas_aasDI_StartAASDI_set(paasDi, FALSE);
 			openaas_aasDI_StopAASDI_set(paasDi, TRUE);

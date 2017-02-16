@@ -98,6 +98,7 @@ LIBRARY openaas
 			postoffice           : STRING HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "JSON String as message communication" INITIALVALUE    =   "";
 			lastReceivedMessage  : STRING COMMENT = "Last arrived and processed message" INITIALVALUE   =   "";
 			lastSendMessage      : STRING COMMENT = "Last send message" INITIALVALUE    =   "";
+			result               : UINT FLAGS = "o" INITIALVALUE = 0;
 		END_VARIABLES;
 		PARTS
 			Header           : CLASS openaas/Header;
