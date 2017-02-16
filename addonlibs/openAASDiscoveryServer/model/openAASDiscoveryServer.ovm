@@ -42,6 +42,9 @@ LIBRARY openAASDiscoveryServer
             DeleteOVDataForAAS : STRING HAS_SET_ACCESSOR FLAGS = "i"
                 COMMENT         =   "Delete the ComCo Data to this AAS"
                 INITIALVALUE    =   "";
+            result             : STRING FLAGS = "o" 
+                COMMENT         =   "Result"
+                INITIALVALUE    =   "";
 		END_VARIABLES;
 		OPERATIONS
 			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
