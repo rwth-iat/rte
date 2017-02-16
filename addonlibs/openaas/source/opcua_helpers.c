@@ -467,7 +467,6 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 
 UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 	OV_UINT iterator = 0;
-	ov_memstack_lock();
 	if(pVariant->arrayLength == 0 && pVariant->data > UA_EMPTY_ARRAY_SENTINEL){
 		/*	scalar values	*/
 		if(pVariant->type == &UA_TYPES[UA_TYPES_BOOLEAN]){
@@ -500,7 +499,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			if(!(UA_String*)pVariant->data || ((UA_String*)pVariant->data)->length <= 0){
 				pAny->value.valueunion.val_string =  NULL;
 			} else {
-				pAny->value.valueunion.val_string =  ov_memstack_alloc(((UA_String*)pVariant->data)->length + 1);
+				pAny->value.valueunion.val_string =  ov_database_malloc(((UA_String*)pVariant->data)->length + 1);
 				if(!pAny->value.valueunion.val_string){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -524,7 +523,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_BOOL_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_bool_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_bool_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_BOOL));
+				pAny->value.valueunion.val_bool_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_BOOL));
 				if(!pAny->value.valueunion.val_bool_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -543,7 +542,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_INT_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_int_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_int_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_INT));
+				pAny->value.valueunion.val_int_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_INT));
 				if(!pAny->value.valueunion.val_int_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -558,7 +557,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_INT_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_int_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_int_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_INT));
+				pAny->value.valueunion.val_int_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_INT));
 				if(!pAny->value.valueunion.val_int_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -573,7 +572,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_UINT_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_uint_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_uint_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_UINT));
+				pAny->value.valueunion.val_uint_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_UINT));
 				if(!pAny->value.valueunion.val_uint_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -588,7 +587,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_UINT_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_uint_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_uint_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_UINT));
+				pAny->value.valueunion.val_uint_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_UINT));
 				if(!pAny->value.valueunion.val_uint_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -603,7 +602,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_SINGLE_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_single_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_single_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_SINGLE));
+				pAny->value.valueunion.val_single_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_SINGLE));
 				if(!pAny->value.valueunion.val_single_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -618,7 +617,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_DOUBLE_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_double_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_double_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_DOUBLE));
+				pAny->value.valueunion.val_double_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_DOUBLE));
 				if(!pAny->value.valueunion.val_double_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -633,7 +632,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_STRING_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_string_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_string_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_STRING));
+				pAny->value.valueunion.val_string_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_STRING));
 				if(!pAny->value.valueunion.val_string_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -642,7 +641,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 						pAny->value.valueunion.val_string_vec.value[iterator] =  NULL;
 					} else {
 						OV_UINT iTwo = 0;
-						pAny->value.valueunion.val_string_vec.value[iterator] =  ov_memstack_alloc(((UA_String*)pVariant->data)[iterator].length + 1);
+						pAny->value.valueunion.val_string_vec.value[iterator] =  ov_database_malloc(((UA_String*)pVariant->data)[iterator].length + 1);
 						if(!pAny->value.valueunion.val_string_vec.value[iterator]){
 							return UA_STATUSCODE_BADOUTOFMEMORY;
 						}
@@ -660,7 +659,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_TIME_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_time_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_time_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_TIME));
+				pAny->value.valueunion.val_time_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_TIME));
 				if(!pAny->value.valueunion.val_time_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -675,7 +674,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.vartype = OV_VT_STATE_VEC;
 			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_state_vec.veclen = pVariant->arrayLength;
-				pAny->value.valueunion.val_state_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_STATE));
+				pAny->value.valueunion.val_state_vec.value = ov_database_malloc(pVariant->arrayLength * sizeof(OV_STATE));
 				if(!pAny->value.valueunion.val_state_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
@@ -691,7 +690,6 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 		}
 
 	}
-	ov_memstack_unlock();
 	return UA_STATUSCODE_GOOD;
 }
 
