@@ -261,5 +261,27 @@ LIBRARY openaas
         typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
     END_OPERATIONS;    
     END_CLASS;
+    
+    CLASS LCEGenerator    :    CLASS fb/functionblock 
+        IS_INSTANTIABLE;
+    VARIABLES
+        AASIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        AASIdType                       : UINT HAS_SET_ACCESSOR;
+        LCECreatingInstanceIdString     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCECreatingInstanceIdType       : UINT HAS_SET_ACCESSOR;
+        LCEWritingInstanceIdString      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCEWritingInstanceIdType        : UINT HAS_SET_ACCESSOR;
+        LCEEventClass                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCESubject                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCEValue                        : ANY HAS_SET_ACCESSOR;
+        StartLCEGenerator               : BOOL HAS_SET_ACCESSOR;
+        StopLCEGenerator                : BOOL HAS_SET_ACCESSOR;
+        Status                          : UINT;
+    END_VARIABLES;
+    OPERATIONS
+        getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
+        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+    END_OPERATIONS;    
+    END_CLASS;
   	
 END_LIBRARY;

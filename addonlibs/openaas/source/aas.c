@@ -259,13 +259,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			lce.writingInstance.IdType = createLCEReq->lce.writingInstance.idType;
 
 			ov_string_setvalue(&lce.eventClass, createLCEReq->lce.eventClass.data);
-			createLCEReq->lce.hasEventClass = true;
 
 			ov_string_setvalue(&lce.subject, createLCEReq->lce.subject.data);
-			createLCEReq->lce.hasSubject = true;
 
 			serviceValueToOVDataValue(&lce.data, createLCEReq->lce.dataType, createLCEReq->lce.data, createLCEReq->lce.dataTime);
-			createLCEReq->lce.hastDataTime = true;
 
 			result = openaas_modelmanager_createLCE(aasId, lce);
 

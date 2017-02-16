@@ -610,6 +610,8 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	OV_UINT len2 = 0;
 	OV_UINT len3 = 0;
 	OV_UINT len4 = 0;
+	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
+		return NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "/", &len);
 	plist2 = ov_string_split(plist[len-1], ".", &len2);

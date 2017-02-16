@@ -189,7 +189,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,&paas->p_Body), pvslName));
 		if(ppvsl){
 			ppvs = Ov_StaticPtrCast(openaas_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), pvs.pvsName));
-			if(ppvs){
+			if(!ppvs){
 				result = Ov_CreateObject(openaas_PropertyValueStatement, ppvs, ppvsl, pvs.pvsName);
 				if(Ov_Fail(result)){
 					ov_logfile_error("Fatal: could not create PVS object - reason: %s", ov_result_getresulttext(result));
@@ -204,9 +204,9 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 				ppvs->v_IDIdType = pvs.ID.IdType;
 				ppvs->v_View = pvs.view;
 				ppvs->v_Visibility = pvs.Visibility;
-			}
-			else
+			}else{
 				return AASSTATUSCODE_BADPVSNAME;
+			}
 		}else{
 			return AASSTATUSCODE_BADPVSLNAME;
 		}

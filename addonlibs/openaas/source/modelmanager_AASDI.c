@@ -33,6 +33,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_startGetAssetLCEData(Identifi
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aasDI paasDi = NULL;
+	OV_INSTPTR_fb_task	purtask = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
@@ -43,6 +44,12 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_startGetAssetLCEData(Identifi
 			ovResult = Ov_CreateObject(openaas_aasDI, paasDi, Ov_StaticPtrCast(ov_domain, paas), "AASDI");
 			if(Ov_Fail(ovResult)){
 				ov_logfile_error("Fatal: could not create AASDI object - reason: %s", ov_result_getresulttext(ovResult));
+				return openaas_modelmanager_ovresultToAASStatusCode(ovResult);
+			}
+			purtask = (OV_INSTPTR_fb_task)ov_path_getobjectpointer("/Tasks/UrTask", 2);
+			ovResult = Ov_Link(fb_tasklist, purtask, paasDi);
+			if (Ov_Fail(ovResult)) {
+				ov_logfile_error("Fatal: could not link object - reason: %s", ov_result_getresulttext(ovResult));
 				return openaas_modelmanager_ovresultToAASStatusCode(ovResult);
 			}
 		}
