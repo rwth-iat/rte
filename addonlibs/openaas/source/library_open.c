@@ -40,6 +40,7 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 	OV_INSTPTR_ov_library pLibOPCUA = NULL;
 	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
 	OV_INSTPTR_openaas_aas pComCo = NULL;
+	OV_INSTPTR_openaas_ExternalPostOffice pExternalPost = NULL;
 	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
 	OV_INSTPTR_ksapi_getVar pGetComCoAddressFromAASDiscoveryServer = NULL;
 	/*
@@ -255,6 +256,20 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			return OV_ERR_GENERIC;
 		}
 
+	}
+
+	// create ExternalPostOffice
+	Ov_ForEachChildEx(ov_instantiation, pclass_openaas_ExternalPostOffice, pExternalPost, openaas_ExternalPostOffice){
+		if(ov_string_compare(pExternalPost->v_identifier, "ExternalPostOffice") == OV_STRCMP_EQUAL){
+			break;
+		}
+	}
+	if(!pExternalPost){
+		result = Ov_CreateObject(openaas_ExternalPostOffice, pExternalPost, pAASFolder, "ExternalPostOffice");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create externalPostOffice object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
 	}
 
 	// Performance
