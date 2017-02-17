@@ -18274,7 +18274,7 @@ UA_StatusCode UA_Server_run_shutdown(UA_Server *server) {
         size_t stopJobsSize = nl->stop(nl, &stopJobs);
         for(size_t j = 0; j < stopJobsSize; ++j)
             processJob(server, &stopJobs[j]);
-        if (stopJobs > 0)
+        if (stopJobsSize > 0)
         	UA_free(stopJobs);
     }
 
