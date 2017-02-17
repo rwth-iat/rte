@@ -295,5 +295,24 @@ LIBRARY openaas
         typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
     END_OPERATIONS;    
     END_CLASS;
+    
+    CLASS ExternalPostOffice    :    CLASS fb/functionblock 
+        IS_INSTANTIABLE;
+    VARIABLES
+        postoffice           : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE    =   "";
+        ReceiverAASIdString  : STRING INITIALVALUE    =   "";
+        ReceiverAASIdType    : UINT;
+        lastSendMessage      : STRING COMMENT = "Last send message" INITIALVALUE    =   "";
+        tmpServerHost        : STRING INITIALVALUE    =   "";
+        tmpManagerName       : STRING INITIALVALUE    =   "";
+        tmpPath              : STRING INITIALVALUE    =   "";
+        result               : UINT FLAGS = "o" INITIALVALUE = 0;
+        state                : UINT;
+    END_VARIABLES;
+    OPERATIONS
+        getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
+        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+    END_OPERATIONS;    
+    END_CLASS;
   	
 END_LIBRARY;

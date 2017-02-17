@@ -135,7 +135,7 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 		}
 	}
 	if(!pGetComCoAddressFromAASDiscoveryServer){
-		result = Ov_CreateObject(ksapi_setVar, pGetComCoAddressFromAASDiscoveryServer, pDomOpenAAS, "GetComCoAddressFromAASDiscoveryServer");
+		result = Ov_CreateObject(ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, pDomOpenAAS, "GetComCoAddressFromAASDiscoveryServer");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create GetComCoAddressFromAASDiscoveryServer object - reason: %s", ov_result_getresulttext(result));
 			return result;

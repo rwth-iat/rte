@@ -695,7 +695,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			break;
 		}
 	}
-	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
+	OV_INSTPTR_ksapi_KSApiCommon pKSApiSendCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
 
 	if (ov_string_compare(pobj->v_identifier, "ComCo") == OV_STRCMP_EQUAL){ // This AAS is the ComCo
 		OV_INSTPTR_ov_object ptr = NULL;
@@ -727,175 +727,138 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		}else{ // receiverAASId is not in this network => send it to the ComCo of the receiverAAS network
 			// GetAddress of ComCo of the receiverAAS network from AASDiscoveryServer
 
-			OV_INSTPTR_ksapi_getVar pGetComCoAddressFromAASDiscoveryServer = NULL;
-			Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, ksapi_getVar){
-				if(ov_string_compare(pGetComCoAddressFromAASDiscoveryServer->v_identifier, "GetComCoAddressFromAASDiscoveryServer") == OV_STRCMP_EQUAL){
-					break;
-				}
-			}
+//			OV_INSTPTR_ksapi_getVar pGetComCoAddressFromAASDiscoveryServer = NULL;
+//			Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, ksapi_getVar){
+//				if(ov_string_compare(pGetComCoAddressFromAASDiscoveryServer->v_identifier, "GetComCoAddressFromAASDiscoveryServer") == OV_STRCMP_EQUAL){
+//					break;
+//				}
+//			}
+//			OV_INSTPTR_ksapi_KSApiCommon pKSApiGetCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, pGetComCoAddressFromAASDiscoveryServer);
+//
+//			OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
+//			pNodeStoreFunctions = Ov_StaticPtrCast(openaas_nodeStoreFunctions, Ov_GetFirstChild(ov_instantiation, pclass_openaas_nodeStoreFunctions));
+//
+//
+//			// Get ServerHost of ComCo
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
+//			OV_STRING getComCoAddressMsg = NULL;
+//			ov_string_print(&getComCoAddressMsg, "%x", headerSend->receiver.idType);
+//			for (OV_UINT i = 0; i < headerSend->receiver.idSpec.length; i++){
+//				OV_STRING tmpHexString2 = NULL;
+//				ov_string_print(&tmpHexString2, "%x", headerSend->receiver.idSpec.data[i]);
+//				ov_string_append(&getComCoAddressMsg, tmpHexString2);
+//			}
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".ServerHost");
+//
+//			ksapi_KSApiCommon_Reset_set(pKSApiGetCommon, FALSE);
+//			ksapi_KSApiCommon_Reset_set(pKSApiGetCommon, TRUE);
+//			ksapi_KSApiCommon_Submit_set(pKSApiGetCommon, FALSE);
+//			ksapi_KSApiCommon_Submit_set(pKSApiGetCommon, TRUE);
+//
+//
+//			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
+//				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
+//				SRV_msgHeader_t_delete(headerReceive);
+//				SRV_msgHeader_t_delete(headerSend);
+//				SRV_String_delete(srvStringReceive);
+//				SRV_String_delete(srvStringSend);
+//				IdentificationType_deleteMembers(&aasId);
+//				IdentificationType_deleteMembers(&sender);
+//				IdentificationType_deleteMembers(&receiver);
+//				pobj->v_result = OV_ERR_NOACCESS;
+//				return OV_ERR_OK;
+//			}
+//
+//			OV_STRING tmpServerHost = NULL;
+//			ov_string_setvalue(&tmpServerHost, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
+//
+//			// Get Manager Name of ComCo
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
+//			getComCoAddressMsg = NULL;
+//			ov_string_print(&getComCoAddressMsg, "%x", headerSend->receiver.idType);
+//			for (OV_UINT i = 0; i < headerSend->receiver.idSpec.length; i++){
+//				OV_STRING tmpHexString2 = NULL;
+//				ov_string_print(&tmpHexString2, "%x", headerSend->receiver.idSpec.data[i]);
+//				ov_string_append(&getComCoAddressMsg, tmpHexString2);
+//			}
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".ServerName");
+//
+//			ksapi_KSApiCommon_Reset_set(pKSApiGetCommon, FALSE);
+//			ksapi_KSApiCommon_Reset_set(pKSApiGetCommon, TRUE);
+//			ksapi_KSApiCommon_Submit_set(pKSApiGetCommon, FALSE);
+//			ksapi_KSApiCommon_Submit_set(pKSApiGetCommon, TRUE);
+//
+//			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
+//				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
+//				SRV_msgHeader_t_delete(headerReceive);
+//				SRV_msgHeader_t_delete(headerSend);
+//				SRV_String_delete(srvStringReceive);
+//				SRV_String_delete(srvStringSend);
+//				IdentificationType_deleteMembers(&aasId);
+//				IdentificationType_deleteMembers(&sender);
+//				IdentificationType_deleteMembers(&receiver);
+//				pobj->v_result = OV_ERR_NOACCESS;
+//				return OV_ERR_OK;
+//			}
+//
+//			OV_STRING tmpManagereName = NULL;
+//			ov_string_setvalue(&tmpManagereName, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
+//
+//			// Get Path of ComCo
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
+//			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
+//			getComCoAddressMsg = NULL;
+//			ov_string_print(&getComCoAddressMsg, "%x", headerSend->receiver.idType);
+//			for (OV_UINT i = 0; i < headerSend->receiver.idSpec.length; i++){
+//				OV_STRING tmpHexString2 = NULL;
+//				ov_string_print(&tmpHexString2, "%x", headerSend->receiver.idSpec.data[i]);
+//				ov_string_append(&getComCoAddressMsg, tmpHexString2);
+//			}
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
+//			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".Path");
+//
+//			ksapi_KSApiCommon_Reset_set(pKSApiGetCommon, FALSE);
+//			ksapi_KSApiCommon_Reset_set(pKSApiGetCommon, TRUE);
+//			ksapi_KSApiCommon_Submit_set(pKSApiGetCommon, FALSE);
+//			ksapi_KSApiCommon_Submit_set(pKSApiGetCommon, TRUE);
+//
+//			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
+//				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
+//				SRV_msgHeader_t_delete(headerReceive);
+//				SRV_msgHeader_t_delete(headerSend);
+//				SRV_String_delete(srvStringReceive);
+//				SRV_String_delete(srvStringSend);
+//				IdentificationType_deleteMembers(&aasId);
+//				IdentificationType_deleteMembers(&sender);
+//				IdentificationType_deleteMembers(&receiver);
+//				pobj->v_result = OV_ERR_NOACCESS;
+//				return OV_ERR_OK;
+//			}
+//
+//			OV_STRING tmpPath = NULL;
+//			ov_string_setvalue(&tmpPath, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
 
-			OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
-			pNodeStoreFunctions = Ov_StaticPtrCast(openaas_nodeStoreFunctions, Ov_GetFirstChild(ov_instantiation, pclass_openaas_nodeStoreFunctions));
+			// Get the pointer to object for send the Message
 
+			OV_INSTPTR_openaas_ExternalPostOffice pExternalPost = NULL;
+			pExternalPost = Ov_StaticPtrCast(openaas_ExternalPostOffice, Ov_GetFirstChild(ov_instantiation, pclass_openaas_ExternalPostOffice));
 
-			// Get ServerHost of ComCo
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
-			OV_STRING getComCoAddressMsg = NULL;
-			ov_string_print(&getComCoAddressMsg, "%x", headerSend->receiver.idType);
-			for (OV_UINT i = 0; i < headerSend->receiver.idSpec.length; i++){
-				OV_STRING tmpHexString2 = NULL;
-				ov_string_print(&tmpHexString2, "%x", headerSend->receiver.idSpec.data[i]);
-				ov_string_append(&getComCoAddressMsg, tmpHexString2);
-			}
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".ServerHost");
-
-			ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
-			ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
-			ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
-			ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
-
-			OV_UINT waitforanswercounter = 0;
-			while (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
-
-				if (waitforanswercounter > 5){
-					break;
-				}else{
-#if OV_SYSEM_NT == 1
-					Sleep(1);
-#elif OV_SYSTEM_LINUX == 1
-					sleep(1);
-#endif
-				}
-				waitforanswercounter++;
-			};
-
-			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
-				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
-				SRV_msgHeader_t_delete(headerReceive);
-				SRV_msgHeader_t_delete(headerSend);
-				SRV_String_delete(srvStringReceive);
-				SRV_String_delete(srvStringSend);
-				IdentificationType_deleteMembers(&aasId);
-				IdentificationType_deleteMembers(&sender);
-				IdentificationType_deleteMembers(&receiver);
-				pobj->v_result = OV_ERR_NOACCESS;
-				return OV_ERR_OK;
-			}
-
-			OV_STRING tmpServerHost = NULL;
-			ov_string_setvalue(&tmpServerHost, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
-
-			// Get Manager Name of ComCo
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
-			getComCoAddressMsg = NULL;
-			ov_string_print(&getComCoAddressMsg, "%x", headerSend->receiver.idType);
-			for (OV_UINT i = 0; i < headerSend->receiver.idSpec.length; i++){
-				OV_STRING tmpHexString2 = NULL;
-				ov_string_print(&tmpHexString2, "%x", headerSend->receiver.idSpec.data[i]);
-				ov_string_append(&getComCoAddressMsg, tmpHexString2);
-			}
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".ServerName");
-
-			ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
-			ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
-			ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
-			ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
-
-			waitforanswercounter = 0;
-			while (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
-
-				if (waitforanswercounter > 5){
-					break;
-				}else{
-#if OV_SYSEM_NT == 1
-					Sleep(1);
-#elif OV_SYSTEM_LINUX == 1
-					sleep(1);
-#endif
-				}
-				waitforanswercounter++;
-			};
-
-			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
-				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
-				SRV_msgHeader_t_delete(headerReceive);
-				SRV_msgHeader_t_delete(headerSend);
-				SRV_String_delete(srvStringReceive);
-				SRV_String_delete(srvStringSend);
-				IdentificationType_deleteMembers(&aasId);
-				IdentificationType_deleteMembers(&sender);
-				IdentificationType_deleteMembers(&receiver);
-				pobj->v_result = OV_ERR_NOACCESS;
-				return OV_ERR_OK;
-			}
-
-			OV_STRING tmpManagereName = NULL;
-			ov_string_setvalue(&tmpManagereName, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
-
-			// Get Path of ComCo
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-			ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
-			getComCoAddressMsg = NULL;
-			ov_string_print(&getComCoAddressMsg, "%x", headerSend->receiver.idType);
-			for (OV_UINT i = 0; i < headerSend->receiver.idSpec.length; i++){
-				OV_STRING tmpHexString2 = NULL;
-				ov_string_print(&tmpHexString2, "%x", headerSend->receiver.idSpec.data[i]);
-				ov_string_append(&getComCoAddressMsg, tmpHexString2);
-			}
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, getComCoAddressMsg);
-			ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, ".Path");
-
-			ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
-			ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
-			ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
-			ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
-
-			waitforanswercounter = 0;
-			while (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
-
-				if (waitforanswercounter > 5){
-					break;
-				}else{
-#if OV_SYSEM_NT == 1
-					Sleep(1);
-#elif OV_SYSTEM_LINUX == 1
-					sleep(1);
-#endif
-				}
-				waitforanswercounter++;
-			};
-
-			if (pGetComCoAddressFromAASDiscoveryServer->v_status != 2){
-				SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
-				SRV_msgHeader_t_delete(headerReceive);
-				SRV_msgHeader_t_delete(headerSend);
-				SRV_String_delete(srvStringReceive);
-				SRV_String_delete(srvStringSend);
-				IdentificationType_deleteMembers(&aasId);
-				IdentificationType_deleteMembers(&sender);
-				IdentificationType_deleteMembers(&receiver);
-				pobj->v_result = OV_ERR_NOACCESS;
-				return OV_ERR_OK;
-			}
-
-			OV_STRING tmpPath = NULL;
-			ov_string_setvalue(&tmpPath, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
-
-
-			ov_string_setvalue(&psendAASMessage->v_serverHost, tmpServerHost);
-			ov_string_setvalue(&psendAASMessage->v_serverName, tmpManagereName);
-			ov_string_setvalue(&psendAASMessage->v_path, tmpPath);
-			ov_string_append(&psendAASMessage->v_path, ".postoffice");
+			ov_string_setvalue(&pExternalPost->v_ReceiverAASIdString, headerSend->receiver.idSpec.data);
+			pExternalPost->v_ReceiverAASIdType = headerSend->receiver.idType;
+			ov_string_setvalue(&psendAASMessage->v_serverHost, "localhost");
+			ov_string_setvalue(&psendAASMessage->v_serverHost, "localhost");
+			ov_string_setvalue(&psendAASMessage->v_serverName, "MANAGER");
+			ov_string_setvalue(&psendAASMessage->v_path, "/TechUnits/openAAS/AASFolder/ExternalPostOffice.postoffice");
 		}
 	}else{ // This AAS is not the ComCo => send message to ComCoAAS
 		ov_string_setvalue(&psendAASMessage->v_serverHost, "localhost");
@@ -907,10 +870,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, srvStringSend->data);
 	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
 
-	ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
-	ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
-	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
-	ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
+	ksapi_KSApiCommon_Reset_set(pKSApiSendCommon, FALSE);
+	ksapi_KSApiCommon_Reset_set(pKSApiSendCommon, TRUE);
+	ksapi_KSApiCommon_Submit_set(pKSApiSendCommon, FALSE);
+	ksapi_KSApiCommon_Submit_set(pKSApiSendCommon, TRUE);
 
 	ov_string_setvalue(&pobj->v_lastReceivedMessage, srvStringReceive->data);
 	ov_string_setvalue(&pobj->v_lastSendMessage, srvStringSend->data);

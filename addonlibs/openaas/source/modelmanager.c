@@ -95,7 +95,7 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[2] = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[2], tmpServername.value.valueunion.val_string);
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3] = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3], "/TechUnits/AASFolder/ComCo");
+	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3], "/TechUnits/openAAS/AASFolder/ComCo");
 	ov_database_free(tmpHexString);
 
 	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
