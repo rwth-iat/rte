@@ -43,6 +43,7 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 	OV_INSTPTR_openaas_ExternalPostOffice pExternalPost = NULL;
 	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
 	OV_INSTPTR_ksapi_getVar pGetComCoAddressFromAASDiscoveryServer = NULL;
+	OV_INSTPTR_fb_task	purtask = NULL;
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
@@ -268,6 +269,12 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 		result = Ov_CreateObject(openaas_ExternalPostOffice, pExternalPost, pAASFolder, "ExternalPostOffice");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create externalPostOffice object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+		purtask = (OV_INSTPTR_fb_task)ov_path_getobjectpointer("/Tasks/UrTask", 2);
+		result = Ov_Link(fb_tasklist, purtask, pExternalPost);
+		if (Ov_Fail(result)) {
+			ov_logfile_error("Fatal: could not link externalPostOffice object - reason: %s", ov_result_getresulttext(result));
 			return result;
 		}
 	}
