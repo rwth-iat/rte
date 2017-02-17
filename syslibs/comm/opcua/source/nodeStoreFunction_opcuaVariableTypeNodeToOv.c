@@ -109,6 +109,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_opcuaVariableTypeNodeToOv
 			break;
 		case UA_TYPES_STRING:
 			(*ovNode)->v_value.value.vartype = OV_VT_STRING;
+			(*ovNode)->v_value.value.valueunion.val_string = NULL;
 			copyOPCUAStringToOV(*((UA_String*)opcuaNode->value.data.value.value.data),
 									&((*ovNode)->v_value.value.valueunion.val_string));
 			break;
@@ -163,6 +164,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_nodeStoreFunctions_opcuaVariableTypeNodeToOv
 				(*ovNode)->v_value.value.vartype = OV_VT_STRING_VEC;
 				Ov_SetDynamicVectorLength(&(*ovNode)->v_value.value.valueunion.val_string_vec, opcuaNode->arrayDimensions[0], STRING);
 				for (size_t i = 0; i < opcuaNode->arrayDimensions[0]; i++){
+					(*ovNode)->v_value.value.valueunion.val_string_vec.value[i] = NULL;
 					copyOPCUAStringToOV(*((UA_String*)(opcuaNode->value.data.value.value.data)+i),
 															&((*ovNode)->v_value.value.valueunion.val_string_vec.value[i]));
 				}
