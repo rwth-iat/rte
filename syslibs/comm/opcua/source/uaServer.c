@@ -181,14 +181,9 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 		ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
 	}
 
-	/*if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_NUMERIC(opcua_pUaServer->v_NameSpaceIndex, 0), true) != UA_STATUSCODE_GOOD){
-		ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
-	}*/
-
 	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
 				UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(opcua_pUaServer->v_NameSpaceIndex, "/acplt/ov/domain"), true) != UA_STATUSCODE_GOOD){
-			ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
+			ov_logfile_error("%s - init: could not create reference to ov-namespace library", pinst->v_identifier);
 		}
 //	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
 //				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_NUMERIC(opcua_pUaServer->v_NameSpaceIndex, 0), true) != UA_STATUSCODE_GOOD){
