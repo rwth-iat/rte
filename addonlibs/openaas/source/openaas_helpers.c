@@ -72,7 +72,6 @@ void PropertyValueStatement_init(PropertyValueStatement *this){
 	this->ExpressionLogic = 0;
 	this->unit = NULL;
 	this->view = 0;
-	this->value.Value.value.valueunion.val_string = NULL;
 }
 void PropertyValueStatement_deleteMembers(PropertyValueStatement *this){
 	IdentificationType_delete(&this->ID);
@@ -96,7 +95,6 @@ void LifeCycleEntry_init(LifeCycleEntry *this){
 	this->eventClass = NULL;
 	this->lceId = 0;
 	this->subject = NULL;
-	this->data.Value.value.valueunion.val_string = NULL;
 }
 void LifeCycleEntry_deleteMembers(LifeCycleEntry *this){
 	IdentificationType_delete(&this->creatingInstance);

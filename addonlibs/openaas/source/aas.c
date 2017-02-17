@@ -866,6 +866,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 	}
 
 	// send message
+	psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, srvStringSend->data);
 	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
 

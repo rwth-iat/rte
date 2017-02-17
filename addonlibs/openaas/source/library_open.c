@@ -128,7 +128,6 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			ov_logfile_error("Fatal: could not create SendAASMessage object - reason: %s", ov_result_getresulttext(result));
 			return result;
 		}
-		psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
 	}
 
 	// create getComCoAddressFromAASDiscoveryServer
@@ -143,7 +142,6 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			ov_logfile_error("Fatal: could not create GetComCoAddressFromAASDiscoveryServer object - reason: %s", ov_result_getresulttext(result));
 			return result;
 		}
-		pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string = NULL;
 	}
 
 	// Create Folder for NodeStoreFunctionsOpenAAS & ModelManagerOpenAAS
