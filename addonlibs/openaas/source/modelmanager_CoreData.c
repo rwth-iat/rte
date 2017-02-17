@@ -53,6 +53,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 			(*pvsl)[pvslSize].CreationTime = ppvsl->v_CreationTime;
 			ov_string_setvalue(&(*pvsl)[pvslSize].pvslName, ppvsl->v_identifier);
 
+			pvsSize = 0;
 			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, openaas_PropertyValueStatement){
 				if (ppvs->v_Visibility == 2)
 					pvsSize++;
