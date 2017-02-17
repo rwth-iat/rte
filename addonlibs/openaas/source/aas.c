@@ -856,7 +856,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			ov_string_setvalue(&pExternalPost->v_ReceiverAASIdString, headerSend->receiver.idSpec.data);
 			pExternalPost->v_ReceiverAASIdType = headerSend->receiver.idType;
 			ov_string_setvalue(&psendAASMessage->v_serverHost, "localhost");
-			ov_string_setvalue(&psendAASMessage->v_serverHost, "localhost");
 			ov_string_setvalue(&psendAASMessage->v_serverName, "MANAGER");
 			ov_string_setvalue(&psendAASMessage->v_path, "/TechUnits/openAAS/AASFolder/ExternalPostOffice.postoffice");
 		}

@@ -105,8 +105,6 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(Identifica
 	if (resultOV)
 		return AASSTATUSCODE_BADUNEXPECTEDERROR;
 
-	getCoreDataReq_t_deleteMembers(&getCoreDataReq);
-
 	// Get the pointer to object for send the Message
 	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
 	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
