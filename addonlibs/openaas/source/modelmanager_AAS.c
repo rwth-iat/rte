@@ -120,7 +120,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 			ov_logfile_error("Fatal: could not create AAS object - reason: %s", ov_result_getresulttext(result));
 			return openaas_modelmanager_ovresultToAASStatusCode(result);
 		}
-		openaas_modelmanager_AASConvertListAdd(aasId, aasName);
+		if (ov_string_compare(aasName, "ComCo") != OV_STRCMP_EQUAL)
+			openaas_modelmanager_AASConvertListAdd(aasId, aasName);
 		paas->p_Header.p_Config.v_CarrierIdString = NULL;
 		ov_string_setvalue(&paas->p_Header.p_Config.v_CarrierIdString, aasId.IdSpec);
 		paas->p_Header.p_Config.v_CarrierIdType = aasId.IdType;

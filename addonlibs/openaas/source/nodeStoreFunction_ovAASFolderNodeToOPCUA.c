@@ -96,7 +96,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovAASFolderNodeToOPCUA(
 	newNode->displayName = lText;
 
 	// NodeId
-	newNode->nodeId = *nodeId;
+	UA_NodeId_copy(nodeId, &newNode->nodeId);
 
 	// NodeClass
 	newNode->nodeClass 	= *nodeClass;
@@ -143,8 +143,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovAASFolderNodeToOPCUA(
 	}
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
 	ov_database_free(tmpString);
-	for (OV_UINT i = 0; i < len; i++)
-		ov_database_free(plist[i]);
+	ov_string_freelist(plist);
 
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);

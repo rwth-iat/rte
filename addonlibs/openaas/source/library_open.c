@@ -30,7 +30,6 @@
 #include "libov/ov_result.h"
 #include "libov/ov_time.h"
 
-
 OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 
  OV_RESULT ov_library_setglobalvars_openaas_new(void) {
@@ -223,6 +222,11 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			ov_logfile_error("Fatal: could not create nodestoreFunctions object - reason: %s", ov_result_getresulttext(result));
 			return result;
 		}
+		ov_string_setvalue(&pNodeStoreFunctions->v_IPAddressServer, "134.130.125.81");
+		ov_string_setvalue(&pNodeStoreFunctions->v_IPAddressAASDiscoveryServer, "192.168.3.1");
+		ov_string_setvalue(&pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer, "DiscoveryServer");
+		ov_string_setvalue(&pNodeStoreFunctions->v_PathToAASDiscoveryServer, "/TechUnits/DiscoveryServer");
+
 	}
 
 	// create modelmanager
@@ -234,6 +238,7 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			return result;
 		}
 	}
+
 
 	// create ComCo
 	Ov_ForEachChildEx(ov_instantiation, pclass_openaas_aas, pComCo, openaas_aas){

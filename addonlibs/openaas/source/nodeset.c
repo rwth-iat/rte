@@ -1273,6 +1273,9 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7001), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6033), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7001), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6034), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7001), false);
+free(inputArguments);
+free(outputArguments);
+
 } while(0);
 
 do {
@@ -1334,6 +1337,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7007), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6045), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7007), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6046), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7007), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1411,6 +1416,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7005), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6041), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7005), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6042), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7005), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1464,6 +1471,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7003), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6035), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7003), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6036), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7003), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1505,6 +1514,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7002), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6037), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7002), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6038), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7002), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1550,6 +1561,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7008), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6047), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7008), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6048), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7008), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1599,6 +1612,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7006), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6043), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7006), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6044), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7006), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1644,6 +1659,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7004), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6039), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7004), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6040), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7004), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1685,6 +1702,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7013), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7013), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6057), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7013), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1738,6 +1757,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7014), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6058), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7014), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6059), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7014), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1803,6 +1824,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7012), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6053), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7012), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6054), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7012), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1880,6 +1903,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7010), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6055), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7010), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6056), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7010), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -1945,6 +1970,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6051), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6052), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -2022,6 +2049,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6049), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6050), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -2071,6 +2100,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7016), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6070), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7016), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6071), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7016), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -2112,6 +2143,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7017), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6072), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7017), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6073), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7017), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -2157,6 +2190,8 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7015), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6067), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7015), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6068), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7015), false);
+free(inputArguments);
+free(outputArguments);
 } while(0);
 
 do {
@@ -2705,5 +2740,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 5009), UA_NODEID_NUMER
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 3008), UA_NODEID_NUMERIC(nsIdx_0, 38), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 5009), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6032), UA_NODEID_NUMERIC(nsIdx_0, 39), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 5009), false);
 } while(0);
+
 return UA_STATUSCODE_GOOD;
 }

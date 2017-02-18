@@ -114,6 +114,7 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 		if (ov_string_compare(pListElement->v_AASIdString, aasId.IdSpec) == OV_STRCMP_EQUAL && pListElement->v_AASIdType == aasId.IdType){
 			if (Ov_Fail(Ov_DeleteObject(pListElement)))
 				return;
+
 			// Get the pointer to object for send the Message
 			OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
 			Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){

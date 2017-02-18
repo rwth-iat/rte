@@ -111,7 +111,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 	newNode->displayName = lText;
 
 	// NodeId
-	newNode->nodeId = *nodeId;
+	UA_NodeId_copy(nodeId, &newNode->nodeId);
 
 	// NodeClass
 	newNode->nodeClass 	= *nodeClass;
@@ -169,16 +169,14 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 	newNode->references[0].isInverse = UA_TRUE;
-	for (OV_UINT i = 0; i < len; i++)
-		ov_database_free(plist[i]);
+	ov_string_freelist(plist);
 	len = 0;
-	*plist = NULL;
+	plist = NULL;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "|", &len);
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, plist[0]);
-	for (OV_UINT i = 0; i < len; i++)
-		ov_database_free(plist[i]);
+	ov_string_freelist(plist);
 	ov_database_free(tmpString);
 
 	// TypeNode
