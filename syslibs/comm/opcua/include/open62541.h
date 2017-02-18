@@ -12465,7 +12465,8 @@ extern "C" {
 extern UA_EXPORT const UA_ServerConfig UA_ServerConfig_standard;
 extern UA_EXPORT const UA_ClientConfig UA_ClientConfig_standard;
 UA_EXPORT void addDataTypes(UA_Server* server, const UA_DataType *customDataTypes, size_t customDataTypesSize);
-UA_EXPORT void *ov_database_calloc(OV_UINT num, OV_UINT size);
+// VALGRIND
+//UA_EXPORT void *ov_database_calloc(OV_UINT num, OV_UINT size);
 #ifdef __cplusplus
 }
 #endif
