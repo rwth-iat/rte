@@ -27923,11 +27923,10 @@ void addDataTypes(UA_Server* server, const UA_DataType *customDataTypes, size_t 
 	server->config.customDataTypesSize = customDataTypesSize;
 }
 
-/* VALGRIND
 void* ov_database_calloc(OV_UINT num, OV_UINT size){
 	size_t total = num * size;
 	void *p = ov_database_malloc(total);
 	if (!p) return NULL;
 	return memset(p, 0, total);
 }
-*/
+
