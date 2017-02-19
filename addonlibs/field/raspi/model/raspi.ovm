@@ -1,0 +1,69 @@
+#include "ov.ovm"
+#include "fb.ovm"
+
+LIBRARY raspi
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of gpio.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS gpio : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			error : BOOL FLAGS = "o" COMMENT = "no error = 0, error = 1";
+			errorMsg : STRING FLAGS = "o" COMMENT = "error message";
+            initialized : BOOL FLAGS = "o" COMMENT = "pin initialized?";
+			// Add variables here. The syntax is:
+			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
+			// Example:
+			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
+			// Example for a fb/functionblock based class
+			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+		END_VARIABLES;
+		OPERATIONS
+			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
+			// if MY_FUNC is declared in raspi.ovf. Implement the functions in gpio.c.
+			// fb/functionblock based classes have to implement typemethod
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+			constructor  : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	   CLASS gpioIn : CLASS raspi/gpio
+        IS_INSTANTIABLE;
+        VARIABLES
+            pin : INT FLAGS = "i" COMMENT = "pin that should be read";
+            pullUpDown : INT FLAGS = "i" COMMENT = "Pull off=0/up=1/down=2";
+            output : BOOL FLAGS = "o" COMMENT = "read value";
+            
+            // Add variables here. The syntax is:
+            // <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
+            // Example:
+            // varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
+            // Example for a fb/functionblock based class
+            // inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+        END_VARIABLES;
+        OPERATIONS
+            // Declare functions here. You may use your own function types, e.g. MY_FUNC,
+            // if MY_FUNC is declared in raspi.ovf. Implement the functions in gpio.c.
+            // fb/functionblock based classes have to implement typemethod
+            typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+            constructor  : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;
