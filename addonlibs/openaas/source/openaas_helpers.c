@@ -77,6 +77,8 @@ void PropertyValueStatement_deleteMembers(PropertyValueStatement *this){
 	IdentificationType_delete(&this->ID);
 	ov_database_free(this->pvsName);
 	ov_database_free(this->unit);
+	if (this->value.Value.value.vartype == OV_VT_STRING)
+		ov_database_free(this->value.Value.value.valueunion.val_string);
 	PropertyValueStatement_init(this);
 }
 void PropertyValueStatement_delete(PropertyValueStatement *this){
@@ -101,6 +103,8 @@ void LifeCycleEntry_deleteMembers(LifeCycleEntry *this){
 	IdentificationType_delete(&this->writingInstance);
 	ov_database_free(this->eventClass);
 	ov_database_free(this->subject);
+	if (this->data.Value.value.vartype == OV_VT_STRING)
+		ov_database_free(this->data.Value.value.valueunion.val_string);
 }
 void LifeCycleEntry_delete(LifeCycleEntry *this){
 	LifeCycleEntry_deleteMembers(this);

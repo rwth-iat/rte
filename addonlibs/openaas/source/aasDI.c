@@ -106,6 +106,7 @@ OV_DLLFNCEXPORT void openaas_aasDI_typemethod(
     /*    
     *   local variables
     */
+
     OV_INSTPTR_openaas_aasDI pinst = Ov_StaticPtrCast(openaas_aasDI, pfb);
     OV_STRING ipAddress = NULL;
     ov_string_setvalue(&ipAddress, "opc.tcp://");
@@ -125,7 +126,7 @@ OV_DLLFNCEXPORT void openaas_aasDI_typemethod(
 	for (size_t i = 0; i < argInSize; i++) {
 		UA_Variant_init(&inputArgs[i]);
 	}
-	/* convert input to UA types */
+	// convert input to UA types
 	UA_Identification AASId;
 	AASId.idType = pinst->v_AssetAASIdType;
 	AASId.idSpec = UA_String_fromChars(pinst->v_AssetAASIdString);
@@ -216,14 +217,14 @@ OV_DLLFNCEXPORT void openaas_aasDI_typemethod(
 				LifeCycleEntry_deleteMembers(&lce);
 			}
 		}
-		UA_Array_delete(output, argOutSize, &UA_TYPES[UA_TYPES_VARIANT]);
-	} else {
 	}
 	UA_Identification_deleteMembers(&AASId);
 	UA_Array_delete(inputArgs, argInSize, &UA_TYPES[UA_TYPES_VARIANT]);
+	UA_Array_delete(output, argOutSize, &UA_TYPES[UA_TYPES_VARIANT]);
 	IdentificationType_deleteMembers(&aasId);
 	IdentificationType_deleteMembers(&assetAASId);
 	UA_Client_disconnect(client);
 	UA_Client_delete(client);
+	ov_database_free(ipAddress);
     return;
 }

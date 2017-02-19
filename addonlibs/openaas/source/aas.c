@@ -53,9 +53,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 	// Decoding the Message
 	SRV_String *srvStringReceive = SRV_String_new();
-	srvStringReceive->data = malloc(ov_string_getlength(value)*sizeof(char));
-	memcpy(srvStringReceive->data, value, ov_string_getlength(value)*sizeof(char));
-	srvStringReceive->length = ov_string_getlength(value);
+	SRV_String_setCopy(srvStringReceive, value, ov_string_getlength(value));
 	SRV_msgHeader *headerReceive = NULL;
 	void *srvStructReceive = NULL;
 	SRV_service_t srvTypeReceive;
@@ -128,7 +126,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				createAASRsp_t_deleteMembers(&createAASRsp);
 				IdentificationType_deleteMembers(&tmpOVAASId);
 				IdentificationType_deleteMembers(&tmpOVAssetId);
-				free(tmpOVName);
+				ov_database_free(tmpOVName);
 			}else{
 				createAASRsp_t createAASRsp;
 				createAASRsp_t_init(&createAASRsp);
@@ -217,7 +215,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 			createPVSLRsp_t_deleteMembers(&createPVSLRsp);
 			IdentificationType_deleteMembers(&tmpOVCarrier);
-			free(tmpOVPVSLName);
+			IdentificationType_deleteMembers(&tmpOVCreatingInstance);
+			ov_database_free(tmpOVPVSLName);
 		}break;
 		case SRV_createPVSLRsp:{
 			// TODO: Check the answer
@@ -592,6 +591,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 						ov_database_free(ppvs[i].pvs[j].ID.IdSpec);
 						ov_database_free(ppvs[i].pvs[j].pvsName);
 						ov_database_free(ppvs[i].pvs[j].unit);
+						if (ppvs[i].pvs[j].value.Value.value.vartype == OV_VT_STRING)
+							ov_database_free(ppvs[i].pvs[j].value.Value.value.valueunion.val_string);
 					}
 					ov_database_free(ppvs[i].pvs);
 					ov_database_free(ppvs[i].Carrier.IdSpec);
@@ -654,6 +655,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 						result = openaas_modelmanager_createPVSTime(aasId, tmpOVPVSLName, pvs);
 						PropertyValueStatement_deleteMembers(&pvs);
+						ov_database_free(tmpOVPVSLName);
 					}
 					ov_database_free(tmpOVPVSLName);
 					IdentificationType_deleteMembers(&tmpOVCarrier);
@@ -661,12 +663,15 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 				}
 			}
 
+
 			SRV_serviceGeneric_delete(srvStructReceive, srvTypeReceive);
 			SRV_msgHeader_t_delete(headerReceive);
-			SRV_String_delete(srvStringReceive);
-
 			SRV_msgHeader_t_delete(headerSend);
+			SRV_String_delete(srvStringReceive);
 			SRV_String_delete(srvStringSend);
+			IdentificationType_deleteMembers(&aasId);
+			IdentificationType_deleteMembers(&sender);
+			IdentificationType_deleteMembers(&receiver);
 			pobj->v_result = resultOV;
 			return OV_ERR_OK;
 		}break;
