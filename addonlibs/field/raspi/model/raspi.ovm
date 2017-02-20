@@ -12,11 +12,12 @@ LIBRARY raspi
 		@note Javadoc syntax is allowed here.
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/
-	CLASS gpio : CLASS fb/functionblock
+	
+	CLASS gpio : CLASS fb/functionblock 
 		VARIABLES
 			error : BOOL FLAGS = "o" COMMENT = "no error = 0, error = 1";
 			errorMsg : STRING FLAGS = "o" COMMENT = "error message";
-            initialized : BOOL FLAGS = "o" COMMENT = "pin initialized?" INITIALVALUE = false;
+            initialized : BOOL FLAGS = "o"  COMMENT = "pin initialized?" INITIALVALUE = FALSE;
 			// Add variables here. The syntax is:
 			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
 			// Example:
@@ -31,7 +32,7 @@ LIBRARY raspi
 		END_OPERATIONS;
 	END_CLASS;
 	
-	   CLASS gpioIn : CLASS raspi/gpio
+    CLASS gpioIn : CLASS raspi/gpio
         IS_INSTANTIABLE;
         VARIABLES
             pin : INT FLAGS = "i" COMMENT = "pin that should be read";

@@ -51,7 +51,7 @@ OV_DLLFNCEXPORT void raspi_gpioIn_typemethod(
 		default:
 			pinst->v_error = TRUE;
 			ov_string_setvalue(&pinst->v_errorMsg,"wrong value for pull up/down resistor");
-			return OV_ERR_BADPARAM;
+			return;
 		}
 		pinst->v_initialized = TRUE;
 	}
@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT OV_RESULT raspi_gpioIn_constructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_raspi_gpioIn pinst = Ov_StaticPtrCast(raspi_gpioIn, pobj);
+    //OV_INSTPTR_raspi_gpioIn pinst = Ov_StaticPtrCast(raspi_gpioIn, pobj);
 
     wiringPiSetup();
 

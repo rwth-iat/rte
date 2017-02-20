@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2017-02-19   File created
+*   2017-02-20   File created
 *
 *******************************************************************************
 *
@@ -24,16 +24,4 @@
 #include "raspi.h"
 #include "libov/ov_macros.h"
 
-
-OV_DLLFNCEXPORT void raspi_gpio_typemethod(
-	OV_INSTPTR_fb_functionblock	pfb,
-	OV_TIME						*pltc
-) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_raspi_gpio pinst = Ov_StaticPtrCast(raspi_gpio, pfb);
-
-    return;
-}
 
