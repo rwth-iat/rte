@@ -886,9 +886,9 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/processcontrol/PCMsgParser 
 				addonlibs/processcontrol/PCMsgCreator 
 				addonlibs/functionblock/SSChelper
+				addonlibs/field/raspi
 				addonlibs/openaas
-				addonlibs/openAASDiscoveryServer
-				addonlibs/field/raspi}
+				addonlibs/openAASDiscoveryServer}
 				
 print_msg "checking out all libraries of the acplt system"
 
