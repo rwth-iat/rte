@@ -133,6 +133,9 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
     *   local variables
     */
     OV_INSTPTR_openaas_LCEGenerator pinst = Ov_StaticPtrCast(openaas_LCEGenerator, pfb);
+    OV_INSTPTR_raspi_gpioIn pgpioIn = NULL;
+    OV_INSTPTR_fb_task	purtask = NULL;
+    OV_RESULT ovResult = OV_ERR_OK;
     LifeCycleEntry lce;
 	LifeCycleEntry_init(&lce);
 
@@ -155,7 +158,39 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 	ov_string_setvalue(&aasId.IdSpec, pinst->v_AASIdString);
 	aasId.IdType = pinst->v_AASIdType;
 
-	pinst->v_Status = openaas_modelmanager_createLCE(aasId, lce);
+	pgpioIn = Ov_StaticPtrCast(raspi_gpioIn, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pinst), "RASPIIN"));
+	if(!pgpioIn){
+		ovResult = Ov_CreateObject(raspi_gpioIn, pgpioIn, Ov_StaticPtrCast(ov_domain, pinst), "RASPIIN");
+		if(Ov_Fail(ovResult)){
+			ov_logfile_error("Fatal: could not create RASPIIN object - reason: %s", ov_result_getresulttext(ovResult));
+			return ;
+		}
+		purtask = (OV_INSTPTR_fb_task)ov_path_getobjectpointer("/Tasks/UrTask", 2);
+		ovResult = Ov_Link(fb_tasklist, purtask, pgpioIn);
+		if (Ov_Fail(ovResult)) {
+			ov_logfile_error("Fatal: could not link object - reason: %s", ov_result_getresulttext(ovResult));
+			return ;
+		}
+		pgpioIn->v_pin = 0;
+		pgpioIn->v_pullUpDown = 2;
+		pgpioIn->v_iexreq = true;
+		pgpioIn->v_actimode = 1;
+	}
+
+	switch(pinst->v_State){
+	case 0:
+		if(pgpioIn->v_output == TRUE)
+			pinst->v_State = 1;
+		break;
+	case 1:
+		pinst->v_Status = openaas_modelmanager_createLCE(aasId, lce);
+		pinst->v_State = 2;
+		break;
+	case 2:
+		if(pgpioIn->v_output == FALSE)
+			pinst->v_State = 0;
+		break;
+	}
 
     return;
 }

@@ -58,6 +58,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_startGetAssetLCEData(Identifi
 		ov_string_setvalue(&(paasDi->v_AssetAASIdString), assetAASId.IdSpec);
 		paasDi->v_AssetAASIdType = assetAASId.IdType;
 		ov_string_setvalue(&(paasDi->v_AssetIPAddress), ipaddress);
+
 		openaas_aasDI_StartAASDI_set(paasDi, TRUE);
 	}else{
 		return AASSTATUSCODE_BADUNEXPECTEDERROR;
