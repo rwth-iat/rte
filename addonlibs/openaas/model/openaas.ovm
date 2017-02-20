@@ -3,7 +3,6 @@
 #include "fb.ovm"
 #include "opcua.ovm"
 #include "ksapi.ovm"
-#include "raspi.ovm"
 
 LIBRARY openaas
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -290,6 +289,7 @@ LIBRARY openaas
         StartLCEGenerator               : BOOL HAS_SET_ACCESSOR;
         StopLCEGenerator                : BOOL HAS_SET_ACCESSOR;
         State                           : UINT; 
+        Generate                        : BOOL;                              
         Status                          : UINT;
     END_VARIABLES;
     OPERATIONS
