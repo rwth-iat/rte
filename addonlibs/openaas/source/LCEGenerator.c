@@ -146,7 +146,7 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 
 	ov_string_setvalue(&lce.subject,  pinst->v_LCESubject);
 
-	ov_variable_setanyvalue(&lce.data.Value, &pinst->v_LCEValue);
+	Ov_SetAnyValue(&lce.data.Value, &pinst->v_LCEValue);
 
 	ov_time_gettime(&lce.data.TimeStamp);
 
