@@ -886,7 +886,6 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/processcontrol/PCMsgParser 
 				addonlibs/processcontrol/PCMsgCreator 
 				addonlibs/functionblock/SSChelper
-				addonlibs/field/raspi
 				addonlibs/openaas
 				addonlibs/openAASDiscoveryServer}
 				
