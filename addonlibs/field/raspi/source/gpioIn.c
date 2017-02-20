@@ -32,8 +32,33 @@ OV_DLLFNCEXPORT void raspi_gpioIn_typemethod(
     /*    
     *   local variables
     */
-    OV_INSTPTR_raspi_gpioIn pinst = Ov_StaticPtrCast(raspi_gpioIn, pfb);
-    wiringPiSetup();
+
+	/* do what */
+	OV_INSTPTR_raspi_gpioIn pinst = Ov_StaticPtrCast(raspi_gpioIn, pfb);
+
+	if(!pinst->v_initialized){
+		pinMode(pinst->v_pin, INPUT);
+		switch(pinst->v_pullUpDown){
+		case 0:
+			pullUpDnControl(pinst->v_pin,PUD_OFF);
+			break;
+		case 1:
+			pullUpDnControl(pinst->v_pin,PUD_UP);
+			break;
+		case 2:
+			pullUpDnControl(pinst->v_pin,PUD_DOWN);
+			break;
+		default:
+			pinst->v_error = TRUE;
+			ov_string_setvalue(&pinst->v_errorMsg,"wrong value for pull up/down resistor");
+			return OV_ERR_BADPARAM;
+		}
+		pinst->v_initialized = TRUE;
+	}
+	pinst->v_output = digitalRead(pinst->v_pin);
+	pinst->v_error = 0;
+	ov_string_setvalue(&pinst->v_errorMsg,"");
+
     return;
 }
 
@@ -45,32 +70,7 @@ OV_DLLFNCEXPORT OV_RESULT raspi_gpioIn_constructor(
     */
     OV_INSTPTR_raspi_gpioIn pinst = Ov_StaticPtrCast(raspi_gpioIn, pobj);
 
-
-    /* do what */
-    if(!pinst->v_initialized){
-    	pinMode(pinst->v_pin, INPUT);
-    	switch(pinst->v_pullUpDown){
-    	case 0:
-    		pullUpDnControl(pinst->v_pin,PUD_OFF);
-    		break;
-    	case 1:
-    		pullUpDnControl(pinst->v_pin,PUD_UP);
-    		break;
-    	case 2:
-    		pullUpDnControl(pinst->v_pin,PUD_DOWN);
-    		break;
-    	default:
-    		pinst->v_error = TRUE;
-    		ov_string_setvalue(&pinst->v_errorMsg,"wrong value for pull up/down resistor");
-    		return OV_ERR_BADPARAM;
-    	}
-    	pinst->v_initialized = TRUE;
-    }
-    pinst->v_output = digitalRead(pinst->v_pin);
-    pinst->v_error = 0;
-    ov_string_setvalue(&pinst->v_errorMsg,"");
-
-
+    wiringPiSetup();
 
     return OV_ERR_OK;
 }

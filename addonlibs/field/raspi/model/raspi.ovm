@@ -16,7 +16,7 @@ LIBRARY raspi
 		VARIABLES
 			error : BOOL FLAGS = "o" COMMENT = "no error = 0, error = 1";
 			errorMsg : STRING FLAGS = "o" COMMENT = "error message";
-            initialized : BOOL FLAGS = "o" COMMENT = "pin initialized?";
+            initialized : BOOL FLAGS = "o" COMMENT = "pin initialized?" INITIALVALUE = false;
 			// Add variables here. The syntax is:
 			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
 			// Example:
