@@ -13,7 +13,6 @@ LIBRARY raspi
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/
 	CLASS gpio : CLASS fb/functionblock
-		IS_INSTANTIABLE;
 		VARIABLES
 			error : BOOL FLAGS = "o" COMMENT = "no error = 0, error = 1";
 			errorMsg : STRING FLAGS = "o" COMMENT = "error message";
@@ -29,8 +28,6 @@ LIBRARY raspi
 			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
 			// if MY_FUNC is declared in raspi.ovf. Implement the functions in gpio.c.
 			// fb/functionblock based classes have to implement typemethod
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-			constructor  : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
 	

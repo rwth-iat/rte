@@ -44,13 +44,7 @@ OV_DLLFNCEXPORT OV_RESULT raspi_gpioIn_constructor(
     *   local variables
     */
     OV_INSTPTR_raspi_gpioIn pinst = Ov_StaticPtrCast(raspi_gpioIn, pobj);
-    OV_RESULT    result;
 
-
-    /* do what the base class does first */
-    result = raspi_gpio_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
 
     /* do what */
     if(!pinst->v_initialized){
