@@ -131,7 +131,6 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 			ov_string_setvalue(&psendAASMessage->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
 			ov_string_append(&psendAASMessage->v_path, ".DeleteOVDataForAAS");
 
-			psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
 			OV_STRING tmpHexString = NULL;
 			ov_string_print(&tmpHexString, "%x", aasId.IdType);
 
