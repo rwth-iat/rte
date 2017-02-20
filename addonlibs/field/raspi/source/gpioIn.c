@@ -23,7 +23,7 @@
 
 #include "raspi.h"
 #include "libov/ov_macros.h"
-#include "wiringPi.h"
+#include <wiringPi.h>
 
 OV_DLLFNCEXPORT void raspi_gpioIn_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,

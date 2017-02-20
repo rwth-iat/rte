@@ -9,9 +9,9 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 SERVERSTARTKEYS = -w fb -w ksbase -w raspi
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = 
-EXTRA_CC_FLAGS = -lwiringPi 
+EXTRA_CC_FLAGS = 
 EXTRA_LIBS = 
-LD_FLAGS = 
+LD_FLAGS = -lwiringPi 
 COMPILER = GCC
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
