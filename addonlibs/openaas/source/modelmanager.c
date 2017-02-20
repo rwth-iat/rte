@@ -80,6 +80,7 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 		ov_database_free(tmpHexString2);
 	}
 
+	Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
 	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING_VEC;
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.veclen = 0;
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value = NULL;
@@ -140,7 +141,7 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 				ov_string_append(&tmpHexString, tmpHexString2);
 				ov_database_free(tmpHexString2);
 			}
-			psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
+			Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
 			ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, tmpHexString);
 			ov_database_free(tmpHexString);
 

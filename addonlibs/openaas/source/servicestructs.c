@@ -16,36 +16,61 @@ SRV_String* SRV_String_new(){
 }
 
 SRV_String* SRV_String_copy(SRV_String* to, const SRV_String* from){
+	SRV_String* dst;
 	// allocate memory if no destination was given
 	if(!to){
-		to = malloc(sizeof(SRV_String));
-		if(!to)
+		dst = malloc(sizeof(SRV_String));
+		if(!dst)
 			return NULL;
+	} else {
+		dst = to;
 	}
 
-	to->length = from->length;
-	to->data = malloc(from->length+1);
-	memcpy(to->data, from->data, from->length);
-	to->data[to->length] = '\0';
-	return to;
+	dst->length = from->length;
+	dst->data = malloc(from->length+1);
+	if(!dst->data){
+		if(!to){
+			free(dst);
+		}
+		return NULL;
+	}
+	memcpy(dst->data, from->data, from->length);
+	dst->data[to->length] = '\0';
+	return dst;
+}
+
+int srvStrEq(const SRV_String* str1, const SRV_String* str2) {
+	if(!str1 || !str2)
+		return -2;
+	if(str1->length!=str2->length)
+		return -1;
+	return strncmp(str1->data, str2->data, str1->length);
 }
 
 void SRV_String_init(SRV_String* this){
+	if(!this)
+		return;
 	this->data = NULL;
 	this->length = 0;
 }
 
-void SRV_String_setCopy(SRV_String* srvstr, const char* str, int len){
+int SRV_String_setCopy(SRV_String* srvstr, const char* str, int len){
 	if(len<0)
 		len = strlen(str);
 
 	srvstr->data = malloc(len+1);
+	if(!srvstr->data)
+		return -1;
+
 	srvstr->length = len;
 	memcpy(srvstr->data, str, len);
 	srvstr->data[len] = '\0';
+	return 0;
 }
 
 void SRV_String_deleteMembers(SRV_String* this){
+	if(!this)
+		return;
 	if(this->data)
 		free(this->data);
 	this->data = NULL;
@@ -53,6 +78,8 @@ void SRV_String_deleteMembers(SRV_String* this){
 }
 
 void SRV_String_delete(SRV_String* this){
+	if(!this)
+		return;
 	free(this->data);
 	free(this);
 }
@@ -326,11 +353,15 @@ getCoreDataRsp_t* getCoreDataRsp_t_new(){
 }
 
 void SRV_ident_t_init (SRV_ident_t* this){
+	if(!this)
+		return;
 	this->idType = SRV_IDT_undefined;
 	SRV_String_init(&this->idSpec);
 }
 
 void PVSL_t_init (PVSL_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_init(&this->carrier);
 	SRV_ident_t_init(&this->creatingInstance);
 	SRV_String_init(&this->name);
@@ -342,6 +373,8 @@ void PVSL_t_init (PVSL_t* this){
 }
 
 void PVS_t_init (PVS_t* this){
+	if(!this)
+		return;
 	SRV_String_init(&this->name);
 	this->hasName = false;
 	SRV_String_init(&this->unit);
@@ -358,6 +391,8 @@ void PVS_t_init (PVS_t* this){
 }
 
 void LCE_t_init (LCE_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_init(&this->creatingInstance);
 	SRV_ident_t_init(&this->writingInstance);
 	SRV_String_init(&this->eventClass);
@@ -373,12 +408,16 @@ void LCE_t_init (LCE_t* this){
 }
 
 void SRV_msgHeader_t_init (SRV_msgHeader* this){
+	if(!this)
+		return;
 	SRV_ident_t_init(&this->receiver);
 	SRV_ident_t_init(&this->sender);
 	this->msgNo = 0;
 }
 
 void SRV_serviceGeneric_init(void* this, SRV_service_t type){
+	if(!this)
+		return;
 	switch(type){
 	case SRV_createAASReq:
 		createAASReq_t_init(this);
@@ -465,103 +504,159 @@ void SRV_serviceGeneric_init(void* this, SRV_service_t type){
 }
 
 void createAASReq_t_init (createAASReq_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_init(&this->aasId);
 	SRV_ident_t_init(&this->assetId);
 	SRV_String_init(&this->aasName);
 }
 void createAASRsp_t_init (createAASRsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void deleteAASReq_t_init (deleteAASReq_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_init(&this->aasId);
 }
 void deleteAASRsp_t_init (deleteAASRsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void createPVSLReq_t_init (createPVSLReq_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_init(&this->carrier);
 	SRV_String_init(&this->pvslName);
 }
 void createPVSLRsp_t_init (createPVSLRsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void deletePVSLReq_t_init (deletePVSLReq_t* this){
+	if(!this)
+		return;
 	SRV_String_init(&this->pvslName);
 }
 void deletePVSLRsp_t_init (deletePVSLRsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void createPVSReq_t_init (createPVSReq_t* this){
+	if(!this)
+		return;
 	PVS_t_init(&this->pvs);
 	SRV_String_init(&this->pvslName);
 }
 void createPVSRsp_t_init (createPVSRsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void deletePVSReq_t_init (deletePVSReq_t* this){
+	if(!this)
+		return;
 	SRV_String_init(&this->pvslName);
 	SRV_String_init(&this->pvsName);
 }
 void deletePVSRsp_t_init (deletePVSRsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void createLCEReq_t_init (createLCEReq_t* this){
+	if(!this)
+		return;
 	LCE_t_init(&this->lce);
 }
 void createLCERsp_t_init (createLCERsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void deleteLCEReq_t_init (deleteLCEReq_t* this){
+	if(!this)
+		return;
 	this->lceId = 0;
 }
 void deleteLCERsp_t_init (deleteLCERsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void getPVSReq_t_init (getPVSReq_t* this){
+	if(!this)
+		return;
 	SRV_String_init(&this->pvslName);
 	SRV_String_init(&this->pvsName);
 }
 void getPVSRsp_t_init (getPVSRsp_t* this){
+	if(!this)
+		return;
 	PVS_t_init(&this->pvs);
 	this->status = 0;
 }
 void setPVSReq_t_init (setPVSReq_t* this){
+	if(!this)
+		return;
 	PVS_t_init(&this->pvs);
 	SRV_String_init(&this->pvslName);
 	//SRV_String_init(&this->pvsName);
 }
 void setPVSRsp_t_init (setPVSRsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 void getLCEReq_t_init (getLCEReq_t* this){
+	if(!this)
+		return;
 	this->lceId = 0;
 }
 void getLCERsp_t_init (getLCERsp_t* this){
+	if(!this)
+		return;
 	LCE_t_init(&this->lce);
 	this->status = 0;
 }
 void setLCEReq_t_init (setLCEReq_t* this){
+	if(!this)
+		return;
 	LCE_t_init(&this->lce);
 	//this->lceId = 0;
 }
 void setLCERsp_t_init (setLCERsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 }
 
 void getCoreDataReq_t_init(getCoreDataReq_t* this){
+	if(!this)
+		return;
 	this->dummy = 42;
 }
 void getCoreDataRsp_t_init(getCoreDataRsp_t* this){
+	if(!this)
+		return;
 	this->status = 0;
 	this->numPvsl = 0;
 	this->pvsl = NULL;
 }
 
 void SRV_ident_t_deleteMembers (SRV_ident_t* this){
+	if(!this)
+		return;
 	SRV_String_deleteMembers(&this->idSpec);
 }
 
 void PVSL_t_deleteMembers (PVSL_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_deleteMembers(&this->carrier);
 	SRV_ident_t_deleteMembers(&this->creatingInstance);
 	SRV_String_deleteMembers(&this->name);
@@ -576,6 +671,8 @@ void PVSL_t_deleteMembers (PVSL_t* this){
 }
 
 void PVS_t_deleteMembers (PVS_t* this){
+	if(!this)
+		return;
 	SRV_String_deleteMembers(&this->name);
 	SRV_String_deleteMembers(&this->unit);
 	SRV_ident_t_deleteMembers(&this->ID);
@@ -588,6 +685,8 @@ void PVS_t_deleteMembers (PVS_t* this){
 }
 
 void LCE_t_deleteMembers (LCE_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_deleteMembers(&this->creatingInstance);
 	SRV_ident_t_deleteMembers(&this->writingInstance);
 	SRV_String_deleteMembers(&this->eventClass);
@@ -601,12 +700,16 @@ void LCE_t_deleteMembers (LCE_t* this){
 }
 
 void SRV_msgHeader_t_deleteMembers (SRV_msgHeader* this){
+	if(!this)
+		return;
 	SRV_ident_t_deleteMembers(&this->receiver);
 	SRV_ident_t_deleteMembers(&this->sender);
 }
 
 
 void SRV_serviceGeneric_deleteMembers(void* this, SRV_service_t type){
+	if(!this)
+		return;
 	switch(type){
 	case SRV_createAASReq:
 		createAASReq_t_deleteMembers(this);
@@ -693,63 +796,89 @@ void SRV_serviceGeneric_deleteMembers(void* this, SRV_service_t type){
 }
 
 void createAASReq_t_deleteMembers (createAASReq_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_deleteMembers(&this->aasId);
 	SRV_ident_t_deleteMembers(&this->assetId);
 	SRV_String_deleteMembers(&this->aasName);
 }
 void createAASRsp_t_deleteMembers (createAASRsp_t* this){}
 void deleteAASReq_t_deleteMembers (deleteAASReq_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_deleteMembers(&this->aasId);
 }
 void deleteAASRsp_t_deleteMembers (deleteAASRsp_t* this){}
 void createPVSLReq_t_deleteMembers (createPVSLReq_t* this){
+	if(!this)
+		return;
 	SRV_ident_t_deleteMembers(&this->carrier);
 	SRV_String_deleteMembers(&this->pvslName);
 }
 void createPVSLRsp_t_deleteMembers (createPVSLRsp_t* this){}
 void deletePVSLReq_t_deleteMembers (deletePVSLReq_t* this){
+	if(!this)
+		return;
 	SRV_String_deleteMembers(&this->pvslName);
 }
 void deletePVSLRsp_t_deleteMembers (deletePVSLRsp_t* this){}
 void createPVSReq_t_deleteMembers (createPVSReq_t* this){
+	if(!this)
+		return;
 	PVS_t_deleteMembers(&this->pvs);
 	SRV_String_deleteMembers(&this->pvslName);
 }
 void createPVSRsp_t_deleteMembers (createPVSRsp_t* this){}
 void deletePVSReq_t_deleteMembers (deletePVSReq_t* this){
+	if(!this)
+		return;
 	SRV_String_deleteMembers(&this->pvslName);
 	SRV_String_deleteMembers(&this->pvsName);
 }
 void deletePVSRsp_t_deleteMembers (deletePVSRsp_t* this){}
 void createLCEReq_t_deleteMembers (createLCEReq_t* this){
+	if(!this)
+		return;
 	LCE_t_deleteMembers(&this->lce);
 }
 void createLCERsp_t_deleteMembers (createLCERsp_t* this){}
 void deleteLCEReq_t_deleteMembers (deleteLCEReq_t* this){}
 void deleteLCERsp_t_deleteMembers (deleteLCERsp_t* this){}
 void getPVSReq_t_deleteMembers (getPVSReq_t* this){
+	if(!this)
+		return;
 	SRV_String_deleteMembers(&this->pvslName);
 	SRV_String_deleteMembers(&this->pvsName);
 }
 void getPVSRsp_t_deleteMembers (getPVSRsp_t* this){
+	if(!this)
+		return;
 	PVS_t_deleteMembers(&this->pvs);
 }
 void setPVSReq_t_deleteMembers (setPVSReq_t* this){
+	if(!this)
+		return;
 	PVS_t_deleteMembers(&this->pvs);
 	SRV_String_deleteMembers(&this->pvslName);
 }
 void setPVSRsp_t_deleteMembers (setPVSRsp_t* this){}
 void getLCEReq_t_deleteMembers (getLCEReq_t* this){}
 void getLCERsp_t_deleteMembers (getLCERsp_t* this){
+	if(!this)
+		return;
 	LCE_t_deleteMembers(&this->lce);
 }
 void setLCEReq_t_deleteMembers (setLCEReq_t* this){
+	if(!this)
+		return;
 	LCE_t_deleteMembers(&this->lce);
 }
 void setLCERsp_t_deleteMembers (setLCERsp_t* this){}
 
 void getCoreDataReq_t_deleteMembers(getCoreDataReq_t* this){}
 void getCoreDataRsp_t_deleteMembers(getCoreDataRsp_t* this){
+	if(!this)
+		return;
 	if(this->pvsl){
 		for(uint i = 0; i<this->numPvsl; i++){
 			PVSL_t_deleteMembers(&this->pvsl[i]);

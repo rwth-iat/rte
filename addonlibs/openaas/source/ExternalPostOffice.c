@@ -168,6 +168,7 @@ OV_DLLFNCEXPORT void openaas_ExternalPostOffice_typemethod(
 		ov_string_setvalue(&psendAASMessage->v_path, pinst->v_tmpPath);
 		ov_string_append(&psendAASMessage->v_path, ".postoffice");
 		// send message
+		Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
 		psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
 		ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, pinst->v_postoffice);
 		psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;

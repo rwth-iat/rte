@@ -15,14 +15,11 @@
 #include <stdint.h>
 #include <string.h>
 
-#define JSON_SEC_TO_DATETIME 10000000LL
-#define JSON_DATETIME_UNIXEPOCH (11644473600LL * JSON_SEC_TO_DATETIME)
-
-
 // types for sub-structures
 
 typedef int status_t;
 typedef uint64_t SRV_DateTime;
+extern const size_t SRV_VALUEMEMSIZE;
 
 typedef struct {
 	size_t length;
@@ -253,7 +250,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	int lceId;
+	uint64_t lceId;
 } deleteLCEReq_t;
 
 typedef struct {
@@ -316,8 +313,9 @@ typedef struct {
 
 SRV_String* SRV_String_new();
 SRV_String* SRV_String_copy(SRV_String* to, const SRV_String* from);
+int srvStrEq(const SRV_String* str1, const SRV_String* str2);
 void SRV_String_init(SRV_String* this);
-void SRV_String_setCopy(SRV_String* srvstr, const char* str, int len);
+int SRV_String_setCopy(SRV_String* srvstr, const char* str, int len);
 void SRV_String_deleteMembers(SRV_String* this);
 void SRV_String_delete(SRV_String* this);
 
