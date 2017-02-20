@@ -21,7 +21,7 @@ cd build && sudo chmod +x tclsh acplt_build.tcl
 ```
 and run the build command:
 ```sh
-cd build && tclsh acplt_build.tcl
+tclsh acplt_build.tcl
 ```
 or
 ```sh
