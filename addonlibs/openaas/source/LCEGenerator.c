@@ -170,6 +170,8 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 		break;
 	}
 
+	LifeCycleEntry_deleteMembers(&lce);
+	IdentificationType_deleteMembers(&aasId);
     return;
 }
 
