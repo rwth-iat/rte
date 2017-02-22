@@ -18213,7 +18213,7 @@ UA_UInt16 UA_Server_run_iterate(UA_Server *server, UA_Boolean waitInternal) {
     /* Get work from the networklayer */
     for(size_t i = 0; i < server->config.networkLayersSize; ++i) {
         UA_ServerNetworkLayer *nl = &server->config.networkLayers[i];
-        UA_Job *jobs;
+        UA_Job *jobs = NULL;
         size_t jobsSize;
         /* only the last networklayer waits on the tieout */
         if(i == server->config.networkLayersSize-1)
@@ -18270,11 +18270,12 @@ UA_UInt16 UA_Server_run_iterate(UA_Server *server, UA_Boolean waitInternal) {
 UA_StatusCode UA_Server_run_shutdown(UA_Server *server) {
     for(size_t i = 0; i < server->config.networkLayersSize; ++i) {
         UA_ServerNetworkLayer *nl = &server->config.networkLayers[i];
-        UA_Job *stopJobs;
+        UA_Job *stopJobs = NULL;
         size_t stopJobsSize = nl->stop(nl, &stopJobs);
         for(size_t j = 0; j < stopJobsSize; ++j)
             processJob(server, &stopJobs[j]);
-        UA_free(stopJobs);
+        if (stopJobsSize > 0)
+        	UA_free(stopJobs);
     }
 
 #ifdef UA_ENABLE_MULTITHREADING
@@ -19874,11 +19875,11 @@ void UA_Discovery_cleanupTimedOut(UA_Server *server, UA_DateTime nowMonotonic) {
         UA_Boolean semaphoreDeleted = UA_FALSE;
 
         if (current->registeredServer.semaphoreFilePath.length) {
-            char* filePath = malloc(sizeof(char)*current->registeredServer.semaphoreFilePath.length+1);
+            char* filePath = UA_malloc(sizeof(char)*current->registeredServer.semaphoreFilePath.length+1);
             memcpy( filePath, current->registeredServer.semaphoreFilePath.data, current->registeredServer.semaphoreFilePath.length );
             filePath[current->registeredServer.semaphoreFilePath.length] = '\0';
             semaphoreDeleted = access( filePath, 0 ) == -1;
-            free(filePath);
+            UA_free(filePath);
         }
 
         if (semaphoreDeleted || (server->config.discoveryCleanupTimeout && current->lastSeen < timedOut)) {
@@ -24112,7 +24113,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
     UA_NotificationMessageEntry *retransmission = NULL;
     if(notifications > 0) {
         /* Allocate the retransmission entry */
-        retransmission = malloc(sizeof(UA_NotificationMessageEntry));
+        retransmission = UA_malloc(sizeof(UA_NotificationMessageEntry));
         if(!retransmission) {
             UA_LOG_WARNING_SESSION(server->config.logger, sub->session,
                                    "Subscription %u | Could not allocate memory "
@@ -24887,7 +24888,7 @@ static void UA_Client_deleteMembers(UA_Client* client) {
     UA_Client_NotificationsAckNumber *n, *tmp;
     LIST_FOREACH_SAFE(n, &client->pendingNotificationsAcks, listEntry, tmp) {
         LIST_REMOVE(n, listEntry);
-        free(n);
+        UA_free(n);
     }
     UA_Client_Subscription *sub, *tmps;
     LIST_FOREACH_SAFE(sub, &client->subscriptions, listEntry, tmps)
@@ -26529,7 +26530,7 @@ socket_write(UA_Connection *connection, UA_ByteString *buf) {
 
 static UA_StatusCode
 socket_recv(UA_Connection *connection, UA_ByteString *response, UA_UInt32 timeout) {
-    response->data = malloc(connection->localConf.recvBufferSize);
+    response->data = UA_malloc(connection->localConf.recvBufferSize);
     if(!response->data) {
         response->length = 0;
         return UA_STATUSCODE_BADOUTOFMEMORY; /* not enough memory retry */
@@ -26621,7 +26622,7 @@ static UA_StatusCode socket_set_nonblocking(SOCKET sockfd) {
 
 static void FreeConnectionCallback(UA_Server *server, void *ptr) {
     UA_Connection_deleteMembers((UA_Connection*)ptr);
-    free(ptr);
+    UA_free(ptr);
  }
 
 /***************************/
@@ -26734,7 +26735,7 @@ ServerNetworkLayerTCP_closeConnection(UA_Connection *connection) {
 /* call only from the single networking thread */
 static UA_StatusCode
 ServerNetworkLayerTCP_add(ServerNetworkLayerTCP *layer, UA_Int32 newsockfd) {
-    UA_Connection *c = malloc(sizeof(UA_Connection));
+    UA_Connection *c = UA_malloc(sizeof(UA_Connection));
     if(!c)
         return UA_STATUSCODE_BADINTERNALERROR;
 
@@ -26764,10 +26765,10 @@ ServerNetworkLayerTCP_add(ServerNetworkLayerTCP *layer, UA_Int32 newsockfd) {
     c->releaseRecvBuffer = ServerNetworkLayerReleaseRecvBuffer;
     c->state = UA_CONNECTION_OPENING;
     struct ConnectionMapping *nm;
-    nm = realloc(layer->mappings, sizeof(struct ConnectionMapping)*(layer->mappingsSize+1));
+    nm = UA_realloc(layer->mappings, sizeof(struct ConnectionMapping)*(layer->mappingsSize+1));
     if(!nm) {
         UA_LOG_ERROR(layer->logger, UA_LOGCATEGORY_NETWORK, "No memory for a new Connection");
-        free(c);
+        UA_free(c);
         return UA_STATUSCODE_BADINTERNALERROR;
     }
     layer->mappings = nm;
@@ -26884,7 +26885,7 @@ ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt1
        resulted socket */
     if(resultsize == 0)
         return 0;
-    UA_Job *js = malloc(sizeof(UA_Job) * (size_t)resultsize * 2);
+    UA_Job *js = UA_malloc(sizeof(UA_Job) * (size_t)resultsize * 2);
     if(!js)
         return 0;
 
@@ -26920,7 +26921,7 @@ ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt1
     }
 
     if(j == 0) {
-        free(js);
+        UA_free(js);
         js = NULL;
     }
 
@@ -26936,7 +26937,7 @@ ServerNetworkLayerTCP_stop(UA_ServerNetworkLayer *nl, UA_Job **jobs) {
                 layer->mappingsSize);
     shutdown((SOCKET)layer->serversockfd,2);
     CLOSESOCKET(layer->serversockfd);
-    UA_Job *items = malloc(sizeof(UA_Job) * layer->mappingsSize * 2);
+    UA_Job *items = UA_malloc(sizeof(UA_Job) * layer->mappingsSize * 2);
     if(!items)
         return 0;
     for(size_t i = 0; i < layer->mappingsSize; ++i) {
@@ -26957,8 +26958,8 @@ ServerNetworkLayerTCP_stop(UA_ServerNetworkLayer *nl, UA_Job **jobs) {
 /* run only when the server is stopped */
 static void ServerNetworkLayerTCP_deleteMembers(UA_ServerNetworkLayer *nl) {
     ServerNetworkLayerTCP *layer = nl->handle;
-    free(layer->mappings);
-    free(layer);
+    UA_free(layer->mappings);
+    UA_free(layer);
     UA_String_deleteMembers(&nl->discoveryUrl);
 }
 
@@ -26973,7 +26974,7 @@ UA_ServerNetworkLayerTCP(UA_ConnectionConfig conf, UA_UInt16 port) {
 
     UA_ServerNetworkLayer nl;
     memset(&nl, 0, sizeof(UA_ServerNetworkLayer));
-    ServerNetworkLayerTCP *layer = calloc(1,sizeof(ServerNetworkLayerTCP));
+    ServerNetworkLayerTCP *layer = UA_calloc(1,sizeof(ServerNetworkLayerTCP));
     if(!layer)
         return nl;
     
@@ -27922,10 +27923,10 @@ void addDataTypes(UA_Server* server, const UA_DataType *customDataTypes, size_t 
 	server->config.customDataTypesSize = customDataTypesSize;
 }
 
-/*
 void* ov_database_calloc(OV_UINT num, OV_UINT size){
 	size_t total = num * size;
 	void *p = ov_database_malloc(total);
 	if (!p) return NULL;
 	return memset(p, 0, total);
-}*/
+}
+

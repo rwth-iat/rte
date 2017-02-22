@@ -9,7 +9,6 @@
 
 #include "open62541.h"
 
-
 /*	restore pre-anti-warning state	*/
 #ifndef WIN32
 #define WIN32
@@ -45,7 +44,8 @@ typedef struct UA_CustomDataTypes{
 	KS_DATAPACKET* outData;
 } ov_UA_Connection;
 */
-
+typedef UA_Connection* UA_ConnectionPTR;       
+typedef UA_Connection** UA_ConnectionPTRPTR;
 typedef UA_Server* OV_PTR_UA_Server;
 typedef UA_Client* OV_PTR_UA_Client;
 	

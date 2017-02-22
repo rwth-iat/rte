@@ -61,6 +61,11 @@ OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvObject(UA_NodeId 
 
 UA_Int32 opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access);
 
+UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port);
+
+OV_INSTPTR_opcua_ovNetworkLayer getOvNetworkLayer();
+void opcua_ovNetworklayer_addConnToDelete(UA_Connection* connection);
+void opcua_ovNetworklayer_addConnToClose(UA_Connection* connection);
 
 OV_RESULT copyOvStringToOPCUA(OV_STRING src, UA_String* dst);
 OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst);

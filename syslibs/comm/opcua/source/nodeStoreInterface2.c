@@ -658,14 +658,15 @@ static void OV_NodeStore2_deleteNodestore(void *handle){
 }
 
 static void OV_NodeStore2_deleteNode(UA_Node *node){
-	//UA_Node_deleteMembersAnyNodeClass(node);
-	ov_database_free(node);
+	if (node)
+		UA_Node_deleteMembersAnyNodeClass(node);
+	UA_free(node);
 }
 static void OV_NodeStore2_releaseNode(void *handle, const UA_Node *node){
 	OV_NodeStore2_deleteNode((UA_Node*)node);
 }
 static UA_StatusCode OV_NodeStore2_insert(void *handle, UA_Node *node, UA_NodeId *parrentNode){
-	OV_NodeStore2_releaseNode(handle, node);
+	//OV_NodeStore2_releaseNode(handle, node);
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 
@@ -682,6 +683,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
+	OV_ELEMENT				element;
 	UA_NodeClass 			*nodeClass = NULL;
 	OV_ANY					value = {.value.vartype = OV_VT_VOID, .value.valueunion.val_string = NULL, .state=OV_ST_UNKNOWN, .time.secs = 0, .time.usecs = 0};
 	OV_ANY					emptyAny = {.value.vartype = OV_VT_VOID, .value.valueunion.val_string = NULL, .state=OV_ST_UNKNOWN, .time.secs = 0, .time.usecs = 0};
@@ -692,54 +694,54 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		ov_memstack_unlock();
 		return NULL;
 	}
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+	element = path.elements[path.size-1];
+	ov_memstack_unlock();
+
+	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&element, pTicket, &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
-		ov_memstack_unlock();
 		return NULL;
 	}
 
 	nodeClass = UA_NodeClass_new();
 	if(!nodeClass){
 		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		ov_memstack_unlock();
 		return NULL;
 	}
-	switch(path.elements[path.size-1].elemtype){
+	switch(element.elemtype){
 	case OV_ET_OBJECT:
 		if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_class){
-			newNode = (UA_Node*)ov_database_malloc(sizeof(UA_ObjectTypeNode));
+			newNode = (UA_Node*)UA_malloc(sizeof(UA_ObjectTypeNode));
 			*nodeClass = UA_NODECLASS_OBJECTTYPE;
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
 			*nodeClass = UA_NODECLASS_VARIABLETYPE;
-			newNode = (UA_Node*)ov_database_malloc(sizeof(UA_VariableTypeNode));
+			newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableTypeNode));
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
 			*nodeClass = UA_NODECLASS_REFERENCETYPE;
-			newNode = (UA_Node*)ov_database_malloc(sizeof(UA_ReferenceTypeNode));
+			newNode = (UA_Node*)UA_malloc(sizeof(UA_ReferenceTypeNode));
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
 			*nodeClass = UA_NODECLASS_VARIABLE;
-			newNode = (UA_Node*)ov_database_malloc(sizeof(UA_VariableNode));
+			newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
 		} else if(Ov_CanCastTo(opcua_methodNode, pobj)){
 			*nodeClass = UA_NODECLASS_METHOD;
-			newNode = (UA_Node*)ov_database_malloc(sizeof(UA_MethodNode));
+			newNode = (UA_Node*)UA_malloc(sizeof(UA_MethodNode));
 		} else{
 			*nodeClass = UA_NODECLASS_OBJECT;
-			newNode = (UA_Node*)ov_database_malloc(sizeof(UA_ObjectNode));
+			newNode = (UA_Node*)UA_malloc(sizeof(UA_ObjectNode));
 		}
 		break;
 	case OV_ET_VARIABLE:
 	case OV_ET_MEMBER:
 		*nodeClass = UA_NODECLASS_VARIABLE;
-		newNode = (UA_Node*)ov_database_malloc(sizeof(UA_VariableNode));
+		newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
 		break;
 	case OV_ET_OPERATION:
 		*nodeClass = UA_NODECLASS_METHOD;
-		newNode = (UA_Node*)ov_database_malloc(sizeof(UA_MethodNode));
+		newNode = (UA_Node*)UA_malloc(sizeof(UA_MethodNode));
 		break;
 	case OV_ET_CHILDLINK:
 	case OV_ET_PARENTLINK:
 	default:
 		*nodeClass = UA_NODECLASS_UNSPECIFIED;
-		ov_memstack_unlock();
 		return NULL;
 	}
 
@@ -755,7 +757,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	newNode->browseName = qName;
 
 	// Description
-	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &(path.elements[path.size-1]));
+	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &element);
 	UA_LocalizedText lText;
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
@@ -778,7 +780,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		newNode->nodeId.identifier.numeric = nodeId->identifier.numeric;
 		break;
 	case UA_NODEIDTYPE_STRING:
-		newNode->nodeId.identifier.string = nodeId->identifier.string;
+		UA_String_copy(&nodeId->identifier.string, &newNode->nodeId.identifier.string);
 		break;
 	case UA_NODEIDTYPE_GUID:
 		newNode->nodeId.identifier.guid = nodeId->identifier.guid;
@@ -793,7 +795,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 
 	// WriteMask
 	UA_UInt32 writeMask = 0;
-	if(path.elements[path.size-1].elemtype != OV_ET_VARIABLE){
+	if(element.elemtype != OV_ET_VARIABLE){
 		if(access & OV_AC_WRITE){
 			writeMask |= (1<<2);	/*	BrowseName	*/
 			writeMask |= (1<<6);	/*	DisplayName	*/
@@ -842,8 +844,8 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		break;
 	case UA_NODECLASS_VARIABLE:
 		// arrayDimensionsSize & arrayDimensions
-		pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
-		switch(path.elements[path.size-1].elemtype) {
+		pobjtemp = Ov_StaticPtrCast(ov_object, element.elemunion.pvar);
+		switch(element.elemtype) {
 		case OV_ET_MEMBER:
 		case OV_ET_VARIABLE:
 			if(Ov_CanCastTo(ov_variable, pobjtemp)){
@@ -875,7 +877,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			}
 			break;
 		case OV_ET_OBJECT:
-			pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].pobj);
+			pobjtemp = Ov_StaticPtrCast(ov_object, element.pobj);
 			if(Ov_CanCastTo(ov_variable, pobjtemp)){
 				switch((((OV_INSTPTR_ov_variable)pobjtemp)->v_vartype) & OV_VT_KSMASK){
 				case OV_VT_ANY:
@@ -914,13 +916,13 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			break;
 		}
 		// valuerank
-		pobjtemp = path.elements[path.size-1].pobj;
+		pobjtemp = element.pobj;
 		Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
 		if((!pVtblObj) || (ov_activitylock)){
 			pVtblObj = pclass_ov_object->v_pvtable;
 		}
-		if (path.elements[path.size-1].elemtype == OV_ET_VARIABLE){
-			pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
+		if (element.elemtype == OV_ET_VARIABLE){
+			pobjtemp = Ov_StaticPtrCast(ov_object, element.elemunion.pvar);
 		}
 		if(Ov_GetParent(ov_instantiation, pobjtemp) == pclass_ov_variable){
 			switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
@@ -948,15 +950,15 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			break;
 		}
 		// value & dataType
-		pobjtemp = path.elements[path.size-1].pobj;
+		pobjtemp = element.pobj;
 		Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
 		if((!pVtblObj) || (ov_activitylock)){
 			pVtblObj = pclass_ov_object->v_pvtable;
 		}
-		switch(path.elements[path.size-1].elemtype){
+		switch(element.elemtype){
 		case OV_ET_MEMBER:
 		case OV_ET_VARIABLE:
-			result = ov_resultToUaStatusCode((pVtblObj->m_getvar)(pobjtemp, &(path.elements[path.size-1]), &value));
+			result = ov_resultToUaStatusCode((pVtblObj->m_getvar)(pobjtemp, &element, &value));
 			value.value.vartype &= OV_VT_KSMASK;
 			if(result == UA_STATUSCODE_GOOD){
 				result = ov_AnyToVariant(&value, &(((UA_VariableNode*)newNode)->value.data.value.value));
@@ -995,10 +997,10 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		break;
 	case UA_NODECLASS_VARIABLETYPE:
 		// arrayDimensionsSize & arrayDimensions
-		switch(path.elements[path.size-1].elemtype) {
+		switch(element.elemtype) {
 		case OV_ET_MEMBER:
 		case OV_ET_VARIABLE:
-			pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
+			pobjtemp = Ov_StaticPtrCast(ov_object, element.elemunion.pvar);
 			if(Ov_CanCastTo(ov_variable, pobjtemp)){
 				switch((((OV_INSTPTR_ov_variable)pobjtemp)->v_vartype) & OV_VT_KSMASK){
 				case OV_VT_ANY:
@@ -1028,7 +1030,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			}
 			break;
 		case OV_ET_OBJECT:
-			pobjtemp = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].pobj);
+			pobjtemp = Ov_StaticPtrCast(ov_object, element.pobj);
 			if(Ov_CanCastTo(ov_variable, pobjtemp)){
 				switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
 				case OV_VT_ANY:
@@ -1067,7 +1069,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			break;
 		}
 		// valueRank
-		pobjtemp = path.elements[path.size-1].pobj;
+		pobjtemp = element.pobj;
 		Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
 		if((!pVtblObj) || (ov_activitylock)){
 			pVtblObj = pclass_ov_object->v_pvtable;
@@ -1089,7 +1091,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			break;
 		}
 		// value
-		pobjtemp = path.elements[path.size-1].pobj;
+		pobjtemp = element.pobj;
 		Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
 		if((!pVtblObj) || (ov_activitylock)){
 			pVtblObj = pclass_ov_object->v_pvtable;
@@ -1098,7 +1100,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		// isAbstract
 		((UA_VariableTypeNode*)newNode)->isAbstract = UA_FALSE;
 		// dataType
-		pobjtemp = path.elements[path.size-1].pobj;
+		pobjtemp = element.pobj;
 		Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
 		if((!pVtblObj) || (ov_activitylock)){
 			pVtblObj = pclass_ov_object->v_pvtable;
@@ -1112,7 +1114,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	// references
 	UA_BrowseDescription 	*browseDescriptions = NULL;
 	UA_ReferenceDescription *references = NULL;
-	OV_ELEMENT*				pNode		=	NULL;
+	OV_ELEMENT				pNode;
 	OV_PATH					nodePath;
 	OV_UINT					j;
 	OV_UINT					refCount	=	0;
@@ -1134,12 +1136,14 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	#define INDEX_HasComponent					9
 	#define INDEX_OvReference					10
 
+	ov_memstack_lock();
 	if(opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &nodePath) != UA_STATUSCODE_GOOD){
 		result = UA_STATUSCODE_BADNODEIDUNKNOWN;
 		ov_memstack_unlock();
 		return NULL;
 	}
-	pNode = &(nodePath.elements[nodePath.size - 1]);
+	pNode = nodePath.elements[nodePath.size - 1];
+	ov_memstack_unlock();
 	for(j=1; j<UAREFS_LENGTH; j++){
 		uaReferences[j] = -1;
 	}
@@ -1154,13 +1158,13 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 * count all reference
 ********************************************************************************************************************************/
 	// HasProperty
-	countReferenceDescriptions_HasProperty2(browseDescriptions, pNode, &refCount);
+	countReferenceDescriptions_HasProperty2(browseDescriptions, &pNode, &refCount);
 	if (refCount == refCountBefore){
 		uaReferences[INDEX_HasProperty] = 1;
 	}
 	refCountBefore = refCount;
 	// HasTypeDefinition
-	countReferenceDescriptions_HasTypeDefinition2(browseDescriptions, pNode, &refCount);
+	countReferenceDescriptions_HasTypeDefinition2(browseDescriptions, &pNode, &refCount);
 	if (refCount == refCountBefore){
 		uaReferences[INDEX_HasTypeDefinition] = 1;
 	}
@@ -1176,19 +1180,19 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	// Aggregates
 	// Do nothing as this reference type is abstract
 	// Organizes
-	countReferenceDescriptions_Organizes2(browseDescriptions, pNode, &refCount);
+	countReferenceDescriptions_Organizes2(browseDescriptions, &pNode, &refCount);
 	if (refCount == refCountBefore){
 		uaReferences[INDEX_Organizes] = 1;
 	}
 	refCountBefore = refCount;
 	// HasSubtype
-	countReferenceDescriptions_HasSubtype2(browseDescriptions, pNode, &refCount);
+	countReferenceDescriptions_HasSubtype2(browseDescriptions, &pNode, &refCount);
 	if(refCount == refCountBefore){
 		uaReferences[INDEX_HasSubtype] = 1;
 	}
 	refCountBefore = refCount;
 	// HasComponent
-	countReferenceDescriptions_HasComponent2(browseDescriptions, pNode, &refCount);
+	countReferenceDescriptions_HasComponent2(browseDescriptions, &pNode, &refCount);
 	if(refCount == refCountBefore){
 		uaReferences[INDEX_HasComponent] = 1;
 	}
@@ -1208,7 +1212,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	newNode->references = UA_calloc(refCount, sizeof(UA_ReferenceNode));
 	if(!references && !newNode->references && refCount>0){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
-		ov_memstack_unlock();
 		return NULL;
 	}
 	newNode->referencesSize = refCount;
@@ -1218,12 +1221,12 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	 ********************************************************************************************************************************/
 	// HasProperty
 	if (uaReferences[INDEX_HasProperty] != 1){
-		fillReferenceDescriptions_HasProperty2(browseDescriptions, pNode, &refCount, browseDescriptions->resultMask,
+		fillReferenceDescriptions_HasProperty2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
 												references, &result);
 	}
 	// HasTypeDefinition
 	if (uaReferences[INDEX_HasTypeDefinition] != 1){
-		fillReferenceDescriptions_HasTypeDefinition2(browseDescriptions, pNode, &refCount, browseDescriptions->resultMask,
+		fillReferenceDescriptions_HasTypeDefinition2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
 												references, &result);
 	}
 	// References
@@ -1238,17 +1241,17 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	// Do nothing as this reference type is abstract
 	// Organizes
 	if (uaReferences[INDEX_Organizes] != 1){
-		fillReferenceDescriptions_Organizes2(browseDescriptions, pNode, &refCount, browseDescriptions->resultMask,
+		fillReferenceDescriptions_Organizes2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
 												references, &result);
 	}
 	// HasSubtype
 	if (uaReferences[INDEX_HasSubtype] != 1){
-		fillReferenceDescriptions_HasSubtype2(browseDescriptions, pNode, &refCount, browseDescriptions->resultMask,
+		fillReferenceDescriptions_HasSubtype2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
 												references, &result);
 	}
 	// HasComponent
 	if (uaReferences[INDEX_HasComponent] != 1){
-		fillReferenceDescriptions_HasComponent2(browseDescriptions, pNode, &refCount, browseDescriptions->resultMask,
+		fillReferenceDescriptions_HasComponent2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
 												references, &result);
 	}
 	// OvReferences
@@ -1262,7 +1265,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		newNode->references[i].targetId = references[i].nodeId;
 		newNode->references[i].isInverse = !references[i].isForward;
 	}
-	ov_memstack_unlock();
 	return newNode;
 }
 static UA_Node * OV_NodeStore2_getCopyNode(void *handle, const UA_NodeId *nodeId){
@@ -1280,6 +1282,7 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 	OV_VTBLPTR_ov_object	pVtblObj	=	NULL;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_TICKET				*pTicket	=	NULL;
+	OV_ELEMENT				element;
 	OV_ANY					value		=	{.value.vartype = OV_VT_VOID, .value.valueunion = {0}, .state=OV_ST_UNKNOWN, .time = {0, 0}};
 	OV_TIME_SPAN			tempTimeSpan	=	{.secs = 0, .usecs = 0};
 	OV_TIME_SPAN_VEC		tempTimeSpanVec	=	{.veclen = 0, .value = NULL};
@@ -1292,6 +1295,7 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 		ov_memstack_unlock();
 		return UA_STATUSCODE_BADNODEIDEXISTS;
 	}
+	element = path.elements[path.size-1];
 
 	// NodeId
 	// NOTIMPLEMENTED
@@ -1304,14 +1308,14 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 			break;
 		}
 		case UA_NODECLASS_VARIABLE:{
-			pobj = path.elements[path.size-1].pobj;
+			pobj = element.pobj;
 			Ov_GetVTablePtr(ov_object, pVtblObj, pobj);
 			if((!pVtblObj) || (ov_activitylock)){
 				pVtblObj = pclass_ov_object->v_pvtable;
 			}
-			access = (pVtblObj)->m_getaccess(path.elements[path.size-1].pobj, &(path.elements[path.size-1]), pTicket);
+			access = (pVtblObj)->m_getaccess(path.elements[path.size-1].pobj, &element, pTicket);
 			if(access & OV_AC_WRITE){
-				switch(path.elements[path.size-1].elemtype) {
+				switch(element.elemtype) {
 				case OV_ET_MEMBER:
 				case OV_ET_VARIABLE:
 					if(((UA_VariableNode*)node)->value.data.value.hasValue == UA_TRUE){
@@ -1323,12 +1327,12 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 							value.value.vartype |= OV_VT_HAS_TIMESTAMP;
 							value.time = ov_1601nsTimeToOvTime(((UA_VariableNode*)node)->value.data.value.sourceTimestamp);
 						}
-						result = ov_resultToUaStatusCode((pVtblObj->m_setvar)(pobj, &(path.elements[path.size-1]), &value));
+						result = ov_resultToUaStatusCode((pVtblObj->m_setvar)(pobj, &element, &value));
 						if(result == UA_STATUSCODE_BADTYPEMISMATCH
 								&& ((value.value.vartype == OV_VT_DOUBLE
-											&& (path.elements[path.size-1].pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN)
+											&& (element.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN)
 									|| (value.value.vartype == OV_VT_DOUBLE_VEC
-											&& (path.elements[path.size-1].pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN_VEC))){
+											&& (element.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN_VEC))){
 							/*	timeSpans are doubles in UA	*/
 							if(!(value.value.vartype & OV_VT_ISVECTOR)){
 								Ov_DoubleToTimeSpan(value.value.valueunion.val_double * 1000.0, tempTimeSpan);
@@ -1352,7 +1356,7 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 								value.value.vartype |= OV_VT_HAS_TIMESTAMP;
 								value.time = ov_1601nsTimeToOvTime(((UA_VariableNode*)node)->value.data.value.sourceTimestamp);
 							}
-							result = ov_resultToUaStatusCode((pVtblObj->m_setvar)(pobj, &(path.elements[path.size-1]), &value));
+							result = ov_resultToUaStatusCode((pVtblObj->m_setvar)(pobj, &element, &value));
 						}
 					} else {
 						result = UA_STATUSCODE_BADINVALIDARGUMENT;
@@ -1374,18 +1378,17 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 			break;
 		}
 		case UA_NODECLASS_VARIABLETYPE:{
-			pobj = path.elements[path.size-1].pobj;
+			pobj = element.pobj;
 			Ov_GetVTablePtr(ov_object, pVtblObj, pobj);
 			if((!pVtblObj) || (ov_activitylock)){
 				pVtblObj = pclass_ov_object->v_pvtable;
 			}
-			access = (pVtblObj)->m_getaccess(path.elements[path.size-1].pobj, &(path.elements[path.size-1]), pTicket);
+			access = (pVtblObj)->m_getaccess(element.pobj, &element, pTicket);
 			if(access & OV_AC_WRITE){
-				switch(path.elements[path.size-1].elemtype) {
+				switch(element.elemtype) {
 				case OV_ET_MEMBER:
 				case OV_ET_VARIABLE:
 					if(((UA_VariableNode*)node)->value.data.value.hasValue == UA_TRUE){
-						ov_memstack_lock();
 						result = ov_VariantToAny(&(((UA_VariableNode*)node)->value.data.value.value), &value);
 						if(result != UA_STATUSCODE_GOOD){
 							break;
@@ -1394,12 +1397,12 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 							value.value.vartype |= OV_VT_HAS_TIMESTAMP;
 							value.time = ov_1601nsTimeToOvTime(((UA_VariableNode*)node)->value.data.value.sourceTimestamp);
 						}
-						result = ov_resultToUaStatusCode((pVtblObj->m_setvar)(pobj, &(path.elements[path.size-1]), &value));
+						result = ov_resultToUaStatusCode((pVtblObj->m_setvar)(pobj, &element, &value));
 						if(result == UA_STATUSCODE_BADTYPEMISMATCH
 								&& ((value.value.vartype == OV_VT_DOUBLE
-											&& (path.elements[path.size-1].pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN)
+											&& (element.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN)
 									|| (value.value.vartype == OV_VT_DOUBLE_VEC
-											&& (path.elements[path.size-1].pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN_VEC))){
+											&& (element.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_TIME_SPAN_VEC))){
 							/*	timeSpans are doubles in UA	*/
 							if(!(value.value.vartype & OV_VT_ISVECTOR)){
 								Ov_DoubleToTimeSpan(value.value.valueunion.val_double * 1000.0, tempTimeSpan);
@@ -1423,7 +1426,7 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 								value.value.vartype |= OV_VT_HAS_TIMESTAMP;
 								value.time = ov_1601nsTimeToOvTime(((UA_VariableNode*)node)->value.data.value.sourceTimestamp);
 							}
-							result = ov_resultToUaStatusCode((pVtblObj->m_setvar)(pobj, &(path.elements[path.size-1]), &value));
+							result = ov_resultToUaStatusCode((pVtblObj->m_setvar)(pobj, &element, &value));
 						}
 					} else {
 						result = UA_STATUSCODE_BADINVALIDARGUMENT;
@@ -1454,8 +1457,7 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 
 	ov_memstack_unlock();
 	OV_NodeStore2_releaseNode(handle, node);
-
-	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+	return UA_STATUSCODE_GOOD;
 }
 
 void

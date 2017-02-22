@@ -693,6 +693,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 	return UA_STATUSCODE_GOOD;
 }
 
+
 OV_RESULT copyOvStringToOPCUA(OV_STRING src, UA_String* dst) {
 	if(!src)
 		return OV_ERR_OK;

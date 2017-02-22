@@ -25,8 +25,6 @@
 #include "opcua.h"
 #include "libov/ov_macros.h"
 
-OV_INSTPTR_opcua_uaClient opcua_pUaClient = NULL;
-
 OV_DLLFNCEXPORT void opcua_uaClient_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -37,9 +35,6 @@ OV_DLLFNCEXPORT void opcua_uaClient_startup(
 
     /* do what the base class does first */
     ov_object_startup(pobj);
-
-    /* do what */
-    opcua_pUaClient = pinst;
 
    /*	initialize config struct as standard and copy in variables from the server object	*/
    pinst->v_clientConfig = UA_ClientConfig_standard;
