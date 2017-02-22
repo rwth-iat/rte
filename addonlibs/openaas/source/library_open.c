@@ -30,7 +30,6 @@
 #include "libov/ov_result.h"
 #include "libov/ov_time.h"
 
-
 OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 
  OV_RESULT ov_library_setglobalvars_openaas_new(void) {
@@ -40,8 +39,10 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 	OV_INSTPTR_ov_library pLibOPCUA = NULL;
 	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
 	OV_INSTPTR_openaas_aas pComCo = NULL;
+	OV_INSTPTR_openaas_ExternalPostOffice pExternalPost = NULL;
 	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
 	OV_INSTPTR_ksapi_getVar pGetComCoAddressFromAASDiscoveryServer = NULL;
+	OV_INSTPTR_fb_task	purtask = NULL;
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
@@ -135,7 +136,7 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 		}
 	}
 	if(!pGetComCoAddressFromAASDiscoveryServer){
-		result = Ov_CreateObject(ksapi_setVar, pGetComCoAddressFromAASDiscoveryServer, pDomOpenAAS, "GetComCoAddressFromAASDiscoveryServer");
+		result = Ov_CreateObject(ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, pDomOpenAAS, "GetComCoAddressFromAASDiscoveryServer");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create GetComCoAddressFromAASDiscoveryServer object - reason: %s", ov_result_getresulttext(result));
 			return result;
@@ -221,6 +222,11 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			ov_logfile_error("Fatal: could not create nodestoreFunctions object - reason: %s", ov_result_getresulttext(result));
 			return result;
 		}
+		ov_string_setvalue(&pNodeStoreFunctions->v_IPAddressServer, "134.130.125.81");
+		ov_string_setvalue(&pNodeStoreFunctions->v_IPAddressAASDiscoveryServer, "192.168.3.1");
+		ov_string_setvalue(&pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer, "DiscoveryServer");
+		ov_string_setvalue(&pNodeStoreFunctions->v_PathToAASDiscoveryServer, "/TechUnits/DiscoveryServer");
+
 	}
 
 	// create modelmanager
@@ -232,6 +238,7 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			return result;
 		}
 	}
+
 
 	// create ComCo
 	Ov_ForEachChildEx(ov_instantiation, pclass_openaas_aas, pComCo, openaas_aas){
@@ -255,6 +262,26 @@ OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
 			return OV_ERR_GENERIC;
 		}
 
+	}
+
+	// create ExternalPostOffice
+	Ov_ForEachChildEx(ov_instantiation, pclass_openaas_ExternalPostOffice, pExternalPost, openaas_ExternalPostOffice){
+		if(ov_string_compare(pExternalPost->v_identifier, "ExternalPostOffice") == OV_STRCMP_EQUAL){
+			break;
+		}
+	}
+	if(!pExternalPost){
+		result = Ov_CreateObject(openaas_ExternalPostOffice, pExternalPost, pAASFolder, "ExternalPostOffice");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create externalPostOffice object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+		purtask = (OV_INSTPTR_fb_task)ov_path_getobjectpointer("/Tasks/UrTask", 2);
+		result = Ov_Link(fb_tasklist, purtask, pExternalPost);
+		if (Ov_Fail(result)) {
+			ov_logfile_error("Fatal: could not link externalPostOffice object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
 	}
 
 	// Performance

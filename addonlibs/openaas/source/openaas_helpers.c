@@ -43,6 +43,7 @@ void PropertyValueStatementList_init(PropertyValueStatementList *this){
 	IdentificationType_init(&this->CreatingInstance);
 	ov_time_gettime(&this->CreationTime);
 	this->pvs = NULL;
+	this->pvslName = NULL;
 	this->pvsNumber = 0;
 }
 void PropertyValueStatementList_deleteMembers(PropertyValueStatementList *this){
@@ -51,6 +52,8 @@ void PropertyValueStatementList_deleteMembers(PropertyValueStatementList *this){
 	for (OV_UINT i = 0; i < this->pvsNumber; i++){
 		PropertyValueStatement_deleteMembers(&(this->pvs)[i]);
 	}
+	ov_database_free(this->pvs);
+	ov_database_free(this->pvslName);
 	PropertyValueStatementList_init(this);
 }
 void PropertyValueStatementList_delete(PropertyValueStatementList *this){
@@ -72,12 +75,39 @@ void PropertyValueStatement_init(PropertyValueStatement *this){
 	this->ExpressionLogic = 0;
 	this->unit = NULL;
 	this->view = 0;
+	ov_time_gettime(&this->value.TimeStamp);
+	this->value.Value.value.vartype = OV_VT_VOID;
 	this->value.Value.value.valueunion.val_string = NULL;
+	this->value.Value.value.valueunion.val_bool_vec.value = NULL;
+	this->value.Value.value.valueunion.val_bool_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_byte_vec.value = NULL;
+	this->value.Value.value.valueunion.val_byte_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_double_vec.value = NULL;
+	this->value.Value.value.valueunion.val_double_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_generic_vec.value = NULL;
+	this->value.Value.value.valueunion.val_generic_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_int_vec.value = NULL;
+	this->value.Value.value.valueunion.val_int_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_single_vec.value = NULL;
+	this->value.Value.value.valueunion.val_single_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_state_vec.value = NULL;
+	this->value.Value.value.valueunion.val_state_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_string_vec.value = NULL;
+	this->value.Value.value.valueunion.val_string_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_struct_vec.value = NULL;
+	this->value.Value.value.valueunion.val_struct_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_time_span_vec.value = NULL;
+	this->value.Value.value.valueunion.val_time_span_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_time_vec.value = NULL;
+	this->value.Value.value.valueunion.val_time_vec.veclen = 0;
+	this->value.Value.value.valueunion.val_uint_vec.value = NULL;
+	this->value.Value.value.valueunion.val_uint_vec.veclen = 0;
 }
 void PropertyValueStatement_deleteMembers(PropertyValueStatement *this){
 	IdentificationType_delete(&this->ID);
 	ov_database_free(this->pvsName);
 	ov_database_free(this->unit);
+	Ov_SetAnyValue(&this->value.Value, NULL);
 	PropertyValueStatement_init(this);
 }
 void PropertyValueStatement_delete(PropertyValueStatement *this){
@@ -96,13 +126,40 @@ void LifeCycleEntry_init(LifeCycleEntry *this){
 	this->eventClass = NULL;
 	this->lceId = 0;
 	this->subject = NULL;
+	ov_time_gettime(&this->data.TimeStamp);
+	this->data.Value.value.vartype = OV_VT_VOID;
 	this->data.Value.value.valueunion.val_string = NULL;
+	this->data.Value.value.valueunion.val_bool_vec.value = NULL;
+	this->data.Value.value.valueunion.val_bool_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_byte_vec.value = NULL;
+	this->data.Value.value.valueunion.val_byte_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_double_vec.value = NULL;
+	this->data.Value.value.valueunion.val_double_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_generic_vec.value = NULL;
+	this->data.Value.value.valueunion.val_generic_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_int_vec.value = NULL;
+	this->data.Value.value.valueunion.val_int_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_single_vec.value = NULL;
+	this->data.Value.value.valueunion.val_single_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_state_vec.value = NULL;
+	this->data.Value.value.valueunion.val_state_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_string_vec.value = NULL;
+	this->data.Value.value.valueunion.val_string_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_struct_vec.value = NULL;
+	this->data.Value.value.valueunion.val_struct_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_time_span_vec.value = NULL;
+	this->data.Value.value.valueunion.val_time_span_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_time_vec.value = NULL;
+	this->data.Value.value.valueunion.val_time_vec.veclen = 0;
+	this->data.Value.value.valueunion.val_uint_vec.value = NULL;
+	this->data.Value.value.valueunion.val_uint_vec.veclen = 0;
 }
 void LifeCycleEntry_deleteMembers(LifeCycleEntry *this){
 	IdentificationType_delete(&this->creatingInstance);
 	IdentificationType_delete(&this->writingInstance);
 	ov_database_free(this->eventClass);
 	ov_database_free(this->subject);
+	Ov_SetAnyValue(&this->data.Value, NULL);
 }
 void LifeCycleEntry_delete(LifeCycleEntry *this){
 	LifeCycleEntry_deleteMembers(this);
@@ -151,28 +208,17 @@ OV_RESULT encodeMSG(SRV_String** str, const SRV_msgHeader *header, const void* s
 		memcpy((*str)->data, "JSON", 4*sizeof(char));
 		memcpy((*str)->data+4, strtmp->data, (strtmp->length)*sizeof(char));
 		(*str)->data[(*str)->length] = '\0';
+		SRV_String_delete(strtmp);
 	}break;
 	case SRV_OPCB: // OPC UA binary Encoding
-		*str = malloc(sizeof(SRV_String));
-		(*str)->data = malloc(strtmp->length+4);
-		(*str)->length = strtmp->length+4;
-		memcpy((*str)->data, "OPCB", 4*sizeof(char));
-		memcpy((*str)->data+4, strtmp->data, (strtmp->length)*sizeof(char));
+		return OV_ERR_NOTIMPLEMENTED;
 		break;
 	case SRV_XMLT: // XML text Encoding
-		*str = malloc(sizeof(SRV_String));
-		(*str)->data = malloc(strtmp->length+4);
-		(*str)->length = strtmp->length+4;
-		memcpy((*str)->data, "XMLT", 4*sizeof(char));
-		memcpy((*str)->data+4, strtmp->data, (strtmp->length)*sizeof(char));
+		return OV_ERR_NOTIMPLEMENTED;
 		break;
 	case SRV_XMLB: // XML binary Encoding
-		*str = malloc(sizeof(SRV_String));
-		(*str)->data = malloc(strtmp->length+4);
-		(*str)->length = strtmp->length+4;
-		memcpy((*str)->data, "XMLB", 4*sizeof(char));
-		memcpy((*str)->data+4, strtmp->data, (strtmp->length)*sizeof(char));
-		break;
+		return OV_ERR_NOTIMPLEMENTED;
+	break;
 	default:
 		return OV_ERR_BADTYPE;
 		break;

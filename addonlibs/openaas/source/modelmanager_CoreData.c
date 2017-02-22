@@ -42,41 +42,45 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ppvsl, openaas_PropertyValueStatementList){
 			pvslSize++;
 		}
-		*pvsl = ov_database_malloc(sizeof(PropertyValueStatementList)*pvslSize);
+		PropertyValueStatementList *pvsltmp = ov_database_malloc(sizeof(PropertyValueStatementList)*pvslSize);
 		*number = pvslSize;
 		pvslSize = 0;
 		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ppvsl, openaas_PropertyValueStatementList){
-			ov_string_setvalue(&(*pvsl)[pvslSize].Carrier.IdSpec, ppvsl->v_CarrierIdString);
-			(*pvsl)[pvslSize].Carrier.IdType = ppvsl->v_CarrierIdType;
-			ov_string_setvalue(&(*pvsl)[pvslSize].CreatingInstance.IdSpec, ppvsl->v_CreatingInstanceIdString);
-			(*pvsl)[pvslSize].CreatingInstance.IdType = ppvsl->v_CreatingInstanceIdType;
-			(*pvsl)[pvslSize].CreationTime = ppvsl->v_CreationTime;
-			ov_string_setvalue(&(*pvsl)[pvslSize].pvslName, ppvsl->v_identifier);
+			PropertyValueStatementList_init(&pvsltmp[pvslSize]);
+			ov_string_setvalue(&pvsltmp[pvslSize].Carrier.IdSpec, ppvsl->v_CarrierIdString);
+			pvsltmp[pvslSize].Carrier.IdType = ppvsl->v_CarrierIdType;
+			ov_string_setvalue(&pvsltmp[pvslSize].CreatingInstance.IdSpec, ppvsl->v_CreatingInstanceIdString);
+			pvsltmp[pvslSize].CreatingInstance.IdType = ppvsl->v_CreatingInstanceIdType;
+			pvsltmp[pvslSize].CreationTime = ppvsl->v_CreationTime;
+			ov_string_setvalue(&pvsltmp[pvslSize].pvslName, ppvsl->v_identifier);
 
+			pvsSize = 0;
 			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, openaas_PropertyValueStatement){
 				if (ppvs->v_Visibility == 2)
 					pvsSize++;
 			}
-			(*pvsl)[pvslSize].pvs = ov_database_malloc(sizeof(PropertyValueStatement)*pvsSize);
-			(*pvsl)[pvslSize].pvsNumber = pvsSize;
+			pvsltmp[pvslSize].pvs = ov_database_malloc(sizeof(PropertyValueStatement)*pvsSize);
+			pvsltmp[pvslSize].pvsNumber = pvsSize;
 			pvsSize = 0;
 			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, openaas_PropertyValueStatement){
 				if (ppvs->v_Visibility == 2){
-					(*pvsl)[pvslSize].pvs[pvsSize].ExpressionLogic = ppvs->v_ExpressionLogic;
-					(*pvsl)[pvslSize].pvs[pvsSize].ExpressionSemantic = ppvs->v_ExpressionSemantic;
-					ov_string_setvalue(&(*pvsl)[pvslSize].pvs[pvsSize].ID.IdSpec, ppvs->v_IDIdString);
-					(*pvsl)[pvslSize].pvs[pvsSize].ID.IdType = ppvs->v_IDIdType;
-					(*pvsl)[pvslSize].pvs[pvsSize].Visibility = ppvs->v_Visibility;
-					ov_string_setvalue(&(*pvsl)[pvslSize].pvs[pvsSize].pvsName, ppvs->v_identifier);
-					ov_string_setvalue(&(*pvsl)[pvslSize].pvs[pvsSize].unit, ppvs->v_Unit);
-					(*pvsl)[pvslSize].pvs[pvsSize].value.Value = ppvs->v_Value;
-					(*pvsl)[pvslSize].pvs[pvsSize].value.TimeStamp = ppvs->v_TimeStamp;
-					(*pvsl)[pvslSize].pvs[pvsSize].view = ppvs->v_View;
+					PropertyValueStatement_init(&(pvsltmp[pvslSize].pvs[pvsSize]));
+					pvsltmp[pvslSize].pvs[pvsSize].ExpressionLogic = ppvs->v_ExpressionLogic;
+					pvsltmp[pvslSize].pvs[pvsSize].ExpressionSemantic = ppvs->v_ExpressionSemantic;
+					ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].ID.IdSpec, ppvs->v_IDIdString);
+					pvsltmp[pvslSize].pvs[pvsSize].ID.IdType = ppvs->v_IDIdType;
+					pvsltmp[pvslSize].pvs[pvsSize].Visibility = ppvs->v_Visibility;
+					ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].pvsName, ppvs->v_identifier);
+					ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].unit, ppvs->v_Unit);
+					Ov_SetAnyValue(&pvsltmp[pvslSize].pvs[pvsSize].value.Value, &ppvs->v_Value);
+					pvsltmp[pvslSize].pvs[pvsSize].value.TimeStamp = ppvs->v_TimeStamp;
+					pvsltmp[pvslSize].pvs[pvsSize].view = ppvs->v_View;
 					pvsSize++;
 				}
 			}
 			pvslSize++;
 		}
+		*pvsl = pvsltmp;
 	}
 
     return (AASStatusCode)0;
@@ -106,7 +110,6 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(Identifica
 		return AASSTATUSCODE_BADUNEXPECTEDERROR;
 
 	getCoreDataReq_t_deleteMembers(&getCoreDataReq);
-
 	// Get the pointer to object for send the Message
 	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
 	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
@@ -120,6 +123,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(Identifica
 	ov_string_setvalue(&psendAASMessage->v_path, "/TechUnits/openAAS/AASFolder/ComCo.postoffice");
 
 	// send message
+	Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
 	psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, srvStringSend->data);
 	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
@@ -130,11 +134,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(Identifica
 	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
 	ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 
-	SRV_serviceGeneric_deleteMembers(srvStructSend, srvTypeSend);
-	srvStructSend = NULL;
 	SRV_msgHeader_t_delete(headerSend);
-	SRV_String_deleteMembers(srvStringSend);
-	free(srvStringSend);
+	SRV_String_delete(srvStringSend);
 
     return result;
 }

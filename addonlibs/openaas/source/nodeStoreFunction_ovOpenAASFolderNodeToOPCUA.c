@@ -95,7 +95,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOP
 	newNode->displayName = lText;
 
 	// NodeId
-	newNode->nodeId = *nodeId;
+	UA_NodeId_copy(nodeId, &newNode->nodeId);
 
 	// NodeClass
 	newNode->nodeClass 	= *nodeClass;

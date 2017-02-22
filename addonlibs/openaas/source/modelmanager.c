@@ -70,13 +70,6 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 	ov_string_setvalue(&psendAASMessage->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
 	ov_string_append(&psendAASMessage->v_path, ".AddOVDataForAAS");
 
-	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING_VEC;
-	psendAASMessage->v_varValue.value.valueunion.val_string_vec.veclen = 4;
-	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value = ov_database_malloc(4 * sizeof(OV_STRING));
-	if(!psendAASMessage->v_varValue.value.valueunion.val_string_vec.value){
-		return;
-	}
-
 	OV_STRING tmpHexString = NULL;
 	ov_string_print(&tmpHexString, "%x", aasId.IdType);
 
@@ -86,6 +79,13 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 		ov_string_append(&tmpHexString, tmpHexString2);
 		ov_database_free(tmpHexString2);
 	}
+
+	Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
+	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING_VEC;
+	psendAASMessage->v_varValue.value.valueunion.val_string_vec.veclen = 0;
+	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value = NULL;
+	Ov_SetDynamicVectorLength(&psendAASMessage->v_varValue.value.valueunion.val_string_vec, 4, STRING);
+
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[0] = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[0], tmpHexString);
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[1] = NULL;
@@ -95,14 +95,17 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[2] = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[2], tmpServername.value.valueunion.val_string);
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3] = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3], "/TechUnits/AASFolder/ComCo");
+	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3], "/TechUnits/openAAS/AASFolder/ComCo");
 	ov_database_free(tmpHexString);
 
 	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
+	ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
+	ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
 	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
 	ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 	return;
 }
+
 
 void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
@@ -114,6 +117,7 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 		if (ov_string_compare(pListElement->v_AASIdString, aasId.IdSpec) == OV_STRCMP_EQUAL && pListElement->v_AASIdType == aasId.IdType){
 			if (Ov_Fail(Ov_DeleteObject(pListElement)))
 				return;
+
 			// Get the pointer to object for send the Message
 			OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
 			Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
@@ -127,7 +131,6 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 			ov_string_setvalue(&psendAASMessage->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
 			ov_string_append(&psendAASMessage->v_path, ".DeleteOVDataForAAS");
 
-			psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
 			OV_STRING tmpHexString = NULL;
 			ov_string_print(&tmpHexString, "%x", aasId.IdType);
 
@@ -137,7 +140,7 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 				ov_string_append(&tmpHexString, tmpHexString2);
 				ov_database_free(tmpHexString2);
 			}
-			psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
+			Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
 			ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, tmpHexString);
 			ov_database_free(tmpHexString);
 
@@ -167,6 +170,7 @@ OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 	}
 	return "";
 }
+
 
 
 

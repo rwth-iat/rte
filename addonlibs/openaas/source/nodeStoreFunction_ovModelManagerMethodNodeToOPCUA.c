@@ -122,7 +122,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	newNode->displayName = lText;
 
 	// NodeId
-	newNode->nodeId = *nodeId;
+	UA_NodeId_copy(nodeId, &newNode->nodeId);
 
 	// NodeClass
 	newNode->nodeClass 	= *nodeClass;
@@ -157,18 +157,14 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[0].isInverse = UA_TRUE;
-	for (OV_UINT i = 0; i < len; i++)
-		ov_database_free(plist[i]);
-	for (OV_UINT i = 0; i < len2; i++)
-		ov_database_free(plist2[i]);
+	ov_string_freelist(plist);
+	ov_string_freelist(plist2);
 	len = 0;
-	*plist = NULL;
+	plist = NULL;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, plist[0]);
-	for (OV_UINT i = 0; i < len; i++)
-		ov_database_free(plist[i]);
 	ov_database_free(tmpString);
 
 	// Type
@@ -254,6 +250,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STOPGETASSETLCEDATA_OUTPUTARGUMENTS);
 	}
 
+	ov_string_freelist(plist);
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }
