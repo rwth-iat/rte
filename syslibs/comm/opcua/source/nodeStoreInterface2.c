@@ -684,7 +684,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	OV_ELEMENT				element;
-	UA_NodeClass 			*nodeClass = NULL;
 	OV_ANY					value = {.value.vartype = OV_VT_VOID, .value.valueunion.val_string = NULL, .state=OV_ST_UNKNOWN, .time.secs = 0, .time.usecs = 0};
 	OV_ANY					emptyAny = {.value.vartype = OV_VT_VOID, .value.valueunion.val_string = NULL, .state=OV_ST_UNKNOWN, .time.secs = 0, .time.usecs = 0};
 
@@ -702,77 +701,70 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		return NULL;
 	}
 
-	nodeClass = UA_NodeClass_new();
-	if(!nodeClass){
-		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		return NULL;
-	}
 	switch(element.elemtype){
 	case OV_ET_OBJECT:
 		if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_class){
 			newNode = (UA_Node*)UA_malloc(sizeof(UA_ObjectTypeNode));
-			*nodeClass = UA_NODECLASS_OBJECTTYPE;
+			newNode->nodeClass = UA_NODECLASS_OBJECTTYPE;
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
-			*nodeClass = UA_NODECLASS_VARIABLETYPE;
 			newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableTypeNode));
+			newNode->nodeClass = UA_NODECLASS_VARIABLETYPE;
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
-			*nodeClass = UA_NODECLASS_REFERENCETYPE;
 			newNode = (UA_Node*)UA_malloc(sizeof(UA_ReferenceTypeNode));
+			newNode->nodeClass = UA_NODECLASS_REFERENCETYPE;
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
-			*nodeClass = UA_NODECLASS_VARIABLE;
 			newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
+			newNode->nodeClass = UA_NODECLASS_VARIABLE;
 		} else if(Ov_CanCastTo(opcua_methodNode, pobj)){
-			*nodeClass = UA_NODECLASS_METHOD;
 			newNode = (UA_Node*)UA_malloc(sizeof(UA_MethodNode));
+			newNode->nodeClass = UA_NODECLASS_METHOD;
 		} else{
-			*nodeClass = UA_NODECLASS_OBJECT;
 			newNode = (UA_Node*)UA_malloc(sizeof(UA_ObjectNode));
+			newNode->nodeClass = UA_NODECLASS_OBJECT;
 		}
 		break;
 	case OV_ET_VARIABLE:
 	case OV_ET_MEMBER:
-		*nodeClass = UA_NODECLASS_VARIABLE;
 		newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
+		newNode->nodeClass = UA_NODECLASS_VARIABLE;
 		break;
 	case OV_ET_OPERATION:
-		*nodeClass = UA_NODECLASS_METHOD;
 		newNode = (UA_Node*)UA_malloc(sizeof(UA_MethodNode));
+		newNode->nodeClass = UA_NODECLASS_METHOD;
 		break;
 	case OV_ET_CHILDLINK:
 	case OV_ET_PARENTLINK:
 	default:
-		*nodeClass = UA_NODECLASS_UNSPECIFIED;
 		return NULL;
 	}
 
 	// Basic Attribute
 	// BrowseName
-	UA_QualifiedName qName;
-	qName.name = UA_String_fromChars(pobj->v_identifier);
+	UA_QualifiedName_init(&newNode->browseName);
+	newNode->browseName.name = UA_String_fromChars(pobj->v_identifier);
 	if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
-		qName.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+		newNode->browseName.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
 	} else {
-		qName.namespaceIndex = 0;
+		newNode->browseName.namespaceIndex = 0;
 	}
-	newNode->browseName = qName;
 
 	// Description
+	UA_LocalizedText_init(&newNode->description);
 	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &element);
-	UA_LocalizedText lText;
-	lText.locale = UA_String_fromChars("en");
+	newNode->description.locale = UA_String_fromChars("en");
 	if(tempString){
-		lText.text = UA_String_fromChars(tempString);
+		newNode->description.text = UA_String_fromChars(tempString);
 	} else {
-		lText.text = UA_String_fromChars("");
+		newNode->description.text = UA_String_fromChars("");
 	}
-	newNode->description = lText;
 
 	// DisplayName
-	lText.locale = UA_String_fromChars("en");
-	lText.text = UA_String_fromChars(pobj->v_identifier);
-	newNode->displayName = lText;
+	UA_LocalizedText_init(&newNode->displayName);
+	newNode->displayName.locale = UA_String_fromChars("en");
+	newNode->displayName.text = UA_String_fromChars(pobj->v_identifier);
 
 	// NodeId
+	UA_NodeId_init(&newNode->nodeId);
 	newNode->nodeId.identifierType = nodeId->identifierType;
 	newNode->nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
 	switch(newNode->nodeId.identifierType){
@@ -790,9 +782,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		break;
 	}
 
-	// NodeClass
-	newNode->nodeClass 	= *nodeClass;
-
 	// WriteMask
 	UA_UInt32 writeMask = 0;
 	if(element.elemtype != OV_ET_VARIABLE){
@@ -808,7 +797,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 
 	UA_Byte accessLevel = 0;
 
-	switch(*nodeClass){
+	switch(newNode->nodeClass){
 	case UA_NODECLASS_OBJECT:
 		// eventNotifier
 		((UA_ObjectNode*)newNode)->eventNotifier = 0;
