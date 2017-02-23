@@ -136,13 +136,17 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOP
 
 
 	// ModelManager
-	newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-	newNode->references[2].isInverse = UA_FALSE;
+	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
+	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
 	OV_STRING tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "/ModelmanagerOpenAAS");
-	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
-	ov_database_free(tmpString);
+	if (pmodelmanager){
+		newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+		newNode->references[2].isInverse = UA_FALSE;
+		ov_memstack_lock();
+		tmpString = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pmodelmanager), 2);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+		ov_memstack_unlock();
+	}
 
 	// AASFolder
 	newNode->references[3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);

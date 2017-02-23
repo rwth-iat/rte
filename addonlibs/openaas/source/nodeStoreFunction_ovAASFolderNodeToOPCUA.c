@@ -119,7 +119,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovAASFolderNodeToOPCUA(
 	// References
 	OV_INSTPTR_ov_object pchild = NULL;
 	size_t size_references = 0;
-	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
+	Ov_ForEachChild(ov_instantiation, pclass_openaas_aas, pchild) {
 		size_references++;
 	}
 
@@ -152,30 +152,15 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovAASFolderNodeToOPCUA(
 
 
 	size_t i = 1;
-	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
+	Ov_ForEachChild(ov_instantiation, pclass_openaas_aas, pchild) {
 		i++;
 		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 		newNode->references[i].isInverse = UA_FALSE;
-		if(Ov_CanCastTo(openaas_aas, pchild)){
-			OV_INSTPTR_openaas_aas pref =
-						Ov_DynamicPtrCast(openaas_aas,pchild);
-			OV_STRING tmpString = NULL;
-			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-			ov_string_append(&tmpString, "/");
-			ov_string_append(&tmpString, pref->v_identifier);
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
-			ov_database_free(tmpString);
-		}else if (Ov_CanCastTo(openaas_modelmanager, pchild)){
-			OV_INSTPTR_openaas_modelmanager pref =
-						Ov_DynamicPtrCast(openaas_modelmanager,pchild);
-			OV_STRING tmpString = NULL;
-			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-			ov_string_append(&tmpString, "/");
-			ov_string_append(&tmpString, pref->v_identifier);
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
-			ov_database_free(tmpString);
-		}
-
+		OV_STRING tmpString = NULL;
+		ov_memstack_lock();
+		tmpString = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pchild), 2);
+		newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+		ov_memstack_unlock();
 	}
 
 	*opcuaNode = newNode;

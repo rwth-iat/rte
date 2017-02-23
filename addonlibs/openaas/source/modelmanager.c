@@ -23,8 +23,6 @@
 
 #include "openaas.h"
 #include "libov/ov_macros.h"
-#include "nodeset.h"
-#include "ua_openaas_generated.h"
 #include "openaas_helpers.h"
 
 extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
@@ -209,17 +207,184 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
     /*
     *   local variables
     */
-    //OV_INSTPTR_openaas_modelmanager pinst = Ov_StaticPtrCast(openaas_modelmanager, pobj);
+    OV_INSTPTR_openaas_modelmanager pinst = Ov_StaticPtrCast(openaas_modelmanager, pobj);
     OV_RESULT    result;
-
+    OV_INSTPTR_ov_object pOtherObject = NULL;
+    OV_INSTPTR_ov_domain pcommunication = NULL;
+	OV_INSTPTR_ov_domain pDomOpenAAS = NULL;
+	OV_INSTPTR_openaas_aas pComCo = NULL;
+	OV_INSTPTR_openaas_ExternalPostOffice pExternalPost = NULL;
+	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
+	OV_INSTPTR_ksapi_getVar pGetComCoAddressFromAASDiscoveryServer = NULL;
+	OV_INSTPTR_ov_library pLibKSAPI = NULL;
+	OV_INSTPTR_fb_task	purtask = NULL;
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))
          return result;
 
     /* do what */
+    Ov_ForEachChild(ov_instantiation, pclass_openaas_modelmanager, pOtherObject){
+		if(pOtherObject != pobj){
+			ov_logfile_error("%s: cannot instantiate - modelmanager instance already exists", pinst->v_identifier);
+			return OV_ERR_ALREADYEXISTS;
+		}
+	}
 
+    Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibKSAPI, ov_library){
+		if(ov_string_compare(pLibKSAPI->v_identifier, "ksapi") == OV_STRCMP_EQUAL){
+			break;
+		}
+	 }
+	 if(!pLibKSAPI){
+		result = Ov_CreateObject(ov_library, pLibKSAPI, &(pdb->acplt), "ksapi");
+		if(Ov_Fail(result)){
+			ov_memstack_lock();
+			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library ksapi Reason: %s", ov_result_getresulttext(result));
+			ov_memstack_unlock();
+			return result;
+		}
+	 }
 
+	pcommunication = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "communication"));
+	if(!pcommunication) {
+		result = Ov_CreateObject(ov_domain, pcommunication, &(pdb->root), "communication");
+		if(Ov_Fail(result)) {
+			ov_logfile_error("Fatal: Could not create Object 'communication'");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pcommunication)){
+		ov_logfile_error("Fatal: communication object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	pDomOpenAAS = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pcommunication, "OpenAAS"));
+	if(!pDomOpenAAS) {
+		result = Ov_CreateObject(ov_domain, pDomOpenAAS, pcommunication, "OpenAAS");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create OpenAAS domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pDomOpenAAS)){
+		ov_logfile_error("Fatal: OpenAAS object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	// create sendAASMessage
+	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
+		if(ov_string_compare(psendAASMessage->v_identifier, "SendAASMessage") == OV_STRCMP_EQUAL){
+			break;
+		}
+	}
+	if(!psendAASMessage){
+		result = Ov_CreateObject(ksapi_setVar, psendAASMessage, pDomOpenAAS, "SendAASMessage");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create SendAASMessage object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+	}
+
+	// create getComCoAddressFromAASDiscoveryServer
+	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, ksapi_getVar){
+		if(ov_string_compare(pGetComCoAddressFromAASDiscoveryServer->v_identifier, "GetComCoAddressFromAASDiscoveryServer") == OV_STRCMP_EQUAL){
+			break;
+		}
+	}
+	if(!pGetComCoAddressFromAASDiscoveryServer){
+		result = Ov_CreateObject(ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, pDomOpenAAS, "GetComCoAddressFromAASDiscoveryServer");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create GetComCoAddressFromAASDiscoveryServer object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+	}
+
+	// Create Folder for AAS
+	OV_INSTPTR_ov_domain pTechUnits = NULL;
+	pTechUnits = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "TechUnits"));
+	if(!pTechUnits) {
+		result = Ov_CreateObject(ov_domain, pTechUnits, &(pdb->root), "TechUnits");
+		if(Ov_Fail(result)) {
+			ov_logfile_error("Fatal: Could not create Object 'pTechUnits'");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pTechUnits))	{
+		ov_logfile_error("Fatal: pTechUnits object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	OV_INSTPTR_ov_domain popenAASFolder = NULL;
+	popenAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pTechUnits, "openAAS"));
+	if(!popenAASFolder) {
+		result = Ov_CreateObject(ov_domain, popenAASFolder, pTechUnits, "openAAS");
+		if(Ov_Fail(result))	{
+			ov_logfile_error("Fatal: could not create openAAS domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) popenAASFolder)){
+		ov_logfile_error("Fatal: openAAS object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	OV_INSTPTR_ov_domain pAASFolder = NULL;
+	pAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, popenAASFolder, "AASFolder"));
+	if(!pAASFolder) {
+		result = Ov_CreateObject(ov_domain, pAASFolder, popenAASFolder, "AASFolder");
+		if(Ov_Fail(result))	{
+			ov_logfile_error("Fatal: could not create AASFolder domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pAASFolder)){
+		ov_logfile_error("Fatal: AASFolder object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	// create ComCo
+	Ov_ForEachChildEx(ov_instantiation, pclass_openaas_aas, pComCo, openaas_aas){
+		if(ov_string_compare(pComCo->v_identifier, "ComCo") == OV_STRCMP_EQUAL){
+			break;
+		}
+	}
+	if(!pComCo){
+		IdentificationType aasId;
+		aasId.IdSpec = NULL;
+		ov_string_setvalue(&aasId.IdSpec, "http://acplt.org/ComCo");
+		aasId.IdType = 0;
+
+		IdentificationType assetId;
+		assetId.IdSpec = NULL;
+		ov_string_setvalue(&assetId.IdSpec, "http://acplt.org/Manager");
+		assetId.IdType = 0;
+
+		if (AASSTATUSCODE_FAIL(openaas_modelmanager_createAAS(aasId, "ComCo", assetId))){
+			ov_logfile_error("Fatal: Could not create Object 'ComCo'");
+			return OV_ERR_GENERIC;
+		}
+	}
+
+	// create ExternalPostOffice
+	Ov_ForEachChildEx(ov_instantiation, pclass_openaas_ExternalPostOffice, pExternalPost, openaas_ExternalPostOffice){
+		if(ov_string_compare(pExternalPost->v_identifier, "ExternalPostOffice") == OV_STRCMP_EQUAL){
+			break;
+		}
+	}
+	if(!pExternalPost){
+		result = Ov_CreateObject(openaas_ExternalPostOffice, pExternalPost, pAASFolder, "ExternalPostOffice");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create externalPostOffice object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+		purtask = (OV_INSTPTR_fb_task)ov_path_getobjectpointer("/Tasks/UrTask", 2);
+		result = Ov_Link(fb_tasklist, purtask, pExternalPost);
+		if (Ov_Fail(result)) {
+			ov_logfile_error("Fatal: could not link externalPostOffice object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+	}
     return OV_ERR_OK;
 }
 
@@ -253,15 +418,6 @@ OV_DLLFNCEXPORT void openaas_modelmanager_startup(
     ov_object_startup(pobj);
 
     /* do what */
-
-    // Add InformationModel & NodeStoreInterface & Reference to AASFolder
-    UA_StatusCode ret = UA_STATUSCODE_GOOD;
-    OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
-    pNodeStoreFunctions = Ov_StaticPtrCast(openaas_nodeStoreFunctions, Ov_GetFirstChild(ov_instantiation, pclass_openaas_nodeStoreFunctions));
-    ret = opcua_uaServer_addInformationModel(&pNodeStoreFunctions->v_NodeStoreInterface, "http://acplt.org/AAS/Ov", "/TechUnits/openAAS", nodeset_returnIndices, &pNodeStoreFunctions->v_NameSpaceIndexInformationModel, &pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, UA_OPENAAS, UA_OPENAAS_COUNT);
-	if (ret != UA_STATUSCODE_GOOD){
-		ov_logfile_error("openaas: Fatal: Couldn't add InformationModel");
-	}
 
     return;
 }
