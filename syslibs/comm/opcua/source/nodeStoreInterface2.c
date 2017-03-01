@@ -156,7 +156,6 @@ UA_Int32 getReferenceDescriptions_Organizes2(const UA_BrowseDescription* browseD
 	//	this is mapped to ov/containment
 	if((browseDescription->browseDirection == UA_BROWSEDIRECTION_FORWARD)
 			|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
-		OV_INSTPTR_opcua_methodNode pMethod = Ov_DynamicPtrCast(opcua_methodNode, pNode->pobj);
 		// children
 		childPart.elemtype = OV_ET_NONE;
 		childPart.pobj = NULL;
@@ -180,7 +179,7 @@ UA_Int32 getReferenceDescriptions_Organizes2(const UA_BrowseDescription* browseD
 			if(maskMatch && (access & OV_AC_READ)){
 				if(childPart.elemtype == OV_ET_OBJECT || childPart.elemtype == OV_ET_VARIABLE || childPart.elemtype == OV_ET_MEMBER){
 					/*	exclude the Arguments-parts of method nodes	*/
-					if(!pMethod || childPart.elemtype != OV_ET_OBJECT
+					if(childPart.elemtype != OV_ET_OBJECT
 							|| (ov_string_compare(childPart.pobj->v_identifier, "InputArguments") != OV_STRCMP_EQUAL
 									&& ov_string_compare(childPart.pobj->v_identifier, "OutputArguments") != OV_STRCMP_EQUAL)){
 						if(fillDescription){
@@ -259,14 +258,9 @@ UA_Int32 getReferenceDescriptions_HasTypeDefinition2(const UA_BrowseDescription*
 			if(maskMatch && (access & OV_AC_READ)){
 				if(fillDescription){
 					if(pNode->elemtype == OV_ET_OBJECT){
-						if(Ov_GetClassPtr(pNode->pobj) != pclass_opcua_arguments){
-							parentTypeDefinition.elemtype = OV_ET_OBJECT;
-							parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_instantiation, pNode->pobj));
-							*statusCode = opcua_nsOv_fillReferenceDescription2(&parentTypeDefinition, 0, UA_NODEID_HasTypeDefinition, UA_TRUE, resultMask, &(dst[*refCount]));
-						} else {
-							*statusCode = opcua_ns0_fakeReferenceDescription2(UA_NODEID_NUMERIC(0, 62), "BaseVariableType", 0, "BaseVariableType", UA_NODECLASS_VARIABLETYPE, UA_NODEID_NULL,
-									0, UA_NODEID_HasTypeDefinition, UA_TRUE, resultMask, &(dst[*refCount]));
-						}
+						parentTypeDefinition.elemtype = OV_ET_OBJECT;
+						parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_instantiation, pNode->pobj));
+						*statusCode = opcua_nsOv_fillReferenceDescription2(&parentTypeDefinition, 0, UA_NODEID_HasTypeDefinition, UA_TRUE, resultMask, &(dst[*refCount]));
 					} else if (pNode->elemtype == OV_ET_VARIABLE || pNode->elemtype == OV_ET_MEMBER){
 						parentTypeDefinition.elemtype = OV_ET_OBJECT;
 						parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.pvar);
@@ -381,53 +375,17 @@ UA_Int32 getReferenceDescriptions_HasProperty2(const UA_BrowseDescription* brows
 	if((browseDescription->browseDirection == UA_BROWSEDIRECTION_FORWARD)
 			|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
 		if(pNode->elemtype == OV_ET_OBJECT){
-			/*	check if it is a methodNode	*/
-			OV_INSTPTR_opcua_methodNode pMethod = Ov_DynamicPtrCast(opcua_methodNode, pNode->pobj);
-			if(pMethod){
-				/*	add the hasproperty references for arguments	*/
-				referencedElement.elemtype = OV_ET_NONE;
-				ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
-				while(referencedElement.elemtype != OV_ET_NONE){
-					maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
-					if(maskMatch && (access & OV_AC_READ)){
-						/*	check if we are handling the InputArguments or OutputArguments part, if so add reference hasProperty	*/
-						if(ov_string_compare(referencedElement.pobj->v_identifier, "InputArguments") == OV_STRCMP_EQUAL
-								|| ov_string_compare(referencedElement.pobj->v_identifier, "OutputArguments") == OV_STRCMP_EQUAL){
-							if(fillDescription){
-								/*	standard description fill	*/
-								*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, 0, UA_NODEID_HasProperty, UA_TRUE, resultMask, &(dst[*refCount]));
-								/*	specific modifications	*/
-								if(resultMask & (1<<2)){
-									(dst[*refCount]).nodeClass = UA_NODECLASS_VARIABLE;
-								}
-								if(resultMask & (1<<5)){
-									(dst[*refCount]).typeDefinition.nodeId.namespaceIndex = 0;
-									(dst[*refCount]).typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
-									(dst[*refCount]).typeDefinition.nodeId.identifier.numeric = 296;
-								}
-								if(resultMask & (1<<3)){
-									(dst[*refCount]).browseName.namespaceIndex = 0;
-								}
-							}
-							(*refCount)++;
-						}
+			referencedElement.elemtype = OV_ET_NONE;
+			ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
+			while(referencedElement.elemtype != OV_ET_NONE){
+				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+				if(maskMatch && (access & OV_AC_READ)){
+					if(fillDescription){
+						*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, 0, UA_NODEID_HasProperty, UA_TRUE, resultMask, &(dst[*refCount]));
 					}
-					ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
+					(*refCount)++;
 				}
-			}
-			if(Ov_GetClassPtr(pNode->pobj) != pclass_opcua_arguments) {
-				referencedElement.elemtype = OV_ET_NONE;
 				ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
-				while(referencedElement.elemtype != OV_ET_NONE){
-					maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
-					if(maskMatch && (access & OV_AC_READ)){
-						if(fillDescription){
-							*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, 0, UA_NODEID_HasProperty, UA_TRUE, resultMask, &(dst[*refCount]));
-						}
-						(*refCount)++;
-					}
-					ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
-				}
 			}
 		}
 	}
@@ -436,16 +394,6 @@ UA_Int32 getReferenceDescriptions_HasProperty2(const UA_BrowseDescription* brows
 		if(pNode->elemtype == OV_ET_VARIABLE || pNode->elemtype == OV_ET_MEMBER){
 			referencedElement.elemtype = OV_ET_OBJECT;
 			referencedElement.pobj = pNode->pobj;
-			maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
-			if(maskMatch && (access & OV_AC_READ)){
-				if(fillDescription){
-					*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, 0, UA_NODEID_HasProperty, UA_FALSE, resultMask, &(dst[*refCount]));
-				}
-				(*refCount)++;
-			}
-		} else if(pNode->elemtype == OV_ET_OBJECT && Ov_GetClassPtr(pNode->pobj) == pclass_opcua_arguments){
-			referencedElement.elemtype = OV_ET_OBJECT;
-			referencedElement.pobj = pNode->pobj->v_pouterobject;
 			maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 			if(maskMatch && (access & OV_AC_READ)){
 				if(fillDescription){
@@ -480,32 +428,14 @@ UA_Int32 getReferenceDescriptions_HasComponent2(const UA_BrowseDescription* brow
 	//	maps to variables in objects
 	if((browseDescription->browseDirection == UA_BROWSEDIRECTION_FORWARD)
 			|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
-		OV_INSTPTR_opcua_methodNode pMethod = Ov_DynamicPtrCast(opcua_methodNode, pNode->pobj);
 		if(pNode->elemtype == OV_ET_OBJECT){
-			/*	children - only for methods	*/
-			referencedElement.elemtype = OV_ET_NONE;
-			referencedElement.pobj = NULL;
-			ov_element_getnextchild(pNode, &referencedElement);
-			while(referencedElement.elemtype!=OV_ET_NONE){
-				if(Ov_CanCastTo(opcua_methodNode, referencedElement.pobj)){
-					maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
-					if(maskMatch && (access & OV_AC_READ)){
-						if(fillDescription){
-							*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, 0, UA_NODEID_HasComponent, UA_TRUE, resultMask, &(dst[*refCount]));
-						}
-						(*refCount)++;
-					}
-				}
-				ov_element_getnextchild(pNode, &referencedElement);
-			}
-
 			referencedElement.elemtype = OV_ET_NONE;
 			ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
 			while(referencedElement.elemtype != OV_ET_NONE){
 				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					/*	exclude the Arguments-parts of method nodes	*/
-					if(!pMethod || referencedElement.elemtype != OV_ET_OBJECT
+					if(referencedElement.elemtype != OV_ET_OBJECT
 							|| (ov_string_compare(referencedElement.pobj->v_identifier, "InputArguments") != OV_STRCMP_EQUAL
 									&& ov_string_compare(referencedElement.pobj->v_identifier, "OutputArguments") != OV_STRCMP_EQUAL)){
 						if(fillDescription){
@@ -524,16 +454,6 @@ UA_Int32 getReferenceDescriptions_HasComponent2(const UA_BrowseDescription* brow
 			if(pNode->pobj->v_pouterobject){
 				referencedElement.elemtype = OV_ET_OBJECT;
 				referencedElement.pobj = pNode->pobj->v_pouterobject;
-				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
-				if(maskMatch && (access & OV_AC_READ)){
-					if(fillDescription){
-						*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, 0, UA_NODEID_HasComponent, UA_FALSE, resultMask, &(dst[*refCount]));
-					}
-					(*refCount)++;
-				}
-			} else if(Ov_CanCastTo(opcua_methodNode, referencedElement.pobj)){
-				referencedElement.elemtype = OV_ET_OBJECT;
-				referencedElement.pobj = (OV_INSTPTR_ov_object)Ov_GetParent(ov_containment, pNode->pobj);
 				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
@@ -721,12 +641,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
 			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ReferenceTypeNode));
 			newNode->nodeClass = UA_NODECLASS_REFERENCETYPE;
-		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
-			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableNode));
-			newNode->nodeClass = UA_NODECLASS_VARIABLE;
-		} else if(Ov_CanCastTo(opcua_methodNode, pobj)){
-			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_MethodNode));
-			newNode->nodeClass = UA_NODECLASS_METHOD;
 		} else{
 			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ObjectNode));
 			newNode->nodeClass = UA_NODECLASS_OBJECT;
@@ -751,11 +665,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	// BrowseName
 	UA_QualifiedName_init(&newNode->browseName);
 	newNode->browseName.name = UA_String_fromChars(pobj->v_identifier);
-	if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
-		newNode->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
-	} else {
-		newNode->browseName.namespaceIndex = 0;
-	}
+	newNode->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
 
 	// Description
 	UA_LocalizedText_init(&newNode->description);
@@ -902,9 +812,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 						break;
 					}
 				}
-			}else if(Ov_GetParent(ov_instantiation, pobjtemp) == pclass_opcua_arguments){
-				((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
-			} else {
+			}else {
 				result = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 				break;
 			}
@@ -939,10 +847,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 				}
 				break;
 			}
-		}else  if(Ov_GetParent(ov_instantiation, pobjtemp) == pclass_opcua_arguments){
-			((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
-			result = UA_STATUSCODE_GOOD;
-			break;
 		} else {
 			result = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 			break;
@@ -963,18 +867,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 				((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
 				((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(value.value.vartype);
 				value = emptyAny;
-			}
-			break;
-		case OV_ET_OBJECT:
-			if(Ov_GetParent(ov_instantiation, pobjtemp) == pclass_opcua_arguments){
-				size_t numberofArgs = 0;
-				UA_Argument *argArray = NULL;
-				result = opcua_nodeStoreFunctions_getCallArgs((OV_INSTPTR_opcua_arguments)pobjtemp, &numberofArgs, &argArray);
-				((UA_VariableNode*)newNode)->value.data.value.value.data = argArray;
-				((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
-				((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(value.value.vartype);
-			} else {
-				result = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 			}
 			break;
 		default:
@@ -1057,8 +949,6 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 						break;
 					}
 				}
-			}else if(Ov_GetParent(ov_instantiation, pobjtemp) == pclass_opcua_arguments){
-				((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
 			} else {
 				result = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
 				break;
