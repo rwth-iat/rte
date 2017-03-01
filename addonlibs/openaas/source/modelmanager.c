@@ -173,7 +173,7 @@ OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 
 
 OV_DLLFNCEXPORT UA_NodeId openaas_modelmanager_getAASNodeId(IdentificationType aasId) {
-    return UA_NODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, openaas_modelmanager_AASConvertListGet(aasId));;
+    return UA_NODEID_STRING_ALLOC(pNodeStoreFunctions->v_interfacenamespace.index, openaas_modelmanager_AASConvertListGet(aasId));;
 }
 
 

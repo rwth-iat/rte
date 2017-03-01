@@ -116,9 +116,8 @@ LIBRARY openaas
     	IS_INSTANTIABLE;
         COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
     VARIABLES
-    	NameSpaceIndexInformationModel : UINT;
-        NameSpaceIndexNodeStoreInterface : UINT;  
-        NodeStoreInterface : C_TYPE <UA_NodestoreInterface>;
+        modelnamespace : C_TYPE <UA_Namespace>;
+        interfacenamespace : C_TYPE <UA_Namespace>;
         IPAddressServer                 : STRING    COMMENT = "IP address of this server" INITIALVALUE    =   "";
         IPAddressAASDiscoveryServer     : STRING    COMMENT = "IP address of the AASDiscoveryServer" INITIALVALUE    =   "";
         ManagerNameAASDiscoveryServer   : STRING    COMMENT = "Manager Name of the AASDiscoveryServer" INITIALVALUE    =   "";
@@ -145,6 +144,7 @@ LIBRARY openaas
         
         constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
         startup: C_FUNCTION <OV_FNC_STARTUP>;
+        destructor: C_FUNCTION <OV_FNC_DESTRUCTOR>;
         getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
     END_OPERATIONS;    
     END_CLASS;

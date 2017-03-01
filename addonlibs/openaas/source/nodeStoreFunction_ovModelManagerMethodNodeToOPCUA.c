@@ -59,7 +59,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	UA_NodeId_init(&tmpNodeId);
 	tmpNodeId.namespaceIndex = nodeId->namespaceIndex;
 	tmpNodeId.identifierType = nodeId->identifierType;
-	copyOvStringToOPCUA(plist[0], &(tmpNodeId.identifier.string));
+	tmpNodeId.identifier.string = UA_String_fromChars(plist[0]);
 
 	ov_memstack_lock();
 	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
@@ -67,6 +67,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 		ov_memstack_unlock();
 		return result;
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
 
@@ -84,7 +85,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 
 
 	*nodeClass = UA_NODECLASS_METHOD;
-	newNode = (UA_Node*)UA_malloc(sizeof(UA_MethodNode));
+	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_MethodNode));
 
 	OV_ELEMENT tmpElement;
 	tmpElement.elemtype = OV_ET_NONE;
@@ -97,12 +98,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
-	qName.name = UA_String_fromChars(tmpElement.elemunion.pop->v_identifier);
-	if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
-		qName.namespaceIndex = pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface;
-	} else {
-		qName.namespaceIndex = 0;
-	}
+	qName.name = UA_String_fromChars(pobj->v_identifier);
+	qName.name = UA_String_fromChars(pobj->v_identifier);
+	qName.namespaceIndex = 0;
 	newNode->browseName = qName;
 
 	// Description
@@ -164,7 +162,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, plist[0]);
+	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_interfacenamespace.index, plist[0]);
 	ov_database_free(tmpString);
 
 	// Type
@@ -181,73 +179,73 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovModelManagerMethodNod
 
 
 	if (ov_string_compare(plist[1], "createAAS") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEAAS);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEAAS_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEAAS_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEAAS);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEAAS_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEAAS_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "deleteAAS") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEAAS);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEAAS_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEAAS_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEAAS);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEAAS_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEAAS_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "createLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATELCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATELCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATELCE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATELCE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATELCE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATELCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "deleteLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETELCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETELCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETELCE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETELCE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETELCE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETELCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLCE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETLCE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETLCE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETLCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "setLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_SETLCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_SETLCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_SETLCE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_SETLCE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_SETLCE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_SETLCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "createPVSL") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEPVSL);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEPVSL_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEPVSL_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEPVSL);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEPVSL_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEPVSL_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "deletePVSL") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEPVSL);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEPVSL_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEPVSL_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEPVSL);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEPVSL_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEPVSL_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "createPVS") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEPVS);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEPVS_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_CREATEPVS_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEPVS);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEPVS_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_CREATEPVS_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "deletePVS") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEPVS);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEPVS_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_DELETEPVS_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEPVS);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEPVS_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_DELETEPVS_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getPVS") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETPVS);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETPVS_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETPVS_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETPVS);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETPVS_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETPVS_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "setPVS") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_SETPVS);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_SETPVS_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_SETPVS_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_SETPVS);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_SETPVS_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_SETPVS_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getAASNodeId") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETAASNODEID);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETAASNODEID_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETAASNODEID_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETAASNODEID);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETAASNODEID_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETAASNODEID_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getLastLCEs") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLASTLCES);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLASTLCES_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_GETLASTLCES_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETLASTLCES);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETLASTLCES_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_GETLASTLCES_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "triggerGetCoreData") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_TRIGGERGETCOREDATA);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_TRIGGERGETCOREDATA_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_TRIGGERGETCOREDATA_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_TRIGGERGETCOREDATA);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_TRIGGERGETCOREDATA_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_TRIGGERGETCOREDATA_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "startGetAssetLCEData") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STARTGETASSETLCEDATA);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STARTGETASSETLCEDATA_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STARTGETASSETLCEDATA_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_STARTGETASSETLCEDATA);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_STARTGETASSETLCEDATA_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_STARTGETASSETLCEDATA_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "stopGetAssetLCEData") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STOPGETASSETLCEDATA);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STOPGETASSETLCEDATA_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_NameSpaceIndexInformationModel, UA_NS2ID_STOPGETASSETLCEDATA_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_STOPGETASSETLCEDATA);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_STOPGETASSETLCEDATA_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_STOPGETASSETLCEDATA_OUTPUTARGUMENTS);
 	}
 
 	ov_string_freelist(plist);

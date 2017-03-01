@@ -10,6 +10,7 @@
 */
 #include "openaas.ovt"
 #include "open62541.h"
+#include "opcua_helpers.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 #include "libov/ov_result.h"
@@ -35,7 +36,7 @@ typedef UA_StatusCode UA_FNC_INSERTNODE(void* handle, UA_Node* node, UA_NodeId *
 typedef UA_Node * UA_FNC_GETNODE(void* handle, UA_NodeId* nodeId);
 typedef UA_StatusCode UA_FNC_REPLACENODE(void* handle, UA_Node* node);
 typedef UA_StatusCode UA_FNC_REMOVENODE(void* handle, UA_NodeId* nodeId);
-typedef void UA_FNC_OVNODESTOREINTERFACEOPENAASNEW(UA_NodestoreInterface* nsi);
+typedef UA_NodestoreInterface* UA_FNC_OVNODESTOREINTERFACEOPENAASNEW(void);
 typedef void UA_FNC_OVNODESTOREINTERFACEOPENAASDELETE(UA_NodestoreInterface * nsi);
 typedef UA_StatusCode UA_FNC_METHODCALLBACKSTANDARD(void *methodHandle, const UA_NodeId *objectId,
                      const UA_NodeId *sessionId, void *sessionHandle,

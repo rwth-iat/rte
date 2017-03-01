@@ -154,6 +154,23 @@ OV_DLLFNCEXPORT OV_RESULT openaas_nodeStoreFunctions_constructor(
 }
 
 
+OV_DLLFNCEXPORT void openaas_nodeStoreFunctions_destructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_openaas_nodeStoreFunctions pinst = Ov_StaticPtrCast(openaas_nodeStoreFunctions, pobj);
+
+    /* do what */
+
+    /* destroy object */
+    ov_object_destructor(pobj);
+
+    return;
+}
+
+
 OV_DLLFNCEXPORT void openaas_nodeStoreFunctions_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -166,16 +183,37 @@ OV_DLLFNCEXPORT void openaas_nodeStoreFunctions_startup(
     ov_object_startup(pobj);
 
     /* do what */
-    openaas_nodeStoreFunctions_ovNodeStoreInterfaceOpenAASNew(&pinst->v_NodeStoreInterface);
+
+    UA_String tmpNamespaceName = UA_String_fromChars("http://openAAS.org/AAS/");
+    UA_Namespace_init(&pinst->v_modelnamespace, &tmpNamespaceName);
+    UA_String_deleteMembers(&tmpNamespaceName);
+    pinst->v_modelnamespace.dataTypes = UA_OPENAAS;
+    pinst->v_modelnamespace.dataTypesSize = UA_OPENAAS_COUNT;
+
+    tmpNamespaceName = UA_String_fromChars("http://openAAS.org/AAS/Ov");
+	UA_Namespace_init(&pinst->v_interfacenamespace, &tmpNamespaceName);
+	UA_String_deleteMembers(&tmpNamespaceName);
+	pinst->v_interfacenamespace.nodestore = openaas_nodeStoreFunctions_ovNodeStoreInterfaceOpenAASNew();
+
+    UA_Namespace** nsArray = UA_malloc(2 * sizeof(UA_Namespace*));
+    nsArray[0] = &pinst->v_modelnamespace;
+    nsArray[1] = &pinst->v_interfacenamespace;
+
+    OV_STRING startFolder[2];
+    startFolder[0] = NULL;
+    startFolder[1] = "/TechUnits/openAAS";
 
     // Add InformationModel & NodeStoreInterface & Reference to AASFolder
 	UA_StatusCode ret = UA_STATUSCODE_GOOD;
-	OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
-	pNodeStoreFunctions = Ov_StaticPtrCast(openaas_nodeStoreFunctions, Ov_GetFirstChild(ov_instantiation, pclass_openaas_nodeStoreFunctions));
-	ret = opcua_uaServer_addInformationModel(&pNodeStoreFunctions->v_NodeStoreInterface, "http://acplt.org/AAS/Ov", "/TechUnits/openAAS", nodeset_returnIndices, &pNodeStoreFunctions->v_NameSpaceIndexInformationModel, &pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, UA_OPENAAS, UA_OPENAAS_COUNT);
+	ret = opcua_uaServer_addInformationModel(nsArray, 2, startFolder, nodeset_returnNamespaces);
+	startFolder[1] = NULL;
 	if (ret != UA_STATUSCODE_GOOD){
 		ov_logfile_error("openaas: Fatal: Couldn't add InformationModel");
+		UA_Namespace_deleteMembers(&(pinst->v_modelnamespace));
+		UA_Namespace_deleteMembers(&(pinst->v_interfacenamespace));
+		return;
 	}
+
     return;
 }
 

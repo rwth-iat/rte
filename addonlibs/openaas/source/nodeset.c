@@ -4,34 +4,39 @@
  */
 #include "nodeset.h"
 UA_INLINE UA_StatusCode nodeset(UA_Server *server){
- return nodeset_returnIndices(server, NULL, NULL, NULL, NULL);
+  return nodeset_returnNamespaces(server, NULL, NULL);
 }
 
-UA_INLINE UA_StatusCode nodeset_returnIndices(UA_Server *server, UA_UInt16 *namespacesSize, UA_UInt16 **oldNameSpaceIndices,
-    UA_UInt16 **newNameSpaceIndices, UA_String **nameSpaceUri) {
-  UA_UInt16* oldNsIdx = UA_malloc(2*sizeof(UA_UInt16));
-  UA_UInt16* newNsIdx = UA_malloc(2*sizeof(UA_UInt16));
-  UA_String* nsUri = UA_malloc(2*sizeof(UA_String*));
+UA_INLINE UA_StatusCode nodeset_returnNamespaces(
+        UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces) {
+  UA_StatusCode retval = UA_STATUSCODE_GOOD;
+  UA_Namespace* nsArray = UA_malloc(2 * sizeof(UA_Namespace));
+  UA_String tempNsUri;
 
   //Adding namespace for old namespace index = 0 with uri: http://opcfoundation.org/UA/
-  UA_UInt16 nsIdx_0 = UA_Server_addNamespace(server, "http://opcfoundation.org/UA/");
-  oldNsIdx[0] = 0;
-  newNsIdx[0] = nsIdx_0;
-  if(nameSpaceUri) nsUri[0] = UA_STRING_ALLOC("http://opcfoundation.org/UA/");
-
+  tempNsUri = UA_String_fromChars("http://opcfoundation.org/UA/");
+  UA_Namespace_init(&nsArray[0], &tempNsUri);
+  UA_String_deleteMembers(&tempNsUri);
+  retval |= UA_Server_addNamespace_full(server, &nsArray[0]);
+  UA_UInt16 nsIdx_0 = nsArray[0].index;
   //Adding namespace for old namespace index = 2 with uri: http://openAAS.org/AAS/
-  UA_UInt16 nsIdx_2 = UA_Server_addNamespace(server, "http://openAAS.org/AAS/");
-  oldNsIdx[1] = 2;
-  newNsIdx[1] = nsIdx_2;
-  if(nameSpaceUri) nsUri[1] = UA_STRING_ALLOC("http://openAAS.org/AAS/");
+  tempNsUri = UA_String_fromChars("http://openAAS.org/AAS/");
+  UA_Namespace_init(&nsArray[1], &tempNsUri);
+  UA_String_deleteMembers(&tempNsUri);
+  retval |= UA_Server_addNamespace_full(server, &nsArray[1]);
+  UA_UInt16 nsIdx_2 = nsArray[1].index;
 
-  //Writing back desired new and old namespace values
-  if(namespacesSize) *namespacesSize = 2;
-  if(oldNameSpaceIndices) *oldNameSpaceIndices = oldNsIdx;
-  if(newNameSpaceIndices) *newNameSpaceIndices = newNsIdx;
-  if(nameSpaceUri) *nameSpaceUri = nsUri;
-  UA_StatusCode retval = UA_STATUSCODE_GOOD; 
+  //Writing back desired namespace values')
+  if(namespacesSize) {*namespacesSize = 2;};
+  if(namespaces) {namespaces = &nsArray;}
+  else {
+    for(size_t i = 0 ; i < 2 ; ++i){
+      UA_Namespace_deleteMembers(&nsArray[i]);
+    }
+    UA_free(nsArray);
+  }
   if(retval == UA_STATUSCODE_GOOD){retval = UA_STATUSCODE_GOOD;} //ensure that retval is used
+  
 
 do {
 // Referencing node found and declared as parent: i=29/Enumeration using i=45/HasSubtype
@@ -1232,7 +1237,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 3);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1248,7 +1253,7 @@ inputArguments[2].name = UA_STRING("AssetId");
 inputArguments[2].valueRank = -1;
 inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1273,9 +1278,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7001), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6033), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7001), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6034), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7001), false);
-free(inputArguments);
-free(outputArguments);
-
 } while(0);
 
 do {
@@ -1284,7 +1286,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 6);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 6);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<6; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1312,7 +1314,7 @@ inputArguments[5].name = UA_STRING("Data");
 inputArguments[5].valueRank = -1;
 inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1337,8 +1339,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7007), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6045), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7007), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6046), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7007), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1347,7 +1347,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 10);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 10);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<10; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1391,7 +1391,7 @@ inputArguments[9].name = UA_STRING("Visibility");
 inputArguments[9].valueRank = -1;
 inputArguments[9].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3006);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1416,8 +1416,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7005), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6041), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7005), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6042), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7005), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1426,7 +1424,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 4);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 4);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<4; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1446,7 +1444,7 @@ inputArguments[3].name = UA_STRING("CreatingInstance");
 inputArguments[3].valueRank = -1;
 inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1471,8 +1469,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7003), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6035), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7003), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6036), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7003), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1481,7 +1477,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1489,7 +1485,7 @@ inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1514,8 +1510,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7002), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6037), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7002), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6038), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7002), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1524,7 +1518,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 2);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1536,7 +1530,7 @@ inputArguments[1].name = UA_STRING("LCEId");
 inputArguments[1].valueRank = -1;
 inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 9);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1561,8 +1555,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7008), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6047), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7008), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6048), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7008), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1571,7 +1563,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 3);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1587,7 +1579,7 @@ inputArguments[2].name = UA_STRING("Name");
 inputArguments[2].valueRank = -1;
 inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1612,8 +1604,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7006), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6043), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7006), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6044), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7006), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1622,7 +1612,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 2);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1632,9 +1622,9 @@ inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[1].name = UA_STRING("Name");
 inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1659,8 +1649,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7004), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6039), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7004), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6040), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7004), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1669,7 +1657,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1677,7 +1665,7 @@ inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1702,8 +1690,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7013), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7013), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6057), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7013), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1712,7 +1698,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 2);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1724,7 +1710,7 @@ inputArguments[1].name = UA_STRING("Count");
 inputArguments[1].valueRank = -1;
 inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 3);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<3; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1757,8 +1743,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7014), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6058), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7014), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6059), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7014), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1767,7 +1751,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 2);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1779,7 +1763,7 @@ inputArguments[1].name = UA_STRING("LCEId");
 inputArguments[1].valueRank = -1;
 inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 9);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 6);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 6);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<6; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1824,8 +1808,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7012), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6053), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7012), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6054), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7012), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1834,7 +1816,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 3);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1850,7 +1832,7 @@ inputArguments[2].name = UA_STRING("Name");
 inputArguments[2].valueRank = -1;
 inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 8);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 8);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<8; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1903,8 +1885,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7010), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6055), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7010), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6056), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7010), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1913,7 +1893,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 7);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 7);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<7; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1945,7 +1925,7 @@ inputArguments[6].name = UA_STRING("Data");
 inputArguments[6].valueRank = -1;
 inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -1970,8 +1950,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7009), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6051), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6052), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7009), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -1980,7 +1958,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 10);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 10);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<10; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -2024,7 +2002,7 @@ inputArguments[9].name = UA_STRING("Visibility");
 inputArguments[9].valueRank = -1;
 inputArguments[9].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3006);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -2049,8 +2027,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7011), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6049), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6050), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7011), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -2059,7 +2035,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 3);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 3);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -2075,7 +2051,7 @@ inputArguments[2].name = UA_STRING("AssetAASId");
 inputArguments[2].valueRank = -1;
 inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -2100,8 +2076,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7016), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6070), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7016), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6071), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7016), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -2110,7 +2084,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -2118,7 +2092,7 @@ inputArguments[0].name = UA_STRING("AASId");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -2143,8 +2117,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7017), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6072), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7017), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6073), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7017), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -2153,7 +2125,7 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 2);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -2165,7 +2137,7 @@ inputArguments[1].name = UA_STRING("targetAAS");
 inputArguments[1].valueRank = -1;
 inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3005);
 
-outputArguments = (UA_Argument *) malloc(sizeof(UA_Argument) * 1);
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
 for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
@@ -2190,8 +2162,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 7015), UA_NODEID_NUMER
 //  Creating this node has resolved the following open references:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6067), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7015), false);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6068), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 7015), false);
-free(inputArguments);
-free(outputArguments);
 } while(0);
 
 do {
@@ -2740,6 +2710,5 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 5009), UA_NODEID_NUMER
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 3008), UA_NODEID_NUMERIC(nsIdx_0, 38), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 5009), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6032), UA_NODEID_NUMERIC(nsIdx_0, 39), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 5009), false);
 } while(0);
-
 return UA_STATUSCODE_GOOD;
 }

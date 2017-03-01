@@ -64,18 +64,15 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOP
 	}
 
 	*nodeClass = UA_NODECLASS_OBJECT;
-	newNode = (UA_Node*)UA_malloc(sizeof(UA_ObjectNode));
+	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ObjectNode));
 
 
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(pobj->v_identifier);
-	if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
-		qName.namespaceIndex = pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface;
-	} else {
-		qName.namespaceIndex = 0;
-	}
+	qName.name = UA_String_fromChars(pobj->v_identifier);
+	qName.namespaceIndex = 0;
 	newNode->browseName = qName;
 
 	// Description
@@ -144,7 +141,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOP
 		newNode->references[2].isInverse = UA_FALSE;
 		ov_memstack_lock();
 		tmpString = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pmodelmanager), 2);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_interfacenamespace.index, tmpString);
 		ov_memstack_unlock();
 	}
 
@@ -154,7 +151,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovOpenAASFolderNodeToOP
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "/AASFolder");
-	newNode->references[3].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+	newNode->references[3].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_interfacenamespace.index, tmpString);
 	ov_database_free(tmpString);
 
 	*opcuaNode = newNode;

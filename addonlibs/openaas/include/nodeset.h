@@ -5,7 +5,10 @@
 #ifndef NODESET_H_
 #define NODESET_H_
 #ifdef UA_NO_AMALGAMATION
+#include "server/ua_server_internal.h"
   #include "ua_util.h"
+  #include "ua_types.h"
+  #include "ua_nodes.h"
   #include "ua_server.h"
   #include "ua_types_encoding_binary.h"
   #include "ua_types_generated_encoding_binary.h"
@@ -100,9 +103,7 @@
 #define UA_NS2ID_PROPERTYVALUESTATEMENTLISTTYPE 1002
 #define UA_NS2ID_SUBMODEL 1006
 
-extern UA_StatusCode nodeset(UA_Server *server);
-extern UA_StatusCode nodeset_returnIndices(UA_Server *server,
-   UA_UInt16 *namespacesSize, UA_UInt16 **oldNameSpaceIndices,
-   UA_UInt16 **newNameSpaceIndices, UA_String **nameSpaceUri);
-
+  extern UA_StatusCode nodeset(UA_Server *server);
+  extern UA_StatusCode nodeset_returnNamespaces(UA_Server *server,
+          UA_UInt16 *namespacesSize, UA_Namespace **namspaces);
 #endif /* NODESET_H_ */

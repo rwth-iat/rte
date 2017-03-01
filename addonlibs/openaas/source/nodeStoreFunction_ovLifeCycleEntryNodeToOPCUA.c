@@ -68,18 +68,15 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 	}
 
 	*nodeClass = UA_NODECLASS_VARIABLE;
-	newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
+	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableNode));
 
 
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(pobj->v_identifier);
-	if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
-		qName.namespaceIndex = pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface;
-	} else {
-		qName.namespaceIndex = 0;
-	}
+	qName.name = UA_String_fromChars(pobj->v_identifier);
+	qName.namespaceIndex = 0;
 	newNode->browseName = qName;
 
 	// Description
@@ -139,7 +136,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 		if (tmpPart.elemtype == OV_ET_NONE)
 			break;
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceIdString") == OV_STRCMP_EQUAL){
-			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpLifeCycleEntry.creatingInstance.idSpec);
+			tmpLifeCycleEntry.creatingInstance.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceIdType") == OV_STRCMP_EQUAL){
@@ -147,7 +144,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceIdString") == OV_STRCMP_EQUAL){
-			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpLifeCycleEntry.writingInstance.idSpec);
+			tmpLifeCycleEntry.writingInstance.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceIdType") == OV_STRCMP_EQUAL){
@@ -163,11 +160,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Subject") == OV_STRCMP_EQUAL){
-			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpLifeCycleEntry.subject);
+			tmpLifeCycleEntry.subject = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "EventClass") == OV_STRCMP_EQUAL){
-			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpLifeCycleEntry.eventClass);
+			tmpLifeCycleEntry.eventClass = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
 			continue;
 		}
 		tmpLifeCycleEntry.id =  atoi(tmpPart.elemunion.pvar->v_identifier);
@@ -181,6 +178,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 		return result;
 	}
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = true;
+	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
 	UA_LifeCycleEntry_copy(&tmpLifeCycleEntry, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
 	UA_LifeCycleEntry_deleteMembers(&tmpLifeCycleEntry);
 
@@ -200,7 +198,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
 	((UA_VariableNode*)newNode)->dataType.identifierType = UA_NODEIDTYPE_NUMERIC;
-	((UA_VariableNode*)newNode)->dataType.namespaceIndex = pNodeStoreFunctions->v_NameSpaceIndexInformationModel;
+	((UA_VariableNode*)newNode)->dataType.namespaceIndex = pNodeStoreFunctions->v_modelnamespace.index;
 	((UA_VariableNode*)newNode)->dataType.identifier.numeric = UA_NS2ID_LIFECYCLEENTRY;
 
 
@@ -228,7 +226,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 			ov_string_append(&tmpString, "/");
 		ov_string_append(&tmpString, plist[i]);
 	}
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_interfacenamespace.index, tmpString);
 	ov_string_freelist(plist);
 	ov_database_free(tmpString);
 

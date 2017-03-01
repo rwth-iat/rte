@@ -204,21 +204,21 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		UA_Identification tmpUACreatingInstance;
 		UA_Identification_init(&tmpUACreatingInstance);
-		copyOvStringToOPCUA(lce.creatingInstance.IdSpec, &tmpUACreatingInstance.idSpec);
+		tmpUACreatingInstance.idSpec = UA_String_fromChars(lce.creatingInstance.IdSpec);
 		tmpUACreatingInstance.idType = lce.creatingInstance.IdType;
 
 		UA_Identification tmpUAWritingInstance;
 		UA_Identification_init(&tmpUAWritingInstance);
-		copyOvStringToOPCUA(lce.writingInstance.IdSpec, &tmpUAWritingInstance.idSpec);
+		tmpUAWritingInstance.idSpec = UA_String_fromChars(lce.writingInstance.IdSpec);
 		tmpUAWritingInstance.idType = lce.writingInstance.IdType;
 
 		UA_String tmpUAEventClass;
 		UA_String_init(&tmpUAEventClass);
-		copyOvStringToOPCUA(lce.eventClass, &tmpUAEventClass);
+		tmpUAEventClass = UA_String_fromChars(lce.eventClass);
 
 		UA_String tmpUASubject;
 		UA_String_init(&tmpUASubject);
-		copyOvStringToOPCUA(lce.subject, &tmpUASubject);
+		tmpUASubject = UA_String_fromChars(lce.subject);
 
 		UA_DataValue tmpUAValue;
 		UA_DataValue_init(&tmpUAValue);
@@ -264,12 +264,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		for (OV_UINT i = 0; i < arrayDimension; i++){
 			UA_LifeCycleEntry_init(&tmpUALifeCycleEntry[i]);
-			copyOvStringToOPCUA(lce[i].creatingInstance.IdSpec, &tmpUALifeCycleEntry[i].creatingInstance.idSpec);
+			tmpUALifeCycleEntry[i].creatingInstance.idSpec = UA_String_fromChars(lce[i].creatingInstance.IdSpec);
 			tmpUALifeCycleEntry[i].creatingInstance.idType = lce[i].creatingInstance.IdType;
-			copyOvStringToOPCUA(lce[i].writingInstance.IdSpec, &tmpUALifeCycleEntry[i].writingInstance.idSpec);
+			tmpUALifeCycleEntry[i].writingInstance.idSpec = UA_String_fromChars(lce[i].writingInstance.IdSpec);
 			tmpUALifeCycleEntry[i].writingInstance.idType = lce[i].writingInstance.IdType;
-			copyOvStringToOPCUA(lce[i].eventClass, &tmpUALifeCycleEntry[i].eventClass);
-			copyOvStringToOPCUA(lce[i].subject, &tmpUALifeCycleEntry[i].subject);
+			tmpUALifeCycleEntry[i].eventClass = UA_String_fromChars(lce[i].eventClass);
+			tmpUALifeCycleEntry[i].subject = UA_String_fromChars(lce[i].subject);
 			ov_AnyToVariant(&lce[i].data.Value, &tmpUALifeCycleEntry[i].data.value);
 			tmpUALifeCycleEntry[i].data.hasValue = true;
 			tmpUALifeCycleEntry[i].data.sourceTimestamp = ov_ovTimeTo1601nsTime(lce[i].data.TimeStamp);
@@ -436,11 +436,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		UA_String tmpUAUnit;
 		UA_String_init(&tmpUAUnit);
-		copyOvStringToOPCUA(pvs.unit, &tmpUAUnit);
+		tmpUAUnit = UA_String_fromChars(pvs.unit);
 
 		UA_Identification tmpUAID;
 		UA_Identification_init(&tmpUAID);
-		copyOvStringToOPCUA(pvs.ID.IdSpec, &tmpUAID.idSpec);
+		tmpUAID.idSpec = UA_String_fromChars(pvs.ID.IdSpec);
 		tmpUAID.idType = pvs.ID.IdType;
 
 		UA_ViewEnum tmpUAView;
@@ -578,7 +578,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
     return resultOV;
 }
 
-static void OV_NodeStore_deleteNodestore(void *handle){
+static void OV_NodeStore_deleteNodestore(void *handle, UA_UInt16 namespaceIndex){
 
 }
 
@@ -587,8 +587,8 @@ static void OV_NodeStore_deleteNode(UA_Node *node){
 		UA_Node_deleteMembersAnyNodeClass(node);
 	UA_free(node);
 }
-static void OV_NodeStore_releaseNode(UA_Node *node){
-	OV_NodeStore_deleteNode(node);
+static void OV_NodeStore_releaseNode(void *handle, const UA_Node *node){
+	OV_NodeStore_deleteNode((UA_Node*)node);
 }
 
 static UA_Node * OV_NodeStore_newNode(UA_NodeClass nodeClass){ //TODO add nodestore handle? --> move nodeStore from static context to main
@@ -747,10 +747,11 @@ static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
 		tmpNodeId.identifierType = node->nodeId.identifierType;
 		ov_string_setvalue(&tmpString2, plist[0]);
 		ov_string_append(&tmpString2, ".CarrierString");
-		copyOvStringToOPCUA(tmpString2, &(tmpNodeId.identifier.string));
+		tmpNodeId.identifier.string = UA_String_fromChars(tmpString2);
 
 		ov_memstack_lock();
 		result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
+		UA_NodeId_deleteMembers(&tmpNodeId);
 		if(result != UA_STATUSCODE_GOOD){
 			ov_memstack_unlock();
 			return result;
@@ -758,9 +759,11 @@ static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
 
 		ov_string_setvalue(&tmpString2, plist[0]);
 		ov_string_append(&tmpString2, ".CarrierType");
-		copyOvStringToOPCUA(tmpString2, &(tmpNodeId.identifier.string));
+		UA_NodeId_init(&tmpNodeId);
+		tmpNodeId.identifier.string = UA_String_fromChars(tmpString2);
 
 		result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path2);
+		UA_NodeId_deleteMembers(&tmpNodeId);
 		if(result != UA_STATUSCODE_GOOD){
 			ov_memstack_unlock();
 			return result;
@@ -848,21 +851,32 @@ static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
 	ov_database_free(tmpString2);
 	return UA_STATUSCODE_GOOD;
 }
+static void OV_NodeStore_iterate(void *handle, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor){
 
+}
+static UA_StatusCode OV_NodeStore_linkNamespace(void *handle, UA_UInt16 namespaceIndex){
+	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+}
+static UA_StatusCode OV_NodeStore_unlinkNamespace(void *handle, UA_UInt16 namespaceIndex){
+	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+}
 
-void
-openaas_nodeStoreFunctions_ovNodeStoreInterfaceOpenAASNew(UA_NodestoreInterface* nsi) {
+UA_NodestoreInterface* openaas_nodeStoreFunctions_ovNodeStoreInterfaceOpenAASNew(void) {
+	UA_NodestoreInterface *nsi = ov_database_malloc(sizeof(UA_NodestoreInterface));
     nsi->handle =        	NULL;
-    nsi->deleteNodeStore =  (UA_NodestoreInterface_delete) 		OV_NodeStore_deleteNodestore;
+    nsi->deleteNodestore =  (UA_NodestoreInterface_deleteNodeStore) 		OV_NodeStore_deleteNodestore;
     nsi->newNode =       	(UA_NodestoreInterface_newNode)     OV_NodeStore_newNode;
     nsi->deleteNode =    	(UA_NodestoreInterface_deleteNode)  OV_NodeStore_deleteNode;
-    nsi->insert =       	(UA_NodestoreInterface_insert)      OV_NodeStore_insertNode;
-    nsi->get =          	(UA_NodestoreInterface_get)         OV_NodeStore_getNode;
-    nsi->getCopy =      	(UA_NodestoreInterface_getCopy)     OV_NodeStore_getCopyNode;
-    nsi->replace =      	(UA_NodestoreInterface_replace)     OV_NodeStore_replaceNode;
-    nsi->remove =       	(UA_NodestoreInterface_remove)      OV_NodeStore_removeNode;
-    //nsi->iterateNode =       (UA_NodestoreInterface_iterateNode)     OV_NodeStore_iterateNode;
-    nsi->release =       	(UA_NodestoreInterface_release)     OV_NodeStore_releaseNode;
+    nsi->insertNode =       	(UA_NodestoreInterface_insertNode)      OV_NodeStore_insertNode;
+    nsi->getNode =          	(UA_NodestoreInterface_getNode)         OV_NodeStore_getNode;
+    nsi->getNodeCopy =      	(UA_NodestoreInterface_getNodeCopy)     OV_NodeStore_getCopyNode;
+    nsi->replaceNode =      	(UA_NodestoreInterface_replaceNode)     OV_NodeStore_replaceNode;
+    nsi->removeNode =       	(UA_NodestoreInterface_removeNode)      OV_NodeStore_removeNode;
+    nsi->iterate =       (UA_NodestoreInterface_iterate)     OV_NodeStore_iterate;
+    nsi->releaseNode =       	(UA_NodestoreInterface_releaseNode)     OV_NodeStore_releaseNode;
+    nsi->linkNamespace =       (UA_NodestoreInterface_linkNamespace)     OV_NodeStore_linkNamespace;
+	nsi->unlinkNamespace =       	(UA_NodestoreInterface_unlinkNamespace)     OV_NodeStore_unlinkNamespace;
+	return nsi;
 }
 
 void

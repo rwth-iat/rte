@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	}
 
 	*nodeClass = UA_NODECLASS_VARIABLE;
-	newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
+	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableNode));
 
 	// Basic Attribute
 	// BrowseName
@@ -142,7 +142,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Unit") == OV_STRCMP_EQUAL){
-			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpPropertyValueStatement.unit);
+			tmpPropertyValueStatement.unit = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Value") == OV_STRCMP_EQUAL){
@@ -150,7 +150,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "IDIdString") == OV_STRCMP_EQUAL){
-			copyOvStringToOPCUA(*(OV_STRING*)tmpPart.pvalue, &tmpPropertyValueStatement.iD.idSpec);
+			tmpPropertyValueStatement.iD.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
 			continue;
 		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "IDIdType") == OV_STRCMP_EQUAL){
@@ -170,6 +170,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 		return result;
 	}
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = true;
+	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
 	UA_PropertyValueStatement_copy(&tmpPropertyValueStatement, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
 	UA_PropertyValueStatement_deleteMembers(&tmpPropertyValueStatement);
 
@@ -188,7 +189,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
 	((UA_VariableNode*)newNode)->dataType.identifierType = UA_NODEIDTYPE_NUMERIC;
-	((UA_VariableNode*)newNode)->dataType.namespaceIndex = pNodeStoreFunctions->v_NameSpaceIndexInformationModel;
+	((UA_VariableNode*)newNode)->dataType.namespaceIndex = pNodeStoreFunctions->v_modelnamespace.index;
 	((UA_VariableNode*)newNode)->dataType.identifier.numeric = UA_NS2ID_PROPERTYVALUESTATEMENT;
 
 	// References
@@ -216,7 +217,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 			ov_string_append(&tmpString, "/");
 		ov_string_append(&tmpString, plist[i]);
 	}
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface, tmpString);
+	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_interfacenamespace.index, tmpString);
 	ov_string_freelist(plist);
 	ov_database_free(tmpString);
 
