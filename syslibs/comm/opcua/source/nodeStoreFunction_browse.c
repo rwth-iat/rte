@@ -83,7 +83,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription(
 		return UA_STATUSCODE_BADINVALIDARGUMENT;
 	}
 	dst->nodeId.nodeId.identifierType = UA_NODEIDTYPE_STRING;
-	dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+	dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 	if(pElement->elemtype == OV_ET_OBJECT || pElement->elemtype == OV_ET_VARIABLE || pElement->elemtype == OV_ET_MEMBER){
 		pObject = pElement->pobj;
 	} else {
@@ -119,7 +119,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription(
 		} else if(pElement->elemtype == OV_ET_VARIABLE){
 			dst->browseName.name = UA_String_fromChars(pElement->elemunion.pvar->v_identifier);
 		}
-		dst->browseName.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+		dst->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
 	}
 	if(resultMask & (1<<4)){
 		if(pElement->elemtype == OV_ET_OBJECT){
@@ -141,7 +141,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription(
 	}
 	if(resultMask & (1<<5)){	// TODO fixme	This is the type-node: using 0|58 (baseObjectType) for all variables
 		if(dst->nodeClass == UA_NODECLASS_OBJECT){
-			dst->typeDefinition.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+			dst->typeDefinition.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 			dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 			dst->typeDefinition.nodeId.identifier.numeric = pElement->pobj->v_idL;
 		} else if(dst->nodeClass == UA_NODECLASS_VARIABLE){
@@ -592,7 +592,7 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 								maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 								if(maskMatch && (access & OV_AC_READ)){
 									if(fillDescription){
-										*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, opcua_pUaServer->v_NameSpaceIndex,
+										*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, opcua_pUaServer->v_namespace.index,
 												linkElement.elemunion.passoc->v_idL, UA_TRUE, resultMask, &(dst[*refCount]));
 									}
 									(*refCount)++;
@@ -605,7 +605,7 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 								maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 								if(maskMatch && (access & OV_AC_READ)){
 									if(fillDescription){
-										*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, opcua_pUaServer->v_NameSpaceIndex,
+										*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, opcua_pUaServer->v_namespace.index,
 												linkElement.elemunion.passoc->v_idL, UA_TRUE, resultMask, &(dst[*refCount]));
 									}
 									(*refCount)++;
@@ -633,7 +633,7 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 							maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 							if(maskMatch && (access & OV_AC_READ)){
 								if(fillDescription){
-									*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, opcua_pUaServer->v_NameSpaceIndex,
+									*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, opcua_pUaServer->v_namespace.index,
 											linkElement.elemunion.passoc->v_idL, UA_FALSE, resultMask, &(dst[*refCount]));
 								}
 								(*refCount)++;
@@ -831,7 +831,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_browseNodes(
 		 * done with arguments nodes
 		 **********************************************************************/
 		// check ov-references
-		if(browseDescriptions[indices[index]].referenceTypeId.namespaceIndex == opcua_pUaServer->v_NameSpaceIndex){
+		if(browseDescriptions[indices[index]].referenceTypeId.namespaceIndex == opcua_pUaServer->v_namespace.index){
 			uaResult = opcua_nodeStoreFunctions_resolveNodeIdToPath(browseDescriptions[indices[index]].referenceTypeId, &assocPath);
 			if(uaResult != UA_STATUSCODE_GOOD){
 				KS_logfile_debug(("nodeStore_browseNodes: could not resolve association for index %u in list. Skipping.", index));

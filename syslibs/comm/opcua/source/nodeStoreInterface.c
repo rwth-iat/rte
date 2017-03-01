@@ -120,6 +120,14 @@ static UA_Node * OV_NodeStore_newNode(UA_NodeClass nodeClass){ //TODO add nodest
     return newNode;
 }
 
+static UA_StatusCode OV_NodeStore_linkNamespace(void *handle, UA_UInt16 namespaceIndex){
+	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+}
+static UA_StatusCode OV_NodeStore_unlinkNamespace(void *handle, UA_UInt16 namespaceIndex){
+	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+}
+static void OV_NodeStore_iterate(void *handle, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor){
+}
 static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeId){
 	OV_INSTPTR_ov_object pobj = opcua_nodeStoreFunctions_resolveNodeIdToOvObject((UA_NodeId*)nodeId);
 	if (pobj == NULL)
@@ -199,16 +207,18 @@ UA_NodestoreInterface*
 opcua_nodeStoreFunctions_ovNodeStoreInterfaceNew(void) {
 	UA_NodestoreInterface *nsi = ov_database_malloc(sizeof(UA_NodestoreInterface));
     nsi->handle =        	NULL;
-    nsi->deleteNodeStore =  (UA_NodestoreInterface_delete) 		OV_NodeStore_deleteNodestore;
+    nsi->deleteNodestore =  (UA_NodestoreInterface_deleteNodeStore) 		OV_NodeStore_deleteNodestore;
     nsi->newNode =       	(UA_NodestoreInterface_newNode)     OV_NodeStore_newNode;
     nsi->deleteNode =    	(UA_NodestoreInterface_deleteNode)  OV_NodeStore_deleteNode;
-    nsi->insert =       	(UA_NodestoreInterface_insert)      OV_NodeStore_insertNode;
-    nsi->get =          	(UA_NodestoreInterface_get)         OV_NodeStore_getNode;
-    nsi->getCopy =      	(UA_NodestoreInterface_getCopy)     OV_NodeStore_getCopyNode;
-    nsi->replace =      	(UA_NodestoreInterface_replace)     OV_NodeStore_replaceNode;
-    nsi->remove =       	(UA_NodestoreInterface_remove)      OV_NodeStore_removeNode;
-    //nsi->iterateNode =       (UA_NodestoreInterface_iterateNode)     OV_NodeStore_iterateNode;
-    nsi->release =       	(UA_NodestoreInterface_release)     OV_NodeStore_releaseNode;
+    nsi->insertNode =       	(UA_NodestoreInterface_insertNode)      OV_NodeStore_insertNode;
+    nsi->getNode =          	(UA_NodestoreInterface_getNode)         OV_NodeStore_getNode;
+    nsi->getNodeCopy =      	(UA_NodestoreInterface_getNodeCopy)     OV_NodeStore_getCopyNode;
+    nsi->replaceNode =      	(UA_NodestoreInterface_replaceNode)     OV_NodeStore_replaceNode;
+    nsi->removeNode =       	(UA_NodestoreInterface_removeNode)      OV_NodeStore_removeNode;
+    nsi->iterate =       (UA_NodestoreInterface_iterate)     OV_NodeStore_iterate;
+    nsi->releaseNode =       	(UA_NodestoreInterface_releaseNode)     OV_NodeStore_releaseNode;
+    nsi->linkNamespace = (UA_NodestoreInterface_linkNamespace) OV_NodeStore_linkNamespace;
+    nsi->unlinkNamespace = (UA_NodestoreInterface_unlinkNamespace) OV_NodeStore_unlinkNamespace;
     return nsi;
 }
 void

@@ -72,7 +72,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 		return UA_STATUSCODE_BADINVALIDARGUMENT;
 	}
 	dst->nodeId.nodeId.identifierType = UA_NODEIDTYPE_STRING;
-	dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+	dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 	if(pElement->elemtype == OV_ET_OBJECT || pElement->elemtype == OV_ET_VARIABLE || pElement->elemtype == OV_ET_MEMBER){
 		pObject = pElement->pobj;
 	} else {
@@ -107,7 +107,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 		} else if(pElement->elemtype == OV_ET_VARIABLE){
 			dst->browseName.name = UA_String_fromChars(pElement->elemunion.pvar->v_identifier);
 		}
-		dst->browseName.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+		dst->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
 	}
 	if(resultMask & (1<<4)){
 		if(pElement->elemtype == OV_ET_OBJECT){
@@ -129,7 +129,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 	}
 	if(resultMask & (1<<5)){	// TODO fixme	This is the type-node: using 0|58 (baseObjectType) for all variables
 		if(dst->nodeClass == UA_NODECLASS_OBJECT){
-			dst->typeDefinition.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+			dst->typeDefinition.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 			dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 			dst->typeDefinition.nodeId.identifier.numeric = pElement->pobj->v_idL;
 		} else if(dst->nodeClass == UA_NODECLASS_VARIABLE){
@@ -581,7 +581,7 @@ UA_Int32 getReferenceDescriptions_OvReferences2(const UA_BrowseDescription* brow
 								maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 								if(maskMatch && (access & OV_AC_READ)){
 									if(fillDescription){
-										*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_NameSpaceIndex,
+										*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespace.index,
 												linkElement.elemunion.passoc->v_idL, UA_TRUE, resultMask, &(dst[*refCount]));
 									}
 									(*refCount)++;
@@ -594,7 +594,7 @@ UA_Int32 getReferenceDescriptions_OvReferences2(const UA_BrowseDescription* brow
 								maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 								if(maskMatch && (access & OV_AC_READ)){
 									if(fillDescription){
-										*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_NameSpaceIndex,
+										*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespace.index,
 												linkElement.elemunion.passoc->v_idL, UA_TRUE, resultMask, &(dst[*refCount]));
 									}
 									(*refCount)++;
@@ -622,7 +622,7 @@ UA_Int32 getReferenceDescriptions_OvReferences2(const UA_BrowseDescription* brow
 							maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 							if(maskMatch && (access & OV_AC_READ)){
 								if(fillDescription){
-									*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_NameSpaceIndex,
+									*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespace.index,
 											linkElement.elemunion.passoc->v_idL, UA_FALSE, resultMask, &(dst[*refCount]));
 								}
 								(*refCount)++;
@@ -670,6 +670,15 @@ static UA_StatusCode OV_NodeStore2_insert(void *handle, UA_Node *node, UA_NodeId
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 
+
+static UA_StatusCode OV_NodeStore2_linkNamespace(void *handle, UA_UInt16 namespaceIndex){
+	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+}
+static UA_StatusCode OV_NodeStore2_unlinkNamespace(void *handle, UA_UInt16 namespaceIndex){
+	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+}
+static void OV_NodeStore2_iterate(void *handle, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor){
+}
 static UA_Node * OV_NodeStore2_newNode(UA_NodeClass nodeClass){ //TODO add nodestore handle? --> move nodeStore from static context to main
     return NULL;
 }
@@ -704,32 +713,32 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	switch(element.elemtype){
 	case OV_ET_OBJECT:
 		if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_class){
-			newNode = (UA_Node*)UA_malloc(sizeof(UA_ObjectTypeNode));
+			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ObjectTypeNode));
 			newNode->nodeClass = UA_NODECLASS_OBJECTTYPE;
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
-			newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableTypeNode));
+			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableTypeNode));
 			newNode->nodeClass = UA_NODECLASS_VARIABLETYPE;
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
-			newNode = (UA_Node*)UA_malloc(sizeof(UA_ReferenceTypeNode));
+			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ReferenceTypeNode));
 			newNode->nodeClass = UA_NODECLASS_REFERENCETYPE;
 		} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_opcua_arguments){
-			newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
+			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableNode));
 			newNode->nodeClass = UA_NODECLASS_VARIABLE;
 		} else if(Ov_CanCastTo(opcua_methodNode, pobj)){
-			newNode = (UA_Node*)UA_malloc(sizeof(UA_MethodNode));
+			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_MethodNode));
 			newNode->nodeClass = UA_NODECLASS_METHOD;
 		} else{
-			newNode = (UA_Node*)UA_malloc(sizeof(UA_ObjectNode));
+			newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ObjectNode));
 			newNode->nodeClass = UA_NODECLASS_OBJECT;
 		}
 		break;
 	case OV_ET_VARIABLE:
 	case OV_ET_MEMBER:
-		newNode = (UA_Node*)UA_malloc(sizeof(UA_VariableNode));
+		newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableNode));
 		newNode->nodeClass = UA_NODECLASS_VARIABLE;
 		break;
 	case OV_ET_OPERATION:
-		newNode = (UA_Node*)UA_malloc(sizeof(UA_MethodNode));
+		newNode = (UA_Node*)UA_calloc(1, sizeof(UA_MethodNode));
 		newNode->nodeClass = UA_NODECLASS_METHOD;
 		break;
 	case OV_ET_CHILDLINK:
@@ -743,7 +752,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	UA_QualifiedName_init(&newNode->browseName);
 	newNode->browseName.name = UA_String_fromChars(pobj->v_identifier);
 	if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
-		newNode->browseName.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+		newNode->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
 	} else {
 		newNode->browseName.namespaceIndex = 0;
 	}
@@ -766,7 +775,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	// NodeId
 	UA_NodeId_init(&newNode->nodeId);
 	newNode->nodeId.identifierType = nodeId->identifierType;
-	newNode->nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+	newNode->nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 	switch(newNode->nodeId.identifierType){
 	case UA_NODEIDTYPE_NUMERIC:
 		newNode->nodeId.identifier.numeric = nodeId->identifier.numeric;
@@ -951,6 +960,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 			value.value.vartype &= OV_VT_KSMASK;
 			if(result == UA_STATUSCODE_GOOD){
 				result = ov_AnyToVariant(&value, &(((UA_VariableNode*)newNode)->value.data.value.value));
+				((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
 				((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(value.value.vartype);
 				value = emptyAny;
 			}
@@ -961,6 +971,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 				UA_Argument *argArray = NULL;
 				result = opcua_nodeStoreFunctions_getCallArgs((OV_INSTPTR_opcua_arguments)pobjtemp, &numberofArgs, &argArray);
 				((UA_VariableNode*)newNode)->value.data.value.value.data = argArray;
+				((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
 				((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(value.value.vartype);
 			} else {
 				result = ov_resultToUaStatusCode(OV_ERR_BADPATH);
@@ -1085,7 +1096,9 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		if((!pVtblObj) || (ov_activitylock)){
 			pVtblObj = pclass_ov_object->v_pvtable;
 		}
+
 		result = ov_AnyToVariant(ov_variable_initialvalue_get(Ov_StaticPtrCast(ov_variable,pobjtemp)), &(((UA_VariableTypeNode*)newNode)->value.data.value.value));
+		((UA_VariableTypeNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
 		// isAbstract
 		((UA_VariableTypeNode*)newNode)->isAbstract = UA_FALSE;
 		// dataType
@@ -1449,19 +1462,23 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 	return UA_STATUSCODE_GOOD;
 }
 
-void
-opcua_nodeStoreFunctions_ovNodeStoreInterface2New(UA_NodestoreInterface* nsi) {
+UA_NodestoreInterface*
+opcua_nodeStoreFunctions_ovNodeStoreInterface2New(void) {
+	UA_NodestoreInterface *nsi = ov_database_malloc(sizeof(UA_NodestoreInterface));
     nsi->handle =        	NULL;
-    nsi->deleteNodeStore =  (UA_NodestoreInterface_delete) 		OV_NodeStore2_deleteNodestore;
+    nsi->deleteNodestore =  (UA_NodestoreInterface_deleteNodeStore) 		OV_NodeStore2_deleteNodestore;
     nsi->newNode =       	(UA_NodestoreInterface_newNode)     OV_NodeStore2_newNode;
     nsi->deleteNode =    	(UA_NodestoreInterface_deleteNode)  OV_NodeStore2_deleteNode;
-    nsi->insert =       	(UA_NodestoreInterface_insert)      OV_NodeStore2_insertNode;
-    nsi->get =          	(UA_NodestoreInterface_get)         OV_NodeStore2_getNode;
-    nsi->getCopy =      	(UA_NodestoreInterface_getCopy)     OV_NodeStore2_getCopyNode;
-    nsi->replace =      	(UA_NodestoreInterface_replace)     OV_NodeStore2_replaceNode;
-    nsi->remove =       	(UA_NodestoreInterface_remove)      OV_NodeStore2_removeNode;
-    //nsi->iterateNode =       (UA_NodestoreInterface_iterateNode)     OV_NodeStore2iterateNode;
-    nsi->release =      	(UA_NodestoreInterface_release) 	OV_NodeStore2_releaseNode;
+    nsi->insertNode =       	(UA_NodestoreInterface_insertNode)      OV_NodeStore2_insertNode;
+    nsi->getNode =          	(UA_NodestoreInterface_getNode)         OV_NodeStore2_getNode;
+    nsi->getNodeCopy =      	(UA_NodestoreInterface_getNodeCopy)     OV_NodeStore2_getCopyNode;
+    nsi->replaceNode =      	(UA_NodestoreInterface_replaceNode)     OV_NodeStore2_replaceNode;
+    nsi->removeNode =       	(UA_NodestoreInterface_removeNode)      OV_NodeStore2_removeNode;
+    nsi->iterate =       (UA_NodestoreInterface_iterate)     OV_NodeStore2_iterate;
+    nsi->releaseNode =      	(UA_NodestoreInterface_releaseNode) 	OV_NodeStore2_releaseNode;
+    nsi->linkNamespace = (UA_NodestoreInterface_linkNamespace) OV_NodeStore2_linkNamespace;
+    nsi->unlinkNamespace = (UA_NodestoreInterface_unlinkNamespace) OV_NodeStore2_unlinkNamespace;
+    return nsi;
 }
 void
 opcua_nodeStoreFunctions_ovNodeStoreInterface2Delete(UA_NodestoreInterface * nodestoreInterface){

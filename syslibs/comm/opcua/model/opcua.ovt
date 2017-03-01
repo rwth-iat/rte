@@ -25,10 +25,6 @@ struct UA_NodeStore {
     UA_UInt32          sizePrimeIndex;
 };
 
-typedef struct UA_CustomDataTypes{
-	UA_DataType *DataTypes;	
-}UA_CustomDataTypes;
-
 
 /*		
 	Never ever change the order of the items inside this struct!!!
@@ -49,7 +45,6 @@ typedef UA_Connection** UA_ConnectionPTRPTR;
 typedef UA_Server* OV_PTR_UA_Server;
 typedef UA_Client* OV_PTR_UA_Client;
 	
-typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_UInt16 **oldNameSpaceIndices,
-                                                UA_UInt16 **newNameSpaceIndices, UA_String **nameSpaceUri);
+typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
 
 #endif

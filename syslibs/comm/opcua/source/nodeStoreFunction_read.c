@@ -271,7 +271,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 						UA_QualifiedName* qName = UA_QualifiedName_new();
 						qName->name = UA_String_fromChars(pobj->v_identifier);
 						if(Ov_GetClassPtr(pobj) != pclass_opcua_arguments){
-							qName->namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+							qName->namespaceIndex = opcua_pUaServer->v_namespace.index;
 						} else {
 							qName->namespaceIndex = 0;
 						}

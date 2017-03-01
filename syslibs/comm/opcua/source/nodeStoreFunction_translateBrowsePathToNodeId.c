@@ -51,7 +51,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 	}
 	memcpy(targetIdentifier, relativePath->elements[levelCounter-1].targetName.name.data, relativePath->elements[levelCounter-1].targetName.name.length);
 	targetIdentifier[relativePath->elements[levelCounter-1].targetName.name.length] = '\0';
-	if(relativePath->elements[levelCounter-1].targetName.namespaceIndex != opcua_pUaServer->v_NameSpaceIndex){
+	if(relativePath->elements[levelCounter-1].targetName.namespaceIndex != opcua_pUaServer->v_namespace.index){
 		if(relativePath->elements[levelCounter-1].targetName.namespaceIndex != 0
 				|| (ov_string_compare(targetIdentifier, "InputArguments") != OV_STRCMP_EQUAL
 						&& ov_string_compare(targetIdentifier, "OutputArguments") != OV_STRCMP_EQUAL)){
@@ -83,7 +83,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 							if(fillDescription){
 								browsePathTargets[*elementCount].remainingPathIndex = 0;
 								UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 								browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 								browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 							}
@@ -108,7 +108,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 							if(fillDescription){
 								browsePathTargets[*elementCount].remainingPathIndex = 0;
 								UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 								browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 								browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 							}
@@ -126,7 +126,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 							if(fillDescription){//TODO Var-NodeIDs!!!
 								browsePathTargets[*elementCount].remainingPathIndex = 0;
 								UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 								browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_STRING;
 								browsePathTargets[*elementCount].targetId.nodeId.identifier.string = UA_String_fromChars(refElem.elemunion.pvar->v_identifier);
 							}
@@ -150,7 +150,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 					if(fillDescription){
 						browsePathTargets[*elementCount].remainingPathIndex = 0;
 						UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-						browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+						browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 						browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 						browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 					}
@@ -181,7 +181,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 					if(fillDescription){
 						browsePathTargets[*elementCount].remainingPathIndex = 0;
 						UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-						browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+						browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 						browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 						browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 					}
@@ -202,7 +202,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 							if(fillDescription){
 								browsePathTargets[*elementCount].remainingPathIndex = 0;
 								UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 								browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 								browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 							}
@@ -234,7 +234,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 							if(fillDescription){
 								browsePathTargets[*elementCount].remainingPathIndex = 0;
 								UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 								browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 								browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 							}
@@ -257,7 +257,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 					if(fillDescription){
 						browsePathTargets[*elementCount].remainingPathIndex = 0;
 						UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-						browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+						browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 						browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 						browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 					}
@@ -291,7 +291,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 							if(fillDescription){
 								browsePathTargets[*elementCount].remainingPathIndex = 0;
 								UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 								browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 								browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 							}
@@ -310,7 +310,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 							if(fillDescription){//TODO Var-NodeIDs!!!
 								browsePathTargets[*elementCount].remainingPathIndex = 0;
 								UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+								browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 								browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 								browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 							}
@@ -330,7 +330,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 								if(fillDescription){
 									browsePathTargets[*elementCount].remainingPathIndex = 0;
 									UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-									browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+									browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 									browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 									browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 								}
@@ -354,7 +354,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 						if(fillDescription){
 							browsePathTargets[*elementCount].remainingPathIndex = 0;
 							UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-							browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+							browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 							browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 							browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 						}
@@ -368,7 +368,7 @@ UA_StatusCode opcua_WalkPath(const UA_RelativePath *relativePath, UA_UInt32 leve
 						if(fillDescription){
 							browsePathTargets[*elementCount].remainingPathIndex = 0;
 							UA_ExpandedNodeId_init(&(browsePathTargets[*elementCount].targetId));
-							browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_NameSpaceIndex;
+							browsePathTargets[*elementCount].targetId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
 							browsePathTargets[*elementCount].targetId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 							browsePathTargets[*elementCount].targetId.nodeId.identifier.numeric = refElem.pobj->v_idL;
 						}

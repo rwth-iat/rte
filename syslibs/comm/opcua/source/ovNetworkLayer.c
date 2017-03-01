@@ -229,13 +229,13 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_ovNetworkLayer_getaccess(
 
 OV_DLLFNCEXPORT UA_StatusCode opcua_ovNetworkLayer_start(
 	struct UA_ServerNetworkLayer *nl,
-	UA_Logger *logger
+	UA_Logger logger
 ) {
 
     return (UA_StatusCode)0;
 }
 
-OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
+OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_getJobs(
 	struct UA_ServerNetworkLayer *nl,
 	UA_Job** jobs,
 	UA_UInt16 timeout
@@ -300,7 +300,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
 	return counter;
 }
 
-OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_stop(
+OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_stop(
 	struct UA_ServerNetworkLayer *nl,
 	UA_Job** jobs
 ) {

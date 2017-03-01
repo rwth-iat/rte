@@ -1,21 +1,18 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
- * Git-Revision: undefined
+ * Git-Revision: 0.2-rc2-228-gaac423f
  */
 
 /*
  * Copyright (C) 2014-2016 the contributors as stated in the AUTHORS file
  *
  * This file is part of open62541. open62541 is free software: you can
- * redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License, version 3 (as published by the Free Software Foundation) with
- * a static linking exception as stated in the LICENSE file provided with
- * open62541.
+ * redistribute it and/or modify it under the terms of the Mozilla Public
+ * License v2.0 as stated in the LICENSE file provided with open62541.
  *
  * open62541 is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * A PARTICULAR PURPOSE.
  */
 
 #ifndef UA_DYNAMIC_LINKING_EXPORT
@@ -731,13 +728,28 @@ int __secs_to_tm(long long t, struct tm *tm);
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_util.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Assert */
 #include <assert.h>
 #define UA_assert(ignore) assert(ignore)
 
 /* BSD Queue Macros */
+
+/* C++ Access to datatypes defined inside structs (for queue.h) */
+#ifdef __cplusplus
+# define memberstruct(container,member) container::member
+#else
+# define memberstruct(container,member) member
+#endif
 
 /* container_of */
 #define container_of(ptr, type, member) \
@@ -752,7 +764,8 @@ int __secs_to_tm(long long t, struct tm *tm);
 # elif defined(_MSC_VER)
 #  define UA_THREAD_LOCAL __declspec(thread) /* MSVC extension */
 # else
-#  warning The compiler does not allow thread-local variables. The library can be built, but will not be thread-safe.
+#  warning The compiler does not allow thread-local variables. \
+    The library can be built, but will not be thread-safe.
 # endif
 #endif
 #ifndef UA_THREAD_LOCAL
@@ -820,8 +833,24 @@ UA_atomic_add(volatile uint32_t *addr, uint32_t increase) {
 #endif
 }
 
+/* Utility Functions
+ * ----------------- */
+
+/* Convert given byte string to a positive number. Returns the number of valid
+ * digits. Stops if a non-digit char is found and returns the number of digits
+ * up to that point. */
+size_t UA_readNumber(UA_Byte *buf, size_t buflen, UA_UInt32 *number);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_types_encoding_binary.h" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 
@@ -834,8 +863,8 @@ UA_encodeBinary(const void *src, const UA_DataType *type,
 
 UA_StatusCode UA_EXPORT
 UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst,
-                const UA_DataType *type, size_t customTypesSize,
-                const UA_DataType *customTypes) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
+                const UA_DataType *type,
+                size_t newNamespacesSize, UA_Namespace *newNamespaces) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
 
 size_t UA_calcSizeBinary(void *p, const UA_DataType *type);
 
@@ -843,8 +872,10 @@ size_t UA_calcSizeBinary(void *p, const UA_DataType *type);
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_types_generated_encoding_binary.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
- * on host jgvm1 by user julian at 2017-01-06 06:04:54 */
+ * on host altair by user julian at 2017-02-28 07:53:05 */
 
+#ifdef UA_NO_AMALGAMATION
+#endif
 
 /* Boolean */
 static UA_INLINE UA_StatusCode
@@ -1196,6 +1227,16 @@ UA_NotificationMessage_decodeBinary(const UA_ByteString *src, size_t *offset, UA
     return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_NOTIFICATIONMESSAGE], 0, NULL);
 }
 
+/* FindServersOnNetworkRequest */
+static UA_INLINE UA_StatusCode
+UA_FindServersOnNetworkRequest_encodeBinary(const UA_FindServersOnNetworkRequest *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_TYPES[UA_TYPES_FINDSERVERSONNETWORKREQUEST], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_FindServersOnNetworkRequest_decodeBinary(const UA_ByteString *src, size_t *offset, UA_FindServersOnNetworkRequest *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_FINDSERVERSONNETWORKREQUEST], 0, NULL);
+}
+
 /* NodeAttributesMask */
 static UA_INLINE UA_StatusCode
 UA_NodeAttributesMask_encodeBinary(const UA_NodeAttributesMask *src, UA_ByteString *dst, size_t *offset) {
@@ -1214,6 +1255,16 @@ UA_MonitoringMode_encodeBinary(const UA_MonitoringMode *src, UA_ByteString *dst,
 static UA_INLINE UA_StatusCode
 UA_MonitoringMode_decodeBinary(const UA_ByteString *src, size_t *offset, UA_MonitoringMode *dst) {
     return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_MONITORINGMODE], 0, NULL);
+}
+
+/* MdnsDiscoveryConfiguration */
+static UA_INLINE UA_StatusCode
+UA_MdnsDiscoveryConfiguration_encodeBinary(const UA_MdnsDiscoveryConfiguration *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_TYPES[UA_TYPES_MDNSDISCOVERYCONFIGURATION], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_MdnsDiscoveryConfiguration_decodeBinary(const UA_ByteString *src, size_t *offset, UA_MdnsDiscoveryConfiguration *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_MDNSDISCOVERYCONFIGURATION], 0, NULL);
 }
 
 /* CallMethodResult */
@@ -1586,6 +1637,16 @@ UA_ViewDescription_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Vie
     return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_VIEWDESCRIPTION], 0, NULL);
 }
 
+/* ServerOnNetwork */
+static UA_INLINE UA_StatusCode
+UA_ServerOnNetwork_encodeBinary(const UA_ServerOnNetwork *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_TYPES[UA_TYPES_SERVERONNETWORK], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_ServerOnNetwork_decodeBinary(const UA_ByteString *src, size_t *offset, UA_ServerOnNetwork *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_SERVERONNETWORK], 0, NULL);
+}
+
 /* DeleteMonitoredItemsResponse */
 static UA_INLINE UA_StatusCode
 UA_DeleteMonitoredItemsResponse_encodeBinary(const UA_DeleteMonitoredItemsResponse *src, UA_ByteString *dst, size_t *offset) {
@@ -1594,6 +1655,16 @@ UA_DeleteMonitoredItemsResponse_encodeBinary(const UA_DeleteMonitoredItemsRespon
 static UA_INLINE UA_StatusCode
 UA_DeleteMonitoredItemsResponse_decodeBinary(const UA_ByteString *src, size_t *offset, UA_DeleteMonitoredItemsResponse *dst) {
     return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_DELETEMONITOREDITEMSRESPONSE], 0, NULL);
+}
+
+/* FindServersOnNetworkResponse */
+static UA_INLINE UA_StatusCode
+UA_FindServersOnNetworkResponse_encodeBinary(const UA_FindServersOnNetworkResponse *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_TYPES[UA_TYPES_FINDSERVERSONNETWORKRESPONSE], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_FindServersOnNetworkResponse_decodeBinary(const UA_ByteString *src, size_t *offset, UA_FindServersOnNetworkResponse *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_FINDSERVERSONNETWORKRESPONSE], 0, NULL);
 }
 
 /* NodeAttributes */
@@ -1724,6 +1795,16 @@ UA_QueryNextResponse_encodeBinary(const UA_QueryNextResponse *src, UA_ByteString
 static UA_INLINE UA_StatusCode
 UA_QueryNextResponse_decodeBinary(const UA_ByteString *src, size_t *offset, UA_QueryNextResponse *dst) {
     return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_QUERYNEXTRESPONSE], 0, NULL);
+}
+
+/* DiscoveryConfiguration */
+static UA_INLINE UA_StatusCode
+UA_DiscoveryConfiguration_encodeBinary(const UA_DiscoveryConfiguration *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_TYPES[UA_TYPES_DISCOVERYCONFIGURATION], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_DiscoveryConfiguration_decodeBinary(const UA_ByteString *src, size_t *offset, UA_DiscoveryConfiguration *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_DISCOVERYCONFIGURATION], 0, NULL);
 }
 
 /* ActivateSessionResponse */
@@ -2096,6 +2177,16 @@ UA_DeleteSubscriptionsResponse_decodeBinary(const UA_ByteString *src, size_t *of
     return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_DELETESUBSCRIPTIONSRESPONSE], 0, NULL);
 }
 
+/* RegisterServer2Response */
+static UA_INLINE UA_StatusCode
+UA_RegisterServer2Response_encodeBinary(const UA_RegisterServer2Response *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_TYPES[UA_TYPES_REGISTERSERVER2RESPONSE], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_RegisterServer2Response_decodeBinary(const UA_ByteString *src, size_t *offset, UA_RegisterServer2Response *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_REGISTERSERVER2RESPONSE], 0, NULL);
+}
+
 /* RelativePath */
 static UA_INLINE UA_StatusCode
 UA_RelativePath_encodeBinary(const UA_RelativePath *src, UA_ByteString *dst, size_t *offset) {
@@ -2406,6 +2497,16 @@ UA_BrowseResult_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Browse
     return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_BROWSERESULT], 0, NULL);
 }
 
+/* RegisterServer2Request */
+static UA_INLINE UA_StatusCode
+UA_RegisterServer2Request_encodeBinary(const UA_RegisterServer2Request *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_TYPES[UA_TYPES_REGISTERSERVER2REQUEST], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_RegisterServer2Request_decodeBinary(const UA_ByteString *src, size_t *offset, UA_RegisterServer2Request *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_REGISTERSERVER2REQUEST], 0, NULL);
+}
+
 /* CreateSessionRequest */
 static UA_INLINE UA_StatusCode
 UA_CreateSessionRequest_encodeBinary(const UA_CreateSessionRequest *src, UA_ByteString *dst, size_t *offset) {
@@ -2509,7 +2610,7 @@ UA_QueryFirstRequest_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Q
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_transport_generated.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
- * on host jgvm1 by user julian at 2017-01-06 06:04:54 */
+ * on host altair by user julian at 2017-02-28 07:53:05 */
 
 
 #ifdef __cplusplus
@@ -2522,8 +2623,8 @@ extern "C" {
  * Every type is assigned an index in an array containing the type descriptions.
  * These descriptions are used during type handling (copying, deletion,
  * binary encoding, ...). */
-#define UA_TRANSPORT_COUNT 11
-extern UA_EXPORT const UA_DataType UA_TRANSPORT[UA_TRANSPORT_COUNT];
+#define UA_TRANSPORT_COUNT 12
+extern UA_EXPORT UA_DataType UA_TRANSPORT[UA_TRANSPORT_COUNT];
 
 /**
  * SecureConversationMessageAbortBody
@@ -2564,6 +2665,17 @@ typedef struct {
 #define UA_TRANSPORT_TCPHELLOMESSAGE 2
 
 /**
+ * TcpErrorMessage
+ * ^^^^^^^^^^^^^^^
+ * Error Message */
+typedef struct {
+    UA_UInt32 error;
+    UA_String reason;
+} UA_TcpErrorMessage;
+
+#define UA_TRANSPORT_TCPERRORMESSAGE 3
+
+/**
  * MessageType
  * ^^^^^^^^^^^
  * Message Type and whether the message contains an intermediate chunk */
@@ -2572,10 +2684,11 @@ typedef enum {
     UA_MESSAGETYPE_HEL = 0x4C4548,
     UA_MESSAGETYPE_MSG = 0x47534D,
     UA_MESSAGETYPE_OPN = 0x4E504F,
-    UA_MESSAGETYPE_CLO = 0x4F4C43
+    UA_MESSAGETYPE_CLO = 0x4F4C43,
+    UA_MESSAGETYPE_ERR = 0x525245
 } UA_MessageType;
 
-#define UA_TRANSPORT_MESSAGETYPE 3
+#define UA_TRANSPORT_MESSAGETYPE 4
 
 /**
  * AsymmetricAlgorithmSecurityHeader
@@ -2587,7 +2700,7 @@ typedef struct {
     UA_ByteString receiverCertificateThumbprint;
 } UA_AsymmetricAlgorithmSecurityHeader;
 
-#define UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER 4
+#define UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER 5
 
 /**
  * TcpAcknowledgeMessage
@@ -2601,7 +2714,7 @@ typedef struct {
     UA_UInt32 maxChunkCount;
 } UA_TcpAcknowledgeMessage;
 
-#define UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE 5
+#define UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE 6
 
 /**
  * SequenceHeader
@@ -2612,7 +2725,7 @@ typedef struct {
     UA_UInt32 requestId;
 } UA_SequenceHeader;
 
-#define UA_TRANSPORT_SEQUENCEHEADER 6
+#define UA_TRANSPORT_SEQUENCEHEADER 7
 
 /**
  * TcpMessageHeader
@@ -2623,7 +2736,7 @@ typedef struct {
     UA_UInt32 messageSize;
 } UA_TcpMessageHeader;
 
-#define UA_TRANSPORT_TCPMESSAGEHEADER 7
+#define UA_TRANSPORT_TCPMESSAGEHEADER 8
 
 /**
  * ChunkType
@@ -2635,7 +2748,7 @@ typedef enum {
     UA_CHUNKTYPE_ABORT = 0x41000000
 } UA_ChunkType;
 
-#define UA_TRANSPORT_CHUNKTYPE 8
+#define UA_TRANSPORT_CHUNKTYPE 9
 
 /**
  * SymmetricAlgorithmSecurityHeader
@@ -2645,7 +2758,7 @@ typedef struct {
     UA_UInt32 tokenId;
 } UA_SymmetricAlgorithmSecurityHeader;
 
-#define UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER 9
+#define UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER 10
 
 /**
  * SecureConversationMessageHeader
@@ -2656,7 +2769,7 @@ typedef struct {
     UA_UInt32 secureChannelId;
 } UA_SecureConversationMessageHeader;
 
-#define UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER 10
+#define UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER 11
 
 #ifdef __cplusplus
 } // extern "C"
@@ -2666,7 +2779,7 @@ typedef struct {
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_transport_generated_handling.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
- * on host jgvm1 by user julian at 2017-01-06 06:04:54 */
+ * on host altair by user julian at 2017-02-28 07:53:05 */
 
 
 #ifdef __cplusplus
@@ -2757,6 +2870,32 @@ UA_TcpHelloMessage_deleteMembers(UA_TcpHelloMessage *p) {
 static UA_INLINE void
 UA_TcpHelloMessage_delete(UA_TcpHelloMessage *p) {
     UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE]);
+}
+
+/* TcpErrorMessage */
+static UA_INLINE void
+UA_TcpErrorMessage_init(UA_TcpErrorMessage *p) {
+    memset(p, 0, sizeof(UA_TcpErrorMessage));
+}
+
+static UA_INLINE UA_TcpErrorMessage *
+UA_TcpErrorMessage_new(void) {
+    return (UA_TcpErrorMessage*)UA_new(&UA_TRANSPORT[UA_TRANSPORT_TCPERRORMESSAGE]);
+}
+
+static UA_INLINE UA_StatusCode
+UA_TcpErrorMessage_copy(const UA_TcpErrorMessage *src, UA_TcpErrorMessage *dst) {
+    return UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPERRORMESSAGE]);
+}
+
+static UA_INLINE void
+UA_TcpErrorMessage_deleteMembers(UA_TcpErrorMessage *p) {
+    UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_TCPERRORMESSAGE]);
+}
+
+static UA_INLINE void
+UA_TcpErrorMessage_delete(UA_TcpErrorMessage *p) {
+    UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_TCPERRORMESSAGE]);
 }
 
 /* MessageType */
@@ -2972,8 +3111,10 @@ UA_SecureConversationMessageHeader_delete(UA_SecureConversationMessageHeader *p)
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_transport_generated_encoding_binary.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
- * on host jgvm1 by user julian at 2017-01-06 06:04:54 */
+ * on host altair by user julian at 2017-02-28 07:53:05 */
 
+#ifdef UA_NO_AMALGAMATION
+#endif
 
 /* SecureConversationMessageAbortBody */
 static UA_INLINE UA_StatusCode
@@ -3003,6 +3144,16 @@ UA_TcpHelloMessage_encodeBinary(const UA_TcpHelloMessage *src, UA_ByteString *ds
 static UA_INLINE UA_StatusCode
 UA_TcpHelloMessage_decodeBinary(const UA_ByteString *src, size_t *offset, UA_TcpHelloMessage *dst) {
     return UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE], 0, NULL);
+}
+
+/* TcpErrorMessage */
+static UA_INLINE UA_StatusCode
+UA_TcpErrorMessage_encodeBinary(const UA_TcpErrorMessage *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_TCPERRORMESSAGE], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_TcpErrorMessage_decodeBinary(const UA_ByteString *src, size_t *offset, UA_TcpErrorMessage *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPERRORMESSAGE], 0, NULL);
 }
 
 /* MessageType */
@@ -3087,10 +3238,17 @@ UA_SecureConversationMessageHeader_decodeBinary(const UA_ByteString *src, size_t
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_connection_internal.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
-/**
- * The network layer may receive chopped up messages since TCP is a streaming
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+/* The network layer may receive chopped up messages since TCP is a streaming
  * protocol. Furthermore, the networklayer may operate on ringbuffers or
  * statically assigned memory.
  *
@@ -3105,32 +3263,62 @@ UA_SecureConversationMessageHeader_decodeBinary(const UA_ByteString *src, size_t
  * @param realloced The Boolean value is set to true if the outgoing message has
  *        been reallocated from the network layer.
  * @return Returns UA_STATUSCODE_GOOD or an error code. When an error occurs, the ingoing message
- *         and the current buffer in the connection are freed.
- */
+ *         and the current buffer in the connection are freed. */
 UA_StatusCode
 UA_Connection_completeMessages(UA_Connection *connection, UA_ByteString * UA_RESTRICT message,
                                UA_Boolean * UA_RESTRICT realloced);
 
-void UA_EXPORT UA_Connection_detachSecureChannel(UA_Connection *connection);
-void UA_EXPORT UA_Connection_attachSecureChannel(UA_Connection *connection, UA_SecureChannel *channel);
-
-/**
- * EndpointURL helper
+/* Try to receive at least one complete chunk on the connection. This blocks the
+ * current thread up to the given timeout.
+ *
+ * @param connection The connection
+ * @param chunk The received chunk. The memory is allocated either by the
+ *        networklayer or internally.
+ * @param realloced The Boolean value is set to true if the chunk has been
+ *        reallocated from the network layer.
+ * @param timeout The timeout (in milliseconds) the method will block at most.
+ * @return Returns UA_STATUSCODE_GOOD or an error code. When an error occurs,
+ *         the chunk buffer is returned empty. Upon a timeout,
+ *         UA_STATUSCODE_GOODNONCRITICALTIMEOUT is returned.
  */
+UA_StatusCode
+UA_Connection_receiveChunksBlocking(UA_Connection *connection, UA_ByteString *chunks,
+                                    UA_Boolean *realloced, UA_UInt32 timeout);
 
-/**
- * Split the given endpoint url into hostname and port. Some of the chunks are returned as pointer.
+void UA_Connection_detachSecureChannel(UA_Connection *connection);
+void UA_Connection_attachSecureChannel(UA_Connection *connection, UA_SecureChannel *channel);
+
+/* Split the given endpoint url into hostname and port. Some of the chunks are
+ * returned as pointer.
  * @param endpointUrl The endpoint URL to split up
  * @param hostname the target array for hostname. Has to be at least 256 size.
- * @param port if url contains port, it will point to the beginning of port. NULL otherwise. It may also include the path part, thus stop at position of path pointer, if it is not NULL.
- * @param path points to the first occurance of '/' after the port or NULL if no path in url
- * @return UA_STATUSCODE_BADOUTOFRANGE if url too long, UA_STATUSCODE_BADATTRIBUTEIDINVALID if url not starting with 'opc.tcp://', UA_STATUSCODE_GOOD on success
- */
-UA_StatusCode UA_EXPORT UA_EndpointUrl_split_ptr(const char *endpointUrl, char *hostname, const char ** port, const char ** path);
+ * @param port if url contains port, it will point to the beginning of port.
+ *        NULL otherwise. It may also include the path part, thus stop at
+ *        position of path pointer, if it is not NULL.
+ * @param path points to the first occurance of '/' after the port or NULL if no
+ *        path in url
+ * @return UA_STATUSCODE_BADOUTOFRANGE if url too long,
+ *         UA_STATUSCODE_BADATTRIBUTEIDINVALID if url not starting with
+ *         'opc.tcp://', UA_STATUSCODE_GOOD on success */
+UA_StatusCode
+UA_EndpointUrl_split_ptr(const char *endpointUrl, char *hostname,
+                         const char ** port, const char ** path);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_securechannel.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 struct UA_Session;
@@ -3233,9 +3421,21 @@ UA_SecureChannel_processChunks(UA_SecureChannel *channel, const UA_ByteString *c
                  ((CHANNEL)->connection ? (CHANNEL)->connection->sockfd : 0), \
                  (CHANNEL)->securityToken.channelId, ##__VA_ARGS__);
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_session.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 #define UA_MAXCONTINUATIONPOINTS 5
@@ -3350,8 +3550,16 @@ UA_Session_getUniqueSubscriptionID(UA_Session *session);
                  UA_PRINTF_GUID_DATA(SESSION->sessionId.identifier.guid), \
                  ##__VA_ARGS__);
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_subscription.h" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 
@@ -3480,6 +3688,10 @@ UA_Subscription_answerPublishRequestsNoSubscription(UA_Server *server,
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_nodestore.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -3502,7 +3714,12 @@ UA_NodeStore * UA_NodeStore_new(void);
 
 /* Delete the nodestore and all nodes in it. Do not call from a read-side
    critical section (multithreading). */
-void UA_NodeStore_delete(UA_NodeStore *ns);
+void UA_NodeStore_delete(UA_NodeStore *ns, UA_UInt16 namespaceIndex);
+
+/* Link a namespace index to this nodestore*/
+UA_StatusCode UA_NodeStore_linkNamespace(UA_NodeStore *ns, UA_UInt16 namespaceIndex);
+
+UA_StatusCode UA_NodeStore_unlinkNamespace(UA_NodeStore *ns, UA_UInt16 namespaceIndex);
 
 /**
  * Node Lifecycle
@@ -3524,7 +3741,7 @@ void UA_NodeStore_deleteNode(UA_Node *node);
 /* Inserts a new node into the nodestore. If the nodeid is zero, then a fresh
  * numeric nodeid from namespace 1 is assigned. If insertion fails, the node is
  * deleted. */
-UA_StatusCode UA_NodeStore_insert(UA_NodeStore *ns, UA_Node *node, const UA_NodeId *parentNodeId, UA_NodeId *addedNodeId);
+UA_StatusCode UA_NodeStore_insert(UA_NodeStore *ns, UA_Node *node, UA_NodeId *addedNodeId);
 
 /* The returned node is immutable. */
 const UA_Node * UA_NodeStore_get(UA_NodeStore *ns, const UA_NodeId *nodeid);
@@ -3548,8 +3765,7 @@ UA_StatusCode UA_NodeStore_remove(UA_NodeStore *ns, const UA_NodeId *nodeid);
  * ^^^^^^^^^
  * The following definitions are used to call a callback for every node in the
  * nodestore. */
-typedef void (*UA_NodeStore_nodeVisitor)(const UA_Node *node);
-void UA_NodeStore_iterate(UA_NodeStore *ns, UA_NodeStore_nodeVisitor visitor);
+void UA_NodeStore_iterate(UA_NodeStore *ns, void *visitorHandle, UA_NodestoreInterface_nodeVisitor visitor);
 
 /**
  * Release
@@ -3578,31 +3794,14 @@ void UA_NodeStore_release(void *handle, const UA_Node *node);
 extern "C" {
 #endif
 
-typedef struct UA_NodestoreSwitch{
-    UA_NodestoreInterface** nodestoreInterfaces;
-    UA_UInt16 nodestoreInterfacesSize;
-} UA_NodestoreSwitch;
-
 /**
- * Nodestoreswitch Lifecycle
- * ^^^^^^^^^^^^^^^^^^^ */
-/* Create a new nodestore */
-UA_NodestoreSwitch * UA_NodestoreSwitch_new(void);
-
-/* Delete the nodestore and all nodes in it. Do not call from a read-side
-   critical section (multithreading). */
-void UA_NodestoreSwitch_delete(UA_NodestoreSwitch* nodestoreSwitch);
-
-/**
- * Change Nodestore
+ * Nodestore lifecycle
  * ^^^^^^^^^^^^^^^^
  *
  */
-UA_Boolean UA_NodestoreSwitch_add(UA_NodestoreSwitch* nodestoreSwitch, UA_NodestoreInterface *nodestoreInterface);
-UA_Boolean UA_NodestoreSwitch_change(UA_NodestoreSwitch* nodestoreSwitch, UA_NodestoreInterface *nodestoreInterface, UA_UInt16 nodestoreInterfaceIndex);
-UA_NodestoreInterface* UA_NodestoreSwitch_getNodestoreForNamespace(UA_NodestoreSwitch* nodestoreSwitch, UA_UInt16 namespaceIndex);
-//TODO Add: Get all Namespaces for a Nodestore. --> Export this Functions
-
+void
+UA_NodestoreSwitch_deleteNodestore(UA_Server* server,
+                          UA_UInt16 namespaceIndex);
 /**
  * Node Lifecycle
  * ^^^^^^^^^^^^^^
@@ -3610,30 +3809,30 @@ UA_NodestoreInterface* UA_NodestoreSwitch_getNodestoreForNamespace(UA_NodestoreS
  * to be removed via a special deleteNode function. (If the new node is not
  * added to the nodestore.) */
 /* Create an editable node of the given NodeClass. */
-UA_Node * UA_NodestoreSwitch_newNode(UA_NodestoreSwitch* nodestoreSwitch, UA_NodeClass nodeClass, UA_UInt16 namespaceIndex);
+UA_Node * UA_NodestoreSwitch_newNode(UA_Server* server, UA_NodeClass nodeClass, UA_UInt16 namespaceIndex);
 /*
  * The following definitions are used to create empty nodes of the different
  * node types in NameSpace 0.
  */
 #define UA_Nodestore_newObjectNode() \
-    (UA_ObjectNode*)UA_NodestoreSwitch_newNode(server->nodestoreSwitch, UA_NODECLASS_OBJECT, 0)
+    (UA_ObjectNode*)UA_NodestoreSwitch_newNode(server, UA_NODECLASS_OBJECT, 0)
 #define UA_Nodestore_newVariableNode() \
-    (UA_VariableNode*)UA_NodestoreSwitch_newNode(server->nodestoreSwitch, UA_NODECLASS_VARIABLE, 0)
+    (UA_VariableNode*)UA_NodestoreSwitch_newNode(server, UA_NODECLASS_VARIABLE, 0)
 #define UA_Nodestore_newMethodNode() \
-    (UA_MethodNode*)UA_NodestoreSwitch_newNode(server->nodestoreSwitch, UA_NODECLASS_METHOD, 0)
+    (UA_MethodNode*)UA_NodestoreSwitch_newNode(server, UA_NODECLASS_METHOD, 0)
 #define UA_Nodestore_newObjectTypeNode() \
-    (UA_ObjectTypeNode*)UA_NodestoreSwitch_newNode(server->nodestoreSwitch, UA_NODECLASS_OBJECTTYPE, 0)
+    (UA_ObjectTypeNode*)UA_NodestoreSwitch_newNode(server, UA_NODECLASS_OBJECTTYPE, 0)
 #define UA_Nodestore_newVariableTypeNode() \
-    (UA_VariableTypeNode*)UA_NodestoreSwitch_newNode(server->nodestoreSwitch, UA_NODECLASS_VARIABLETYPE, 0)
+    (UA_VariableTypeNode*)UA_NodestoreSwitch_newNode(server, UA_NODECLASS_VARIABLETYPE, 0)
 #define UA_Nodestore_newReferenceTypeNode() \
-    (UA_ReferenceTypeNode*)UA_NodestoreSwitch_newNode(server->nodestoreSwitch, UA_NODECLASS_REFERENCETYPE, 0)
+    (UA_ReferenceTypeNode*)UA_NodestoreSwitch_newNode(server, UA_NODECLASS_REFERENCETYPE, 0)
 #define UA_Nodestore_newDataTypeNode() \
-    (UA_DataTypeNode*)UA_NodestoreSwitch_newNode(server->nodestoreSwitch, UA_NODECLASS_DATATYPE, 0)
+    (UA_DataTypeNode*)UA_NodestoreSwitch_newNode(server, UA_NODECLASS_DATATYPE, 0)
 #define UA_Nodestore_newViewNode() \
-    (UA_ViewNode*)UA_NodestoreSwitch_newNode(server->nodestoreSwitch, UA_NODECLASS_VIEW, 0)
+    (UA_ViewNode*)UA_NodestoreSwitch_newNode(server, UA_NODECLASS_VIEW, 0)
 
 /* Delete an editable node. */
-void UA_NodestoreSwitch_deleteNode(UA_NodestoreSwitch* nodestoreSwitch, UA_Node *node);
+void UA_NodestoreSwitch_deleteNode(UA_Server* server, UA_Node *node);
 
 /**
  * Insert / Get / Replace / Remove
@@ -3641,32 +3840,25 @@ void UA_NodestoreSwitch_deleteNode(UA_NodestoreSwitch* nodestoreSwitch, UA_Node 
 /* Inserts a new node into the nodestore. If the nodeid is zero, then a fresh
  * numeric nodeid from namespace 1 is assigned. If insertion fails, the node is
  * deleted. */
-UA_StatusCode UA_NodestoreSwitch_insert(UA_NodestoreSwitch* nodestoreSwitch, UA_Node *node,
-        const UA_NodeId *parentNodeId, UA_NodeId *addedNodeId);
+UA_StatusCode UA_NodestoreSwitch_insertNode(UA_Server* server, UA_Node *node,
+        UA_NodeId *addedNodeId);
 
 /* The returned node is immutable. */
-const UA_Node * UA_NodestoreSwitch_get(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *nodeId);
+const UA_Node * UA_NodestoreSwitch_getNode(UA_Server* server, const UA_NodeId *nodeId);
 
 /* Returns an editable copy of a node (needs to be deleted with the deleteNode
    function or inserted / replaced into the nodestore). */
-UA_Node * UA_NodestoreSwitch_getCopy(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *nodeId);
+UA_Node * UA_NodestoreSwitch_getNodeCopy(UA_Server* server, const UA_NodeId *nodeId);
 
 /* To replace a node, get an editable copy of the node, edit and replace with
  * this function. If the node was already replaced since the copy was made,
  * UA_STATUSCODE_BADINTERNALERROR is returned. If the nodeid is not found,
  * UA_STATUSCODE_BADNODEIDUNKNOWN is returned. In both error cases, the editable
  * node is deleted. */
-UA_StatusCode UA_NodestoreSwitch_replace(UA_NodestoreSwitch* nodestoreSwitch, UA_Node *node);
+UA_StatusCode UA_NodestoreSwitch_replaceNode(UA_Server* server, UA_Node *node);
 
 /* Remove a node in the nodestore. */
-UA_StatusCode UA_NodestoreSwitch_remove(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *nodeId);
-
-/**
- * Iteration
- * ^^^^^^^^^
- * The following definitions are used to call a callback for every node in the
- * nodestore. */
-void UA_NodestoreSwitch_iterate(UA_NodestoreSwitch* nodestoreSwitch, UA_Nodestore_nodeVisitor visitor, UA_UInt16 namespaceIndex);
+UA_StatusCode UA_NodestoreSwitch_removeNode(UA_Server* server, const UA_NodeId *nodeId);
 
 /**
  * Release
@@ -3674,7 +3866,7 @@ void UA_NodestoreSwitch_iterate(UA_NodestoreSwitch* nodestoreSwitch, UA_Nodestor
  * Indicates that the reference to a node, which was fetched from the nodestore via the "get" method, is not used anymore.
  * This is the basis for multithreading capable nodestores. Reference Counting and locks can be freed via this method.
  *  */
-void UA_NodestoreSwitch_release(UA_NodestoreSwitch* nodestoreSwitch, const UA_Node *node);
+void UA_NodestoreSwitch_releaseNode(UA_Server* server, const UA_Node *node);
 
 #ifdef __cplusplus
 } // extern "C"
@@ -3683,6 +3875,14 @@ void UA_NodestoreSwitch_release(UA_NodestoreSwitch* nodestoreSwitch, const UA_No
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_session_manager.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 typedef struct session_list_entry {
@@ -3713,9 +3913,21 @@ UA_SessionManager_removeSession(UA_SessionManager *sm, const UA_NodeId *token);
 UA_Session *
 UA_SessionManager_getSession(UA_SessionManager *sm, const UA_NodeId *token);
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_securechannel_manager.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 typedef struct channel_list_entry {
@@ -3754,15 +3966,31 @@ UA_SecureChannelManager_get(UA_SecureChannelManager *cm, UA_UInt32 channelId);
 UA_StatusCode
 UA_SecureChannelManager_close(UA_SecureChannelManager *cm, UA_UInt32 channelId);
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_server_internal.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 #define ANONYMOUS_POLICY "open62541-anonymous-policy"
 #define USERNAME_POLICY "open62541-username-policy"
 
-/* liburcu includes */
+/* The general idea of RCU is to delay freeing nodes (or any callback invoked
+ * with call_rcu) until all threads have left their critical section. Thus we
+ * can delete nodes safely in concurrent operations. The macros UA_RCU_LOCK and
+ * UA_RCU_UNLOCK are used to test during debugging that we do not nest read-side
+ * critical sections (although this is generally allowed). */
 #ifdef UA_ENABLE_MULTITHREADING
 # define _LGPL_SOURCE
 # include <urcu.h>
@@ -3783,7 +4011,7 @@ UA_SecureChannelManager_close(UA_SecureChannelManager *cm, UA_UInt32 channelId);
 #   define UA_RCU_UNLOCK() do {                   \
         UA_ASSERT_RCU_LOCKED();                   \
         rcu_locked = false;                       \
-        rcu_read_lock(); } while(0)
+        rcu_read_unlock(); } while(0)
 # endif
 #else
 # define UA_RCU_LOCK()
@@ -3793,8 +4021,8 @@ UA_SecureChannelManager_close(UA_SecureChannelManager *cm, UA_UInt32 channelId);
 #endif
 
 #ifdef UA_ENABLE_EXTERNAL_NAMESPACES
-/** Mapping of namespace-id and url to an external nodestore. For namespaces
-    that have no mapping defined, the internal nodestore is used by default. */
+/* Mapping of namespace-id and url to an external nodestore. For namespaces that
+ * have no mapping defined, the internal nodestore is used by default. */
 typedef struct UA_ExternalNamespace {
     UA_UInt16 index;
     UA_String url;
@@ -3844,8 +4072,7 @@ struct UA_Server {
 #endif
 
     size_t namespacesSize;
-    UA_String *namespaces;
-    UA_NodestoreSwitch *nodestoreSwitch;
+    UA_Namespace *namespaces;
     UA_NodestoreInterface *nodestore_std;
 
 #ifdef UA_ENABLE_EXTERNAL_NAMESPACES
@@ -3866,6 +4093,7 @@ struct UA_Server {
                                           by worker threads */
     struct DelayedJobs *delayedJobs;
     pthread_cond_t dispatchQueue_condition; /* so the workers don't spin if the queue is empty */
+    pthread_mutex_t dispatchQueue_mutex; /* mutex for access to condition variable */
     struct cds_wfcq_tail dispatchQueue_tail; /* Dispatch queue tail for the worker threads */
 #endif
 
@@ -3910,9 +4138,8 @@ Service_AddNodes_existing(UA_Server *server, UA_Session *session, UA_Node *node,
 UA_StatusCode
 parse_numericrange(const UA_String *str, UA_NumericRange *range);
 
-UA_UInt16 addNamespace(UA_Server *server, const UA_String name);
-UA_UInt16 addNamespace_nodestore(UA_Server *server, const UA_String name,
-                                 UA_NodestoreInterface* nodestore);
+UA_StatusCode
+addNamespace(UA_Server *server, UA_Namespace * newNs);
 
 UA_Boolean
 UA_Node_hasSubTypeOrInstances(const UA_Node *node);
@@ -3928,12 +4155,12 @@ getObjectNodeType(UA_Server *server, const UA_ObjectNode *node);
  * hasSubType reference. Since multi-inheritance is possible, we test for
  * duplicates and return evey nodeid at most once. */
 UA_StatusCode
-getTypeHierarchy(UA_NodestoreSwitch* nodestoreSwitch, const UA_Node *rootRef, UA_Boolean inverse,
+getTypeHierarchy(UA_Server* server, const UA_Node *rootRef, UA_Boolean inverse,
                  UA_NodeId **typeHierarchy, size_t *typeHierarchySize);
 
 /* Recursively searches "upwards" in the tree following specific reference types */
 UA_Boolean
-isNodeInTree(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *leafNode,
+isNodeInTree(UA_Server* server, const UA_NodeId *leafNode,
              const UA_NodeId *nodeToFind, const UA_NodeId *referenceTypeIds,
              size_t referenceTypeIdsSize);
 
@@ -4011,8 +4238,16 @@ void Service_Call_single(UA_Server *server, UA_Session *session,
 /* Periodic task to clean up the discovery registry */
 void UA_Discovery_cleanupTimedOut(UA_Server *server, UA_DateTime nowMonotonic);
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services.h" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 #ifdef __cplusplus
@@ -4319,6 +4554,10 @@ void Service_DeleteSubscriptions(UA_Server *server, UA_Session *session,
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/client/ua_client_internal.h" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 
 /**************************/
@@ -4327,37 +4566,38 @@ void Service_DeleteSubscriptions(UA_Server *server, UA_Session *session,
 
 #ifdef UA_ENABLE_SUBSCRIPTIONS
 
-typedef struct UA_Client_NotificationsAckNumber_s {
-    LIST_ENTRY(UA_Client_NotificationsAckNumber_s) listEntry;
+typedef struct UA_Client_NotificationsAckNumber {
+    LIST_ENTRY(UA_Client_NotificationsAckNumber) listEntry;
     UA_SubscriptionAcknowledgement subAck;
 } UA_Client_NotificationsAckNumber;
 
-typedef struct UA_Client_MonitoredItem_s {
-    LIST_ENTRY(UA_Client_MonitoredItem_s)  listEntry;
-    UA_UInt32 MonitoredItemId;
-    UA_UInt32 MonitoringMode;
+typedef struct UA_Client_MonitoredItem {
+    LIST_ENTRY(UA_Client_MonitoredItem)  listEntry;
+    UA_UInt32 monitoredItemId;
+    UA_UInt32 monitoringMode;
     UA_NodeId monitoredNodeId;
-    UA_UInt32 AttributeID;
-    UA_UInt32 ClientHandle;
-    UA_Double SamplingInterval;
-    UA_UInt32 QueueSize;
-    UA_Boolean DiscardOldest;
+    UA_UInt32 attributeID;
+    UA_UInt32 clientHandle;
+    UA_Double samplingInterval;
+    UA_UInt32 queueSize;
+    UA_Boolean discardOldest;
     void (*handler)(UA_UInt32 monId, UA_DataValue *value, void *context);
     void *handlerContext;
 } UA_Client_MonitoredItem;
 
-typedef struct UA_Client_Subscription_s {
-    LIST_ENTRY(UA_Client_Subscription_s) listEntry;
-    UA_UInt32 LifeTime;
-    UA_UInt32 KeepAliveCount;
-    UA_Double PublishingInterval;
-    UA_UInt32 SubscriptionID;
-    UA_UInt32 NotificationsPerPublish;
-    UA_UInt32 Priority;
-    LIST_HEAD(UA_ListOfClientMonitoredItems, UA_Client_MonitoredItem_s) MonitoredItems;
+typedef struct UA_Client_Subscription {
+    LIST_ENTRY(UA_Client_Subscription) listEntry;
+    UA_UInt32 lifeTime;
+    UA_UInt32 keepAliveCount;
+    UA_Double publishingInterval;
+    UA_UInt32 subscriptionID;
+    UA_UInt32 notificationsPerPublish;
+    UA_UInt32 priority;
+    LIST_HEAD(UA_ListOfClientMonitoredItems, UA_Client_MonitoredItem) monitoredItems;
 } UA_Client_Subscription;
 
 void UA_Client_Subscriptions_forceDelete(UA_Client *client, UA_Client_Subscription *sub);
+
 #endif
 
 /**********/
@@ -4372,12 +4612,16 @@ typedef enum {
 struct UA_Client {
     /* State */
     UA_ClientState state;
+    UA_ClientConfig config;
 
     /* Connection */
-    UA_Connection *connection;
-    UA_SecureChannel *channel;
+    UA_Connection connection;
     UA_String endpointUrl;
+
+    /* SecureChannel */
+    UA_SecureChannel channel;
     UA_UInt32 requestId;
+    UA_DateTime nextChannelRenewal;
 
     /* Authentication */
     UA_Client_Authentication authenticationMethod;
@@ -4389,21 +4633,24 @@ struct UA_Client {
     UA_NodeId authenticationToken;
     UA_UInt32 requestHandle;
     
+    /* Subscriptions */
 #ifdef UA_ENABLE_SUBSCRIPTIONS
     UA_UInt32 monitoredItemHandles;
-    LIST_HEAD(UA_ListOfUnacknowledgedNotificationNumbers, UA_Client_NotificationsAckNumber_s) pendingNotificationsAcks;
-    LIST_HEAD(UA_ListOfClientSubscriptionItems, UA_Client_Subscription_s) subscriptions;
+    LIST_HEAD(ListOfUnacknowledgedNotifications, UA_Client_NotificationsAckNumber) pendingNotificationsAcks;
+    LIST_HEAD(ListOfClientSubscriptionItems, UA_Client_Subscription) subscriptions;
 #endif
     
-    /* Config */
-    UA_ClientConfig config;
-    UA_DateTime scRenewAt;
+    /* Namespace Config */
+    size_t namespacesSize;
+    UA_Namespace *namespaces;
 };
 
 
-
-
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_types.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 
@@ -4416,30 +4663,35 @@ struct UA_Client {
 
 /* Global definition of NULL type instances. These are always zeroed out, as
  * mandated by the C/C++ standard for global values with no initializer. */
-const UA_String UA_STRING_NULL;
-const UA_ByteString UA_BYTESTRING_NULL;
-const UA_Guid UA_GUID_NULL;
-const UA_NodeId UA_NODEID_NULL;
-const UA_ExpandedNodeId UA_EXPANDEDNODEID_NULL;
-
-
-/* Pointer to custom datatypes in the server or client. Set inside
- * UA_decodeBinary */
-UA_THREAD_LOCAL size_t customTypesArraySize;
-UA_THREAD_LOCAL const UA_DataType *customTypesArray;
+const UA_String UA_STRING_NULL = {0, NULL};
+const UA_ByteString UA_BYTESTRING_NULL = {0, NULL};
+const UA_Guid UA_GUID_NULL = {0, 0, 0, {0,0,0,0,0,0,0,0}};
+const UA_NodeId UA_NODEID_NULL = {0, UA_NODEIDTYPE_NUMERIC, {0}};
+const UA_ExpandedNodeId UA_EXPANDEDNODEID_NULL = {{0, UA_NODEIDTYPE_NUMERIC, {0}}, {0, NULL}, 0};
 
 /* TODO: The standard-defined types are ordered. See if binary search is more
  * efficient. */
 const UA_DataType *
-UA_findDataType(const UA_NodeId *typeId) {
-    for(size_t i = 0; i < UA_TYPES_COUNT; ++i) {
-        if(UA_TYPES[i].typeId.identifier.numeric == typeId->identifier.numeric)
-            return &UA_TYPES[i];
+UA_findDataType(const UA_NodeId *typeId, const UA_Namespace* namespaces, const size_t namespacesSize) {
+    const UA_DataType *types = NULL;
+    size_t typesSize = 0;
+    if(typeId->namespaceIndex != 0){
+        if(namespaces == NULL) return NULL;
+        for(size_t i = 0; i < namespacesSize; ++i){
+            if(namespaces[i].index == typeId->namespaceIndex){
+                types = namespaces[i].dataTypes;
+                typesSize = namespaces[i].dataTypesSize;
+                break;
+            }
+        }
+    }else{
+        types = UA_TYPES;
+        typesSize = UA_TYPES_COUNT;
     }
-    for(size_t i = 0; i < customTypesArraySize; ++i) {
-		if(customTypesArray[i].typeId.identifier.numeric == typeId->identifier.numeric)
-			return &customTypesArray[i];
-	}
+    for(size_t i = 0; i < typesSize; ++i) {
+        if(types[i].typeId.identifier.numeric == typeId->identifier.numeric)
+            return &types[i];
+    }
     return NULL;
 }
 
@@ -5446,10 +5698,13 @@ UA_Array_delete(void *p, size_t size, const UA_DataType *type) {
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_types_encoding_binary.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 /* Type Encoding
  * -------------
-
  * This file contains encoding functions for the builtin data types and generic
  * functions that operate on all types and arrays. This requires the type
  * description from a UA_DataType structure. Note that some internal (static)
@@ -5463,9 +5718,6 @@ UA_Array_delete(void *p, size_t size, const UA_DataType *type) {
  * encoding. This enables fast sending of large messages as spurious copying is
  * avoided. */
 
-/* There is no robust way to detect float endianness in clang. This warning can
- * be removed if the target is known to be little endian with floats in the IEEE
- * 754 format. */
 #if defined(__clang__)
 # pragma GCC diagnostic push
 # pragma GCC diagnostic warning "-W#warnings"
@@ -5474,6 +5726,9 @@ UA_Array_delete(void *p, size_t size, const UA_DataType *type) {
 #ifndef UA_BINARY_OVERLAYABLE_INTEGER
 # warning Integer endianness could not be detected to be little endian. Use slow generic encoding.
 #endif
+
+/* There is no robust way to detect float endianness in clang. This warning can be removed
+ * if the target is known to be little endian with floats in the IEEE 754 format. */
 #ifndef UA_BINARY_OVERLAYABLE_FLOAT
 # warning Float endianness could not be detected to be little endian in the IEEE 754 format. Use slow generic encoding.
 #endif
@@ -5492,14 +5747,22 @@ extern const UA_decodeBinarySignature decodeBinaryJumpTable[UA_BUILTIN_TYPES_COU
 typedef size_t (*UA_calcSizeBinarySignature)(const void *UA_RESTRICT p, const UA_DataType *contenttype);
 extern const UA_calcSizeBinarySignature calcSizeBinaryJumpTable[UA_BUILTIN_TYPES_COUNT + 1];
 
+/* Pointer to custom datatypes in the server or client. Set inside
+ * UA_decodeBinary */
+UA_THREAD_LOCAL UA_Namespace* namespaces_local;
+UA_THREAD_LOCAL size_t namespacesSize_local;
+
+
 /* We give pointers to the current position and the last position in the buffer
  * instead of a string with an offset. */
 UA_THREAD_LOCAL UA_Byte * pos;
 UA_THREAD_LOCAL UA_Byte * end;
 
-/* The code UA_STATUSCODE_BADENCODINGLIMITSEXCEEDED is returned only when the
- * end of the buffer is reached. This error is caught. We then try to send the
- * current chunk and continue with the next. */
+/* The code UA_STATUSCODE_BADENCODINGLIMITSEXCEEDED is returned only when the end of the
+ * buffer is reached. When this StatusCode is received, we try to send the current chunk,
+ * replace the buffer and continue encoding. That way, memory-constrained servers need to
+ * allocate only the memory for the current chunk. And we avoid needless copying. Note:
+ * The only place where this is used from is UA_SecureChannel_sendBinaryMessage. */
 
 /* Thread-local buffers used for exchanging the buffer for chunking */
 UA_THREAD_LOCAL UA_ByteString *encodeBuf; /* the original buffer */
@@ -5512,7 +5775,7 @@ exchangeBuffer(void) {
     if(!exchangeBufferCallback)
         return UA_STATUSCODE_BADENCODINGERROR;
 
-    /* store context variables since chunk-sending might call UA_encode itself */
+    /* Store context variables since chunk-sending might call UA_encode itself */
     UA_ByteString *store_encodeBuf = encodeBuf;
     UA_exchangeEncodeBuffer store_exchangeBufferCallback = exchangeBufferCallback;
     void *store_exchangeBufferCallbackHandle = exchangeBufferCallbackHandle;
@@ -5520,12 +5783,14 @@ exchangeBuffer(void) {
     size_t offset = ((uintptr_t)pos - (uintptr_t)encodeBuf->data) / sizeof(UA_Byte);
     UA_StatusCode retval = exchangeBufferCallback(exchangeBufferCallbackHandle, encodeBuf, offset);
 
-    /* restore context variables */
+    /* Restore context variables. This restores the pointer to the buffer, not the buffer
+     * itself. This is required so that a call to UA_encode can be made from within the
+     * exchangeBufferCallback. For example to encode the chunk header */
     encodeBuf = store_encodeBuf;
     exchangeBufferCallback = store_exchangeBufferCallback;
     exchangeBufferCallbackHandle = store_exchangeBufferCallbackHandle;
 
-    /* set pos and end in order to continue encoding */
+    /* Set pos and end in order to continue encoding */
     pos = encodeBuf->data;
     end = &encodeBuf->data[encodeBuf->length];
     return retval;
@@ -5535,8 +5800,9 @@ exchangeBuffer(void) {
 /* Integer Types */
 /*****************/
 
-/* The following en/decoding functions are used only when the architecture isn't
-   little-endian. */
+#if !UA_BINARY_OVERLAYABLE_INTEGER
+
+/* These en/decoding functions are only used when the architecture isn't little-endian. */
 static void
 UA_encode16(const UA_UInt16 v, UA_Byte buf[2]) {
     buf[0] = (UA_Byte)v;
@@ -5559,9 +5825,9 @@ UA_encode32(const UA_UInt32 v, UA_Byte buf[4]) {
 static void
 UA_decode32(const UA_Byte buf[4], UA_UInt32 *v) {
     *v = (UA_UInt32)((UA_UInt32)buf[0] +
-                     (((UA_UInt32)buf[1]) << 8) +
-                     (((UA_UInt32)buf[2]) << 16) +
-                     (((UA_UInt32)buf[3]) << 24));
+                    (((UA_UInt32)buf[1]) << 8) +
+                    (((UA_UInt32)buf[2]) << 16) +
+                    (((UA_UInt32)buf[3]) << 24));
 }
 
 static void
@@ -5579,14 +5845,16 @@ UA_encode64(const UA_UInt64 v, UA_Byte buf[8]) {
 static void
 UA_decode64(const UA_Byte buf[8], UA_UInt64 *v) {
     *v = (UA_UInt64)((UA_UInt64)buf[0] +
-                     (((UA_UInt64)buf[1]) << 8) +
-                     (((UA_UInt64)buf[2]) << 16) +
-                     (((UA_UInt64)buf[3]) << 24) +
-                     (((UA_UInt64)buf[4]) << 32) +
-                     (((UA_UInt64)buf[5]) << 40) +
-                     (((UA_UInt64)buf[6]) << 48) +
-                     (((UA_UInt64)buf[7]) << 56));
+                    (((UA_UInt64)buf[1]) << 8) +
+                    (((UA_UInt64)buf[2]) << 16) +
+                    (((UA_UInt64)buf[3]) << 24) +
+                    (((UA_UInt64)buf[4]) << 32) +
+                    (((UA_UInt64)buf[5]) << 40) +
+                    (((UA_UInt64)buf[6]) << 48) +
+                    (((UA_UInt64)buf[7]) << 56));
 }
+
+#endif /* !UA_BINARY_OVERLAYABLE_INTEGER */
 
 /* Boolean */
 static UA_StatusCode
@@ -5881,7 +6149,59 @@ Double_decodeBinary(UA_Double *dst, const UA_DataType *_) {
 /******************/
 
 static UA_StatusCode
+Array_encodeBinaryOverlayable(uintptr_t ptr, size_t length, size_t elementMemSize) {
+    /* Store the number of already encoded elements */
+    size_t finished = 0;
+
+    /* Loop as long as more elements remain than fit into the chunk */
+    while(end < pos + (elementMemSize * (length-finished))) {
+        size_t possible = ((uintptr_t)end - (uintptr_t)pos) / (sizeof(UA_Byte) * elementMemSize);
+        size_t possibleMem = possible * elementMemSize;
+        memcpy(pos, (void*)ptr, possibleMem);
+        pos += possibleMem;
+        ptr += possibleMem;
+        finished += possible;
+        UA_StatusCode retval = exchangeBuffer();
+        if(retval != UA_STATUSCODE_GOOD)
+            return retval;
+    }
+
+    /* Encode the remaining elements */
+    memcpy(pos, (void*)ptr, elementMemSize * (length-finished));
+    pos += elementMemSize * (length-finished);
+    return UA_STATUSCODE_GOOD;
+}
+
+static UA_StatusCode
+Array_encodeBinaryComplex(uintptr_t ptr, size_t length, const UA_DataType *type) {
+    /* Get the encoding function for the data type. The jumptable at
+     * UA_BUILTIN_TYPES_COUNT points to the generic UA_encodeBinary method */
+    size_t encode_index = type->builtin ? type->typeIndex : UA_BUILTIN_TYPES_COUNT;
+    UA_encodeBinarySignature encodeType = encodeBinaryJumpTable[encode_index];
+
+    /* Encode every element */
+    for(size_t i = 0; i < length; ++i) {
+        UA_Byte *oldpos = pos;
+        UA_StatusCode retval = encodeType((const void*)ptr, type);
+        ptr += type->memSize;
+        /* Encoding failed, switch to the next chunk when possible */
+        if(retval != UA_STATUSCODE_GOOD) {
+            if(retval == UA_STATUSCODE_BADENCODINGLIMITSEXCEEDED) {
+                pos = oldpos; /* Set buffer position to the end of the last encoded element */
+                retval = exchangeBuffer();
+                ptr -= type->memSize; /* Undo to retry encoding the ith element */
+                --i;
+            }
+            if(retval != UA_STATUSCODE_GOOD)
+                return retval; /* Unrecoverable fail */
+        }
+    }
+    return UA_STATUSCODE_GOOD;
+}
+
+static UA_StatusCode
 Array_encodeBinary(const void *src, size_t length, const UA_DataType *type) {
+    /* Check and convert the array length to int32 */
     UA_Int32 signed_length = -1;
     if(length > UA_INT32_MAX)
         return UA_STATUSCODE_BADINTERNALERROR;
@@ -5889,73 +6209,46 @@ Array_encodeBinary(const void *src, size_t length, const UA_DataType *type) {
         signed_length = (UA_Int32)length;
     else if(src == UA_EMPTY_ARRAY_SENTINEL)
         signed_length = 0;
+
+    /* Encode the array length */
     UA_StatusCode retval = Int32_encodeBinary(&signed_length);
     if(retval != UA_STATUSCODE_GOOD || length == 0)
         return retval;
 
-    uintptr_t ptr = (uintptr_t)src;
-    if(type->overlayable) {
-        /* Overlayable type */
-        size_t before = 0; /* the number of already encoded elements */
-        while(end < pos + (type->memSize * (length-before))) {
-            /* not enough space, need to exchange the buffer */
-            size_t possible_elements = ((uintptr_t)end - (uintptr_t)pos) / (sizeof(UA_Byte) * type->memSize);
-            memcpy(pos, (void*)ptr, type->memSize * possible_elements);
-            pos += type->memSize * possible_elements;
-            ptr += possible_elements * type->memSize;
-            before += possible_elements;
-            retval = exchangeBuffer();
-            if(retval != UA_STATUSCODE_GOOD)
-                return retval;
-        }
-        /* encode the remaining elements */
-        memcpy(pos, (void*)ptr, type->memSize * (length-before));
-        pos += type->memSize * (length-before);
-    } else {
-        /* Call encoding function for every element */
-        /* The jumptable at UA_BUILTIN_TYPES_COUNT points to the generic UA_encodeBinary method */
-        size_t encode_index = type->builtin ? type->typeIndex : UA_BUILTIN_TYPES_COUNT;
-        for(size_t i = 0; i < length && retval == UA_STATUSCODE_GOOD; ++i) {
-            UA_Byte *oldpos = pos;
-            retval = encodeBinaryJumpTable[encode_index]((const void*)ptr, type);
-            ptr += type->memSize;
-            if(retval == UA_STATUSCODE_BADENCODINGLIMITSEXCEEDED) {
-                /* Reset the last encoding call */
-                pos = oldpos;
-                ptr -= type->memSize;
-                --i;
-                retval = exchangeBuffer(); /* Exchange buffer */
-            }
-        }
-    }
-    return retval;
+    /* Encode the content */
+    if(!type->overlayable)
+        return Array_encodeBinaryComplex((uintptr_t)src, length, type);
+    return Array_encodeBinaryOverlayable((uintptr_t)src, length, type->memSize);
 }
 
 static UA_StatusCode
 Array_decodeBinary(void *UA_RESTRICT *UA_RESTRICT dst,
                    size_t *out_length, const UA_DataType *type) {
-    /* decode the length */
+    /* Decode the length */
     UA_Int32 signed_length;
     UA_StatusCode retval = Int32_decodeBinary(&signed_length);
     if(retval != UA_STATUSCODE_GOOD)
         return retval;
 
-    /* check the length */
+    /* Return early for empty arrays */
     if(signed_length <= 0) {
-        *dst = NULL;
-        if(signed_length == 0)
+        *out_length = 0;
+        if(signed_length < 0)
+            *dst = NULL;
+        else
             *dst = UA_EMPTY_ARRAY_SENTINEL;
         return UA_STATUSCODE_GOOD;
     }
-    size_t length = (size_t)signed_length;
 
-    /* filter out arrays that can obviously not be parsed, because the message
-       is too small */
+    /* Filter out arrays that can obviously not be decoded, because the message
+     * is too small for the array length. This prevents the allocation of very
+     * long arrays for bogus messages.*/
+    size_t length = (size_t)signed_length;
     if(pos + ((type->memSize * length) / 32) > end)
         return UA_STATUSCODE_BADDECODINGERROR;
 
-    /* allocate memory */
-    *dst = UA_calloc(1, type->memSize * length);
+    /* Allocate memory */
+    *dst = UA_calloc(length, type->memSize);
     if(!*dst)
         return UA_STATUSCODE_BADOUTOFMEMORY;
 
@@ -6040,50 +6333,46 @@ Guid_decodeBinary(UA_Guid *dst, const UA_DataType *_) {
 #define UA_NODEIDTYPE_NUMERIC_FOURBYTE 1
 #define UA_NODEIDTYPE_NUMERIC_COMPLETE 2
 
+/* For ExpandedNodeId, we prefill the encoding mask */
 static UA_StatusCode
-NodeId_encodeBinary(UA_NodeId const *src, const UA_DataType *_) {
+NodeId_encodeBinaryWithEncodingMask(UA_NodeId const *src, UA_Byte encoding) {
     UA_StatusCode retval = UA_STATUSCODE_GOOD;
-    // temporary variables for endian-save code
-    UA_Byte srcByte;
-    UA_UInt16 srcUInt16;
-    UA_UInt32 srcUInt32;
     switch (src->identifierType) {
     case UA_NODEIDTYPE_NUMERIC:
         if(src->identifier.numeric > UA_UINT16_MAX || src->namespaceIndex > UA_BYTE_MAX) {
-            srcByte = UA_NODEIDTYPE_NUMERIC_COMPLETE;
-            retval |= Byte_encodeBinary(&srcByte, NULL);
+            encoding |= UA_NODEIDTYPE_NUMERIC_COMPLETE;
+            retval |= Byte_encodeBinary(&encoding, NULL);
             retval |= UInt16_encodeBinary(&src->namespaceIndex, NULL);
-            srcUInt32 = src->identifier.numeric;
-            retval |= UInt32_encodeBinary(&srcUInt32, NULL);
+            retval |= UInt32_encodeBinary(&src->identifier.numeric, NULL);
         } else if(src->identifier.numeric > UA_BYTE_MAX || src->namespaceIndex > 0) {
-            srcByte = UA_NODEIDTYPE_NUMERIC_FOURBYTE;
-            retval |= Byte_encodeBinary(&srcByte, NULL);
-            srcByte = (UA_Byte)src->namespaceIndex;
-            srcUInt16 = (UA_UInt16)src->identifier.numeric;
-            retval |= Byte_encodeBinary(&srcByte, NULL);
-            retval |= UInt16_encodeBinary(&srcUInt16, NULL);
+            encoding |= UA_NODEIDTYPE_NUMERIC_FOURBYTE;
+            retval |= Byte_encodeBinary(&encoding, NULL);
+            UA_Byte nsindex = (UA_Byte)src->namespaceIndex;
+            retval |= Byte_encodeBinary(&nsindex, NULL);
+            UA_UInt16 identifier16 = (UA_UInt16)src->identifier.numeric;
+            retval |= UInt16_encodeBinary(&identifier16, NULL);
         } else {
-            srcByte = UA_NODEIDTYPE_NUMERIC_TWOBYTE;
-            retval |= Byte_encodeBinary(&srcByte, NULL);
-            srcByte = (UA_Byte)src->identifier.numeric;
-            retval |= Byte_encodeBinary(&srcByte, NULL);
+            encoding |= UA_NODEIDTYPE_NUMERIC_TWOBYTE;
+            retval |= Byte_encodeBinary(&encoding, NULL);
+            UA_Byte identifier8 = (UA_Byte)src->identifier.numeric;
+            retval |= Byte_encodeBinary(&identifier8, NULL);
         }
         break;
     case UA_NODEIDTYPE_STRING:
-        srcByte = UA_NODEIDTYPE_STRING;
-        retval |= Byte_encodeBinary(&srcByte, NULL);
+        encoding |= UA_NODEIDTYPE_STRING;
+        retval |= Byte_encodeBinary(&encoding, NULL);
         retval |= UInt16_encodeBinary(&src->namespaceIndex, NULL);
         retval |= String_encodeBinary(&src->identifier.string, NULL);
         break;
     case UA_NODEIDTYPE_GUID:
-        srcByte = UA_NODEIDTYPE_GUID;
-        retval |= Byte_encodeBinary(&srcByte, NULL);
+        encoding |= UA_NODEIDTYPE_GUID;
+        retval |= Byte_encodeBinary(&encoding, NULL);
         retval |= UInt16_encodeBinary(&src->namespaceIndex, NULL);
         retval |= Guid_encodeBinary(&src->identifier.guid, NULL);
         break;
     case UA_NODEIDTYPE_BYTESTRING:
-        srcByte = UA_NODEIDTYPE_BYTESTRING;
-        retval |= Byte_encodeBinary(&srcByte, NULL);
+        encoding |= UA_NODEIDTYPE_BYTESTRING;
+        retval |= Byte_encodeBinary(&encoding, NULL);
         retval |= UInt16_encodeBinary(&src->namespaceIndex, NULL);
         retval |= ByteString_encodeBinary(&src->identifier.byteString);
         break;
@@ -6091,6 +6380,11 @@ NodeId_encodeBinary(UA_NodeId const *src, const UA_DataType *_) {
         return UA_STATUSCODE_BADINTERNALERROR;
     }
     return retval;
+}
+
+static UA_StatusCode
+NodeId_encodeBinary(UA_NodeId const *src, const UA_DataType *_) {
+    return NodeId_encodeBinaryWithEncodingMask(src, 0);
 }
 
 static UA_StatusCode
@@ -6147,33 +6441,42 @@ NodeId_decodeBinary(UA_NodeId *dst, const UA_DataType *_) {
 
 static UA_StatusCode
 ExpandedNodeId_encodeBinary(UA_ExpandedNodeId const *src, const UA_DataType *_) {
-    if(pos >= end)
-        return UA_STATUSCODE_BADENCODINGLIMITSEXCEEDED;
-    UA_Byte *start = pos;
-    UA_StatusCode retval = NodeId_encodeBinary(&src->nodeId, NULL);
-    if(src->namespaceUri.length > 0) {
+    /* Set up the encoding mask */
+    UA_Byte encoding = 0;
+    if((void*)src->namespaceUri.data > UA_EMPTY_ARRAY_SENTINEL)
+        encoding |= UA_EXPANDEDNODEID_NAMESPACEURI_FLAG;
+    if(src->serverIndex > 0)
+        encoding |= UA_EXPANDEDNODEID_SERVERINDEX_FLAG;
+
+    /* Encode the content */
+    UA_StatusCode retval = NodeId_encodeBinaryWithEncodingMask(&src->nodeId, encoding);
+    if((void*)src->namespaceUri.data > UA_EMPTY_ARRAY_SENTINEL)
         retval |= String_encodeBinary(&src->namespaceUri, NULL);
-        *start |= UA_EXPANDEDNODEID_NAMESPACEURI_FLAG;
-    }
-    if(src->serverIndex > 0) {
+    if(src->serverIndex > 0)
         retval |= UInt32_encodeBinary(&src->serverIndex, NULL);
-        *start |= UA_EXPANDEDNODEID_SERVERINDEX_FLAG;
-    }
     return retval;
 }
 
 static UA_StatusCode
 ExpandedNodeId_decodeBinary(UA_ExpandedNodeId *dst, const UA_DataType *_) {
+    /* Decode the encoding mask */
     if(pos >= end)
         return UA_STATUSCODE_BADDECODINGERROR;
-    UA_Byte encodingByte = *pos;
-    *pos = encodingByte & (UA_Byte)~(UA_EXPANDEDNODEID_NAMESPACEURI_FLAG | UA_EXPANDEDNODEID_SERVERINDEX_FLAG);
+    UA_Byte encoding = *pos;
+
+    /* Mask out the encoding byte on the stream to decode the NodeId only */
+    *pos = encoding & (UA_Byte)~(UA_EXPANDEDNODEID_NAMESPACEURI_FLAG |
+                                 UA_EXPANDEDNODEID_SERVERINDEX_FLAG);
     UA_StatusCode retval = NodeId_decodeBinary(&dst->nodeId, NULL);
-    if(encodingByte & UA_EXPANDEDNODEID_NAMESPACEURI_FLAG) {
+
+    /* Decode the NamespaceUri */
+    if(encoding & UA_EXPANDEDNODEID_NAMESPACEURI_FLAG) {
         dst->nodeId.namespaceIndex = 0;
         retval |= String_decodeBinary(&dst->namespaceUri, NULL);
     }
-    if(encodingByte & UA_EXPANDEDNODEID_SERVERINDEX_FLAG)
+
+    /* Decode the ServerIndex */
+    if(encoding & UA_EXPANDEDNODEID_SERVERINDEX_FLAG)
         retval |= UInt32_decodeBinary(&dst->serverIndex, NULL);
     return retval;
 }
@@ -6184,38 +6487,54 @@ ExpandedNodeId_decodeBinary(UA_ExpandedNodeId *dst, const UA_DataType *_) {
 
 static UA_StatusCode
 LocalizedText_encodeBinary(UA_LocalizedText const *src, const UA_DataType *_) {
-    UA_Byte encodingMask = 0;
+    /* Set up the encoding mask */
+    UA_Byte encoding = 0;
     if(src->locale.data)
-        encodingMask |= UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_LOCALE;
+        encoding |= UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_LOCALE;
     if(src->text.data)
-        encodingMask |= UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_TEXT;
-    UA_StatusCode retval = Byte_encodeBinary(&encodingMask, NULL);
-    if(encodingMask & UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_LOCALE)
+        encoding |= UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_TEXT;
+
+    /* Encode the content */
+    UA_StatusCode retval = Byte_encodeBinary(&encoding, NULL);
+    if(encoding & UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_LOCALE)
         retval |= String_encodeBinary(&src->locale, NULL);
-    if(encodingMask & UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_TEXT)
+    if(encoding & UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_TEXT)
         retval |= String_encodeBinary(&src->text, NULL);
     return retval;
 }
 
 static UA_StatusCode
 LocalizedText_decodeBinary(UA_LocalizedText *dst, const UA_DataType *_) {
-    UA_Byte encodingMask = 0;
-    UA_StatusCode retval = Byte_decodeBinary(&encodingMask, NULL);
-    if(encodingMask & UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_LOCALE)
+    /* Decode the encoding mask */
+    UA_Byte encoding = 0;
+    UA_StatusCode retval = Byte_decodeBinary(&encoding, NULL);
+
+    /* Decode the content */
+    if(encoding & UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_LOCALE)
         retval |= String_decodeBinary(&dst->locale, NULL);
-    if(encodingMask & UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_TEXT)
+    if(encoding & UA_LOCALIZEDTEXT_ENCODINGMASKTYPE_TEXT)
         retval |= String_decodeBinary(&dst->text, NULL);
     return retval;
 }
 
 static UA_StatusCode
 findDataTypeByBinary(const UA_NodeId *typeId, const UA_DataType **findtype) {
-    const UA_DataType *types = UA_TYPES;
-    size_t typesSize = UA_TYPES_COUNT;
-    if(typeId->namespaceIndex != 0) {
-        types = customTypesArray;
-        typesSize = customTypesArraySize;
+    const UA_DataType *types = NULL;
+    size_t typesSize;
+    if(typeId->namespaceIndex != 0){
+        if(namespaces_local == NULL) return UA_STATUSCODE_BADNODEIDUNKNOWN;
+        for(size_t i = 0; i < namespacesSize_local; ++i){
+            if(namespaces_local[i].index == typeId->namespaceIndex){
+                types = namespaces_local[i].dataTypes;
+                typesSize = namespaces_local[i].dataTypesSize;
+                break;
+            }
+        }
+    }else{
+        types = UA_TYPES;
+        typesSize = UA_TYPES_COUNT;
     }
+    if(types == NULL) return UA_STATUSCODE_BADNODEIDUNKNOWN;
     for(size_t i = 0; i < typesSize; ++i) {
         if(types[i].binaryEncodingId == typeId->identifier.numeric) {
             // cppcheck-suppress autoVariables
@@ -6229,31 +6548,11 @@ findDataTypeByBinary(const UA_NodeId *typeId, const UA_DataType **findtype) {
 /* ExtensionObject */
 static UA_StatusCode
 ExtensionObject_encodeBinary(UA_ExtensionObject const *src, const UA_DataType *_) {
-    UA_StatusCode retval;
     UA_Byte encoding = src->encoding;
-    if(encoding > UA_EXTENSIONOBJECT_ENCODED_XML) {
-        if(!src->content.decoded.type || !src->content.decoded.data)
-            return UA_STATUSCODE_BADENCODINGERROR;
-        UA_NodeId typeId = src->content.decoded.type->typeId;
-        if(typeId.identifierType != UA_NODEIDTYPE_NUMERIC)
-            return UA_STATUSCODE_BADENCODINGERROR;
-        typeId.identifier.numeric= src->content.decoded.type->binaryEncodingId;
-        encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
-        retval = NodeId_encodeBinary(&typeId, NULL);
-        retval |= Byte_encodeBinary(&encoding, NULL);
-        UA_Byte *old_pos = pos; /* save the position to encode the length afterwards */
-        pos += 4; /* jump over the length field */
-        const UA_DataType *type = src->content.decoded.type;
-        size_t encode_index = type->builtin ? type->typeIndex : UA_BUILTIN_TYPES_COUNT;
-        retval |= encodeBinaryJumpTable[encode_index](src->content.decoded.data, type);
-        /* jump back, encode the length, jump back forward */
-        UA_Int32 length = (UA_Int32)(((uintptr_t)pos - (uintptr_t)old_pos) / sizeof(UA_Byte)) - 4;
-        UA_Byte *new_pos = pos;
-        pos = old_pos;
-        retval |= Int32_encodeBinary(&length);
-        pos = new_pos;
-    } else {
-        retval = NodeId_encodeBinary(&src->content.encoded.typeId, NULL);
+
+    /* No content or already encoded content */
+    if(encoding <= UA_EXTENSIONOBJECT_ENCODED_XML) {
+        UA_StatusCode retval = NodeId_encodeBinary(&src->content.encoded.typeId, NULL);
         retval |= Byte_encodeBinary(&encoding, NULL);
         switch (src->encoding) {
         case UA_EXTENSIONOBJECT_ENCODED_NOBODY:
@@ -6263,10 +6562,66 @@ ExtensionObject_encodeBinary(UA_ExtensionObject const *src, const UA_DataType *_
             retval |= ByteString_encodeBinary(&src->content.encoded.body);
             break;
         default:
-            return UA_STATUSCODE_BADINTERNALERROR;
+            retval = UA_STATUSCODE_BADINTERNALERROR;
         }
+        return retval;
     }
+
+    /* Cannot encode with no data or no type description */
+    if(!src->content.decoded.type || !src->content.decoded.data)
+        return UA_STATUSCODE_BADENCODINGERROR;
+
+    /* Write the NodeId for the binary encoded type */
+    UA_NodeId typeId = src->content.decoded.type->typeId;
+    if(typeId.identifierType != UA_NODEIDTYPE_NUMERIC)
+        return UA_STATUSCODE_BADENCODINGERROR;
+    typeId.identifier.numeric = src->content.decoded.type->binaryEncodingId;
+    UA_StatusCode retval = NodeId_encodeBinary(&typeId, NULL);
+
+    /* Write the encoding byte */
+    encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+    retval |= Byte_encodeBinary(&encoding, NULL);
+
+    /* Write the length of the following content */
+    const UA_DataType *type = src->content.decoded.type;
+    size_t len = UA_calcSizeBinary(src->content.decoded.data, type);
+    if(len > UA_INT32_MAX)
+        return UA_STATUSCODE_BADENCODINGERROR;
+    UA_Int32 signed_len = (UA_Int32)len;
+    retval |= Int32_encodeBinary(&signed_len);
+
+    /* Encode the content */
+    size_t encode_index = type->builtin ? type->typeIndex : UA_BUILTIN_TYPES_COUNT;
+    retval |= encodeBinaryJumpTable[encode_index](src->content.decoded.data, type);
     return retval;
+}
+
+static UA_StatusCode
+ExtensionObject_decodeBinaryContent(UA_ExtensionObject *dst, const UA_NodeId *typeId) {
+    /* Lookup the datatype */
+    const UA_DataType *type = NULL;
+    findDataTypeByBinary(typeId, &type);
+
+    /* Unknown type, just take the binary content */
+    if(!type) {
+        dst->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
+        dst->content.encoded.typeId = *typeId;
+        return ByteString_decodeBinary(&dst->content.encoded.body);
+    }
+
+    /* Allocate memory */
+    dst->content.decoded.data = UA_new(type);
+    if(!dst->content.decoded.data)
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+
+    /* Jump over the length field (TODO: check if the decoded length matches) */
+    pos += 4;
+        
+    /* Decode */
+    dst->encoding = UA_EXTENSIONOBJECT_DECODED;
+    dst->content.decoded.type = type;
+    size_t decode_index = type->builtin ? type->typeIndex : UA_BUILTIN_TYPES_COUNT;
+    return decodeBinaryJumpTable[decode_index](dst->content.decoded.data, type);
 }
 
 static UA_StatusCode
@@ -6283,7 +6638,9 @@ ExtensionObject_decodeBinary(UA_ExtensionObject *dst, const UA_DataType *_) {
         return retval;
     }
 
-    if(encoding == UA_EXTENSIONOBJECT_ENCODED_NOBODY) {
+    if(encoding == UA_EXTENSIONOBJECT_ENCODED_BYTESTRING) {
+        retval = ExtensionObject_decodeBinaryContent(dst, &typeId);
+    } else if(encoding == UA_EXTENSIONOBJECT_ENCODED_NOBODY) {
         dst->encoding = (UA_ExtensionObjectEncoding)encoding;
         dst->content.encoded.typeId = typeId;
         dst->content.encoded.body = UA_BYTESTRING_NULL;
@@ -6292,33 +6649,53 @@ ExtensionObject_decodeBinary(UA_ExtensionObject *dst, const UA_DataType *_) {
         dst->content.encoded.typeId = typeId;
         retval = ByteString_decodeBinary(&dst->content.encoded.body);
     } else {
-        /* try to decode the content */
-        const UA_DataType *type = NULL;
-        /* helping clang analyzer, typeId is numeric */
-        UA_assert(typeId.identifier.byteString.data == NULL);
-        UA_assert(typeId.identifier.string.data == NULL);
-        findDataTypeByBinary(&typeId, &type);
-        if(type) {
-            pos += 4; /* jump over the length (todo: check if length matches) */
-            dst->content.decoded.data = UA_new(type);
-            size_t decode_index = type->builtin ? type->typeIndex : UA_BUILTIN_TYPES_COUNT;
-            if(dst->content.decoded.data) {
-                dst->content.decoded.type = type;
-                dst->encoding = UA_EXTENSIONOBJECT_DECODED;
-                retval = decodeBinaryJumpTable[decode_index](dst->content.decoded.data, type);
-            } else {
-                retval = UA_STATUSCODE_BADOUTOFMEMORY;
-            }
-        } else {
-            retval = ByteString_decodeBinary(&dst->content.encoded.body);
-            dst->encoding = UA_EXTENSIONOBJECT_ENCODED_BYTESTRING;
-            dst->content.encoded.typeId = typeId;
-        }
+        retval = UA_STATUSCODE_BADDECODINGERROR;
     }
     return retval;
 }
 
 /* Variant */
+static UA_StatusCode
+Variant_encodeBinaryWrapExtensionObject(const UA_Variant *src, const UA_Boolean isArray) {
+    /* Default to 1 for a scalar. */
+    size_t length = 1;
+
+    /* Encode the array length if required */
+    UA_StatusCode retval = UA_STATUSCODE_GOOD;
+    if(isArray) {
+        if(src->arrayLength > UA_INT32_MAX)
+            return UA_STATUSCODE_BADENCODINGERROR;
+        length = src->arrayLength;
+        UA_Int32 encodedLength = (UA_Int32)src->arrayLength;
+        retval = Int32_encodeBinary(&encodedLength);
+    }
+
+    /* Set up the ExtensionObject */
+    UA_ExtensionObject eo;
+    UA_ExtensionObject_init(&eo);
+    eo.encoding = UA_EXTENSIONOBJECT_DECODED;
+    eo.content.decoded.type = src->type;
+    const UA_UInt16 memSize = src->type->memSize;
+    uintptr_t ptr = (uintptr_t)src->data;
+
+    /* Iterate over the array */
+    for(size_t i = 0; i < length && retval == UA_STATUSCODE_GOOD; ++i) {
+        UA_Byte *oldpos = pos;
+        eo.content.decoded.data = (void*)ptr;
+        retval |= ExtensionObject_encodeBinary(&eo, NULL);
+        ptr += memSize;
+        if(retval == UA_STATUSCODE_BADENCODINGLIMITSEXCEEDED) {
+            /* exchange/send with the current buffer with chunking */
+            pos = oldpos;
+            retval = exchangeBuffer();
+            /* encode the same element in the next iteration */
+            --i;
+            ptr -= memSize;
+        }
+    }
+    return retval;
+}
+
 enum UA_VARIANT_ENCODINGMASKTYPE {
     UA_VARIANT_ENCODINGMASKTYPE_TYPEID_MASK = 0x3F,        // bits 0:5
     UA_VARIANT_ENCODINGMASKTYPE_DIMENSIONS  = (0x01 << 6), // bit 6
@@ -6326,74 +6703,89 @@ enum UA_VARIANT_ENCODINGMASKTYPE {
 };
 
 static UA_StatusCode
-Variant_encodeBinary(UA_Variant const *src, const UA_DataType *_) {
-    UA_Byte encodingByte = 0;
+Variant_encodeBinary(const UA_Variant *src, const UA_DataType *_) {
+    /* Quit early for the empty variant */
+    UA_Byte encoding = 0;
     if(!src->type)
-        return Byte_encodeBinary(&encodingByte, NULL); /* empty variant */
+        return Byte_encodeBinary(&encoding, NULL);
 
+    /* Set the content type in the encoding mask */
+    const UA_Boolean isBuiltin = src->type->builtin;
+    if(isBuiltin)
+        encoding |= UA_VARIANT_ENCODINGMASKTYPE_TYPEID_MASK & (UA_Byte)(src->type->typeIndex + 1);
+    else
+        encoding |= UA_VARIANT_ENCODINGMASKTYPE_TYPEID_MASK & (UA_Byte)(UA_TYPES_EXTENSIONOBJECT + 1);
+
+    /* Set the array type in the encoding mask */
     const UA_Boolean isArray = src->arrayLength > 0 || src->data <= UA_EMPTY_ARRAY_SENTINEL;
     const UA_Boolean hasDimensions = isArray && src->arrayDimensionsSize > 0;
-    const UA_Boolean isBuiltin = src->type->builtin;
-
-    /* Encode the encodingbyte */
     if(isArray) {
-        encodingByte |= UA_VARIANT_ENCODINGMASKTYPE_ARRAY;
+        encoding |= UA_VARIANT_ENCODINGMASKTYPE_ARRAY;
         if(hasDimensions)
-            encodingByte |= UA_VARIANT_ENCODINGMASKTYPE_DIMENSIONS;
+            encoding |= UA_VARIANT_ENCODINGMASKTYPE_DIMENSIONS;
     }
-    if(isBuiltin) {
-        UA_Byte t = (UA_Byte)(UA_VARIANT_ENCODINGMASKTYPE_TYPEID_MASK & (src->type->typeIndex + 1));
-        encodingByte |= t;
-    } else {
-        /* Non-builtin types are wrapped in an ExtensionObject */
-        encodingByte |= UA_VARIANT_ENCODINGMASKTYPE_TYPEID_MASK & (UA_Byte) 22;
-    }
-    UA_StatusCode retval = Byte_encodeBinary(&encodingByte, NULL);
 
     /* Encode the content */
-    if(isBuiltin) {
-        if(!isArray) {
-            size_t encode_index = src->type->typeIndex;
-            retval |= encodeBinaryJumpTable[encode_index](src->data, src->type);
-        } else
-            retval |= Array_encodeBinary(src->data, src->arrayLength, src->type);
-    } else {
-        /* Wrap not-builtin elements into an extensionobject */
-        if(src->arrayDimensionsSize > UA_INT32_MAX)
-            return UA_STATUSCODE_BADINTERNALERROR;
-        size_t length = 1;
-        if(isArray) {
-            length = src->arrayLength;
-            UA_Int32 encodedLength = (UA_Int32)src->arrayLength;
-            retval |= Int32_encodeBinary(&encodedLength);
-        }
-        UA_ExtensionObject eo;
-        UA_ExtensionObject_init(&eo);
-        eo.encoding = UA_EXTENSIONOBJECT_DECODED;
-        eo.content.decoded.type = src->type;
-        const UA_UInt16 memSize = src->type->memSize;
-        uintptr_t ptr = (uintptr_t)src->data;
-        for(size_t i = 0; i < length && retval == UA_STATUSCODE_GOOD; ++i) {
-            UA_Byte *oldpos = pos;
-            eo.content.decoded.data = (void*)ptr;
-            retval |= ExtensionObject_encodeBinary(&eo, NULL);
-            ptr += memSize;
-            if(retval == UA_STATUSCODE_BADENCODINGLIMITSEXCEEDED) {
-                /* exchange/send with the current buffer with chunking */
-                pos = oldpos;
-                retval = exchangeBuffer();
-                /* encode the same element in the next iteration */
-                --i;
-                ptr -= memSize;
-            }
-        }
-    }
+    UA_StatusCode retval = Byte_encodeBinary(&encoding, NULL);
+    if(!isBuiltin)
+        retval |= Variant_encodeBinaryWrapExtensionObject(src, isArray);
+    else if(!isArray)
+        retval |= encodeBinaryJumpTable[src->type->typeIndex](src->data, src->type);
+    else
+        retval |= Array_encodeBinary(src->data, src->arrayLength, src->type);
 
-    /* Encode the dimensions */
+    /* Encode the array dimensions */
     if(hasDimensions)
         retval |= Array_encodeBinary(src->arrayDimensions, src->arrayDimensionsSize,
                                      &UA_TYPES[UA_TYPES_INT32]);
+    return retval;
+}
 
+static UA_StatusCode
+Variant_decodeBinaryUnwrapExtensionObject(UA_Variant *dst) {
+    /* Save the position in the ByteString */
+    UA_Byte *old_pos = pos;
+
+    /* Decode the DataType */
+    UA_NodeId typeId;
+    UA_NodeId_init(&typeId);
+    UA_StatusCode retval = NodeId_decodeBinary(&typeId, NULL);
+    if(retval != UA_STATUSCODE_GOOD)
+        return retval;
+
+    /* Decode the EncodingByte */
+    UA_Byte encoding;
+    retval = Byte_decodeBinary(&encoding, NULL);
+    if(retval != UA_STATUSCODE_GOOD) {
+        UA_NodeId_deleteMembers(&typeId);
+        return retval;
+    }
+
+    /* Search for the datatype. Default to ExtensionObject. */
+    if(encoding == UA_EXTENSIONOBJECT_ENCODED_BYTESTRING &&
+       typeId.identifierType == UA_NODEIDTYPE_NUMERIC &&
+       findDataTypeByBinary(&typeId, &dst->type) == UA_STATUSCODE_GOOD) {
+        /* Jump over the length field (TODO: check if length matches) */
+        pos += 4; 
+    } else {
+        /* Reset and decode as ExtensionObject */
+        UA_assert(dst->type == &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+        pos = old_pos;
+        UA_NodeId_deleteMembers(&typeId);
+    }
+
+    /* Allocate memory */
+    dst->data = UA_new(dst->type);
+    if(!dst->data)
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+
+    /* Decode the content */
+    size_t decode_index = dst->type->builtin ? dst->type->typeIndex : UA_BUILTIN_TYPES_COUNT;
+    retval = decodeBinaryJumpTable[decode_index](dst->data, dst->type);
+    if(retval != UA_STATUSCODE_GOOD) {
+        UA_free(dst->data);
+        dst->data = NULL;
+    }
     return retval;
 }
 
@@ -6401,87 +6793,58 @@ Variant_encodeBinary(UA_Variant const *src, const UA_DataType *_) {
  we only support ns0 types (todo: attach typedescriptions to datatypenodes) */
 static UA_StatusCode
 Variant_decodeBinary(UA_Variant *dst, const UA_DataType *_) {
+    /* Decode the encoding byte */
     UA_Byte encodingByte;
     UA_StatusCode retval = Byte_decodeBinary(&encodingByte, NULL);
     if(retval != UA_STATUSCODE_GOOD)
         return retval;
+
+    /* Return early for an empty variant (was already _inited) */
     if(encodingByte == 0)
-        return UA_STATUSCODE_GOOD; /* empty Variant (was already _inited) */
-    UA_Boolean isArray = encodingByte & UA_VARIANT_ENCODINGMASKTYPE_ARRAY;
+        return UA_STATUSCODE_GOOD;
+
+    /* Does the variant contain an array? */
+    const UA_Boolean isArray = (encodingByte & UA_VARIANT_ENCODINGMASKTYPE_ARRAY) > 0;
+
+    /* Get the datatype of the content. The type must be a builtin data type.
+     * All not-builtin types are wrapped in an ExtensionObject. */
     size_t typeIndex = (size_t)((encodingByte & UA_VARIANT_ENCODINGMASKTYPE_TYPEID_MASK) - 1);
-    if(typeIndex > 24) /* the type must be builtin (maybe wrapped in an extensionobject) */
+    if(typeIndex > UA_TYPES_DIAGNOSTICINFO)
         return UA_STATUSCODE_BADDECODINGERROR;
+    dst->type = &UA_TYPES[typeIndex];
 
+    /* Decode the content */
     if(isArray) {
-        /* an array */
-        dst->type = &UA_TYPES[typeIndex]; /* Arrays of non-builtin types contain only ExtensionObjects */
         retval = Array_decodeBinary(&dst->data, &dst->arrayLength, dst->type);
-    } else if (typeIndex != UA_TYPES_EXTENSIONOBJECT) {
-        /* a builtin type */
-        dst->type = &UA_TYPES[typeIndex];
-        dst->data = UA_calloc(1, dst->type->memSize);
+    } else if(typeIndex != UA_TYPES_EXTENSIONOBJECT) {
+        dst->data = UA_new(dst->type);
         if(!dst->data)
             return UA_STATUSCODE_BADOUTOFMEMORY;
-        size_t decode_index = dst->type->builtin ? dst->type->typeIndex : UA_BUILTIN_TYPES_COUNT;
-        retval = decodeBinaryJumpTable[decode_index](dst->data, dst->type);
-        // dst->arrayLength = 0; /* is null already in an initialized type */
+        retval = decodeBinaryJumpTable[typeIndex](dst->data, dst->type);
     } else {
-        /* a single extensionobject */
-        UA_Byte *old_pos = pos; /* save the beginning of the extensionobject */
-        UA_NodeId typeId;
-        UA_NodeId_init(&typeId);
-        retval = NodeId_decodeBinary(&typeId, NULL);
-        if(retval != UA_STATUSCODE_GOOD)
-            return retval;
-
-        UA_Byte eo_encoding;
-        retval = Byte_decodeBinary(&eo_encoding, NULL);
-        if(retval != UA_STATUSCODE_GOOD) {
-            UA_NodeId_deleteMembers(&typeId);
-            return retval;
-        }
-
-        /* search for the datatype. use extensionobject if nothing is found */
-        dst->type = &UA_TYPES[UA_TYPES_EXTENSIONOBJECT];
-        if(typeId.identifierType == UA_NODEIDTYPE_NUMERIC &&
-           eo_encoding == UA_EXTENSIONOBJECT_ENCODED_BYTESTRING) {
-            UA_assert(typeId.identifier.byteString.data == NULL); /* for clang analyzer <= 3.7 */
-            if(findDataTypeByBinary(&typeId, &dst->type) == UA_STATUSCODE_GOOD)
-                pos += 4; /* jump over the length (todo: check if length matches) */
-            else
-                pos = old_pos; /* jump back and decode as extensionobject */
-        } else {
-            pos = old_pos; /* jump back and decode as extensionobject */
-            UA_NodeId_deleteMembers(&typeId); /* found nodeids are always numerical */
-        }
-
-        /* decode the type */
-        dst->data = UA_calloc(1, dst->type->memSize);
-        if(!dst->data)
-            return UA_STATUSCODE_BADOUTOFMEMORY;
-        size_t decode_index = dst->type->builtin ? dst->type->typeIndex : UA_BUILTIN_TYPES_COUNT;
-        retval = decodeBinaryJumpTable[decode_index](dst->data, dst->type);
-        if(retval != UA_STATUSCODE_GOOD) {
-            UA_free(dst->data);
-            dst->data = NULL;
-        }
+        retval = Variant_decodeBinaryUnwrapExtensionObject(dst);
     }
 
-    /* array dimensions */
-    if(isArray && (encodingByte & UA_VARIANT_ENCODINGMASKTYPE_DIMENSIONS))
+    /* Decode array dimensions */
+    if(isArray && (encodingByte & UA_VARIANT_ENCODINGMASKTYPE_DIMENSIONS) > 0)
         retval |= Array_decodeBinary((void**)&dst->arrayDimensions,
                                      &dst->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);
-
     return retval;
 }
 
 /* DataValue */
 static UA_StatusCode
 DataValue_encodeBinary(UA_DataValue const *src, const UA_DataType *_) {
+    /* Set up the encoding mask */
     UA_Byte encodingMask = (UA_Byte)
-        (src->hasValue | (src->hasStatus << 1) | (src->hasSourceTimestamp << 2) |
-         (src->hasServerTimestamp << 3) | (src->hasSourcePicoseconds << 4) |
-         (src->hasServerPicoseconds << 5));
+        ((UA_Byte)src->hasValue |
+        ((UA_Byte)src->hasStatus << 1) |
+		((UA_Byte)src->hasSourceTimestamp << 2) |
+        ((UA_Byte)src->hasServerTimestamp << 3) |
+		((UA_Byte)src->hasSourcePicoseconds << 4) |
+        ((UA_Byte)src->hasServerPicoseconds << 5));
+
+    /* Encode the content */
     UA_StatusCode retval = Byte_encodeBinary(&encodingMask, NULL);
     if(src->hasValue)
         retval |= Variant_encodeBinary(&src->value, NULL);
@@ -6499,12 +6862,16 @@ DataValue_encodeBinary(UA_DataValue const *src, const UA_DataType *_) {
 }
 
 #define MAX_PICO_SECONDS 9999
+
 static UA_StatusCode
 DataValue_decodeBinary(UA_DataValue *dst, const UA_DataType *_) {
+    /* Decode the encoding mask */
     UA_Byte encodingMask;
     UA_StatusCode retval = Byte_decodeBinary(&encodingMask, NULL);
     if(retval != UA_STATUSCODE_GOOD)
         return retval;
+
+    /* Decode the content */
     if(encodingMask & 0x01) {
         dst->hasValue = true;
         retval |= Variant_decodeBinary(&dst->value, NULL);
@@ -6539,10 +6906,13 @@ DataValue_decodeBinary(UA_DataValue *dst, const UA_DataType *_) {
 /* DiagnosticInfo */
 static UA_StatusCode
 DiagnosticInfo_encodeBinary(const UA_DiagnosticInfo *src, const UA_DataType *_) {
+    /* Set up the encoding mask */
     UA_Byte encodingMask = (UA_Byte)
-        (src->hasSymbolicId | (src->hasNamespaceUri << 1) |
-         (src->hasLocalizedText << 2) | (src->hasLocale << 3) |
-         (src->hasAdditionalInfo << 4) | (src->hasInnerDiagnosticInfo << 5));
+        ((UA_Byte)src->hasSymbolicId | ((UA_Byte)src->hasNamespaceUri << 1) |
+        ((UA_Byte)src->hasLocalizedText << 2) | ((UA_Byte)src->hasLocale << 3) |
+        ((UA_Byte)src->hasAdditionalInfo << 4) | ((UA_Byte)src->hasInnerDiagnosticInfo << 5));
+
+    /* Encode the content */
     UA_StatusCode retval = Byte_encodeBinary(&encodingMask, NULL);
     if(src->hasSymbolicId)
         retval |= Int32_encodeBinary(&src->symbolicId);
@@ -6563,10 +6933,13 @@ DiagnosticInfo_encodeBinary(const UA_DiagnosticInfo *src, const UA_DataType *_) 
 
 static UA_StatusCode
 DiagnosticInfo_decodeBinary(UA_DiagnosticInfo *dst, const UA_DataType *_) {
+    /* Decode the encoding mask */
     UA_Byte encodingMask;
     UA_StatusCode retval = Byte_decodeBinary(&encodingMask, NULL);
     if(retval != UA_STATUSCODE_GOOD)
         return retval;
+
+    /* Decode the content */
     if(encodingMask & 0x01) {
         dst->hasSymbolicId = true;
         retval |= Int32_decodeBinary(&dst->symbolicId);
@@ -6754,15 +7127,15 @@ UA_decodeBinaryInternal(void *dst, const UA_DataType *type) {
 
 UA_StatusCode
 UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst,
-                const UA_DataType *type, size_t customTypesSize,
-                const UA_DataType *customTypes) {
+                const UA_DataType *type,
+                size_t newNamespacesSize, UA_Namespace *newNamespaces) {
     /* Initialize the destination */
     memset(dst, 0, type->memSize);
 
     /* Store the pointers to the custom datatypes. They might be needed during
      * decoding of variants. */
-    customTypesArraySize = customTypesSize;
-    customTypesArray = customTypes;
+    namespaces_local = newNamespaces;
+    namespacesSize_local = newNamespacesSize;
 
     /* Set the (thread-local) position and end pointers to save function
      * arguments */
@@ -7030,7438 +7403,8499 @@ UA_calcSizeBinary(void *p, const UA_DataType *type) {
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_types_generated.c" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
- * on host jgvm1 by user julian at 2017-01-06 06:04:54 */
+ * on host altair by user julian at 2017-02-28 07:53:05 */
 
 
 /* Boolean */
 static UA_DataTypeMember Boolean_members[1] = {
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SByte */
 static UA_DataTypeMember SByte_members[1] = {
-  { .memberTypeIndex = UA_TYPES_SBYTE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_SBYTE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Byte */
 static UA_DataTypeMember Byte_members[1] = {
-  { .memberTypeIndex = UA_TYPES_BYTE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Int16 */
 static UA_DataTypeMember Int16_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT16,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT16, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* UInt16 */
 static UA_DataTypeMember UInt16_members[1] = {
-  { .memberTypeIndex = UA_TYPES_UINT16,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_UINT16, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Int32 */
 static UA_DataTypeMember Int32_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* UInt32 */
 static UA_DataTypeMember UInt32_members[1] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Int64 */
 static UA_DataTypeMember Int64_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT64,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT64, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* UInt64 */
 static UA_DataTypeMember UInt64_members[1] = {
-  { .memberTypeIndex = UA_TYPES_UINT64,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_UINT64, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Float */
 static UA_DataTypeMember Float_members[1] = {
-  { .memberTypeIndex = UA_TYPES_FLOAT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_FLOAT, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Double */
 static UA_DataTypeMember Double_members[1] = {
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* String */
 static UA_DataTypeMember String_members[1] = {
-  { .memberTypeIndex = UA_TYPES_BYTE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = true
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* DateTime */
 static UA_DataTypeMember DateTime_members[1] = {
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Guid */
 static UA_DataTypeMember Guid_members[1] = {
-  { .memberTypeIndex = UA_TYPES_GUID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_GUID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ByteString */
 static UA_DataTypeMember ByteString_members[1] = {
-  { .memberTypeIndex = UA_TYPES_BYTE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = true
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* XmlElement */
 static UA_DataTypeMember XmlElement_members[1] = {
-  { .memberTypeIndex = UA_TYPES_BYTE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = true
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* NodeId */
 static UA_DataTypeMember NodeId_members[1] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ExpandedNodeId */
 static UA_DataTypeMember ExpandedNodeId_members[1] = {
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* StatusCode */
 static UA_DataTypeMember StatusCode_members[1] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* QualifiedName */
 static UA_DataTypeMember QualifiedName_members[2] = {
-  { .memberTypeIndex = UA_TYPES_INT16,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "namespaceIndex",
+    "namespaceIndex", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_INT16, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "name",
+    "name", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QualifiedName, name) - offsetof(UA_QualifiedName, namespaceIndex) - sizeof(UA_Int16),
-    .isArray = false
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_QualifiedName, name) - offsetof(UA_QualifiedName, namespaceIndex) - sizeof(UA_Int16), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* LocalizedText */
 static UA_DataTypeMember LocalizedText_members[1] = {
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ExtensionObject */
 static UA_DataTypeMember ExtensionObject_members[1] = {
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DataValue */
 static UA_DataTypeMember DataValue_members[1] = {
-  { .memberTypeIndex = UA_TYPES_DATAVALUE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_DATAVALUE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Variant */
 static UA_DataTypeMember Variant_members[1] = {
-  { .memberTypeIndex = UA_TYPES_VARIANT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_VARIANT, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DiagnosticInfo */
 static UA_DataTypeMember DiagnosticInfo_members[1] = {
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SignedSoftwareCertificate */
 static UA_DataTypeMember SignedSoftwareCertificate_members[2] = {
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "certificateData",
+    "certificateData", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "signature",
+    "signature", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SignedSoftwareCertificate, signature) - offsetof(UA_SignedSoftwareCertificate, certificateData) - sizeof(UA_ByteString),
-    .isArray = false
-  },};
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_SignedSoftwareCertificate, signature) - offsetof(UA_SignedSoftwareCertificate, certificateData) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* BrowsePathTarget */
 static UA_DataTypeMember BrowsePathTarget_members[2] = {
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "targetId",
+    "targetId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "remainingPathIndex",
+    "remainingPathIndex", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowsePathTarget, remainingPathIndex) - offsetof(UA_BrowsePathTarget, targetId) - sizeof(UA_ExpandedNodeId),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_BrowsePathTarget, remainingPathIndex) - offsetof(UA_BrowsePathTarget, targetId) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ViewAttributes */
 static UA_DataTypeMember ViewAttributes_members[7] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ViewAttributes, displayName) - offsetof(UA_ViewAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ViewAttributes, displayName) - offsetof(UA_ViewAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ViewAttributes, description) - offsetof(UA_ViewAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ViewAttributes, description) - offsetof(UA_ViewAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ViewAttributes, writeMask) - offsetof(UA_ViewAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ViewAttributes, writeMask) - offsetof(UA_ViewAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ViewAttributes, userWriteMask) - offsetof(UA_ViewAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ViewAttributes, userWriteMask) - offsetof(UA_ViewAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "containsNoLoops",
+    "containsNoLoops", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ViewAttributes, containsNoLoops) - offsetof(UA_ViewAttributes, userWriteMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTE,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_ViewAttributes, containsNoLoops) - offsetof(UA_ViewAttributes, userWriteMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "eventNotifier",
+    "eventNotifier", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ViewAttributes, eventNotifier) - offsetof(UA_ViewAttributes, containsNoLoops) - sizeof(UA_Boolean),
-    .isArray = false
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    offsetof(UA_ViewAttributes, eventNotifier) - offsetof(UA_ViewAttributes, containsNoLoops) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* BrowseResultMask */
 static UA_DataTypeMember BrowseResultMask_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* RequestHeader */
 static UA_DataTypeMember RequestHeader_members[7] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "authenticationToken",
+    "authenticationToken", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "timestamp",
+    "timestamp", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RequestHeader, timestamp) - offsetof(UA_RequestHeader, authenticationToken) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    offsetof(UA_RequestHeader, timestamp) - offsetof(UA_RequestHeader, authenticationToken) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHandle",
+    "requestHandle", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RequestHeader, requestHandle) - offsetof(UA_RequestHeader, timestamp) - sizeof(UA_DateTime),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_RequestHeader, requestHandle) - offsetof(UA_RequestHeader, timestamp) - sizeof(UA_DateTime), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "returnDiagnostics",
+    "returnDiagnostics", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RequestHeader, returnDiagnostics) - offsetof(UA_RequestHeader, requestHandle) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_RequestHeader, returnDiagnostics) - offsetof(UA_RequestHeader, requestHandle) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "auditEntryId",
+    "auditEntryId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RequestHeader, auditEntryId) - offsetof(UA_RequestHeader, returnDiagnostics) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_RequestHeader, auditEntryId) - offsetof(UA_RequestHeader, returnDiagnostics) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "timeoutHint",
+    "timeoutHint", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RequestHeader, timeoutHint) - offsetof(UA_RequestHeader, auditEntryId) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_RequestHeader, timeoutHint) - offsetof(UA_RequestHeader, auditEntryId) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "additionalHeader",
+    "additionalHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RequestHeader, additionalHeader) - offsetof(UA_RequestHeader, timeoutHint) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_RequestHeader, additionalHeader) - offsetof(UA_RequestHeader, timeoutHint) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* MonitoredItemModifyResult */
 static UA_DataTypeMember MonitoredItemModifyResult_members[4] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "statusCode",
+    "statusCode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedSamplingInterval",
+    "revisedSamplingInterval", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemModifyResult, revisedSamplingInterval) - offsetof(UA_MonitoredItemModifyResult, statusCode) - sizeof(UA_StatusCode),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemModifyResult, revisedSamplingInterval) - offsetof(UA_MonitoredItemModifyResult, statusCode) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedQueueSize",
+    "revisedQueueSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemModifyResult, revisedQueueSize) - offsetof(UA_MonitoredItemModifyResult, revisedSamplingInterval) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemModifyResult, revisedQueueSize) - offsetof(UA_MonitoredItemModifyResult, revisedSamplingInterval) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "filterResult",
+    "filterResult", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemModifyResult, filterResult) - offsetof(UA_MonitoredItemModifyResult, revisedQueueSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemModifyResult, filterResult) - offsetof(UA_MonitoredItemModifyResult, revisedQueueSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* CloseSecureChannelRequest */
 static UA_DataTypeMember CloseSecureChannelRequest_members[1] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* AddNodesResult */
 static UA_DataTypeMember AddNodesResult_members[2] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "statusCode",
+    "statusCode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "addedNodeId",
+    "addedNodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesResult, addedNodeId) - offsetof(UA_AddNodesResult, statusCode) - sizeof(UA_StatusCode),
-    .isArray = false
-  },};
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_AddNodesResult, addedNodeId) - offsetof(UA_AddNodesResult, statusCode) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* VariableAttributes */
 static UA_DataTypeMember VariableAttributes_members[13] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, displayName) - offsetof(UA_VariableAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, displayName) - offsetof(UA_VariableAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, description) - offsetof(UA_VariableAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, description) - offsetof(UA_VariableAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, writeMask) - offsetof(UA_VariableAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, writeMask) - offsetof(UA_VariableAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, userWriteMask) - offsetof(UA_VariableAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_VARIANT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, userWriteMask) - offsetof(UA_VariableAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "value",
+    "value", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, value) - offsetof(UA_VariableAttributes, userWriteMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_VARIANT, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, value) - offsetof(UA_VariableAttributes, userWriteMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "dataType",
+    "dataType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, dataType) - offsetof(UA_VariableAttributes, value) - sizeof(UA_Variant),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_INT32,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, dataType) - offsetof(UA_VariableAttributes, value) - sizeof(UA_Variant), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "valueRank",
+    "valueRank", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, valueRank) - offsetof(UA_VariableAttributes, dataType) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, valueRank) - offsetof(UA_VariableAttributes, dataType) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "arrayDimensions",
+    "arrayDimensions", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, arrayDimensionsSize) - offsetof(UA_VariableAttributes, valueRank) - sizeof(UA_Int32),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_BYTE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, arrayDimensionsSize) - offsetof(UA_VariableAttributes, valueRank) - sizeof(UA_Int32), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "accessLevel",
+    "accessLevel", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, accessLevel) - offsetof(UA_VariableAttributes, arrayDimensions) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTE,
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, accessLevel) - offsetof(UA_VariableAttributes, arrayDimensions) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userAccessLevel",
+    "userAccessLevel", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, userAccessLevel) - offsetof(UA_VariableAttributes, accessLevel) - sizeof(UA_Byte),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, userAccessLevel) - offsetof(UA_VariableAttributes, accessLevel) - sizeof(UA_Byte), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "minimumSamplingInterval",
+    "minimumSamplingInterval", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, minimumSamplingInterval) - offsetof(UA_VariableAttributes, userAccessLevel) - sizeof(UA_Byte),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, minimumSamplingInterval) - offsetof(UA_VariableAttributes, userAccessLevel) - sizeof(UA_Byte), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "historizing",
+    "historizing", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableAttributes, historizing) - offsetof(UA_VariableAttributes, minimumSamplingInterval) - sizeof(UA_Double),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_VariableAttributes, historizing) - offsetof(UA_VariableAttributes, minimumSamplingInterval) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* NotificationMessage */
 static UA_DataTypeMember NotificationMessage_members[3] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sequenceNumber",
+    "sequenceNumber", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "publishTime",
+    "publishTime", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_NotificationMessage, publishTime) - offsetof(UA_NotificationMessage, sequenceNumber) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    offsetof(UA_NotificationMessage, publishTime) - offsetof(UA_NotificationMessage, sequenceNumber) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "notificationData",
+    "notificationData", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_NotificationMessage, notificationDataSize) - offsetof(UA_NotificationMessage, publishTime) - sizeof(UA_DateTime),
-    .isArray = true
-  },};
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_NotificationMessage, notificationDataSize) - offsetof(UA_NotificationMessage, publishTime) - sizeof(UA_DateTime), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
+
+/* FindServersOnNetworkRequest */
+static UA_DataTypeMember FindServersOnNetworkRequest_members[4] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "requestHeader", /* .memberName */
+#endif
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "startingRecordId", /* .memberName */
+#endif
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_FindServersOnNetworkRequest, startingRecordId) - offsetof(UA_FindServersOnNetworkRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "maxRecordsToReturn", /* .memberName */
+#endif
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_FindServersOnNetworkRequest, maxRecordsToReturn) - offsetof(UA_FindServersOnNetworkRequest, startingRecordId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "serverCapabilityFilter", /* .memberName */
+#endif
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_FindServersOnNetworkRequest, serverCapabilityFilterSize) - offsetof(UA_FindServersOnNetworkRequest, maxRecordsToReturn) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* NodeAttributesMask */
 static UA_DataTypeMember NodeAttributesMask_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* MonitoringMode */
 static UA_DataTypeMember MonitoringMode_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
+
+/* MdnsDiscoveryConfiguration */
+static UA_DataTypeMember MdnsDiscoveryConfiguration_members[2] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "mdnsServerName", /* .memberName */
+#endif
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "serverCapabilities", /* .memberName */
+#endif
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_MdnsDiscoveryConfiguration, serverCapabilitiesSize) - offsetof(UA_MdnsDiscoveryConfiguration, mdnsServerName) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CallMethodResult */
 static UA_DataTypeMember CallMethodResult_members[4] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "statusCode",
+    "statusCode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "inputArgumentResults",
+    "inputArgumentResults", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CallMethodResult, inputArgumentResultsSize) - offsetof(UA_CallMethodResult, statusCode) - sizeof(UA_StatusCode),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_CallMethodResult, inputArgumentResultsSize) - offsetof(UA_CallMethodResult, statusCode) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "inputArgumentDiagnosticInfos",
+    "inputArgumentDiagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CallMethodResult, inputArgumentDiagnosticInfosSize) - offsetof(UA_CallMethodResult, inputArgumentResults) - sizeof(void*),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_VARIANT,
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_CallMethodResult, inputArgumentDiagnosticInfosSize) - offsetof(UA_CallMethodResult, inputArgumentResults) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "outputArguments",
+    "outputArguments", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CallMethodResult, outputArgumentsSize) - offsetof(UA_CallMethodResult, inputArgumentDiagnosticInfos) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_VARIANT, /* .memberTypeIndex */
+    offsetof(UA_CallMethodResult, outputArgumentsSize) - offsetof(UA_CallMethodResult, inputArgumentDiagnosticInfos) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ParsingResult */
 static UA_DataTypeMember ParsingResult_members[3] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "statusCode",
+    "statusCode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "dataStatusCodes",
+    "dataStatusCodes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ParsingResult, dataStatusCodesSize) - offsetof(UA_ParsingResult, statusCode) - sizeof(UA_StatusCode),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_ParsingResult, dataStatusCodesSize) - offsetof(UA_ParsingResult, statusCode) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "dataDiagnosticInfos",
+    "dataDiagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ParsingResult, dataDiagnosticInfosSize) - offsetof(UA_ParsingResult, dataStatusCodes) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_ParsingResult, dataDiagnosticInfosSize) - offsetof(UA_ParsingResult, dataStatusCodes) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* RelativePathElement */
 static UA_DataTypeMember RelativePathElement_members[4] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referenceTypeId",
+    "referenceTypeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isInverse",
+    "isInverse", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RelativePathElement, isInverse) - offsetof(UA_RelativePathElement, referenceTypeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_RelativePathElement, isInverse) - offsetof(UA_RelativePathElement, referenceTypeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "includeSubtypes",
+    "includeSubtypes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RelativePathElement, includeSubtypes) - offsetof(UA_RelativePathElement, isInverse) - sizeof(UA_Boolean),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_QUALIFIEDNAME,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_RelativePathElement, includeSubtypes) - offsetof(UA_RelativePathElement, isInverse) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "targetName",
+    "targetName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RelativePathElement, targetName) - offsetof(UA_RelativePathElement, includeSubtypes) - sizeof(UA_Boolean),
-    .isArray = false
-  },};
+    UA_TYPES_QUALIFIEDNAME, /* .memberTypeIndex */
+    offsetof(UA_RelativePathElement, targetName) - offsetof(UA_RelativePathElement, includeSubtypes) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* BrowseDirection */
 static UA_DataTypeMember BrowseDirection_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* CallMethodRequest */
 static UA_DataTypeMember CallMethodRequest_members[3] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "objectId",
+    "objectId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "methodId",
+    "methodId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CallMethodRequest, methodId) - offsetof(UA_CallMethodRequest, objectId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_VARIANT,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_CallMethodRequest, methodId) - offsetof(UA_CallMethodRequest, objectId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "inputArguments",
+    "inputArguments", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CallMethodRequest, inputArgumentsSize) - offsetof(UA_CallMethodRequest, methodId) - sizeof(UA_NodeId),
-    .isArray = true
-  },};
+    UA_TYPES_VARIANT, /* .memberTypeIndex */
+    offsetof(UA_CallMethodRequest, inputArgumentsSize) - offsetof(UA_CallMethodRequest, methodId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* UnregisterNodesRequest */
 static UA_DataTypeMember UnregisterNodesRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodesToUnregister",
+    "nodesToUnregister", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_UnregisterNodesRequest, nodesToUnregisterSize) - offsetof(UA_UnregisterNodesRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_UnregisterNodesRequest, nodesToUnregisterSize) - offsetof(UA_UnregisterNodesRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ContentFilterElementResult */
 static UA_DataTypeMember ContentFilterElementResult_members[3] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "statusCode",
+    "statusCode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "operandStatusCodes",
+    "operandStatusCodes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ContentFilterElementResult, operandStatusCodesSize) - offsetof(UA_ContentFilterElementResult, statusCode) - sizeof(UA_StatusCode),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_ContentFilterElementResult, operandStatusCodesSize) - offsetof(UA_ContentFilterElementResult, statusCode) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "operandDiagnosticInfos",
+    "operandDiagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ContentFilterElementResult, operandDiagnosticInfosSize) - offsetof(UA_ContentFilterElementResult, operandStatusCodes) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_ContentFilterElementResult, operandDiagnosticInfosSize) - offsetof(UA_ContentFilterElementResult, operandStatusCodes) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* QueryDataSet */
 static UA_DataTypeMember QueryDataSet_members[3] = {
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeId",
+    "nodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "typeDefinitionNode",
+    "typeDefinitionNode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryDataSet, typeDefinitionNode) - offsetof(UA_QueryDataSet, nodeId) - sizeof(UA_ExpandedNodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_VARIANT,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    offsetof(UA_QueryDataSet, typeDefinitionNode) - offsetof(UA_QueryDataSet, nodeId) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "values",
+    "values", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryDataSet, valuesSize) - offsetof(UA_QueryDataSet, typeDefinitionNode) - sizeof(UA_ExpandedNodeId),
-    .isArray = true
-  },};
+    UA_TYPES_VARIANT, /* .memberTypeIndex */
+    offsetof(UA_QueryDataSet, valuesSize) - offsetof(UA_QueryDataSet, typeDefinitionNode) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* AnonymousIdentityToken */
 static UA_DataTypeMember AnonymousIdentityToken_members[1] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "policyId",
+    "policyId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SetPublishingModeRequest */
 static UA_DataTypeMember SetPublishingModeRequest_members[3] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "publishingEnabled",
+    "publishingEnabled", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetPublishingModeRequest, publishingEnabled) - offsetof(UA_SetPublishingModeRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_SetPublishingModeRequest, publishingEnabled) - offsetof(UA_SetPublishingModeRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionIds",
+    "subscriptionIds", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetPublishingModeRequest, subscriptionIdsSize) - offsetof(UA_SetPublishingModeRequest, publishingEnabled) - sizeof(UA_Boolean),
-    .isArray = true
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_SetPublishingModeRequest, subscriptionIdsSize) - offsetof(UA_SetPublishingModeRequest, publishingEnabled) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* TimestampsToReturn */
 static UA_DataTypeMember TimestampsToReturn_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* CallRequest */
 static UA_DataTypeMember CallRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_CALLMETHODREQUEST,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "methodsToCall",
+    "methodsToCall", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CallRequest, methodsToCallSize) - offsetof(UA_CallRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_CALLMETHODREQUEST, /* .memberTypeIndex */
+    offsetof(UA_CallRequest, methodsToCallSize) - offsetof(UA_CallRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* MethodAttributes */
 static UA_DataTypeMember MethodAttributes_members[7] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MethodAttributes, displayName) - offsetof(UA_MethodAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_MethodAttributes, displayName) - offsetof(UA_MethodAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MethodAttributes, description) - offsetof(UA_MethodAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_MethodAttributes, description) - offsetof(UA_MethodAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MethodAttributes, writeMask) - offsetof(UA_MethodAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_MethodAttributes, writeMask) - offsetof(UA_MethodAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MethodAttributes, userWriteMask) - offsetof(UA_MethodAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_MethodAttributes, userWriteMask) - offsetof(UA_MethodAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "executable",
+    "executable", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MethodAttributes, executable) - offsetof(UA_MethodAttributes, userWriteMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_MethodAttributes, executable) - offsetof(UA_MethodAttributes, userWriteMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userExecutable",
+    "userExecutable", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MethodAttributes, userExecutable) - offsetof(UA_MethodAttributes, executable) - sizeof(UA_Boolean),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_MethodAttributes, userExecutable) - offsetof(UA_MethodAttributes, executable) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DeleteReferencesItem */
 static UA_DataTypeMember DeleteReferencesItem_members[5] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sourceNodeId",
+    "sourceNodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referenceTypeId",
+    "referenceTypeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteReferencesItem, referenceTypeId) - offsetof(UA_DeleteReferencesItem, sourceNodeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_DeleteReferencesItem, referenceTypeId) - offsetof(UA_DeleteReferencesItem, sourceNodeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isForward",
+    "isForward", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteReferencesItem, isForward) - offsetof(UA_DeleteReferencesItem, referenceTypeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_DeleteReferencesItem, isForward) - offsetof(UA_DeleteReferencesItem, referenceTypeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "targetNodeId",
+    "targetNodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteReferencesItem, targetNodeId) - offsetof(UA_DeleteReferencesItem, isForward) - sizeof(UA_Boolean),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    offsetof(UA_DeleteReferencesItem, targetNodeId) - offsetof(UA_DeleteReferencesItem, isForward) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "deleteBidirectional",
+    "deleteBidirectional", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteReferencesItem, deleteBidirectional) - offsetof(UA_DeleteReferencesItem, targetNodeId) - sizeof(UA_ExpandedNodeId),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_DeleteReferencesItem, deleteBidirectional) - offsetof(UA_DeleteReferencesItem, targetNodeId) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* WriteValue */
 static UA_DataTypeMember WriteValue_members[4] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeId",
+    "nodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "attributeId",
+    "attributeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_WriteValue, attributeId) - offsetof(UA_WriteValue, nodeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_WriteValue, attributeId) - offsetof(UA_WriteValue, nodeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "indexRange",
+    "indexRange", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_WriteValue, indexRange) - offsetof(UA_WriteValue, attributeId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATAVALUE,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_WriteValue, indexRange) - offsetof(UA_WriteValue, attributeId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "value",
+    "value", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_WriteValue, value) - offsetof(UA_WriteValue, indexRange) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_TYPES_DATAVALUE, /* .memberTypeIndex */
+    offsetof(UA_WriteValue, value) - offsetof(UA_WriteValue, indexRange) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* MonitoredItemCreateResult */
 static UA_DataTypeMember MonitoredItemCreateResult_members[5] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "statusCode",
+    "statusCode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "monitoredItemId",
+    "monitoredItemId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemCreateResult, monitoredItemId) - offsetof(UA_MonitoredItemCreateResult, statusCode) - sizeof(UA_StatusCode),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemCreateResult, monitoredItemId) - offsetof(UA_MonitoredItemCreateResult, statusCode) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedSamplingInterval",
+    "revisedSamplingInterval", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemCreateResult, revisedSamplingInterval) - offsetof(UA_MonitoredItemCreateResult, monitoredItemId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemCreateResult, revisedSamplingInterval) - offsetof(UA_MonitoredItemCreateResult, monitoredItemId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedQueueSize",
+    "revisedQueueSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemCreateResult, revisedQueueSize) - offsetof(UA_MonitoredItemCreateResult, revisedSamplingInterval) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemCreateResult, revisedQueueSize) - offsetof(UA_MonitoredItemCreateResult, revisedSamplingInterval) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "filterResult",
+    "filterResult", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemCreateResult, filterResult) - offsetof(UA_MonitoredItemCreateResult, revisedQueueSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemCreateResult, filterResult) - offsetof(UA_MonitoredItemCreateResult, revisedQueueSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* MessageSecurityMode */
 static UA_DataTypeMember MessageSecurityMode_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* MonitoringParameters */
 static UA_DataTypeMember MonitoringParameters_members[5] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientHandle",
+    "clientHandle", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "samplingInterval",
+    "samplingInterval", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoringParameters, samplingInterval) - offsetof(UA_MonitoringParameters, clientHandle) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_MonitoringParameters, samplingInterval) - offsetof(UA_MonitoringParameters, clientHandle) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "filter",
+    "filter", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoringParameters, filter) - offsetof(UA_MonitoringParameters, samplingInterval) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_MonitoringParameters, filter) - offsetof(UA_MonitoringParameters, samplingInterval) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "queueSize",
+    "queueSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoringParameters, queueSize) - offsetof(UA_MonitoringParameters, filter) - sizeof(UA_ExtensionObject),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_MonitoringParameters, queueSize) - offsetof(UA_MonitoringParameters, filter) - sizeof(UA_ExtensionObject), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "discardOldest",
+    "discardOldest", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoringParameters, discardOldest) - offsetof(UA_MonitoringParameters, queueSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_MonitoringParameters, discardOldest) - offsetof(UA_MonitoringParameters, queueSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SignatureData */
 static UA_DataTypeMember SignatureData_members[2] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "algorithm",
+    "algorithm", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "signature",
+    "signature", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SignatureData, signature) - offsetof(UA_SignatureData, algorithm) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_SignatureData, signature) - offsetof(UA_SignatureData, algorithm) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ReferenceNode */
 static UA_DataTypeMember ReferenceNode_members[3] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referenceTypeId",
+    "referenceTypeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isInverse",
+    "isInverse", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceNode, isInverse) - offsetof(UA_ReferenceNode, referenceTypeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_ReferenceNode, isInverse) - offsetof(UA_ReferenceNode, referenceTypeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "targetId",
+    "targetId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceNode, targetId) - offsetof(UA_ReferenceNode, isInverse) - sizeof(UA_Boolean),
-    .isArray = false
-  },};
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    offsetof(UA_ReferenceNode, targetId) - offsetof(UA_ReferenceNode, isInverse) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* Argument */
 static UA_DataTypeMember Argument_members[5] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "name",
+    "name", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "dataType",
+    "dataType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_Argument, dataType) - offsetof(UA_Argument, name) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_INT32,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_Argument, dataType) - offsetof(UA_Argument, name) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "valueRank",
+    "valueRank", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_Argument, valueRank) - offsetof(UA_Argument, dataType) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    offsetof(UA_Argument, valueRank) - offsetof(UA_Argument, dataType) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "arrayDimensions",
+    "arrayDimensions", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_Argument, arrayDimensionsSize) - offsetof(UA_Argument, valueRank) - sizeof(UA_Int32),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_Argument, arrayDimensionsSize) - offsetof(UA_Argument, valueRank) - sizeof(UA_Int32), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_Argument, description) - offsetof(UA_Argument, arrayDimensions) - sizeof(void*),
-    .isArray = false
-  },};
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_Argument, description) - offsetof(UA_Argument, arrayDimensions) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* UserIdentityToken */
 static UA_DataTypeMember UserIdentityToken_members[1] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "policyId",
+    "policyId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ObjectTypeAttributes */
 static UA_DataTypeMember ObjectTypeAttributes_members[6] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectTypeAttributes, displayName) - offsetof(UA_ObjectTypeAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ObjectTypeAttributes, displayName) - offsetof(UA_ObjectTypeAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectTypeAttributes, description) - offsetof(UA_ObjectTypeAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ObjectTypeAttributes, description) - offsetof(UA_ObjectTypeAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectTypeAttributes, writeMask) - offsetof(UA_ObjectTypeAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ObjectTypeAttributes, writeMask) - offsetof(UA_ObjectTypeAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectTypeAttributes, userWriteMask) - offsetof(UA_ObjectTypeAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ObjectTypeAttributes, userWriteMask) - offsetof(UA_ObjectTypeAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isAbstract",
+    "isAbstract", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectTypeAttributes, isAbstract) - offsetof(UA_ObjectTypeAttributes, userWriteMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_ObjectTypeAttributes, isAbstract) - offsetof(UA_ObjectTypeAttributes, userWriteMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DeadbandType */
 static UA_DataTypeMember DeadbandType_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SecurityTokenRequestType */
 static UA_DataTypeMember SecurityTokenRequestType_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DataChangeTrigger */
 static UA_DataTypeMember DataChangeTrigger_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* BuildInfo */
 static UA_DataTypeMember BuildInfo_members[6] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "productUri",
+    "productUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "manufacturerName",
+    "manufacturerName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BuildInfo, manufacturerName) - offsetof(UA_BuildInfo, productUri) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_BuildInfo, manufacturerName) - offsetof(UA_BuildInfo, productUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "productName",
+    "productName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BuildInfo, productName) - offsetof(UA_BuildInfo, manufacturerName) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_BuildInfo, productName) - offsetof(UA_BuildInfo, manufacturerName) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "softwareVersion",
+    "softwareVersion", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BuildInfo, softwareVersion) - offsetof(UA_BuildInfo, productName) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_BuildInfo, softwareVersion) - offsetof(UA_BuildInfo, productName) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "buildNumber",
+    "buildNumber", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BuildInfo, buildNumber) - offsetof(UA_BuildInfo, softwareVersion) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_BuildInfo, buildNumber) - offsetof(UA_BuildInfo, softwareVersion) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "buildDate",
+    "buildDate", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BuildInfo, buildDate) - offsetof(UA_BuildInfo, buildNumber) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    offsetof(UA_BuildInfo, buildDate) - offsetof(UA_BuildInfo, buildNumber) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* NodeClass */
 static UA_DataTypeMember NodeClass_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ChannelSecurityToken */
 static UA_DataTypeMember ChannelSecurityToken_members[4] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "channelId",
+    "channelId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "tokenId",
+    "tokenId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ChannelSecurityToken, tokenId) - offsetof(UA_ChannelSecurityToken, channelId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ChannelSecurityToken, tokenId) - offsetof(UA_ChannelSecurityToken, channelId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "createdAt",
+    "createdAt", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ChannelSecurityToken, createdAt) - offsetof(UA_ChannelSecurityToken, tokenId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    offsetof(UA_ChannelSecurityToken, createdAt) - offsetof(UA_ChannelSecurityToken, tokenId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedLifetime",
+    "revisedLifetime", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ChannelSecurityToken, revisedLifetime) - offsetof(UA_ChannelSecurityToken, createdAt) - sizeof(UA_DateTime),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ChannelSecurityToken, revisedLifetime) - offsetof(UA_ChannelSecurityToken, createdAt) - sizeof(UA_DateTime), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* MonitoredItemNotification */
 static UA_DataTypeMember MonitoredItemNotification_members[2] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientHandle",
+    "clientHandle", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATAVALUE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "value",
+    "value", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemNotification, value) - offsetof(UA_MonitoredItemNotification, clientHandle) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_DATAVALUE, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemNotification, value) - offsetof(UA_MonitoredItemNotification, clientHandle) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DeleteNodesItem */
 static UA_DataTypeMember DeleteNodesItem_members[2] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeId",
+    "nodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "deleteTargetReferences",
+    "deleteTargetReferences", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteNodesItem, deleteTargetReferences) - offsetof(UA_DeleteNodesItem, nodeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_DeleteNodesItem, deleteTargetReferences) - offsetof(UA_DeleteNodesItem, nodeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SubscriptionAcknowledgement */
 static UA_DataTypeMember SubscriptionAcknowledgement_members[2] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sequenceNumber",
+    "sequenceNumber", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SubscriptionAcknowledgement, sequenceNumber) - offsetof(UA_SubscriptionAcknowledgement, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_SubscriptionAcknowledgement, sequenceNumber) - offsetof(UA_SubscriptionAcknowledgement, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ReadValueId */
 static UA_DataTypeMember ReadValueId_members[4] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeId",
+    "nodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "attributeId",
+    "attributeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReadValueId, attributeId) - offsetof(UA_ReadValueId, nodeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ReadValueId, attributeId) - offsetof(UA_ReadValueId, nodeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "indexRange",
+    "indexRange", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReadValueId, indexRange) - offsetof(UA_ReadValueId, attributeId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_QUALIFIEDNAME,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ReadValueId, indexRange) - offsetof(UA_ReadValueId, attributeId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "dataEncoding",
+    "dataEncoding", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReadValueId, dataEncoding) - offsetof(UA_ReadValueId, indexRange) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_TYPES_QUALIFIEDNAME, /* .memberTypeIndex */
+    offsetof(UA_ReadValueId, dataEncoding) - offsetof(UA_ReadValueId, indexRange) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DataTypeAttributes */
 static UA_DataTypeMember DataTypeAttributes_members[6] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DataTypeAttributes, displayName) - offsetof(UA_DataTypeAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_DataTypeAttributes, displayName) - offsetof(UA_DataTypeAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DataTypeAttributes, description) - offsetof(UA_DataTypeAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_DataTypeAttributes, description) - offsetof(UA_DataTypeAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DataTypeAttributes, writeMask) - offsetof(UA_DataTypeAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_DataTypeAttributes, writeMask) - offsetof(UA_DataTypeAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DataTypeAttributes, userWriteMask) - offsetof(UA_DataTypeAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_DataTypeAttributes, userWriteMask) - offsetof(UA_DataTypeAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isAbstract",
+    "isAbstract", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DataTypeAttributes, isAbstract) - offsetof(UA_DataTypeAttributes, userWriteMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_DataTypeAttributes, isAbstract) - offsetof(UA_DataTypeAttributes, userWriteMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ResponseHeader */
 static UA_DataTypeMember ResponseHeader_members[6] = {
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "timestamp",
+    "timestamp", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHandle",
+    "requestHandle", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ResponseHeader, requestHandle) - offsetof(UA_ResponseHeader, timestamp) - sizeof(UA_DateTime),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ResponseHeader, requestHandle) - offsetof(UA_ResponseHeader, timestamp) - sizeof(UA_DateTime), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serviceResult",
+    "serviceResult", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ResponseHeader, serviceResult) - offsetof(UA_ResponseHeader, requestHandle) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_ResponseHeader, serviceResult) - offsetof(UA_ResponseHeader, requestHandle) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serviceDiagnostics",
+    "serviceDiagnostics", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ResponseHeader, serviceDiagnostics) - offsetof(UA_ResponseHeader, serviceResult) - sizeof(UA_StatusCode),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_ResponseHeader, serviceDiagnostics) - offsetof(UA_ResponseHeader, serviceResult) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "stringTable",
+    "stringTable", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ResponseHeader, stringTableSize) - offsetof(UA_ResponseHeader, serviceDiagnostics) - sizeof(UA_DiagnosticInfo),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ResponseHeader, stringTableSize) - offsetof(UA_ResponseHeader, serviceDiagnostics) - sizeof(UA_DiagnosticInfo), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "additionalHeader",
+    "additionalHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ResponseHeader, additionalHeader) - offsetof(UA_ResponseHeader, stringTable) - sizeof(void*),
-    .isArray = false
-  },};
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_ResponseHeader, additionalHeader) - offsetof(UA_ResponseHeader, stringTable) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DeleteSubscriptionsRequest */
 static UA_DataTypeMember DeleteSubscriptionsRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionIds",
+    "subscriptionIds", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteSubscriptionsRequest, subscriptionIdsSize) - offsetof(UA_DeleteSubscriptionsRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_DeleteSubscriptionsRequest, subscriptionIdsSize) - offsetof(UA_DeleteSubscriptionsRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ViewDescription */
 static UA_DataTypeMember ViewDescription_members[3] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "viewId",
+    "viewId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "timestamp",
+    "timestamp", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ViewDescription, timestamp) - offsetof(UA_ViewDescription, viewId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    offsetof(UA_ViewDescription, timestamp) - offsetof(UA_ViewDescription, viewId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "viewVersion",
+    "viewVersion", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ViewDescription, viewVersion) - offsetof(UA_ViewDescription, timestamp) - sizeof(UA_DateTime),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ViewDescription, viewVersion) - offsetof(UA_ViewDescription, timestamp) - sizeof(UA_DateTime), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
+
+/* ServerOnNetwork */
+static UA_DataTypeMember ServerOnNetwork_members[4] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "recordId", /* .memberName */
+#endif
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "serverName", /* .memberName */
+#endif
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ServerOnNetwork, serverName) - offsetof(UA_ServerOnNetwork, recordId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "discoveryUrl", /* .memberName */
+#endif
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ServerOnNetwork, discoveryUrl) - offsetof(UA_ServerOnNetwork, serverName) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "serverCapabilities", /* .memberName */
+#endif
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ServerOnNetwork, serverCapabilitiesSize) - offsetof(UA_ServerOnNetwork, discoveryUrl) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* DeleteMonitoredItemsResponse */
 static UA_DataTypeMember DeleteMonitoredItemsResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteMonitoredItemsResponse, resultsSize) - offsetof(UA_DeleteMonitoredItemsResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_DeleteMonitoredItemsResponse, resultsSize) - offsetof(UA_DeleteMonitoredItemsResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteMonitoredItemsResponse, diagnosticInfosSize) - offsetof(UA_DeleteMonitoredItemsResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_DeleteMonitoredItemsResponse, diagnosticInfosSize) - offsetof(UA_DeleteMonitoredItemsResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
+
+/* FindServersOnNetworkResponse */
+static UA_DataTypeMember FindServersOnNetworkResponse_members[3] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "responseHeader", /* .memberName */
+#endif
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "lastCounterResetTime", /* .memberName */
+#endif
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    offsetof(UA_FindServersOnNetworkResponse, lastCounterResetTime) - offsetof(UA_FindServersOnNetworkResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "servers", /* .memberName */
+#endif
+    UA_TYPES_SERVERONNETWORK, /* .memberTypeIndex */
+    offsetof(UA_FindServersOnNetworkResponse, serversSize) - offsetof(UA_FindServersOnNetworkResponse, lastCounterResetTime) - sizeof(UA_DateTime), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* NodeAttributes */
 static UA_DataTypeMember NodeAttributes_members[5] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_NodeAttributes, displayName) - offsetof(UA_NodeAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_NodeAttributes, displayName) - offsetof(UA_NodeAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_NodeAttributes, description) - offsetof(UA_NodeAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_NodeAttributes, description) - offsetof(UA_NodeAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_NodeAttributes, writeMask) - offsetof(UA_NodeAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_NodeAttributes, writeMask) - offsetof(UA_NodeAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_NodeAttributes, userWriteMask) - offsetof(UA_NodeAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_NodeAttributes, userWriteMask) - offsetof(UA_NodeAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* RegisterNodesRequest */
 static UA_DataTypeMember RegisterNodesRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodesToRegister",
+    "nodesToRegister", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisterNodesRequest, nodesToRegisterSize) - offsetof(UA_RegisterNodesRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_RegisterNodesRequest, nodesToRegisterSize) - offsetof(UA_RegisterNodesRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* DeleteNodesRequest */
 static UA_DataTypeMember DeleteNodesRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DELETENODESITEM,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodesToDelete",
+    "nodesToDelete", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteNodesRequest, nodesToDeleteSize) - offsetof(UA_DeleteNodesRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_DELETENODESITEM, /* .memberTypeIndex */
+    offsetof(UA_DeleteNodesRequest, nodesToDeleteSize) - offsetof(UA_DeleteNodesRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* PublishResponse */
 static UA_DataTypeMember PublishResponse_members[7] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PublishResponse, subscriptionId) - offsetof(UA_PublishResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_PublishResponse, subscriptionId) - offsetof(UA_PublishResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "availableSequenceNumbers",
+    "availableSequenceNumbers", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PublishResponse, availableSequenceNumbersSize) - offsetof(UA_PublishResponse, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_PublishResponse, availableSequenceNumbersSize) - offsetof(UA_PublishResponse, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "moreNotifications",
+    "moreNotifications", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PublishResponse, moreNotifications) - offsetof(UA_PublishResponse, availableSequenceNumbers) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NOTIFICATIONMESSAGE,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_PublishResponse, moreNotifications) - offsetof(UA_PublishResponse, availableSequenceNumbers) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "notificationMessage",
+    "notificationMessage", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PublishResponse, notificationMessage) - offsetof(UA_PublishResponse, moreNotifications) - sizeof(UA_Boolean),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_NOTIFICATIONMESSAGE, /* .memberTypeIndex */
+    offsetof(UA_PublishResponse, notificationMessage) - offsetof(UA_PublishResponse, moreNotifications) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PublishResponse, resultsSize) - offsetof(UA_PublishResponse, notificationMessage) - sizeof(UA_NotificationMessage),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_PublishResponse, resultsSize) - offsetof(UA_PublishResponse, notificationMessage) - sizeof(UA_NotificationMessage), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PublishResponse, diagnosticInfosSize) - offsetof(UA_PublishResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_PublishResponse, diagnosticInfosSize) - offsetof(UA_PublishResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* MonitoredItemModifyRequest */
 static UA_DataTypeMember MonitoredItemModifyRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "monitoredItemId",
+    "monitoredItemId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MONITORINGPARAMETERS,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedParameters",
+    "requestedParameters", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemModifyRequest, requestedParameters) - offsetof(UA_MonitoredItemModifyRequest, monitoredItemId) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_MONITORINGPARAMETERS, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemModifyRequest, requestedParameters) - offsetof(UA_MonitoredItemModifyRequest, monitoredItemId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* UserNameIdentityToken */
 static UA_DataTypeMember UserNameIdentityToken_members[4] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "policyId",
+    "policyId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userName",
+    "userName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_UserNameIdentityToken, userName) - offsetof(UA_UserNameIdentityToken, policyId) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_UserNameIdentityToken, userName) - offsetof(UA_UserNameIdentityToken, policyId) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "password",
+    "password", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_UserNameIdentityToken, password) - offsetof(UA_UserNameIdentityToken, userName) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_UserNameIdentityToken, password) - offsetof(UA_UserNameIdentityToken, userName) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "encryptionAlgorithm",
+    "encryptionAlgorithm", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_UserNameIdentityToken, encryptionAlgorithm) - offsetof(UA_UserNameIdentityToken, password) - sizeof(UA_ByteString),
-    .isArray = false
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_UserNameIdentityToken, encryptionAlgorithm) - offsetof(UA_UserNameIdentityToken, password) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* IdType */
 static UA_DataTypeMember IdType_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* UserTokenType */
 static UA_DataTypeMember UserTokenType_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ActivateSessionRequest */
 static UA_DataTypeMember ActivateSessionRequest_members[6] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_SIGNATUREDATA,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientSignature",
+    "clientSignature", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ActivateSessionRequest, clientSignature) - offsetof(UA_ActivateSessionRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_SIGNEDSOFTWARECERTIFICATE,
+    UA_TYPES_SIGNATUREDATA, /* .memberTypeIndex */
+    offsetof(UA_ActivateSessionRequest, clientSignature) - offsetof(UA_ActivateSessionRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientSoftwareCertificates",
+    "clientSoftwareCertificates", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ActivateSessionRequest, clientSoftwareCertificatesSize) - offsetof(UA_ActivateSessionRequest, clientSignature) - sizeof(UA_SignatureData),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_SIGNEDSOFTWARECERTIFICATE, /* .memberTypeIndex */
+    offsetof(UA_ActivateSessionRequest, clientSoftwareCertificatesSize) - offsetof(UA_ActivateSessionRequest, clientSignature) - sizeof(UA_SignatureData), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "localeIds",
+    "localeIds", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ActivateSessionRequest, localeIdsSize) - offsetof(UA_ActivateSessionRequest, clientSoftwareCertificates) - sizeof(void*),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ActivateSessionRequest, localeIdsSize) - offsetof(UA_ActivateSessionRequest, clientSoftwareCertificates) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userIdentityToken",
+    "userIdentityToken", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ActivateSessionRequest, userIdentityToken) - offsetof(UA_ActivateSessionRequest, localeIds) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_SIGNATUREDATA,
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_ActivateSessionRequest, userIdentityToken) - offsetof(UA_ActivateSessionRequest, localeIds) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userTokenSignature",
+    "userTokenSignature", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ActivateSessionRequest, userTokenSignature) - offsetof(UA_ActivateSessionRequest, userIdentityToken) - sizeof(UA_ExtensionObject),
-    .isArray = false
-  },};
+    UA_TYPES_SIGNATUREDATA, /* .memberTypeIndex */
+    offsetof(UA_ActivateSessionRequest, userTokenSignature) - offsetof(UA_ActivateSessionRequest, userIdentityToken) - sizeof(UA_ExtensionObject), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* OpenSecureChannelResponse */
 static UA_DataTypeMember OpenSecureChannelResponse_members[4] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverProtocolVersion",
+    "serverProtocolVersion", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_OpenSecureChannelResponse, serverProtocolVersion) - offsetof(UA_OpenSecureChannelResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_CHANNELSECURITYTOKEN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_OpenSecureChannelResponse, serverProtocolVersion) - offsetof(UA_OpenSecureChannelResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "securityToken",
+    "securityToken", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_OpenSecureChannelResponse, securityToken) - offsetof(UA_OpenSecureChannelResponse, serverProtocolVersion) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_CHANNELSECURITYTOKEN, /* .memberTypeIndex */
+    offsetof(UA_OpenSecureChannelResponse, securityToken) - offsetof(UA_OpenSecureChannelResponse, serverProtocolVersion) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverNonce",
+    "serverNonce", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_OpenSecureChannelResponse, serverNonce) - offsetof(UA_OpenSecureChannelResponse, securityToken) - sizeof(UA_ChannelSecurityToken),
-    .isArray = false
-  },};
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_OpenSecureChannelResponse, serverNonce) - offsetof(UA_OpenSecureChannelResponse, securityToken) - sizeof(UA_ChannelSecurityToken), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ApplicationType */
 static UA_DataTypeMember ApplicationType_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ServerState */
 static UA_DataTypeMember ServerState_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* QueryNextResponse */
 static UA_DataTypeMember QueryNextResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_QUERYDATASET,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "queryDataSets",
+    "queryDataSets", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryNextResponse, queryDataSetsSize) - offsetof(UA_QueryNextResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_QUERYDATASET, /* .memberTypeIndex */
+    offsetof(UA_QueryNextResponse, queryDataSetsSize) - offsetof(UA_QueryNextResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedContinuationPoint",
+    "revisedContinuationPoint", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryNextResponse, revisedContinuationPoint) - offsetof(UA_QueryNextResponse, queryDataSets) - sizeof(void*),
-    .isArray = false
-  },};
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_QueryNextResponse, revisedContinuationPoint) - offsetof(UA_QueryNextResponse, queryDataSets) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
+
+/* DiscoveryConfiguration */
+#define DiscoveryConfiguration_members NULL
 
 /* ActivateSessionResponse */
 static UA_DataTypeMember ActivateSessionResponse_members[4] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverNonce",
+    "serverNonce", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ActivateSessionResponse, serverNonce) - offsetof(UA_ActivateSessionResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_ActivateSessionResponse, serverNonce) - offsetof(UA_ActivateSessionResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ActivateSessionResponse, resultsSize) - offsetof(UA_ActivateSessionResponse, serverNonce) - sizeof(UA_ByteString),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_ActivateSessionResponse, resultsSize) - offsetof(UA_ActivateSessionResponse, serverNonce) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ActivateSessionResponse, diagnosticInfosSize) - offsetof(UA_ActivateSessionResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_ActivateSessionResponse, diagnosticInfosSize) - offsetof(UA_ActivateSessionResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* FilterOperator */
 static UA_DataTypeMember FilterOperator_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* QueryNextRequest */
 static UA_DataTypeMember QueryNextRequest_members[3] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "releaseContinuationPoint",
+    "releaseContinuationPoint", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryNextRequest, releaseContinuationPoint) - offsetof(UA_QueryNextRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_QueryNextRequest, releaseContinuationPoint) - offsetof(UA_QueryNextRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "continuationPoint",
+    "continuationPoint", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryNextRequest, continuationPoint) - offsetof(UA_QueryNextRequest, releaseContinuationPoint) - sizeof(UA_Boolean),
-    .isArray = false
-  },};
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_QueryNextRequest, continuationPoint) - offsetof(UA_QueryNextRequest, releaseContinuationPoint) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* WriteResponse */
 static UA_DataTypeMember WriteResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_WriteResponse, resultsSize) - offsetof(UA_WriteResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_WriteResponse, resultsSize) - offsetof(UA_WriteResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_WriteResponse, diagnosticInfosSize) - offsetof(UA_WriteResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_WriteResponse, diagnosticInfosSize) - offsetof(UA_WriteResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* BrowseNextRequest */
 static UA_DataTypeMember BrowseNextRequest_members[3] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "releaseContinuationPoints",
+    "releaseContinuationPoints", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseNextRequest, releaseContinuationPoints) - offsetof(UA_BrowseNextRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_BrowseNextRequest, releaseContinuationPoints) - offsetof(UA_BrowseNextRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "continuationPoints",
+    "continuationPoints", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseNextRequest, continuationPointsSize) - offsetof(UA_BrowseNextRequest, releaseContinuationPoints) - sizeof(UA_Boolean),
-    .isArray = true
-  },};
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_BrowseNextRequest, continuationPointsSize) - offsetof(UA_BrowseNextRequest, releaseContinuationPoints) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CreateSubscriptionRequest */
 static UA_DataTypeMember CreateSubscriptionRequest_members[7] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedPublishingInterval",
+    "requestedPublishingInterval", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionRequest, requestedPublishingInterval) - offsetof(UA_CreateSubscriptionRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionRequest, requestedPublishingInterval) - offsetof(UA_CreateSubscriptionRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedLifetimeCount",
+    "requestedLifetimeCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionRequest, requestedLifetimeCount) - offsetof(UA_CreateSubscriptionRequest, requestedPublishingInterval) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionRequest, requestedLifetimeCount) - offsetof(UA_CreateSubscriptionRequest, requestedPublishingInterval) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedMaxKeepAliveCount",
+    "requestedMaxKeepAliveCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionRequest, requestedMaxKeepAliveCount) - offsetof(UA_CreateSubscriptionRequest, requestedLifetimeCount) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionRequest, requestedMaxKeepAliveCount) - offsetof(UA_CreateSubscriptionRequest, requestedLifetimeCount) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxNotificationsPerPublish",
+    "maxNotificationsPerPublish", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionRequest, maxNotificationsPerPublish) - offsetof(UA_CreateSubscriptionRequest, requestedMaxKeepAliveCount) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionRequest, maxNotificationsPerPublish) - offsetof(UA_CreateSubscriptionRequest, requestedMaxKeepAliveCount) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "publishingEnabled",
+    "publishingEnabled", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionRequest, publishingEnabled) - offsetof(UA_CreateSubscriptionRequest, maxNotificationsPerPublish) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTE,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionRequest, publishingEnabled) - offsetof(UA_CreateSubscriptionRequest, maxNotificationsPerPublish) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "priority",
+    "priority", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionRequest, priority) - offsetof(UA_CreateSubscriptionRequest, publishingEnabled) - sizeof(UA_Boolean),
-    .isArray = false
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionRequest, priority) - offsetof(UA_CreateSubscriptionRequest, publishingEnabled) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* VariableTypeAttributes */
 static UA_DataTypeMember VariableTypeAttributes_members[10] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, displayName) - offsetof(UA_VariableTypeAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, displayName) - offsetof(UA_VariableTypeAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, description) - offsetof(UA_VariableTypeAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, description) - offsetof(UA_VariableTypeAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, writeMask) - offsetof(UA_VariableTypeAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, writeMask) - offsetof(UA_VariableTypeAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, userWriteMask) - offsetof(UA_VariableTypeAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_VARIANT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, userWriteMask) - offsetof(UA_VariableTypeAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "value",
+    "value", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, value) - offsetof(UA_VariableTypeAttributes, userWriteMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_VARIANT, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, value) - offsetof(UA_VariableTypeAttributes, userWriteMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "dataType",
+    "dataType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, dataType) - offsetof(UA_VariableTypeAttributes, value) - sizeof(UA_Variant),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_INT32,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, dataType) - offsetof(UA_VariableTypeAttributes, value) - sizeof(UA_Variant), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "valueRank",
+    "valueRank", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, valueRank) - offsetof(UA_VariableTypeAttributes, dataType) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, valueRank) - offsetof(UA_VariableTypeAttributes, dataType) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "arrayDimensions",
+    "arrayDimensions", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, arrayDimensionsSize) - offsetof(UA_VariableTypeAttributes, valueRank) - sizeof(UA_Int32),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, arrayDimensionsSize) - offsetof(UA_VariableTypeAttributes, valueRank) - sizeof(UA_Int32), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isAbstract",
+    "isAbstract", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_VariableTypeAttributes, isAbstract) - offsetof(UA_VariableTypeAttributes, arrayDimensions) - sizeof(void*),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_VariableTypeAttributes, isAbstract) - offsetof(UA_VariableTypeAttributes, arrayDimensions) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* BrowsePathResult */
 static UA_DataTypeMember BrowsePathResult_members[2] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "statusCode",
+    "statusCode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BROWSEPATHTARGET,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "targets",
+    "targets", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowsePathResult, targetsSize) - offsetof(UA_BrowsePathResult, statusCode) - sizeof(UA_StatusCode),
-    .isArray = true
-  },};
+    UA_TYPES_BROWSEPATHTARGET, /* .memberTypeIndex */
+    offsetof(UA_BrowsePathResult, targetsSize) - offsetof(UA_BrowsePathResult, statusCode) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ModifySubscriptionResponse */
 static UA_DataTypeMember ModifySubscriptionResponse_members[4] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedPublishingInterval",
+    "revisedPublishingInterval", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionResponse, revisedPublishingInterval) - offsetof(UA_ModifySubscriptionResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionResponse, revisedPublishingInterval) - offsetof(UA_ModifySubscriptionResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedLifetimeCount",
+    "revisedLifetimeCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionResponse, revisedLifetimeCount) - offsetof(UA_ModifySubscriptionResponse, revisedPublishingInterval) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionResponse, revisedLifetimeCount) - offsetof(UA_ModifySubscriptionResponse, revisedPublishingInterval) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedMaxKeepAliveCount",
+    "revisedMaxKeepAliveCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionResponse, revisedMaxKeepAliveCount) - offsetof(UA_ModifySubscriptionResponse, revisedLifetimeCount) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionResponse, revisedMaxKeepAliveCount) - offsetof(UA_ModifySubscriptionResponse, revisedLifetimeCount) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* OpenSecureChannelRequest */
 static UA_DataTypeMember OpenSecureChannelRequest_members[6] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientProtocolVersion",
+    "clientProtocolVersion", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_OpenSecureChannelRequest, clientProtocolVersion) - offsetof(UA_OpenSecureChannelRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_SECURITYTOKENREQUESTTYPE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_OpenSecureChannelRequest, clientProtocolVersion) - offsetof(UA_OpenSecureChannelRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestType",
+    "requestType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_OpenSecureChannelRequest, requestType) - offsetof(UA_OpenSecureChannelRequest, clientProtocolVersion) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MESSAGESECURITYMODE,
+    UA_TYPES_SECURITYTOKENREQUESTTYPE, /* .memberTypeIndex */
+    offsetof(UA_OpenSecureChannelRequest, requestType) - offsetof(UA_OpenSecureChannelRequest, clientProtocolVersion) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "securityMode",
+    "securityMode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_OpenSecureChannelRequest, securityMode) - offsetof(UA_OpenSecureChannelRequest, requestType) - sizeof(UA_SecurityTokenRequestType),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_MESSAGESECURITYMODE, /* .memberTypeIndex */
+    offsetof(UA_OpenSecureChannelRequest, securityMode) - offsetof(UA_OpenSecureChannelRequest, requestType) - sizeof(UA_SecurityTokenRequestType), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientNonce",
+    "clientNonce", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_OpenSecureChannelRequest, clientNonce) - offsetof(UA_OpenSecureChannelRequest, securityMode) - sizeof(UA_MessageSecurityMode),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_OpenSecureChannelRequest, clientNonce) - offsetof(UA_OpenSecureChannelRequest, securityMode) - sizeof(UA_MessageSecurityMode), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedLifetime",
+    "requestedLifetime", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_OpenSecureChannelRequest, requestedLifetime) - offsetof(UA_OpenSecureChannelRequest, clientNonce) - sizeof(UA_ByteString),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_OpenSecureChannelRequest, requestedLifetime) - offsetof(UA_OpenSecureChannelRequest, clientNonce) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* RegisterNodesResponse */
 static UA_DataTypeMember RegisterNodesResponse_members[2] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "registeredNodeIds",
+    "registeredNodeIds", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisterNodesResponse, registeredNodeIdsSize) - offsetof(UA_RegisterNodesResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },};
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_RegisterNodesResponse, registeredNodeIdsSize) - offsetof(UA_RegisterNodesResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CloseSessionRequest */
 static UA_DataTypeMember CloseSessionRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "deleteSubscriptions",
+    "deleteSubscriptions", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CloseSessionRequest, deleteSubscriptions) - offsetof(UA_CloseSessionRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_CloseSessionRequest, deleteSubscriptions) - offsetof(UA_CloseSessionRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ModifySubscriptionRequest */
 static UA_DataTypeMember ModifySubscriptionRequest_members[7] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionRequest, subscriptionId) - offsetof(UA_ModifySubscriptionRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionRequest, subscriptionId) - offsetof(UA_ModifySubscriptionRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedPublishingInterval",
+    "requestedPublishingInterval", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionRequest, requestedPublishingInterval) - offsetof(UA_ModifySubscriptionRequest, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionRequest, requestedPublishingInterval) - offsetof(UA_ModifySubscriptionRequest, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedLifetimeCount",
+    "requestedLifetimeCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionRequest, requestedLifetimeCount) - offsetof(UA_ModifySubscriptionRequest, requestedPublishingInterval) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionRequest, requestedLifetimeCount) - offsetof(UA_ModifySubscriptionRequest, requestedPublishingInterval) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedMaxKeepAliveCount",
+    "requestedMaxKeepAliveCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionRequest, requestedMaxKeepAliveCount) - offsetof(UA_ModifySubscriptionRequest, requestedLifetimeCount) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionRequest, requestedMaxKeepAliveCount) - offsetof(UA_ModifySubscriptionRequest, requestedLifetimeCount) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxNotificationsPerPublish",
+    "maxNotificationsPerPublish", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionRequest, maxNotificationsPerPublish) - offsetof(UA_ModifySubscriptionRequest, requestedMaxKeepAliveCount) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionRequest, maxNotificationsPerPublish) - offsetof(UA_ModifySubscriptionRequest, requestedMaxKeepAliveCount) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "priority",
+    "priority", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifySubscriptionRequest, priority) - offsetof(UA_ModifySubscriptionRequest, maxNotificationsPerPublish) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    offsetof(UA_ModifySubscriptionRequest, priority) - offsetof(UA_ModifySubscriptionRequest, maxNotificationsPerPublish) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* UserTokenPolicy */
 static UA_DataTypeMember UserTokenPolicy_members[5] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "policyId",
+    "policyId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_USERTOKENTYPE,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "tokenType",
+    "tokenType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_UserTokenPolicy, tokenType) - offsetof(UA_UserTokenPolicy, policyId) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_USERTOKENTYPE, /* .memberTypeIndex */
+    offsetof(UA_UserTokenPolicy, tokenType) - offsetof(UA_UserTokenPolicy, policyId) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "issuedTokenType",
+    "issuedTokenType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_UserTokenPolicy, issuedTokenType) - offsetof(UA_UserTokenPolicy, tokenType) - sizeof(UA_UserTokenType),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_UserTokenPolicy, issuedTokenType) - offsetof(UA_UserTokenPolicy, tokenType) - sizeof(UA_UserTokenType), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "issuerEndpointUrl",
+    "issuerEndpointUrl", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_UserTokenPolicy, issuerEndpointUrl) - offsetof(UA_UserTokenPolicy, issuedTokenType) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_UserTokenPolicy, issuerEndpointUrl) - offsetof(UA_UserTokenPolicy, issuedTokenType) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "securityPolicyUri",
+    "securityPolicyUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_UserTokenPolicy, securityPolicyUri) - offsetof(UA_UserTokenPolicy, issuerEndpointUrl) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_UserTokenPolicy, securityPolicyUri) - offsetof(UA_UserTokenPolicy, issuerEndpointUrl) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DeleteMonitoredItemsRequest */
 static UA_DataTypeMember DeleteMonitoredItemsRequest_members[3] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteMonitoredItemsRequest, subscriptionId) - offsetof(UA_DeleteMonitoredItemsRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_DeleteMonitoredItemsRequest, subscriptionId) - offsetof(UA_DeleteMonitoredItemsRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "monitoredItemIds",
+    "monitoredItemIds", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteMonitoredItemsRequest, monitoredItemIdsSize) - offsetof(UA_DeleteMonitoredItemsRequest, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = true
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_DeleteMonitoredItemsRequest, monitoredItemIdsSize) - offsetof(UA_DeleteMonitoredItemsRequest, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ReferenceTypeAttributes */
 static UA_DataTypeMember ReferenceTypeAttributes_members[8] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceTypeAttributes, displayName) - offsetof(UA_ReferenceTypeAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ReferenceTypeAttributes, displayName) - offsetof(UA_ReferenceTypeAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceTypeAttributes, description) - offsetof(UA_ReferenceTypeAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ReferenceTypeAttributes, description) - offsetof(UA_ReferenceTypeAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceTypeAttributes, writeMask) - offsetof(UA_ReferenceTypeAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ReferenceTypeAttributes, writeMask) - offsetof(UA_ReferenceTypeAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceTypeAttributes, userWriteMask) - offsetof(UA_ReferenceTypeAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ReferenceTypeAttributes, userWriteMask) - offsetof(UA_ReferenceTypeAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isAbstract",
+    "isAbstract", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceTypeAttributes, isAbstract) - offsetof(UA_ReferenceTypeAttributes, userWriteMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_ReferenceTypeAttributes, isAbstract) - offsetof(UA_ReferenceTypeAttributes, userWriteMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "symmetric",
+    "symmetric", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceTypeAttributes, symmetric) - offsetof(UA_ReferenceTypeAttributes, isAbstract) - sizeof(UA_Boolean),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_ReferenceTypeAttributes, symmetric) - offsetof(UA_ReferenceTypeAttributes, isAbstract) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "inverseName",
+    "inverseName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceTypeAttributes, inverseName) - offsetof(UA_ReferenceTypeAttributes, symmetric) - sizeof(UA_Boolean),
-    .isArray = false
-  },};
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ReferenceTypeAttributes, inverseName) - offsetof(UA_ReferenceTypeAttributes, symmetric) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SetMonitoringModeRequest */
 static UA_DataTypeMember SetMonitoringModeRequest_members[4] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetMonitoringModeRequest, subscriptionId) - offsetof(UA_SetMonitoringModeRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MONITORINGMODE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_SetMonitoringModeRequest, subscriptionId) - offsetof(UA_SetMonitoringModeRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "monitoringMode",
+    "monitoringMode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetMonitoringModeRequest, monitoringMode) - offsetof(UA_SetMonitoringModeRequest, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_MONITORINGMODE, /* .memberTypeIndex */
+    offsetof(UA_SetMonitoringModeRequest, monitoringMode) - offsetof(UA_SetMonitoringModeRequest, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "monitoredItemIds",
+    "monitoredItemIds", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetMonitoringModeRequest, monitoredItemIdsSize) - offsetof(UA_SetMonitoringModeRequest, monitoringMode) - sizeof(UA_MonitoringMode),
-    .isArray = true
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_SetMonitoringModeRequest, monitoredItemIdsSize) - offsetof(UA_SetMonitoringModeRequest, monitoringMode) - sizeof(UA_MonitoringMode), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* UnregisterNodesResponse */
 static UA_DataTypeMember UnregisterNodesResponse_members[1] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* WriteRequest */
 static UA_DataTypeMember WriteRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_WRITEVALUE,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodesToWrite",
+    "nodesToWrite", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_WriteRequest, nodesToWriteSize) - offsetof(UA_WriteRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_WRITEVALUE, /* .memberTypeIndex */
+    offsetof(UA_WriteRequest, nodesToWriteSize) - offsetof(UA_WriteRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ObjectAttributes */
 static UA_DataTypeMember ObjectAttributes_members[6] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "specifiedAttributes",
+    "specifiedAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectAttributes, displayName) - offsetof(UA_ObjectAttributes, specifiedAttributes) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ObjectAttributes, displayName) - offsetof(UA_ObjectAttributes, specifiedAttributes) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "description",
+    "description", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectAttributes, description) - offsetof(UA_ObjectAttributes, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ObjectAttributes, description) - offsetof(UA_ObjectAttributes, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "writeMask",
+    "writeMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectAttributes, writeMask) - offsetof(UA_ObjectAttributes, description) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ObjectAttributes, writeMask) - offsetof(UA_ObjectAttributes, description) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userWriteMask",
+    "userWriteMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectAttributes, userWriteMask) - offsetof(UA_ObjectAttributes, writeMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ObjectAttributes, userWriteMask) - offsetof(UA_ObjectAttributes, writeMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "eventNotifier",
+    "eventNotifier", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ObjectAttributes, eventNotifier) - offsetof(UA_ObjectAttributes, userWriteMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    offsetof(UA_ObjectAttributes, eventNotifier) - offsetof(UA_ObjectAttributes, userWriteMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* BrowseDescription */
 static UA_DataTypeMember BrowseDescription_members[6] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeId",
+    "nodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BROWSEDIRECTION,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "browseDirection",
+    "browseDirection", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseDescription, browseDirection) - offsetof(UA_BrowseDescription, nodeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_BROWSEDIRECTION, /* .memberTypeIndex */
+    offsetof(UA_BrowseDescription, browseDirection) - offsetof(UA_BrowseDescription, nodeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referenceTypeId",
+    "referenceTypeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseDescription, referenceTypeId) - offsetof(UA_BrowseDescription, browseDirection) - sizeof(UA_BrowseDirection),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_BrowseDescription, referenceTypeId) - offsetof(UA_BrowseDescription, browseDirection) - sizeof(UA_BrowseDirection), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "includeSubtypes",
+    "includeSubtypes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseDescription, includeSubtypes) - offsetof(UA_BrowseDescription, referenceTypeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_BrowseDescription, includeSubtypes) - offsetof(UA_BrowseDescription, referenceTypeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeClassMask",
+    "nodeClassMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseDescription, nodeClassMask) - offsetof(UA_BrowseDescription, includeSubtypes) - sizeof(UA_Boolean),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_BrowseDescription, nodeClassMask) - offsetof(UA_BrowseDescription, includeSubtypes) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "resultMask",
+    "resultMask", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseDescription, resultMask) - offsetof(UA_BrowseDescription, nodeClassMask) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_BrowseDescription, resultMask) - offsetof(UA_BrowseDescription, nodeClassMask) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* RepublishRequest */
 static UA_DataTypeMember RepublishRequest_members[3] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RepublishRequest, subscriptionId) - offsetof(UA_RepublishRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_RepublishRequest, subscriptionId) - offsetof(UA_RepublishRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "retransmitSequenceNumber",
+    "retransmitSequenceNumber", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RepublishRequest, retransmitSequenceNumber) - offsetof(UA_RepublishRequest, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_RepublishRequest, retransmitSequenceNumber) - offsetof(UA_RepublishRequest, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* GetEndpointsRequest */
 static UA_DataTypeMember GetEndpointsRequest_members[4] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "endpointUrl",
+    "endpointUrl", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_GetEndpointsRequest, endpointUrl) - offsetof(UA_GetEndpointsRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_GetEndpointsRequest, endpointUrl) - offsetof(UA_GetEndpointsRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "localeIds",
+    "localeIds", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_GetEndpointsRequest, localeIdsSize) - offsetof(UA_GetEndpointsRequest, endpointUrl) - sizeof(UA_String),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_GetEndpointsRequest, localeIdsSize) - offsetof(UA_GetEndpointsRequest, endpointUrl) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "profileUris",
+    "profileUris", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_GetEndpointsRequest, profileUrisSize) - offsetof(UA_GetEndpointsRequest, localeIds) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_GetEndpointsRequest, profileUrisSize) - offsetof(UA_GetEndpointsRequest, localeIds) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* PublishRequest */
 static UA_DataTypeMember PublishRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionAcknowledgements",
+    "subscriptionAcknowledgements", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_PublishRequest, subscriptionAcknowledgementsSize) - offsetof(UA_PublishRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT, /* .memberTypeIndex */
+    offsetof(UA_PublishRequest, subscriptionAcknowledgementsSize) - offsetof(UA_PublishRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* AddNodesResponse */
 static UA_DataTypeMember AddNodesResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_ADDNODESRESULT,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesResponse, resultsSize) - offsetof(UA_AddNodesResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_ADDNODESRESULT, /* .memberTypeIndex */
+    offsetof(UA_AddNodesResponse, resultsSize) - offsetof(UA_AddNodesResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesResponse, diagnosticInfosSize) - offsetof(UA_AddNodesResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_AddNodesResponse, diagnosticInfosSize) - offsetof(UA_AddNodesResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* DataChangeNotification */
 static UA_DataTypeMember DataChangeNotification_members[2] = {
-  { .memberTypeIndex = UA_TYPES_MONITOREDITEMNOTIFICATION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "monitoredItems",
+    "monitoredItems", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_MONITOREDITEMNOTIFICATION, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DataChangeNotification, diagnosticInfosSize) - offsetof(UA_DataChangeNotification, monitoredItems) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_DataChangeNotification, diagnosticInfosSize) - offsetof(UA_DataChangeNotification, monitoredItems) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CloseSecureChannelResponse */
 static UA_DataTypeMember CloseSecureChannelResponse_members[1] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ModifyMonitoredItemsRequest */
 static UA_DataTypeMember ModifyMonitoredItemsRequest_members[4] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifyMonitoredItemsRequest, subscriptionId) - offsetof(UA_ModifyMonitoredItemsRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_TIMESTAMPSTORETURN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ModifyMonitoredItemsRequest, subscriptionId) - offsetof(UA_ModifyMonitoredItemsRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "timestampsToReturn",
+    "timestampsToReturn", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifyMonitoredItemsRequest, timestampsToReturn) - offsetof(UA_ModifyMonitoredItemsRequest, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MONITOREDITEMMODIFYREQUEST,
+    UA_TYPES_TIMESTAMPSTORETURN, /* .memberTypeIndex */
+    offsetof(UA_ModifyMonitoredItemsRequest, timestampsToReturn) - offsetof(UA_ModifyMonitoredItemsRequest, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "itemsToModify",
+    "itemsToModify", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifyMonitoredItemsRequest, itemsToModifySize) - offsetof(UA_ModifyMonitoredItemsRequest, timestampsToReturn) - sizeof(UA_TimestampsToReturn),
-    .isArray = true
-  },};
+    UA_TYPES_MONITOREDITEMMODIFYREQUEST, /* .memberTypeIndex */
+    offsetof(UA_ModifyMonitoredItemsRequest, itemsToModifySize) - offsetof(UA_ModifyMonitoredItemsRequest, timestampsToReturn) - sizeof(UA_TimestampsToReturn), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* SetMonitoringModeResponse */
 static UA_DataTypeMember SetMonitoringModeResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetMonitoringModeResponse, resultsSize) - offsetof(UA_SetMonitoringModeResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_SetMonitoringModeResponse, resultsSize) - offsetof(UA_SetMonitoringModeResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetMonitoringModeResponse, diagnosticInfosSize) - offsetof(UA_SetMonitoringModeResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_SetMonitoringModeResponse, diagnosticInfosSize) - offsetof(UA_SetMonitoringModeResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* FindServersRequest */
 static UA_DataTypeMember FindServersRequest_members[4] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "endpointUrl",
+    "endpointUrl", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_FindServersRequest, endpointUrl) - offsetof(UA_FindServersRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_FindServersRequest, endpointUrl) - offsetof(UA_FindServersRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "localeIds",
+    "localeIds", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_FindServersRequest, localeIdsSize) - offsetof(UA_FindServersRequest, endpointUrl) - sizeof(UA_String),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_FindServersRequest, localeIdsSize) - offsetof(UA_FindServersRequest, endpointUrl) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverUris",
+    "serverUris", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_FindServersRequest, serverUrisSize) - offsetof(UA_FindServersRequest, localeIds) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_FindServersRequest, serverUrisSize) - offsetof(UA_FindServersRequest, localeIds) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ReferenceDescription */
 static UA_DataTypeMember ReferenceDescription_members[7] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referenceTypeId",
+    "referenceTypeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isForward",
+    "isForward", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceDescription, isForward) - offsetof(UA_ReferenceDescription, referenceTypeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_ReferenceDescription, isForward) - offsetof(UA_ReferenceDescription, referenceTypeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeId",
+    "nodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceDescription, nodeId) - offsetof(UA_ReferenceDescription, isForward) - sizeof(UA_Boolean),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_QUALIFIEDNAME,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    offsetof(UA_ReferenceDescription, nodeId) - offsetof(UA_ReferenceDescription, isForward) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "browseName",
+    "browseName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceDescription, browseName) - offsetof(UA_ReferenceDescription, nodeId) - sizeof(UA_ExpandedNodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_QUALIFIEDNAME, /* .memberTypeIndex */
+    offsetof(UA_ReferenceDescription, browseName) - offsetof(UA_ReferenceDescription, nodeId) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "displayName",
+    "displayName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceDescription, displayName) - offsetof(UA_ReferenceDescription, browseName) - sizeof(UA_QualifiedName),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODECLASS,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ReferenceDescription, displayName) - offsetof(UA_ReferenceDescription, browseName) - sizeof(UA_QualifiedName), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeClass",
+    "nodeClass", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceDescription, nodeClass) - offsetof(UA_ReferenceDescription, displayName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+    UA_TYPES_NODECLASS, /* .memberTypeIndex */
+    offsetof(UA_ReferenceDescription, nodeClass) - offsetof(UA_ReferenceDescription, displayName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "typeDefinition",
+    "typeDefinition", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReferenceDescription, typeDefinition) - offsetof(UA_ReferenceDescription, nodeClass) - sizeof(UA_NodeClass),
-    .isArray = false
-  },};
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    offsetof(UA_ReferenceDescription, typeDefinition) - offsetof(UA_ReferenceDescription, nodeClass) - sizeof(UA_NodeClass), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SetPublishingModeResponse */
 static UA_DataTypeMember SetPublishingModeResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetPublishingModeResponse, resultsSize) - offsetof(UA_SetPublishingModeResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_SetPublishingModeResponse, resultsSize) - offsetof(UA_SetPublishingModeResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SetPublishingModeResponse, diagnosticInfosSize) - offsetof(UA_SetPublishingModeResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_SetPublishingModeResponse, diagnosticInfosSize) - offsetof(UA_SetPublishingModeResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ContentFilterResult */
 static UA_DataTypeMember ContentFilterResult_members[2] = {
-  { .memberTypeIndex = UA_TYPES_CONTENTFILTERELEMENTRESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "elementResults",
+    "elementResults", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_CONTENTFILTERELEMENTRESULT, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "elementDiagnosticInfos",
+    "elementDiagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ContentFilterResult, elementDiagnosticInfosSize) - offsetof(UA_ContentFilterResult, elementResults) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_ContentFilterResult, elementDiagnosticInfosSize) - offsetof(UA_ContentFilterResult, elementResults) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* RegisterServerResponse */
 static UA_DataTypeMember RegisterServerResponse_members[1] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* AddReferencesItem */
 static UA_DataTypeMember AddReferencesItem_members[6] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sourceNodeId",
+    "sourceNodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referenceTypeId",
+    "referenceTypeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddReferencesItem, referenceTypeId) - offsetof(UA_AddReferencesItem, sourceNodeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_AddReferencesItem, referenceTypeId) - offsetof(UA_AddReferencesItem, sourceNodeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isForward",
+    "isForward", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddReferencesItem, isForward) - offsetof(UA_AddReferencesItem, referenceTypeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_AddReferencesItem, isForward) - offsetof(UA_AddReferencesItem, referenceTypeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "targetServerUri",
+    "targetServerUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddReferencesItem, targetServerUri) - offsetof(UA_AddReferencesItem, isForward) - sizeof(UA_Boolean),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_AddReferencesItem, targetServerUri) - offsetof(UA_AddReferencesItem, isForward) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "targetNodeId",
+    "targetNodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddReferencesItem, targetNodeId) - offsetof(UA_AddReferencesItem, targetServerUri) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODECLASS,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    offsetof(UA_AddReferencesItem, targetNodeId) - offsetof(UA_AddReferencesItem, targetServerUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "targetNodeClass",
+    "targetNodeClass", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddReferencesItem, targetNodeClass) - offsetof(UA_AddReferencesItem, targetNodeId) - sizeof(UA_ExpandedNodeId),
-    .isArray = false
-  },};
+    UA_TYPES_NODECLASS, /* .memberTypeIndex */
+    offsetof(UA_AddReferencesItem, targetNodeClass) - offsetof(UA_AddReferencesItem, targetNodeId) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* CreateSubscriptionResponse */
 static UA_DataTypeMember CreateSubscriptionResponse_members[5] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionResponse, subscriptionId) - offsetof(UA_CreateSubscriptionResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionResponse, subscriptionId) - offsetof(UA_CreateSubscriptionResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedPublishingInterval",
+    "revisedPublishingInterval", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionResponse, revisedPublishingInterval) - offsetof(UA_CreateSubscriptionResponse, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionResponse, revisedPublishingInterval) - offsetof(UA_CreateSubscriptionResponse, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedLifetimeCount",
+    "revisedLifetimeCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionResponse, revisedLifetimeCount) - offsetof(UA_CreateSubscriptionResponse, revisedPublishingInterval) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionResponse, revisedLifetimeCount) - offsetof(UA_CreateSubscriptionResponse, revisedPublishingInterval) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedMaxKeepAliveCount",
+    "revisedMaxKeepAliveCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSubscriptionResponse, revisedMaxKeepAliveCount) - offsetof(UA_CreateSubscriptionResponse, revisedLifetimeCount) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateSubscriptionResponse, revisedMaxKeepAliveCount) - offsetof(UA_CreateSubscriptionResponse, revisedLifetimeCount) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DeleteSubscriptionsResponse */
 static UA_DataTypeMember DeleteSubscriptionsResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteSubscriptionsResponse, resultsSize) - offsetof(UA_DeleteSubscriptionsResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_DeleteSubscriptionsResponse, resultsSize) - offsetof(UA_DeleteSubscriptionsResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteSubscriptionsResponse, diagnosticInfosSize) - offsetof(UA_DeleteSubscriptionsResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_DeleteSubscriptionsResponse, diagnosticInfosSize) - offsetof(UA_DeleteSubscriptionsResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
+
+/* RegisterServer2Response */
+static UA_DataTypeMember RegisterServer2Response_members[3] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "responseHeader", /* .memberName */
+#endif
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "configurationResults", /* .memberName */
+#endif
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_RegisterServer2Response, configurationResultsSize) - offsetof(UA_RegisterServer2Response, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "diagnosticInfos", /* .memberName */
+#endif
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_RegisterServer2Response, diagnosticInfosSize) - offsetof(UA_RegisterServer2Response, configurationResults) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* RelativePath */
 static UA_DataTypeMember RelativePath_members[1] = {
-  { .memberTypeIndex = UA_TYPES_RELATIVEPATHELEMENT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "elements",
+    "elements", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = true
-  },};
+    UA_TYPES_RELATIVEPATHELEMENT, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* DeleteReferencesResponse */
 static UA_DataTypeMember DeleteReferencesResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteReferencesResponse, resultsSize) - offsetof(UA_DeleteReferencesResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_DeleteReferencesResponse, resultsSize) - offsetof(UA_DeleteReferencesResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteReferencesResponse, diagnosticInfosSize) - offsetof(UA_DeleteReferencesResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_DeleteReferencesResponse, diagnosticInfosSize) - offsetof(UA_DeleteReferencesResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CreateMonitoredItemsResponse */
 static UA_DataTypeMember CreateMonitoredItemsResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MONITOREDITEMCREATERESULT,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateMonitoredItemsResponse, resultsSize) - offsetof(UA_CreateMonitoredItemsResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_MONITOREDITEMCREATERESULT, /* .memberTypeIndex */
+    offsetof(UA_CreateMonitoredItemsResponse, resultsSize) - offsetof(UA_CreateMonitoredItemsResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateMonitoredItemsResponse, diagnosticInfosSize) - offsetof(UA_CreateMonitoredItemsResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_CreateMonitoredItemsResponse, diagnosticInfosSize) - offsetof(UA_CreateMonitoredItemsResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CallResponse */
 static UA_DataTypeMember CallResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_CALLMETHODRESULT,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CallResponse, resultsSize) - offsetof(UA_CallResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_CALLMETHODRESULT, /* .memberTypeIndex */
+    offsetof(UA_CallResponse, resultsSize) - offsetof(UA_CallResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CallResponse, diagnosticInfosSize) - offsetof(UA_CallResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_CallResponse, diagnosticInfosSize) - offsetof(UA_CallResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* DeleteNodesResponse */
 static UA_DataTypeMember DeleteNodesResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteNodesResponse, resultsSize) - offsetof(UA_DeleteNodesResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_DeleteNodesResponse, resultsSize) - offsetof(UA_DeleteNodesResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteNodesResponse, diagnosticInfosSize) - offsetof(UA_DeleteNodesResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_DeleteNodesResponse, diagnosticInfosSize) - offsetof(UA_DeleteNodesResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* RepublishResponse */
 static UA_DataTypeMember RepublishResponse_members[2] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NOTIFICATIONMESSAGE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "notificationMessage",
+    "notificationMessage", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RepublishResponse, notificationMessage) - offsetof(UA_RepublishResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = false
-  },};
+    UA_TYPES_NOTIFICATIONMESSAGE, /* .memberTypeIndex */
+    offsetof(UA_RepublishResponse, notificationMessage) - offsetof(UA_RepublishResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* MonitoredItemCreateRequest */
 static UA_DataTypeMember MonitoredItemCreateRequest_members[3] = {
-  { .memberTypeIndex = UA_TYPES_READVALUEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "itemToMonitor",
+    "itemToMonitor", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MONITORINGMODE,
+    UA_TYPES_READVALUEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "monitoringMode",
+    "monitoringMode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemCreateRequest, monitoringMode) - offsetof(UA_MonitoredItemCreateRequest, itemToMonitor) - sizeof(UA_ReadValueId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MONITORINGPARAMETERS,
+    UA_TYPES_MONITORINGMODE, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemCreateRequest, monitoringMode) - offsetof(UA_MonitoredItemCreateRequest, itemToMonitor) - sizeof(UA_ReadValueId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedParameters",
+    "requestedParameters", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_MonitoredItemCreateRequest, requestedParameters) - offsetof(UA_MonitoredItemCreateRequest, monitoringMode) - sizeof(UA_MonitoringMode),
-    .isArray = false
-  },};
+    UA_TYPES_MONITORINGPARAMETERS, /* .memberTypeIndex */
+    offsetof(UA_MonitoredItemCreateRequest, requestedParameters) - offsetof(UA_MonitoredItemCreateRequest, monitoringMode) - sizeof(UA_MonitoringMode), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* DeleteReferencesRequest */
 static UA_DataTypeMember DeleteReferencesRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DELETEREFERENCESITEM,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referencesToDelete",
+    "referencesToDelete", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DeleteReferencesRequest, referencesToDeleteSize) - offsetof(UA_DeleteReferencesRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_DELETEREFERENCESITEM, /* .memberTypeIndex */
+    offsetof(UA_DeleteReferencesRequest, referencesToDeleteSize) - offsetof(UA_DeleteReferencesRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ModifyMonitoredItemsResponse */
 static UA_DataTypeMember ModifyMonitoredItemsResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MONITOREDITEMMODIFYRESULT,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifyMonitoredItemsResponse, resultsSize) - offsetof(UA_ModifyMonitoredItemsResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_MONITOREDITEMMODIFYRESULT, /* .memberTypeIndex */
+    offsetof(UA_ModifyMonitoredItemsResponse, resultsSize) - offsetof(UA_ModifyMonitoredItemsResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ModifyMonitoredItemsResponse, diagnosticInfosSize) - offsetof(UA_ModifyMonitoredItemsResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_ModifyMonitoredItemsResponse, diagnosticInfosSize) - offsetof(UA_ModifyMonitoredItemsResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ReadResponse */
 static UA_DataTypeMember ReadResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATAVALUE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReadResponse, resultsSize) - offsetof(UA_ReadResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_DATAVALUE, /* .memberTypeIndex */
+    offsetof(UA_ReadResponse, resultsSize) - offsetof(UA_ReadResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReadResponse, diagnosticInfosSize) - offsetof(UA_ReadResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_ReadResponse, diagnosticInfosSize) - offsetof(UA_ReadResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* AddReferencesRequest */
 static UA_DataTypeMember AddReferencesRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_ADDREFERENCESITEM,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referencesToAdd",
+    "referencesToAdd", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddReferencesRequest, referencesToAddSize) - offsetof(UA_AddReferencesRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_ADDREFERENCESITEM, /* .memberTypeIndex */
+    offsetof(UA_AddReferencesRequest, referencesToAddSize) - offsetof(UA_AddReferencesRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ReadRequest */
 static UA_DataTypeMember ReadRequest_members[4] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxAge",
+    "maxAge", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReadRequest, maxAge) - offsetof(UA_ReadRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_TIMESTAMPSTORETURN,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_ReadRequest, maxAge) - offsetof(UA_ReadRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "timestampsToReturn",
+    "timestampsToReturn", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReadRequest, timestampsToReturn) - offsetof(UA_ReadRequest, maxAge) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_READVALUEID,
+    UA_TYPES_TIMESTAMPSTORETURN, /* .memberTypeIndex */
+    offsetof(UA_ReadRequest, timestampsToReturn) - offsetof(UA_ReadRequest, maxAge) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodesToRead",
+    "nodesToRead", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ReadRequest, nodesToReadSize) - offsetof(UA_ReadRequest, timestampsToReturn) - sizeof(UA_TimestampsToReturn),
-    .isArray = true
-  },};
+    UA_TYPES_READVALUEID, /* .memberTypeIndex */
+    offsetof(UA_ReadRequest, nodesToReadSize) - offsetof(UA_ReadRequest, timestampsToReturn) - sizeof(UA_TimestampsToReturn), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* AddNodesItem */
 static UA_DataTypeMember AddNodesItem_members[7] = {
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "parentNodeId",
+    "parentNodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "referenceTypeId",
+    "referenceTypeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesItem, referenceTypeId) - offsetof(UA_AddNodesItem, parentNodeId) - sizeof(UA_ExpandedNodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_AddNodesItem, referenceTypeId) - offsetof(UA_AddNodesItem, parentNodeId) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedNewNodeId",
+    "requestedNewNodeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesItem, requestedNewNodeId) - offsetof(UA_AddNodesItem, referenceTypeId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_QUALIFIEDNAME,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    offsetof(UA_AddNodesItem, requestedNewNodeId) - offsetof(UA_AddNodesItem, referenceTypeId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "browseName",
+    "browseName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesItem, browseName) - offsetof(UA_AddNodesItem, requestedNewNodeId) - sizeof(UA_ExpandedNodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODECLASS,
+    UA_TYPES_QUALIFIEDNAME, /* .memberTypeIndex */
+    offsetof(UA_AddNodesItem, browseName) - offsetof(UA_AddNodesItem, requestedNewNodeId) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeClass",
+    "nodeClass", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesItem, nodeClass) - offsetof(UA_AddNodesItem, browseName) - sizeof(UA_QualifiedName),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_NODECLASS, /* .memberTypeIndex */
+    offsetof(UA_AddNodesItem, nodeClass) - offsetof(UA_AddNodesItem, browseName) - sizeof(UA_QualifiedName), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeAttributes",
+    "nodeAttributes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesItem, nodeAttributes) - offsetof(UA_AddNodesItem, nodeClass) - sizeof(UA_NodeClass),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_AddNodesItem, nodeAttributes) - offsetof(UA_AddNodesItem, nodeClass) - sizeof(UA_NodeClass), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "typeDefinition",
+    "typeDefinition", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesItem, typeDefinition) - offsetof(UA_AddNodesItem, nodeAttributes) - sizeof(UA_ExtensionObject),
-    .isArray = false
-  },};
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    offsetof(UA_AddNodesItem, typeDefinition) - offsetof(UA_AddNodesItem, nodeAttributes) - sizeof(UA_ExtensionObject), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ServerStatusDataType */
 static UA_DataTypeMember ServerStatusDataType_members[6] = {
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "startTime",
+    "startTime", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DATETIME,
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "currentTime",
+    "currentTime", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ServerStatusDataType, currentTime) - offsetof(UA_ServerStatusDataType, startTime) - sizeof(UA_DateTime),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_SERVERSTATE,
+    UA_TYPES_DATETIME, /* .memberTypeIndex */
+    offsetof(UA_ServerStatusDataType, currentTime) - offsetof(UA_ServerStatusDataType, startTime) - sizeof(UA_DateTime), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "state",
+    "state", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ServerStatusDataType, state) - offsetof(UA_ServerStatusDataType, currentTime) - sizeof(UA_DateTime),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BUILDINFO,
+    UA_TYPES_SERVERSTATE, /* .memberTypeIndex */
+    offsetof(UA_ServerStatusDataType, state) - offsetof(UA_ServerStatusDataType, currentTime) - sizeof(UA_DateTime), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "buildInfo",
+    "buildInfo", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ServerStatusDataType, buildInfo) - offsetof(UA_ServerStatusDataType, state) - sizeof(UA_ServerState),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_BUILDINFO, /* .memberTypeIndex */
+    offsetof(UA_ServerStatusDataType, buildInfo) - offsetof(UA_ServerStatusDataType, state) - sizeof(UA_ServerState), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "secondsTillShutdown",
+    "secondsTillShutdown", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ServerStatusDataType, secondsTillShutdown) - offsetof(UA_ServerStatusDataType, buildInfo) - sizeof(UA_BuildInfo),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_ServerStatusDataType, secondsTillShutdown) - offsetof(UA_ServerStatusDataType, buildInfo) - sizeof(UA_BuildInfo), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "shutdownReason",
+    "shutdownReason", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ServerStatusDataType, shutdownReason) - offsetof(UA_ServerStatusDataType, secondsTillShutdown) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ServerStatusDataType, shutdownReason) - offsetof(UA_ServerStatusDataType, secondsTillShutdown) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* AddReferencesResponse */
 static UA_DataTypeMember AddReferencesResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddReferencesResponse, resultsSize) - offsetof(UA_AddReferencesResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    offsetof(UA_AddReferencesResponse, resultsSize) - offsetof(UA_AddReferencesResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddReferencesResponse, diagnosticInfosSize) - offsetof(UA_AddReferencesResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_AddReferencesResponse, diagnosticInfosSize) - offsetof(UA_AddReferencesResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* TranslateBrowsePathsToNodeIdsResponse */
 static UA_DataTypeMember TranslateBrowsePathsToNodeIdsResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BROWSEPATHRESULT,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TranslateBrowsePathsToNodeIdsResponse, resultsSize) - offsetof(UA_TranslateBrowsePathsToNodeIdsResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_BROWSEPATHRESULT, /* .memberTypeIndex */
+    offsetof(UA_TranslateBrowsePathsToNodeIdsResponse, resultsSize) - offsetof(UA_TranslateBrowsePathsToNodeIdsResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TranslateBrowsePathsToNodeIdsResponse, diagnosticInfosSize) - offsetof(UA_TranslateBrowsePathsToNodeIdsResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_TranslateBrowsePathsToNodeIdsResponse, diagnosticInfosSize) - offsetof(UA_TranslateBrowsePathsToNodeIdsResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* DataChangeFilter */
 static UA_DataTypeMember DataChangeFilter_members[3] = {
-  { .memberTypeIndex = UA_TYPES_DATACHANGETRIGGER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "trigger",
+    "trigger", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DATACHANGETRIGGER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "deadbandType",
+    "deadbandType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DataChangeFilter, deadbandType) - offsetof(UA_DataChangeFilter, trigger) - sizeof(UA_DataChangeTrigger),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_DataChangeFilter, deadbandType) - offsetof(UA_DataChangeFilter, trigger) - sizeof(UA_DataChangeTrigger), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "deadbandValue",
+    "deadbandValue", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_DataChangeFilter, deadbandValue) - offsetof(UA_DataChangeFilter, deadbandType) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_DataChangeFilter, deadbandValue) - offsetof(UA_DataChangeFilter, deadbandType) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ContentFilterElement */
 static UA_DataTypeMember ContentFilterElement_members[2] = {
-  { .memberTypeIndex = UA_TYPES_FILTEROPERATOR,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "filterOperator",
+    "filterOperator", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_EXTENSIONOBJECT,
+    UA_TYPES_FILTEROPERATOR, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "filterOperands",
+    "filterOperands", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ContentFilterElement, filterOperandsSize) - offsetof(UA_ContentFilterElement, filterOperator) - sizeof(UA_FilterOperator),
-    .isArray = true
-  },};
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_ContentFilterElement, filterOperandsSize) - offsetof(UA_ContentFilterElement, filterOperator) - sizeof(UA_FilterOperator), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CloseSessionResponse */
 static UA_DataTypeMember CloseSessionResponse_members[1] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* RegisteredServer */
 static UA_DataTypeMember RegisteredServer_members[8] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverUri",
+    "serverUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "productUri",
+    "productUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisteredServer, productUri) - offsetof(UA_RegisteredServer, serverUri) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_RegisteredServer, productUri) - offsetof(UA_RegisteredServer, serverUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverNames",
+    "serverNames", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisteredServer, serverNamesSize) - offsetof(UA_RegisteredServer, productUri) - sizeof(UA_String),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_APPLICATIONTYPE,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_RegisteredServer, serverNamesSize) - offsetof(UA_RegisteredServer, productUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverType",
+    "serverType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisteredServer, serverType) - offsetof(UA_RegisteredServer, serverNames) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_APPLICATIONTYPE, /* .memberTypeIndex */
+    offsetof(UA_RegisteredServer, serverType) - offsetof(UA_RegisteredServer, serverNames) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "gatewayServerUri",
+    "gatewayServerUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisteredServer, gatewayServerUri) - offsetof(UA_RegisteredServer, serverType) - sizeof(UA_ApplicationType),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_RegisteredServer, gatewayServerUri) - offsetof(UA_RegisteredServer, serverType) - sizeof(UA_ApplicationType), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "discoveryUrls",
+    "discoveryUrls", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisteredServer, discoveryUrlsSize) - offsetof(UA_RegisteredServer, gatewayServerUri) - sizeof(UA_String),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_RegisteredServer, discoveryUrlsSize) - offsetof(UA_RegisteredServer, gatewayServerUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "semaphoreFilePath",
+    "semaphoreFilePath", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisteredServer, semaphoreFilePath) - offsetof(UA_RegisteredServer, discoveryUrls) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_RegisteredServer, semaphoreFilePath) - offsetof(UA_RegisteredServer, discoveryUrls) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "isOnline",
+    "isOnline", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisteredServer, isOnline) - offsetof(UA_RegisteredServer, semaphoreFilePath) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_RegisteredServer, isOnline) - offsetof(UA_RegisteredServer, semaphoreFilePath) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ApplicationDescription */
 static UA_DataTypeMember ApplicationDescription_members[7] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "applicationUri",
+    "applicationUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "productUri",
+    "productUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ApplicationDescription, productUri) - offsetof(UA_ApplicationDescription, applicationUri) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_LOCALIZEDTEXT,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ApplicationDescription, productUri) - offsetof(UA_ApplicationDescription, applicationUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "applicationName",
+    "applicationName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ApplicationDescription, applicationName) - offsetof(UA_ApplicationDescription, productUri) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_APPLICATIONTYPE,
+    UA_TYPES_LOCALIZEDTEXT, /* .memberTypeIndex */
+    offsetof(UA_ApplicationDescription, applicationName) - offsetof(UA_ApplicationDescription, productUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "applicationType",
+    "applicationType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ApplicationDescription, applicationType) - offsetof(UA_ApplicationDescription, applicationName) - sizeof(UA_LocalizedText),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_APPLICATIONTYPE, /* .memberTypeIndex */
+    offsetof(UA_ApplicationDescription, applicationType) - offsetof(UA_ApplicationDescription, applicationName) - sizeof(UA_LocalizedText), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "gatewayServerUri",
+    "gatewayServerUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ApplicationDescription, gatewayServerUri) - offsetof(UA_ApplicationDescription, applicationType) - sizeof(UA_ApplicationType),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ApplicationDescription, gatewayServerUri) - offsetof(UA_ApplicationDescription, applicationType) - sizeof(UA_ApplicationType), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "discoveryProfileUri",
+    "discoveryProfileUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ApplicationDescription, discoveryProfileUri) - offsetof(UA_ApplicationDescription, gatewayServerUri) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ApplicationDescription, discoveryProfileUri) - offsetof(UA_ApplicationDescription, gatewayServerUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "discoveryUrls",
+    "discoveryUrls", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_ApplicationDescription, discoveryUrlsSize) - offsetof(UA_ApplicationDescription, discoveryProfileUri) - sizeof(UA_String),
-    .isArray = true
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_ApplicationDescription, discoveryUrlsSize) - offsetof(UA_ApplicationDescription, discoveryProfileUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ServiceFault */
 static UA_DataTypeMember ServiceFault_members[1] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* RegisterServerRequest */
 static UA_DataTypeMember RegisterServerRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_REGISTEREDSERVER,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "server",
+    "server", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_RegisterServerRequest, server) - offsetof(UA_RegisterServerRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },};
+    UA_TYPES_REGISTEREDSERVER, /* .memberTypeIndex */
+    offsetof(UA_RegisterServerRequest, server) - offsetof(UA_RegisterServerRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* FindServersResponse */
 static UA_DataTypeMember FindServersResponse_members[2] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_APPLICATIONDESCRIPTION,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "servers",
+    "servers", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_FindServersResponse, serversSize) - offsetof(UA_FindServersResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },};
+    UA_TYPES_APPLICATIONDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_FindServersResponse, serversSize) - offsetof(UA_FindServersResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CreateMonitoredItemsRequest */
 static UA_DataTypeMember CreateMonitoredItemsRequest_members[4] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "subscriptionId",
+    "subscriptionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateMonitoredItemsRequest, subscriptionId) - offsetof(UA_CreateMonitoredItemsRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_TIMESTAMPSTORETURN,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateMonitoredItemsRequest, subscriptionId) - offsetof(UA_CreateMonitoredItemsRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "timestampsToReturn",
+    "timestampsToReturn", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateMonitoredItemsRequest, timestampsToReturn) - offsetof(UA_CreateMonitoredItemsRequest, subscriptionId) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MONITOREDITEMCREATEREQUEST,
+    UA_TYPES_TIMESTAMPSTORETURN, /* .memberTypeIndex */
+    offsetof(UA_CreateMonitoredItemsRequest, timestampsToReturn) - offsetof(UA_CreateMonitoredItemsRequest, subscriptionId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "itemsToCreate",
+    "itemsToCreate", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateMonitoredItemsRequest, itemsToCreateSize) - offsetof(UA_CreateMonitoredItemsRequest, timestampsToReturn) - sizeof(UA_TimestampsToReturn),
-    .isArray = true
-  },};
+    UA_TYPES_MONITOREDITEMCREATEREQUEST, /* .memberTypeIndex */
+    offsetof(UA_CreateMonitoredItemsRequest, itemsToCreateSize) - offsetof(UA_CreateMonitoredItemsRequest, timestampsToReturn) - sizeof(UA_TimestampsToReturn), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* ContentFilter */
 static UA_DataTypeMember ContentFilter_members[1] = {
-  { .memberTypeIndex = UA_TYPES_CONTENTFILTERELEMENT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "elements",
+    "elements", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = true
-  },};
+    UA_TYPES_CONTENTFILTERELEMENT, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* QueryFirstResponse */
 static UA_DataTypeMember QueryFirstResponse_members[6] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_QUERYDATASET,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "queryDataSets",
+    "queryDataSets", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstResponse, queryDataSetsSize) - offsetof(UA_QueryFirstResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_QUERYDATASET, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstResponse, queryDataSetsSize) - offsetof(UA_QueryFirstResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "continuationPoint",
+    "continuationPoint", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstResponse, continuationPoint) - offsetof(UA_QueryFirstResponse, queryDataSets) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_PARSINGRESULT,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstResponse, continuationPoint) - offsetof(UA_QueryFirstResponse, queryDataSets) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "parsingResults",
+    "parsingResults", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstResponse, parsingResultsSize) - offsetof(UA_QueryFirstResponse, continuationPoint) - sizeof(UA_ByteString),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_PARSINGRESULT, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstResponse, parsingResultsSize) - offsetof(UA_QueryFirstResponse, continuationPoint) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstResponse, diagnosticInfosSize) - offsetof(UA_QueryFirstResponse, parsingResults) - sizeof(void*),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_CONTENTFILTERRESULT,
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstResponse, diagnosticInfosSize) - offsetof(UA_QueryFirstResponse, parsingResults) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "filterResult",
+    "filterResult", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstResponse, filterResult) - offsetof(UA_QueryFirstResponse, diagnosticInfos) - sizeof(void*),
-    .isArray = false
-  },};
+    UA_TYPES_CONTENTFILTERRESULT, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstResponse, filterResult) - offsetof(UA_QueryFirstResponse, diagnosticInfos) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* AddNodesRequest */
 static UA_DataTypeMember AddNodesRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_ADDNODESITEM,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodesToAdd",
+    "nodesToAdd", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AddNodesRequest, nodesToAddSize) - offsetof(UA_AddNodesRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_ADDNODESITEM, /* .memberTypeIndex */
+    offsetof(UA_AddNodesRequest, nodesToAddSize) - offsetof(UA_AddNodesRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* BrowseRequest */
 static UA_DataTypeMember BrowseRequest_members[4] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_VIEWDESCRIPTION,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "view",
+    "view", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseRequest, view) - offsetof(UA_BrowseRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_VIEWDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_BrowseRequest, view) - offsetof(UA_BrowseRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedMaxReferencesPerNode",
+    "requestedMaxReferencesPerNode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseRequest, requestedMaxReferencesPerNode) - offsetof(UA_BrowseRequest, view) - sizeof(UA_ViewDescription),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BROWSEDESCRIPTION,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_BrowseRequest, requestedMaxReferencesPerNode) - offsetof(UA_BrowseRequest, view) - sizeof(UA_ViewDescription), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodesToBrowse",
+    "nodesToBrowse", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseRequest, nodesToBrowseSize) - offsetof(UA_BrowseRequest, requestedMaxReferencesPerNode) - sizeof(UA_UInt32),
-    .isArray = true
-  },};
+    UA_TYPES_BROWSEDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_BrowseRequest, nodesToBrowseSize) - offsetof(UA_BrowseRequest, requestedMaxReferencesPerNode) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* BrowsePath */
 static UA_DataTypeMember BrowsePath_members[2] = {
-  { .memberTypeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "startingNode",
+    "startingNode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_RELATIVEPATH,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "relativePath",
+    "relativePath", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowsePath, relativePath) - offsetof(UA_BrowsePath, startingNode) - sizeof(UA_NodeId),
-    .isArray = false
-  },};
+    UA_TYPES_RELATIVEPATH, /* .memberTypeIndex */
+    offsetof(UA_BrowsePath, relativePath) - offsetof(UA_BrowsePath, startingNode) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* BrowseResult */
 static UA_DataTypeMember BrowseResult_members[3] = {
-  { .memberTypeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "statusCode",
+    "statusCode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_STATUSCODE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "continuationPoint",
+    "continuationPoint", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseResult, continuationPoint) - offsetof(UA_BrowseResult, statusCode) - sizeof(UA_StatusCode),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_REFERENCEDESCRIPTION,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_BrowseResult, continuationPoint) - offsetof(UA_BrowseResult, statusCode) - sizeof(UA_StatusCode), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "references",
+    "references", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseResult, referencesSize) - offsetof(UA_BrowseResult, continuationPoint) - sizeof(UA_ByteString),
-    .isArray = true
-  },};
+    UA_TYPES_REFERENCEDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_BrowseResult, referencesSize) - offsetof(UA_BrowseResult, continuationPoint) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
+
+/* RegisterServer2Request */
+static UA_DataTypeMember RegisterServer2Request_members[3] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "requestHeader", /* .memberName */
+#endif
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "server", /* .memberName */
+#endif
+    UA_TYPES_REGISTEREDSERVER, /* .memberTypeIndex */
+    offsetof(UA_RegisterServer2Request, server) - offsetof(UA_RegisterServer2Request, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "discoveryConfiguration", /* .memberName */
+#endif
+    UA_TYPES_EXTENSIONOBJECT, /* .memberTypeIndex */
+    offsetof(UA_RegisterServer2Request, discoveryConfigurationSize) - offsetof(UA_RegisterServer2Request, server) - sizeof(UA_RegisteredServer), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CreateSessionRequest */
 static UA_DataTypeMember CreateSessionRequest_members[9] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_APPLICATIONDESCRIPTION,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientDescription",
+    "clientDescription", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionRequest, clientDescription) - offsetof(UA_CreateSessionRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_APPLICATIONDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionRequest, clientDescription) - offsetof(UA_CreateSessionRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverUri",
+    "serverUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionRequest, serverUri) - offsetof(UA_CreateSessionRequest, clientDescription) - sizeof(UA_ApplicationDescription),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionRequest, serverUri) - offsetof(UA_CreateSessionRequest, clientDescription) - sizeof(UA_ApplicationDescription), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "endpointUrl",
+    "endpointUrl", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionRequest, endpointUrl) - offsetof(UA_CreateSessionRequest, serverUri) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionRequest, endpointUrl) - offsetof(UA_CreateSessionRequest, serverUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sessionName",
+    "sessionName", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionRequest, sessionName) - offsetof(UA_CreateSessionRequest, endpointUrl) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionRequest, sessionName) - offsetof(UA_CreateSessionRequest, endpointUrl) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientNonce",
+    "clientNonce", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionRequest, clientNonce) - offsetof(UA_CreateSessionRequest, sessionName) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionRequest, clientNonce) - offsetof(UA_CreateSessionRequest, sessionName) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "clientCertificate",
+    "clientCertificate", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionRequest, clientCertificate) - offsetof(UA_CreateSessionRequest, clientNonce) - sizeof(UA_ByteString),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionRequest, clientCertificate) - offsetof(UA_CreateSessionRequest, clientNonce) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestedSessionTimeout",
+    "requestedSessionTimeout", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionRequest, requestedSessionTimeout) - offsetof(UA_CreateSessionRequest, clientCertificate) - sizeof(UA_ByteString),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionRequest, requestedSessionTimeout) - offsetof(UA_CreateSessionRequest, clientCertificate) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxResponseMessageSize",
+    "maxResponseMessageSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionRequest, maxResponseMessageSize) - offsetof(UA_CreateSessionRequest, requestedSessionTimeout) - sizeof(UA_Double),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionRequest, maxResponseMessageSize) - offsetof(UA_CreateSessionRequest, requestedSessionTimeout) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* QueryDataDescription */
 static UA_DataTypeMember QueryDataDescription_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RELATIVEPATH,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "relativePath",
+    "relativePath", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_RELATIVEPATH, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "attributeId",
+    "attributeId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryDataDescription, attributeId) - offsetof(UA_QueryDataDescription, relativePath) - sizeof(UA_RelativePath),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_QueryDataDescription, attributeId) - offsetof(UA_QueryDataDescription, relativePath) - sizeof(UA_RelativePath), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "indexRange",
+    "indexRange", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryDataDescription, indexRange) - offsetof(UA_QueryDataDescription, attributeId) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_QueryDataDescription, indexRange) - offsetof(UA_QueryDataDescription, attributeId) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* EndpointDescription */
 static UA_DataTypeMember EndpointDescription_members[8] = {
-  { .memberTypeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "endpointUrl",
+    "endpointUrl", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_APPLICATIONDESCRIPTION,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "server",
+    "server", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_EndpointDescription, server) - offsetof(UA_EndpointDescription, endpointUrl) - sizeof(UA_String),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_APPLICATIONDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_EndpointDescription, server) - offsetof(UA_EndpointDescription, endpointUrl) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverCertificate",
+    "serverCertificate", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_EndpointDescription, serverCertificate) - offsetof(UA_EndpointDescription, server) - sizeof(UA_ApplicationDescription),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_MESSAGESECURITYMODE,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_EndpointDescription, serverCertificate) - offsetof(UA_EndpointDescription, server) - sizeof(UA_ApplicationDescription), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "securityMode",
+    "securityMode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_EndpointDescription, securityMode) - offsetof(UA_EndpointDescription, serverCertificate) - sizeof(UA_ByteString),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_MESSAGESECURITYMODE, /* .memberTypeIndex */
+    offsetof(UA_EndpointDescription, securityMode) - offsetof(UA_EndpointDescription, serverCertificate) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "securityPolicyUri",
+    "securityPolicyUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_EndpointDescription, securityPolicyUri) - offsetof(UA_EndpointDescription, securityMode) - sizeof(UA_MessageSecurityMode),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_USERTOKENPOLICY,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_EndpointDescription, securityPolicyUri) - offsetof(UA_EndpointDescription, securityMode) - sizeof(UA_MessageSecurityMode), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "userIdentityTokens",
+    "userIdentityTokens", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_EndpointDescription, userIdentityTokensSize) - offsetof(UA_EndpointDescription, securityPolicyUri) - sizeof(UA_String),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_USERTOKENPOLICY, /* .memberTypeIndex */
+    offsetof(UA_EndpointDescription, userIdentityTokensSize) - offsetof(UA_EndpointDescription, securityPolicyUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "transportProfileUri",
+    "transportProfileUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_EndpointDescription, transportProfileUri) - offsetof(UA_EndpointDescription, userIdentityTokens) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTE,
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_EndpointDescription, transportProfileUri) - offsetof(UA_EndpointDescription, userIdentityTokens) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "securityLevel",
+    "securityLevel", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_EndpointDescription, securityLevel) - offsetof(UA_EndpointDescription, transportProfileUri) - sizeof(UA_String),
-    .isArray = false
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    offsetof(UA_EndpointDescription, securityLevel) - offsetof(UA_EndpointDescription, transportProfileUri) - sizeof(UA_String), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* GetEndpointsResponse */
 static UA_DataTypeMember GetEndpointsResponse_members[2] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_ENDPOINTDESCRIPTION,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "endpoints",
+    "endpoints", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_GetEndpointsResponse, endpointsSize) - offsetof(UA_GetEndpointsResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },};
+    UA_TYPES_ENDPOINTDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_GetEndpointsResponse, endpointsSize) - offsetof(UA_GetEndpointsResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* NodeTypeDescription */
 static UA_DataTypeMember NodeTypeDescription_members[3] = {
-  { .memberTypeIndex = UA_TYPES_EXPANDEDNODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "typeDefinitionNode",
+    "typeDefinitionNode", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BOOLEAN,
+    UA_TYPES_EXPANDEDNODEID, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "includeSubTypes",
+    "includeSubTypes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_NodeTypeDescription, includeSubTypes) - offsetof(UA_NodeTypeDescription, typeDefinitionNode) - sizeof(UA_ExpandedNodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_QUERYDATADESCRIPTION,
+    UA_TYPES_BOOLEAN, /* .memberTypeIndex */
+    offsetof(UA_NodeTypeDescription, includeSubTypes) - offsetof(UA_NodeTypeDescription, typeDefinitionNode) - sizeof(UA_ExpandedNodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "dataToReturn",
+    "dataToReturn", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_NodeTypeDescription, dataToReturnSize) - offsetof(UA_NodeTypeDescription, includeSubTypes) - sizeof(UA_Boolean),
-    .isArray = true
-  },};
+    UA_TYPES_QUERYDATADESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_NodeTypeDescription, dataToReturnSize) - offsetof(UA_NodeTypeDescription, includeSubTypes) - sizeof(UA_Boolean), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* BrowseNextResponse */
 static UA_DataTypeMember BrowseNextResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BROWSERESULT,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseNextResponse, resultsSize) - offsetof(UA_BrowseNextResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_BROWSERESULT, /* .memberTypeIndex */
+    offsetof(UA_BrowseNextResponse, resultsSize) - offsetof(UA_BrowseNextResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseNextResponse, diagnosticInfosSize) - offsetof(UA_BrowseNextResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_BrowseNextResponse, diagnosticInfosSize) - offsetof(UA_BrowseNextResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* TranslateBrowsePathsToNodeIdsRequest */
 static UA_DataTypeMember TranslateBrowsePathsToNodeIdsRequest_members[2] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BROWSEPATH,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "browsePaths",
+    "browsePaths", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TranslateBrowsePathsToNodeIdsRequest, browsePathsSize) - offsetof(UA_TranslateBrowsePathsToNodeIdsRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = true
-  },};
+    UA_TYPES_BROWSEPATH, /* .memberTypeIndex */
+    offsetof(UA_TranslateBrowsePathsToNodeIdsRequest, browsePathsSize) - offsetof(UA_TranslateBrowsePathsToNodeIdsRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* BrowseResponse */
 static UA_DataTypeMember BrowseResponse_members[3] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BROWSERESULT,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "results",
+    "results", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseResponse, resultsSize) - offsetof(UA_BrowseResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_DIAGNOSTICINFO,
+    UA_TYPES_BROWSERESULT, /* .memberTypeIndex */
+    offsetof(UA_BrowseResponse, resultsSize) - offsetof(UA_BrowseResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "diagnosticInfos",
+    "diagnosticInfos", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_BrowseResponse, diagnosticInfosSize) - offsetof(UA_BrowseResponse, results) - sizeof(void*),
-    .isArray = true
-  },};
+    UA_TYPES_DIAGNOSTICINFO, /* .memberTypeIndex */
+    offsetof(UA_BrowseResponse, diagnosticInfosSize) - offsetof(UA_BrowseResponse, results) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},};
 
 /* CreateSessionResponse */
 static UA_DataTypeMember CreateSessionResponse_members[10] = {
-  { .memberTypeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "responseHeader",
+    "responseHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_RESPONSEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sessionId",
+    "sessionId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, sessionId) - offsetof(UA_CreateSessionResponse, responseHeader) - sizeof(UA_ResponseHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODEID,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, sessionId) - offsetof(UA_CreateSessionResponse, responseHeader) - sizeof(UA_ResponseHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "authenticationToken",
+    "authenticationToken", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, authenticationToken) - offsetof(UA_CreateSessionResponse, sessionId) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_DOUBLE,
+    UA_TYPES_NODEID, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, authenticationToken) - offsetof(UA_CreateSessionResponse, sessionId) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "revisedSessionTimeout",
+    "revisedSessionTimeout", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, revisedSessionTimeout) - offsetof(UA_CreateSessionResponse, authenticationToken) - sizeof(UA_NodeId),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_DOUBLE, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, revisedSessionTimeout) - offsetof(UA_CreateSessionResponse, authenticationToken) - sizeof(UA_NodeId), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverNonce",
+    "serverNonce", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, serverNonce) - offsetof(UA_CreateSessionResponse, revisedSessionTimeout) - sizeof(UA_Double),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, serverNonce) - offsetof(UA_CreateSessionResponse, revisedSessionTimeout) - sizeof(UA_Double), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverCertificate",
+    "serverCertificate", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, serverCertificate) - offsetof(UA_CreateSessionResponse, serverNonce) - sizeof(UA_ByteString),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_ENDPOINTDESCRIPTION,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, serverCertificate) - offsetof(UA_CreateSessionResponse, serverNonce) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverEndpoints",
+    "serverEndpoints", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, serverEndpointsSize) - offsetof(UA_CreateSessionResponse, serverCertificate) - sizeof(UA_ByteString),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_SIGNEDSOFTWARECERTIFICATE,
+    UA_TYPES_ENDPOINTDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, serverEndpointsSize) - offsetof(UA_CreateSessionResponse, serverCertificate) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverSoftwareCertificates",
+    "serverSoftwareCertificates", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, serverSoftwareCertificatesSize) - offsetof(UA_CreateSessionResponse, serverEndpoints) - sizeof(void*),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_SIGNATUREDATA,
+    UA_TYPES_SIGNEDSOFTWARECERTIFICATE, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, serverSoftwareCertificatesSize) - offsetof(UA_CreateSessionResponse, serverEndpoints) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "serverSignature",
+    "serverSignature", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, serverSignature) - offsetof(UA_CreateSessionResponse, serverSoftwareCertificates) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_SIGNATUREDATA, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, serverSignature) - offsetof(UA_CreateSessionResponse, serverSoftwareCertificates) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxRequestMessageSize",
+    "maxRequestMessageSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_CreateSessionResponse, maxRequestMessageSize) - offsetof(UA_CreateSessionResponse, serverSignature) - sizeof(UA_SignatureData),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_CreateSessionResponse, maxRequestMessageSize) - offsetof(UA_CreateSessionResponse, serverSignature) - sizeof(UA_SignatureData), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* QueryFirstRequest */
 static UA_DataTypeMember QueryFirstRequest_members[6] = {
-  { .memberTypeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestHeader",
+    "requestHeader", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_VIEWDESCRIPTION,
+    UA_TYPES_REQUESTHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "view",
+    "view", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstRequest, view) - offsetof(UA_QueryFirstRequest, requestHeader) - sizeof(UA_RequestHeader),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_NODETYPEDESCRIPTION,
+    UA_TYPES_VIEWDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstRequest, view) - offsetof(UA_QueryFirstRequest, requestHeader) - sizeof(UA_RequestHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "nodeTypes",
+    "nodeTypes", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstRequest, nodeTypesSize) - offsetof(UA_QueryFirstRequest, view) - sizeof(UA_ViewDescription),
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_CONTENTFILTER,
+    UA_TYPES_NODETYPEDESCRIPTION, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstRequest, nodeTypesSize) - offsetof(UA_QueryFirstRequest, view) - sizeof(UA_ViewDescription), /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "filter",
+    "filter", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstRequest, filter) - offsetof(UA_QueryFirstRequest, nodeTypes) - sizeof(void*),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_CONTENTFILTER, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstRequest, filter) - offsetof(UA_QueryFirstRequest, nodeTypes) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxDataSetsToReturn",
+    "maxDataSetsToReturn", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstRequest, maxDataSetsToReturn) - offsetof(UA_QueryFirstRequest, filter) - sizeof(UA_ContentFilter),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstRequest, maxDataSetsToReturn) - offsetof(UA_QueryFirstRequest, filter) - sizeof(UA_ContentFilter), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxReferencesToReturn",
+    "maxReferencesToReturn", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_QueryFirstRequest, maxReferencesToReturn) - offsetof(UA_QueryFirstRequest, maxDataSetsToReturn) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
-const UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_QueryFirstRequest, maxReferencesToReturn) - offsetof(UA_QueryFirstRequest, maxDataSetsToReturn) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
+UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
 
 /* Boolean */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 1},
-  .typeIndex = UA_TYPES_BOOLEAN,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Boolean",
+    "Boolean", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Boolean),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = true,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Boolean_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {1}}, /* .typeId */
+    sizeof(UA_Boolean), /* .memSize */
+    UA_TYPES_BOOLEAN, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    true, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Boolean_members /* .members */ },
 
 /* SByte */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 2},
-  .typeIndex = UA_TYPES_SBYTE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SByte",
+    "SByte", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SByte),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = true,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = SByte_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {2}}, /* .typeId */
+    sizeof(UA_SByte), /* .memSize */
+    UA_TYPES_SBYTE, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    true, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    SByte_members /* .members */ },
 
 /* Byte */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 3},
-  .typeIndex = UA_TYPES_BYTE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Byte",
+    "Byte", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Byte),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = true,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Byte_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {3}}, /* .typeId */
+    sizeof(UA_Byte), /* .memSize */
+    UA_TYPES_BYTE, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    true, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Byte_members /* .members */ },
 
 /* Int16 */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 4},
-  .typeIndex = UA_TYPES_INT16,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Int16",
+    "Int16", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Int16),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Int16_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {4}}, /* .typeId */
+    sizeof(UA_Int16), /* .memSize */
+    UA_TYPES_INT16, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Int16_members /* .members */ },
 
 /* UInt16 */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 5},
-  .typeIndex = UA_TYPES_UINT16,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UInt16",
+    "UInt16", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UInt16),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = UInt16_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {5}}, /* .typeId */
+    sizeof(UA_UInt16), /* .memSize */
+    UA_TYPES_UINT16, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    UInt16_members /* .members */ },
 
 /* Int32 */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Int32",
+    "Int32", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Int32),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Int32_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_Int32), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Int32_members /* .members */ },
 
 /* UInt32 */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 7},
-  .typeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UInt32",
+    "UInt32", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UInt32),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = UInt32_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {7}}, /* .typeId */
+    sizeof(UA_UInt32), /* .memSize */
+    UA_TYPES_UINT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    UInt32_members /* .members */ },
 
 /* Int64 */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 8},
-  .typeIndex = UA_TYPES_INT64,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Int64",
+    "Int64", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Int64),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Int64_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {8}}, /* .typeId */
+    sizeof(UA_Int64), /* .memSize */
+    UA_TYPES_INT64, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Int64_members /* .members */ },
 
 /* UInt64 */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 9},
-  .typeIndex = UA_TYPES_UINT64,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UInt64",
+    "UInt64", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UInt64),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = UInt64_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {9}}, /* .typeId */
+    sizeof(UA_UInt64), /* .memSize */
+    UA_TYPES_UINT64, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    UInt64_members /* .members */ },
 
 /* Float */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 10},
-  .typeIndex = UA_TYPES_FLOAT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Float",
+    "Float", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Float),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_FLOAT,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Float_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {10}}, /* .typeId */
+    sizeof(UA_Float), /* .memSize */
+    UA_TYPES_FLOAT, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_FLOAT, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Float_members /* .members */ },
 
 /* Double */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 11},
-  .typeIndex = UA_TYPES_DOUBLE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Double",
+    "Double", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Double),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_FLOAT,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Double_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {11}}, /* .typeId */
+    sizeof(UA_Double), /* .memSize */
+    UA_TYPES_DOUBLE, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_FLOAT, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Double_members /* .members */ },
 
 /* String */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 12},
-  .typeIndex = UA_TYPES_STRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "String",
+    "String", /* .typeName */
 #endif
-  .memSize = sizeof(UA_String),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = String_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {12}}, /* .typeId */
+    sizeof(UA_String), /* .memSize */
+    UA_TYPES_STRING, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    String_members /* .members */ },
 
 /* DateTime */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 13},
-  .typeIndex = UA_TYPES_DATETIME,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DateTime",
+    "DateTime", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DateTime),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = DateTime_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {13}}, /* .typeId */
+    sizeof(UA_DateTime), /* .memSize */
+    UA_TYPES_DATETIME, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    DateTime_members /* .members */ },
 
 /* Guid */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 14},
-  .typeIndex = UA_TYPES_GUID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Guid",
+    "Guid", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Guid),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = (UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_Guid, data2) == sizeof(UA_UInt32) && offsetof(UA_Guid, data3) == (sizeof(UA_UInt16) + sizeof(UA_UInt32)) && offsetof(UA_Guid, data4) == (2*sizeof(UA_UInt32))),
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Guid_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {14}}, /* .typeId */
+    sizeof(UA_Guid), /* .memSize */
+    UA_TYPES_GUID, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    (UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_Guid, data2) == sizeof(UA_UInt32) && offsetof(UA_Guid, data3) == (sizeof(UA_UInt16) + sizeof(UA_UInt32)) && offsetof(UA_Guid, data4) == (2*sizeof(UA_UInt32))), /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Guid_members /* .members */ },
 
 /* ByteString */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 15},
-  .typeIndex = UA_TYPES_BYTESTRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ByteString",
+    "ByteString", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ByteString),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = ByteString_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {15}}, /* .typeId */
+    sizeof(UA_ByteString), /* .memSize */
+    UA_TYPES_BYTESTRING, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ByteString_members /* .members */ },
 
 /* XmlElement */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 16},
-  .typeIndex = UA_TYPES_XMLELEMENT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "XmlElement",
+    "XmlElement", /* .typeName */
 #endif
-  .memSize = sizeof(UA_XmlElement),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = XmlElement_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {16}}, /* .typeId */
+    sizeof(UA_XmlElement), /* .memSize */
+    UA_TYPES_XMLELEMENT, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    XmlElement_members /* .members */ },
 
 /* NodeId */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 17},
-  .typeIndex = UA_TYPES_NODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "NodeId",
+    "NodeId", /* .typeName */
 #endif
-  .memSize = sizeof(UA_NodeId),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = NodeId_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {17}}, /* .typeId */
+    sizeof(UA_NodeId), /* .memSize */
+    UA_TYPES_NODEID, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    NodeId_members /* .members */ },
 
 /* ExpandedNodeId */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 18},
-  .typeIndex = UA_TYPES_EXPANDEDNODEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ExpandedNodeId",
+    "ExpandedNodeId", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ExpandedNodeId),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = ExpandedNodeId_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {18}}, /* .typeId */
+    sizeof(UA_ExpandedNodeId), /* .memSize */
+    UA_TYPES_EXPANDEDNODEID, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ExpandedNodeId_members /* .members */ },
 
 /* StatusCode */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 19},
-  .typeIndex = UA_TYPES_STATUSCODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "StatusCode",
+    "StatusCode", /* .typeName */
 #endif
-  .memSize = sizeof(UA_StatusCode),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = StatusCode_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {19}}, /* .typeId */
+    sizeof(UA_StatusCode), /* .memSize */
+    UA_TYPES_STATUSCODE, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    StatusCode_members /* .members */ },
 
 /* QualifiedName */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 20},
-  .typeIndex = UA_TYPES_QUALIFIEDNAME,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "QualifiedName",
+    "QualifiedName", /* .typeName */
 #endif
-  .memSize = sizeof(UA_QualifiedName),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 2,
-  .members = QualifiedName_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {20}}, /* .typeId */
+    sizeof(UA_QualifiedName), /* .memSize */
+    UA_TYPES_QUALIFIEDNAME, /* .typeIndex */
+    2, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    QualifiedName_members /* .members */ },
 
 /* LocalizedText */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 21},
-  .typeIndex = UA_TYPES_LOCALIZEDTEXT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "LocalizedText",
+    "LocalizedText", /* .typeName */
 #endif
-  .memSize = sizeof(UA_LocalizedText),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = LocalizedText_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {21}}, /* .typeId */
+    sizeof(UA_LocalizedText), /* .memSize */
+    UA_TYPES_LOCALIZEDTEXT, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    LocalizedText_members /* .members */ },
 
 /* ExtensionObject */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 22},
-  .typeIndex = UA_TYPES_EXTENSIONOBJECT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ExtensionObject",
+    "ExtensionObject", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ExtensionObject),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = ExtensionObject_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {22}}, /* .typeId */
+    sizeof(UA_ExtensionObject), /* .memSize */
+    UA_TYPES_EXTENSIONOBJECT, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ExtensionObject_members /* .members */ },
 
 /* DataValue */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 23},
-  .typeIndex = UA_TYPES_DATAVALUE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DataValue",
+    "DataValue", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DataValue),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = DataValue_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {23}}, /* .typeId */
+    sizeof(UA_DataValue), /* .memSize */
+    UA_TYPES_DATAVALUE, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    DataValue_members /* .members */ },
 
 /* Variant */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 24},
-  .typeIndex = UA_TYPES_VARIANT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Variant",
+    "Variant", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Variant),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = Variant_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {24}}, /* .typeId */
+    sizeof(UA_Variant), /* .memSize */
+    UA_TYPES_VARIANT, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    Variant_members /* .members */ },
 
 /* DiagnosticInfo */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 25},
-  .typeIndex = UA_TYPES_DIAGNOSTICINFO,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DiagnosticInfo",
+    "DiagnosticInfo", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DiagnosticInfo),
-  .builtin = true,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = DiagnosticInfo_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {25}}, /* .typeId */
+    sizeof(UA_DiagnosticInfo), /* .memSize */
+    UA_TYPES_DIAGNOSTICINFO, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    DiagnosticInfo_members /* .members */ },
 
 /* SignedSoftwareCertificate */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 344},
-  .typeIndex = UA_TYPES_SIGNEDSOFTWARECERTIFICATE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SignedSoftwareCertificate",
+    "SignedSoftwareCertificate", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SignedSoftwareCertificate),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 346,
-  .membersSize = 2,
-  .members = SignedSoftwareCertificate_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {344}}, /* .typeId */
+    sizeof(UA_SignedSoftwareCertificate), /* .memSize */
+    UA_TYPES_SIGNEDSOFTWARECERTIFICATE, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    346, /* .binaryEncodingId */
+    SignedSoftwareCertificate_members /* .members */ },
 
 /* BrowsePathTarget */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 546},
-  .typeIndex = UA_TYPES_BROWSEPATHTARGET,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowsePathTarget",
+    "BrowsePathTarget", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowsePathTarget),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 548,
-  .membersSize = 2,
-  .members = BrowsePathTarget_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {546}}, /* .typeId */
+    sizeof(UA_BrowsePathTarget), /* .memSize */
+    UA_TYPES_BROWSEPATHTARGET, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    548, /* .binaryEncodingId */
+    BrowsePathTarget_members /* .members */ },
 
 /* ViewAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 373},
-  .typeIndex = UA_TYPES_VIEWATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ViewAttributes",
+    "ViewAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ViewAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 375,
-  .membersSize = 7,
-  .members = ViewAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {373}}, /* .typeId */
+    sizeof(UA_ViewAttributes), /* .memSize */
+    UA_TYPES_VIEWATTRIBUTES, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    375, /* .binaryEncodingId */
+    ViewAttributes_members /* .members */ },
 
 /* BrowseResultMask */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowseResultMask",
+    "BrowseResultMask", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowseResultMask),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = BrowseResultMask_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_BrowseResultMask), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    BrowseResultMask_members /* .members */ },
 
 /* RequestHeader */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 389},
-  .typeIndex = UA_TYPES_REQUESTHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RequestHeader",
+    "RequestHeader", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RequestHeader),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 391,
-  .membersSize = 7,
-  .members = RequestHeader_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {389}}, /* .typeId */
+    sizeof(UA_RequestHeader), /* .memSize */
+    UA_TYPES_REQUESTHEADER, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    391, /* .binaryEncodingId */
+    RequestHeader_members /* .members */ },
 
 /* MonitoredItemModifyResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 758},
-  .typeIndex = UA_TYPES_MONITOREDITEMMODIFYRESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MonitoredItemModifyResult",
+    "MonitoredItemModifyResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MonitoredItemModifyResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 760,
-  .membersSize = 4,
-  .members = MonitoredItemModifyResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {758}}, /* .typeId */
+    sizeof(UA_MonitoredItemModifyResult), /* .memSize */
+    UA_TYPES_MONITOREDITEMMODIFYRESULT, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    760, /* .binaryEncodingId */
+    MonitoredItemModifyResult_members /* .members */ },
 
 /* CloseSecureChannelRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 450},
-  .typeIndex = UA_TYPES_CLOSESECURECHANNELREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CloseSecureChannelRequest",
+    "CloseSecureChannelRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CloseSecureChannelRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 452,
-  .membersSize = 1,
-  .members = CloseSecureChannelRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {450}}, /* .typeId */
+    sizeof(UA_CloseSecureChannelRequest), /* .memSize */
+    UA_TYPES_CLOSESECURECHANNELREQUEST, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    452, /* .binaryEncodingId */
+    CloseSecureChannelRequest_members /* .members */ },
 
 /* AddNodesResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 483},
-  .typeIndex = UA_TYPES_ADDNODESRESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AddNodesResult",
+    "AddNodesResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AddNodesResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 485,
-  .membersSize = 2,
-  .members = AddNodesResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {483}}, /* .typeId */
+    sizeof(UA_AddNodesResult), /* .memSize */
+    UA_TYPES_ADDNODESRESULT, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    485, /* .binaryEncodingId */
+    AddNodesResult_members /* .members */ },
 
 /* VariableAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 355},
-  .typeIndex = UA_TYPES_VARIABLEATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "VariableAttributes",
+    "VariableAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_VariableAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 357,
-  .membersSize = 13,
-  .members = VariableAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {355}}, /* .typeId */
+    sizeof(UA_VariableAttributes), /* .memSize */
+    UA_TYPES_VARIABLEATTRIBUTES, /* .typeIndex */
+    13, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    357, /* .binaryEncodingId */
+    VariableAttributes_members /* .members */ },
 
 /* NotificationMessage */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 803},
-  .typeIndex = UA_TYPES_NOTIFICATIONMESSAGE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "NotificationMessage",
+    "NotificationMessage", /* .typeName */
 #endif
-  .memSize = sizeof(UA_NotificationMessage),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 805,
-  .membersSize = 3,
-  .members = NotificationMessage_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {803}}, /* .typeId */
+    sizeof(UA_NotificationMessage), /* .memSize */
+    UA_TYPES_NOTIFICATIONMESSAGE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    805, /* .binaryEncodingId */
+    NotificationMessage_members /* .members */ },
+
+/* FindServersOnNetworkRequest */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "FindServersOnNetworkRequest", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {12190}}, /* .typeId */
+    sizeof(UA_FindServersOnNetworkRequest), /* .memSize */
+    UA_TYPES_FINDSERVERSONNETWORKREQUEST, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    12208, /* .binaryEncodingId */
+    FindServersOnNetworkRequest_members /* .members */ },
 
 /* NodeAttributesMask */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "NodeAttributesMask",
+    "NodeAttributesMask", /* .typeName */
 #endif
-  .memSize = sizeof(UA_NodeAttributesMask),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = NodeAttributesMask_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_NodeAttributesMask), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    NodeAttributesMask_members /* .members */ },
 
 /* MonitoringMode */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MonitoringMode",
+    "MonitoringMode", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MonitoringMode),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = MonitoringMode_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_MonitoringMode), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    MonitoringMode_members /* .members */ },
+
+/* MdnsDiscoveryConfiguration */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "MdnsDiscoveryConfiguration", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {12891}}, /* .typeId */
+    sizeof(UA_MdnsDiscoveryConfiguration), /* .memSize */
+    UA_TYPES_MDNSDISCOVERYCONFIGURATION, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    12901, /* .binaryEncodingId */
+    MdnsDiscoveryConfiguration_members /* .members */ },
 
 /* CallMethodResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 707},
-  .typeIndex = UA_TYPES_CALLMETHODRESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CallMethodResult",
+    "CallMethodResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CallMethodResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 709,
-  .membersSize = 4,
-  .members = CallMethodResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {707}}, /* .typeId */
+    sizeof(UA_CallMethodResult), /* .memSize */
+    UA_TYPES_CALLMETHODRESULT, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    709, /* .binaryEncodingId */
+    CallMethodResult_members /* .members */ },
 
 /* ParsingResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 610},
-  .typeIndex = UA_TYPES_PARSINGRESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ParsingResult",
+    "ParsingResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ParsingResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 612,
-  .membersSize = 3,
-  .members = ParsingResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {610}}, /* .typeId */
+    sizeof(UA_ParsingResult), /* .memSize */
+    UA_TYPES_PARSINGRESULT, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    612, /* .binaryEncodingId */
+    ParsingResult_members /* .members */ },
 
 /* RelativePathElement */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 537},
-  .typeIndex = UA_TYPES_RELATIVEPATHELEMENT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RelativePathElement",
+    "RelativePathElement", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RelativePathElement),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 539,
-  .membersSize = 4,
-  .members = RelativePathElement_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {537}}, /* .typeId */
+    sizeof(UA_RelativePathElement), /* .memSize */
+    UA_TYPES_RELATIVEPATHELEMENT, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    539, /* .binaryEncodingId */
+    RelativePathElement_members /* .members */ },
 
 /* BrowseDirection */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowseDirection",
+    "BrowseDirection", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowseDirection),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = BrowseDirection_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_BrowseDirection), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    BrowseDirection_members /* .members */ },
 
 /* CallMethodRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 704},
-  .typeIndex = UA_TYPES_CALLMETHODREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CallMethodRequest",
+    "CallMethodRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CallMethodRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 706,
-  .membersSize = 3,
-  .members = CallMethodRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {704}}, /* .typeId */
+    sizeof(UA_CallMethodRequest), /* .memSize */
+    UA_TYPES_CALLMETHODREQUEST, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    706, /* .binaryEncodingId */
+    CallMethodRequest_members /* .members */ },
 
 /* UnregisterNodesRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 564},
-  .typeIndex = UA_TYPES_UNREGISTERNODESREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UnregisterNodesRequest",
+    "UnregisterNodesRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UnregisterNodesRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 566,
-  .membersSize = 2,
-  .members = UnregisterNodesRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {564}}, /* .typeId */
+    sizeof(UA_UnregisterNodesRequest), /* .memSize */
+    UA_TYPES_UNREGISTERNODESREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    566, /* .binaryEncodingId */
+    UnregisterNodesRequest_members /* .members */ },
 
 /* ContentFilterElementResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 604},
-  .typeIndex = UA_TYPES_CONTENTFILTERELEMENTRESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ContentFilterElementResult",
+    "ContentFilterElementResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ContentFilterElementResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 606,
-  .membersSize = 3,
-  .members = ContentFilterElementResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {604}}, /* .typeId */
+    sizeof(UA_ContentFilterElementResult), /* .memSize */
+    UA_TYPES_CONTENTFILTERELEMENTRESULT, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    606, /* .binaryEncodingId */
+    ContentFilterElementResult_members /* .members */ },
 
 /* QueryDataSet */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 577},
-  .typeIndex = UA_TYPES_QUERYDATASET,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "QueryDataSet",
+    "QueryDataSet", /* .typeName */
 #endif
-  .memSize = sizeof(UA_QueryDataSet),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 579,
-  .membersSize = 3,
-  .members = QueryDataSet_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {577}}, /* .typeId */
+    sizeof(UA_QueryDataSet), /* .memSize */
+    UA_TYPES_QUERYDATASET, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    579, /* .binaryEncodingId */
+    QueryDataSet_members /* .members */ },
 
 /* AnonymousIdentityToken */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 319},
-  .typeIndex = UA_TYPES_ANONYMOUSIDENTITYTOKEN,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AnonymousIdentityToken",
+    "AnonymousIdentityToken", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AnonymousIdentityToken),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 321,
-  .membersSize = 1,
-  .members = AnonymousIdentityToken_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {319}}, /* .typeId */
+    sizeof(UA_AnonymousIdentityToken), /* .memSize */
+    UA_TYPES_ANONYMOUSIDENTITYTOKEN, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    321, /* .binaryEncodingId */
+    AnonymousIdentityToken_members /* .members */ },
 
 /* SetPublishingModeRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 797},
-  .typeIndex = UA_TYPES_SETPUBLISHINGMODEREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SetPublishingModeRequest",
+    "SetPublishingModeRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SetPublishingModeRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 799,
-  .membersSize = 3,
-  .members = SetPublishingModeRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {797}}, /* .typeId */
+    sizeof(UA_SetPublishingModeRequest), /* .memSize */
+    UA_TYPES_SETPUBLISHINGMODEREQUEST, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    799, /* .binaryEncodingId */
+    SetPublishingModeRequest_members /* .members */ },
 
 /* TimestampsToReturn */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "TimestampsToReturn",
+    "TimestampsToReturn", /* .typeName */
 #endif
-  .memSize = sizeof(UA_TimestampsToReturn),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = TimestampsToReturn_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_TimestampsToReturn), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    TimestampsToReturn_members /* .members */ },
 
 /* CallRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 710},
-  .typeIndex = UA_TYPES_CALLREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CallRequest",
+    "CallRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CallRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 712,
-  .membersSize = 2,
-  .members = CallRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {710}}, /* .typeId */
+    sizeof(UA_CallRequest), /* .memSize */
+    UA_TYPES_CALLREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    712, /* .binaryEncodingId */
+    CallRequest_members /* .members */ },
 
 /* MethodAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 358},
-  .typeIndex = UA_TYPES_METHODATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MethodAttributes",
+    "MethodAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MethodAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 360,
-  .membersSize = 7,
-  .members = MethodAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {358}}, /* .typeId */
+    sizeof(UA_MethodAttributes), /* .memSize */
+    UA_TYPES_METHODATTRIBUTES, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    360, /* .binaryEncodingId */
+    MethodAttributes_members /* .members */ },
 
 /* DeleteReferencesItem */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 385},
-  .typeIndex = UA_TYPES_DELETEREFERENCESITEM,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteReferencesItem",
+    "DeleteReferencesItem", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteReferencesItem),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 387,
-  .membersSize = 5,
-  .members = DeleteReferencesItem_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {385}}, /* .typeId */
+    sizeof(UA_DeleteReferencesItem), /* .memSize */
+    UA_TYPES_DELETEREFERENCESITEM, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    387, /* .binaryEncodingId */
+    DeleteReferencesItem_members /* .members */ },
 
 /* WriteValue */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 668},
-  .typeIndex = UA_TYPES_WRITEVALUE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "WriteValue",
+    "WriteValue", /* .typeName */
 #endif
-  .memSize = sizeof(UA_WriteValue),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 670,
-  .membersSize = 4,
-  .members = WriteValue_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {668}}, /* .typeId */
+    sizeof(UA_WriteValue), /* .memSize */
+    UA_TYPES_WRITEVALUE, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    670, /* .binaryEncodingId */
+    WriteValue_members /* .members */ },
 
 /* MonitoredItemCreateResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 746},
-  .typeIndex = UA_TYPES_MONITOREDITEMCREATERESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MonitoredItemCreateResult",
+    "MonitoredItemCreateResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MonitoredItemCreateResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 748,
-  .membersSize = 5,
-  .members = MonitoredItemCreateResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {746}}, /* .typeId */
+    sizeof(UA_MonitoredItemCreateResult), /* .memSize */
+    UA_TYPES_MONITOREDITEMCREATERESULT, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    748, /* .binaryEncodingId */
+    MonitoredItemCreateResult_members /* .members */ },
 
 /* MessageSecurityMode */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MessageSecurityMode",
+    "MessageSecurityMode", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MessageSecurityMode),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = MessageSecurityMode_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_MessageSecurityMode), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    MessageSecurityMode_members /* .members */ },
 
 /* MonitoringParameters */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 740},
-  .typeIndex = UA_TYPES_MONITORINGPARAMETERS,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MonitoringParameters",
+    "MonitoringParameters", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MonitoringParameters),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 742,
-  .membersSize = 5,
-  .members = MonitoringParameters_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {740}}, /* .typeId */
+    sizeof(UA_MonitoringParameters), /* .memSize */
+    UA_TYPES_MONITORINGPARAMETERS, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    742, /* .binaryEncodingId */
+    MonitoringParameters_members /* .members */ },
 
 /* SignatureData */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 456},
-  .typeIndex = UA_TYPES_SIGNATUREDATA,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SignatureData",
+    "SignatureData", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SignatureData),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 458,
-  .membersSize = 2,
-  .members = SignatureData_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {456}}, /* .typeId */
+    sizeof(UA_SignatureData), /* .memSize */
+    UA_TYPES_SIGNATUREDATA, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    458, /* .binaryEncodingId */
+    SignatureData_members /* .members */ },
 
 /* ReferenceNode */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 285},
-  .typeIndex = UA_TYPES_REFERENCENODE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ReferenceNode",
+    "ReferenceNode", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ReferenceNode),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 287,
-  .membersSize = 3,
-  .members = ReferenceNode_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {285}}, /* .typeId */
+    sizeof(UA_ReferenceNode), /* .memSize */
+    UA_TYPES_REFERENCENODE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    287, /* .binaryEncodingId */
+    ReferenceNode_members /* .members */ },
 
 /* Argument */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 296},
-  .typeIndex = UA_TYPES_ARGUMENT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "Argument",
+    "Argument", /* .typeName */
 #endif
-  .memSize = sizeof(UA_Argument),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 298,
-  .membersSize = 5,
-  .members = Argument_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {296}}, /* .typeId */
+    sizeof(UA_Argument), /* .memSize */
+    UA_TYPES_ARGUMENT, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    298, /* .binaryEncodingId */
+    Argument_members /* .members */ },
 
 /* UserIdentityToken */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 316},
-  .typeIndex = UA_TYPES_USERIDENTITYTOKEN,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UserIdentityToken",
+    "UserIdentityToken", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UserIdentityToken),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 318,
-  .membersSize = 1,
-  .members = UserIdentityToken_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {316}}, /* .typeId */
+    sizeof(UA_UserIdentityToken), /* .memSize */
+    UA_TYPES_USERIDENTITYTOKEN, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    318, /* .binaryEncodingId */
+    UserIdentityToken_members /* .members */ },
 
 /* ObjectTypeAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 361},
-  .typeIndex = UA_TYPES_OBJECTTYPEATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ObjectTypeAttributes",
+    "ObjectTypeAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ObjectTypeAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 363,
-  .membersSize = 6,
-  .members = ObjectTypeAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {361}}, /* .typeId */
+    sizeof(UA_ObjectTypeAttributes), /* .memSize */
+    UA_TYPES_OBJECTTYPEATTRIBUTES, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    363, /* .binaryEncodingId */
+    ObjectTypeAttributes_members /* .members */ },
 
 /* DeadbandType */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeadbandType",
+    "DeadbandType", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeadbandType),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = DeadbandType_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_DeadbandType), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    DeadbandType_members /* .members */ },
 
 /* SecurityTokenRequestType */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SecurityTokenRequestType",
+    "SecurityTokenRequestType", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SecurityTokenRequestType),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = SecurityTokenRequestType_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_SecurityTokenRequestType), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    SecurityTokenRequestType_members /* .members */ },
 
 /* DataChangeTrigger */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DataChangeTrigger",
+    "DataChangeTrigger", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DataChangeTrigger),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = DataChangeTrigger_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_DataChangeTrigger), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    DataChangeTrigger_members /* .members */ },
 
 /* BuildInfo */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 338},
-  .typeIndex = UA_TYPES_BUILDINFO,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BuildInfo",
+    "BuildInfo", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BuildInfo),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 340,
-  .membersSize = 6,
-  .members = BuildInfo_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {338}}, /* .typeId */
+    sizeof(UA_BuildInfo), /* .memSize */
+    UA_TYPES_BUILDINFO, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    340, /* .binaryEncodingId */
+    BuildInfo_members /* .members */ },
 
 /* NodeClass */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "NodeClass",
+    "NodeClass", /* .typeName */
 #endif
-  .memSize = sizeof(UA_NodeClass),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = NodeClass_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_NodeClass), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    NodeClass_members /* .members */ },
 
 /* ChannelSecurityToken */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 441},
-  .typeIndex = UA_TYPES_CHANNELSECURITYTOKEN,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ChannelSecurityToken",
+    "ChannelSecurityToken", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ChannelSecurityToken),
-  .builtin = false,
-  .pointerFree = true,
-  .overlayable = true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_ChannelSecurityToken, tokenId) == (offsetof(UA_ChannelSecurityToken, channelId) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_ChannelSecurityToken, createdAt) == (offsetof(UA_ChannelSecurityToken, tokenId) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_ChannelSecurityToken, revisedLifetime) == (offsetof(UA_ChannelSecurityToken, createdAt) + sizeof(UA_DateTime)),
-  .binaryEncodingId = 443,
-  .membersSize = 4,
-  .members = ChannelSecurityToken_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {441}}, /* .typeId */
+    sizeof(UA_ChannelSecurityToken), /* .memSize */
+    UA_TYPES_CHANNELSECURITYTOKEN, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_ChannelSecurityToken, tokenId) == (offsetof(UA_ChannelSecurityToken, channelId) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_ChannelSecurityToken, createdAt) == (offsetof(UA_ChannelSecurityToken, tokenId) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_ChannelSecurityToken, revisedLifetime) == (offsetof(UA_ChannelSecurityToken, createdAt) + sizeof(UA_DateTime)), /* .overlayable */ 
+    443, /* .binaryEncodingId */
+    ChannelSecurityToken_members /* .members */ },
 
 /* MonitoredItemNotification */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 806},
-  .typeIndex = UA_TYPES_MONITOREDITEMNOTIFICATION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MonitoredItemNotification",
+    "MonitoredItemNotification", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MonitoredItemNotification),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 808,
-  .membersSize = 2,
-  .members = MonitoredItemNotification_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {806}}, /* .typeId */
+    sizeof(UA_MonitoredItemNotification), /* .memSize */
+    UA_TYPES_MONITOREDITEMNOTIFICATION, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    808, /* .binaryEncodingId */
+    MonitoredItemNotification_members /* .members */ },
 
 /* DeleteNodesItem */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 382},
-  .typeIndex = UA_TYPES_DELETENODESITEM,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteNodesItem",
+    "DeleteNodesItem", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteNodesItem),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 384,
-  .membersSize = 2,
-  .members = DeleteNodesItem_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {382}}, /* .typeId */
+    sizeof(UA_DeleteNodesItem), /* .memSize */
+    UA_TYPES_DELETENODESITEM, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    384, /* .binaryEncodingId */
+    DeleteNodesItem_members /* .members */ },
 
 /* SubscriptionAcknowledgement */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 821},
-  .typeIndex = UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SubscriptionAcknowledgement",
+    "SubscriptionAcknowledgement", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SubscriptionAcknowledgement),
-  .builtin = false,
-  .pointerFree = true,
-  .overlayable = true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_SubscriptionAcknowledgement, sequenceNumber) == (offsetof(UA_SubscriptionAcknowledgement, subscriptionId) + sizeof(UA_UInt32)),
-  .binaryEncodingId = 823,
-  .membersSize = 2,
-  .members = SubscriptionAcknowledgement_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {821}}, /* .typeId */
+    sizeof(UA_SubscriptionAcknowledgement), /* .memSize */
+    UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_SubscriptionAcknowledgement, sequenceNumber) == (offsetof(UA_SubscriptionAcknowledgement, subscriptionId) + sizeof(UA_UInt32)), /* .overlayable */ 
+    823, /* .binaryEncodingId */
+    SubscriptionAcknowledgement_members /* .members */ },
 
 /* ReadValueId */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 626},
-  .typeIndex = UA_TYPES_READVALUEID,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ReadValueId",
+    "ReadValueId", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ReadValueId),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 628,
-  .membersSize = 4,
-  .members = ReadValueId_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {626}}, /* .typeId */
+    sizeof(UA_ReadValueId), /* .memSize */
+    UA_TYPES_READVALUEID, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    628, /* .binaryEncodingId */
+    ReadValueId_members /* .members */ },
 
 /* DataTypeAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 370},
-  .typeIndex = UA_TYPES_DATATYPEATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DataTypeAttributes",
+    "DataTypeAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DataTypeAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 372,
-  .membersSize = 6,
-  .members = DataTypeAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {370}}, /* .typeId */
+    sizeof(UA_DataTypeAttributes), /* .memSize */
+    UA_TYPES_DATATYPEATTRIBUTES, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    372, /* .binaryEncodingId */
+    DataTypeAttributes_members /* .members */ },
 
 /* ResponseHeader */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 392},
-  .typeIndex = UA_TYPES_RESPONSEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ResponseHeader",
+    "ResponseHeader", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ResponseHeader),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 394,
-  .membersSize = 6,
-  .members = ResponseHeader_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {392}}, /* .typeId */
+    sizeof(UA_ResponseHeader), /* .memSize */
+    UA_TYPES_RESPONSEHEADER, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    394, /* .binaryEncodingId */
+    ResponseHeader_members /* .members */ },
 
 /* DeleteSubscriptionsRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 845},
-  .typeIndex = UA_TYPES_DELETESUBSCRIPTIONSREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteSubscriptionsRequest",
+    "DeleteSubscriptionsRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteSubscriptionsRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 847,
-  .membersSize = 2,
-  .members = DeleteSubscriptionsRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {845}}, /* .typeId */
+    sizeof(UA_DeleteSubscriptionsRequest), /* .memSize */
+    UA_TYPES_DELETESUBSCRIPTIONSREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    847, /* .binaryEncodingId */
+    DeleteSubscriptionsRequest_members /* .members */ },
 
 /* ViewDescription */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 511},
-  .typeIndex = UA_TYPES_VIEWDESCRIPTION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ViewDescription",
+    "ViewDescription", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ViewDescription),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 513,
-  .membersSize = 3,
-  .members = ViewDescription_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {511}}, /* .typeId */
+    sizeof(UA_ViewDescription), /* .memSize */
+    UA_TYPES_VIEWDESCRIPTION, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    513, /* .binaryEncodingId */
+    ViewDescription_members /* .members */ },
+
+/* ServerOnNetwork */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "ServerOnNetwork", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {12189}}, /* .typeId */
+    sizeof(UA_ServerOnNetwork), /* .memSize */
+    UA_TYPES_SERVERONNETWORK, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    12207, /* .binaryEncodingId */
+    ServerOnNetwork_members /* .members */ },
 
 /* DeleteMonitoredItemsResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 782},
-  .typeIndex = UA_TYPES_DELETEMONITOREDITEMSRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteMonitoredItemsResponse",
+    "DeleteMonitoredItemsResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteMonitoredItemsResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 784,
-  .membersSize = 3,
-  .members = DeleteMonitoredItemsResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {782}}, /* .typeId */
+    sizeof(UA_DeleteMonitoredItemsResponse), /* .memSize */
+    UA_TYPES_DELETEMONITOREDITEMSRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    784, /* .binaryEncodingId */
+    DeleteMonitoredItemsResponse_members /* .members */ },
+
+/* FindServersOnNetworkResponse */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "FindServersOnNetworkResponse", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {12191}}, /* .typeId */
+    sizeof(UA_FindServersOnNetworkResponse), /* .memSize */
+    UA_TYPES_FINDSERVERSONNETWORKRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    12209, /* .binaryEncodingId */
+    FindServersOnNetworkResponse_members /* .members */ },
 
 /* NodeAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 349},
-  .typeIndex = UA_TYPES_NODEATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "NodeAttributes",
+    "NodeAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_NodeAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 351,
-  .membersSize = 5,
-  .members = NodeAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {349}}, /* .typeId */
+    sizeof(UA_NodeAttributes), /* .memSize */
+    UA_TYPES_NODEATTRIBUTES, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    351, /* .binaryEncodingId */
+    NodeAttributes_members /* .members */ },
 
 /* RegisterNodesRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 558},
-  .typeIndex = UA_TYPES_REGISTERNODESREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RegisterNodesRequest",
+    "RegisterNodesRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RegisterNodesRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 560,
-  .membersSize = 2,
-  .members = RegisterNodesRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {558}}, /* .typeId */
+    sizeof(UA_RegisterNodesRequest), /* .memSize */
+    UA_TYPES_REGISTERNODESREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    560, /* .binaryEncodingId */
+    RegisterNodesRequest_members /* .members */ },
 
 /* DeleteNodesRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 498},
-  .typeIndex = UA_TYPES_DELETENODESREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteNodesRequest",
+    "DeleteNodesRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteNodesRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 500,
-  .membersSize = 2,
-  .members = DeleteNodesRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {498}}, /* .typeId */
+    sizeof(UA_DeleteNodesRequest), /* .memSize */
+    UA_TYPES_DELETENODESREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    500, /* .binaryEncodingId */
+    DeleteNodesRequest_members /* .members */ },
 
 /* PublishResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 827},
-  .typeIndex = UA_TYPES_PUBLISHRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "PublishResponse",
+    "PublishResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_PublishResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 829,
-  .membersSize = 7,
-  .members = PublishResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {827}}, /* .typeId */
+    sizeof(UA_PublishResponse), /* .memSize */
+    UA_TYPES_PUBLISHRESPONSE, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    829, /* .binaryEncodingId */
+    PublishResponse_members /* .members */ },
 
 /* MonitoredItemModifyRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 755},
-  .typeIndex = UA_TYPES_MONITOREDITEMMODIFYREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MonitoredItemModifyRequest",
+    "MonitoredItemModifyRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MonitoredItemModifyRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 757,
-  .membersSize = 2,
-  .members = MonitoredItemModifyRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {755}}, /* .typeId */
+    sizeof(UA_MonitoredItemModifyRequest), /* .memSize */
+    UA_TYPES_MONITOREDITEMMODIFYREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    757, /* .binaryEncodingId */
+    MonitoredItemModifyRequest_members /* .members */ },
 
 /* UserNameIdentityToken */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 322},
-  .typeIndex = UA_TYPES_USERNAMEIDENTITYTOKEN,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UserNameIdentityToken",
+    "UserNameIdentityToken", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UserNameIdentityToken),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 324,
-  .membersSize = 4,
-  .members = UserNameIdentityToken_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {322}}, /* .typeId */
+    sizeof(UA_UserNameIdentityToken), /* .memSize */
+    UA_TYPES_USERNAMEIDENTITYTOKEN, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    324, /* .binaryEncodingId */
+    UserNameIdentityToken_members /* .members */ },
 
 /* IdType */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "IdType",
+    "IdType", /* .typeName */
 #endif
-  .memSize = sizeof(UA_IdType),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = IdType_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_IdType), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    IdType_members /* .members */ },
 
 /* UserTokenType */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UserTokenType",
+    "UserTokenType", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UserTokenType),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = UserTokenType_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_UserTokenType), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    UserTokenType_members /* .members */ },
 
 /* ActivateSessionRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 465},
-  .typeIndex = UA_TYPES_ACTIVATESESSIONREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ActivateSessionRequest",
+    "ActivateSessionRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ActivateSessionRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 467,
-  .membersSize = 6,
-  .members = ActivateSessionRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {465}}, /* .typeId */
+    sizeof(UA_ActivateSessionRequest), /* .memSize */
+    UA_TYPES_ACTIVATESESSIONREQUEST, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    467, /* .binaryEncodingId */
+    ActivateSessionRequest_members /* .members */ },
 
 /* OpenSecureChannelResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 447},
-  .typeIndex = UA_TYPES_OPENSECURECHANNELRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "OpenSecureChannelResponse",
+    "OpenSecureChannelResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_OpenSecureChannelResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 449,
-  .membersSize = 4,
-  .members = OpenSecureChannelResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {447}}, /* .typeId */
+    sizeof(UA_OpenSecureChannelResponse), /* .memSize */
+    UA_TYPES_OPENSECURECHANNELRESPONSE, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    449, /* .binaryEncodingId */
+    OpenSecureChannelResponse_members /* .members */ },
 
 /* ApplicationType */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ApplicationType",
+    "ApplicationType", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ApplicationType),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = ApplicationType_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_ApplicationType), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ApplicationType_members /* .members */ },
 
 /* ServerState */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ServerState",
+    "ServerState", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ServerState),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = ServerState_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_ServerState), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ServerState_members /* .members */ },
 
 /* QueryNextResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 622},
-  .typeIndex = UA_TYPES_QUERYNEXTRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "QueryNextResponse",
+    "QueryNextResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_QueryNextResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 624,
-  .membersSize = 3,
-  .members = QueryNextResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {622}}, /* .typeId */
+    sizeof(UA_QueryNextResponse), /* .memSize */
+    UA_TYPES_QUERYNEXTRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    624, /* .binaryEncodingId */
+    QueryNextResponse_members /* .members */ },
+
+/* DiscoveryConfiguration */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "DiscoveryConfiguration", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {12890}}, /* .typeId */
+    sizeof(UA_DiscoveryConfiguration), /* .memSize */
+    UA_TYPES_DISCOVERYCONFIGURATION, /* .typeIndex */
+    0, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true, /* .overlayable */ 
+    12900, /* .binaryEncodingId */
+    DiscoveryConfiguration_members /* .members */ },
 
 /* ActivateSessionResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 468},
-  .typeIndex = UA_TYPES_ACTIVATESESSIONRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ActivateSessionResponse",
+    "ActivateSessionResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ActivateSessionResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 470,
-  .membersSize = 4,
-  .members = ActivateSessionResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {468}}, /* .typeId */
+    sizeof(UA_ActivateSessionResponse), /* .memSize */
+    UA_TYPES_ACTIVATESESSIONRESPONSE, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    470, /* .binaryEncodingId */
+    ActivateSessionResponse_members /* .members */ },
 
 /* FilterOperator */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 6},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "FilterOperator",
+    "FilterOperator", /* .typeName */
 #endif
-  .memSize = sizeof(UA_FilterOperator),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = FilterOperator_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_FilterOperator), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    FilterOperator_members /* .members */ },
 
 /* QueryNextRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 619},
-  .typeIndex = UA_TYPES_QUERYNEXTREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "QueryNextRequest",
+    "QueryNextRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_QueryNextRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 621,
-  .membersSize = 3,
-  .members = QueryNextRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {619}}, /* .typeId */
+    sizeof(UA_QueryNextRequest), /* .memSize */
+    UA_TYPES_QUERYNEXTREQUEST, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    621, /* .binaryEncodingId */
+    QueryNextRequest_members /* .members */ },
 
 /* WriteResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 674},
-  .typeIndex = UA_TYPES_WRITERESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "WriteResponse",
+    "WriteResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_WriteResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 676,
-  .membersSize = 3,
-  .members = WriteResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {674}}, /* .typeId */
+    sizeof(UA_WriteResponse), /* .memSize */
+    UA_TYPES_WRITERESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    676, /* .binaryEncodingId */
+    WriteResponse_members /* .members */ },
 
 /* BrowseNextRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 531},
-  .typeIndex = UA_TYPES_BROWSENEXTREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowseNextRequest",
+    "BrowseNextRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowseNextRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 533,
-  .membersSize = 3,
-  .members = BrowseNextRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {531}}, /* .typeId */
+    sizeof(UA_BrowseNextRequest), /* .memSize */
+    UA_TYPES_BROWSENEXTREQUEST, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    533, /* .binaryEncodingId */
+    BrowseNextRequest_members /* .members */ },
 
 /* CreateSubscriptionRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 785},
-  .typeIndex = UA_TYPES_CREATESUBSCRIPTIONREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CreateSubscriptionRequest",
+    "CreateSubscriptionRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CreateSubscriptionRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 787,
-  .membersSize = 7,
-  .members = CreateSubscriptionRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {785}}, /* .typeId */
+    sizeof(UA_CreateSubscriptionRequest), /* .memSize */
+    UA_TYPES_CREATESUBSCRIPTIONREQUEST, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    787, /* .binaryEncodingId */
+    CreateSubscriptionRequest_members /* .members */ },
 
 /* VariableTypeAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 364},
-  .typeIndex = UA_TYPES_VARIABLETYPEATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "VariableTypeAttributes",
+    "VariableTypeAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_VariableTypeAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 366,
-  .membersSize = 10,
-  .members = VariableTypeAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {364}}, /* .typeId */
+    sizeof(UA_VariableTypeAttributes), /* .memSize */
+    UA_TYPES_VARIABLETYPEATTRIBUTES, /* .typeIndex */
+    10, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    366, /* .binaryEncodingId */
+    VariableTypeAttributes_members /* .members */ },
 
 /* BrowsePathResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 549},
-  .typeIndex = UA_TYPES_BROWSEPATHRESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowsePathResult",
+    "BrowsePathResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowsePathResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 551,
-  .membersSize = 2,
-  .members = BrowsePathResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {549}}, /* .typeId */
+    sizeof(UA_BrowsePathResult), /* .memSize */
+    UA_TYPES_BROWSEPATHRESULT, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    551, /* .binaryEncodingId */
+    BrowsePathResult_members /* .members */ },
 
 /* ModifySubscriptionResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 794},
-  .typeIndex = UA_TYPES_MODIFYSUBSCRIPTIONRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ModifySubscriptionResponse",
+    "ModifySubscriptionResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ModifySubscriptionResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 796,
-  .membersSize = 4,
-  .members = ModifySubscriptionResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {794}}, /* .typeId */
+    sizeof(UA_ModifySubscriptionResponse), /* .memSize */
+    UA_TYPES_MODIFYSUBSCRIPTIONRESPONSE, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    796, /* .binaryEncodingId */
+    ModifySubscriptionResponse_members /* .members */ },
 
 /* OpenSecureChannelRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 444},
-  .typeIndex = UA_TYPES_OPENSECURECHANNELREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "OpenSecureChannelRequest",
+    "OpenSecureChannelRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_OpenSecureChannelRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 446,
-  .membersSize = 6,
-  .members = OpenSecureChannelRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {444}}, /* .typeId */
+    sizeof(UA_OpenSecureChannelRequest), /* .memSize */
+    UA_TYPES_OPENSECURECHANNELREQUEST, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    446, /* .binaryEncodingId */
+    OpenSecureChannelRequest_members /* .members */ },
 
 /* RegisterNodesResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 561},
-  .typeIndex = UA_TYPES_REGISTERNODESRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RegisterNodesResponse",
+    "RegisterNodesResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RegisterNodesResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 563,
-  .membersSize = 2,
-  .members = RegisterNodesResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {561}}, /* .typeId */
+    sizeof(UA_RegisterNodesResponse), /* .memSize */
+    UA_TYPES_REGISTERNODESRESPONSE, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    563, /* .binaryEncodingId */
+    RegisterNodesResponse_members /* .members */ },
 
 /* CloseSessionRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 471},
-  .typeIndex = UA_TYPES_CLOSESESSIONREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CloseSessionRequest",
+    "CloseSessionRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CloseSessionRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 473,
-  .membersSize = 2,
-  .members = CloseSessionRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {471}}, /* .typeId */
+    sizeof(UA_CloseSessionRequest), /* .memSize */
+    UA_TYPES_CLOSESESSIONREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    473, /* .binaryEncodingId */
+    CloseSessionRequest_members /* .members */ },
 
 /* ModifySubscriptionRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 791},
-  .typeIndex = UA_TYPES_MODIFYSUBSCRIPTIONREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ModifySubscriptionRequest",
+    "ModifySubscriptionRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ModifySubscriptionRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 793,
-  .membersSize = 7,
-  .members = ModifySubscriptionRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {791}}, /* .typeId */
+    sizeof(UA_ModifySubscriptionRequest), /* .memSize */
+    UA_TYPES_MODIFYSUBSCRIPTIONREQUEST, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    793, /* .binaryEncodingId */
+    ModifySubscriptionRequest_members /* .members */ },
 
 /* UserTokenPolicy */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 304},
-  .typeIndex = UA_TYPES_USERTOKENPOLICY,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UserTokenPolicy",
+    "UserTokenPolicy", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UserTokenPolicy),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 306,
-  .membersSize = 5,
-  .members = UserTokenPolicy_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {304}}, /* .typeId */
+    sizeof(UA_UserTokenPolicy), /* .memSize */
+    UA_TYPES_USERTOKENPOLICY, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    306, /* .binaryEncodingId */
+    UserTokenPolicy_members /* .members */ },
 
 /* DeleteMonitoredItemsRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 779},
-  .typeIndex = UA_TYPES_DELETEMONITOREDITEMSREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteMonitoredItemsRequest",
+    "DeleteMonitoredItemsRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteMonitoredItemsRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 781,
-  .membersSize = 3,
-  .members = DeleteMonitoredItemsRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {779}}, /* .typeId */
+    sizeof(UA_DeleteMonitoredItemsRequest), /* .memSize */
+    UA_TYPES_DELETEMONITOREDITEMSREQUEST, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    781, /* .binaryEncodingId */
+    DeleteMonitoredItemsRequest_members /* .members */ },
 
 /* ReferenceTypeAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 367},
-  .typeIndex = UA_TYPES_REFERENCETYPEATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ReferenceTypeAttributes",
+    "ReferenceTypeAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ReferenceTypeAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 369,
-  .membersSize = 8,
-  .members = ReferenceTypeAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {367}}, /* .typeId */
+    sizeof(UA_ReferenceTypeAttributes), /* .memSize */
+    UA_TYPES_REFERENCETYPEATTRIBUTES, /* .typeIndex */
+    8, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    369, /* .binaryEncodingId */
+    ReferenceTypeAttributes_members /* .members */ },
 
 /* SetMonitoringModeRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 767},
-  .typeIndex = UA_TYPES_SETMONITORINGMODEREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SetMonitoringModeRequest",
+    "SetMonitoringModeRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SetMonitoringModeRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 769,
-  .membersSize = 4,
-  .members = SetMonitoringModeRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {767}}, /* .typeId */
+    sizeof(UA_SetMonitoringModeRequest), /* .memSize */
+    UA_TYPES_SETMONITORINGMODEREQUEST, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    769, /* .binaryEncodingId */
+    SetMonitoringModeRequest_members /* .members */ },
 
 /* UnregisterNodesResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 567},
-  .typeIndex = UA_TYPES_UNREGISTERNODESRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "UnregisterNodesResponse",
+    "UnregisterNodesResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_UnregisterNodesResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 569,
-  .membersSize = 1,
-  .members = UnregisterNodesResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {567}}, /* .typeId */
+    sizeof(UA_UnregisterNodesResponse), /* .memSize */
+    UA_TYPES_UNREGISTERNODESRESPONSE, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    569, /* .binaryEncodingId */
+    UnregisterNodesResponse_members /* .members */ },
 
 /* WriteRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 671},
-  .typeIndex = UA_TYPES_WRITEREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "WriteRequest",
+    "WriteRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_WriteRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 673,
-  .membersSize = 2,
-  .members = WriteRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {671}}, /* .typeId */
+    sizeof(UA_WriteRequest), /* .memSize */
+    UA_TYPES_WRITEREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    673, /* .binaryEncodingId */
+    WriteRequest_members /* .members */ },
 
 /* ObjectAttributes */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 352},
-  .typeIndex = UA_TYPES_OBJECTATTRIBUTES,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ObjectAttributes",
+    "ObjectAttributes", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ObjectAttributes),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 354,
-  .membersSize = 6,
-  .members = ObjectAttributes_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {352}}, /* .typeId */
+    sizeof(UA_ObjectAttributes), /* .memSize */
+    UA_TYPES_OBJECTATTRIBUTES, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    354, /* .binaryEncodingId */
+    ObjectAttributes_members /* .members */ },
 
 /* BrowseDescription */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 514},
-  .typeIndex = UA_TYPES_BROWSEDESCRIPTION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowseDescription",
+    "BrowseDescription", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowseDescription),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 516,
-  .membersSize = 6,
-  .members = BrowseDescription_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {514}}, /* .typeId */
+    sizeof(UA_BrowseDescription), /* .memSize */
+    UA_TYPES_BROWSEDESCRIPTION, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    516, /* .binaryEncodingId */
+    BrowseDescription_members /* .members */ },
 
 /* RepublishRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 830},
-  .typeIndex = UA_TYPES_REPUBLISHREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RepublishRequest",
+    "RepublishRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RepublishRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 832,
-  .membersSize = 3,
-  .members = RepublishRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {830}}, /* .typeId */
+    sizeof(UA_RepublishRequest), /* .memSize */
+    UA_TYPES_REPUBLISHREQUEST, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    832, /* .binaryEncodingId */
+    RepublishRequest_members /* .members */ },
 
 /* GetEndpointsRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 426},
-  .typeIndex = UA_TYPES_GETENDPOINTSREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "GetEndpointsRequest",
+    "GetEndpointsRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_GetEndpointsRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 428,
-  .membersSize = 4,
-  .members = GetEndpointsRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {426}}, /* .typeId */
+    sizeof(UA_GetEndpointsRequest), /* .memSize */
+    UA_TYPES_GETENDPOINTSREQUEST, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    428, /* .binaryEncodingId */
+    GetEndpointsRequest_members /* .members */ },
 
 /* PublishRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 824},
-  .typeIndex = UA_TYPES_PUBLISHREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "PublishRequest",
+    "PublishRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_PublishRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 826,
-  .membersSize = 2,
-  .members = PublishRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {824}}, /* .typeId */
+    sizeof(UA_PublishRequest), /* .memSize */
+    UA_TYPES_PUBLISHREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    826, /* .binaryEncodingId */
+    PublishRequest_members /* .members */ },
 
 /* AddNodesResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 489},
-  .typeIndex = UA_TYPES_ADDNODESRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AddNodesResponse",
+    "AddNodesResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AddNodesResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 491,
-  .membersSize = 3,
-  .members = AddNodesResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {489}}, /* .typeId */
+    sizeof(UA_AddNodesResponse), /* .memSize */
+    UA_TYPES_ADDNODESRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    491, /* .binaryEncodingId */
+    AddNodesResponse_members /* .members */ },
 
 /* DataChangeNotification */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 809},
-  .typeIndex = UA_TYPES_DATACHANGENOTIFICATION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DataChangeNotification",
+    "DataChangeNotification", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DataChangeNotification),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 811,
-  .membersSize = 2,
-  .members = DataChangeNotification_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {809}}, /* .typeId */
+    sizeof(UA_DataChangeNotification), /* .memSize */
+    UA_TYPES_DATACHANGENOTIFICATION, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    811, /* .binaryEncodingId */
+    DataChangeNotification_members /* .members */ },
 
 /* CloseSecureChannelResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 453},
-  .typeIndex = UA_TYPES_CLOSESECURECHANNELRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CloseSecureChannelResponse",
+    "CloseSecureChannelResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CloseSecureChannelResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 455,
-  .membersSize = 1,
-  .members = CloseSecureChannelResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {453}}, /* .typeId */
+    sizeof(UA_CloseSecureChannelResponse), /* .memSize */
+    UA_TYPES_CLOSESECURECHANNELRESPONSE, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    455, /* .binaryEncodingId */
+    CloseSecureChannelResponse_members /* .members */ },
 
 /* ModifyMonitoredItemsRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 761},
-  .typeIndex = UA_TYPES_MODIFYMONITOREDITEMSREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ModifyMonitoredItemsRequest",
+    "ModifyMonitoredItemsRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ModifyMonitoredItemsRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 763,
-  .membersSize = 4,
-  .members = ModifyMonitoredItemsRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {761}}, /* .typeId */
+    sizeof(UA_ModifyMonitoredItemsRequest), /* .memSize */
+    UA_TYPES_MODIFYMONITOREDITEMSREQUEST, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    763, /* .binaryEncodingId */
+    ModifyMonitoredItemsRequest_members /* .members */ },
 
 /* SetMonitoringModeResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 770},
-  .typeIndex = UA_TYPES_SETMONITORINGMODERESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SetMonitoringModeResponse",
+    "SetMonitoringModeResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SetMonitoringModeResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 772,
-  .membersSize = 3,
-  .members = SetMonitoringModeResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {770}}, /* .typeId */
+    sizeof(UA_SetMonitoringModeResponse), /* .memSize */
+    UA_TYPES_SETMONITORINGMODERESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    772, /* .binaryEncodingId */
+    SetMonitoringModeResponse_members /* .members */ },
 
 /* FindServersRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 420},
-  .typeIndex = UA_TYPES_FINDSERVERSREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "FindServersRequest",
+    "FindServersRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_FindServersRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 422,
-  .membersSize = 4,
-  .members = FindServersRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {420}}, /* .typeId */
+    sizeof(UA_FindServersRequest), /* .memSize */
+    UA_TYPES_FINDSERVERSREQUEST, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    422, /* .binaryEncodingId */
+    FindServersRequest_members /* .members */ },
 
 /* ReferenceDescription */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 518},
-  .typeIndex = UA_TYPES_REFERENCEDESCRIPTION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ReferenceDescription",
+    "ReferenceDescription", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ReferenceDescription),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 520,
-  .membersSize = 7,
-  .members = ReferenceDescription_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {518}}, /* .typeId */
+    sizeof(UA_ReferenceDescription), /* .memSize */
+    UA_TYPES_REFERENCEDESCRIPTION, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    520, /* .binaryEncodingId */
+    ReferenceDescription_members /* .members */ },
 
 /* SetPublishingModeResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 800},
-  .typeIndex = UA_TYPES_SETPUBLISHINGMODERESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SetPublishingModeResponse",
+    "SetPublishingModeResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SetPublishingModeResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 802,
-  .membersSize = 3,
-  .members = SetPublishingModeResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {800}}, /* .typeId */
+    sizeof(UA_SetPublishingModeResponse), /* .memSize */
+    UA_TYPES_SETPUBLISHINGMODERESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    802, /* .binaryEncodingId */
+    SetPublishingModeResponse_members /* .members */ },
 
 /* ContentFilterResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 607},
-  .typeIndex = UA_TYPES_CONTENTFILTERRESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ContentFilterResult",
+    "ContentFilterResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ContentFilterResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 609,
-  .membersSize = 2,
-  .members = ContentFilterResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {607}}, /* .typeId */
+    sizeof(UA_ContentFilterResult), /* .memSize */
+    UA_TYPES_CONTENTFILTERRESULT, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    609, /* .binaryEncodingId */
+    ContentFilterResult_members /* .members */ },
 
 /* RegisterServerResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 438},
-  .typeIndex = UA_TYPES_REGISTERSERVERRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RegisterServerResponse",
+    "RegisterServerResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RegisterServerResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 440,
-  .membersSize = 1,
-  .members = RegisterServerResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {438}}, /* .typeId */
+    sizeof(UA_RegisterServerResponse), /* .memSize */
+    UA_TYPES_REGISTERSERVERRESPONSE, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    440, /* .binaryEncodingId */
+    RegisterServerResponse_members /* .members */ },
 
 /* AddReferencesItem */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 379},
-  .typeIndex = UA_TYPES_ADDREFERENCESITEM,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AddReferencesItem",
+    "AddReferencesItem", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AddReferencesItem),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 381,
-  .membersSize = 6,
-  .members = AddReferencesItem_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {379}}, /* .typeId */
+    sizeof(UA_AddReferencesItem), /* .memSize */
+    UA_TYPES_ADDREFERENCESITEM, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    381, /* .binaryEncodingId */
+    AddReferencesItem_members /* .members */ },
 
 /* CreateSubscriptionResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 788},
-  .typeIndex = UA_TYPES_CREATESUBSCRIPTIONRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CreateSubscriptionResponse",
+    "CreateSubscriptionResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CreateSubscriptionResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 790,
-  .membersSize = 5,
-  .members = CreateSubscriptionResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {788}}, /* .typeId */
+    sizeof(UA_CreateSubscriptionResponse), /* .memSize */
+    UA_TYPES_CREATESUBSCRIPTIONRESPONSE, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    790, /* .binaryEncodingId */
+    CreateSubscriptionResponse_members /* .members */ },
 
 /* DeleteSubscriptionsResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 848},
-  .typeIndex = UA_TYPES_DELETESUBSCRIPTIONSRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteSubscriptionsResponse",
+    "DeleteSubscriptionsResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteSubscriptionsResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 850,
-  .membersSize = 3,
-  .members = DeleteSubscriptionsResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {848}}, /* .typeId */
+    sizeof(UA_DeleteSubscriptionsResponse), /* .memSize */
+    UA_TYPES_DELETESUBSCRIPTIONSRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    850, /* .binaryEncodingId */
+    DeleteSubscriptionsResponse_members /* .members */ },
+
+/* RegisterServer2Response */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "RegisterServer2Response", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {12194}}, /* .typeId */
+    sizeof(UA_RegisterServer2Response), /* .memSize */
+    UA_TYPES_REGISTERSERVER2RESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    12212, /* .binaryEncodingId */
+    RegisterServer2Response_members /* .members */ },
 
 /* RelativePath */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 540},
-  .typeIndex = UA_TYPES_RELATIVEPATH,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RelativePath",
+    "RelativePath", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RelativePath),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 542,
-  .membersSize = 1,
-  .members = RelativePath_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {540}}, /* .typeId */
+    sizeof(UA_RelativePath), /* .memSize */
+    UA_TYPES_RELATIVEPATH, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    542, /* .binaryEncodingId */
+    RelativePath_members /* .members */ },
 
 /* DeleteReferencesResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 507},
-  .typeIndex = UA_TYPES_DELETEREFERENCESRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteReferencesResponse",
+    "DeleteReferencesResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteReferencesResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 509,
-  .membersSize = 3,
-  .members = DeleteReferencesResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {507}}, /* .typeId */
+    sizeof(UA_DeleteReferencesResponse), /* .memSize */
+    UA_TYPES_DELETEREFERENCESRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    509, /* .binaryEncodingId */
+    DeleteReferencesResponse_members /* .members */ },
 
 /* CreateMonitoredItemsResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 752},
-  .typeIndex = UA_TYPES_CREATEMONITOREDITEMSRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CreateMonitoredItemsResponse",
+    "CreateMonitoredItemsResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CreateMonitoredItemsResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 754,
-  .membersSize = 3,
-  .members = CreateMonitoredItemsResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {752}}, /* .typeId */
+    sizeof(UA_CreateMonitoredItemsResponse), /* .memSize */
+    UA_TYPES_CREATEMONITOREDITEMSRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    754, /* .binaryEncodingId */
+    CreateMonitoredItemsResponse_members /* .members */ },
 
 /* CallResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 713},
-  .typeIndex = UA_TYPES_CALLRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CallResponse",
+    "CallResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CallResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 715,
-  .membersSize = 3,
-  .members = CallResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {713}}, /* .typeId */
+    sizeof(UA_CallResponse), /* .memSize */
+    UA_TYPES_CALLRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    715, /* .binaryEncodingId */
+    CallResponse_members /* .members */ },
 
 /* DeleteNodesResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 501},
-  .typeIndex = UA_TYPES_DELETENODESRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteNodesResponse",
+    "DeleteNodesResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteNodesResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 503,
-  .membersSize = 3,
-  .members = DeleteNodesResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {501}}, /* .typeId */
+    sizeof(UA_DeleteNodesResponse), /* .memSize */
+    UA_TYPES_DELETENODESRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    503, /* .binaryEncodingId */
+    DeleteNodesResponse_members /* .members */ },
 
 /* RepublishResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 833},
-  .typeIndex = UA_TYPES_REPUBLISHRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RepublishResponse",
+    "RepublishResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RepublishResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 835,
-  .membersSize = 2,
-  .members = RepublishResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {833}}, /* .typeId */
+    sizeof(UA_RepublishResponse), /* .memSize */
+    UA_TYPES_REPUBLISHRESPONSE, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    835, /* .binaryEncodingId */
+    RepublishResponse_members /* .members */ },
 
 /* MonitoredItemCreateRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 743},
-  .typeIndex = UA_TYPES_MONITOREDITEMCREATEREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MonitoredItemCreateRequest",
+    "MonitoredItemCreateRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MonitoredItemCreateRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 745,
-  .membersSize = 3,
-  .members = MonitoredItemCreateRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {743}}, /* .typeId */
+    sizeof(UA_MonitoredItemCreateRequest), /* .memSize */
+    UA_TYPES_MONITOREDITEMCREATEREQUEST, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    745, /* .binaryEncodingId */
+    MonitoredItemCreateRequest_members /* .members */ },
 
 /* DeleteReferencesRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 504},
-  .typeIndex = UA_TYPES_DELETEREFERENCESREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DeleteReferencesRequest",
+    "DeleteReferencesRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DeleteReferencesRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 506,
-  .membersSize = 2,
-  .members = DeleteReferencesRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {504}}, /* .typeId */
+    sizeof(UA_DeleteReferencesRequest), /* .memSize */
+    UA_TYPES_DELETEREFERENCESREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    506, /* .binaryEncodingId */
+    DeleteReferencesRequest_members /* .members */ },
 
 /* ModifyMonitoredItemsResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 764},
-  .typeIndex = UA_TYPES_MODIFYMONITOREDITEMSRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ModifyMonitoredItemsResponse",
+    "ModifyMonitoredItemsResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ModifyMonitoredItemsResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 766,
-  .membersSize = 3,
-  .members = ModifyMonitoredItemsResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {764}}, /* .typeId */
+    sizeof(UA_ModifyMonitoredItemsResponse), /* .memSize */
+    UA_TYPES_MODIFYMONITOREDITEMSRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    766, /* .binaryEncodingId */
+    ModifyMonitoredItemsResponse_members /* .members */ },
 
 /* ReadResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 632},
-  .typeIndex = UA_TYPES_READRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ReadResponse",
+    "ReadResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ReadResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 634,
-  .membersSize = 3,
-  .members = ReadResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {632}}, /* .typeId */
+    sizeof(UA_ReadResponse), /* .memSize */
+    UA_TYPES_READRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    634, /* .binaryEncodingId */
+    ReadResponse_members /* .members */ },
 
 /* AddReferencesRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 492},
-  .typeIndex = UA_TYPES_ADDREFERENCESREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AddReferencesRequest",
+    "AddReferencesRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AddReferencesRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 494,
-  .membersSize = 2,
-  .members = AddReferencesRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {492}}, /* .typeId */
+    sizeof(UA_AddReferencesRequest), /* .memSize */
+    UA_TYPES_ADDREFERENCESREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    494, /* .binaryEncodingId */
+    AddReferencesRequest_members /* .members */ },
 
 /* ReadRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 629},
-  .typeIndex = UA_TYPES_READREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ReadRequest",
+    "ReadRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ReadRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 631,
-  .membersSize = 4,
-  .members = ReadRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {629}}, /* .typeId */
+    sizeof(UA_ReadRequest), /* .memSize */
+    UA_TYPES_READREQUEST, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    631, /* .binaryEncodingId */
+    ReadRequest_members /* .members */ },
 
 /* AddNodesItem */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 376},
-  .typeIndex = UA_TYPES_ADDNODESITEM,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AddNodesItem",
+    "AddNodesItem", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AddNodesItem),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 378,
-  .membersSize = 7,
-  .members = AddNodesItem_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {376}}, /* .typeId */
+    sizeof(UA_AddNodesItem), /* .memSize */
+    UA_TYPES_ADDNODESITEM, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    378, /* .binaryEncodingId */
+    AddNodesItem_members /* .members */ },
 
 /* ServerStatusDataType */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 862},
-  .typeIndex = UA_TYPES_SERVERSTATUSDATATYPE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ServerStatusDataType",
+    "ServerStatusDataType", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ServerStatusDataType),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 864,
-  .membersSize = 6,
-  .members = ServerStatusDataType_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {862}}, /* .typeId */
+    sizeof(UA_ServerStatusDataType), /* .memSize */
+    UA_TYPES_SERVERSTATUSDATATYPE, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    864, /* .binaryEncodingId */
+    ServerStatusDataType_members /* .members */ },
 
 /* AddReferencesResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 495},
-  .typeIndex = UA_TYPES_ADDREFERENCESRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AddReferencesResponse",
+    "AddReferencesResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AddReferencesResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 497,
-  .membersSize = 3,
-  .members = AddReferencesResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {495}}, /* .typeId */
+    sizeof(UA_AddReferencesResponse), /* .memSize */
+    UA_TYPES_ADDREFERENCESRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    497, /* .binaryEncodingId */
+    AddReferencesResponse_members /* .members */ },
 
 /* TranslateBrowsePathsToNodeIdsResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 555},
-  .typeIndex = UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "TranslateBrowsePathsToNodeIdsResponse",
+    "TranslateBrowsePathsToNodeIdsResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_TranslateBrowsePathsToNodeIdsResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 557,
-  .membersSize = 3,
-  .members = TranslateBrowsePathsToNodeIdsResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {555}}, /* .typeId */
+    sizeof(UA_TranslateBrowsePathsToNodeIdsResponse), /* .memSize */
+    UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    557, /* .binaryEncodingId */
+    TranslateBrowsePathsToNodeIdsResponse_members /* .members */ },
 
 /* DataChangeFilter */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 722},
-  .typeIndex = UA_TYPES_DATACHANGEFILTER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "DataChangeFilter",
+    "DataChangeFilter", /* .typeName */
 #endif
-  .memSize = sizeof(UA_DataChangeFilter),
-  .builtin = false,
-  .pointerFree = true,
-  .overlayable = true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_DataChangeFilter, deadbandType) == (offsetof(UA_DataChangeFilter, trigger) + sizeof(UA_DataChangeTrigger)) && UA_BINARY_OVERLAYABLE_FLOAT && offsetof(UA_DataChangeFilter, deadbandValue) == (offsetof(UA_DataChangeFilter, deadbandType) + sizeof(UA_UInt32)),
-  .binaryEncodingId = 724,
-  .membersSize = 3,
-  .members = DataChangeFilter_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {722}}, /* .typeId */
+    sizeof(UA_DataChangeFilter), /* .memSize */
+    UA_TYPES_DATACHANGEFILTER, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_DataChangeFilter, deadbandType) == (offsetof(UA_DataChangeFilter, trigger) + sizeof(UA_DataChangeTrigger)) && UA_BINARY_OVERLAYABLE_FLOAT && offsetof(UA_DataChangeFilter, deadbandValue) == (offsetof(UA_DataChangeFilter, deadbandType) + sizeof(UA_UInt32)), /* .overlayable */ 
+    724, /* .binaryEncodingId */
+    DataChangeFilter_members /* .members */ },
 
 /* ContentFilterElement */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 583},
-  .typeIndex = UA_TYPES_CONTENTFILTERELEMENT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ContentFilterElement",
+    "ContentFilterElement", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ContentFilterElement),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 585,
-  .membersSize = 2,
-  .members = ContentFilterElement_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {583}}, /* .typeId */
+    sizeof(UA_ContentFilterElement), /* .memSize */
+    UA_TYPES_CONTENTFILTERELEMENT, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    585, /* .binaryEncodingId */
+    ContentFilterElement_members /* .members */ },
 
 /* CloseSessionResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 474},
-  .typeIndex = UA_TYPES_CLOSESESSIONRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CloseSessionResponse",
+    "CloseSessionResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CloseSessionResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 476,
-  .membersSize = 1,
-  .members = CloseSessionResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {474}}, /* .typeId */
+    sizeof(UA_CloseSessionResponse), /* .memSize */
+    UA_TYPES_CLOSESESSIONRESPONSE, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    476, /* .binaryEncodingId */
+    CloseSessionResponse_members /* .members */ },
 
 /* RegisteredServer */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 432},
-  .typeIndex = UA_TYPES_REGISTEREDSERVER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RegisteredServer",
+    "RegisteredServer", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RegisteredServer),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 434,
-  .membersSize = 8,
-  .members = RegisteredServer_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {432}}, /* .typeId */
+    sizeof(UA_RegisteredServer), /* .memSize */
+    UA_TYPES_REGISTEREDSERVER, /* .typeIndex */
+    8, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    434, /* .binaryEncodingId */
+    RegisteredServer_members /* .members */ },
 
 /* ApplicationDescription */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 308},
-  .typeIndex = UA_TYPES_APPLICATIONDESCRIPTION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ApplicationDescription",
+    "ApplicationDescription", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ApplicationDescription),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 310,
-  .membersSize = 7,
-  .members = ApplicationDescription_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {308}}, /* .typeId */
+    sizeof(UA_ApplicationDescription), /* .memSize */
+    UA_TYPES_APPLICATIONDESCRIPTION, /* .typeIndex */
+    7, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    310, /* .binaryEncodingId */
+    ApplicationDescription_members /* .members */ },
 
 /* ServiceFault */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 395},
-  .typeIndex = UA_TYPES_SERVICEFAULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ServiceFault",
+    "ServiceFault", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ServiceFault),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 397,
-  .membersSize = 1,
-  .members = ServiceFault_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {395}}, /* .typeId */
+    sizeof(UA_ServiceFault), /* .memSize */
+    UA_TYPES_SERVICEFAULT, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    397, /* .binaryEncodingId */
+    ServiceFault_members /* .members */ },
 
 /* RegisterServerRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 435},
-  .typeIndex = UA_TYPES_REGISTERSERVERREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "RegisterServerRequest",
+    "RegisterServerRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_RegisterServerRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 437,
-  .membersSize = 2,
-  .members = RegisterServerRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {435}}, /* .typeId */
+    sizeof(UA_RegisterServerRequest), /* .memSize */
+    UA_TYPES_REGISTERSERVERREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    437, /* .binaryEncodingId */
+    RegisterServerRequest_members /* .members */ },
 
 /* FindServersResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 423},
-  .typeIndex = UA_TYPES_FINDSERVERSRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "FindServersResponse",
+    "FindServersResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_FindServersResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 425,
-  .membersSize = 2,
-  .members = FindServersResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {423}}, /* .typeId */
+    sizeof(UA_FindServersResponse), /* .memSize */
+    UA_TYPES_FINDSERVERSRESPONSE, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    425, /* .binaryEncodingId */
+    FindServersResponse_members /* .members */ },
 
 /* CreateMonitoredItemsRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 749},
-  .typeIndex = UA_TYPES_CREATEMONITOREDITEMSREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CreateMonitoredItemsRequest",
+    "CreateMonitoredItemsRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CreateMonitoredItemsRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 751,
-  .membersSize = 4,
-  .members = CreateMonitoredItemsRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {749}}, /* .typeId */
+    sizeof(UA_CreateMonitoredItemsRequest), /* .memSize */
+    UA_TYPES_CREATEMONITOREDITEMSREQUEST, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    751, /* .binaryEncodingId */
+    CreateMonitoredItemsRequest_members /* .members */ },
 
 /* ContentFilter */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 586},
-  .typeIndex = UA_TYPES_CONTENTFILTER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ContentFilter",
+    "ContentFilter", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ContentFilter),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 588,
-  .membersSize = 1,
-  .members = ContentFilter_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {586}}, /* .typeId */
+    sizeof(UA_ContentFilter), /* .memSize */
+    UA_TYPES_CONTENTFILTER, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    588, /* .binaryEncodingId */
+    ContentFilter_members /* .members */ },
 
 /* QueryFirstResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 616},
-  .typeIndex = UA_TYPES_QUERYFIRSTRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "QueryFirstResponse",
+    "QueryFirstResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_QueryFirstResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 618,
-  .membersSize = 6,
-  .members = QueryFirstResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {616}}, /* .typeId */
+    sizeof(UA_QueryFirstResponse), /* .memSize */
+    UA_TYPES_QUERYFIRSTRESPONSE, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    618, /* .binaryEncodingId */
+    QueryFirstResponse_members /* .members */ },
 
 /* AddNodesRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 486},
-  .typeIndex = UA_TYPES_ADDNODESREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AddNodesRequest",
+    "AddNodesRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AddNodesRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 488,
-  .membersSize = 2,
-  .members = AddNodesRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {486}}, /* .typeId */
+    sizeof(UA_AddNodesRequest), /* .memSize */
+    UA_TYPES_ADDNODESREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    488, /* .binaryEncodingId */
+    AddNodesRequest_members /* .members */ },
 
 /* BrowseRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 525},
-  .typeIndex = UA_TYPES_BROWSEREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowseRequest",
+    "BrowseRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowseRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 527,
-  .membersSize = 4,
-  .members = BrowseRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {525}}, /* .typeId */
+    sizeof(UA_BrowseRequest), /* .memSize */
+    UA_TYPES_BROWSEREQUEST, /* .typeIndex */
+    4, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    527, /* .binaryEncodingId */
+    BrowseRequest_members /* .members */ },
 
 /* BrowsePath */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 543},
-  .typeIndex = UA_TYPES_BROWSEPATH,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowsePath",
+    "BrowsePath", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowsePath),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 545,
-  .membersSize = 2,
-  .members = BrowsePath_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {543}}, /* .typeId */
+    sizeof(UA_BrowsePath), /* .memSize */
+    UA_TYPES_BROWSEPATH, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    545, /* .binaryEncodingId */
+    BrowsePath_members /* .members */ },
 
 /* BrowseResult */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 522},
-  .typeIndex = UA_TYPES_BROWSERESULT,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowseResult",
+    "BrowseResult", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowseResult),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 524,
-  .membersSize = 3,
-  .members = BrowseResult_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {522}}, /* .typeId */
+    sizeof(UA_BrowseResult), /* .memSize */
+    UA_TYPES_BROWSERESULT, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    524, /* .binaryEncodingId */
+    BrowseResult_members /* .members */ },
+
+/* RegisterServer2Request */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "RegisterServer2Request", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {12193}}, /* .typeId */
+    sizeof(UA_RegisterServer2Request), /* .memSize */
+    UA_TYPES_REGISTERSERVER2REQUEST, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    12211, /* .binaryEncodingId */
+    RegisterServer2Request_members /* .members */ },
 
 /* CreateSessionRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 459},
-  .typeIndex = UA_TYPES_CREATESESSIONREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CreateSessionRequest",
+    "CreateSessionRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CreateSessionRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 461,
-  .membersSize = 9,
-  .members = CreateSessionRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {459}}, /* .typeId */
+    sizeof(UA_CreateSessionRequest), /* .memSize */
+    UA_TYPES_CREATESESSIONREQUEST, /* .typeIndex */
+    9, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    461, /* .binaryEncodingId */
+    CreateSessionRequest_members /* .members */ },
 
 /* QueryDataDescription */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 570},
-  .typeIndex = UA_TYPES_QUERYDATADESCRIPTION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "QueryDataDescription",
+    "QueryDataDescription", /* .typeName */
 #endif
-  .memSize = sizeof(UA_QueryDataDescription),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 572,
-  .membersSize = 3,
-  .members = QueryDataDescription_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {570}}, /* .typeId */
+    sizeof(UA_QueryDataDescription), /* .memSize */
+    UA_TYPES_QUERYDATADESCRIPTION, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    572, /* .binaryEncodingId */
+    QueryDataDescription_members /* .members */ },
 
 /* EndpointDescription */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 312},
-  .typeIndex = UA_TYPES_ENDPOINTDESCRIPTION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "EndpointDescription",
+    "EndpointDescription", /* .typeName */
 #endif
-  .memSize = sizeof(UA_EndpointDescription),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 314,
-  .membersSize = 8,
-  .members = EndpointDescription_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {312}}, /* .typeId */
+    sizeof(UA_EndpointDescription), /* .memSize */
+    UA_TYPES_ENDPOINTDESCRIPTION, /* .typeIndex */
+    8, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    314, /* .binaryEncodingId */
+    EndpointDescription_members /* .members */ },
 
 /* GetEndpointsResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 429},
-  .typeIndex = UA_TYPES_GETENDPOINTSRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "GetEndpointsResponse",
+    "GetEndpointsResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_GetEndpointsResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 431,
-  .membersSize = 2,
-  .members = GetEndpointsResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {429}}, /* .typeId */
+    sizeof(UA_GetEndpointsResponse), /* .memSize */
+    UA_TYPES_GETENDPOINTSRESPONSE, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    431, /* .binaryEncodingId */
+    GetEndpointsResponse_members /* .members */ },
 
 /* NodeTypeDescription */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 573},
-  .typeIndex = UA_TYPES_NODETYPEDESCRIPTION,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "NodeTypeDescription",
+    "NodeTypeDescription", /* .typeName */
 #endif
-  .memSize = sizeof(UA_NodeTypeDescription),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 575,
-  .membersSize = 3,
-  .members = NodeTypeDescription_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {573}}, /* .typeId */
+    sizeof(UA_NodeTypeDescription), /* .memSize */
+    UA_TYPES_NODETYPEDESCRIPTION, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    575, /* .binaryEncodingId */
+    NodeTypeDescription_members /* .members */ },
 
 /* BrowseNextResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 534},
-  .typeIndex = UA_TYPES_BROWSENEXTRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowseNextResponse",
+    "BrowseNextResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowseNextResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 536,
-  .membersSize = 3,
-  .members = BrowseNextResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {534}}, /* .typeId */
+    sizeof(UA_BrowseNextResponse), /* .memSize */
+    UA_TYPES_BROWSENEXTRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    536, /* .binaryEncodingId */
+    BrowseNextResponse_members /* .members */ },
 
 /* TranslateBrowsePathsToNodeIdsRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 552},
-  .typeIndex = UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "TranslateBrowsePathsToNodeIdsRequest",
+    "TranslateBrowsePathsToNodeIdsRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_TranslateBrowsePathsToNodeIdsRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 554,
-  .membersSize = 2,
-  .members = TranslateBrowsePathsToNodeIdsRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {552}}, /* .typeId */
+    sizeof(UA_TranslateBrowsePathsToNodeIdsRequest), /* .memSize */
+    UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    554, /* .binaryEncodingId */
+    TranslateBrowsePathsToNodeIdsRequest_members /* .members */ },
 
 /* BrowseResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 528},
-  .typeIndex = UA_TYPES_BROWSERESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "BrowseResponse",
+    "BrowseResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_BrowseResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 530,
-  .membersSize = 3,
-  .members = BrowseResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {528}}, /* .typeId */
+    sizeof(UA_BrowseResponse), /* .memSize */
+    UA_TYPES_BROWSERESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    530, /* .binaryEncodingId */
+    BrowseResponse_members /* .members */ },
 
 /* CreateSessionResponse */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 462},
-  .typeIndex = UA_TYPES_CREATESESSIONRESPONSE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "CreateSessionResponse",
+    "CreateSessionResponse", /* .typeName */
 #endif
-  .memSize = sizeof(UA_CreateSessionResponse),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 464,
-  .membersSize = 10,
-  .members = CreateSessionResponse_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {462}}, /* .typeId */
+    sizeof(UA_CreateSessionResponse), /* .memSize */
+    UA_TYPES_CREATESESSIONRESPONSE, /* .typeIndex */
+    10, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    464, /* .binaryEncodingId */
+    CreateSessionResponse_members /* .members */ },
 
 /* QueryFirstRequest */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 613},
-  .typeIndex = UA_TYPES_QUERYFIRSTREQUEST,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "QueryFirstRequest",
+    "QueryFirstRequest", /* .typeName */
 #endif
-  .memSize = sizeof(UA_QueryFirstRequest),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 615,
-  .membersSize = 6,
-  .members = QueryFirstRequest_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {613}}, /* .typeId */
+    sizeof(UA_QueryFirstRequest), /* .memSize */
+    UA_TYPES_QUERYFIRSTREQUEST, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    615, /* .binaryEncodingId */
+    QueryFirstRequest_members /* .members */ },
 };
 
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_transport_generated.c" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
- * on host jgvm1 by user julian at 2017-01-06 06:04:54 */
+ * on host altair by user julian at 2017-02-28 07:53:05 */
 
 
 /* SecureConversationMessageAbortBody */
 static UA_DataTypeMember SecureConversationMessageAbortBody_members[2] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "error",
+    "error", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "reason",
+    "reason", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SecureConversationMessageAbortBody, reason) - offsetof(UA_SecureConversationMessageAbortBody, error) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_SecureConversationMessageAbortBody, reason) - offsetof(UA_SecureConversationMessageAbortBody, error) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SecureConversationMessageFooter */
 static UA_DataTypeMember SecureConversationMessageFooter_members[2] = {
-  { .memberTypeIndex = UA_TYPES_BYTE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "padding",
+    "padding", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = true
-  },
-  { .memberTypeIndex = UA_TYPES_BYTE,
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    true /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "signature",
+    "signature", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SecureConversationMessageFooter, signature) - offsetof(UA_SecureConversationMessageFooter, padding) - sizeof(void*),
-    .isArray = false
-  },};
+    UA_TYPES_BYTE, /* .memberTypeIndex */
+    offsetof(UA_SecureConversationMessageFooter, signature) - offsetof(UA_SecureConversationMessageFooter, padding) - sizeof(void*), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* TcpHelloMessage */
 static UA_DataTypeMember TcpHelloMessage_members[6] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "protocolVersion",
+    "protocolVersion", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "receiveBufferSize",
+    "receiveBufferSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpHelloMessage, receiveBufferSize) - offsetof(UA_TcpHelloMessage, protocolVersion) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, receiveBufferSize) - offsetof(UA_TcpHelloMessage, protocolVersion) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sendBufferSize",
+    "sendBufferSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpHelloMessage, sendBufferSize) - offsetof(UA_TcpHelloMessage, receiveBufferSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, sendBufferSize) - offsetof(UA_TcpHelloMessage, receiveBufferSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxMessageSize",
+    "maxMessageSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpHelloMessage, maxMessageSize) - offsetof(UA_TcpHelloMessage, sendBufferSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, maxMessageSize) - offsetof(UA_TcpHelloMessage, sendBufferSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxChunkCount",
+    "maxChunkCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpHelloMessage, maxChunkCount) - offsetof(UA_TcpHelloMessage, maxMessageSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_STRING,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, maxChunkCount) - offsetof(UA_TcpHelloMessage, maxMessageSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "endpointUrl",
+    "endpointUrl", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpHelloMessage, endpointUrl) - offsetof(UA_TcpHelloMessage, maxChunkCount) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, endpointUrl) - offsetof(UA_TcpHelloMessage, maxChunkCount) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
+
+/* TcpErrorMessage */
+static UA_DataTypeMember TcpErrorMessage_members[2] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "error", /* .memberName */
+#endif
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "reason", /* .memberName */
+#endif
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    offsetof(UA_TcpErrorMessage, reason) - offsetof(UA_TcpErrorMessage, error) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* MessageType */
 static UA_DataTypeMember MessageType_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* AsymmetricAlgorithmSecurityHeader */
 static UA_DataTypeMember AsymmetricAlgorithmSecurityHeader_members[3] = {
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "securityPolicyUri",
+    "securityPolicyUri", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "senderCertificate",
+    "senderCertificate", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AsymmetricAlgorithmSecurityHeader, senderCertificate) - offsetof(UA_AsymmetricAlgorithmSecurityHeader, securityPolicyUri) - sizeof(UA_ByteString),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_BYTESTRING,
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_AsymmetricAlgorithmSecurityHeader, senderCertificate) - offsetof(UA_AsymmetricAlgorithmSecurityHeader, securityPolicyUri) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "receiverCertificateThumbprint",
+    "receiverCertificateThumbprint", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_AsymmetricAlgorithmSecurityHeader, receiverCertificateThumbprint) - offsetof(UA_AsymmetricAlgorithmSecurityHeader, senderCertificate) - sizeof(UA_ByteString),
-    .isArray = false
-  },};
+    UA_TYPES_BYTESTRING, /* .memberTypeIndex */
+    offsetof(UA_AsymmetricAlgorithmSecurityHeader, receiverCertificateThumbprint) - offsetof(UA_AsymmetricAlgorithmSecurityHeader, senderCertificate) - sizeof(UA_ByteString), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* TcpAcknowledgeMessage */
 static UA_DataTypeMember TcpAcknowledgeMessage_members[5] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "protocolVersion",
+    "protocolVersion", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "receiveBufferSize",
+    "receiveBufferSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpAcknowledgeMessage, receiveBufferSize) - offsetof(UA_TcpAcknowledgeMessage, protocolVersion) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpAcknowledgeMessage, receiveBufferSize) - offsetof(UA_TcpAcknowledgeMessage, protocolVersion) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sendBufferSize",
+    "sendBufferSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpAcknowledgeMessage, sendBufferSize) - offsetof(UA_TcpAcknowledgeMessage, receiveBufferSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpAcknowledgeMessage, sendBufferSize) - offsetof(UA_TcpAcknowledgeMessage, receiveBufferSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxMessageSize",
+    "maxMessageSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpAcknowledgeMessage, maxMessageSize) - offsetof(UA_TcpAcknowledgeMessage, sendBufferSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpAcknowledgeMessage, maxMessageSize) - offsetof(UA_TcpAcknowledgeMessage, sendBufferSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "maxChunkCount",
+    "maxChunkCount", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpAcknowledgeMessage, maxChunkCount) - offsetof(UA_TcpAcknowledgeMessage, maxMessageSize) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpAcknowledgeMessage, maxChunkCount) - offsetof(UA_TcpAcknowledgeMessage, maxMessageSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SequenceHeader */
 static UA_DataTypeMember SequenceHeader_members[2] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "sequenceNumber",
+    "sequenceNumber", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "requestId",
+    "requestId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SequenceHeader, requestId) - offsetof(UA_SequenceHeader, sequenceNumber) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_SequenceHeader, requestId) - offsetof(UA_SequenceHeader, sequenceNumber) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* TcpMessageHeader */
 static UA_DataTypeMember TcpMessageHeader_members[2] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "messageTypeAndChunkType",
+    "messageTypeAndChunkType", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "messageSize",
+    "messageSize", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_TcpMessageHeader, messageSize) - offsetof(UA_TcpMessageHeader, messageTypeAndChunkType) - sizeof(UA_UInt32),
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpMessageHeader, messageSize) - offsetof(UA_TcpMessageHeader, messageTypeAndChunkType) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* ChunkType */
 static UA_DataTypeMember ChunkType_members[1] = {
-  { .memberTypeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "",
+    "", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SymmetricAlgorithmSecurityHeader */
 static UA_DataTypeMember SymmetricAlgorithmSecurityHeader_members[1] = {
-  { .memberTypeIndex = UA_TYPES_UINT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "tokenId",
+    "tokenId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = 0,
-    .isArray = false
-  },};
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
 
 /* SecureConversationMessageHeader */
 static UA_DataTypeMember SecureConversationMessageHeader_members[2] = {
-  { .memberTypeIndex = UA_TRANSPORT_TCPMESSAGEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "messageHeader",
+    "messageHeader", /* .memberName */
 #endif
-    .namespaceZero = false,
-    .padding = 0,
-    .isArray = false
-  },
-  { .memberTypeIndex = UA_TYPES_UINT32,
+    UA_TRANSPORT_TCPMESSAGEHEADER, /* .memberTypeIndex */
+    0, /* .padding */
+    false, /* .namespaceZero */
+    false /* .isArray */
+},
+{
 #ifdef UA_ENABLE_TYPENAMES
-    .memberName = "secureChannelId",
+    "secureChannelId", /* .memberName */
 #endif
-    .namespaceZero = true,
-    .padding = offsetof(UA_SecureConversationMessageHeader, secureChannelId) - offsetof(UA_SecureConversationMessageHeader, messageHeader) - sizeof(UA_TcpMessageHeader),
-    .isArray = false
-  },};
-const UA_DataType UA_TRANSPORT[UA_TRANSPORT_COUNT] = {
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_SecureConversationMessageHeader, secureChannelId) - offsetof(UA_SecureConversationMessageHeader, messageHeader) - sizeof(UA_TcpMessageHeader), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
+UA_DataType UA_TRANSPORT[UA_TRANSPORT_COUNT] = {
 
 /* SecureConversationMessageAbortBody */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SecureConversationMessageAbortBody",
+    "SecureConversationMessageAbortBody", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SecureConversationMessageAbortBody),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 2,
-  .members = SecureConversationMessageAbortBody_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_SecureConversationMessageAbortBody), /* .memSize */
+    UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    SecureConversationMessageAbortBody_members /* .members */ },
 
 /* SecureConversationMessageFooter */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SecureConversationMessageFooter",
+    "SecureConversationMessageFooter", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SecureConversationMessageFooter),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 2,
-  .members = SecureConversationMessageFooter_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_SecureConversationMessageFooter), /* .memSize */
+    UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    SecureConversationMessageFooter_members /* .members */ },
 
 /* TcpHelloMessage */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_TCPHELLOMESSAGE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "TcpHelloMessage",
+    "TcpHelloMessage", /* .typeName */
 #endif
-  .memSize = sizeof(UA_TcpHelloMessage),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 6,
-  .members = TcpHelloMessage_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_TcpHelloMessage), /* .memSize */
+    UA_TRANSPORT_TCPHELLOMESSAGE, /* .typeIndex */
+    6, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    TcpHelloMessage_members /* .members */ },
+
+/* TcpErrorMessage */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "TcpErrorMessage", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_TcpErrorMessage), /* .memSize */
+    UA_TRANSPORT_TCPERRORMESSAGE, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    TcpErrorMessage_members /* .members */ },
 
 /* MessageType */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "MessageType",
+    "MessageType", /* .typeName */
 #endif
-  .memSize = sizeof(UA_MessageType),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = MessageType_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_MessageType), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    MessageType_members /* .members */ },
 
 /* AsymmetricAlgorithmSecurityHeader */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "AsymmetricAlgorithmSecurityHeader",
+    "AsymmetricAlgorithmSecurityHeader", /* .typeName */
 #endif
-  .memSize = sizeof(UA_AsymmetricAlgorithmSecurityHeader),
-  .builtin = false,
-  .pointerFree = false,
-  .overlayable = false,
-  .binaryEncodingId = 0,
-  .membersSize = 3,
-  .members = AsymmetricAlgorithmSecurityHeader_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_AsymmetricAlgorithmSecurityHeader), /* .memSize */
+    UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    AsymmetricAlgorithmSecurityHeader_members /* .members */ },
 
 /* TcpAcknowledgeMessage */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "TcpAcknowledgeMessage",
+    "TcpAcknowledgeMessage", /* .typeName */
 #endif
-  .memSize = sizeof(UA_TcpAcknowledgeMessage),
-  .builtin = false,
-  .pointerFree = true,
-  .overlayable = true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpAcknowledgeMessage, receiveBufferSize) == (offsetof(UA_TcpAcknowledgeMessage, protocolVersion) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpAcknowledgeMessage, sendBufferSize) == (offsetof(UA_TcpAcknowledgeMessage, receiveBufferSize) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpAcknowledgeMessage, maxMessageSize) == (offsetof(UA_TcpAcknowledgeMessage, sendBufferSize) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpAcknowledgeMessage, maxChunkCount) == (offsetof(UA_TcpAcknowledgeMessage, maxMessageSize) + sizeof(UA_UInt32)),
-  .binaryEncodingId = 0,
-  .membersSize = 5,
-  .members = TcpAcknowledgeMessage_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_TcpAcknowledgeMessage), /* .memSize */
+    UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpAcknowledgeMessage, receiveBufferSize) == (offsetof(UA_TcpAcknowledgeMessage, protocolVersion) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpAcknowledgeMessage, sendBufferSize) == (offsetof(UA_TcpAcknowledgeMessage, receiveBufferSize) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpAcknowledgeMessage, maxMessageSize) == (offsetof(UA_TcpAcknowledgeMessage, sendBufferSize) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpAcknowledgeMessage, maxChunkCount) == (offsetof(UA_TcpAcknowledgeMessage, maxMessageSize) + sizeof(UA_UInt32)), /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    TcpAcknowledgeMessage_members /* .members */ },
 
 /* SequenceHeader */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_SEQUENCEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SequenceHeader",
+    "SequenceHeader", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SequenceHeader),
-  .builtin = false,
-  .pointerFree = true,
-  .overlayable = true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_SequenceHeader, requestId) == (offsetof(UA_SequenceHeader, sequenceNumber) + sizeof(UA_UInt32)),
-  .binaryEncodingId = 0,
-  .membersSize = 2,
-  .members = SequenceHeader_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_SequenceHeader), /* .memSize */
+    UA_TRANSPORT_SEQUENCEHEADER, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_SequenceHeader, requestId) == (offsetof(UA_SequenceHeader, sequenceNumber) + sizeof(UA_UInt32)), /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    SequenceHeader_members /* .members */ },
 
 /* TcpMessageHeader */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_TCPMESSAGEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "TcpMessageHeader",
+    "TcpMessageHeader", /* .typeName */
 #endif
-  .memSize = sizeof(UA_TcpMessageHeader),
-  .builtin = false,
-  .pointerFree = true,
-  .overlayable = true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpMessageHeader, messageSize) == (offsetof(UA_TcpMessageHeader, messageTypeAndChunkType) + sizeof(UA_UInt32)),
-  .binaryEncodingId = 0,
-  .membersSize = 2,
-  .members = TcpMessageHeader_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_TcpMessageHeader), /* .memSize */
+    UA_TRANSPORT_TCPMESSAGEHEADER, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpMessageHeader, messageSize) == (offsetof(UA_TcpMessageHeader, messageTypeAndChunkType) + sizeof(UA_UInt32)), /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    TcpMessageHeader_members /* .members */ },
 
 /* ChunkType */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TYPES_INT32,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "ChunkType",
+    "ChunkType", /* .typeName */
 #endif
-  .memSize = sizeof(UA_ChunkType),
-  .builtin = true,
-  .pointerFree = true,
-  .overlayable = UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = ChunkType_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_ChunkType), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ChunkType_members /* .members */ },
 
 /* SymmetricAlgorithmSecurityHeader */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SymmetricAlgorithmSecurityHeader",
+    "SymmetricAlgorithmSecurityHeader", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SymmetricAlgorithmSecurityHeader),
-  .builtin = false,
-  .pointerFree = true,
-  .overlayable = true && UA_BINARY_OVERLAYABLE_INTEGER,
-  .binaryEncodingId = 0,
-  .membersSize = 1,
-  .members = SymmetricAlgorithmSecurityHeader_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_SymmetricAlgorithmSecurityHeader), /* .memSize */
+    UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true && UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    SymmetricAlgorithmSecurityHeader_members /* .members */ },
 
 /* SecureConversationMessageHeader */
-{ .typeId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 0},
-  .typeIndex = UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER,
+{
 #ifdef UA_ENABLE_TYPENAMES
-  .typeName = "SecureConversationMessageHeader",
+    "SecureConversationMessageHeader", /* .typeName */
 #endif
-  .memSize = sizeof(UA_SecureConversationMessageHeader),
-  .builtin = false,
-  .pointerFree = true,
-  .overlayable = true && true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpMessageHeader, messageSize) == (offsetof(UA_TcpMessageHeader, messageTypeAndChunkType) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_SecureConversationMessageHeader, secureChannelId) == (offsetof(UA_SecureConversationMessageHeader, messageHeader) + sizeof(UA_TcpMessageHeader)),
-  .binaryEncodingId = 0,
-  .membersSize = 2,
-  .members = SecureConversationMessageHeader_members },
+    {0, UA_NODEIDTYPE_NUMERIC, {0}}, /* .typeId */
+    sizeof(UA_SecureConversationMessageHeader), /* .memSize */
+    UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true && true && UA_BINARY_OVERLAYABLE_INTEGER && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_TcpMessageHeader, messageSize) == (offsetof(UA_TcpMessageHeader, messageTypeAndChunkType) + sizeof(UA_UInt32)) && UA_BINARY_OVERLAYABLE_INTEGER && offsetof(UA_SecureConversationMessageHeader, secureChannelId) == (offsetof(UA_SecureConversationMessageHeader, messageHeader) + sizeof(UA_TcpMessageHeader)), /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    SecureConversationMessageHeader_members /* .members */ },
 };
 
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_connection.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 void UA_Connection_deleteMembers(UA_Connection *connection) {
     UA_ByteString_deleteMembers(&connection->incompleteMessage);
 }
 
-UA_StatusCode
-UA_Connection_completeMessages(UA_Connection *connection, UA_ByteString * UA_RESTRICT message,
-                              UA_Boolean * UA_RESTRICT realloced) {
-    UA_StatusCode retval = UA_STATUSCODE_GOOD;
+static UA_StatusCode
+prependIncomplete(UA_Connection *connection, UA_ByteString * UA_RESTRICT message,
+                  UA_Boolean * UA_RESTRICT realloced) {
+    UA_assert(connection->incompleteMessage.length > 0);
 
-    /* We have a stored an incomplete chunk. Concat the received message to the end.
-     * After this block, connection->incompleteMessage is always empty. */
-    if(connection->incompleteMessage.length > 0) {
-        size_t length = connection->incompleteMessage.length + message->length;
-        UA_Byte *data = (UA_Byte*)UA_realloc(connection->incompleteMessage.data, length);
-        if(!data) {
-            retval = UA_STATUSCODE_BADOUTOFMEMORY;
-            goto cleanup;
-        }
-        memcpy(&data[connection->incompleteMessage.length], message->data, message->length);
+    /* Allocate the new message buffer */
+    size_t length = connection->incompleteMessage.length + message->length;
+    UA_Byte *data = (UA_Byte*)UA_realloc(connection->incompleteMessage.data, length);
+    if(!data) {
+        UA_ByteString_deleteMembers(&connection->incompleteMessage);
         connection->releaseRecvBuffer(connection, message);
-        message->data = data;
-        message->length = length;
-        *realloced = true;
-        connection->incompleteMessage = UA_BYTESTRING_NULL;
+        return UA_STATUSCODE_BADOUTOFMEMORY;
     }
 
-    /* Loop over the chunks in the received buffer */
-    size_t complete_until = 0; /* the received complete chunks end at this point */
-    UA_Boolean garbage_end = false; /* garbage after the last complete message */
+    /* Copy / release the current message buffer */
+    memcpy(&data[connection->incompleteMessage.length], message->data, message->length);
+    connection->releaseRecvBuffer(connection, message);
+    message->length = length;
+    message->data = data;
+    connection->incompleteMessage = UA_BYTESTRING_NULL;
+    *realloced = true;
+    return UA_STATUSCODE_GOOD;
+}
+
+static size_t
+completeChunksUntil(UA_Connection *connection, UA_ByteString * UA_RESTRICT message,
+                    UA_Boolean *garbage_end) {
+    size_t complete_until = 0;
+
+    /* At least 8 byte needed for the header... */
     while(message->length - complete_until >= 8) {
         /* Check the message type */
         UA_UInt32 msgtype = (UA_UInt32)message->data[complete_until] +
-            ((UA_UInt32)message->data[complete_until+1] << 8) +
-            ((UA_UInt32)message->data[complete_until+2] << 16);
+                           ((UA_UInt32)message->data[complete_until+1] << 8) +
+                           ((UA_UInt32)message->data[complete_until+2] << 16);
         if(msgtype != ('M' + ('S' << 8) + ('G' << 16)) &&
+           msgtype != ('E' + ('R' << 8) + ('R' << 16)) &&
            msgtype != ('O' + ('P' << 8) + ('N' << 16)) &&
            msgtype != ('H' + ('E' << 8) + ('L' << 16)) &&
            msgtype != ('A' + ('C' << 8) + ('K' << 16)) &&
            msgtype != ('C' + ('L' << 8) + ('O' << 16))) {
-            garbage_end = true; /* the message type is not recognized */
+            *garbage_end = true; /* the message type is not recognized */
             break;
         }
 
-        /* Decode the length of the chunk */
+        /* Decoding failed or the message size is not allowed. The remaining
+         * message is garbage. */
         UA_UInt32 chunk_length = 0;
         size_t length_pos = complete_until + 4;
-        UA_StatusCode decode_retval = UA_UInt32_decodeBinary(message, &length_pos, &chunk_length);
-
-        /* The message size is not allowed. Throw the remaining bytestring away */
-        if(decode_retval != UA_STATUSCODE_GOOD ||
-           chunk_length < 16 ||
-           chunk_length > connection->localConf.recvBufferSize) {
-            garbage_end = true;
+        if(UA_UInt32_decodeBinary(message, &length_pos, &chunk_length) != UA_STATUSCODE_GOOD ||
+           chunk_length < 16 || chunk_length > connection->localConf.recvBufferSize) {
+            *garbage_end = true;
             break;
         }
 
@@ -14469,53 +15903,114 @@ UA_Connection_completeMessages(UA_Connection *connection, UA_ByteString * UA_RES
         if(chunk_length + complete_until > message->length)
             break;
 
-        complete_until += chunk_length; /* Go to the next chunk */
+        /* Continue to the next chunk */
+        complete_until += chunk_length;
     }
 
-    /* Separate incomplete chunks */
-    if(complete_until != message->length) {
-        /* Garbage after the last good chunk. No need to keep a buffer */
-        if(garbage_end) {
-            if(complete_until == 0)
-                goto cleanup; /* All garbage, only happens on messages from the network layer */
-            message->length = complete_until;
-            return UA_STATUSCODE_GOOD;
-        }
+    UA_assert(complete_until <= message->length);
+    return complete_until;
+}
 
-        /* No good chunk, only an incomplete one */
-        if(complete_until == 0) {
-            if(!*realloced) {
-                retval = UA_ByteString_allocBuffer(&connection->incompleteMessage, message->length);
-                if(retval != UA_STATUSCODE_GOOD)
-                    goto cleanup;
-                memcpy(connection->incompleteMessage.data, message->data, message->length);
-                connection->releaseRecvBuffer(connection, message);
-                *realloced = true;
-            } else {
-                connection->incompleteMessage = *message;
-                *message = UA_BYTESTRING_NULL;
-            }
-            return UA_STATUSCODE_GOOD;
-        }
+static UA_StatusCode
+separateIncompleteChunk(UA_Connection *connection, UA_ByteString * UA_RESTRICT message,
+                        size_t complete_until, UA_Boolean garbage_end, UA_Boolean *realloced) {
+    UA_assert(complete_until < message->length);
 
-        /* At least one good chunk and an incomplete one */
-        size_t incomplete_length = message->length - complete_until;
-        retval = UA_ByteString_allocBuffer(&connection->incompleteMessage, incomplete_length);
-        if(retval != UA_STATUSCODE_GOOD)
-            goto cleanup;
-        memcpy(connection->incompleteMessage.data,
-               &message->data[complete_until], incomplete_length);
+    /* Garbage after the last good chunk. No need to keep an incomplete message. */
+    if(garbage_end) {
+        if(complete_until == 0) /* All garbage */
+            return UA_STATUSCODE_BADDECODINGERROR;
         message->length = complete_until;
+        return UA_STATUSCODE_GOOD;
     }
 
-    return UA_STATUSCODE_GOOD;
+    /* No good chunk, buffer the entire message */
+    if(complete_until == 0) {
+        if(!*realloced) {
+            UA_StatusCode retval =
+                UA_ByteString_allocBuffer(&connection->incompleteMessage, message->length);
+            if(retval != UA_STATUSCODE_GOOD)
+                return retval;
+            memcpy(connection->incompleteMessage.data, message->data, message->length);
+            connection->releaseRecvBuffer(connection, message);
+            *realloced = true;
+        } else {
+            connection->incompleteMessage = *message;
+            *message = UA_BYTESTRING_NULL;
+        }
+        return UA_STATUSCODE_GOOD;
+    }
 
- cleanup:
-    if(!*realloced)
-        connection->releaseRecvBuffer(connection, message);
-    UA_ByteString_deleteMembers(&connection->incompleteMessage);
+    /* At least one good chunk and an incomplete one */
+    size_t incomplete_length = message->length - complete_until;
+    UA_StatusCode retval =
+        UA_ByteString_allocBuffer(&connection->incompleteMessage, incomplete_length);
+    if(retval != UA_STATUSCODE_GOOD)
+        return retval;
+    memcpy(connection->incompleteMessage.data, &message->data[complete_until], incomplete_length);
+    message->length = complete_until;
+    return UA_STATUSCODE_GOOD;
+}
+
+UA_StatusCode
+UA_Connection_completeMessages(UA_Connection *connection, UA_ByteString * UA_RESTRICT message,
+                              UA_Boolean * UA_RESTRICT realloced) {
+    /* If we have a stored an incomplete chunk, prefix to the received message.
+     * After this block, connection->incompleteMessage is always empty. The
+     * message and the buffer is released if allocating the memory fails. */
+    if(connection->incompleteMessage.length > 0) {
+        UA_StatusCode retval = prependIncomplete(connection, message, realloced);
+        if(retval != UA_STATUSCODE_GOOD)
+            return retval;
+    }
+
+    /* Find the end of the last complete chunk */
+    UA_Boolean garbage_end = false; /* garbage after the last complete message */
+    size_t complete_until = completeChunksUntil(connection, message, &garbage_end);
+
+    /* Buffer incomplete chunk (at the end of the message) in the connection and
+     * adjust the size of the message. */
+    if(complete_until < message->length) {
+        UA_StatusCode retval = separateIncompleteChunk(connection, message, complete_until,
+                                                       garbage_end, realloced);
+        if(retval != UA_STATUSCODE_GOOD) {
+            if(*realloced)
+                UA_ByteString_deleteMembers(message);
+            else
+                connection->releaseRecvBuffer(connection, message);
+            return retval;
+        }
+    }
+    return UA_STATUSCODE_GOOD;
+}
+
+UA_StatusCode
+UA_Connection_receiveChunksBlocking(UA_Connection *connection, UA_ByteString *chunks,
+                                    UA_Boolean *realloced, UA_UInt32 timeout) {
+    UA_DateTime now = UA_DateTime_nowMonotonic();
+    UA_DateTime maxDate = now + (timeout * UA_MSEC_TO_DATETIME);
+    *realloced = false;
+
+    UA_StatusCode retval = UA_STATUSCODE_GOOD;
+    while(true) {
+        /* Listen for messages to arrive */
+        retval = connection->recv(connection, chunks, timeout);
+
+        /* Get complete chunks and return */
+        retval |= UA_Connection_completeMessages(connection, chunks, realloced);
+        if(retval != UA_STATUSCODE_GOOD || chunks->length > 0)
+            break;
+
+        /* We received a message. But the chunk is incomplete. Compute the
+         * remaining timeout. */
+        now = UA_DateTime_nowMonotonic();
+        if(now > maxDate)
+            return UA_STATUSCODE_GOODNONCRITICALTIMEOUT;
+        timeout = (UA_UInt32)((maxDate - now) / UA_MSEC_TO_DATETIME);
+    }
     return retval;
 }
+
 
 void UA_Connection_detachSecureChannel(UA_Connection *connection) {
     UA_SecureChannel *channel = connection->channel;
@@ -14527,8 +16022,7 @@ void UA_Connection_detachSecureChannel(UA_Connection *connection) {
 
 // TODO: Return an error code
 void
-UA_Connection_attachSecureChannel(UA_Connection *connection,
-                                  UA_SecureChannel *channel) {
+UA_Connection_attachSecureChannel(UA_Connection *connection, UA_SecureChannel *channel) {
     if(UA_atomic_cmpxchg((void**)&channel->connection, NULL, connection) == NULL)
         UA_atomic_xchg((void**)&connection->channel, (void*)channel);
 }
@@ -14651,14 +16145,14 @@ UA_EndpointUrl_split(const char *endpointUrl, char *hostname,
 }
 
 size_t UA_readNumber(UA_Byte *buf, size_t buflen, UA_UInt32 *number) {
-    if (!buf)
-        return 0;
+    UA_assert(buf);
+    UA_assert(number);
     UA_UInt32 n = 0;
     size_t progress = 0;
     /* read numbers until the end or a non-number character appears */
     while(progress < buflen) {
         UA_Byte c = buf[progress];
-        if('0' > c || '9' < c)
+        if(c < '0' || c > '9')
             break;
         n = (n*10) + (UA_UInt32)(c-'0');
         ++progress;
@@ -14669,13 +16163,18 @@ size_t UA_readNumber(UA_Byte *buf, size_t buflen, UA_UInt32 *number) {
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_securechannel.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 #define UA_SECURE_MESSAGE_HEADER_LENGTH 24
 
 void UA_SecureChannel_init(UA_SecureChannel *channel) {
     memset(channel, 0, sizeof(UA_SecureChannel));
-    LIST_INIT(&channel->sessions);
-    LIST_INIT(&channel->chunks);
+    /* Linked lists are also initialized by zeroing out */
+    /* LIST_INIT(&channel->sessions); */
+    /* LIST_INIT(&channel->chunks); */
 }
 
 void UA_SecureChannel_deleteMembersCleanup(UA_SecureChannel *channel) {
@@ -14711,7 +16210,7 @@ void UA_SecureChannel_deleteMembersCleanup(UA_SecureChannel *channel) {
 
 //TODO implement real nonce generator - DUMMY function
 UA_StatusCode UA_SecureChannel_generateNonce(UA_ByteString *nonce) {
-    if(!(nonce->data = UA_malloc(1)))
+    if(!(nonce->data = (UA_Byte *)UA_malloc(1)))
         return UA_STATUSCODE_BADOUTOFMEMORY;
     nonce->length  = 1;
     nonce->data[0] = 'a';
@@ -14726,7 +16225,7 @@ UA_StatusCode UA_SecureChannel_generateNonce(UA_ByteString *nonce) {
 #endif
 
 void UA_SecureChannel_attachSession(UA_SecureChannel *channel, UA_Session *session) {
-    struct SessionEntry *se = UA_malloc(sizeof(struct SessionEntry));
+    struct SessionEntry *se = (struct SessionEntry *)UA_malloc(sizeof(struct SessionEntry));
     if(!se)
         return;
     se->session = session;
@@ -14842,7 +16341,9 @@ UA_SecureChannel_sendChunk(UA_ChunkInfo *ci, UA_ByteString *dst, size_t offset) 
             connection->getSendBuffer(connection, connection->localConf.sendBufferSize, dst);
         if(retval != UA_STATUSCODE_GOOD)
             return retval;
-        /* Hide the header of the buffer, so that the ensuing encoding does not overwrite anything */
+        /* Forward the data pointer so that the payload is encoded after the message header.
+         * TODO: This works but is a bit too clever. Instead, we could return an offset to the
+         * binary encoding exchangeBuffer function. */
         dst->data = &dst->data[UA_SECURE_MESSAGE_HEADER_LENGTH];
         dst->length = connection->localConf.sendBufferSize - UA_SECURE_MESSAGE_HEADER_LENGTH;
     }
@@ -14926,7 +16427,7 @@ UA_SecureChannel_removeChunk(UA_SecureChannel *channel, UA_UInt32 requestId) {
 static void
 appendChunk(struct ChunkEntry *ch, const UA_ByteString *msg,
             size_t offset, size_t chunklength) {
-    UA_Byte* new_bytes = UA_realloc(ch->bytes.data, ch->bytes.length + chunklength);
+    UA_Byte* new_bytes = (UA_Byte *)UA_realloc(ch->bytes.data, ch->bytes.length + chunklength);
     if(!new_bytes) {
         UA_ByteString_deleteMembers(&ch->bytes);
         return;
@@ -14956,7 +16457,7 @@ UA_SecureChannel_appendChunk(UA_SecureChannel *channel, UA_UInt32 requestId,
 
     /* No chunkentry on the channel, create one */
     if(!ch) {
-        ch = UA_malloc(sizeof(struct ChunkEntry));
+        ch = (struct ChunkEntry *)UA_malloc(sizeof(struct ChunkEntry));
         if(!ch)
             return;
         ch->requestId = requestId;
@@ -15017,6 +16518,23 @@ UA_SecureChannel_processChunks(UA_SecureChannel *channel, const UA_ByteString *c
     UA_StatusCode retval = UA_STATUSCODE_GOOD;
     size_t offset= 0;
     do {
+
+        if (chunks->length > 3 && chunks->data[offset] == 'E' &&
+                chunks->data[offset+1] == 'R' && chunks->data[offset+2] == 'R') {
+            UA_TcpMessageHeader header;
+            retval = UA_TcpMessageHeader_decodeBinary(chunks, &offset, &header);
+            if(retval != UA_STATUSCODE_GOOD)
+                break;
+
+            UA_TcpErrorMessage errorMessage;
+            retval = UA_TcpErrorMessage_decodeBinary(chunks, &offset, &errorMessage);
+            if(retval != UA_STATUSCODE_GOOD)
+                break;
+
+            callback(application, channel, UA_MESSAGETYPE_ERR, 0, (const UA_ByteString *)&errorMessage);
+            continue;
+        }
+
         /* Store the initial offset to compute the header length */
         size_t initial_offset = offset;
 
@@ -15072,7 +16590,7 @@ UA_SecureChannel_processChunks(UA_SecureChannel *channel, const UA_ByteString *c
                                                header.messageHeader.messageSize - processed_header,
                                                &realloced);
             if(message.length > 0) {
-                callback(application, channel, header.messageHeader.messageTypeAndChunkType & 0x00ffffff,
+                callback(application,(UA_SecureChannel *)channel,(UA_MessageType)(header.messageHeader.messageTypeAndChunkType & 0x00ffffff),
                          sequenceHeader.requestId, &message);
                 if(realloced)
                     UA_ByteString_deleteMembers(&message);
@@ -15094,22 +16612,37 @@ UA_SecureChannel_processChunks(UA_SecureChannel *channel, const UA_ByteString *c
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_session.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #ifdef UA_ENABLE_SUBSCRIPTIONS
 #endif
 
 UA_Session adminSession = {
-    .clientDescription =  {.applicationUri = {0, NULL}, .productUri = {0, NULL},
-                           .applicationName = {.locale = {0, NULL}, .text = {0, NULL}},
-                           .applicationType = UA_APPLICATIONTYPE_CLIENT,
-                           .gatewayServerUri = {0, NULL}, .discoveryProfileUri = {0, NULL},
-                           .discoveryUrlsSize = 0, .discoveryUrls = NULL},
-    .sessionName = {sizeof("Administrator Session")-1, (UA_Byte*)"Administrator Session"},
-    .authenticationToken = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
-                            .identifier.numeric = 1},
-    .sessionId = {.namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC, .identifier.numeric = 1},
-    .maxRequestMessageSize = UA_UINT32_MAX, .maxResponseMessageSize = UA_UINT32_MAX,
-    .timeout = (UA_Double)UA_INT64_MAX, .validTill = UA_INT64_MAX, .channel = NULL,
-    .continuationPoints = {NULL}};
+    {{0, NULL},{0, NULL},
+     {{0, NULL},{0, NULL}},
+     UA_APPLICATIONTYPE_CLIENT,
+     {0, NULL},{0, NULL},
+     0, NULL}, /* .clientDescription */
+    {sizeof("Administrator Session")-1, (UA_Byte*)"Administrator Session"}, /* .sessionName */
+    false, /* .activated */
+    NULL, /* .sessionHandle */
+    {0,UA_NODEIDTYPE_NUMERIC,{1}}, /* .authenticationToken */
+    {0,UA_NODEIDTYPE_NUMERIC,{1}}, /* .sessionId */
+    UA_UINT32_MAX, /* .maxRequestMessageSize */
+    UA_UINT32_MAX, /* .maxResponseMessageSize */
+    (UA_Double)UA_INT64_MAX, /* .timeout */
+    UA_INT64_MAX, /* .validTill */
+    NULL, /* .channel */
+    0, /* .availableContinuationPoints */
+    {NULL}, /* .continuationPoints */
+#ifdef UA_ENABLE_SUBSCRIPTIONS
+    0, /* .lastSubscriptionID */
+    {NULL}, /* .serverSubscriptions */
+    {NULL, NULL}, /* .responseQueue */
+#endif
+};
 
 void UA_Session_init(UA_Session *session) {
     UA_ApplicationDescription_init(&session->clientDescription);
@@ -15200,7 +16733,220 @@ UA_UInt32 UA_Session_getUniqueSubscriptionID(UA_Session *session) {
 
 #endif
 
+/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/ua_namespace.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+*  License, v. 2.0. If a copy of the MPL was not distributed with this
+*  file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+void UA_Namespace_init(UA_Namespace * namespacePtr, const UA_String * namespaceUri){
+    namespacePtr->dataTypesSize = 0;
+    namespacePtr->dataTypes = NULL;
+    namespacePtr->nodestore = NULL;
+    namespacePtr->index = UA_NAMESPACE_UNDEFINED;
+    UA_String_copy(namespaceUri, &namespacePtr->uri);
+}
+
+UA_Namespace* UA_Namespace_new(const UA_String * namespaceUri){
+    UA_Namespace* ns = (UA_Namespace*)UA_malloc(sizeof(UA_Namespace));
+    UA_Namespace_init(ns,namespaceUri);
+    return ns;
+}
+
+UA_Namespace* UA_Namespace_newFromChar(const char * namespaceUri){
+    // Override const attribute to get string (dirty hack) /
+    UA_String nameString;
+    nameString.length = (size_t) strlen(namespaceUri);
+    nameString.data = (UA_Byte*)(uintptr_t)namespaceUri;
+    return UA_Namespace_new(&nameString);
+}
+
+
+void UA_Namespace_deleteMembers(UA_Namespace* namespacePtr){
+    if(namespacePtr->nodestore){
+        namespacePtr->nodestore->deleteNodestore(
+                namespacePtr->nodestore->handle, namespacePtr->index);
+    }
+    UA_String_deleteMembers(&namespacePtr->uri);
+}
+
+void UA_Namespace_updateDataTypes(UA_Namespace * namespaceToUpdate,
+                                  UA_Namespace * namespaceNewDataTypes, UA_UInt16 newNamespaceIndex){
+    if(namespaceNewDataTypes && namespaceNewDataTypes->dataTypes){
+        //replace data types
+        namespaceToUpdate->dataTypesSize = 0;
+        namespaceToUpdate->dataTypes = namespaceNewDataTypes->dataTypes;
+        namespaceToUpdate->dataTypesSize = namespaceNewDataTypes->dataTypesSize;
+    }
+    // update indices in dataTypes
+    for(size_t j = 0; j < namespaceToUpdate->dataTypesSize; j++){
+        namespaceToUpdate->dataTypes[j].typeId.namespaceIndex = newNamespaceIndex;
+        //TODO Only update namespaceIndex if equal to old index (namespaceToUpdate->index)?
+        //TODO maybe better a pointer for data types namespaceIndex -> Only one pointer update needed.
+    }
+}
+
+static UA_Boolean updateNodeNamespaceIndices(UA_Node * node, size_t* newNsIndices, size_t newNsIndicesSize) {
+    /* Update NodeId */
+    UA_UInt16* nodeIdx = &node->nodeId.namespaceIndex;
+    //if(*nodeIdx == 0 && &node->nodeId.identifierType == UA_NODEIDTYPE_NUMERIC && &node->nodeId.identifier.numeric == 2255)
+    //return UA_FALSE;
+    if(*nodeIdx < (UA_UInt16) newNsIndicesSize){
+        UA_UInt16 newNodeIdx = (UA_UInt16)newNsIndices[(size_t)*nodeIdx];
+        if(newNodeIdx == UA_NAMESPACE_UNDEFINED)
+            return UA_FALSE;
+        *nodeIdx = newNodeIdx;
+    }
+    else
+        return UA_FALSE;
+
+    /* Update Qualified name */
+    nodeIdx = &node->browseName.namespaceIndex;
+    if(*nodeIdx < (UA_UInt16) newNsIndicesSize)
+        *nodeIdx =(UA_UInt16) newNsIndices[(size_t)*nodeIdx];
+    else
+        *nodeIdx = UA_NAMESPACE_UNDEFINED;
+
+    /* Update References */
+    for(size_t i = 0 ; i < node->referencesSize ; ++i){
+        nodeIdx = &node->references[i].referenceTypeId.namespaceIndex;
+        if(*nodeIdx < (UA_UInt16) newNsIndicesSize)
+            *nodeIdx = (UA_UInt16) newNsIndices[(size_t)*nodeIdx];
+        //TODO Support expanded NodeIds. check if expanded nodeId in own server ?
+        /* Currently no expandednodeids are allowed */
+        if(node->references[i].targetId.namespaceUri.length == 0){
+            nodeIdx = &node->references[i].targetId.nodeId.namespaceIndex;
+            if(*nodeIdx < (UA_UInt16) newNsIndicesSize)
+                *nodeIdx = (UA_UInt16) newNsIndices[(size_t)*nodeIdx];
+            else
+                *nodeIdx = UA_NAMESPACE_UNDEFINED;
+        }
+    }
+    return UA_TRUE;
+}
+
+struct nodeListEntry{
+    struct nodeListEntry* next;
+    const UA_Node* node;
+};
+
+struct updateNodeNamespaceIndexHandle{
+    UA_NodestoreInterface* nsi;
+    struct nodeListEntry*  nextNode;
+    UA_StatusCode result;
+} ;
+
+static void updateNodeNamespaceIndexCallback(struct updateNodeNamespaceIndexHandle * handle, const UA_Node * node){
+    //printf("getnode: ns=%i, i=%i, name=%.*s\n",node->nodeId.namespaceIndex, node->nodeId.identifier.numeric,
+    //        (int)node->browseName.name.length, node->browseName.name.data);
+    if(handle->result != UA_STATUSCODE_GOOD){
+        return;
+    }
+    handle->nextNode->node = handle->nsi->getNode(handle->nsi->handle, &node->nodeId);
+
+    //set pointer to node in listentry and set list pointer one step further
+    handle->nextNode->next = (struct nodeListEntry*)UA_malloc(sizeof(struct nodeListEntry));
+    if(handle->nextNode->next){
+        handle->nextNode->next->node = NULL;
+        handle->nextNode->next->next = NULL;
+        handle->nextNode = handle->nextNode->next;
+    }else{
+        handle->result = UA_STATUSCODE_BADOUTOFMEMORY;
+    }
+}
+
+static void updateNodestoreNamespaceIndex(UA_NodestoreInterface* nodestore,
+                                                size_t* newNsIndices, size_t newNsIndicesSize) {
+    struct nodeListEntry* nodeEntry = (struct nodeListEntry*)UA_malloc(sizeof(struct nodeListEntry));
+    nodeEntry->node = NULL;
+    nodeEntry->next = NULL;
+
+    struct updateNodeNamespaceIndexHandle handle;
+    handle.nsi = nodestore;
+    handle.nextNode = nodeEntry;
+    handle.result = UA_STATUSCODE_GOOD;
+
+    nodestore->iterate(nodestore->handle, &handle,
+                       (UA_NodestoreInterface_nodeVisitor)updateNodeNamespaceIndexCallback);
+    while(nodeEntry) {
+        if(nodeEntry->node){
+            UA_Node* copy = nodestore->getNodeCopy(nodestore->handle, &nodeEntry->node->nodeId);
+            nodestore->removeNode(nodestore->handle, &nodeEntry->node->nodeId);
+            nodestore->releaseNode(nodestore->handle, nodeEntry->node);
+            if(copy){
+                if(updateNodeNamespaceIndices(copy, newNsIndices, newNsIndicesSize) == UA_TRUE){
+                    //printf("insertnode: ns=%i, i=%i, name=%.*s\n",copy->nodeId.namespaceIndex, copy->nodeId.identifier.numeric,
+                    //        (int)copy->browseName.name.length, copy->browseName.name.data);
+                    if(nodestore->insertNode(nodestore->handle, copy, NULL) != UA_STATUSCODE_GOOD){
+                        nodestore->deleteNode(copy);
+                    }
+                }else{
+                    nodestore->deleteNode(copy);
+                }
+            }
+        }
+        struct nodeListEntry * next = nodeEntry->next;
+        UA_free(nodeEntry);
+        nodeEntry = next;
+    }
+}
+
+void UA_Namespace_changeNodestore(UA_Namespace * namespacesToUpdate,
+                                  UA_Namespace * namespaceNewNodestore,
+                                  UA_NodestoreInterface * defaultNodestore,
+                                  UA_UInt16 newIdx){
+    /* Delete existing nodestore and set new nodestore */
+    if(namespaceNewNodestore && namespaceNewNodestore->nodestore){
+       if(namespacesToUpdate->nodestore){
+           namespacesToUpdate->nodestore->deleteNodestore(
+                namespacesToUpdate->nodestore->handle, namespacesToUpdate->index);
+       }
+       namespacesToUpdate->nodestore = namespaceNewNodestore->nodestore;
+       namespacesToUpdate->nodestore->linkNamespace(namespacesToUpdate->nodestore->handle, newIdx);
+    }
+    if(!namespacesToUpdate->nodestore){
+        //Set default nodestore if not already set
+        namespacesToUpdate->nodestore = defaultNodestore;
+        namespacesToUpdate->nodestore->linkNamespace(namespacesToUpdate->nodestore->handle, newIdx);
+    }
+
+}
+
+
+void UA_Namespace_updateNodestores(UA_Namespace * namespacesToUpdate, size_t namespacesToUpdateSize,
+                                   size_t* oldNsIdxToNewNsIdx, size_t oldNsIdxToNewNsIdxSize) {
+    /* Update namespace indices in all relevant nodestores */
+    for(size_t i = 0; i < namespacesToUpdateSize ; ++i){
+        UA_NodestoreInterface * ns = namespacesToUpdate[i].nodestore;
+        if(ns){
+            //TODO Add a flag to nodestore if nodes should be automatically updated on namespace changes
+            //check if same nodestore is used for different namespaces and update only once
+            UA_Boolean nodestoreAlreadyUpdated = UA_FALSE;
+            for(size_t j = 0; j < i ; ++j){
+                if(namespacesToUpdate[j].nodestore == ns){
+                    nodestoreAlreadyUpdated = UA_TRUE;
+                    break;
+                }
+            }
+            if(nodestoreAlreadyUpdated == UA_FALSE){
+                updateNodestoreNamespaceIndex(ns,
+                    oldNsIdxToNewNsIdx,oldNsIdxToNewNsIdxSize);
+            }
+            //If Index changed link and unlink
+            if((UA_UInt16)oldNsIdxToNewNsIdx[(size_t)namespacesToUpdate->index] != namespacesToUpdate->index){
+                ns->linkNamespace(ns->handle, (UA_UInt16)oldNsIdxToNewNsIdx[(size_t)namespacesToUpdate->index]);
+                ns->unlinkNamespace(ns->handle, namespacesToUpdate->index);
+            }
+        }
+    }
+}
+
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_server.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 #ifdef UA_ENABLE_DISCOVERY
@@ -15219,78 +16965,206 @@ UA_THREAD_LOCAL bool rcu_locked = false;
 #if defined(UA_ENABLE_METHODCALLS) && defined(UA_ENABLE_SUBSCRIPTIONS)
 UA_THREAD_LOCAL UA_Session* methodCallSession = NULL;
 #endif
-
 static const UA_NodeId nodeIdHasSubType = {
-    .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
-    .identifier.numeric = UA_NS0ID_HASSUBTYPE};
+    0,UA_NODEIDTYPE_NUMERIC,{UA_NS0ID_HASSUBTYPE}};
 static const UA_NodeId nodeIdHasComponent = {
-    .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
-    .identifier.numeric = UA_NS0ID_HASCOMPONENT};
+    0,UA_NODEIDTYPE_NUMERIC,{UA_NS0ID_HASCOMPONENT}};
 static const UA_NodeId nodeIdHasProperty = {
-    .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
-    .identifier.numeric = UA_NS0ID_HASPROPERTY};
+    0,UA_NODEIDTYPE_NUMERIC,{UA_NS0ID_HASPROPERTY}};
 static const UA_NodeId nodeIdOrganizes = {
-    .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
-    .identifier.numeric = UA_NS0ID_ORGANIZES};
+    0,UA_NODEIDTYPE_NUMERIC,{UA_NS0ID_ORGANIZES}};
 
 #ifndef UA_ENABLE_GENERATE_NAMESPACE0
 static const UA_NodeId nodeIdNonHierarchicalReferences = {
-        .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
-        .identifier.numeric = UA_NS0ID_NONHIERARCHICALREFERENCES};
+    0,UA_NODEIDTYPE_NUMERIC,{UA_NS0ID_NONHIERARCHICALREFERENCES}};
 #endif
 
 /**********************/
 /* Namespace Handling */
 /**********************/
 
-UA_UInt16 addNamespace_nodestore(UA_Server *server, const UA_String name,
-                                 UA_NodestoreInterface* nodestore){ 
-    /* Check if the namespace already exists in the server's namespace array */
-    for(UA_UInt16 i = 0; i < server->namespacesSize; ++i) {
-        if(UA_String_equal(&name, &server->namespaces[i])) {
-            UA_NodestoreSwitch_change(server->nodestoreSwitch, nodestore,i); //TODO add Boolean Parameter for replace? Or do not replace and create changeNamespace method.
-            return i;
+static UA_StatusCode
+replaceNamespaceArray_server(UA_Server * server,
+        UA_String * newNsUris, size_t newNsSize){
+
+    UA_LOG_INFO(server->config.logger, UA_LOGCATEGORY_SERVER,
+            "Changing the servers namespace array with new length: %i.", newNsSize);
+    /* Check if new namespace uris are unique */
+    for(size_t i = 0 ; i < newNsSize-1 ; ++i){
+        for(size_t j = i+1 ; j < newNsSize ; ++j){
+            if(UA_String_equal(&newNsUris[i], &newNsUris[j])){
+                return UA_STATUSCODE_BADINVALIDARGUMENT;
+            }
         }
     }
 
-    /* Make the array bigger */
-    UA_String *newNS = UA_realloc(server->namespaces,
-                                  sizeof(UA_String) * (server->namespacesSize + 1));
-    if(!newNS)
-        return 0;
-    server->namespaces = newNS;
+    /* Announce changing process */
+    //TODO set lock flag
+    size_t oldNsSize = server->namespacesSize;
+    server->namespacesSize = 0;
 
-    /* Copy the namespace string */
-    UA_StatusCode retval = UA_String_copy(&name, &server->namespaces[server->namespacesSize]);
-    if(retval != UA_STATUSCODE_GOOD)
-        return 0;
+    /* Alloc new NS Array  */
+    UA_Namespace * newNsArray = (UA_Namespace*)UA_malloc(newNsSize * sizeof(UA_Namespace));
+    if(!newNsArray)
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+    /* Alloc new index mapping array. Old ns index --> new ns index */
+    size_t* oldNsIdxToNewNsIdx = (size_t*)UA_malloc(oldNsSize * sizeof(size_t));
+    if(!oldNsIdxToNewNsIdx){
+        UA_free(newNsArray);
+        server->namespacesSize = oldNsSize;
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+    }
+    //Fill oldNsIdxToNewNsIdx with default values
+    for(size_t i = 0 ; i < oldNsSize ; ++i){
+        oldNsIdxToNewNsIdx[i] = (size_t)UA_NAMESPACE_UNDEFINED;
+    }
+
+    /* Search for old ns and copy it. If not found add a new namespace with default values. */
+    //TODO forbid change of namespace 0?
+    for(size_t newIdx = 0 ; newIdx < newNsSize ; ++newIdx){
+        UA_Boolean nsExists = UA_FALSE;
+        for(size_t oldIdx = 0 ; oldIdx < oldNsSize ; ++oldIdx){
+            if(UA_String_equal(&newNsUris[newIdx], &server->namespaces[oldIdx].uri)){
+                nsExists = UA_TRUE;
+                newNsArray[newIdx] = server->namespaces[oldIdx];
+                oldNsIdxToNewNsIdx[oldIdx] = newIdx; //Mark as already copied
+                break;
+            }
+        }
+        if(nsExists == UA_FALSE){
+            UA_Namespace_init(&newNsArray[newIdx], &newNsUris[newIdx]);
+        }
+    }
+
+    /* Update the namespace indices in data types, new namespaces and nodestores. Set default nodestores */
+    UA_Namespace_updateNodestores(newNsArray,newNsSize,
+                                  oldNsIdxToNewNsIdx, oldNsSize);
+    for(size_t newIdx = 0 ; newIdx < newNsSize ; ++newIdx){
+        UA_Namespace_updateDataTypes(&newNsArray[newIdx], NULL, (UA_UInt16)newIdx);
+        newNsArray[newIdx].index = (UA_UInt16)newIdx;
+        if(!newNsArray[newIdx].nodestore){
+            newNsArray[newIdx].nodestore = server->nodestore_std;
+            newNsArray[newIdx].nodestore->linkNamespace(newNsArray[newIdx].nodestore->handle, (UA_UInt16)newIdx);
+        }
+    }
+
+    /* Delete old unused namespaces */
+    for(size_t i = 0; i<oldNsSize; ++i){
+        if(oldNsIdxToNewNsIdx[i] == (size_t)UA_NAMESPACE_UNDEFINED)
+            UA_Namespace_deleteMembers(&server->namespaces[i]);
+    }
+
+    /* Cleanup, copy new namespace array to server and make visible */
+    UA_free(oldNsIdxToNewNsIdx);
+    UA_free(server->namespaces);
+    server->namespaces = newNsArray;
+    server->namespacesSize = newNsSize;
+    //TODO make multithreading save and do at last step --> add real namespace array size as parameter or lock namespacearray?
+
+    return UA_STATUSCODE_GOOD;
+}
+
+static UA_StatusCode
+writeNamespaces(void *handle, const UA_NodeId nodeid, const UA_Variant *data,
+                const UA_NumericRange *range) {
+    UA_Server *server = (UA_Server*)handle;
+
+    /* Check the data type */
+    if(data->type != &UA_TYPES[UA_TYPES_STRING])
+        return UA_STATUSCODE_BADTYPEMISMATCH;
+
+    /* Check that the variant is not empty */
+    if(!data->data)
+        return UA_STATUSCODE_BADTYPEMISMATCH;
+
+    /* TODO: Writing with a range is not implemented */
+    if(range)
+        return UA_STATUSCODE_BADNOTIMPLEMENTED;
+
+    /* Reorder and replace the namespaces with all consequences */
+    UA_StatusCode retval = replaceNamespaceArray_server(server,
+            (UA_String *)data->data, (size_t)data->arrayLength);
+
+    if(retval == UA_STATUSCODE_GOOD)
+        return UA_STATUSCODE_GOODEDITED; //Don't return good, as namespace array could be moved
+    return retval;
+}
+
+static void
+changeNamespace_server(UA_Server * server, UA_Namespace* newNs,  size_t newNsIdx){
+    //change Nodestore
+    UA_Namespace_changeNodestore(&server->namespaces[newNsIdx], newNs, server->nodestore_std,
+            (UA_UInt16) newNsIdx);
+
+    //Change and update DataTypes
+    UA_Namespace_updateDataTypes(&server->namespaces[newNsIdx], newNs, (UA_UInt16)newNsIdx);
+
+    //Update indices in namespaces
+    newNs->index = (UA_UInt16)newNsIdx;
+    server->namespaces[newNsIdx].index = (UA_UInt16)newNsIdx;
+}
+
+UA_StatusCode
+UA_Server_addNamespace_full(UA_Server *server, UA_Namespace* namespacePtr){
+    /* Check if the namespace already exists in the server's namespace array */
+    for(size_t i = 0; i < server->namespacesSize; ++i) {
+        if(UA_String_equal(&namespacePtr->uri, &server->namespaces[i].uri)){
+            changeNamespace_server(server, namespacePtr, i);
+            return UA_STATUSCODE_GOOD;
+        }
+    }
+    /* Namespace doesn't exist alloc space in namespaces array */
+    UA_Namespace *newNsArray = (UA_Namespace*)UA_realloc(server->namespaces,
+            sizeof(UA_Namespace) * (server->namespacesSize + 1));
+    if(!newNsArray)
+            return UA_STATUSCODE_BADOUTOFMEMORY;
+    server->namespaces = newNsArray;
+
+    /* Fill new namespace with values */
+    UA_Namespace_init(&server->namespaces[server->namespacesSize], &namespacePtr->uri);
+    changeNamespace_server(server, namespacePtr, server->namespacesSize);
 
     /* Announce the change (otherwise, the array appears unchanged) */
     ++server->namespacesSize;
-    UA_NodestoreSwitch_add(server->nodestoreSwitch, nodestore);
-    return (UA_UInt16)(server->namespacesSize - 1);
+    return UA_STATUSCODE_GOOD;
 }
 
-UA_UInt16 addNamespace(UA_Server *server, const UA_String name) {
-    return addNamespace_nodestore(server,name ,UA_NodestoreSwitch_getNodestoreForNamespace(server->nodestoreSwitch,1));
-    //TODO Check if NS1 Nodestore is found. Maybe a constant for default Namespace/Nodestore.
+UA_UInt16 UA_Server_addNamespace(UA_Server *server, const char* namespaceUri){
+    UA_Namespace * ns = UA_Namespace_newFromChar(namespaceUri);
+    UA_Server_addNamespace_full(server, ns);
+    UA_UInt16 retIndex = ns->index;
+    UA_Namespace_deleteMembers(ns);
+    UA_free(ns);
+    return retIndex;
 }
 
-UA_UInt16 UA_Server_addNamespace(UA_Server *server, const char* name) {
-    /* Override const attribute to get string (dirty hack) */
-    const UA_String nameString = {.length = strlen(name),
-                                  .data = (UA_Byte*)(uintptr_t)name};
-    return addNamespace(server, nameString);
+UA_StatusCode UA_Server_deleteNamespace_full(UA_Server *server, UA_Namespace * namespacePtr){
+    UA_String * newNsUris = (UA_String*)UA_malloc((server->namespacesSize-1) * sizeof(UA_String));
+    if(!newNsUris)
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+
+    /* Check if the namespace already exists in the server's namespace array */
+    size_t j = 0;
+    for(size_t i = 0; i < server->namespacesSize; ++i) {
+        if(!UA_String_equal(&namespacePtr->uri, &server->namespaces[i].uri)){
+            if(j == server->namespacesSize){
+                UA_free(newNsUris);
+                return UA_STATUSCODE_BADNOTFOUND;
+            }
+            newNsUris[j++] = server->namespaces[i].uri;
+        }
+    }
+    return replaceNamespaceArray_server(server, newNsUris, j);
 }
 
-UA_UInt16
-UA_Server_addNamespace_Nodestore(UA_Server *server, const char* name,
-        UA_NodestoreInterface* nodestore) {
-    /* Override const attribute to get string (dirty hack) */
-    const UA_String nameString = {.length = strlen(name),
-                                  .data = (UA_Byte*)(uintptr_t)name};
-    return addNamespace_nodestore(server, nameString, nodestore);
+UA_StatusCode UA_Server_deleteNamespace(UA_Server *server, const char* namespaceUri){
+    UA_Namespace * ns = UA_Namespace_newFromChar(namespaceUri);
+    UA_StatusCode retVal = UA_Server_deleteNamespace_full(server, ns);
+    UA_Namespace_deleteMembers(ns);
+    UA_free(ns);
+    return retVal;
 }
+
 
 #ifdef UA_ENABLE_EXTERNAL_NAMESPACES
 static void UA_ExternalNamespace_init(UA_ExternalNamespace *ens) {
@@ -15327,7 +17201,7 @@ UA_Server_addExternalNamespace(UA_Server *server, const UA_String *url,
     urlString[url->length] = 0;
 
     size_t size = server->externalNamespacesSize;
-    server->externalNamespaces =
+    server->externalNamespaces = (UA_ExternalNamespace*)
         UA_realloc(server->externalNamespaces, sizeof(UA_ExternalNamespace) * (size + 1));
     server->externalNamespaces[size].externalNodeStore = *nodeStore;
     server->externalNamespaces[size].index = (UA_UInt16)server->namespacesSize;
@@ -15335,28 +17209,49 @@ UA_Server_addExternalNamespace(UA_Server *server, const UA_String *url,
     UA_String_copy(url, &server->externalNamespaces[size].url);
     ++server->externalNamespacesSize;
     UA_Server_addNamespace(server, urlString);
-
     return UA_STATUSCODE_GOOD;
 }
 #endif /* UA_ENABLE_EXTERNAL_NAMESPACES*/
 
+
+
+
+/**********************/
+/* Utility Functions  */
+/**********************/
+
 UA_StatusCode
 UA_Server_forEachChildNodeCall(UA_Server *server, UA_NodeId parentNodeId,
                                UA_NodeIteratorCallback callback, void *handle) {
-    UA_StatusCode retval = UA_STATUSCODE_GOOD;
     UA_RCU_LOCK();
-    const UA_Node *parent = UA_NodestoreSwitch_get(server->nodestoreSwitch, &parentNodeId);
+    const UA_Node *parent = UA_NodestoreSwitch_getNode(server, &parentNodeId);
     if(!parent) {
         UA_RCU_UNLOCK();
         return UA_STATUSCODE_BADNODEIDINVALID;
     }
-    for(size_t i = 0; i < parent->referencesSize; ++i) {
-        UA_ReferenceNode *ref = &parent->references[i];
+
+    /* TODO: We need to do an ugly copy of the references array since users may
+     * delete references from within the callback. In single-threaded mode this
+     * changes the same node we point at here. In multi-threaded mode, this
+     * creates a new copy as nodes are truly immutable. */
+    UA_ReferenceNode *refs = NULL;
+    size_t refssize = parent->referencesSize;
+    UA_StatusCode retval = UA_Array_copy(parent->references, parent->referencesSize,
+                                         (void**)&refs, &UA_TYPES[UA_TYPES_REFERENCENODE]);
+    if(retval != UA_STATUSCODE_GOOD) {
+        UA_RCU_UNLOCK();
+        return retval;
+    }
+
+    for(size_t i = parent->referencesSize; i > 0; --i) {
+        UA_ReferenceNode *ref = &refs[i-1];
         retval |= callback(ref->targetId.nodeId, ref->isInverse,
                            ref->referenceTypeId, handle);
     }
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
+    UA_NodestoreSwitch_releaseNode(server, parent);
     UA_RCU_UNLOCK();
+
+    UA_Array_delete(refs, refssize, &UA_TYPES[UA_TYPES_REFERENCENODE]);
     return retval;
 }
 
@@ -15449,8 +17344,11 @@ void UA_Server_delete(UA_Server *server) {
     UA_SecureChannelManager_deleteMembers(&server->secureChannelManager);
     UA_SessionManager_deleteMembers(&server->sessionManager);
     UA_RCU_LOCK();
-    //delete all other nodestores
-    UA_NodestoreSwitch_delete(server->nodestoreSwitch);
+    //delete all namespaces and nodestores
+    for(size_t i = 0; i<server->namespacesSize; ++i){
+        UA_Namespace_deleteMembers(&server->namespaces[i]);
+    }
+    UA_free(server->namespaces);
     //Delete the standard nodestore
     UA_Nodestore_standard_delete(server->nodestore_std);
     UA_RCU_UNLOCK();
@@ -15458,7 +17356,6 @@ void UA_Server_delete(UA_Server *server) {
 #ifdef UA_ENABLE_EXTERNAL_NAMESPACES
     UA_Server_deleteExternalNamespaces(server);
 #endif
-    UA_Array_delete(server->namespaces, server->namespacesSize, &UA_TYPES[UA_TYPES_STRING]);
     UA_Array_delete(server->endpointDescriptions, server->endpointDescriptionsSize,
                     &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION]);
 
@@ -15473,6 +17370,7 @@ void UA_Server_delete(UA_Server *server) {
 
 #ifdef UA_ENABLE_MULTITHREADING
     pthread_cond_destroy(&server->dispatchQueue_condition);
+    pthread_mutex_destroy(&server->dispatchQueue_mutex);
 #endif
     UA_free(server);
 }
@@ -15576,52 +17474,21 @@ readNamespaces(void *handle, const UA_NodeId nodeid, UA_Boolean sourceTimestamp,
         return UA_STATUSCODE_GOOD;
     }
     UA_Server *server = (UA_Server*)handle;
-    UA_StatusCode retval;
-    retval = UA_Variant_setArrayCopy(&value->value, server->namespaces,
-                                     server->namespacesSize, &UA_TYPES[UA_TYPES_STRING]);
-    if(retval != UA_STATUSCODE_GOOD)
-        return retval;
+    //Copy namespace array in UA_String array
+    UA_String* namespacesArray = (UA_String*)UA_malloc(sizeof(UA_String) *server->namespacesSize);
+    if(!namespacesArray)
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+    for(size_t i = 0; i < server->namespacesSize; ++i){
+        namespacesArray[i] = server->namespaces[i].uri;
+    }
+    UA_Variant_setArrayCopy(&value->value, namespacesArray,
+            server->namespacesSize, &UA_TYPES[UA_TYPES_STRING]);
+    UA_free(namespacesArray);
     value->hasValue = true;
     if(sourceTimestamp) {
         value->hasSourceTimestamp = true;
         value->sourceTimestamp = UA_DateTime_now();
     }
-    return UA_STATUSCODE_GOOD;
-}
-
-static UA_StatusCode
-writeNamespaces(void *handle, const UA_NodeId nodeid, const UA_Variant *data,
-                const UA_NumericRange *range) {
-    UA_Server *server = (UA_Server*)handle;
-
-    /* Check the data type */
-    if(data->type != &UA_TYPES[UA_TYPES_STRING])
-        return UA_STATUSCODE_BADTYPEMISMATCH;
-
-    /* Check that the variant is not empty */
-    if(!data->data)
-        return UA_STATUSCODE_BADTYPEMISMATCH;
-
-    /* TODO: Writing with a range is not implemented */
-    if(range)
-        return UA_STATUSCODE_BADINTERNALERROR;
-
-    UA_String *newNamespaces = data->data;
-    size_t newNamespacesSize = data->arrayLength;
-
-    /* Test if we append to the existing namespaces */
-    if(newNamespacesSize <= server->namespacesSize)
-        return UA_STATUSCODE_BADTYPEMISMATCH;
-
-    /* Test if the existing namespaces are unchanged */
-    for(size_t i = 0; i < server->namespacesSize; ++i) {
-        if(!UA_String_equal(&server->namespaces[i], &newNamespaces[i]))
-            return UA_STATUSCODE_BADINTERNALERROR;
-    }
-
-    /* Add namespaces */
-    for(size_t i = server->namespacesSize; i < newNamespacesSize; ++i)
-        addNamespace(server, newNamespaces[i]);
     return UA_STATUSCODE_GOOD;
 }
 
@@ -15646,14 +17513,14 @@ readCurrentTime(void *handle, const UA_NodeId nodeid, UA_Boolean sourceTimeStamp
     return UA_STATUSCODE_GOOD;
 }
 
-static void copyNames(UA_Node *node, char *name) {
+static void copyNames(UA_Node *node, const char *name) {
     node->browseName = UA_QUALIFIEDNAME_ALLOC(0, name);
     node->displayName = UA_LOCALIZEDTEXT_ALLOC("en_US", name);
     node->description = UA_LOCALIZEDTEXT_ALLOC("en_US", name);
 }
 
 static void
-addDataTypeNode(UA_Server *server, char* name, UA_UInt32 datatypeid,
+addDataTypeNode(UA_Server *server, const char* name, UA_UInt32 datatypeid,
                 UA_Boolean isAbstract, UA_UInt32 parent) {
     UA_DataTypeNode *datatype = UA_Nodestore_newDataTypeNode();
     copyNames((UA_Node*)datatype, name);
@@ -15664,7 +17531,7 @@ addDataTypeNode(UA_Server *server, char* name, UA_UInt32 datatypeid,
 }
 
 static void
-addObjectTypeNode(UA_Server *server, char* name, UA_UInt32 objecttypeid,
+addObjectTypeNode(UA_Server *server, const char* name, UA_UInt32 objecttypeid,
                   UA_UInt32 parent, UA_UInt32 parentreference) {
     UA_ObjectTypeNode *objecttype =UA_Nodestore_newObjectTypeNode();
     copyNames((UA_Node*)objecttype, name);
@@ -15674,7 +17541,7 @@ addObjectTypeNode(UA_Server *server, char* name, UA_UInt32 objecttypeid,
 }
 
 static UA_VariableTypeNode*
-createVariableTypeNode(UA_Server *server, char* name, UA_UInt32 variabletypeid,
+createVariableTypeNode(UA_Server *server, const char* name, UA_UInt32 variabletypeid,
                        UA_Boolean abstract) {
     UA_VariableTypeNode *variabletype = UA_Nodestore_newVariableTypeNode();
     copyNames((UA_Node*)variabletype, name);
@@ -15703,8 +17570,8 @@ GetMonitoredItems(void *handle, const UA_NodeId *objectId,
     if(sizeOfOutput==0)
         return UA_STATUSCODE_GOOD;
 
-    UA_UInt32* clientHandles = UA_Array_new(sizeOfOutput, &UA_TYPES[UA_TYPES_UINT32]);
-    UA_UInt32* serverHandles = UA_Array_new(sizeOfOutput, &UA_TYPES[UA_TYPES_UINT32]);
+    UA_UInt32* clientHandles = (UA_UInt32 *)UA_Array_new(sizeOfOutput, &UA_TYPES[UA_TYPES_UINT32]);
+    UA_UInt32* serverHandles = (UA_UInt32 *)UA_Array_new(sizeOfOutput, &UA_TYPES[UA_TYPES_UINT32]);
     UA_UInt32 i = 0;
     LIST_FOREACH(monitoredItem, &subscription->monitoredItems, listEntry) {
         clientHandles[i] = monitoredItem->clientHandle;
@@ -15718,7 +17585,7 @@ GetMonitoredItems(void *handle, const UA_NodeId *objectId,
 #endif
 
 UA_Server * UA_Server_new(const UA_ServerConfig config) {
-    UA_Server *server = UA_calloc(1, sizeof(UA_Server));
+    UA_Server *server = (UA_Server *)UA_calloc(1, sizeof(UA_Server));
     if(!server)
         return NULL;
 
@@ -15736,31 +17603,30 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
 #ifndef UA_ENABLE_DETERMINISTIC_RNG
     UA_random_seed((UA_UInt64)UA_DateTime_now());
 #endif
-
-    /* ns0 and ns1 */
-    server->nodestoreSwitch = UA_NodestoreSwitch_new();
-    server->namespaces = UA_Array_new(2, &UA_TYPES[UA_TYPES_STRING]);
-    server->namespacesSize = 0;
-    //Handle default nodeStoreInterfaces
-    server->nodestore_std = UA_malloc(sizeof(UA_NodestoreInterface));
+    //Initialize a default nodeStoreInterface for namespaces
+    server->nodestore_std = (UA_NodestoreInterface*)UA_malloc(sizeof(UA_NodestoreInterface));
     *server->nodestore_std = UA_Nodestore_standard();
+    /* Namespace0 and Namespace1 initialization*/
+    //TODO move to UA_ServerConfig_standard as namespace array of size2
+    UA_Namespace *ns0 = UA_Namespace_newFromChar("http://opcfoundation.org/UA/");
+    ns0->dataTypes = UA_TYPES;
+    ns0->dataTypesSize = UA_TYPES_COUNT;
+    UA_Server_addNamespace_full(server, ns0);
+    UA_Namespace_deleteMembers(ns0);
+    UA_free(ns0);
 
-    //Hacky way of converting UA_String to Char*
-    //--> Maybe easier to overload addNamespace with UA_String parameter
-    UA_Byte* applicationUriStr = UA_malloc(
-            config.applicationDescription.applicationUri.length + 1);
-    memcpy(applicationUriStr, config.applicationDescription.applicationUri.data,
-            config.applicationDescription.applicationUri.length);
-    applicationUriStr[config.applicationDescription.applicationUri.length] ='\0';
-    //Add NS0 and NS1
-    UA_Server_addNamespace_Nodestore(server, "http://opcfoundation.org/UA/",
-            (config.nodestore0 != NULL) ? config.nodestore0 : server->nodestore_std);
-    UA_Server_addNamespace_Nodestore(server, (char *) applicationUriStr,
-            (config.nodestore1 != NULL) ? config.nodestore1 : server->nodestore_std);
-    UA_free(applicationUriStr);
+    UA_Namespace *ns1 = UA_Namespace_new(&config.applicationDescription.applicationUri);
+    UA_Server_addNamespace_full(server, ns1);
+    UA_Namespace_deleteMembers(ns1);
+    UA_free(ns1);
+    /* Custom configuration of Namespaces at beginning*/
+    for(size_t i = 0 ; i < config.namespacesSize ; ++i){
+
+        UA_Server_addNamespace_full(server, &config.namespaces[i]);
+    }
 
     /* Create endpoints w/o endpointurl. It is added from the networklayers at startup */
-    server->endpointDescriptions = UA_Array_new(server->config.networkLayersSize,
+    server->endpointDescriptions = (UA_EndpointDescription *)UA_Array_new(server->config.networkLayersSize,
                                                 &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION]);
     server->endpointDescriptionsSize = server->config.networkLayersSize;
     for(size_t i = 0; i < server->config.networkLayersSize; ++i) {
@@ -15777,7 +17643,7 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
         if(server->config.accessControl.enableUsernamePasswordLogin)
             ++policies;
         endpoint->userIdentityTokensSize = policies;
-        endpoint->userIdentityTokens = UA_Array_new(policies, &UA_TYPES[UA_TYPES_USERTOKENPOLICY]);
+        endpoint->userIdentityTokens = (UA_UserTokenPolicy *)UA_Array_new(policies, &UA_TYPES[UA_TYPES_USERTOKENPOLICY]);
 
         size_t currentIndex = 0;
         if(server->config.accessControl.enableAnonymousLogin) {
@@ -15805,8 +17671,10 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     UA_SecureChannelManager_init(&server->secureChannelManager, server);
     UA_SessionManager_init(&server->sessionManager, server);
 
-    UA_Job cleanup = {.type = UA_JOBTYPE_METHODCALL,
-                      .job.methodCall = {.method = UA_Server_cleanup, .data = NULL} };
+   UA_Job cleanup;
+   cleanup.type = UA_JOBTYPE_METHODCALL; 
+   cleanup.job.methodCall.data = NULL;
+   cleanup.job.methodCall.method = UA_Server_cleanup;
     UA_Server_addRepeatedJob(server, cleanup, 10000, NULL);
 
 #ifdef UA_ENABLE_DISCOVERY
@@ -15819,13 +17687,6 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
 
 #ifdef UA_ENABLE_LOAD_NAMESPACE0
 #ifndef UA_ENABLE_GENERATE_NAMESPACE0
-
-    UA_NodeId referenceTypesFolderId = UA_NODEID_NUMERIC(0,UA_NS0ID_REFERENCETYPESFOLDER);
-    UA_NodeId hasChildId = UA_NODEID_NUMERIC(0,UA_NS0ID_HASCHILD);
-    UA_NodeId dataTypesFolderId = UA_NODEID_NUMERIC(0,UA_NS0ID_DATATYPESFOLDER);
-    UA_NodeId variableTypesFolderId = UA_NODEID_NUMERIC(0,UA_NS0ID_VARIABLETYPESFOLDER);
-    UA_NodeId objectTypesFolderId = UA_NODEID_NUMERIC(0,UA_NS0ID_OBJECTTYPESFOLDER);
-    UA_NodeId rootFolderId = UA_NODEID_NUMERIC(0,UA_NS0ID_ROOTFOLDER);
 
     /*********************************/
     /* Bootstrap reference hierarchy */
@@ -15846,10 +17707,8 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     hassubtype->symmetric = false;
 
     UA_RCU_LOCK();
-    UA_NodestoreSwitch_insert(server->nodestoreSwitch, (UA_Node*)references,
-            &referenceTypesFolderId, NULL);
-    UA_NodestoreSwitch_insert(server->nodestoreSwitch, (UA_Node*)hassubtype,
-            &hasChildId, NULL);
+    UA_NodestoreSwitch_insertNode(server, (UA_Node*)references, NULL);
+    UA_NodestoreSwitch_insertNode(server, (UA_Node*)hassubtype, NULL);
     UA_RCU_UNLOCK();
 
     UA_ReferenceTypeNode *hierarchicalreferences = UA_Nodestore_newReferenceTypeNode();
@@ -16036,8 +17895,7 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     basedatatype->nodeId.identifier.numeric = UA_NS0ID_BASEDATATYPE;
     basedatatype->isAbstract = true;
     UA_RCU_LOCK();
-    UA_NodestoreSwitch_insert(server->nodestoreSwitch, (UA_Node*)basedatatype,
-            &dataTypesFolderId, NULL);
+    UA_NodestoreSwitch_insertNode(server, (UA_Node*)basedatatype, NULL);
     UA_RCU_UNLOCK();
 
     addDataTypeNode(server, "Boolean", UA_NS0ID_BOOLEAN, false, UA_NS0ID_BASEDATATYPE);
@@ -16081,8 +17939,7 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     basevartype->valueRank = -2;
     basevartype->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATATYPE);
     UA_RCU_LOCK();
-    UA_NodestoreSwitch_insert(server->nodestoreSwitch, (UA_Node*)basevartype,
-            &variableTypesFolderId, NULL);
+    UA_NodestoreSwitch_insertNode(server, (UA_Node*)basevartype, NULL);
     UA_RCU_UNLOCK();
 
     UA_VariableTypeNode *basedatavartype =
@@ -16125,8 +17982,7 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     copyNames((UA_Node*)baseobjtype, "BaseObjectType");
     baseobjtype->nodeId.identifier.numeric = UA_NS0ID_BASEOBJECTTYPE;
     UA_RCU_LOCK();
-    UA_NodestoreSwitch_insert(server->nodestoreSwitch, (UA_Node*)baseobjtype,
-            &objectTypesFolderId, NULL);
+    UA_NodestoreSwitch_insertNode(server, (UA_Node*)baseobjtype, NULL);
     UA_RCU_UNLOCK();
 
     addObjectTypeNode(server, "FolderType", UA_NS0ID_FOLDERTYPE,
@@ -16141,20 +17997,13 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     /******************/
     /* Root and below */
     /******************/
-
-    static const UA_NodeId nodeIdFolderType = {
-        .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
-        .identifier.numeric = UA_NS0ID_FOLDERTYPE};
-    static const UA_NodeId nodeIdHasTypeDefinition = {
-        .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
-        .identifier.numeric = UA_NS0ID_HASTYPEDEFINITION};
-
+    const UA_NodeId nodeIdFolderType = UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE);
+    const UA_NodeId nodeIdHasTypeDefinition = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
     UA_ObjectNode *root = UA_Nodestore_newObjectNode();
     copyNames((UA_Node*)root, "Root");
     root->nodeId.identifier.numeric = UA_NS0ID_ROOTFOLDER;
     UA_RCU_LOCK();
-    UA_NodestoreSwitch_insert(server->nodestoreSwitch, (UA_Node*)root,
-           &rootFolderId, NULL);
+    UA_NodestoreSwitch_insertNode(server, (UA_Node*)root,NULL);
     UA_RCU_UNLOCK();
     addReferenceInternal(server, UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER), nodeIdHasTypeDefinition,
                          UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), true);
@@ -16242,8 +18091,9 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     copyNames((UA_Node*)namespaceArray, "NamespaceArray");
     namespaceArray->nodeId.identifier.numeric = UA_NS0ID_SERVER_NAMESPACEARRAY;
     namespaceArray->valueSource = UA_VALUESOURCE_DATASOURCE;
-    namespaceArray->value.dataSource = (UA_DataSource) {.handle = server, .read = readNamespaces,
-                                                        .write = writeNamespaces};
+    namespaceArray->value.dataSource.handle = server;
+    namespaceArray->value.dataSource.read = readNamespaces;
+    namespaceArray->value.dataSource.write = writeNamespaces;
     namespaceArray->dataType = UA_TYPES[UA_TYPES_STRING].typeId;
     namespaceArray->valueRank = 1;
     namespaceArray->minimumSamplingInterval = 1.0;
@@ -16405,8 +18255,9 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     copyNames((UA_Node*)serverstatus, "ServerStatus");
     serverstatus->nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_SERVERSTATUS);
     serverstatus->valueSource = UA_VALUESOURCE_DATASOURCE;
-    serverstatus->value.dataSource = (UA_DataSource) {.handle = server, .read = readStatus,
-                                                      .write = NULL};
+    serverstatus->value.dataSource.handle = server;
+    serverstatus->value.dataSource.read = readStatus;
+    serverstatus->value.dataSource.write = NULL;
     addNodeInternalWithType(server, (UA_Node*)serverstatus, UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER),
                             nodeIdHasComponent, UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE));
 
@@ -16424,8 +18275,9 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     copyNames((UA_Node*)currenttime, "CurrentTime");
     currenttime->nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_SERVERSTATUS_CURRENTTIME);
     currenttime->valueSource = UA_VALUESOURCE_DATASOURCE;
-    currenttime->value.dataSource = (UA_DataSource) {.handle = NULL, .read = readCurrentTime,
-                                                     .write = NULL};
+    currenttime->value.dataSource.handle = NULL;
+    currenttime->value.dataSource.read = readCurrentTime;
+    currenttime->value.dataSource.write = NULL;
     addNodeInternalWithType(server, (UA_Node*)currenttime,
                             UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_SERVERSTATUS),
                             nodeIdHasComponent, UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE));
@@ -16535,8 +18387,9 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     copyNames((UA_Node*)servicelevel, "ServiceLevel");
     servicelevel->nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_SERVICELEVEL);
     servicelevel->valueSource = UA_VALUESOURCE_DATASOURCE;
-    servicelevel->value.dataSource = (UA_DataSource) {.handle = server, .read = readServiceLevel,
-                                                      .write = NULL};
+    servicelevel->value.dataSource.handle = server;
+    servicelevel->value.dataSource.read = readServiceLevel;
+    servicelevel->value.dataSource.write = NULL;
     addNodeInternalWithType(server, (UA_Node*)servicelevel,
                             UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER), nodeIdHasComponent,
                             UA_NODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE));
@@ -16545,7 +18398,9 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
     copyNames((UA_Node*)auditing, "Auditing");
     auditing->nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_AUDITING);
     auditing->valueSource = UA_VALUESOURCE_DATASOURCE;
-    auditing->value.dataSource = (UA_DataSource) {.handle = server, .read = readAuditing, .write = NULL};
+    auditing->value.dataSource.handle = server;
+    auditing->value.dataSource.read = readAuditing;
+    auditing->value.dataSource.write = NULL;
     addNodeInternalWithType(server, (UA_Node*)auditing,
                             UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER), nodeIdHasComponent,
                             UA_NODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE));
@@ -16621,7 +18476,11 @@ UA_Server * UA_Server_new(const UA_ServerConfig config) {
 }
 
 #ifdef UA_ENABLE_DISCOVERY
-static UA_StatusCode register_server_with_discovery_server(UA_Server *server, const char* discoveryServerUrl, const UA_Boolean isUnregister, const char* semaphoreFilePath) {
+static UA_StatusCode
+register_server_with_discovery_server(UA_Server *server, const char* discoveryServerUrl,
+                                      const UA_Boolean isUnregister,
+                                      const char* semaphoreFilePath) {
+    /* Create the client */
     UA_Client *client = UA_Client_new(UA_ClientConfig_standard);
     UA_StatusCode retval = UA_Client_connect(client, discoveryServerUrl);
     if(retval != UA_STATUSCODE_GOOD) {
@@ -16629,106 +18488,81 @@ static UA_StatusCode register_server_with_discovery_server(UA_Server *server, co
         return retval;
     }
 
+    /* Prepare the request. Do not cleanup the request after the service call,
+     * as the members are stack-allocated or point into the server config. */
+    /* TODO: where do we get the discoveryProfileUri for application data? */
     UA_RegisterServerRequest request;
     UA_RegisterServerRequest_init(&request);
-
     request.requestHeader.timestamp = UA_DateTime_now();
     request.requestHeader.timeoutHint = 10000;
 
     request.server.isOnline = !isUnregister;
-
-    // copy all the required data from applicationDescription to request
-    retval |= UA_String_copy(&server->config.applicationDescription.applicationUri, &request.server.serverUri);
-    retval |= UA_String_copy(&server->config.applicationDescription.productUri, &request.server.productUri);
-
-    request.server.serverNamesSize = 1;
-    request.server.serverNames = UA_malloc(sizeof(UA_LocalizedText));
-    if (!request.server.serverNames) {
-        UA_Client_disconnect(client);
-        UA_Client_delete(client);
-        return UA_STATUSCODE_BADOUTOFMEMORY;
-    }
-    retval |= UA_LocalizedText_copy(&server->config.applicationDescription.applicationName, &request.server.serverNames[0]);
-    
+    request.server.serverUri = server->config.applicationDescription.applicationUri;
+    request.server.productUri = server->config.applicationDescription.productUri;
     request.server.serverType = server->config.applicationDescription.applicationType;
-    retval |= UA_String_copy(&server->config.applicationDescription.gatewayServerUri, &request.server.gatewayServerUri);
-    // TODO where do we get the discoveryProfileUri for application data?
+    request.server.gatewayServerUri = server->config.applicationDescription.gatewayServerUri;
 
-    request.server.discoveryUrls = UA_malloc(sizeof(UA_String) * server->config.applicationDescription.discoveryUrlsSize);
-    if (!request.server.serverNames) {
-        UA_RegisteredServer_deleteMembers(&request.server);
-        UA_Client_disconnect(client);
-        UA_Client_delete(client);
-        return UA_STATUSCODE_BADOUTOFMEMORY;
-    }
+    if(semaphoreFilePath)
+        request.server.semaphoreFilePath = UA_STRING((char*)(uintptr_t)semaphoreFilePath); /* dirty cast */
 
-    for (size_t i = 0; i<server->config.applicationDescription.discoveryUrlsSize; i++) {
-        retval |= UA_String_copy(&server->config.applicationDescription.discoveryUrls[i], &request.server.discoveryUrls[i]);
-    }
-    if(retval != UA_STATUSCODE_GOOD) {
-        UA_RegisteredServer_deleteMembers(&request.server);
-        UA_Client_disconnect(client);
-        UA_Client_delete(client);
-        return UA_STATUSCODE_BADOUTOFMEMORY;
-    }
+    request.server.serverNames = &server->config.applicationDescription.applicationName;
+    request.server.serverNamesSize = 1;
 
-    /* add the discoveryUrls from the networklayers */
-    UA_String *disc = UA_realloc(request.server.discoveryUrls,
-                                 sizeof(UA_String) * (request.server.discoveryUrlsSize + server->config.networkLayersSize));
-    if(!disc) {
-        UA_RegisteredServer_deleteMembers(&request.server);
-        UA_Client_disconnect(client);
-        UA_Client_delete(client);
-        return UA_STATUSCODE_BADOUTOFMEMORY;
-    }
-    size_t existing = request.server.discoveryUrlsSize;
-    request.server.discoveryUrls = disc;
-    request.server.discoveryUrlsSize += server->config.networkLayersSize;
+    /* Copy the discovery urls from the server config and the network layers*/
+    size_t config_discurls = server->config.applicationDescription.discoveryUrlsSize;
+    size_t nl_discurls = server->config.networkLayersSize;
+    request.server.discoveryUrls = (UA_String*)UA_alloca(sizeof(UA_String) * (config_discurls + nl_discurls));
+    request.server.discoveryUrlsSize = config_discurls + nl_discurls;
 
-    // TODO: Add nl only if discoveryUrl not already present
-    for(size_t i = 0; i < server->config.networkLayersSize; i++) {
+    for(size_t i = 0; i < config_discurls; ++i)
+        request.server.discoveryUrls[i] = server->config.applicationDescription.discoveryUrls[i];
+
+    /* TODO: Add nl only if discoveryUrl not already present */
+    for(size_t i = 0; i < nl_discurls; ++i) {
         UA_ServerNetworkLayer *nl = &server->config.networkLayers[i];
-        UA_String_copy(&nl->discoveryUrl, &request.server.discoveryUrls[existing + i]);
+        request.server.discoveryUrls[config_discurls + i] = nl->discoveryUrl;
     }
 
-    if (semaphoreFilePath) {
-        request.server.semaphoreFilePath = UA_String_fromChars(semaphoreFilePath);
-    }
-
-    // now send the request
+    /* Call the service */
     UA_RegisterServerResponse response;
     UA_RegisterServerResponse_init(&response);
     __UA_Client_Service(client, &request, &UA_TYPES[UA_TYPES_REGISTERSERVERREQUEST],
                         &response, &UA_TYPES[UA_TYPES_REGISTERSERVERRESPONSE]);
 
-    UA_RegisterServerRequest_deleteMembers(&request);
+    /* Test the result and log on error */
+    retval = response.responseHeader.serviceResult;
+    if(retval != UA_STATUSCODE_GOOD)
+        UA_LOG_INFO(server->config.logger, UA_LOGCATEGORY_CLIENT,
+                    "RegisterServer failed with statuscode %s",
+                    UA_StatusCode_name(response.responseHeader.serviceResult));
 
-    if(response.responseHeader.serviceResult != UA_STATUSCODE_GOOD) {
-        UA_LOG_ERROR(server->config.logger, UA_LOGCATEGORY_CLIENT,
-                     "RegisterServer failed with statuscode 0x%08x", response.responseHeader.serviceResult);
-        UA_RegisterServerResponse_deleteMembers(&response);
-        UA_Client_disconnect(client);
-        UA_Client_delete(client);
-        return response.responseHeader.serviceResult;
-    }
-
-
+    /* Cleanup */
+    UA_RegisterServerResponse_deleteMembers(&response);
     UA_Client_disconnect(client);
     UA_Client_delete(client);
-
-    return UA_STATUSCODE_GOOD;
+    return retval;
 }
 
-UA_StatusCode UA_Server_register_discovery(UA_Server *server, const char* discoveryServerUrl, const char* semaphoreFilePath) {
-    return register_server_with_discovery_server(server, discoveryServerUrl, UA_FALSE, semaphoreFilePath);
+UA_StatusCode
+UA_Server_register_discovery(UA_Server *server, const char* discoveryServerUrl,
+                             const char* semaphoreFilePath) {
+    return register_server_with_discovery_server(server, discoveryServerUrl,
+                                                 UA_FALSE, semaphoreFilePath);
 }
 
-UA_StatusCode UA_Server_unregister_discovery(UA_Server *server, const char* discoveryServerUrl) {
-    return register_server_with_discovery_server(server, discoveryServerUrl, UA_TRUE, NULL);
+UA_StatusCode
+UA_Server_unregister_discovery(UA_Server *server, const char* discoveryServerUrl) {
+    return register_server_with_discovery_server(server, discoveryServerUrl,
+                                                 UA_TRUE, NULL);
 }
+
 #endif
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_server_binary.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 /********************/
@@ -17098,7 +18932,8 @@ processMSG(UA_Server *server, UA_SecureChannel *channel,
                                 "Client requested a subscription, " \
                                 "but those are not enabled in the build");
         } else {
-            UA_LOG_INFO_CHANNEL(server->config.logger, channel, "Unknown request %i",
+            UA_LOG_INFO_CHANNEL(server->config.logger, channel,
+                                "Unknown request with type identifier %i",
                                 requestTypeId.identifier.numeric);
         }
         sendError(channel, msg, requestPos, &UA_TYPES[UA_TYPES_SERVICEFAULT],
@@ -17116,10 +18951,10 @@ processMSG(UA_Server *server, UA_SecureChannel *channel,
     void *request = UA_alloca(requestType->memSize);
     UA_RequestHeader *requestHeader = (UA_RequestHeader*)request;
     retval = UA_decodeBinary(msg, offset, request, requestType,
-                             server->config.customDataTypesSize,
-                             server->config.customDataTypes);
+                             server->namespacesSize, server->namespaces);
     if(retval != UA_STATUSCODE_GOOD) {
-        UA_LOG_DEBUG_CHANNEL(server->config.logger, channel, "Could not decode the request");
+        UA_LOG_DEBUG_CHANNEL(server->config.logger, channel,
+                             "Could not decode the request");
         sendError(channel, msg, requestPos, responseType, requestId, retval);
         return;
     }
@@ -17131,7 +18966,9 @@ processMSG(UA_Server *server, UA_SecureChannel *channel,
 
     /* CreateSession doesn't need a session */
     if(requestType == &UA_TYPES[UA_TYPES_CREATESESSIONREQUEST]) {
-        Service_CreateSession(server, channel, request, response);
+        Service_CreateSession(server, channel,
+                              (const UA_CreateSessionRequest *)request,
+                              (UA_CreateSessionResponse *)response);
         goto send_response;
     }
 
@@ -17151,7 +18988,9 @@ processMSG(UA_Server *server, UA_SecureChannel *channel,
             UA_deleteMembers(request, requestType);
             return;
         }
-        Service_ActivateSession(server, channel, session, request, response);
+        Service_ActivateSession(server, channel, session,
+                                (const UA_ActivateSessionRequest*)request,
+                                (UA_ActivateSessionResponse*)response);
         goto send_response;
     }
 
@@ -17202,7 +19041,8 @@ processMSG(UA_Server *server, UA_SecureChannel *channel,
 #ifdef UA_ENABLE_SUBSCRIPTIONS
     /* The publish request is not answered immediately */
     if(requestType == &UA_TYPES[UA_TYPES_PUBLISHREQUEST]) {
-        Service_Publish(server, session, request, requestId);
+        Service_Publish(server, session,
+                        (const UA_PublishRequest*)request, requestId);
         UA_deleteMembers(request, requestType);
         return;
     }
@@ -17219,12 +19059,26 @@ processMSG(UA_Server *server, UA_SecureChannel *channel,
     retval = UA_SecureChannel_sendBinaryMessage(channel, requestId, response, responseType);
 
     if(retval != UA_STATUSCODE_GOOD)
-        UA_LOG_INFO_CHANNEL(server->config.logger, channel, "Could not send the message over "
-                             "the SecureChannel with error code 0x%08x", retval);
+        UA_LOG_INFO_CHANNEL(server->config.logger, channel,
+                            "Could not send the message over the SecureChannel "
+                            "with StatusCode %s", UA_StatusCode_name(retval));
 
     /* Clean up */
     UA_deleteMembers(request, requestType);
     UA_deleteMembers(response, responseType);
+}
+
+/* ERR -> Error from the remote connection */
+static void processERR(UA_Server *server, UA_Connection *connection, const UA_ByteString *msg, size_t *offset) {
+    UA_TcpErrorMessage errorMessage;
+    if (UA_TcpErrorMessage_decodeBinary(msg, offset, &errorMessage) != UA_STATUSCODE_GOOD) {
+        connection->close(connection);
+        return;
+    }
+
+    UA_LOG_ERROR(server->config.logger, UA_LOGCATEGORY_NETWORK,
+                 "Client replied with an error message: %s %.*s",
+                 UA_StatusCode_name(errorMessage.error), errorMessage.reason.length, errorMessage.reason.data);
 }
 
 /* Takes decoded messages starting at the nodeid of the content type. Only OPN
@@ -17234,7 +19088,16 @@ static void
 UA_Server_processSecureChannelMessage(UA_Server *server, UA_SecureChannel *channel,
                                       UA_MessageType messagetype, UA_UInt32 requestId,
                                       const UA_ByteString *message) {
+    UA_assert(channel);
+    UA_assert(channel->connection);
     switch(messagetype) {
+    case UA_MESSAGETYPE_ERR: {
+        const UA_TcpErrorMessage *msg = (const UA_TcpErrorMessage *) message;
+        UA_LOG_ERROR_CHANNEL(server->config.logger, channel,
+                             "Client replied with an error message: %s %.*s",
+                             UA_StatusCode_name(msg->error), msg->reason.length, msg->reason.data);
+        break;
+    }
     case UA_MESSAGETYPE_HEL:
         UA_LOG_TRACE_CHANNEL(server->config.logger, channel,
                              "Cannot process a HEL on an open channel");
@@ -17271,8 +19134,8 @@ UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection,
             UA_SecureChannel_processChunks(channel, message,
                  (UA_ProcessMessageCallback*)UA_Server_processSecureChannelMessage, server);
         if(retval != UA_STATUSCODE_GOOD)
-            UA_LOG_TRACE_CHANNEL(server->config.logger, channel,
-                                 "Procesing chunkgs resulted in error code 0x%08x", retval);
+            UA_LOG_TRACE_CHANNEL(server->config.logger, channel, "Procesing chunks "
+                                 "resulted in error code %s", UA_StatusCode_name(retval));
     } else {
         /* Process messages without a channel and no chunking */
         size_t offset = 0;
@@ -17285,6 +19148,11 @@ UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection,
 
         /* Dispatch according to the message type */
         switch(tcpMessageHeader.messageTypeAndChunkType & 0x00ffffff) {
+        case UA_MESSAGETYPE_ERR:
+            UA_LOG_TRACE(server->config.logger, UA_LOGCATEGORY_NETWORK,
+                         "Connection %i | Process ERR message", connection->sockfd);
+            processERR(server, connection, message, &offset);
+            break;
         case UA_MESSAGETYPE_HEL:
             UA_LOG_TRACE(server->config.logger, UA_LOGCATEGORY_NETWORK,
                          "Connection %i | Process HEL message", connection->sockfd);
@@ -17297,8 +19165,9 @@ UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection,
             retval = UA_UInt32_decodeBinary(message, &offset, &channelId);
             if(retval != UA_STATUSCODE_GOOD)
                 connection->close(connection);
-            UA_ByteString offsetMessage = (UA_ByteString){
-                .data = message->data + 12, .length = message->length - 12};
+            UA_ByteString offsetMessage;
+            offsetMessage.data = message->data + 12;
+            offsetMessage.length = message->length - 12;
             processOPN(server, connection, channelId, &offsetMessage);
             break; }
         case UA_MESSAGETYPE_MSG:
@@ -17322,6 +19191,10 @@ UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection,
 }
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_server_utils.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 /**********************/
@@ -17362,7 +19235,7 @@ parse_numericrange(const UA_String *str, UA_NumericRange *range) {
         if(idx >= dimensionsMax) {
             UA_NumericRangeDimension *newds;
             size_t newdssize = sizeof(UA_NumericRangeDimension) * (dimensionsMax + 2);
-            newds = UA_realloc(dimensions, newdssize);
+            newds = (UA_NumericRangeDimension*)UA_realloc(dimensions, newdssize);
             if(!newds) {
                 retval = UA_STATUSCODE_BADOUTOFMEMORY;
                 break;
@@ -17406,10 +19279,10 @@ parse_numericrange(const UA_String *str, UA_NumericRange *range) {
 /********************************/
 
 UA_StatusCode
-getTypeHierarchy(UA_NodestoreSwitch* nodestoreSwitch, const UA_Node *rootRef, UA_Boolean inverse,
+getTypeHierarchy(UA_Server* server, const UA_Node *rootRef, UA_Boolean inverse,
                  UA_NodeId **typeHierarchy, size_t *typeHierarchySize) {
     size_t results_size = 20; // probably too big, but saves mallocs
-    UA_NodeId *results = UA_malloc(sizeof(UA_NodeId) * results_size);
+    UA_NodeId *results = (UA_NodeId*)UA_malloc(sizeof(UA_NodeId) * results_size);
     if(!results)
         return UA_STATUSCODE_BADOUTOFMEMORY;
 
@@ -17443,14 +19316,14 @@ getTypeHierarchy(UA_NodestoreSwitch* nodestoreSwitch, const UA_Node *rootRef, UA
 
             /* increase array length if necessary */
             if(last + 1 >= results_size) {
-                                UA_NodeId *new_results =
-                                    UA_realloc(results, sizeof(UA_NodeId) * results_size * 2);
-                                if(!new_results) {
-                                    retval = UA_STATUSCODE_BADOUTOFMEMORY;
-                                    break;
-                                }
-                                results = new_results;
-                                results_size *= 2;
+                UA_NodeId *new_results =
+                    (UA_NodeId*)UA_realloc(results, sizeof(UA_NodeId) * results_size * 2);
+                if(!new_results) {
+                    retval = UA_STATUSCODE_BADOUTOFMEMORY;
+                    break;
+                }
+                results = new_results;
+                results_size *= 2;
             }
 
             /* copy new nodeid to the end of the list */
@@ -17464,12 +19337,12 @@ getTypeHierarchy(UA_NodestoreSwitch* nodestoreSwitch, const UA_Node *rootRef, UA
         ++idx;
         if(idx > last || retval != UA_STATUSCODE_GOOD)
             break;
-        node = UA_NodestoreSwitch_get(nodestoreSwitch ,&results[idx]);
+        node = UA_NodestoreSwitch_getNode(server ,&results[idx]);
         if(!node || node->nodeClass != rootRef->nodeClass){
-            UA_NodestoreSwitch_release(nodestoreSwitch, node);
+            UA_NodestoreSwitch_releaseNode(server, node);
             goto next;
         }
-        UA_NodestoreSwitch_release(nodestoreSwitch, node);
+        UA_NodestoreSwitch_releaseNode(server, node);
     }
 
     if(retval != UA_STATUSCODE_GOOD) {
@@ -17483,12 +19356,12 @@ getTypeHierarchy(UA_NodestoreSwitch* nodestoreSwitch, const UA_Node *rootRef, UA
 }
 
 UA_Boolean
-isNodeInTree(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *leafNode, const UA_NodeId *nodeToFind,
+isNodeInTree(UA_Server* server, const UA_NodeId *leafNode, const UA_NodeId *nodeToFind,
              const UA_NodeId *referenceTypeIds, size_t referenceTypeIdsSize) {
     if(UA_NodeId_equal(leafNode, nodeToFind))
         return true;
 
-    const UA_Node *node = UA_NodestoreSwitch_get(nodestoreSwitch ,leafNode);
+    const UA_Node *node = UA_NodestoreSwitch_getNode(server ,leafNode);
     if(!node)
         return false;
 
@@ -17500,14 +19373,14 @@ isNodeInTree(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *leafNode, con
         /* Recurse only for valid reference types */
         for(size_t j = 0; j < referenceTypeIdsSize; ++j) {
             if(UA_NodeId_equal(&node->references[i].referenceTypeId, &referenceTypeIds[j]) &&
-               isNodeInTree(nodestoreSwitch, &node->references[i].targetId.nodeId, nodeToFind,
+               isNodeInTree(server, &node->references[i].targetId.nodeId, nodeToFind,
                             referenceTypeIds, referenceTypeIdsSize)){
-                UA_NodestoreSwitch_release(nodestoreSwitch, node);
+                UA_NodestoreSwitch_releaseNode(server, node);
                 return true;
             }
         }
     }
-    UA_NodestoreSwitch_release(nodestoreSwitch, node);
+    UA_NodestoreSwitch_releaseNode(server, node);
     return false;
 }
 
@@ -17542,30 +19415,28 @@ getNodeType(UA_Server *server, const UA_Node *node) {
 
     if(!parentId)
         return NULL;
-    return UA_NodestoreSwitch_get(server->nodestoreSwitch ,parentId);
+    return UA_NodestoreSwitch_getNode(server ,parentId);
 }
 
 const UA_VariableTypeNode *
 getVariableNodeType(UA_Server *server, const UA_VariableNode *node) {
     const UA_Node *type = getNodeType(server, (const UA_Node*)node);
     if(!type || type->nodeClass != UA_NODECLASS_VARIABLETYPE){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, type);
+        UA_NodestoreSwitch_releaseNode(server, type);
         return NULL;
     }
     return (const UA_VariableTypeNode*)type;
 }
 
-/* Never Used? --> If used be sure to release the node with
- * UA_NodestoreSwitch_release(server->nodestoreSwitch, node_returned_from_this_function);
 const UA_ObjectTypeNode *
 getObjectNodeType(UA_Server *server, const UA_ObjectNode *node) {
     const UA_Node *type = getNodeType(server, (const UA_Node*)node);
     if(type->nodeClass != UA_NODECLASS_OBJECTTYPE){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, type);
+        UA_NodestoreSwitch_releaseNode(server, type);
         return NULL;
     }
     return (const UA_ObjectTypeNode*)type;
-}*/
+}
 
 UA_Boolean
 UA_Node_hasSubTypeOrInstances(const UA_Node *node) {
@@ -17582,30 +19453,29 @@ UA_Node_hasSubTypeOrInstances(const UA_Node *node) {
     return false;
 }
 
-/* For mulithreading: make a copy of the node, edit and replace.
- * For singletrheading: edit the original */
+/* Make a copy of the node, edit and replace. */
 UA_StatusCode
 UA_Server_editNode(UA_Server *server, UA_Session *session,
                    const UA_NodeId *nodeId, UA_EditNodeCallback callback,
                    const void *data) {
     UA_StatusCode retval;
-    UA_Int16 failCounts = 0;
-    do {
-        UA_Node *copy = UA_NodestoreSwitch_getCopy(server->nodestoreSwitch, nodeId);
-        if(!copy)
-            return UA_STATUSCODE_BADOUTOFMEMORY;
-        retval = callback(server, session, copy, data);
-        if(retval != UA_STATUSCODE_GOOD) {
-            UA_NodestoreSwitch_deleteNode(server->nodestoreSwitch, copy);
-            return retval;
-        }
-        retval = UA_NodestoreSwitch_replace(server->nodestoreSwitch, copy);
-        failCounts++;
-    } while(retval != UA_STATUSCODE_GOOD && failCounts < 10); //TODO FailCounts as attribute from Server.config ?
-    return UA_STATUSCODE_GOOD;
+    UA_Node *copy = UA_NodestoreSwitch_getNodeCopy(server, nodeId);
+    if(!copy)
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+    retval = callback(server, session, copy, data);
+    if(retval != UA_STATUSCODE_GOOD) {
+        UA_NodestoreSwitch_deleteNode(server, copy);
+        return retval;
+    }
+    retval = UA_NodestoreSwitch_replaceNode(server, copy);
+    return retval;
 }
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_server_worker.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 /**
@@ -17656,10 +19526,12 @@ processJob(UA_Server *server, UA_Job *job) {
         UA_Connection_detachSecureChannel(job->job.closeConnection);
         break;
     case UA_JOBTYPE_BINARYMESSAGE_NETWORKLAYER:
+        {
         UA_Server_processBinaryMessage(server, job->job.binaryMessage.connection,
                                        &job->job.binaryMessage.message);
         UA_Connection *connection = job->job.binaryMessage.connection;
         connection->releaseRecvBuffer(connection, &job->job.binaryMessage.message);
+        }
         break;
     case UA_JOBTYPE_BINARYMESSAGE_ALLOCATED:
         UA_Server_processBinaryMessage(server, job->job.binaryMessage.connection,
@@ -17704,10 +19576,6 @@ workerLoop(UA_Worker *worker) {
     UA_random_seed((uintptr_t)worker);
     rcu_register_thread();
 
-    pthread_mutex_t mutex; // required for the condition variable
-    pthread_mutex_init(&mutex, 0);
-    pthread_mutex_lock(&mutex);
-
     while(*running) {
         struct DispatchJob *dj = (struct DispatchJob*)
             cds_wfcq_dequeue_blocking(&server->dispatchQueue_head, &server->dispatchQueue_tail);
@@ -17716,16 +19584,17 @@ workerLoop(UA_Worker *worker) {
             UA_free(dj);
         } else {
             /* nothing to do. sleep until a job is dispatched (and wakes up all worker threads) */
-            pthread_cond_wait(&server->dispatchQueue_condition, &mutex);
+            pthread_mutex_lock(&server->dispatchQueue_mutex);
+            pthread_cond_wait(&server->dispatchQueue_condition, &server->dispatchQueue_mutex);
+            pthread_mutex_unlock(&server->dispatchQueue_mutex);
         }
         UA_atomic_add(counter, 1);
     }
 
-    pthread_mutex_unlock(&mutex);
-    pthread_mutex_destroy(&mutex);
     UA_ASSERT_RCU_UNLOCKED();
     rcu_barrier(); // wait for all scheduled call_rcu work to complete
     rcu_unregister_thread();
+    UA_LOG_DEBUG(server->config.logger, UA_LOGCATEGORY_SERVER, "Worker shut down");
     return NULL;
 }
 
@@ -17803,7 +19672,7 @@ UA_Server_addRepeatedJob(UA_Server *server, UA_Job job,
         (UA_UInt64)interval * (UA_UInt64)UA_MSEC_TO_DATETIME; // from ms to 100ns resolution
 
     /* Create and fill the repeated job structure */
-    struct RepeatedJob *rj = UA_malloc(sizeof(struct RepeatedJob));
+    struct RepeatedJob *rj = (struct RepeatedJob *)UA_malloc(sizeof(struct RepeatedJob));
     if(!rj)
         return UA_STATUSCODE_BADOUTOFMEMORY;
     /* done inside addRepeatedJob:
@@ -17975,7 +19844,7 @@ typedef struct UA_DelayedJob {
 
 UA_StatusCode
 UA_Server_delayedCallback(UA_Server *server, UA_ServerCallback callback, void *data) {
-    UA_DelayedJob *dj = UA_malloc(sizeof(UA_DelayedJob));
+    UA_DelayedJob *dj = (UA_DelayedJob *)UA_malloc(sizeof(UA_DelayedJob));
     if(!dj)
         return UA_STATUSCODE_BADOUTOFMEMORY;
     dj->job.type = UA_JOBTYPE_METHODCALL;
@@ -18142,6 +20011,7 @@ UA_StatusCode UA_Server_run_startup(UA_Server *server) {
     UA_LOG_INFO(server->config.logger, UA_LOGCATEGORY_SERVER,
                 "Spinning up %u worker thread(s)", server->config.nThreads);
     pthread_cond_init(&server->dispatchQueue_condition, 0);
+    pthread_mutex_init(&server->dispatchQueue_mutex, 0);
     server->workers = UA_malloc(server->config.nThreads * sizeof(UA_Worker));
     if(!server->workers)
         return UA_STATUSCODE_BADOUTOFMEMORY;
@@ -18245,18 +20115,16 @@ UA_UInt16 UA_Server_run_iterate(UA_Server *server, UA_Boolean waitInternal) {
 #endif
         }
 
-#ifdef UA_ENABLE_MULTITHREADING
-        /* Wake up worker threads */
-        if(dispatched)
-            pthread_cond_broadcast(&server->dispatchQueue_condition);
-#endif
-
         /* Clean up jobs list */
         if(jobsSize > 0)
             UA_free(jobs);
     }
 
-#ifndef UA_ENABLE_MULTITHREADING
+#ifdef UA_ENABLE_MULTITHREADING
+    /* Wake up worker threads */
+    if(dispatched)
+        pthread_cond_broadcast(&server->dispatchQueue_condition);
+#else
     processDelayedCallbacks(server);
 #endif
 
@@ -18274,23 +20142,26 @@ UA_StatusCode UA_Server_run_shutdown(UA_Server *server) {
         size_t stopJobsSize = nl->stop(nl, &stopJobs);
         for(size_t j = 0; j < stopJobsSize; ++j)
             processJob(server, &stopJobs[j]);
-        if (stopJobsSize > 0)
-        	UA_free(stopJobs);
+        UA_free(stopJobs);
     }
 
 #ifdef UA_ENABLE_MULTITHREADING
-    UA_LOG_INFO(server->config.logger, UA_LOGCATEGORY_SERVER,
-                "Shutting down %u worker thread(s)", server->config.nThreads);
-    /* Wait for all worker threads to finish */
-    for(size_t i = 0; i < server->config.nThreads; ++i)
-        server->workers[i].running = false;
-    pthread_cond_broadcast(&server->dispatchQueue_condition);
-    for(size_t i = 0; i < server->config.nThreads; ++i)
-        pthread_join(server->workers[i].thr, NULL);
-    UA_free(server->workers);
+    /* Ensure that run_shutdown can be called multiple times */
+    if(server->workers) {
+        UA_LOG_INFO(server->config.logger, UA_LOGCATEGORY_SERVER,
+                    "Shutting down %u worker thread(s)", server->config.nThreads);
+        /* Wait for all worker threads to finish */
+        for(size_t i = 0; i < server->config.nThreads; ++i)
+            server->workers[i].running = false;
+        pthread_cond_broadcast(&server->dispatchQueue_condition);
+        for(size_t i = 0; i < server->config.nThreads; ++i)
+            pthread_join(server->workers[i].thr, NULL);
+        /* Free the worker structures */
+        UA_free(server->workers);
+        server->workers = NULL;
+    }
 
-    /* Manually finish the work still enqueued.
-       This especially contains delayed frees */
+    /* Manually finish the work still enqueued */
     emptyDispatchQueue(server);
     UA_ASSERT_RCU_UNLOCKED();
     rcu_barrier(); // wait for all scheduled call_rcu work to complete
@@ -18310,6 +20181,10 @@ UA_StatusCode UA_Server_run(UA_Server *server, volatile UA_Boolean *running) {
 }
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_securechannel_manager.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 #define STARTCHANNELID 1
@@ -18389,7 +20264,7 @@ UA_SecureChannelManager_open(UA_SecureChannelManager *cm, UA_Connection *conn,
     }
 
     /* Set up the channel */
-    channel_list_entry *entry = UA_malloc(sizeof(channel_list_entry));
+    channel_list_entry *entry = (channel_list_entry*)UA_malloc(sizeof(channel_list_entry));
     if(!entry)
         return UA_STATUSCODE_BADOUTOFMEMORY;
     UA_SecureChannel_init(&entry->channel);
@@ -18481,6 +20356,10 @@ UA_SecureChannelManager_close(UA_SecureChannelManager *cm, UA_UInt32 channelId) 
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_session_manager.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 UA_StatusCode
 UA_SessionManager_init(UA_SessionManager *sm, UA_Server *server) {
@@ -18550,7 +20429,7 @@ UA_SessionManager_createSession(UA_SessionManager *sm, UA_SecureChannel *channel
     if(sm->currentSessionCount >= sm->server->config.maxSessions)
         return UA_STATUSCODE_BADTOOMANYSESSIONS;
 
-    session_list_entry *newentry = UA_malloc(sizeof(session_list_entry));
+    session_list_entry *newentry = (session_list_entry *)UA_malloc(sizeof(session_list_entry));
     if(!newentry)
         return UA_STATUSCODE_BADOUTOFMEMORY;
 
@@ -18585,6 +20464,10 @@ UA_SessionManager_removeSession(UA_SessionManager *sm, const UA_NodeId *token) {
 }
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_nodes.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 void UA_Node_deleteMembersAnyNodeClass(UA_Node *node) {
@@ -18785,6 +20668,10 @@ UA_StatusCode UA_Node_copyAnyNodeClass(const UA_Node *src, UA_Node *dst) {
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_nodestore.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 //TODO Move ua_nodestore to plugins folder like networklayer
 
 #ifndef UA_ENABLE_MULTITHREADING /* conditional compilation */
@@ -18803,6 +20690,8 @@ struct UA_NodeStore {
     UA_UInt32 size;
     UA_UInt32 count;
     UA_UInt32 sizePrimeIndex;
+    UA_UInt16 * linkedNamespaces;
+    size_t    linkedNamespacesLength;
 };
 
 /* The size of the hash-map is always a prime number. They are chosen to be
@@ -18863,7 +20752,7 @@ instantiateEntry(UA_NodeClass nodeClass) {
     default:
         return NULL;
     }
-    UA_NodeStoreEntry *entry = UA_calloc(1, size);
+    UA_NodeStoreEntry *entry = (UA_NodeStoreEntry *)UA_calloc(1, size);
     if(!entry)
         return NULL;
     entry->node.nodeClass = nodeClass;
@@ -18937,7 +20826,7 @@ expand(UA_NodeStore *ns) {
     UA_NodeStoreEntry **oentries = ns->entries;
     UA_UInt32 nindex = higher_prime_index(count * 2);
     UA_UInt32 nsize = primes[nindex];
-    UA_NodeStoreEntry **nentries = UA_calloc(nsize, sizeof(UA_NodeStoreEntry*));
+    UA_NodeStoreEntry **nentries = (UA_NodeStoreEntry **)UA_calloc(nsize, sizeof(UA_NodeStoreEntry*));
     if(!nentries)
         return UA_STATUSCODE_BADOUTOFMEMORY;
 
@@ -18958,19 +20847,16 @@ expand(UA_NodeStore *ns) {
     return UA_STATUSCODE_GOOD;
 }
 
-/**********************/
-/* Exported functions */
-/**********************/
-
-UA_NodeStore *
-UA_NodeStore_new(void) {
-    UA_NodeStore *ns = UA_malloc(sizeof(UA_NodeStore));
+static UA_NodeStore *
+initNodestore(UA_NodeStore * ns){
     if(!ns)
         return NULL;
     ns->sizePrimeIndex = higher_prime_index(UA_NODESTORE_MINSIZE);
     ns->size = primes[ns->sizePrimeIndex];
     ns->count = 0;
-    ns->entries = UA_calloc(ns->size, sizeof(UA_NodeStoreEntry*));
+    ns->linkedNamespacesLength = 0;
+    ns->linkedNamespaces = NULL;
+    ns->entries = (UA_NodeStoreEntry **) UA_calloc(ns->size, sizeof(UA_NodeStoreEntry*));
     if(!ns->entries) {
         UA_free(ns);
         return NULL;
@@ -18978,9 +20864,25 @@ UA_NodeStore_new(void) {
     return ns;
 }
 
+
+/**********************/
+/* Exported functions */
+/**********************/
+
+UA_NodeStore *
+UA_NodeStore_new(void) {
+    UA_NodeStore *ns = (UA_NodeStore*)UA_malloc(sizeof(UA_NodeStore));
+    return initNodestore(ns);
+}
+
 void
-UA_NodeStore_delete(UA_NodeStore *ns) {
-    if(ns->size == 0) return; //ns already deleted
+UA_NodeStore_delete(UA_NodeStore *ns, UA_UInt16 namespaceIndex) {
+    if(UA_NodeStore_unlinkNamespace(ns, namespaceIndex) != UA_STATUSCODE_GOOD)
+        return;
+    //Delete all nodes if all namespaces are unlinked
+    if(ns->linkedNamespacesLength > 0) return;
+    UA_free(ns->linkedNamespaces);
+    ns->linkedNamespaces = NULL;
     UA_UInt32 size = ns->size;
     UA_NodeStoreEntry **entries = ns->entries;
     for(UA_UInt32 i = 0; i < size; ++i) {
@@ -18988,8 +20890,44 @@ UA_NodeStore_delete(UA_NodeStore *ns) {
             deleteEntry(entries[i]);
     }
     UA_free(ns->entries);
-    ns->size = 0;
 }
+
+UA_StatusCode
+UA_NodeStore_linkNamespace(UA_NodeStore *ns, UA_UInt16 namespaceIndex){
+    UA_UInt16 * newLinkedNs = (UA_UInt16*)UA_realloc(ns->linkedNamespaces, sizeof(UA_UInt16)*(ns->linkedNamespacesLength + 1));
+    if(!newLinkedNs){
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+    }
+    ns->linkedNamespaces = newLinkedNs;
+    ns->linkedNamespaces[ns->linkedNamespacesLength] = namespaceIndex;
+    ns->linkedNamespacesLength = ns->linkedNamespacesLength + 1;
+    return UA_STATUSCODE_GOOD;
+}
+
+UA_StatusCode
+UA_NodeStore_unlinkNamespace(UA_NodeStore *ns, UA_UInt16 namespaceIndex){
+    size_t lNsLength = ns->linkedNamespacesLength;
+    if(lNsLength == 0)
+        return UA_STATUSCODE_BADINTERNALERROR;
+    UA_UInt16 * newLinkedNs = (UA_UInt16*)UA_malloc(sizeof(UA_UInt16) * (lNsLength -1));
+    if(!newLinkedNs)
+        return UA_STATUSCODE_BADNOTFOUND;
+    size_t j = 0;
+    for(size_t i = 0; i < lNsLength ; ++i) {
+        if(namespaceIndex != ns->linkedNamespaces[i]){
+            if(j == lNsLength){
+                UA_free(newLinkedNs);
+                return UA_STATUSCODE_BADNOTFOUND;
+            }
+            newLinkedNs[j++] = ns->linkedNamespaces[i];
+        }
+    }
+    ns->linkedNamespacesLength = lNsLength - 1;
+    UA_free(ns->linkedNamespaces);
+    ns->linkedNamespaces = newLinkedNs;
+    return UA_STATUSCODE_GOOD;
+}
+
 
 UA_Node *
 UA_NodeStore_newNode(UA_NodeClass nodeClass) {
@@ -19007,8 +20945,7 @@ UA_NodeStore_deleteNode(UA_Node *node) {
 }
 
 UA_StatusCode
-UA_NodeStore_insert(UA_NodeStore *ns, UA_Node *node,
-        const UA_NodeId *parentNodeId, UA_NodeId *addedNodeId) {
+UA_NodeStore_insert(UA_NodeStore *ns, UA_Node *node, UA_NodeId *addedNodeId) {
     if(ns->size * 3 <= ns->count * 4) {
         if(expand(ns) != UA_STATUSCODE_GOOD){
             return UA_STATUSCODE_BADINTERNALERROR;
@@ -19038,13 +20975,14 @@ UA_NodeStore_insert(UA_NodeStore *ns, UA_Node *node,
     } else {
         entry = findSlot(ns, &node->nodeId);
         if(!entry) {
-            deleteEntry(container_of(node, UA_NodeStoreEntry, node));
+            UA_NodeStore_deleteNode(node);
             return UA_STATUSCODE_BADNODEIDEXISTS;
         }
     }
 
     *entry = container_of(node, UA_NodeStoreEntry, node);
     ++ns->count;
+    UA_assert(&(*entry)->node == node);
 
     if(addedNodeId)
         return UA_NodeId_copy(&node->nodeId, addedNodeId);
@@ -19081,15 +21019,15 @@ UA_NodeStore_getCopy(UA_NodeStore *ns, const UA_NodeId *nodeid) {
     if(!slot)
         return NULL;
     UA_NodeStoreEntry *entry = *slot;
-    UA_NodeStoreEntry *new = instantiateEntry(entry->node.nodeClass);
-    if(!new)
+    UA_NodeStoreEntry *newItem = instantiateEntry(entry->node.nodeClass);
+    if(!newItem)
         return NULL;
-    if(UA_Node_copyAnyNodeClass(&entry->node, &new->node) != UA_STATUSCODE_GOOD) {
-        deleteEntry(new);
+    if(UA_Node_copyAnyNodeClass(&entry->node, &newItem->node) != UA_STATUSCODE_GOOD) {
+        deleteEntry(newItem);
         return NULL;
     }
-    new->orig = entry; // store the pointer to the original
-    return &new->node;
+    newItem->orig = entry; // store the pointer to the original
+    return &newItem->node;
 }
 
 UA_StatusCode
@@ -19107,10 +21045,10 @@ UA_NodeStore_remove(UA_NodeStore *ns, const UA_NodeId *nodeid) {
 }
 
 void
-UA_NodeStore_iterate(UA_NodeStore *ns, UA_NodeStore_nodeVisitor visitor) {
+UA_NodeStore_iterate(UA_NodeStore *ns, void *visitorHandle , UA_NodestoreInterface_nodeVisitor visitor) {
     for(UA_UInt32 i = 0; i < ns->size; ++i) {
         if(ns->entries[i] > UA_NODESTORE_TOMBSTONE)
-            visitor((UA_Node*)&ns->entries[i]->node);
+            visitor(visitorHandle,(UA_Node*)&ns->entries[i]->node);
     }
 }
 
@@ -19120,6 +21058,10 @@ UA_NodeStore_release(void *handle, const UA_Node *node){};
 #endif /* UA_ENABLE_MULTITHREADING */
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_nodestore_concurrent.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 #ifdef UA_ENABLE_MULTITHREADING /* conditional compilation */
@@ -19199,7 +21141,7 @@ UA_NodeStore * UA_NodeStore_new() {
 }
 
 /* do not call with read-side critical section held!! */
-void UA_NodeStore_delete(UA_NodeStore *ns) {
+void UA_NodeStore_delete(UA_NodeStore *ns, UA_UInt16 namespaceIndex) {
     if(ns->isDeleted) return;
     UA_ASSERT_RCU_LOCKED();
     struct cds_lfht *ht = ns->ht;
@@ -19213,7 +21155,9 @@ void UA_NodeStore_delete(UA_NodeStore *ns) {
         }
         cds_lfht_next(ht, &iter);
     }
+    UA_RCU_UNLOCK();
     cds_lfht_destroy(ns->ht, NULL);
+    UA_RCU_LOCK();
     UA_free(ns->ht);
     ns->isDeleted = true;
 }
@@ -19231,7 +21175,7 @@ void UA_NodeStore_deleteNode(UA_Node *node) {
 }
 
 UA_StatusCode UA_NodeStore_insert(UA_NodeStore *ns, UA_Node *node,
-        const UA_NodeId *parentNodeId, UA_NodeId *addedNodeId) {
+                                  UA_NodeId *addedNodeId) {
     UA_ASSERT_RCU_LOCKED();
     struct nodeEntry *entry = container_of(node, struct nodeEntry, node);
     struct cds_lfht *ht = ns->ht;
@@ -19348,17 +21292,28 @@ UA_Node * UA_NodeStore_getCopy(UA_NodeStore *ns, const UA_NodeId *nodeid) {
     return &new->node;
 }
 
-void UA_NodeStore_iterate(UA_NodeStore *ns, UA_NodeStore_nodeVisitor visitor) {
+void UA_NodeStore_iterate(UA_NodeStore *ns, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor) {
     UA_ASSERT_RCU_LOCKED();
     struct cds_lfht *ht = ns->ht;
     struct cds_lfht_iter iter;
     cds_lfht_first(ht, &iter);
     while(iter.node != NULL) {
         struct nodeEntry *found_entry = (struct nodeEntry*)iter.node;
-        visitor(&found_entry->node);
+        visitor(visitorHandle, &found_entry->node);
         cds_lfht_next(ht, &iter);
     }
 }
+
+UA_StatusCode
+UA_NodeStore_linkNamespace(UA_NodeStore *ns, UA_UInt16 namespaceIndex){
+    return UA_STATUSCODE_GOOD;
+}
+
+UA_StatusCode
+UA_NodeStore_unlinkNamespace(UA_NodeStore *ns, UA_UInt16 namespaceIndex){
+    return UA_STATUSCODE_GOOD;
+}
+
 void
 UA_NodeStore_release(void *handle, const UA_Node *node){};
 
@@ -19367,64 +21322,8 @@ UA_NodeStore_release(void *handle, const UA_Node *node){};
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_nodestore_switch.c" ***********************************/
 
 
-//returns true if NSIndex is ok.
-static UA_Boolean //TODO return the nodeStoreIndex instead (-1 for wrong namespaceindex)
-checkNSIndex(UA_NodestoreSwitch* nodestoreSwitch, const UA_UInt16 nsi_index) {
-    return (UA_Boolean) (nodestoreSwitch->nodestoreInterfacesSize > nsi_index);
-}
-
-UA_NodestoreSwitch *
-UA_NodestoreSwitch_new(){
-    UA_NodestoreSwitch* nodestoreSwitch = UA_malloc(sizeof(UA_NodestoreSwitch));
-    nodestoreSwitch->nodestoreInterfacesSize = 0;
-    nodestoreSwitch->nodestoreInterfaces = NULL;
-    return nodestoreSwitch;
-}
-
-void
-UA_NodestoreSwitch_delete(UA_NodestoreSwitch* nodestoreSwitch){
-    UA_UInt16 size = nodestoreSwitch->nodestoreInterfacesSize;
-    for(UA_UInt16 i = 0; i < size; i++) {
-        nodestoreSwitch->nodestoreInterfaces[i]->deleteNodeStore(
-        nodestoreSwitch->nodestoreInterfaces[i]->handle);
-    }
-    UA_free(nodestoreSwitch->nodestoreInterfaces);
-    UA_free(nodestoreSwitch);
-}
-
-
-UA_Boolean
-UA_NodestoreSwitch_add(UA_NodestoreSwitch* nodestoreSwitch, UA_NodestoreInterface *nodestoreInterface) {
-    if(!nodestoreInterface){
-        return UA_FALSE;
-    }
-    size_t size = nodestoreSwitch->nodestoreInterfacesSize;
-    UA_NodestoreInterface** new_nsis =
-            UA_realloc(nodestoreSwitch->nodestoreInterfaces,
-               sizeof(UA_NodestoreInterface*) * (size + 1));
-    if(!new_nsis) {
-        return UA_FALSE;//UA_STATUSCODE_BADOUTOFMEMORY;
-    }
-    nodestoreSwitch->nodestoreInterfaces = new_nsis;
-    nodestoreSwitch->nodestoreInterfaces[size] = nodestoreInterface;
-    nodestoreSwitch->nodestoreInterfacesSize++;
-    return UA_TRUE;//UA_STATUSCODE_GOOD;
-}
-
-UA_Boolean
-UA_NodestoreSwitch_change(UA_NodestoreSwitch* nodestoreSwitch, UA_NodestoreInterface *nodestoreInterface, UA_UInt16 nodestoreInterfaceIndex) {
-    if(nodestoreInterface && checkNSIndex(nodestoreSwitch, nodestoreInterfaceIndex)){
-        return UA_FALSE;
-    }
-    nodestoreSwitch->nodestoreInterfaces[nodestoreInterfaceIndex] = nodestoreInterface;
-    return UA_TRUE;//UA_STATUSCODE_GOOD;
-}
-UA_NodestoreInterface *
-UA_NodestoreSwitch_getNodestoreForNamespace(UA_NodestoreSwitch* nodestoreSwitch, UA_UInt16 namespaceIndex){
-    if(checkNSIndex(nodestoreSwitch, namespaceIndex)){
-        return nodestoreSwitch->nodestoreInterfaces[namespaceIndex];
-    }
-    return NULL;
+static UA_Boolean checkNSIndex(UA_Server* server, UA_UInt16 nsIdx){
+    return (UA_Boolean) (nsIdx < (UA_UInt16)server->namespacesSize);
 }
 
 /*
@@ -19432,82 +21331,82 @@ UA_NodestoreSwitch_getNodestoreForNamespace(UA_NodestoreSwitch* nodestoreSwitch,
  */
 
 UA_Node *
-UA_NodestoreSwitch_newNode(UA_NodestoreSwitch* nodestoreSwitch, UA_NodeClass nodeClass, UA_UInt16 namespaceIndex) {
-    if(!checkNSIndex(nodestoreSwitch, namespaceIndex)){
+UA_NodestoreSwitch_newNode(UA_Server* server, UA_NodeClass nodeClass, UA_UInt16 namespaceIndex) {
+    if(!checkNSIndex(server, namespaceIndex)){
         return NULL;
     }
-    return nodestoreSwitch->nodestoreInterfaces[namespaceIndex]->newNode(nodeClass);
+    return server->namespaces[namespaceIndex].nodestore->newNode(nodeClass);
 }
 
 void
-UA_NodestoreSwitch_deleteNode(UA_NodestoreSwitch* nodestoreSwitch, UA_Node *node){
-    if(checkNSIndex(nodestoreSwitch, node->nodeId.namespaceIndex)){
-        nodestoreSwitch->nodestoreInterfaces[node->nodeId.namespaceIndex]->deleteNode(node);
+UA_NodestoreSwitch_deleteNode(UA_Server* server, UA_Node *node){
+    if(checkNSIndex(server, node->nodeId.namespaceIndex)){
+        server->namespaces[node->nodeId.namespaceIndex].nodestore->deleteNode(node);
     }
 }
 
 UA_StatusCode
-UA_NodestoreSwitch_insert(UA_NodestoreSwitch* nodestoreSwitch, UA_Node *node,
-        const UA_NodeId *parentNodeId, UA_NodeId *addedNodeId) {
-    if(!checkNSIndex(nodestoreSwitch, node->nodeId.namespaceIndex)){
+UA_NodestoreSwitch_insertNode(UA_Server* server, UA_Node *node,
+        UA_NodeId *addedNodeId) {
+    if(!checkNSIndex(server, node->nodeId.namespaceIndex)){
         return UA_STATUSCODE_BADNODEIDUNKNOWN;
     }
-    return nodestoreSwitch->nodestoreInterfaces[node->nodeId.namespaceIndex]->insert(
-            nodestoreSwitch->nodestoreInterfaces[node->nodeId.namespaceIndex]->handle, node, parentNodeId, addedNodeId);
+    return server->namespaces[node->nodeId.namespaceIndex].nodestore->insertNode(
+            server->namespaces[node->nodeId.namespaceIndex].nodestore->handle, node, addedNodeId);
 }
 const UA_Node *
-UA_NodestoreSwitch_get(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *nodeId) {
-    if(!checkNSIndex(nodestoreSwitch, nodeId->namespaceIndex)){
+UA_NodestoreSwitch_getNode(UA_Server* server, const UA_NodeId *nodeId) {
+    if(!checkNSIndex(server, nodeId->namespaceIndex)){
         return NULL;
     }
-    return nodestoreSwitch->nodestoreInterfaces[nodeId->namespaceIndex]->get(
-                    nodestoreSwitch->nodestoreInterfaces[nodeId->namespaceIndex]->handle, nodeId);
+    return server->namespaces[nodeId->namespaceIndex].nodestore->getNode(
+            server->namespaces[nodeId->namespaceIndex].nodestore->handle, nodeId);
 }
 UA_Node *
-UA_NodestoreSwitch_getCopy(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *nodeId) {
-    if(!checkNSIndex(nodestoreSwitch, nodeId->namespaceIndex)){
+UA_NodestoreSwitch_getNodeCopy(UA_Server* server, const UA_NodeId *nodeId) {
+    if(!checkNSIndex(server, nodeId->namespaceIndex)){
         return NULL;
     }
-    return nodestoreSwitch->nodestoreInterfaces[nodeId->namespaceIndex]->getCopy(
-            nodestoreSwitch->nodestoreInterfaces[nodeId->namespaceIndex]->handle, nodeId);
+    return server->namespaces[nodeId->namespaceIndex].nodestore->getNodeCopy(
+            server->namespaces[nodeId->namespaceIndex].nodestore->handle, nodeId);
 }
 UA_StatusCode
-UA_NodestoreSwitch_replace(UA_NodestoreSwitch* nodestoreSwitch, UA_Node *node) {
-    if(!checkNSIndex(nodestoreSwitch, node->nodeId.namespaceIndex)){
+UA_NodestoreSwitch_replaceNode(UA_Server* server, UA_Node *node) {
+    if(!checkNSIndex(server, node->nodeId.namespaceIndex)){
         return UA_STATUSCODE_BADNODEIDUNKNOWN;
     }
-    return nodestoreSwitch->nodestoreInterfaces[node->nodeId.namespaceIndex]->replace(
-            nodestoreSwitch->nodestoreInterfaces[node->nodeId.namespaceIndex]->handle, node);
+    return server->namespaces[node->nodeId.namespaceIndex].nodestore->replaceNode(
+            server->namespaces[node->nodeId.namespaceIndex].nodestore->handle, node);
 }
 UA_StatusCode
-UA_NodestoreSwitch_remove(UA_NodestoreSwitch* nodestoreSwitch, const UA_NodeId *nodeId) {
-    if(!checkNSIndex(nodestoreSwitch, nodeId->namespaceIndex)){
+UA_NodestoreSwitch_removeNode(UA_Server* server, const UA_NodeId *nodeId) {
+    if(!checkNSIndex(server, nodeId->namespaceIndex)){
         return UA_STATUSCODE_BADNODEIDUNKNOWN;
     }
-    return nodestoreSwitch->nodestoreInterfaces[nodeId->namespaceIndex]->remove(
-            nodestoreSwitch->nodestoreInterfaces[nodeId->namespaceIndex]->handle, nodeId);
+    return server->namespaces[nodeId->namespaceIndex].nodestore->removeNode(
+            server->namespaces[nodeId->namespaceIndex].nodestore->handle, nodeId);
 }
-void UA_NodestoreSwitch_iterate(UA_NodestoreSwitch* nodestoreSwitch, UA_Nodestore_nodeVisitor visitor, UA_UInt16 namespaceIndex){
-    if(checkNSIndex(nodestoreSwitch, namespaceIndex)){
-        nodestoreSwitch->nodestoreInterfaces[namespaceIndex]->iterate(
-                nodestoreSwitch->nodestoreInterfaces[namespaceIndex]->handle, visitor);
-    }
-}
-void UA_NodestoreSwitch_release(UA_NodestoreSwitch* nodestoreSwitch, const UA_Node *node){
-    if(node && checkNSIndex(nodestoreSwitch, node->nodeId.namespaceIndex)){
-        nodestoreSwitch->nodestoreInterfaces[node->nodeId.namespaceIndex]->release(
-                nodestoreSwitch->nodestoreInterfaces[node->nodeId.namespaceIndex]->handle, node);
+void UA_NodestoreSwitch_releaseNode(UA_Server* server, const UA_Node *node){
+    if(node && checkNSIndex(server, node->nodeId.namespaceIndex)){
+        server->namespaces[node->nodeId.namespaceIndex].nodestore->releaseNode(
+                server->namespaces[node->nodeId.namespaceIndex].nodestore->handle, node);
     }
 }
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services_discovery.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 
 #ifdef UA_ENABLE_DISCOVERY
     #ifdef _MSC_VER
-    # include <io.h> //access
-    # define access _access
+      #ifndef UNDER_CE
+        # include <io.h> //access
+        # define access _access
+      #endif
     #else
     # include <unistd.h> //access
     #endif
@@ -19545,7 +21444,7 @@ static UA_StatusCode copyRegisteredServerToApplicationDescription(const UA_FindS
 
     target->discoveryUrlsSize = registeredServer->discoveryUrlsSize;
     if (registeredServer->discoveryUrlsSize) {
-        target->discoveryUrls = UA_malloc(sizeof(UA_String) * registeredServer->discoveryUrlsSize);
+        target->discoveryUrls = (UA_String *)UA_malloc(sizeof(UA_String) * registeredServer->discoveryUrlsSize);
         if (!target->discoveryUrls) {
             return UA_STATUSCODE_BADOUTOFMEMORY;
         }
@@ -19573,7 +21472,7 @@ void Service_FindServers(UA_Server *server, UA_Session *session,
     // check if client only requested a specific set of servers
     if (request->serverUrisSize) {
 
-        foundServerFilteredPointer = UA_malloc(sizeof(UA_RegisteredServer*) * server->registeredServersSize);
+        foundServerFilteredPointer = (UA_RegisteredServer **)UA_malloc(sizeof(UA_RegisteredServer*) * server->registeredServersSize);
         if(!foundServerFilteredPointer) {
             response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
             return;
@@ -19618,7 +21517,7 @@ void Service_FindServers(UA_Server *server, UA_Session *session,
 #endif
 
     if(foundServersSize) {
-        foundServers = UA_malloc(sizeof(UA_ApplicationDescription) * foundServersSize);
+        foundServers = (UA_ApplicationDescription *)UA_malloc(sizeof(UA_ApplicationDescription) * foundServersSize);
         if (!foundServers) {
             if (foundServerFilteredPointer)
                 UA_free(foundServerFilteredPointer);
@@ -19638,7 +21537,7 @@ void Service_FindServers(UA_Server *server, UA_Session *session,
             }
 
             /* add the discoveryUrls from the networklayers */
-            UA_String* disc = UA_realloc(foundServers[0].discoveryUrls,
+            UA_String* disc = (UA_String *)UA_realloc(foundServers[0].discoveryUrls,
                                          sizeof(UA_String) * (foundServers[0].discoveryUrlsSize +
                                                               server->config.networkLayersSize));
             if(!disc) {
@@ -19719,7 +21618,7 @@ void Service_GetEndpoints(UA_Server *server, UA_Session *session, const UA_GetEn
 #ifdef NO_ALLOCA
     UA_Boolean relevant_endpoints[server->endpointDescriptionsSize];
 #else
-    UA_Boolean *relevant_endpoints = UA_alloca(sizeof(UA_Boolean) * server->endpointDescriptionsSize);
+    UA_Boolean *relevant_endpoints = (UA_Boolean *)UA_alloca(sizeof(UA_Boolean) * server->endpointDescriptionsSize);
 #endif
     memset(relevant_endpoints, 0, sizeof(UA_Boolean) * server->endpointDescriptionsSize);
     size_t relevant_count = 0;
@@ -19752,7 +21651,7 @@ void Service_GetEndpoints(UA_Server *server, UA_Session *session, const UA_GetEn
         nl_endpointurl = true;
     }
 
-    response->endpoints = UA_Array_new(relevant_count * clone_times, &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION]);
+    response->endpoints = (UA_EndpointDescription *)UA_Array_new(relevant_count * clone_times, &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION]);
     if(!response->endpoints) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -19831,7 +21730,7 @@ void Service_RegisterServer(UA_Server *server, UA_Session *session,
 
         UA_LOG_DEBUG_SESSION(server->config.logger, session, "Registering new server: %.*s", (int)request->server.serverUri.length, request->server.serverUri.data);
 
-        registeredServer_entry = UA_malloc(sizeof(registeredServer_list_entry));
+        registeredServer_entry = (registeredServer_list_entry *)UA_malloc(sizeof(registeredServer_list_entry));
         if(!registeredServer_entry) {
             response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
             return;
@@ -19875,11 +21774,18 @@ void UA_Discovery_cleanupTimedOut(UA_Server *server, UA_DateTime nowMonotonic) {
         UA_Boolean semaphoreDeleted = UA_FALSE;
 
         if (current->registeredServer.semaphoreFilePath.length) {
-            char* filePath = UA_malloc(sizeof(char)*current->registeredServer.semaphoreFilePath.length+1);
+            char* filePath = (char *)malloc(sizeof(char)*current->registeredServer.semaphoreFilePath.length+1);
             memcpy( filePath, current->registeredServer.semaphoreFilePath.data, current->registeredServer.semaphoreFilePath.length );
             filePath[current->registeredServer.semaphoreFilePath.length] = '\0';
+#ifdef UNDER_CE
+           FILE *fp = fopen(filePath,"rb");
+           semaphoreDeleted = (fp==NULL);
+           if (fp)
+             fclose(fp);
+#else
             semaphoreDeleted = access( filePath, 0 ) == -1;
-            UA_free(filePath);
+#endif
+            free(filePath);
         }
 
         if (semaphoreDeleted || (server->config.discoveryCleanupTimeout && current->lastSeen < timedOut)) {
@@ -19914,6 +21820,10 @@ void UA_Discovery_cleanupTimedOut(UA_Server *server, UA_DateTime nowMonotonic) {
 #endif
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services_securechannel.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 void Service_OpenSecureChannel(UA_Server *server, UA_Connection *connection,
@@ -19956,6 +21866,10 @@ void Service_CloseSecureChannel(UA_Server *server, UA_SecureChannel *channel) {
 }
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services_session.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 void Service_CreateSession(UA_Server *server, UA_SecureChannel *channel,
@@ -20055,6 +21969,10 @@ Service_CloseSession(UA_Server *server, UA_Session *session, const UA_CloseSessi
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services_attribute.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #ifdef UA_ENABLE_NONSTANDARD_STATELESS
 #endif
 
@@ -20062,10 +21980,13 @@ Service_CloseSession(UA_Server *server, UA_Session *session, const UA_CloseSessi
    nodelete. So the value is not deleted. Use with care! */
 static void
 forceVariantSetScalar(UA_Variant *v, const void *p, const UA_DataType *t) {
+    UA_Variant_setScalarCopy(v,p,t);
+    /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
     UA_Variant_init(v);
     v->type = t;
     v->data = (void*)(uintptr_t)p;
     v->storageType = UA_VARIANT_DATA_NODELETE;
+    */
 }
 
 static UA_UInt32
@@ -20185,7 +22106,7 @@ compatibleArrayDimensions(size_t constraintArrayDimensionsSize,
 static const UA_Variant *
 convertToMatchingValue(UA_Server *server, const UA_Variant *value,
                        const UA_NodeId *targetDataTypeId, UA_Variant *editableValue) {
-    const UA_DataType *targetDataType = UA_findDataType(targetDataTypeId);
+    const UA_DataType *targetDataType = UA_findDataType(targetDataTypeId, server->namespaces, server->namespacesSize);
     if(!targetDataType)
         return NULL;
 
@@ -20194,11 +22115,14 @@ convertToMatchingValue(UA_Server *server, const UA_Variant *value,
     if(targetDataType == &UA_TYPES[UA_TYPES_BYTE] &&
        value->type == &UA_TYPES[UA_TYPES_BYTESTRING] &&
        UA_Variant_isScalar(value)) {
+        UA_Variant_copy(value,editableValue);
+        /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
         UA_ByteString *str = (UA_ByteString*)value->data;
         editableValue->storageType = UA_VARIANT_DATA_NODELETE;
         editableValue->type = &UA_TYPES[UA_TYPES_BYTE];
         editableValue->arrayLength = str->length;
         editableValue->data = str->data;
+        */
         return editableValue;
     }
 
@@ -20207,9 +22131,12 @@ convertToMatchingValue(UA_Server *server, const UA_Variant *value,
     enum type_equivalence te1 = typeEquivalence(targetDataType);
     enum type_equivalence te2 = typeEquivalence(value->type);
     if(te1 != TYPE_EQUIVALENCE_NONE && te1 == te2) {
+        UA_Variant_copy(value,editableValue);
+        /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
         *editableValue = *value;
         editableValue->storageType = UA_VARIANT_DATA_NODELETE;
         editableValue->type = targetDataType;
+        */
         return editableValue;
     }
 
@@ -20229,14 +22156,11 @@ typeCheckValue(UA_Server *server, const UA_NodeId *targetDataTypeId,
                UA_Int32 targetValueRank, size_t targetArrayDimensionsSize,
                const UA_UInt32 *targetArrayDimensions, const UA_Variant *value,
                const UA_NumericRange *range, UA_Variant *editableValue) {
-    /* Empty variant is only allowed for BaseDataType */
-    UA_NodeId basedatatype = UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATATYPE);
-    if(!value->type) {
-        if(UA_NodeId_equal(targetDataTypeId, &basedatatype))
-            goto check_array;
-        else
-            return UA_STATUSCODE_BADTYPEMISMATCH;
-    }
+    const UA_NodeId subtypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE);
+   
+	/* Empty variant always matches... */
+    if(!value->type)
+        return UA_STATUSCODE_GOOD;
 
     /* See if the types match. The nodeid on the wire may be != the nodeid in
      * the node for opaque types, enums and bytestrings. value contains the
@@ -20245,8 +22169,7 @@ typeCheckValue(UA_Server *server, const UA_NodeId *targetDataTypeId,
         goto check_array;
 
     /* Has the value a subtype of the required type? */
-    const UA_NodeId subtypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE);
-    if(isNodeInTree(server->nodestoreSwitch, &value->type->typeId, targetDataTypeId, &subtypeId, 1))
+    if(isNodeInTree(server, &value->type->typeId, targetDataTypeId, &subtypeId, 1))
         goto check_array;
 
     /* Try to convert to a matching value if this is wanted */
@@ -20260,13 +22183,20 @@ typeCheckValue(UA_Server *server, const UA_NodeId *targetDataTypeId,
     if(range) /* array dimensions are checked later when writing the range */
         return UA_STATUSCODE_GOOD;
 
+    size_t valueArrayDimensionsSize = value->arrayDimensionsSize;
+    UA_UInt32 *valueArrayDimensions = value->arrayDimensions;
+    UA_UInt32 tempArrayDimensions;
+    if(valueArrayDimensions == 0 && !UA_Variant_isScalar(value)) {
+        valueArrayDimensionsSize = 1;
+        tempArrayDimensions = (UA_UInt32)value->arrayLength;
+        valueArrayDimensions = &tempArrayDimensions;
+    }
+
     /* See if the array dimensions match. When arrayDimensions are defined, they
      * already hold the valuerank. */
     if(targetArrayDimensionsSize > 0)
-        return compatibleArrayDimensions(targetArrayDimensionsSize,
-                                         targetArrayDimensions,
-                                         value->arrayDimensionsSize,
-                                         value->arrayDimensions);
+        return compatibleArrayDimensions(targetArrayDimensionsSize, targetArrayDimensions,
+                                         valueArrayDimensionsSize, valueArrayDimensions);
 
     /* Check if the valuerank allows for the value dimension */
     return compatibleValueRankValue(targetValueRank, value);
@@ -20278,9 +22208,13 @@ typeCheckValue(UA_Server *server, const UA_NodeId *targetDataTypeId,
 
 static UA_StatusCode
 readArrayDimensionsAttribute(const UA_VariableNode *vn, UA_DataValue *v) {
+    UA_Variant_setArrayCopy(&v->value, vn->arrayDimensions,
+                        vn->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);
+    /*JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
     UA_Variant_setArray(&v->value, vn->arrayDimensions,
                         vn->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);
     v->value.storageType = UA_VARIANT_DATA_NODELETE;
+    */
     v->hasValue = true;
     return UA_STATUSCODE_GOOD;
 }
@@ -20315,11 +22249,11 @@ writeArrayDimensionsAttribute(UA_Server *server, UA_VariableNode *node,
         if(retval != UA_STATUSCODE_GOOD) {
             UA_LOG_DEBUG(server->config.logger, UA_LOGCATEGORY_SERVER,
                          "Array dimensions in the variable type do not match");
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
             return retval;
         }
     }
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
 
     /* Check if the current value is compatible with the array dimensions */
     UA_DataValue value;
@@ -20361,7 +22295,7 @@ writeValueRankAttributeWithVT(UA_Server *server, UA_VariableNode *node,
     if(!vt)
         return UA_STATUSCODE_BADINTERNALERROR;
     UA_StatusCode retVal = writeValueRankAttribute(server, node, valueRank, vt->valueRank);
-    UA_NodestoreSwitch_release(server->nodestoreSwitch,(const UA_Node*)vt);
+    UA_NodestoreSwitch_releaseNode(server,(const UA_Node*)vt);
     return retVal;
 }
 
@@ -20435,7 +22369,7 @@ writeDataTypeAttributeWithVT(UA_Server *server, UA_VariableNode *node,
     if(!vt)
         return UA_STATUSCODE_BADINTERNALERROR;
     UA_StatusCode retVal = writeDataTypeAttribute(server, node, dataType, &vt->dataType);
-    UA_NodestoreSwitch_release(server->nodestoreSwitch,(const UA_Node*)vt);
+    UA_NodestoreSwitch_releaseNode(server,(const UA_Node*)vt);
     return retVal;
 }
 
@@ -20451,7 +22385,7 @@ writeDataTypeAttribute(UA_Server *server, UA_VariableNode *node,
 
     /* Does the new type match the constraints of the variabletype? */
     UA_NodeId subtypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE);
-    if(!isNodeInTree(server->nodestoreSwitch, dataType,
+    if(!isNodeInTree(server, dataType,
                      constraintDataType, &subtypeId, 1))
         return UA_STATUSCODE_BADTYPEMISMATCH;
 
@@ -20492,18 +22426,23 @@ static UA_StatusCode
 readValueAttributeFromNode(UA_Server *server, const UA_VariableNode *vn, UA_DataValue *v,
                            UA_NumericRange *rangeptr) {
     if(vn->value.data.callback.onRead) {
+        UA_RCU_UNLOCK();
         vn->value.data.callback.onRead(vn->value.data.callback.handle,
                                        vn->nodeId, &vn->value.data.value.value, rangeptr);
+        UA_RCU_LOCK();
 #ifdef UA_ENABLE_MULTITHREADING
         /* Reopen the node to see the changes (multithreading only) */
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*) vn);
-        vn = (const UA_VariableNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, &vn->nodeId);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*) vn);
+        vn = (const UA_VariableNode*)UA_NodestoreSwitch_getNode(server, &vn->nodeId);
 #endif
     }
     if(rangeptr)
         return UA_Variant_copyRange(&vn->value.data.value.value, &v->value, *rangeptr);
+    UA_DataValue_copy(&vn->value.data.value,v);
+    /*JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
     *v = vn->value.data.value;
     v->value.storageType = UA_VARIANT_DATA_NODELETE;
+    */
     return UA_STATUSCODE_GOOD;
 }
 
@@ -20515,8 +22454,13 @@ readValueAttributeFromDataSource(const UA_VariableNode *vn, UA_DataValue *v,
         return UA_STATUSCODE_BADINTERNALERROR;
     UA_Boolean sourceTimeStamp = (timestamps == UA_TIMESTAMPSTORETURN_SOURCE ||
                                   timestamps == UA_TIMESTAMPSTORETURN_BOTH);
-    return vn->value.dataSource.read(vn->value.dataSource.handle, vn->nodeId,
-                                     sourceTimeStamp, rangeptr, v);
+
+    UA_RCU_UNLOCK();
+    UA_StatusCode retval =
+        vn->value.dataSource.read(vn->value.dataSource.handle, vn->nodeId,
+                                  sourceTimeStamp, rangeptr, v);
+    UA_RCU_LOCK();
+    return retval;
 }
 
 static UA_StatusCode
@@ -20611,8 +22555,12 @@ writeValueAttribute(UA_Server *server, UA_VariableNode *node,
 
     /* Copy the value into an editable "container" where e.g. the datatype can
      * be adjusted. The data itself is not written into. */
+     /*JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
     UA_DataValue editableValue = *value;
     editableValue.value.storageType = UA_VARIANT_DATA_NODELETE;
+    */
+    UA_DataValue editableValue;
+    UA_DataValue_copy(value, &editableValue);
 
     /* Type checking. May change the type of editableValue */
     if(value->hasValue) {
@@ -20639,23 +22587,29 @@ writeValueAttribute(UA_Server *server, UA_VariableNode *node,
         /* Callback after writing */
         if(retval == UA_STATUSCODE_GOOD && node->value.data.callback.onWrite) {
             /* Reopen the node to see the changes */
-            const UA_VariableNode *writtenNode = (const UA_VariableNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, &node->nodeId);
+            const UA_VariableNode *writtenNode = (const UA_VariableNode*)UA_NodestoreSwitch_getNode(server, &node->nodeId);
             writtenNode->value.data.callback.onWrite(writtenNode->value.data.callback.handle, writtenNode->nodeId,
                                                      &writtenNode->value.data.value.value, rangeptr);
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*) writtenNode);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*) writtenNode);
+            UA_RCU_LOCK();
         }
     } else {
-        if(node->value.dataSource.write)
+        if(node->value.dataSource.write) {
+            UA_RCU_UNLOCK();
             retval = node->value.dataSource.write(node->value.dataSource.handle,
                                                   node->nodeId, &editableValue.value, rangeptr);
-        else
+            UA_RCU_LOCK();
+        } else {
             retval = UA_STATUSCODE_BADWRITENOTSUPPORTED;
+        }
     }
 
     /* Clean up */
  cleanup:
     if(rangeptr)
         UA_free(range.dimensions);
+         /*JGrothof: editableValue has to be freed, because a copy is made */
+        UA_DataValue_deleteMembers(&editableValue);
     return retval;
 }
 
@@ -20742,7 +22696,7 @@ void Service_Read_single(UA_Server *server, UA_Session *session,
     }
 
     /* Get the node */
-    const UA_Node *node = UA_NodestoreSwitch_get(server->nodestoreSwitch, &id->nodeId);
+    const UA_Node *node = UA_NodestoreSwitch_getNode(server, &id->nodeId);
     if(!node) {
         v->hasStatus = true;
         v->status = UA_STATUSCODE_BADNODEIDUNKNOWN;
@@ -20849,7 +22803,7 @@ void Service_Read_single(UA_Server *server, UA_Session *session,
     default:
         retval = UA_STATUSCODE_BADATTRIBUTEIDINVALID;
     }
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, node);
+    UA_NodestoreSwitch_releaseNode(server, node);
 
     /* Return error code when reading has failed */
     if(retval != UA_STATUSCODE_GOOD) {
@@ -20895,7 +22849,7 @@ void Service_Read(UA_Server *server, UA_Session *session,
     }
 
     size_t size = request->nodesToReadSize;
-    response->results = UA_Array_new(size, &UA_TYPES[UA_TYPES_DATAVALUE]);
+    response->results = (UA_DataValue *)UA_Array_new(size, &UA_TYPES[UA_TYPES_DATAVALUE]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -21019,7 +22973,7 @@ __UA_Server_read(UA_Server *server, const UA_NodeId *nodeId,
        attributeId == UA_ATTRIBUTEID_ARRAYDIMENSIONS) {
         /* Return the entire variant */
         if(dv.value.storageType == UA_VARIANT_DATA_NODELETE) {
-            retval = UA_Variant_copy(&dv.value, v);
+            retval = UA_Variant_copy(&dv.value,(UA_Variant *) v);
         } else {
             /* storageType is UA_VARIANT_DATA. Copy the entire variant
              * (including pointers and all) */
@@ -21093,19 +23047,19 @@ CopyAttributeIntoNode(UA_Server *server, UA_Session *session,
         CHECK_USERWRITEMASK(2);
         CHECK_DATATYPE_SCALAR(QUALIFIEDNAME);
         UA_QualifiedName_deleteMembers(&node->browseName);
-        UA_QualifiedName_copy(value, &node->browseName);
+        UA_QualifiedName_copy((const UA_QualifiedName *)value, &node->browseName);
         break;
     case UA_ATTRIBUTEID_DISPLAYNAME:
         CHECK_USERWRITEMASK(6);
         CHECK_DATATYPE_SCALAR(LOCALIZEDTEXT);
         UA_LocalizedText_deleteMembers(&node->displayName);
-        UA_LocalizedText_copy(value, &node->displayName);
+        UA_LocalizedText_copy((const UA_LocalizedText *)value, &node->displayName);
         break;
     case UA_ATTRIBUTEID_DESCRIPTION:
         CHECK_USERWRITEMASK(5);
         CHECK_DATATYPE_SCALAR(LOCALIZEDTEXT);
         UA_LocalizedText_deleteMembers(&node->description);
-        UA_LocalizedText_copy(value, &node->description);
+        UA_LocalizedText_copy((const UA_LocalizedText *)value, &node->description);
         break;
     case UA_ATTRIBUTEID_WRITEMASK:
         CHECK_USERWRITEMASK(20);
@@ -21128,7 +23082,7 @@ CopyAttributeIntoNode(UA_Server *server, UA_Session *session,
         CHECK_USERWRITEMASK(10);
         CHECK_DATATYPE_SCALAR(LOCALIZEDTEXT);
         UA_LocalizedText_deleteMembers(&((UA_ReferenceTypeNode*)node)->inverseName);
-        UA_LocalizedText_copy(value, &((UA_ReferenceTypeNode*)node)->inverseName);
+        UA_LocalizedText_copy((const UA_LocalizedText *)value, &((UA_ReferenceTypeNode*)node)->inverseName);
         break;
     case UA_ATTRIBUTEID_CONTAINSNOLOOPS:
         CHECK_NODECLASS_WRITE(UA_NODECLASS_VIEW);
@@ -21175,7 +23129,7 @@ CopyAttributeIntoNode(UA_Server *server, UA_Session *session,
         CHECK_DATATYPE_ARRAY(UINT32);
         retval = writeArrayDimensionsAttribute(server, (UA_VariableNode*)node,
                                                wvalue->value.value.arrayLength,
-                                               wvalue->value.value.data);
+                                               (UA_UInt32 *)wvalue->value.value.data);
         break;
     case UA_ATTRIBUTEID_ACCESSLEVEL:
         CHECK_NODECLASS_WRITE(UA_NODECLASS_VARIABLE);
@@ -21220,7 +23174,7 @@ Service_Write(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_Array_new(request->nodesToWriteSize, &UA_TYPES[UA_TYPES_STATUSCODE]);
+    response->results = (UA_StatusCode *)UA_Array_new(request->nodesToWriteSize, &UA_TYPES[UA_TYPES_STATUSCODE]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -21295,6 +23249,10 @@ __UA_Server_write(UA_Server *server, const UA_NodeId *nodeId,
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services_nodemanagement.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 /**********************/
 /* Consistency Checks */
@@ -21307,7 +23265,7 @@ static UA_StatusCode
 checkParentReference(UA_Server *server, UA_Session *session, UA_NodeClass nodeClass,
                      const UA_NodeId *parentNodeId, const UA_NodeId *referenceTypeId) {
     /* See if the parent exists */
-    const UA_Node *parent = UA_NodestoreSwitch_get(server->nodestoreSwitch, parentNodeId);
+    const UA_Node *parent = UA_NodestoreSwitch_getNode(server, parentNodeId);
     if(!parent) {
         UA_LOG_DEBUG_SESSION(server->config.logger, session,
                              "AddNodes: Parent node not found");
@@ -21316,11 +23274,11 @@ checkParentReference(UA_Server *server, UA_Session *session, UA_NodeClass nodeCl
 
     /* Check the referencetype exists */
     const UA_ReferenceTypeNode *referenceType =
-        (const UA_ReferenceTypeNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, referenceTypeId);
+        (const UA_ReferenceTypeNode*)UA_NodestoreSwitch_getNode(server, referenceTypeId);
     if(!referenceType) {
         UA_LOG_DEBUG_SESSION(server->config.logger, session,
                              "AddNodes: Reference type to the parent not found");
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
+        UA_NodestoreSwitch_releaseNode(server, parent);
         return UA_STATUSCODE_BADREFERENCETYPEIDINVALID;
     }
 
@@ -21328,8 +23286,8 @@ checkParentReference(UA_Server *server, UA_Session *session, UA_NodeClass nodeCl
     if(referenceType->nodeClass != UA_NODECLASS_REFERENCETYPE) {
         UA_LOG_DEBUG_SESSION(server->config.logger, session,
                              "AddNodes: Reference type to the parent invalid");
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)referenceType);
+        UA_NodestoreSwitch_releaseNode(server, parent);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)referenceType);
         return UA_STATUSCODE_BADREFERENCETYPEIDINVALID;
     }
 
@@ -21337,8 +23295,8 @@ checkParentReference(UA_Server *server, UA_Session *session, UA_NodeClass nodeCl
     if(referenceType->isAbstract == true) {
         UA_LOG_DEBUG_SESSION(server->config.logger, session,
                              "AddNodes: Abstract reference type to the parent invalid");
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)referenceType);
+        UA_NodestoreSwitch_releaseNode(server, parent);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)referenceType);
         return UA_STATUSCODE_BADREFERENCENOTALLOWED;
     }
 
@@ -21353,8 +23311,8 @@ checkParentReference(UA_Server *server, UA_Session *session, UA_NodeClass nodeCl
             UA_LOG_DEBUG_SESSION(server->config.logger, session,
                                  "AddNodes: New type node need to have a "
                                  "hassubtype reference");
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)referenceType);
+            UA_NodestoreSwitch_releaseNode(server, parent);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)referenceType);
             return UA_STATUSCODE_BADREFERENCENOTALLOWED;
         }
         /* supertype needs to be of the same node type  */
@@ -21362,28 +23320,28 @@ checkParentReference(UA_Server *server, UA_Session *session, UA_NodeClass nodeCl
             UA_LOG_DEBUG_SESSION(server->config.logger, session,
                                  "AddNodes: New type node needs to be of the same "
                                  "node type as the parent");
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)referenceType);
+            UA_NodestoreSwitch_releaseNode(server, parent);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)referenceType);
             return UA_STATUSCODE_BADPARENTNODEIDINVALID;
         }
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)referenceType);
+        UA_NodestoreSwitch_releaseNode(server, parent);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)referenceType);
         return UA_STATUSCODE_GOOD;
     }
 
     /* Test if the referencetype is hierarchical */
     const UA_NodeId hierarchicalReference =
         UA_NODEID_NUMERIC(0, UA_NS0ID_HIERARCHICALREFERENCES);
-    if(!isNodeInTree(server->nodestoreSwitch, referenceTypeId,
+    if(!isNodeInTree(server, referenceTypeId,
                      &hierarchicalReference, &subtypeId, 1)) {
         UA_LOG_DEBUG_SESSION(server->config.logger, session,
                              "AddNodes: Reference type is not hierarchical");
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)referenceType);
+        UA_NodestoreSwitch_releaseNode(server, parent);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)referenceType);
         return UA_STATUSCODE_BADREFERENCETYPEIDINVALID;
     }
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, parent);
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)referenceType);
+    UA_NodestoreSwitch_releaseNode(server, parent);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)referenceType);
     return UA_STATUSCODE_GOOD;
 }
 
@@ -21408,11 +23366,11 @@ copyExistingVariable(UA_Server *server, UA_Session *session, const UA_NodeId *va
                      const UA_NodeId *referenceType, const UA_NodeId *parent,
                      UA_InstantiationCallback *instantiationCallback) {
     const UA_VariableNode *node =
-        (const UA_VariableNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, variable);
+        (const UA_VariableNode*)UA_NodestoreSwitch_getNode(server, variable);
     if(!node)
         return UA_STATUSCODE_BADNODEIDINVALID;
     if(node->nodeClass != UA_NODECLASS_VARIABLE){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)node);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)node);
         return UA_STATUSCODE_BADNODECLASSINVALID;
     }
 
@@ -21421,7 +23379,7 @@ copyExistingVariable(UA_Server *server, UA_Session *session, const UA_NodeId *va
     UA_DataValue_init(&value);
     UA_StatusCode retval = readValueAttribute(server, node, &value);
     if(retval != UA_STATUSCODE_GOOD){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)node);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)node);
         return retval;
     }
 
@@ -21452,11 +23410,11 @@ copyExistingVariable(UA_Server *server, UA_Session *session, const UA_NodeId *va
     const UA_VariableTypeNode *vt = (const UA_VariableTypeNode*)getNodeType(server, (const UA_Node*)node);
     if(!vt || vt->nodeClass != UA_NODECLASS_VARIABLETYPE || vt->isAbstract) {
         retval = UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
         goto cleanup;
     }
     item.typeDefinition.nodeId = vt->nodeId;
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
 
     /* Add the variable and instantiate the children */
     UA_AddNodesResult res;
@@ -21477,7 +23435,7 @@ copyExistingVariable(UA_Server *server, UA_Session *session, const UA_NodeId *va
  cleanup:
     if(value.hasValue && value.value.storageType == UA_VARIANT_DATA)
         UA_Variant_deleteMembers(&value.value);
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)node);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)node);
     return retval;
 }
 
@@ -21488,11 +23446,11 @@ copyExistingObject(UA_Server *server, UA_Session *session, const UA_NodeId *obje
                    const UA_NodeId *referenceType, const UA_NodeId *parent,
                    UA_InstantiationCallback *instantiationCallback) {
     const UA_ObjectNode *node =
-        (const UA_ObjectNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, object);
+        (const UA_ObjectNode*)UA_NodestoreSwitch_getNode(server, object);
     if(!node)
         return UA_STATUSCODE_BADNODEIDINVALID;
     if(node->nodeClass != UA_NODECLASS_OBJECT){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)node);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)node);
         return UA_STATUSCODE_BADNODECLASSINVALID;
     }
 
@@ -21515,12 +23473,12 @@ copyExistingObject(UA_Server *server, UA_Session *session, const UA_NodeId *obje
     item.nodeAttributes.content.decoded.data = &attr;
     const UA_ObjectTypeNode *objtype = (const UA_ObjectTypeNode*)getNodeType(server, (const UA_Node*)node);
     if(!objtype || objtype->nodeClass != UA_NODECLASS_OBJECTTYPE || objtype->isAbstract){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)objtype);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)node);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)objtype);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)node);
         return UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
     }
     item.typeDefinition.nodeId = objtype->nodeId;
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)objtype);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)objtype);
 
     /* add the new object */
     UA_AddNodesResult res;
@@ -21538,7 +23496,7 @@ copyExistingObject(UA_Server *server, UA_Session *session, const UA_NodeId *obje
                                       instantiationCallback->handle);
 
     UA_NodeId_deleteMembers(&res.addedNodeId);
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)node);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)node);
     return retval;
 }
 
@@ -21557,23 +23515,23 @@ instantiateNode(UA_Server *server, UA_Session *session, const UA_NodeId *nodeId,
                 UA_NodeClass nodeClass, const UA_NodeId *typeId,
                 UA_InstantiationCallback *instantiationCallback) {
     /* see if the type node is correct */
-    const UA_Node *typenode = UA_NodestoreSwitch_get(server->nodestoreSwitch, typeId);
+    const UA_Node *typenode = UA_NodestoreSwitch_getNode(server, typeId);
     if(!typenode)
         return UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
     if(nodeClass == UA_NODECLASS_VARIABLE) {
         if(typenode->nodeClass != UA_NODECLASS_VARIABLETYPE ||
            ((const UA_VariableTypeNode*)typenode)->isAbstract){
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, typenode);
+            UA_NodestoreSwitch_releaseNode(server, typenode);
             return UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
         }
     } else if(nodeClass == UA_NODECLASS_OBJECT) {
         if(typenode->nodeClass != UA_NODECLASS_OBJECTTYPE ||
            ((const UA_ObjectTypeNode*)typenode)->isAbstract){
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, typenode);
+            UA_NodestoreSwitch_releaseNode(server, typenode);
             return UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
         }
     } else {
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, typenode);
+        UA_NodestoreSwitch_releaseNode(server, typenode);
         return UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
     }
 
@@ -21581,9 +23539,9 @@ instantiateNode(UA_Server *server, UA_Session *session, const UA_NodeId *nodeId,
     UA_NodeId *hierarchy = NULL;
     size_t hierarchySize = 0;
     UA_StatusCode retval =
-        getTypeHierarchy(server->nodestoreSwitch, typenode, true, &hierarchy, &hierarchySize);
+        getTypeHierarchy(server, typenode, true, &hierarchy, &hierarchySize);
     if(retval != UA_STATUSCODE_GOOD){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, typenode);
+        UA_NodestoreSwitch_releaseNode(server, typenode);
         return retval;
     }
     
@@ -21592,7 +23550,7 @@ instantiateNode(UA_Server *server, UA_Session *session, const UA_NodeId *nodeId,
         retval |= copyChildNodesToNode(server, session, &hierarchy[i], nodeId, instantiationCallback);
     UA_Array_delete(hierarchy, hierarchySize, &UA_TYPES[UA_TYPES_NODEID]);
     if(retval != UA_STATUSCODE_GOOD){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, typenode);
+        UA_NodestoreSwitch_releaseNode(server, typenode);
         return retval;
     }
 
@@ -21605,7 +23563,7 @@ instantiateNode(UA_Server *server, UA_Session *session, const UA_NodeId *nodeId,
                                (UA_EditNodeCallback)setObjectInstanceHandle,
                                olm->constructor);
     }
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, typenode);
+    UA_NodestoreSwitch_releaseNode(server, typenode);
 
     /* Add a hasType reference */
     UA_AddReferencesItem addref;
@@ -21742,10 +23700,12 @@ Service_AddNodes_existing(UA_Server *server, UA_Session *session, UA_Node *node,
                           const UA_NodeId *typeDefinition,
                           UA_InstantiationCallback *instantiationCallback,
                           UA_NodeId *addedNodeId) {
+    UA_ASSERT_RCU_LOCKED();
+
     /* Check the namespaceindex */
     if(node->nodeId.namespaceIndex >= server->namespacesSize) {
         UA_LOG_DEBUG_SESSION(server->config.logger, session, "AddNodes: Namespace invalid");
-        UA_NodestoreSwitch_deleteNode(server->nodestoreSwitch, node);
+        UA_NodestoreSwitch_deleteNode(server, node);
         return UA_STATUSCODE_BADNODEIDINVALID;
     }
 
@@ -21756,14 +23716,14 @@ Service_AddNodes_existing(UA_Server *server, UA_Session *session, UA_Node *node,
         UA_LOG_DEBUG_SESSION(server->config.logger, session,
                              "AddNodes: Checking the reference to the parent returned"
                              "error code %s", UA_StatusCode_name(retval));
-        UA_NodestoreSwitch_deleteNode(server->nodestoreSwitch, node);
+        UA_NodestoreSwitch_deleteNode(server, node);
         return retval;
     }
 
     /* Add the node to the nodestore */
     UA_NodeId newNodeId;
     UA_NodeClass nodeClass = node->nodeClass;
-    retval = UA_NodestoreSwitch_insert(server->nodestoreSwitch, node, parentNodeId, &newNodeId);
+    retval = UA_NodestoreSwitch_insertNode(server, node, &newNodeId);
     if(retval != UA_STATUSCODE_GOOD) {
         UA_LOG_DEBUG_SESSION(server->config.logger, session,
                              "AddNodes: Node could not be added to the nodestore "
@@ -21791,7 +23751,7 @@ Service_AddNodes_existing(UA_Server *server, UA_Session *session, UA_Node *node,
     retval = Service_AddReferences_single(server, session, &item);
     if(retval != UA_STATUSCODE_GOOD) {
         UA_LOG_DEBUG_SESSION(server->config.logger, session,
-                             "AddNodes: Could not add the reference to the parent"
+                             "AddNodes: Could not add the reference to the parent "
                              "with error code %s", UA_StatusCode_name(retval));
         goto remove_node;
     }
@@ -21813,7 +23773,7 @@ Service_AddNodes_existing(UA_Server *server, UA_Session *session, UA_Node *node,
                                  typeDefinition, instantiationCallback);
         if(retval != UA_STATUSCODE_GOOD) {
             UA_LOG_DEBUG_SESSION(server->config.logger, session,
-                                 "AddNodes: Could not instantiate the node with"
+                                 "AddNodes: Could not instantiate the node with "
                                  "error code 0x%08x", retval);
             goto remove_node;
         }
@@ -21868,13 +23828,13 @@ copyCommonVariableAttributes(UA_Server *server, UA_VariableNode *node,
     }
     
     const UA_VariableTypeNode *vt =
-        (const UA_VariableTypeNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, typeDef);
+        (const UA_VariableTypeNode*)UA_NodestoreSwitch_getNode(server, typeDef);
     if(!vt || vt->nodeClass != UA_NODECLASS_VARIABLETYPE){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
         return UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
     }
     if(node->nodeClass == UA_NODECLASS_VARIABLE && vt->isAbstract){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
         return UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
     }
     
@@ -21884,7 +23844,7 @@ copyCommonVariableAttributes(UA_Server *server, UA_VariableNode *node,
     else /* workaround common error where the datatype is left as NA_NODEID_NULL */
         retval = UA_NodeId_copy(&vt->dataType, &node->dataType);
     if(retval != UA_STATUSCODE_GOOD){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
         return retval;
     }
         
@@ -21892,13 +23852,13 @@ copyCommonVariableAttributes(UA_Server *server, UA_VariableNode *node,
     retval = compatibleArrayDimensions(attr->arrayDimensionsSize, attr->arrayDimensions,
                                        vt->arrayDimensionsSize, vt->arrayDimensions);
     if(retval != UA_STATUSCODE_GOOD){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
         return retval;
     }
     retval = UA_Array_copy(attr->arrayDimensions, attr->arrayDimensionsSize,
                            (void**)&node->arrayDimensions, &UA_TYPES[UA_TYPES_UINT32]);
     if(retval != UA_STATUSCODE_GOOD){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
         return retval;
     }
     node->arrayDimensionsSize = attr->arrayDimensionsSize;
@@ -21909,10 +23869,10 @@ copyCommonVariableAttributes(UA_Server *server, UA_VariableNode *node,
     else /* workaround common error where the valuerank is left as 0 */
         node->valueRank = vt->valueRank;
     if(retval != UA_STATUSCODE_GOOD){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
         return retval;
     }
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vt);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vt);
     
     /* Set the value */
     UA_DataValue value;
@@ -21995,42 +23955,42 @@ createNodeFromAttributes(UA_Server *server, const UA_AddNodesItem *item, UA_Node
 
     /* Create the node */
     // todo: error case where the nodeclass is faulty
-    void *node = UA_NodestoreSwitch_newNode(server->nodestoreSwitch,
+    void *node = UA_NodestoreSwitch_newNode(server,
             item->nodeClass, item->requestedNewNodeId.nodeId.namespaceIndex);
     if(!node)
         return UA_STATUSCODE_BADOUTOFMEMORY;
 
     /* Copy the attributes into the node */
     void *data = item->nodeAttributes.content.decoded.data;
-    UA_StatusCode retval = copyStandardAttributes(node, item, data);
+    UA_StatusCode retval = copyStandardAttributes((UA_Node *)node, item, (UA_NodeAttributes *)data);
     switch(item->nodeClass) {
     case UA_NODECLASS_OBJECT:
         CHECK_ATTRIBUTES(OBJECTATTRIBUTES);
-        retval |= copyObjectNodeAttributes(node, data);
+        retval |= copyObjectNodeAttributes((UA_ObjectNode *)node, (UA_ObjectAttributes *)data);
         break;
     case UA_NODECLASS_VARIABLE:
         CHECK_ATTRIBUTES(VARIABLEATTRIBUTES);
-        retval |= copyVariableNodeAttributes(server, node, item, data);
+        retval |= copyVariableNodeAttributes(server, (UA_VariableNode *)node, item, (UA_VariableAttributes *)data);
         break;
     case UA_NODECLASS_OBJECTTYPE:
         CHECK_ATTRIBUTES(OBJECTTYPEATTRIBUTES);
-        retval |= copyObjectTypeNodeAttributes(node, data);
+        retval |= copyObjectTypeNodeAttributes((UA_ObjectTypeNode *)node, (UA_ObjectTypeAttributes *)data);
         break;
     case UA_NODECLASS_VARIABLETYPE:
         CHECK_ATTRIBUTES(VARIABLETYPEATTRIBUTES);
-        retval |= copyVariableTypeNodeAttributes(server, node, item, data);
+        retval |= copyVariableTypeNodeAttributes(server,(UA_VariableTypeNode *)node, item, (UA_VariableTypeAttributes *)data);
         break;
     case UA_NODECLASS_REFERENCETYPE:
         CHECK_ATTRIBUTES(REFERENCETYPEATTRIBUTES);
-        retval |= copyReferenceTypeNodeAttributes(node, data);
+        retval |= copyReferenceTypeNodeAttributes((UA_ReferenceTypeNode *)node,(const UA_ReferenceTypeAttributes *)data);
         break;
     case UA_NODECLASS_DATATYPE:
         CHECK_ATTRIBUTES(DATATYPEATTRIBUTES);
-        retval |= copyDataTypeNodeAttributes(node, data);
+        retval |= copyDataTypeNodeAttributes((UA_DataTypeNode *)node, (UA_DataTypeAttributes *)data);
         break;
     case UA_NODECLASS_VIEW:
         CHECK_ATTRIBUTES(VIEWATTRIBUTES);
-        retval |= copyViewNodeAttributes(node, data);
+        retval |= copyViewNodeAttributes((UA_ViewNode *)node, (const UA_ViewAttributes *)data);
         break;
     case UA_NODECLASS_METHOD:
     case UA_NODECLASS_UNSPECIFIED:
@@ -22039,9 +23999,9 @@ createNodeFromAttributes(UA_Server *server, const UA_AddNodesItem *item, UA_Node
     }
 
     if(retval == UA_STATUSCODE_GOOD)
-        *newNode = node;
+        *newNode = (UA_Node*)node;
     else
-        UA_NodestoreSwitch_deleteNode(server->nodestoreSwitch, node);
+        UA_NodestoreSwitch_deleteNode(server, (UA_Node*)node);
     return retval;
 }
 
@@ -22050,7 +24010,7 @@ Service_AddNodes_single(UA_Server *server, UA_Session *session,
                         const UA_AddNodesItem *item, UA_AddNodesResult *result,
                         UA_InstantiationCallback *instantiationCallback) {
     /* Create the node from the attributes*/
-    UA_Node *node;
+    UA_Node *node = NULL;
     result->statusCode = createNodeFromAttributes(server, item, &node);
     if(result->statusCode != UA_STATUSCODE_GOOD)
         return;
@@ -22072,7 +24032,7 @@ void Service_AddNodes(UA_Server *server, UA_Session *session,
     }
     size_t size = request->nodesToAddSize;
 
-    response->results = UA_Array_new(size, &UA_TYPES[UA_TYPES_ADDNODESRESULT]);
+    response->results = (UA_AddNodesResult *)UA_Array_new(size, &UA_TYPES[UA_TYPES_ADDNODESRESULT]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -22132,9 +24092,9 @@ __UA_Server_addNode(UA_Server *server, const UA_NodeClass nodeClass,
     item.browseName = browseName;
     item.nodeClass = nodeClass;
     item.typeDefinition.nodeId = typeDefinition;
-    item.nodeAttributes = (UA_ExtensionObject){
-        .encoding = UA_EXTENSIONOBJECT_DECODED_NODELETE,
-        .content.decoded = {attributeType, (void*)(uintptr_t)attr}};
+    item.nodeAttributes.encoding = UA_EXTENSIONOBJECT_DECODED_NODELETE;
+    item.nodeAttributes.content.decoded.type = attributeType;
+    item.nodeAttributes.content.decoded.data = (void*)(uintptr_t)attr;
 
     /* run the service */
     UA_AddNodesResult result;
@@ -22162,8 +24122,7 @@ UA_Server_addDataSourceVariableNode(UA_Server *server, const UA_NodeId requested
                                     const UA_VariableAttributes attr, const UA_DataSource dataSource,
                                     UA_NodeId *outNewNodeId) {
     /* Create the new node */
-    UA_VariableNode *node = (UA_VariableNode*) UA_NodestoreSwitch_newNode(
-            server->nodestoreSwitch,
+    UA_VariableNode *node = (UA_VariableNode*) UA_NodestoreSwitch_newNode(server,
             UA_NODECLASS_VARIABLE,requestedNewNodeId.namespaceIndex);
     if(!node)
         return UA_STATUSCODE_BADOUTOFMEMORY;
@@ -22181,7 +24140,7 @@ UA_Server_addDataSourceVariableNode(UA_Server *server, const UA_NodeId requested
     editAttr.value = value.value;
 
     if(retval != UA_STATUSCODE_GOOD) {
-        UA_NodestoreSwitch_deleteNode(server->nodestoreSwitch, (UA_Node*)node);
+        UA_NodestoreSwitch_deleteNode(server, (UA_Node*)node);
         return retval;
     }
 
@@ -22194,13 +24153,13 @@ UA_Server_addDataSourceVariableNode(UA_Server *server, const UA_NodeId requested
     item.typeDefinition.nodeId = typeDefinition;
     item.parentNodeId.nodeId = parentNodeId;
     retval |= copyStandardAttributes((UA_Node*)node, &item, (const UA_NodeAttributes*)&editAttr);
-    retval |= copyCommonVariableAttributes(server, node, &item, &editAttr);
+    retval |= copyVariableNodeAttributes(server, node, &item, &editAttr);
     UA_DataValue_deleteMembers(&node->value.data.value);
     node->valueSource = UA_VALUESOURCE_DATASOURCE;
     node->value.dataSource = dataSource;
     UA_DataValue_deleteMembers(&value);
     if(retval != UA_STATUSCODE_GOOD) {
-        UA_NodestoreSwitch_deleteNode(server->nodestoreSwitch, (UA_Node*)node);
+        UA_NodestoreSwitch_deleteNode(server, (UA_Node*)node);
 	UA_RCU_UNLOCK();        
 	return retval;
     }
@@ -22224,8 +24183,7 @@ UA_Server_addMethodNode(UA_Server *server, const UA_NodeId requestedNewNodeId,
                         size_t inputArgumentsSize, const UA_Argument* inputArguments,
                         size_t outputArgumentsSize, const UA_Argument* outputArguments,
                         UA_NodeId *outNewNodeId) {
-    UA_MethodNode *node = (UA_MethodNode*) UA_NodestoreSwitch_newNode(
-            server->nodestoreSwitch,
+    UA_MethodNode *node = (UA_MethodNode*) UA_NodestoreSwitch_newNode(server,
             UA_NODECLASS_METHOD,requestedNewNodeId.namespaceIndex);
     if(!node)
         return UA_STATUSCODE_BADOUTOFMEMORY;
@@ -22254,7 +24212,7 @@ UA_Server_addMethodNode(UA_Server *server, const UA_NodeId requestedNewNodeId,
 
     if(inputArgumentsSize > 0) {
         UA_VariableNode *inputArgumentsVariableNode = (UA_VariableNode*) UA_NodestoreSwitch_newNode(
-                server->nodestoreSwitch, UA_NODECLASS_VARIABLE, newMethodId.namespaceIndex);
+                server, UA_NODECLASS_VARIABLE, newMethodId.namespaceIndex);
         inputArgumentsVariableNode->nodeId.namespaceIndex = newMethodId.namespaceIndex;
         inputArgumentsVariableNode->browseName = UA_QUALIFIEDNAME_ALLOC(0, "InputArguments");
         inputArgumentsVariableNode->displayName = UA_LOCALIZEDTEXT_ALLOC("en_US", "InputArguments");
@@ -22287,7 +24245,7 @@ UA_Server_addMethodNode(UA_Server *server, const UA_NodeId requestedNewNodeId,
     if(outputArgumentsSize > 0) {
         /* create OutputArguments */
         UA_VariableNode *outputArgumentsVariableNode  = (UA_VariableNode*) UA_NodestoreSwitch_newNode(
-                server->nodestoreSwitch, UA_NODECLASS_VARIABLE, newMethodId.namespaceIndex);
+                server, UA_NODECLASS_VARIABLE, newMethodId.namespaceIndex);
         outputArgumentsVariableNode->nodeId.namespaceIndex = newMethodId.namespaceIndex;
         outputArgumentsVariableNode->browseName  = UA_QUALIFIEDNAME_ALLOC(0, "OutputArguments");
         outputArgumentsVariableNode->displayName = UA_LOCALIZEDTEXT_ALLOC("en_US", "OutputArguments");
@@ -22334,7 +24292,7 @@ addOneWayReference(UA_Server *server, UA_Session *session,
                    UA_Node *node, const UA_AddReferencesItem *item) {
     size_t i = node->referencesSize;
     size_t refssize = (i+1) | 3; // so the realloc is not necessary every time
-    UA_ReferenceNode *new_refs = UA_realloc(node->references, sizeof(UA_ReferenceNode) * refssize);
+    UA_ReferenceNode *new_refs = (UA_ReferenceNode *)UA_realloc(node->references, sizeof(UA_ReferenceNode) * refssize);
     if(!new_refs)
         return UA_STATUSCODE_BADOUTOFMEMORY;
     node->references = new_refs;
@@ -22395,12 +24353,12 @@ Service_AddReferences_single(UA_Server *server, UA_Session *session,
                                 (UA_EditNodeCallback)addOneWayReference, &secondItem);
 #else
     handledExternally = UA_FALSE;
-    for(size_t j = 0; j <server->externalNamespacesSize; ++j) {
+    for(size_t j = 0; j < server->externalNamespacesSize; ++j) {
         if(secondItem.sourceNodeId.namespaceIndex != server->externalNamespaces[j].index) {
             continue;
         } else {
             UA_ExternalNodeStore *ens = &server->externalNamespaces[j].externalNodeStore;
-            retval = ens->addOneWayReference(ens->ensHandle, &secondItem);
+            retval = (UA_StatusCode)ens->addOneWayReference(ens->ensHandle, &secondItem);
             handledExternally = UA_TRUE;
             break;
         }
@@ -22435,7 +24393,7 @@ void Service_AddReferences(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_malloc(sizeof(UA_StatusCode) * request->referencesToAddSize);
+    response->results = (UA_StatusCode *)UA_malloc(sizeof(UA_StatusCode) * request->referencesToAddSize);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -22501,61 +24459,47 @@ UA_Server_addReference(UA_Server *server, const UA_NodeId sourceId,
 /* Delete Nodes */
 /****************/
 
+static void
+removeReferences(UA_Server *server, UA_Session *session, const UA_Node *node) {
+    UA_DeleteReferencesItem item;
+    UA_DeleteReferencesItem_init(&item);
+    item.targetNodeId.nodeId = node->nodeId;
+    for(size_t i = 0; i < node->referencesSize; ++i) {
+        item.isForward = node->references[i].isInverse;
+        item.sourceNodeId = node->references[i].targetId.nodeId;
+        item.referenceTypeId = node->references[i].referenceTypeId;
+        Service_DeleteReferences_single(server, session, &item);
+    }
+}
+
 UA_StatusCode
 Service_DeleteNodes_single(UA_Server *server, UA_Session *session,
                            const UA_NodeId *nodeId, UA_Boolean deleteReferences) {
-    const UA_Node *node = UA_NodestoreSwitch_get(server->nodestoreSwitch, nodeId);
+    const UA_Node *node = UA_NodestoreSwitch_getNode(server, nodeId);
     if(!node)
         return UA_STATUSCODE_BADNODEIDUNKNOWN;
 
-    /* destroy an object before removing it */
+    /* TODO: check if the information model consistency is violated */
+
+    /* Destroy an object before removing it */
     if(node->nodeClass == UA_NODECLASS_OBJECT) {
-        /* find the object type(s) */
-        UA_BrowseDescription bd;
-        UA_BrowseDescription_init(&bd);
-        bd.browseDirection = UA_BROWSEDIRECTION_INVERSE;
-        bd.nodeId = *nodeId;
-        bd.referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE);
-        bd.includeSubtypes = true;
-        bd.nodeClassMask = UA_NODECLASS_OBJECTTYPE;
-
-        /* browse type definitions with admin rights */
-        UA_BrowseResult result;
-        UA_BrowseResult_init(&result);
-        Service_Browse_single(server, &adminSession, NULL, &bd, 0, &result);
-        for(size_t i = 0; i < result.referencesSize; ++i) {
-            /* call the destructor */
-            UA_ReferenceDescription *rd = &result.references[i];
-            const UA_ObjectTypeNode *typenode =
-                (const UA_ObjectTypeNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, &rd->nodeId.nodeId);
-            if(!typenode)
-                continue;
-            if(typenode->nodeClass != UA_NODECLASS_OBJECTTYPE || !typenode->lifecycleManagement.destructor){
-                UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)typenode);
-                continue;
+        /* Call the destructor from the object type */
+        const UA_ObjectTypeNode *typenode = getObjectNodeType(server, (const UA_ObjectNode*)node);
+        if(typenode){
+            if(typenode->lifecycleManagement.destructor) {
+                typenode->lifecycleManagement.destructor(*nodeId, ((const UA_ObjectNode*)node)->instanceHandle);
             }
-            /* if there are several types with lifecycle management, call all the destructors */
-            typenode->lifecycleManagement.destructor(*nodeId, ((const UA_ObjectNode*)node)->instanceHandle);
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)typenode);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)typenode);
         }
-        UA_BrowseResult_deleteMembers(&result);
     }
 
-    /* remove references */
-    /* TODO: check if consistency is violated */
-    if(deleteReferences == true) { 
-        for(size_t i = 0; i < node->referencesSize; ++i) {
-            UA_DeleteReferencesItem item;
-            UA_DeleteReferencesItem_init(&item);
-            item.isForward = node->references[i].isInverse;
-            item.sourceNodeId = node->references[i].targetId.nodeId;
-            item.targetNodeId.nodeId = node->nodeId;
-            UA_Server_editNode(server, session, &node->references[i].targetId.nodeId,
-                               (UA_EditNodeCallback)deleteOneWayReference, &item);
-        }
-    }
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, node);
-    return UA_NodestoreSwitch_remove(server->nodestoreSwitch, nodeId);
+    /* Remove references to the node (not the references in the node that will
+     * be deleted anyway) */
+    if(deleteReferences)
+        removeReferences(server, session, node);
+
+    UA_NodestoreSwitch_releaseNode(server, node);
+    return UA_NodestoreSwitch_removeNode(server, nodeId);
 }
 
 void Service_DeleteNodes(UA_Server *server, UA_Session *session,
@@ -22568,7 +24512,7 @@ void Service_DeleteNodes(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_malloc(sizeof(UA_StatusCode) * request->nodesToDeleteSize);
+    response->results = (UA_StatusCode *)UA_malloc(sizeof(UA_StatusCode) * request->nodesToDeleteSize);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;;
         return;
@@ -22601,18 +24545,18 @@ static UA_StatusCode
 deleteOneWayReference(UA_Server *server, UA_Session *session, UA_Node *node,
                       const UA_DeleteReferencesItem *item) {
     UA_Boolean edited = false;
-    for(size_t i = node->referencesSize-1; ; --i) {
-        if(i > node->referencesSize)
-            break; /* underflow after i == 0 */
-        if(!UA_NodeId_equal(&item->targetNodeId.nodeId, &node->references[i].targetId.nodeId))
+    for(size_t i = node->referencesSize; i > 0; --i) {
+        UA_ReferenceNode *ref = &node->references[i-1];
+        if(!UA_NodeId_equal(&item->targetNodeId.nodeId, &ref->targetId.nodeId))
             continue;
-        if(!UA_NodeId_equal(&item->referenceTypeId, &node->references[i].referenceTypeId))
+        if(!UA_NodeId_equal(&item->referenceTypeId, &ref->referenceTypeId))
             continue;
-        if(item->isForward == node->references[i].isInverse)
+        if(item->isForward == ref->isInverse)
             continue;
+        UA_ReferenceNode_deleteMembers(ref);
         /* move the last entry to override the current position */
-        UA_ReferenceNode_deleteMembers(&node->references[i]);
-        node->references[i] = node->references[node->referencesSize-1];
+        if(i != node->referencesSize)
+            node->references[i-1] = node->references[node->referencesSize-1];
         --node->referencesSize;
         edited = true;
         break;
@@ -22641,6 +24585,7 @@ Service_DeleteReferences_single(UA_Server *server, UA_Session *session,
     secondItem.isForward = !item->isForward;
     secondItem.sourceNodeId = item->targetNodeId.nodeId;
     secondItem.targetNodeId.nodeId = item->sourceNodeId;
+    secondItem.referenceTypeId = item->referenceTypeId;
     return UA_Server_editNode(server, session, &secondItem.sourceNodeId,
                               (UA_EditNodeCallback)deleteOneWayReference, &secondItem);
 }
@@ -22656,7 +24601,7 @@ Service_DeleteReferences(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_malloc(sizeof(UA_StatusCode) * request->referencesToDeleteSize);
+    response->results = (UA_StatusCode *)UA_malloc(sizeof(UA_StatusCode) * request->referencesToDeleteSize);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;;
         return;
@@ -22773,7 +24718,7 @@ editMethodCallback(UA_Server *server, UA_Session* session,
                    UA_Node* node, const void* handle) {
     if(node->nodeClass != UA_NODECLASS_METHOD)
         return UA_STATUSCODE_BADNODECLASSINVALID;
-    const struct addMethodCallback *newCallback = handle;
+    const struct addMethodCallback *newCallback = (const struct addMethodCallback *)handle;
     UA_MethodNode *mnode = (UA_MethodNode*) node;
     mnode->attachedMethod = newCallback->callback;
     mnode->methodHandle   = newCallback->handle;
@@ -22793,7 +24738,12 @@ UA_Server_setMethodNode_callback(UA_Server *server, const UA_NodeId methodNodeId
 
 #endif
 
+
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services_view.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 static UA_StatusCode
@@ -22913,9 +24863,9 @@ returnRelevantNode(UA_Server *server, const UA_BrowseDescription *descr, UA_Bool
 #endif
 
     /* return from the internal nodestore */
-    const UA_Node *node =UA_NodestoreSwitch_get(server->nodestoreSwitch, &reference->targetId.nodeId);
+    const UA_Node *node =UA_NodestoreSwitch_getNode(server, &reference->targetId.nodeId);
     if(node && descr->nodeClassMask != 0 && (node->nodeClass & descr->nodeClassMask) == 0){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, node);
+        UA_NodestoreSwitch_releaseNode(server, node);
         return NULL;
     }
     *isExternal = false;
@@ -22945,6 +24895,7 @@ void
 Service_Browse_single(UA_Server *server, UA_Session *session,
                       struct ContinuationPointEntry *cp, const UA_BrowseDescription *descr,
                       UA_UInt32 maxrefs, UA_BrowseResult *result) { 
+    /* TODO: Split this function and remove goto */
     size_t referencesCount = 0;
     size_t referencesIndex = 0;
     /* set the browsedescription if a cp is given */
@@ -22968,28 +24919,28 @@ Service_Browse_single(UA_Server *server, UA_Session *session,
     UA_NodeId *relevant_refs = NULL;
     UA_Boolean all_refs = UA_NodeId_isNull(&descr->referenceTypeId);
     if(!all_refs) {
-        const UA_Node *rootRef = UA_NodestoreSwitch_get(server->nodestoreSwitch, &descr->referenceTypeId);
+        const UA_Node *rootRef = UA_NodestoreSwitch_getNode(server, &descr->referenceTypeId);
         if(!rootRef || rootRef->nodeClass != UA_NODECLASS_REFERENCETYPE) {
             result->statusCode = UA_STATUSCODE_BADREFERENCETYPEIDINVALID;
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, rootRef);
+            UA_NodestoreSwitch_releaseNode(server, rootRef);
             return;
         }
         if(descr->includeSubtypes) {
-            result->statusCode = getTypeHierarchy(server->nodestoreSwitch, rootRef, false,
+            result->statusCode = getTypeHierarchy(server, rootRef, false,
                                                   &relevant_refs, &relevant_refs_size);
             if(result->statusCode != UA_STATUSCODE_GOOD){
-                UA_NodestoreSwitch_release(server->nodestoreSwitch, rootRef);
+                UA_NodestoreSwitch_releaseNode(server, rootRef);
                 return;
             }
         } else {
             relevant_refs = (UA_NodeId*)(uintptr_t)&descr->referenceTypeId;
             relevant_refs_size = 1;
         }
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, rootRef);
+        UA_NodestoreSwitch_releaseNode(server, rootRef);
     }
 
     /* get the node */
-    const UA_Node *node =UA_NodestoreSwitch_get(server->nodestoreSwitch, &descr->nodeId);
+    const UA_Node *node = UA_NodestoreSwitch_getNode(server, &descr->nodeId);
     if(!node) {
         result->statusCode = UA_STATUSCODE_BADNODEIDUNKNOWN;
         if(!all_refs && descr->includeSubtypes)
@@ -23002,9 +24953,14 @@ Service_Browse_single(UA_Server *server, UA_Session *session,
         result->referencesSize = 0;
         if(!all_refs && descr->includeSubtypes)
             UA_Array_delete(relevant_refs, relevant_refs_size, &UA_TYPES[UA_TYPES_NODEID]);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, node);
+        UA_NodestoreSwitch_releaseNode(server, node);
         return;
     }
+
+    /* Forward declare for goto */
+    size_t skipped = 0;
+    UA_Boolean isExternal = false;
+    UA_StatusCode retval = UA_STATUSCODE_GOOD;
 
     /* how many references can we return at most? */
     size_t real_maxrefs = maxrefs;
@@ -23012,16 +24968,13 @@ Service_Browse_single(UA_Server *server, UA_Session *session,
         real_maxrefs = node->referencesSize;
     else if(real_maxrefs > node->referencesSize)
         real_maxrefs = node->referencesSize;
-    result->references = UA_Array_new(real_maxrefs, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
+    result->references = (UA_ReferenceDescription *)UA_Array_new(real_maxrefs, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
     if(!result->references) {
         result->statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
         goto cleanup;
     }
 
     /* loop over the node's references */
-    size_t skipped = 0;
-    UA_Boolean isExternal = false;
-    UA_StatusCode retval = UA_STATUSCODE_GOOD;
     for(; referencesIndex < node->referencesSize && referencesCount < real_maxrefs; ++referencesIndex) {
         isExternal = false;
         const UA_Node *current =
@@ -23039,7 +24992,7 @@ Service_Browse_single(UA_Server *server, UA_Session *session,
                                                &result->references[referencesCount]);
             ++referencesCount;
         }
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, current);
+        UA_NodestoreSwitch_releaseNode(server, current);
     }
     result->referencesSize = referencesCount;
 
@@ -23061,7 +25014,7 @@ Service_Browse_single(UA_Server *server, UA_Session *session,
     if(!all_refs && descr->includeSubtypes)
         UA_Array_delete(relevant_refs, relevant_refs_size, &UA_TYPES[UA_TYPES_NODEID]);
     if(result->statusCode != UA_STATUSCODE_GOOD){
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, node);
+        UA_NodestoreSwitch_releaseNode(server, node);
         return;
     }
 
@@ -23078,9 +25031,9 @@ Service_Browse_single(UA_Server *server, UA_Session *session,
     } else if(maxrefs != 0 && referencesCount >= maxrefs) {
         /* create a cp */
         if(session->availableContinuationPoints <= 0 ||
-           !(cp = UA_malloc(sizeof(struct ContinuationPointEntry)))) {
+           !(cp = (struct ContinuationPointEntry *)UA_malloc(sizeof(struct ContinuationPointEntry)))) {
             result->statusCode = UA_STATUSCODE_BADNOCONTINUATIONPOINTS;
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, node);
+            UA_NodestoreSwitch_releaseNode(server, node);
             return;
         }
         UA_BrowseDescription_copy(descr, &cp->browseDescription);
@@ -23096,7 +25049,7 @@ Service_Browse_single(UA_Server *server, UA_Session *session,
         LIST_INSERT_HEAD(&session->continuationPoints, cp, pointers);
         --session->availableContinuationPoints;
     }
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, node);
+    UA_NodestoreSwitch_releaseNode(server, node);
 }
 
 void Service_Browse(UA_Server *server, UA_Session *session, const UA_BrowseRequest *request,
@@ -23113,7 +25066,7 @@ void Service_Browse(UA_Server *server, UA_Session *session, const UA_BrowseReque
     }
 
     size_t size = request->nodesToBrowseSize;
-    response->results = UA_Array_new(size, &UA_TYPES[UA_TYPES_BROWSERESULT]);
+    response->results = (UA_BrowseResult *)UA_Array_new(size, &UA_TYPES[UA_TYPES_BROWSERESULT]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -23191,7 +25144,7 @@ void Service_BrowseNext(UA_Server *server, UA_Session *session, const UA_BrowseN
         return;
     }
     size_t size = request->continuationPointsSize;
-    response->results = UA_Array_new(size, &UA_TYPES[UA_TYPES_BROWSERESULT]);
+    response->results = (UA_BrowseResult *)UA_Array_new(size, &UA_TYPES[UA_TYPES_BROWSERESULT]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -23233,17 +25186,17 @@ walkBrowsePath(UA_Server *server, UA_Session *session, const UA_Node *node, cons
     } else if(!elem->includeSubtypes) {
         reftypes = (UA_NodeId*)(uintptr_t)&elem->referenceTypeId; // ptr magic due to const cast
     } else {
-        const UA_Node *rootRef = UA_NodestoreSwitch_get(server->nodestoreSwitch, &elem->referenceTypeId);
+        const UA_Node *rootRef = UA_NodestoreSwitch_getNode(server, &elem->referenceTypeId);
         if(!rootRef || rootRef->nodeClass != UA_NODECLASS_REFERENCETYPE){
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, rootRef);
+            UA_NodestoreSwitch_releaseNode(server, rootRef);
             return UA_STATUSCODE_BADREFERENCETYPEIDINVALID;
         }
-        retval = getTypeHierarchy(server->nodestoreSwitch, rootRef, false, &reftypes, &reftypes_count);
+        retval = getTypeHierarchy(server, rootRef, false, &reftypes, &reftypes_count);
         if(retval != UA_STATUSCODE_GOOD){
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, rootRef);
+            UA_NodestoreSwitch_releaseNode(server, rootRef);
             return retval;
         }
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, rootRef);
+        UA_NodestoreSwitch_releaseNode(server, rootRef);
     }
 
     for(size_t i = 0; i < node->referencesSize && retval == UA_STATUSCODE_GOOD; ++i) {
@@ -23257,14 +25210,14 @@ walkBrowsePath(UA_Server *server, UA_Session *session, const UA_Node *node, cons
             continue;
 
         // get the node, todo: expandednodeid
-        const UA_Node *next =UA_NodestoreSwitch_get(server->nodestoreSwitch, &node->references[i].targetId.nodeId);
+        const UA_Node *next =UA_NodestoreSwitch_getNode(server, &node->references[i].targetId.nodeId);
         if(!next)
             continue;
 
         // test the browsename
         if(elem->targetName.namespaceIndex != next->browseName.namespaceIndex ||
            !UA_String_equal(&elem->targetName.name, &next->browseName.name)) {
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, next);
+            UA_NodestoreSwitch_releaseNode(server, next);
             continue;
         }
 
@@ -23276,10 +25229,10 @@ walkBrowsePath(UA_Server *server, UA_Session *session, const UA_Node *node, cons
             // add the browsetarget
             if(*target_count >= *targets_size) {
                 UA_BrowsePathTarget *newtargets;
-                newtargets = UA_realloc(targets, sizeof(UA_BrowsePathTarget) * (*targets_size) * 2);
+                newtargets = (UA_BrowsePathTarget *)UA_realloc(targets, sizeof(UA_BrowsePathTarget) * (*targets_size) * 2);
                 if(!newtargets) {
                     retval = UA_STATUSCODE_BADOUTOFMEMORY;
-                    UA_NodestoreSwitch_release(server->nodestoreSwitch, next);
+                    UA_NodestoreSwitch_releaseNode(server, next);
                     break;
                 }
                 *targets = newtargets;
@@ -23290,13 +25243,13 @@ walkBrowsePath(UA_Server *server, UA_Session *session, const UA_Node *node, cons
             UA_ExpandedNodeId_init(&res[*target_count].targetId);
             retval = UA_NodeId_copy(&next->nodeId, &res[*target_count].targetId.nodeId);
             if(retval != UA_STATUSCODE_GOOD){
-                UA_NodestoreSwitch_release(server->nodestoreSwitch, next);
+                UA_NodestoreSwitch_releaseNode(server, next);
                 break;
             }
             res[*target_count].remainingPathIndex = UA_UINT32_MAX;
             *target_count += 1;
         }
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, next);
+        UA_NodestoreSwitch_releaseNode(server, next);
     }
 
     if(!all_refs && elem->includeSubtypes)
@@ -23321,13 +25274,13 @@ void Service_TranslateBrowsePathsToNodeIds_single(UA_Server *server, UA_Session 
     }
 
     size_t arraySize = 10;
-    result->targets = UA_malloc(sizeof(UA_BrowsePathTarget) * arraySize);
+    result->targets = (UA_BrowsePathTarget *)UA_malloc(sizeof(UA_BrowsePathTarget) * arraySize);
     if(!result->targets) {
         result->statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
     }
     result->targetsSize = 0;
-    const UA_Node *firstNode =UA_NodestoreSwitch_get(server->nodestoreSwitch, &path->startingNode);
+    const UA_Node *firstNode =UA_NodestoreSwitch_getNode(server, &path->startingNode);
     if(!firstNode) {
         result->statusCode = UA_STATUSCODE_BADNODEIDUNKNOWN;
         UA_free(result->targets);
@@ -23337,7 +25290,7 @@ void Service_TranslateBrowsePathsToNodeIds_single(UA_Server *server, UA_Session 
 
     result->statusCode = walkBrowsePath(server, session, firstNode, &path->relativePath, 0,
                                         &result->targets, &arraySize, &result->targetsSize);
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, firstNode);
+    UA_NodestoreSwitch_releaseNode(server, firstNode);
     if(result->targetsSize == 0 && result->statusCode == UA_STATUSCODE_GOOD)
         result->statusCode = UA_STATUSCODE_BADNOMATCH;
 
@@ -23358,7 +25311,7 @@ void Service_TranslateBrowsePathsToNodeIds(UA_Server *server, UA_Session *sessio
     }
 
     size_t size = request->browsePathsSize;
-    response->results = UA_Array_new(size, &UA_TYPES[UA_TYPES_BROWSEPATHRESULT]);
+    response->results = (UA_BrowsePathResult *)UA_Array_new(size, &UA_TYPES[UA_TYPES_BROWSEPATHRESULT]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -23426,7 +25379,12 @@ void Service_UnregisterNodes(UA_Server *server, UA_Session *session, const UA_Un
         response->responseHeader.serviceResult = UA_STATUSCODE_BADNOTHINGTODO;
 }
 
+
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services_call.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 #ifdef UA_ENABLE_METHODCALLS /* conditional compilation */
@@ -23439,16 +25397,16 @@ getArgumentsVariableNode(UA_Server *server, const UA_MethodNode *ofMethod,
         if(ofMethod->references[i].isInverse == false &&
             UA_NodeId_equal(&hasProperty, &ofMethod->references[i].referenceTypeId)) {
             const UA_Node *refTarget =
-               UA_NodestoreSwitch_get(server->nodestoreSwitch, &ofMethod->references[i].targetId.nodeId);
+               UA_NodestoreSwitch_getNode(server, &ofMethod->references[i].targetId.nodeId);
             if(!refTarget)
                 continue;
             if(refTarget->nodeClass == UA_NODECLASS_VARIABLE &&
                 refTarget->browseName.namespaceIndex == 0 &&
                 UA_String_equal(&withBrowseName, &refTarget->browseName.name)) {
-                UA_NodestoreSwitch_release(server->nodestoreSwitch, refTarget);
+                UA_NodestoreSwitch_releaseNode(server, refTarget);
                 return (const UA_VariableNode*) refTarget;
             }
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, refTarget);
+            UA_NodestoreSwitch_releaseNode(server, refTarget);
         }
     }
     return NULL;
@@ -23484,34 +25442,34 @@ Service_Call_single(UA_Server *server, UA_Session *session,
                     UA_CallMethodResult *result) {
     /* Get/verify the method node */
     const UA_MethodNode *methodCalled =
-        (const UA_MethodNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, &request->methodId);
+        (const UA_MethodNode*)UA_NodestoreSwitch_getNode(server, &request->methodId);
     if(!methodCalled) {
         result->statusCode = UA_STATUSCODE_BADMETHODINVALID;
         return;
     }
     if(methodCalled->nodeClass != UA_NODECLASS_METHOD) {
         result->statusCode = UA_STATUSCODE_BADNODECLASSINVALID;
-        UA_NodestoreSwitch_release(server->nodestoreSwitch,(const UA_Node*) methodCalled);
+        UA_NodestoreSwitch_releaseNode(server,(const UA_Node*) methodCalled);
         return;
     }
     if(!methodCalled->attachedMethod) {
         result->statusCode = UA_STATUSCODE_BADINTERNALERROR;
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
         return;
     }
 
     /* Get/verify the object node */
     const UA_ObjectNode *withObject =
-        (const UA_ObjectNode*)UA_NodestoreSwitch_get(server->nodestoreSwitch, &request->objectId);
+        (const UA_ObjectNode*)UA_NodestoreSwitch_getNode(server, &request->objectId);
     if(!withObject) {
         result->statusCode = UA_STATUSCODE_BADNODEIDINVALID;
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
         return;
     }
     if(withObject->nodeClass != UA_NODECLASS_OBJECT && withObject->nodeClass != UA_NODECLASS_OBJECTTYPE) {
         result->statusCode = UA_STATUSCODE_BADNODECLASSINVALID;
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)withObject);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
         return;
     }
 
@@ -23523,8 +25481,8 @@ Service_Call_single(UA_Server *server, UA_Session *session,
                                                                    &request->objectId, &request->methodId);
     if(!executable) {
         result->statusCode = UA_STATUSCODE_BADNOTWRITABLE; // There is no NOTEXECUTABLE?
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)withObject);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
         return;
     }
 
@@ -23538,7 +25496,7 @@ Service_Call_single(UA_Server *server, UA_Session *session,
     for(size_t i = 0; i < methodCalled->referencesSize; ++i) {
         if(methodCalled->references[i].isInverse &&
            UA_NodeId_equal(&methodCalled->references[i].targetId.nodeId, &withObject->nodeId)) {
-            found = isNodeInTree(server->nodestoreSwitch, &methodCalled->references[i].referenceTypeId,
+            found = isNodeInTree(server, &methodCalled->references[i].referenceTypeId,
                                  &hasComponentNodeId, &hasSubTypeNodeId, 1);
             if(found)
                 break;
@@ -23546,8 +25504,8 @@ Service_Call_single(UA_Server *server, UA_Session *session,
     }
     if(!found) {
         result->statusCode = UA_STATUSCODE_BADMETHODINVALID;
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)withObject);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
         return;
     }
 
@@ -23558,8 +25516,8 @@ Service_Call_single(UA_Server *server, UA_Session *session,
     if(!inputArguments) {
         if(request->inputArgumentsSize > 0) {
             result->statusCode = UA_STATUSCODE_BADINVALIDARGUMENT;
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)withObject);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
             return;
         }
     } else {
@@ -23567,8 +25525,8 @@ Service_Call_single(UA_Server *server, UA_Session *session,
                                                            request->inputArgumentsSize,
                                                            request->inputArguments);
         if(result->statusCode != UA_STATUSCODE_GOOD){
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)withObject);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
             return;
         }
     }
@@ -23578,12 +25536,12 @@ Service_Call_single(UA_Server *server, UA_Session *session,
     const UA_VariableNode *outputArguments =
         getArgumentsVariableNode(server, methodCalled, UA_STRING("OutputArguments"));
     if(outputArguments) {
-        result->outputArguments = UA_Array_new(outputArguments->value.data.value.value.arrayLength,
+        result->outputArguments = (UA_Variant*)UA_Array_new(outputArguments->value.data.value.value.arrayLength,
                                                &UA_TYPES[UA_TYPES_VARIANT]);
         if(!result->outputArguments) {
             result->statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
-            UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)withObject);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
             return;
         }
         result->outputArgumentsSize = outputArguments->value.data.value.value.arrayLength;
@@ -23600,8 +25558,8 @@ Service_Call_single(UA_Server *server, UA_Session *session,
 #if defined(UA_ENABLE_METHODCALLS) && defined(UA_ENABLE_SUBSCRIPTIONS)
     methodCallSession = NULL;
 #endif
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)methodCalled);
-    UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)withObject);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
+    UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
     /* TODO: Verify Output matches the argument definition */
 }
 
@@ -23614,7 +25572,7 @@ void Service_Call(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_Array_new(request->methodsToCallSize, &UA_TYPES[UA_TYPES_CALLMETHODRESULT]);
+    response->results = (UA_CallMethodResult*)UA_Array_new(request->methodsToCallSize, &UA_TYPES[UA_TYPES_CALLMETHODRESULT]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -23652,7 +25610,12 @@ void Service_Call(UA_Server *server, UA_Session *session,
 
 #endif /* UA_ENABLE_METHODCALLS */
 
+
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_subscription.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 #ifdef UA_ENABLE_SUBSCRIPTIONS /* conditional compilation */
@@ -23664,20 +25627,20 @@ void Service_Call(UA_Server *server, UA_Session *session,
 /*****************/
 
 UA_MonitoredItem * UA_MonitoredItem_new() {
-    UA_MonitoredItem *new = UA_malloc(sizeof(UA_MonitoredItem));
-    new->subscription = NULL;
-    new->currentQueueSize = 0;
-    new->maxQueueSize = 0;
-    new->monitoredItemType = UA_MONITOREDITEMTYPE_CHANGENOTIFY; /* currently hardcoded */
-    new->timestampsToReturn = UA_TIMESTAMPSTORETURN_SOURCE;
-    UA_String_init(&new->indexRange);
-    TAILQ_INIT(&new->queue);
-    UA_NodeId_init(&new->monitoredNodeId);
-    new->lastSampledValue = UA_BYTESTRING_NULL;
-    memset(&new->sampleJobGuid, 0, sizeof(UA_Guid));
-    new->sampleJobIsRegistered = false;
-    new->itemId = 0;
-    return new;
+    UA_MonitoredItem *newItem = (UA_MonitoredItem *)UA_malloc(sizeof(UA_MonitoredItem));
+    newItem->subscription = NULL;
+    newItem->currentQueueSize = 0;
+    newItem->maxQueueSize = 0;
+    newItem->monitoredItemType = UA_MONITOREDITEMTYPE_CHANGENOTIFY; /* currently hardcoded */
+    newItem->timestampsToReturn = UA_TIMESTAMPSTORETURN_SOURCE;
+    UA_String_init(&newItem->indexRange);
+    TAILQ_INIT(&newItem->queue);
+    UA_NodeId_init(&newItem->monitoredNodeId);
+    newItem->lastSampledValue = UA_BYTESTRING_NULL;
+    memset(&newItem->sampleJobGuid, 0, sizeof(UA_Guid));
+    newItem->sampleJobIsRegistered = false;
+    newItem->itemId = 0;
+    return newItem;
 }
 
 void MonitoredItem_delete(UA_Server *server, UA_MonitoredItem *monitoredItem) {
@@ -23705,7 +25668,8 @@ ensureSpaceInMonitoredItemQueue(UA_MonitoredItem *mon) {
     if(mon->discardOldest)
         queueItem = TAILQ_FIRST(&mon->queue);
     else
-        queueItem = TAILQ_LAST(&mon->queue, QueueOfQueueDataValues);
+        queueItem = TAILQ_LAST(&mon->queue,
+                               memberstruct(UA_MonitoredItem,QueueOfQueueDataValues));
     UA_assert(queueItem); /* When the currentQueueSize > 0, then there is an item */
     TAILQ_REMOVE(&mon->queue, queueItem, listEntry);
     UA_DataValue_deleteMembers(&queueItem->value);
@@ -23733,9 +25697,13 @@ detectValueChange(UA_MonitoredItem *mon, UA_DataValue *value,
         value->hasSourcePicoseconds = false;
     }
 
-    /* Encode the data for comparison */
+    /* Forward declare before goto */
     UA_StatusCode retval = UA_STATUSCODE_GOOD;
-    size_t binsize = UA_calcSizeBinary(value, &UA_TYPES[UA_TYPES_DATAVALUE]);
+    size_t encodingOffset = 0;
+    size_t binsize;
+
+    /* Encode the data for comparison */
+    binsize = UA_calcSizeBinary(value, &UA_TYPES[UA_TYPES_DATAVALUE]);
     if(binsize == 0) {
         retval = UA_STATUSCODE_BADINTERNALERROR;
         goto cleanup;
@@ -23749,7 +25717,6 @@ detectValueChange(UA_MonitoredItem *mon, UA_DataValue *value,
     }
 
     /* Encode the value */
-    size_t encodingOffset = 0;
     retval = UA_encodeBinary(value, &UA_TYPES[UA_TYPES_DATAVALUE],
                              NULL, NULL, encoding, &encodingOffset);
     if(retval != UA_STATUSCODE_GOOD)
@@ -23798,10 +25765,13 @@ void UA_MoniteredItem_SampleCallback(UA_Server *server, UA_MonitoredItem *monito
     Service_Read_single(server, sub->session, ts, &rvid, &value);
 
     /* Stack-allocate some memory for the value encoding */
-    UA_Byte *stackValueEncoding = UA_alloca(UA_VALUENCODING_MAXSTACK);
+    UA_Byte *stackValueEncoding = (UA_Byte *)UA_alloca(UA_VALUENCODING_MAXSTACK);
     UA_ByteString valueEncoding;
     valueEncoding.data = stackValueEncoding;
     valueEncoding.length = UA_VALUENCODING_MAXSTACK;
+
+    /* Forward declaration before goto */
+    MonitoredItem_queuedValue *newQueueItem;
 
     /* Has the value changed? */
     UA_Boolean changed = false;
@@ -23811,7 +25781,7 @@ void UA_MoniteredItem_SampleCallback(UA_Server *server, UA_MonitoredItem *monito
         goto cleanup;
 
     /* Allocate the entry for the publish queue */
-    MonitoredItem_queuedValue *newQueueItem = UA_malloc(sizeof(MonitoredItem_queuedValue));
+    newQueueItem = (MonitoredItem_queuedValue *)UA_malloc(sizeof(MonitoredItem_queuedValue));
     if(!newQueueItem) {
         UA_LOG_WARNING_SESSION(server->config.logger, sub->session,
                                "Subscription %u | MonitoredItem %i | "
@@ -23897,24 +25867,24 @@ UA_StatusCode MonitoredItem_unregisterSampleJob(UA_Server *server, UA_MonitoredI
 /****************/
 
 UA_Subscription * UA_Subscription_new(UA_Session *session, UA_UInt32 subscriptionID) {
-    UA_Subscription *new = UA_malloc(sizeof(UA_Subscription));
-    if(!new)
+    UA_Subscription *newItem = (UA_Subscription *)UA_malloc(sizeof(UA_Subscription));
+    if(!newItem)
         return NULL;
-    new->session = session;
-    new->subscriptionID = subscriptionID;
-    new->sequenceNumber = 0;
-    new->maxKeepAliveCount = 0;
-    new->publishingEnabled = false;
-    memset(&new->publishJobGuid, 0, sizeof(UA_Guid));
-    new->publishJobIsRegistered = false;
-    new->currentKeepAliveCount = 0;
-    new->currentLifetimeCount = 0;
-    new->lastMonitoredItemId = 0;
-    new->state = UA_SUBSCRIPTIONSTATE_NORMAL; /* The first publish response is sent immediately */
-    LIST_INIT(&new->monitoredItems);
-    TAILQ_INIT(&new->retransmissionQueue);
-    new->retransmissionQueueSize = 0;
-    return new;
+    newItem->session = session;
+    newItem->subscriptionID = subscriptionID;
+    newItem->sequenceNumber = 0;
+    newItem->maxKeepAliveCount = 0;
+    newItem->publishingEnabled = false;
+    memset(&newItem->publishJobGuid, 0, sizeof(UA_Guid));
+    newItem->publishJobIsRegistered = false;
+    newItem->currentKeepAliveCount = 0;
+    newItem->currentLifetimeCount = 0;
+    newItem->lastMonitoredItemId = 0;
+    newItem->state = UA_SUBSCRIPTIONSTATE_NORMAL; /* The first publish response is sent immediately */
+    LIST_INIT(&newItem->monitoredItems);
+    TAILQ_INIT(&newItem->retransmissionQueue);
+    newItem->retransmissionQueueSize = 0;
+    return newItem;
 }
 
 void UA_Subscription_deleteMembers(UA_Subscription *subscription, UA_Server *server) {
@@ -23987,7 +25957,8 @@ UA_Subscription_addRetransmissionMessage(UA_Server *server, UA_Subscription *sub
     if(server->config.maxRetransmissionQueueSize > 0 &&
        sub->retransmissionQueueSize >= server->config.maxRetransmissionQueueSize) {
         UA_NotificationMessageEntry *lastentry =
-            TAILQ_LAST(&sub->retransmissionQueue, UA_ListOfNotificationMessages);
+            TAILQ_LAST(&sub->retransmissionQueue,
+                       memberstruct(UA_Subscription,UA_ListOfNotificationMessages));
         TAILQ_REMOVE(&sub->retransmissionQueue, lastentry, listEntry);
         --sub->retransmissionQueueSize;
         UA_NotificationMessage_deleteMembers(&lastentry->message);
@@ -24019,25 +25990,29 @@ prepareNotificationMessage(UA_Subscription *sub, UA_NotificationMessage *message
                            size_t notifications) {
     /* Array of ExtensionObject to hold different kinds of notifications
        (currently only DataChangeNotifications) */
-    message->notificationData = UA_Array_new(1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
+    message->notificationData = (UA_ExtensionObject *)UA_Array_new(1, &UA_TYPES[UA_TYPES_EXTENSIONOBJECT]);
     if(!message->notificationData)
         return UA_STATUSCODE_BADOUTOFMEMORY;
     message->notificationDataSize = 1;
 
     /* Allocate Notification */
     UA_DataChangeNotification *dcn = UA_DataChangeNotification_new();
-    if(!dcn)
-        goto cleanup;
+    if(!dcn) {
+        UA_NotificationMessage_deleteMembers(message);
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+    }
     UA_ExtensionObject *data = message->notificationData;
     data->encoding = UA_EXTENSIONOBJECT_DECODED;
     data->content.decoded.data = dcn;
     data->content.decoded.type = &UA_TYPES[UA_TYPES_DATACHANGENOTIFICATION];
 
     /* Allocate array of notifications */
-    dcn->monitoredItems =
+    dcn->monitoredItems = (UA_MonitoredItemNotification *)
         UA_Array_new(notifications, &UA_TYPES[UA_TYPES_MONITOREDITEMNOTIFICATION]);
-    if(!dcn->monitoredItems)
-        goto cleanup;
+    if(!dcn->monitoredItems) {
+        UA_NotificationMessage_deleteMembers(message);
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+    }
     dcn->monitoredItemsSize = notifications;
 
     /* Move notifications into the response .. the point of no return */
@@ -24058,10 +26033,6 @@ prepareNotificationMessage(UA_Subscription *sub, UA_NotificationMessage *message
         }
     }
     return UA_STATUSCODE_GOOD;
-    
- cleanup:
-    UA_NotificationMessage_deleteMembers(message);
-    return UA_STATUSCODE_BADOUTOFMEMORY;
 }
 
 void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
@@ -24078,7 +26049,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
         if(sub->currentKeepAliveCount < sub->maxKeepAliveCount)
             return;
         UA_LOG_DEBUG_SESSION(server->config.logger, sub->session,
-                             "Sending a keepalive on subscription %u",
+                             "Subscription %u | Sending a KeepAlive",
                              sub->subscriptionID)
     }
 
@@ -24093,7 +26064,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
     /* Cannot publish without a response */
     if(!pre) {
         UA_LOG_DEBUG_SESSION(server->config.logger, sub->session,
-                             "Cannot send a publish response on subscription %u, "
+                             "Subscription %u | Cannot send a publish response "
                              "since the publish queue is empty", sub->subscriptionID)
         if(sub->state != UA_SUBSCRIPTIONSTATE_LATE) {
             sub->state = UA_SUBSCRIPTIONSTATE_LATE;
@@ -24113,7 +26084,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
     UA_NotificationMessageEntry *retransmission = NULL;
     if(notifications > 0) {
         /* Allocate the retransmission entry */
-        retransmission = UA_malloc(sizeof(UA_NotificationMessageEntry));
+        retransmission = (UA_NotificationMessageEntry *)malloc(sizeof(UA_NotificationMessageEntry));
         if(!retransmission) {
             UA_LOG_WARNING_SESSION(server->config.logger, sub->session,
                                    "Subscription %u | Could not allocate memory "
@@ -24159,7 +26130,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
     /* Get the available sequence numbers from the retransmission queue */
     size_t available = sub->retransmissionQueueSize;
     if(available > 0) {
-        response->availableSequenceNumbers = UA_alloca(available * sizeof(UA_UInt32));
+        response->availableSequenceNumbers = (UA_UInt32 *)UA_alloca(available * sizeof(UA_UInt32));
         response->availableSequenceNumbersSize = available;
         size_t i = 0;
         UA_NotificationMessageEntry *nme;
@@ -24180,7 +26151,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
     sub->state = UA_SUBSCRIPTIONSTATE_NORMAL;
     sub->currentKeepAliveCount = 0;
     sub->currentLifetimeCount = 0;
-    
+
     /* Free the response */
     UA_Array_delete(response->results, response->resultsSize,
                     &UA_TYPES[UA_TYPES_UINT32]);
@@ -24196,6 +26167,9 @@ Subscription_registerPublishJob(UA_Server *server, UA_Subscription *sub) {
     if(sub->publishJobIsRegistered)
         return UA_STATUSCODE_GOOD;
 
+    UA_LOG_DEBUG_SESSION(server->config.logger, sub->session,
+                         "Subscription %u | Register subscription publishing callback",
+                         sub->subscriptionID);
     UA_Job job;
     job.type = UA_JOBTYPE_METHODCALL;
     job.job.methodCall.method = (UA_ServerCallback)UA_Subscription_publishCallback;
@@ -24212,6 +26186,9 @@ UA_StatusCode
 Subscription_unregisterPublishJob(UA_Server *server, UA_Subscription *sub) {
     if(!sub->publishJobIsRegistered)
         return UA_STATUSCODE_GOOD;
+    UA_LOG_DEBUG_SESSION(server->config.logger, sub->session,
+                         "Subscription %u | Unregister subscription publishing callback",
+                         sub->subscriptionID);
     sub->publishJobIsRegistered = false;
     return UA_Server_removeRepeatedJob(server, sub->publishJobGuid);
 }
@@ -24245,6 +26222,10 @@ UA_Subscription_answerPublishRequestsNoSubscription(UA_Server *server, UA_NodeId
 #endif /* UA_ENABLE_SUBSCRIPTIONS */
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_services_subscription.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 #ifdef UA_ENABLE_SUBSCRIPTIONS /* conditional compilation */
@@ -24361,7 +26342,7 @@ Service_SetPublishingMode(UA_Server *server, UA_Session *session,
     }
 
     size_t size = request->subscriptionIdsSize;
-    response->results = UA_Array_new(size, &UA_TYPES[UA_TYPES_STATUSCODE]);
+    response->results = (UA_StatusCode *)UA_Array_new(size, &UA_TYPES[UA_TYPES_STATUSCODE]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -24396,11 +26377,11 @@ setMonitoredItemSettings(UA_Server *server, UA_MonitoredItem *mon,
     UA_Double samplingInterval = params->samplingInterval;
     if(mon->attributeID == UA_ATTRIBUTEID_VALUE) {
         const UA_VariableNode *vn = (const UA_VariableNode*)
-           UA_NodestoreSwitch_get(server->nodestoreSwitch, &mon->monitoredNodeId);
+           UA_NodestoreSwitch_getNode(server, &mon->monitoredNodeId);
         if(vn && vn->nodeClass == UA_NODECLASS_VARIABLE &&
            samplingInterval <  vn->minimumSamplingInterval)
             samplingInterval = vn->minimumSamplingInterval;
-        UA_NodestoreSwitch_release(server->nodestoreSwitch, (const UA_Node*)vn);
+        UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)vn);
     } else if(mon->attributeID == UA_ATTRIBUTEID_EVENTNOTIFIER) {
         /* TODO: events should not need a samplinginterval */
         samplingInterval = 10000.0f; // 10 seconds to reduce the load
@@ -24417,7 +26398,7 @@ setMonitoredItemSettings(UA_Server *server, UA_MonitoredItem *mon,
         /* Default: Trigger only on the value and the statuscode */
         mon->trigger = UA_DATACHANGETRIGGER_STATUSVALUE;
     } else {
-        UA_DataChangeFilter *filter = params->filter.content.decoded.data;
+        UA_DataChangeFilter *filter = (UA_DataChangeFilter *)params->filter.content.decoded.data;
         mon->trigger = filter->trigger;
     }
 
@@ -24530,7 +26511,7 @@ Service_CreateMonitoredItems(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_Array_new(request->itemsToCreateSize,
+    response->results = (UA_MonitoredItemCreateResult *)UA_Array_new(request->itemsToCreateSize,
                                      &UA_TYPES[UA_TYPES_MONITOREDITEMCREATERESULT]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
@@ -24585,7 +26566,7 @@ void Service_ModifyMonitoredItems(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_Array_new(request->itemsToModifySize,
+    response->results = (UA_MonitoredItemModifyResult *)UA_Array_new(request->itemsToModifySize,
                                      &UA_TYPES[UA_TYPES_MONITOREDITEMMODIFYRESULT]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
@@ -24614,7 +26595,7 @@ void Service_SetMonitoringMode(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_Array_new(request->monitoredItemIdsSize, &UA_TYPES[UA_TYPES_STATUSCODE]);
+    response->results = (UA_StatusCode *)UA_Array_new(request->monitoredItemIdsSize, &UA_TYPES[UA_TYPES_STATUSCODE]);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -24638,22 +26619,36 @@ void Service_SetMonitoringMode(UA_Server *server, UA_Session *session,
     }
 }
 
+/* TODO: Unify with senderror in ua_server_binary.c */
+static void
+subscriptionSendError(UA_SecureChannel *channel, UA_UInt32 requestHandle,
+                      UA_UInt32 requestId, UA_StatusCode error) {
+    UA_PublishResponse err_response;
+    UA_PublishResponse_init(&err_response);
+    err_response.responseHeader.requestHandle = requestHandle;
+    err_response.responseHeader.timestamp = UA_DateTime_now();
+    err_response.responseHeader.serviceResult = error;
+    UA_SecureChannel_sendBinaryMessage(channel, requestId, &err_response,
+                                       &UA_TYPES[UA_TYPES_PUBLISHRESPONSE]);
+}
 
 void
 Service_Publish(UA_Server *server, UA_Session *session,
                 const UA_PublishRequest *request, UA_UInt32 requestId) {
     UA_LOG_DEBUG_SESSION(server->config.logger, session, "Processing PublishRequest");
-    UA_StatusCode retval = UA_STATUSCODE_GOOD;
+
     /* Return an error if the session has no subscription */
     if(LIST_EMPTY(&session->serverSubscriptions)) {
-        retval = UA_STATUSCODE_BADNOSUBSCRIPTION;
-        goto send_error;
+        subscriptionSendError(session->channel, request->requestHeader.requestHandle,
+                              requestId, UA_STATUSCODE_BADNOSUBSCRIPTION);
+        return;
     }
 
-    UA_PublishResponseEntry *entry = UA_malloc(sizeof(UA_PublishResponseEntry));
+    UA_PublishResponseEntry *entry = (UA_PublishResponseEntry *)UA_malloc(sizeof(UA_PublishResponseEntry));
     if(!entry) {
-        retval = UA_STATUSCODE_BADOUTOFMEMORY;
-        goto send_error;
+        subscriptionSendError(session->channel, requestId,
+                              request->requestHeader.requestHandle, UA_STATUSCODE_BADOUTOFMEMORY);
+        return;
     }
     entry->requestId = requestId;
 
@@ -24662,12 +26657,14 @@ Service_Publish(UA_Server *server, UA_Session *session,
     UA_PublishResponse_init(response);
     response->responseHeader.requestHandle = request->requestHeader.requestHandle;
     if(request->subscriptionAcknowledgementsSize > 0) {
-        response->results = UA_Array_new(request->subscriptionAcknowledgementsSize,
+        response->results = (UA_StatusCode *)UA_Array_new(request->subscriptionAcknowledgementsSize,
                                          &UA_TYPES[UA_TYPES_STATUSCODE]);
         if(!response->results) {
             UA_free(entry);
-            retval = UA_STATUSCODE_BADOUTOFMEMORY;
-            goto send_error;
+            subscriptionSendError(session->channel, requestId,
+                                  request->requestHeader.requestHandle,
+                                  UA_STATUSCODE_BADOUTOFMEMORY);
+            return;
         }
         response->resultsSize = request->subscriptionAcknowledgementsSize;
     }
@@ -24703,17 +26700,6 @@ Service_Publish(UA_Server *server, UA_Session *session,
             break;
         }
     }
-    return;
-
-    UA_PublishResponse err_response;
- send_error:
-    UA_PublishResponse_init(&err_response);
-    err_response.responseHeader.requestHandle = request->requestHeader.requestHandle;
-    err_response.responseHeader.timestamp = UA_DateTime_now();
-    err_response.responseHeader.serviceResult = retval;
-    UA_assert(err_response.responseHeader.requestHandle != 0);
-    UA_SecureChannel_sendBinaryMessage(session->channel, requestId, &err_response,
-                                       &UA_TYPES[UA_TYPES_PUBLISHRESPONSE]);
 }
 
 void
@@ -24728,7 +26714,7 @@ Service_DeleteSubscriptions(UA_Server *server, UA_Session *session,
         return;
     }
 
-    response->results = UA_malloc(sizeof(UA_StatusCode) * request->subscriptionIdsSize);
+    response->results = (UA_StatusCode *)UA_malloc(sizeof(UA_StatusCode) * request->subscriptionIdsSize);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -24779,7 +26765,7 @@ void Service_DeleteMonitoredItems(UA_Server *server, UA_Session *session,
 
     /* Reset the subscription lifetime */
     sub->currentLifetimeCount = 0;
-    response->results = UA_malloc(sizeof(UA_StatusCode) * request->monitoredItemIdsSize);
+    response->results = (UA_StatusCode *)UA_malloc(sizeof(UA_StatusCode) * request->monitoredItemIdsSize);
     if(!response->results) {
         response->responseHeader.serviceResult = UA_STATUSCODE_BADOUTOFMEMORY;
         return;
@@ -24820,25 +26806,10 @@ void Service_Republish(UA_Server *server, UA_Session *session, const UA_Republis
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/client/ua_client.c" ***********************************/
 
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/* Listen with a timeout until at least one complete message is received */
-static UA_StatusCode
-Connection_receiveChunk(UA_Connection *connection, UA_ByteString * UA_RESTRICT message,
-                        UA_Boolean * UA_RESTRICT realloced, UA_UInt32 timeout) {
-    UA_StatusCode retval = UA_STATUSCODE_GOOD;
-    *realloced = false;
-    UA_DateTime maxDate = UA_DateTime_nowMonotonic() + (timeout * UA_MSEC_TO_DATETIME);
-    /* Receive packets until one complete message is assembled */
-    do {
-        UA_DateTime now = UA_DateTime_nowMonotonic();
-        if(now > maxDate)
-            return UA_STATUSCODE_GOODNONCRITICALTIMEOUT;
-        UA_UInt32 thisTimeout = (UA_UInt32)((maxDate - now) / UA_MSEC_TO_DATETIME);
-        retval = connection->recv(connection, message, thisTimeout);
-        retval |= UA_Connection_completeMessages(connection, message, realloced);
-    } while(retval == UA_STATUSCODE_GOOD && message->length == 0);
-    return retval;
-}
 
 /*********************/
 /* Create and Delete */
@@ -24846,36 +26817,38 @@ Connection_receiveChunk(UA_Connection *connection, UA_ByteString * UA_RESTRICT m
 
 static void UA_Client_init(UA_Client* client, UA_ClientConfig config) {
     memset(client, 0, sizeof(UA_Client));
-
-    client->state = UA_CLIENTSTATE_READY;
-    client->connection = (UA_Connection*)UA_malloc(sizeof(UA_Connection));
-    memset(client->connection, 0, sizeof(UA_Connection));
-    client->channel = (UA_SecureChannel*)UA_malloc(sizeof(UA_SecureChannel));
-    UA_SecureChannel_init(client->channel);
-    client->channel->connection = client->connection;
-    client->authenticationMethod = UA_CLIENTAUTHENTICATION_NONE;
+    client->channel.connection = &client->connection;
     client->config = config;
-#ifdef UA_ENABLE_SUBSCRIPTIONS
-    LIST_INIT(&client->pendingNotificationsAcks);
-    LIST_INIT(&client->subscriptions);
-#endif
+    //delete old namespaces
+    for(size_t i = 0; i<client->namespacesSize; ++i){
+        UA_Namespace_deleteMembers(&client->namespaces[i]);
+    }
+    UA_free(client->namespaces);
+    //Add namespace 0, because it is always supported
+    client->namespaces = UA_Namespace_newFromChar("http://opcfoundation.org/UA/");
+    //TODO Namespace_0 as define/std config in ua_namespace? (Watchout will overwrite index with undefined value)
+    client->namespaces->dataTypes = UA_TYPES;
+    client->namespaces->dataTypesSize = UA_TYPES_COUNT;
+    client->namespaces->index = 0;
+    client->namespacesSize = 1;
+    //Add other supported namespaces from config
+    for(size_t i = 0; i < config.namespacesSize; ++i){
+        UA_Client_addNamespace(client, &config.namespaces[i]);
+    }
 }
 
 UA_Client * UA_Client_new(UA_ClientConfig config) {
     UA_Client *client = (UA_Client*)UA_calloc(1, sizeof(UA_Client));
     if(!client)
         return NULL;
-
     UA_Client_init(client, config);
     return client;
 }
 
 static void UA_Client_deleteMembers(UA_Client* client) {
     UA_Client_disconnect(client);
-    UA_SecureChannel_deleteMembersCleanup(client->channel);
-    UA_free(client->channel);
-    UA_Connection_deleteMembers(client->connection);
-    UA_free(client->connection);
+    UA_SecureChannel_deleteMembersCleanup(&client->channel);
+    UA_Connection_deleteMembers(&client->connection);
     if(client->endpointUrl.data)
         UA_String_deleteMembers(&client->endpointUrl);
     UA_UserTokenPolicy_deleteMembers(&client->token);
@@ -24884,11 +26857,15 @@ static void UA_Client_deleteMembers(UA_Client* client) {
         UA_String_deleteMembers(&client->username);
     if(client->password.data)
            UA_String_deleteMembers(&client->password);
+    for(size_t i = 0 ; i < client->namespacesSize ; i++){
+        UA_Namespace_deleteMembers(&client->namespaces[i]);
+    }
+    UA_free(client->namespaces);
 #ifdef UA_ENABLE_SUBSCRIPTIONS
     UA_Client_NotificationsAckNumber *n, *tmp;
     LIST_FOREACH_SAFE(n, &client->pendingNotificationsAcks, listEntry, tmp) {
         LIST_REMOVE(n, listEntry);
-        UA_free(n);
+        free(n);
     }
     UA_Client_Subscription *sub, *tmps;
     LIST_FOREACH_SAFE(sub, &client->subscriptions, listEntry, tmps)
@@ -24919,13 +26896,10 @@ UA_ClientState UA_EXPORT UA_Client_getState(UA_Client *client) {
 #define UA_MINMESSAGESIZE 8192
 
 static UA_StatusCode HelAckHandshake(UA_Client *client) {
-    UA_Connection *conn = client->connection;
-
     /* Get a buffer */
     UA_ByteString message;
-    UA_StatusCode retval =
-        client->connection->getSendBuffer(client->connection,
-                                          UA_MINMESSAGESIZE, &message);
+    UA_Connection *conn = &client->connection;
+    UA_StatusCode retval = conn->getSendBuffer(conn, UA_MINMESSAGESIZE, &message);
     if(retval != UA_STATUSCODE_GOOD)
         return retval;
 
@@ -24949,13 +26923,13 @@ static UA_StatusCode HelAckHandshake(UA_Client *client) {
     offset = 0;
     retval |= UA_TcpMessageHeader_encodeBinary(&messageHeader, &message, &offset);
     if(retval != UA_STATUSCODE_GOOD) {
-        client->connection->releaseSendBuffer(client->connection, &message);
+        conn->releaseSendBuffer(conn, &message);
         return retval;
     }
 
     /* Send the HEL message */
     message.length = messageHeader.messageSize;
-    retval = client->connection->send(client->connection, &message);
+    retval = conn->send(conn, &message);
     if(retval != UA_STATUSCODE_GOOD) {
         UA_LOG_INFO(client->config.logger, UA_LOGCATEGORY_NETWORK,
                     "Sending HEL failed");
@@ -24967,8 +26941,8 @@ static UA_StatusCode HelAckHandshake(UA_Client *client) {
     /* Loop until we have a complete chunk */
     UA_ByteString reply = UA_BYTESTRING_NULL;
     UA_Boolean realloced = false;
-    retval = Connection_receiveChunk(client->connection, &reply,
-                                     &realloced, client->config.timeout);
+    retval = UA_Connection_receiveChunksBlocking(conn, &reply, &realloced,
+                                                 client->config.timeout);
     if(retval != UA_STATUSCODE_GOOD) {
         UA_LOG_INFO(client->config.logger, UA_LOGCATEGORY_NETWORK,
                     "Receiving ACK message failed");
@@ -24983,15 +26957,14 @@ static UA_StatusCode HelAckHandshake(UA_Client *client) {
 
     /* Free the message buffer */
     if(!realloced)
-        client->connection->releaseRecvBuffer(client->connection, &reply);
+        conn->releaseRecvBuffer(conn, &reply);
     else
         UA_ByteString_deleteMembers(&reply);
 
     /* Store remote connection settings and adjust local configuration to not
        exceed the limits */
     if(retval == UA_STATUSCODE_GOOD) {
-        UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_NETWORK,
-                     "Received ACK message");
+        UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_NETWORK, "Received ACK message");
         conn->remoteConf.maxChunkCount = ackMessage.maxChunkCount; /* may be zero -> unlimited */
         conn->remoteConf.maxMessageSize = ackMessage.maxMessageSize; /* may be zero -> unlimited */
         conn->remoteConf.protocolVersion = ackMessage.protocolVersion;
@@ -25003,8 +26976,7 @@ static UA_StatusCode HelAckHandshake(UA_Client *client) {
             conn->localConf.recvBufferSize = conn->remoteConf.sendBufferSize;
         conn->state = UA_CONNECTION_ESTABLISHED;
     } else {
-        UA_LOG_INFO(client->config.logger, UA_LOGCATEGORY_NETWORK,
-                    "Decoding ACK message failed");
+        UA_LOG_INFO(client->config.logger, UA_LOGCATEGORY_NETWORK, "Decoding ACK message failed");
     }
     UA_TcpAcknowledgeMessage_deleteMembers(&ackMessage);
 
@@ -25014,23 +26986,23 @@ static UA_StatusCode HelAckHandshake(UA_Client *client) {
 static UA_StatusCode
 SecureChannelHandshake(UA_Client *client, UA_Boolean renew) {
     /* Check if sc is still valid */
-    if(renew && client->scRenewAt - UA_DateTime_now() > 0)
+    if(renew && client->nextChannelRenewal - UA_DateTime_nowMonotonic() > 0)
         return UA_STATUSCODE_GOOD;
 
-    UA_Connection *c = client->connection;
-    if(c->state != UA_CONNECTION_ESTABLISHED)
+    UA_Connection *conn = &client->connection;
+    if(conn->state != UA_CONNECTION_ESTABLISHED)
         return UA_STATUSCODE_BADSERVERNOTCONNECTED;
 
     UA_SecureConversationMessageHeader messageHeader;
     messageHeader.messageHeader.messageTypeAndChunkType =
         UA_MESSAGETYPE_OPN + UA_CHUNKTYPE_FINAL;
     if(renew)
-        messageHeader.secureChannelId = client->channel->securityToken.channelId;
+        messageHeader.secureChannelId = client->channel.securityToken.channelId;
     else
         messageHeader.secureChannelId = 0;
 
     UA_SequenceHeader seqHeader;
-    seqHeader.sequenceNumber = ++client->channel->sendSequenceNumber;
+    seqHeader.sequenceNumber = ++client->channel.sendSequenceNumber;
     seqHeader.requestId = ++client->requestId;
 
     UA_AsymmetricAlgorithmSecurityHeader asymHeader;
@@ -25057,11 +27029,11 @@ SecureChannelHandshake(UA_Client *client, UA_Boolean renew) {
                      "Requesting to open a SecureChannel");
     }
 
-    UA_ByteString_copy(&client->channel->clientNonce, &opnSecRq.clientNonce);
+    UA_ByteString_copy(&client->channel.clientNonce, &opnSecRq.clientNonce);
     opnSecRq.securityMode = UA_MESSAGESECURITYMODE_NONE;
 
     UA_ByteString message;
-    UA_StatusCode retval = c->getSendBuffer(c, c->remoteConf.recvBufferSize, &message);
+    UA_StatusCode retval = conn->getSendBuffer(conn, conn->remoteConf.recvBufferSize, &message);
     if(retval != UA_STATUSCODE_GOOD) {
         UA_AsymmetricAlgorithmSecurityHeader_deleteMembers(&asymHeader);
         UA_OpenSecureChannelRequest_deleteMembers(&opnSecRq);
@@ -25080,18 +27052,19 @@ SecureChannelHandshake(UA_Client *client, UA_Boolean renew) {
     UA_AsymmetricAlgorithmSecurityHeader_deleteMembers(&asymHeader);
     UA_OpenSecureChannelRequest_deleteMembers(&opnSecRq);
     if(retval != UA_STATUSCODE_GOOD) {
-        client->connection->releaseSendBuffer(client->connection, &message);
+        client->connection.releaseSendBuffer(&client->connection, &message);
         return retval;
     }
 
     message.length = messageHeader.messageHeader.messageSize;
-    retval = client->connection->send(client->connection, &message);
+    retval = conn->send(conn, &message);
     if(retval != UA_STATUSCODE_GOOD)
         return retval;
 
     UA_ByteString reply = UA_BYTESTRING_NULL;
     UA_Boolean realloced = false;
-    retval = Connection_receiveChunk(c, &reply, &realloced, client->config.timeout);
+    retval = UA_Connection_receiveChunksBlocking(conn, &reply, &realloced,
+                                                 client->config.timeout);
     if(retval != UA_STATUSCODE_GOOD) {
         UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_SECURECHANNEL,
                      "Receiving OpenSecureChannelResponse failed");
@@ -25116,7 +27089,7 @@ SecureChannelHandshake(UA_Client *client, UA_Boolean renew) {
     }
 
     /* Save the sequence number from server */
-    client->channel->receiveSequenceNumber = seqHeader.sequenceNumber;
+    client->channel.receiveSequenceNumber = seqHeader.sequenceNumber;
 
     /* Decode the response */
     UA_OpenSecureChannelResponse response;
@@ -25124,45 +27097,44 @@ SecureChannelHandshake(UA_Client *client, UA_Boolean renew) {
 
     /* Free the message */
     if(!realloced)
-        c->releaseRecvBuffer(c, &reply);
+        conn->releaseRecvBuffer(conn, &reply);
     else
         UA_ByteString_deleteMembers(&reply);
 
-    if(retval != UA_STATUSCODE_GOOD) {
-        UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_SECURECHANNEL,
-                     "Decoding OpenSecureChannelResponse failed");
-        UA_AsymmetricAlgorithmSecurityHeader_deleteMembers(&asymHeader);
-        UA_OpenSecureChannelResponse_init(&response);
-        response.responseHeader.serviceResult = retval;
-        return retval;
-    }
+    /* Results in either the StatusCode of decoding or the service */
+    retval |= response.responseHeader.serviceResult;
 
-    retval = response.responseHeader.serviceResult;
     if(retval == UA_STATUSCODE_GOOD) {
         /* Response.securityToken.revisedLifetime is UInt32 we need to cast it
          * to DateTime=Int64 we take 75% of lifetime to start renewing as
          *  described in standard */
-        client->scRenewAt = UA_DateTime_now() +
+        client->nextChannelRenewal = UA_DateTime_nowMonotonic() +
             (UA_DateTime)(response.securityToken.revisedLifetime * (UA_Double)UA_MSEC_TO_DATETIME * 0.75);
 
         /* Replace the old nonce */
-        UA_ChannelSecurityToken_deleteMembers(&client->channel->securityToken);
-        UA_ChannelSecurityToken_copy(&response.securityToken, &client->channel->securityToken);
-        UA_ByteString_deleteMembers(&client->channel->serverNonce);
-        UA_ByteString_copy(&response.serverNonce, &client->channel->serverNonce);
+        UA_ChannelSecurityToken_deleteMembers(&client->channel.securityToken);
+        UA_ChannelSecurityToken_copy(&response.securityToken, &client->channel.securityToken);
+        UA_ByteString_deleteMembers(&client->channel.serverNonce);
+        UA_ByteString_copy(&response.serverNonce, &client->channel.serverNonce);
 
-        if(renew) {
+        if(renew)
             UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_SECURECHANNEL,
                          "SecureChannel renewed");
-        } else {
+        else
             UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_SECURECHANNEL,
                          "SecureChannel opened");
-        }
     } else {
-        UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_SECURECHANNEL,
-                     "SecureChannel could not be opened / "
-                     "renewed with statuscode %i", retval);
+        if(renew)
+            UA_LOG_INFO(client->config.logger, UA_LOGCATEGORY_SECURECHANNEL,
+                        "SecureChannel could not be renewed "
+                        "with error code %s", UA_StatusCode_name(retval));
+        else
+            UA_LOG_INFO(client->config.logger, UA_LOGCATEGORY_SECURECHANNEL,
+                        "SecureChannel could not be opened "
+                        "with error code %s", UA_StatusCode_name(retval));
     }
+
+    /* Clean up */
     UA_OpenSecureChannelResponse_deleteMembers(&response);
     UA_AsymmetricAlgorithmSecurityHeader_deleteMembers(&asymHeader);
     return retval;
@@ -25209,6 +27181,34 @@ static UA_StatusCode ActivateSession(UA_Client *client) {
     UA_ActivateSessionRequest_deleteMembers(&request);
     UA_ActivateSessionResponse_deleteMembers(&response);
     return retval;
+}
+
+static UA_StatusCode UpdateNamespaceIndices(UA_Client* client){
+    if(client->state != UA_CLIENTSTATE_CONNECTED){
+        return UA_STATUSCODE_BADNOTCONNECTED;
+    }
+
+    UA_Variant value;
+    UA_Variant_init(&value);
+
+    UA_StatusCode retval = UA_Client_readValueAttribute(client, UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY), &value);
+    if(retval != UA_STATUSCODE_GOOD){
+        return retval;
+    }
+    for(size_t i = 0; i < client->namespacesSize; i++){
+        client->namespaces[i].index = UA_NAMESPACE_UNDEFINED;
+        //Search if namespace is in Server
+        for(size_t newIdx = 0; newIdx< value.arrayLength; newIdx++){
+            if(UA_String_equal(&client->namespaces[i].uri,&(((UA_String*)value.data)[newIdx]))){
+                // Update index of supported namespace
+                client->namespaces[i].index = (UA_UInt16)i;
+                break;
+            }
+        }
+        UA_Namespace_updateDataTypes(&client->namespaces[i], NULL, (UA_UInt16)i);
+    }
+    UA_Variant_deleteMembers(&value);
+    return UA_STATUSCODE_GOOD;
 }
 
 /* Gets a list of endpoints. Memory is allocated for endpointDescription array */
@@ -25259,8 +27259,8 @@ static UA_StatusCode EndpointsHandshake(UA_Client *client) {
     for(size_t i = 0; i < endpointArraySize; ++i) {
         UA_EndpointDescription* endpoint = &endpointArray[i];
         /* look out for binary transport endpoints */
-        //NODE: Siemens returns empty ProfileUrl, we will accept it as binary
-        if(endpoint->transportProfileUri.length!=0 &&
+        /* Note: Siemens returns empty ProfileUrl, we will accept it as binary */
+        if(endpoint->transportProfileUri.length != 0 &&
            !UA_String_equal(&endpoint->transportProfileUri, &binaryTransport))
             continue;
         /* look out for an endpoint without security */
@@ -25298,12 +27298,11 @@ static UA_StatusCode EndpointsHandshake(UA_Client *client) {
     if(!endpointFound) {
         UA_LOG_ERROR(client->config.logger, UA_LOGCATEGORY_CLIENT,
                      "No suitable endpoint found");
-        return UA_STATUSCODE_BADINTERNALERROR;
-    }
-    if(!tokenFound) {
+        retval = UA_STATUSCODE_BADINTERNALERROR;
+    } else if(!tokenFound) {
         UA_LOG_ERROR(client->config.logger, UA_LOGCATEGORY_CLIENT,
-                     "No anonymous token found");
-        return UA_STATUSCODE_BADINTERNALERROR;
+                     "No suitable UserTokenPolicy found for the possible endpoints");
+        retval = UA_STATUSCODE_BADINTERNALERROR;
     }
     return retval;
 }
@@ -25314,7 +27313,7 @@ static UA_StatusCode SessionHandshake(UA_Client *client) {
 
     request.requestHeader.timestamp = UA_DateTime_now();
     request.requestHeader.timeoutHint = 10000;
-    UA_ByteString_copy(&client->channel->clientNonce, &request.clientNonce);
+    UA_ByteString_copy(&client->channel.clientNonce, &request.clientNonce);
     request.requestedSessionTimeout = 1200000;
     request.maxResponseMessageSize = UA_INT32_MAX;
     UA_String_copy(&client->endpointUrl, &request.endpointUrl);
@@ -25350,7 +27349,7 @@ static UA_StatusCode CloseSession(UA_Client *client) {
 }
 
 static UA_StatusCode CloseSecureChannel(UA_Client *client) {
-    UA_SecureChannel *channel = client->channel;
+    UA_SecureChannel *channel = &client->channel;
     UA_CloseSecureChannelRequest request;
     UA_CloseSecureChannelRequest_init(&request);
     request.requestHeader.requestHandle = ++client->requestHandle;
@@ -25361,7 +27360,7 @@ static UA_StatusCode CloseSecureChannel(UA_Client *client) {
 
     UA_SecureConversationMessageHeader msgHeader;
     msgHeader.messageHeader.messageTypeAndChunkType = UA_MESSAGETYPE_CLO + UA_CHUNKTYPE_FINAL;
-    msgHeader.secureChannelId = client->channel->securityToken.channelId;
+    msgHeader.secureChannelId = channel->securityToken.channelId;
 
     UA_SymmetricAlgorithmSecurityHeader symHeader;
     symHeader.tokenId = channel->securityToken.tokenId;
@@ -25374,8 +27373,8 @@ static UA_StatusCode CloseSecureChannel(UA_Client *client) {
         UA_NODEID_NUMERIC(0, UA_TYPES[UA_TYPES_CLOSESECURECHANNELREQUEST].binaryEncodingId);
 
     UA_ByteString message;
-    UA_Connection *c = client->connection;
-    UA_StatusCode retval = c->getSendBuffer(c, c->remoteConf.recvBufferSize, &message);
+    UA_Connection *conn = &client->connection;
+    UA_StatusCode retval = conn->getSendBuffer(conn, conn->remoteConf.recvBufferSize, &message);
     if(retval != UA_STATUSCODE_GOOD){
         UA_CloseSecureChannelRequest_deleteMembers(&request);
         return retval;
@@ -25394,13 +27393,50 @@ static UA_StatusCode CloseSecureChannel(UA_Client *client) {
 
     if(retval == UA_STATUSCODE_GOOD) {
         message.length = msgHeader.messageHeader.messageSize;
-        retval = client->connection->send(client->connection, &message);
+        retval = conn->send(conn, &message);
     } else {
-        client->connection->releaseSendBuffer(client->connection, &message);
+        conn->releaseSendBuffer(conn, &message);
     }
-    client->connection->close(client->connection);
+    conn->close(conn);
     UA_CloseSecureChannelRequest_deleteMembers(&request);
     return retval;
+}
+
+static void changeNamespace_client(UA_Client *client, UA_Namespace* namespacePtr, size_t nsArrayIdx){
+    UA_UInt16 newNsIdx = UA_NAMESPACE_UNDEFINED;
+    //update namespace array indices
+    if(UpdateNamespaceIndices(client) == UA_STATUSCODE_GOOD){
+        newNsIdx = client->namespaces[nsArrayIdx].index;
+    }
+    //Overwrite values from given namespace
+    UA_Namespace_updateDataTypes(&client->namespaces[nsArrayIdx], namespacePtr, newNsIdx);
+    namespacePtr->index = newNsIdx;
+    client->namespaces[nsArrayIdx].index = newNsIdx;
+}
+
+UA_StatusCode
+UA_Client_addNamespace(UA_Client* client, UA_Namespace * namespacePtr){
+    /* Check if the namespace already exists in the server's namespace array */
+    for(size_t i = 0; i < client->namespacesSize; ++i) {
+        if(UA_String_equal(&namespacePtr->uri, &client->namespaces[i].uri)){
+            changeNamespace_client(client, namespacePtr, i);
+            return UA_STATUSCODE_GOOD;
+        }
+    }
+    /* Namespace doesn't exist alloc space in namespaces array */
+    UA_Namespace *newNsArray = (UA_Namespace*)UA_realloc(client->namespaces,
+                                      sizeof(UA_Namespace) * (client->namespacesSize + 1));
+    if(!newNsArray)
+            return UA_STATUSCODE_BADOUTOFMEMORY;
+    client->namespaces = newNsArray;
+
+    /* Fill new namespace with values */
+    UA_Namespace_init(&client->namespaces[client->namespacesSize], &namespacePtr->uri);
+    changeNamespace_client(client, namespacePtr, client->namespacesSize);
+
+    /* Announce the change (otherwise, the array appears unchanged) */
+    client->namespacesSize++;
+    return UA_STATUSCODE_GOOD;
 }
 
 UA_StatusCode
@@ -25414,10 +27450,10 @@ UA_Client_getEndpoints(UA_Client *client, const char *serverUrl,
 
 
     UA_StatusCode retval = UA_STATUSCODE_GOOD;
-    *client->connection =
+    client->connection =
         client->config.connectionFunc(UA_ConnectionConfig_standard, serverUrl,
                                       client->config.logger);
-    if(client->connection->state != UA_CONNECTION_OPENING) {
+    if(client->connection.state != UA_CONNECTION_OPENING) {
         retval = UA_STATUSCODE_BADCONNECTIONCLOSED;
         goto cleanup;
     }
@@ -25428,7 +27464,7 @@ UA_Client_getEndpoints(UA_Client *client, const char *serverUrl,
         goto cleanup;
     }
 
-    client->connection->localConf = client->config.localConnectionConfig;
+    client->connection.localConf = client->config.localConnectionConfig;
     retval = HelAckHandshake(client);
     if(retval == UA_STATUSCODE_GOOD)
         retval = SecureChannelHandshake(client, false);
@@ -25461,10 +27497,10 @@ UA_Client_connect(UA_Client *client, const char *endpointUrl) {
     }
 
     UA_StatusCode retval = UA_STATUSCODE_GOOD;
-    *client->connection =
+    client->connection =
         client->config.connectionFunc(UA_ConnectionConfig_standard,
                                       endpointUrl, client->config.logger);
-    if(client->connection->state != UA_CONNECTION_OPENING) {
+    if(client->connection.state != UA_CONNECTION_OPENING) {
         retval = UA_STATUSCODE_BADCONNECTIONCLOSED;
         goto cleanup;
     }
@@ -25475,7 +27511,7 @@ UA_Client_connect(UA_Client *client, const char *endpointUrl) {
         goto cleanup;
     }
 
-    client->connection->localConf = client->config.localConnectionConfig;
+    client->connection.localConf = client->config.localConnectionConfig;
     retval = HelAckHandshake(client);
     if(retval == UA_STATUSCODE_GOOD)
         retval = SecureChannelHandshake(client, false);
@@ -25486,8 +27522,9 @@ UA_Client_connect(UA_Client *client, const char *endpointUrl) {
     if(retval == UA_STATUSCODE_GOOD)
         retval = ActivateSession(client);
     if(retval == UA_STATUSCODE_GOOD) {
-        client->connection->state = UA_CONNECTION_ESTABLISHED;
+        client->connection.state = UA_CONNECTION_ESTABLISHED;
         client->state = UA_CLIENTSTATE_CONNECTED;
+        retval = UpdateNamespaceIndices(client);
     } else {
         goto cleanup;
     }
@@ -25499,15 +27536,15 @@ UA_Client_connect(UA_Client *client, const char *endpointUrl) {
 }
 
 UA_StatusCode UA_Client_disconnect(UA_Client *client) {
-    if(client->state != UA_CLIENTSTATE_CONNECTED)
+    if(client->state == UA_CLIENTSTATE_READY)
         return UA_STATUSCODE_BADNOTCONNECTED;
     UA_StatusCode retval = UA_STATUSCODE_GOOD;
     /* Is a session established? */
-    if(client->connection->state == UA_CONNECTION_ESTABLISHED &&
+    if(client->connection.state == UA_CONNECTION_ESTABLISHED &&
        !UA_NodeId_equal(&client->authenticationToken, &UA_NODEID_NULL))
         retval = CloseSession(client);
     /* Is a secure channel established? */
-    if(client->connection->state == UA_CONNECTION_ESTABLISHED)
+    if(client->connection.state == UA_CONNECTION_ESTABLISHED)
         retval |= CloseSecureChannel(client);
     return retval;
 }
@@ -25535,16 +27572,27 @@ static void
 processServiceResponse(struct ResponseDescription *rd, UA_SecureChannel *channel,
                        UA_MessageType messageType, UA_UInt32 requestId,
                        UA_ByteString *message) {
-	const UA_NodeId expectedNodeId =
+    UA_StatusCode retval = UA_STATUSCODE_GOOD;
+    const UA_NodeId expectedNodeId =
         UA_NODEID_NUMERIC(0, rd->responseType->binaryEncodingId);
     const UA_NodeId serviceFaultNodeId =
         UA_NODEID_NUMERIC(0, UA_TYPES[UA_TYPES_SERVICEFAULT].binaryEncodingId);
 
-    UA_StatusCode retval = UA_STATUSCODE_GOOD;
     UA_ResponseHeader *respHeader = (UA_ResponseHeader*)rd->response;
     rd->processed = true;
 
-    if(messageType != UA_MESSAGETYPE_MSG) {
+    /* Forward declaration for the goto */
+    size_t offset = 0;
+    UA_NodeId responseId;
+
+    if(messageType == UA_MESSAGETYPE_ERR) {
+        UA_TcpErrorMessage *msg = (UA_TcpErrorMessage*)message;
+        UA_LOG_ERROR(rd->client->config.logger, UA_LOGCATEGORY_CLIENT,
+                     "Server replied with an error message: %s %.*s",
+                     UA_StatusCode_name(msg->error), msg->reason.length, msg->reason.data);
+        retval = msg->error;
+        goto finish;
+    } else if(messageType != UA_MESSAGETYPE_MSG) {
         UA_LOG_ERROR(rd->client->config.logger, UA_LOGCATEGORY_CLIENT,
                      "Server replied with the wrong message type");
         retval = UA_STATUSCODE_BADTCPMESSAGETYPEINVALID;
@@ -25563,8 +27611,6 @@ processServiceResponse(struct ResponseDescription *rd, UA_SecureChannel *channel
     }
 
     /* Check that the response type matches */
-    size_t offset = 0;
-    UA_NodeId responseId;
     retval = UA_NodeId_decodeBinary(message, &offset, &responseId);
     if(retval != UA_STATUSCODE_GOOD)
         goto finish;
@@ -25587,8 +27633,8 @@ processServiceResponse(struct ResponseDescription *rd, UA_SecureChannel *channel
 
     /* Decode the response */
     retval = UA_decodeBinary(message, &offset, rd->response, rd->responseType,
-                             rd->client->config.customDataTypesSize,
-                             rd->client->config.customDataTypes);
+                             rd->client->namespacesSize,
+                             rd->client->namespaces);
 
  finish:
     if(retval == UA_STATUSCODE_GOOD) {
@@ -25617,10 +27663,10 @@ __UA_Client_Service(UA_Client *client, const void *request, const UA_DataType *r
         return;
     }
 
-    /* Handling request parameters */
-    //here const *request is 'violated'
+    /* Adjusting the request header. The const attribute is violated, but we
+     * only touch the following members: */
     UA_RequestHeader *rr = (UA_RequestHeader*)(uintptr_t)request;
-    UA_NodeId_copy(&client->authenticationToken, &rr->authenticationToken);
+    rr->authenticationToken = client->authenticationToken; /* cleaned up at the end */
     rr->timestamp = UA_DateTime_now();
     rr->requestHandle = ++client->requestHandle;
 
@@ -25628,14 +27674,14 @@ __UA_Client_Service(UA_Client *client, const void *request, const UA_DataType *r
     UA_UInt32 requestId = ++client->requestId;
     UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_CLIENT,
                  "Sending a request of type %i", requestType->typeId.identifier.numeric);
-    retval = UA_SecureChannel_sendBinaryMessage(client->channel, requestId, rr, requestType);
+    retval = UA_SecureChannel_sendBinaryMessage(&client->channel, requestId, rr, requestType);
     if(retval != UA_STATUSCODE_GOOD) {
         if(retval == UA_STATUSCODE_BADENCODINGLIMITSEXCEEDED)
             respHeader->serviceResult = UA_STATUSCODE_BADREQUESTTOOLARGE;
         else
             respHeader->serviceResult = retval;
-        client->state = UA_CLIENTSTATE_ERRORED;
-        UA_NodeId_deleteMembers(&rr->authenticationToken);
+        client->state = UA_CLIENTSTATE_FAULTED;
+        UA_NodeId_init(&rr->authenticationToken);
         return;
     }
 
@@ -25652,7 +27698,7 @@ __UA_Client_Service(UA_Client *client, const void *request, const UA_DataType *r
         UA_DateTime now = UA_DateTime_nowMonotonic();
         if(now < maxDate) {
             UA_UInt32 timeout = (UA_UInt32)((maxDate - now) / UA_MSEC_TO_DATETIME);
-            retval = Connection_receiveChunk(client->connection, &reply, &realloced, timeout);
+            retval = UA_Connection_receiveChunksBlocking(&client->connection, &reply, &realloced, timeout);
         } else {
             retval = UA_STATUSCODE_GOODNONCRITICALTIMEOUT;
         }
@@ -25661,18 +27707,24 @@ __UA_Client_Service(UA_Client *client, const void *request, const UA_DataType *r
             break;
         }
         /* ProcessChunks and call processServiceResponse for complete messages */
-        UA_SecureChannel_processChunks(client->channel, &reply,
+        UA_SecureChannel_processChunks(&client->channel, &reply,
                      (UA_ProcessMessageCallback*)processServiceResponse, &rd);
         /* Free the received buffer */
         if(!realloced)
-            client->connection->releaseRecvBuffer(client->connection, &reply);
+            client->connection.releaseRecvBuffer(&client->connection, &reply);
         else
             UA_ByteString_deleteMembers(&reply);
     } while(!rd.processed);
-    UA_NodeId_deleteMembers(&rr->authenticationToken);
+
+    /* Clean up the authentication token */
+    UA_NodeId_init(&rr->authenticationToken);
 }
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/client/ua_client_highlevel.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 UA_StatusCode
@@ -25702,7 +27754,7 @@ UA_Client_NamespaceGetIndex(UA_Client *client, UA_String *namespaceUri,
     }
 
     retval = UA_STATUSCODE_BADNOTFOUND;
-    UA_String *ns = response.results[0].value.data;
+    UA_String *ns = (UA_String *)response.results[0].value.data;
     for(size_t i = 0; i < response.results[0].value.arrayLength; ++i){
         if(UA_String_equal(namespaceUri, &ns[i])) {
             *namespaceIndex = (UA_UInt16)i;
@@ -25901,7 +27953,7 @@ UA_Client_call(UA_Client *client, const UA_NodeId objectId,
     UA_CallMethodRequest_init(&item);
     item.methodId = methodId;
     item.objectId = objectId;
-    item.inputArguments = (void*)(uintptr_t)input; // cast const...
+    item.inputArguments = (UA_Variant *)(void*)(uintptr_t)input; // cast const...
     item.inputArgumentsSize = inputSize;
     request.methodsToCall = &item;
     request.methodsToCallSize = 1;
@@ -26012,16 +28064,20 @@ __UA_Client_readAttribute(UA_Client *client, const UA_NodeId *nodeId,
         return retval;
     }
 
+    /* Set the StatusCode */
     UA_DataValue *res = response.results;
-    if(res->hasStatus != UA_STATUSCODE_GOOD)
-        retval = res->hasStatus;
-    else if(!res->hasValue)
-        retval = UA_STATUSCODE_BADUNEXPECTEDERROR;
-    if(retval != UA_STATUSCODE_GOOD) {
+    if(res->hasStatus)
+        retval = res->status;
+
+    /* Return early of no value is given */
+    if(!res->hasValue) {
+        if(retval == UA_STATUSCODE_GOOD)
+            retval = UA_STATUSCODE_BADUNEXPECTEDERROR;
         UA_ReadResponse_deleteMembers(&response);
         return retval;
     }
 
+    /* Copy value into out */
     if(attributeId == UA_ATTRIBUTEID_VALUE) {
         memcpy(out, &res->value, sizeof(UA_Variant));
         UA_Variant_init(&res->value);
@@ -26052,12 +28108,13 @@ UA_Client_readArrayDimensionsAttribute(UA_Client *client, const UA_NodeId nodeId
     request.nodesToReadSize = 1;
     UA_ReadResponse response = UA_Client_Service_read(client, request);
     UA_StatusCode retval = response.responseHeader.serviceResult;
+    UA_DataValue *res = response.results;
+
     if(retval == UA_STATUSCODE_GOOD && response.resultsSize != 1)
         retval = UA_STATUSCODE_BADUNEXPECTEDERROR;
     if(retval != UA_STATUSCODE_GOOD)
         goto cleanup;
 
-    UA_DataValue *res = response.results;
     if(res->hasStatus != UA_STATUSCODE_GOOD)
         retval = res->hasStatus;
     else if(!res->hasValue || UA_Variant_isScalar(&res->value))
@@ -26071,7 +28128,7 @@ UA_Client_readArrayDimensionsAttribute(UA_Client *client, const UA_NodeId nodeId
         goto cleanup;
     }
 
-    *outArrayDimensions = res->value.data;
+    *outArrayDimensions = (UA_Int32 *)res->value.data;
     *outArrayDimensionsSize = res->value.arrayLength;
     UA_free(res->value.data);
     res->value.data = NULL;
@@ -26084,6 +28141,10 @@ UA_Client_readArrayDimensionsAttribute(UA_Client *client, const UA_NodeId nodeId
 }
 
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/client/ua_client_highlevel_subscriptions.c" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 #ifdef UA_ENABLE_SUBSCRIPTIONS /* conditional compilation */
@@ -26102,30 +28163,31 @@ UA_Client_Subscriptions_new(UA_Client *client, UA_SubscriptionSettings settings,
 
     UA_CreateSubscriptionResponse response = UA_Client_Service_createSubscription(client, request);
     UA_StatusCode retval = response.responseHeader.serviceResult;
-    if(retval != UA_STATUSCODE_GOOD)
-        goto cleanup;
-
-    UA_Client_Subscription *newSub = UA_malloc(sizeof(UA_Client_Subscription));
-    if(!newSub) {
-        retval = UA_STATUSCODE_BADOUTOFMEMORY;
-        goto cleanup;
+    if(retval != UA_STATUSCODE_GOOD) {
+        UA_CreateSubscriptionResponse_deleteMembers(&response);
+        return retval;
     }
 
-    LIST_INIT(&newSub->MonitoredItems);
-    newSub->LifeTime = response.revisedLifetimeCount;
-    newSub->KeepAliveCount = response.revisedMaxKeepAliveCount;
-    newSub->PublishingInterval = response.revisedPublishingInterval;
-    newSub->SubscriptionID = response.subscriptionId;
-    newSub->NotificationsPerPublish = request.maxNotificationsPerPublish;
-    newSub->Priority = request.priority;
+    UA_Client_Subscription *newSub = (UA_Client_Subscription *)UA_malloc(sizeof(UA_Client_Subscription));
+    if(!newSub) {
+        UA_CreateSubscriptionResponse_deleteMembers(&response);
+        return UA_STATUSCODE_BADOUTOFMEMORY;
+    }
+
+    LIST_INIT(&newSub->monitoredItems);
+    newSub->lifeTime = response.revisedLifetimeCount;
+    newSub->keepAliveCount = response.revisedMaxKeepAliveCount;
+    newSub->publishingInterval = response.revisedPublishingInterval;
+    newSub->subscriptionID = response.subscriptionId;
+    newSub->notificationsPerPublish = request.maxNotificationsPerPublish;
+    newSub->priority = request.priority;
     LIST_INSERT_HEAD(&client->subscriptions, newSub, listEntry);
 
     if(newSubscriptionId)
-        *newSubscriptionId = newSub->SubscriptionID;
+        *newSubscriptionId = newSub->subscriptionID;
 
- cleanup:
     UA_CreateSubscriptionResponse_deleteMembers(&response);
-    return retval;
+    return UA_STATUSCODE_GOOD;
 }
 
 /* remove the subscription remotely */
@@ -26133,7 +28195,7 @@ UA_StatusCode
 UA_Client_Subscriptions_remove(UA_Client *client, UA_UInt32 subscriptionId) {
     UA_Client_Subscription *sub;
     LIST_FOREACH(sub, &client->subscriptions, listEntry) {
-        if(sub->SubscriptionID == subscriptionId)
+        if(sub->subscriptionID == subscriptionId)
             break;
     }
     if(!sub)
@@ -26141,10 +28203,10 @@ UA_Client_Subscriptions_remove(UA_Client *client, UA_UInt32 subscriptionId) {
 
     UA_StatusCode retval = UA_STATUSCODE_GOOD;
     UA_Client_MonitoredItem *mon, *tmpmon;
-    LIST_FOREACH_SAFE(mon, &sub->MonitoredItems, listEntry, tmpmon) {
+    LIST_FOREACH_SAFE(mon, &sub->monitoredItems, listEntry, tmpmon) {
         retval =
-            UA_Client_Subscriptions_removeMonitoredItem(client, sub->SubscriptionID,
-                                                        mon->MonitoredItemId);
+            UA_Client_Subscriptions_removeMonitoredItem(client, sub->subscriptionID,
+                                                        mon->monitoredItemId);
         if(retval != UA_STATUSCODE_GOOD)
             return retval;
     }
@@ -26153,7 +28215,7 @@ UA_Client_Subscriptions_remove(UA_Client *client, UA_UInt32 subscriptionId) {
     UA_DeleteSubscriptionsRequest request;
     UA_DeleteSubscriptionsRequest_init(&request);
     request.subscriptionIdsSize = 1;
-    request.subscriptionIds = &sub->SubscriptionID;
+    request.subscriptionIds = &sub->subscriptionID;
     UA_DeleteSubscriptionsResponse response = UA_Client_Service_deleteSubscriptions(client, request);
     retval = response.responseHeader.serviceResult;
     if(retval == UA_STATUSCODE_GOOD && response.resultsSize > 0)
@@ -26163,7 +28225,7 @@ UA_Client_Subscriptions_remove(UA_Client *client, UA_UInt32 subscriptionId) {
     if(retval != UA_STATUSCODE_GOOD && retval != UA_STATUSCODE_BADSUBSCRIPTIONIDINVALID) {
         UA_LOG_INFO(client->config.logger, UA_LOGCATEGORY_CLIENT,
                     "Could not remove subscription %u with statuscode 0x%08x",
-                    sub->SubscriptionID, retval);
+                    sub->subscriptionID, retval);
         return retval;
     }
 
@@ -26175,7 +28237,7 @@ void
 UA_Client_Subscriptions_forceDelete(UA_Client *client,
                                     UA_Client_Subscription *sub) {
     UA_Client_MonitoredItem *mon, *mon_tmp;
-    LIST_FOREACH_SAFE(mon, &sub->MonitoredItems, listEntry, mon_tmp) {
+    LIST_FOREACH_SAFE(mon, &sub->monitoredItems, listEntry, mon_tmp) {
         UA_NodeId_deleteMembers(&mon->monitoredNodeId);
         LIST_REMOVE(mon, listEntry);
         UA_free(mon);
@@ -26191,7 +28253,7 @@ UA_Client_Subscriptions_addMonitoredItem(UA_Client *client, UA_UInt32 subscripti
                                          void *hfContext, UA_UInt32 *newMonitoredItemId) {
     UA_Client_Subscription *sub;
     LIST_FOREACH(sub, &client->subscriptions, listEntry) {
-        if(sub->SubscriptionID == subscriptionId)
+        if(sub->subscriptionID == subscriptionId)
             break;
     }
     if(!sub)
@@ -26207,7 +28269,7 @@ UA_Client_Subscriptions_addMonitoredItem(UA_Client *client, UA_UInt32 subscripti
     item.itemToMonitor.attributeId = attributeID;
     item.monitoringMode = UA_MONITORINGMODE_REPORTING;
     item.requestedParameters.clientHandle = ++(client->monitoredItemHandles);
-    item.requestedParameters.samplingInterval = sub->PublishingInterval;
+    item.requestedParameters.samplingInterval = sub->publishingInterval;
     item.requestedParameters.discardOldest = true;
     item.requestedParameters.queueSize = 1;
     request.itemsToCreate = &item;
@@ -26226,19 +28288,19 @@ UA_Client_Subscriptions_addMonitoredItem(UA_Client *client, UA_UInt32 subscripti
     }
 
     /* Create the handler */
-    UA_Client_MonitoredItem *newMon = UA_malloc(sizeof(UA_Client_MonitoredItem));
-    newMon->MonitoringMode = UA_MONITORINGMODE_REPORTING;
+    UA_Client_MonitoredItem *newMon = (UA_Client_MonitoredItem *)UA_malloc(sizeof(UA_Client_MonitoredItem));
+    newMon->monitoringMode = UA_MONITORINGMODE_REPORTING;
     UA_NodeId_copy(&nodeId, &newMon->monitoredNodeId);
-    newMon->AttributeID = attributeID;
-    newMon->ClientHandle = client->monitoredItemHandles;
-    newMon->SamplingInterval = sub->PublishingInterval;
-    newMon->QueueSize = 1;
-    newMon->DiscardOldest = true;
+    newMon->attributeID = attributeID;
+    newMon->clientHandle = client->monitoredItemHandles;
+    newMon->samplingInterval = sub->publishingInterval;
+    newMon->queueSize = 1;
+    newMon->discardOldest = true;
     newMon->handler = hf;
     newMon->handlerContext = hfContext;
-    newMon->MonitoredItemId = response.results[0].monitoredItemId;
-    LIST_INSERT_HEAD(&sub->MonitoredItems, newMon, listEntry);
-    *newMonitoredItemId = newMon->MonitoredItemId;
+    newMon->monitoredItemId = response.results[0].monitoredItemId;
+    LIST_INSERT_HEAD(&sub->monitoredItems, newMon, listEntry);
+    *newMonitoredItemId = newMon->monitoredItemId;
 
     UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_CLIENT,
                  "Created a monitored item with client handle %u", client->monitoredItemHandles);
@@ -26252,15 +28314,15 @@ UA_Client_Subscriptions_removeMonitoredItem(UA_Client *client, UA_UInt32 subscri
                                             UA_UInt32 monitoredItemId) {
     UA_Client_Subscription *sub;
     LIST_FOREACH(sub, &client->subscriptions, listEntry) {
-        if(sub->SubscriptionID == subscriptionId)
+        if(sub->subscriptionID == subscriptionId)
             break;
     }
     if(!sub)
         return UA_STATUSCODE_BADSUBSCRIPTIONIDINVALID;
     
     UA_Client_MonitoredItem *mon;
-    LIST_FOREACH(mon, &sub->MonitoredItems, listEntry) {
-        if(mon->MonitoredItemId == monitoredItemId)
+    LIST_FOREACH(mon, &sub->monitoredItems, listEntry) {
+        if(mon->monitoredItemId == monitoredItemId)
             break;
     }
     if(!mon)
@@ -26269,9 +28331,9 @@ UA_Client_Subscriptions_removeMonitoredItem(UA_Client *client, UA_UInt32 subscri
     /* remove the monitoreditem remotely */
     UA_DeleteMonitoredItemsRequest request;
     UA_DeleteMonitoredItemsRequest_init(&request);
-    request.subscriptionId = sub->SubscriptionID;
+    request.subscriptionId = sub->subscriptionID;
     request.monitoredItemIdsSize = 1;
-    request.monitoredItemIds = &mon->MonitoredItemId;
+    request.monitoredItemIds = &mon->monitoredItemId;
     UA_DeleteMonitoredItemsResponse response = UA_Client_Service_deleteMonitoredItems(client, request);
 
     UA_StatusCode retval = response.responseHeader.serviceResult;
@@ -26301,7 +28363,7 @@ UA_Client_processPublishResponse(UA_Client *client, UA_PublishRequest *request,
     /* Find the subscription */
     UA_Client_Subscription *sub;
     LIST_FOREACH(sub, &client->subscriptions, listEntry) {
-        if(sub->SubscriptionID == response->subscriptionId)
+        if(sub->subscriptionID == response->subscriptionId)
             break;
     }
     if(!sub)
@@ -26309,7 +28371,7 @@ UA_Client_processPublishResponse(UA_Client *client, UA_PublishRequest *request,
 
     UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_CLIENT,
                  "Processing a publish response on subscription %u with %u notifications",
-                 sub->SubscriptionID, response->notificationMessage.notificationDataSize);
+                 sub->subscriptionID, response->notificationMessage.notificationDataSize);
 
     /* Check if the server has acknowledged any of the sent ACKs */
     for(size_t i = 0; i < response->resultsSize && i < request->subscriptionAcknowledgementsSize; ++i) {
@@ -26342,27 +28404,27 @@ UA_Client_processPublishResponse(UA_Client *client, UA_PublishRequest *request,
         if(msg->notificationData[k].content.decoded.type != &UA_TYPES[UA_TYPES_DATACHANGENOTIFICATION])
             continue;
 
-        UA_DataChangeNotification *dataChangeNotification = msg->notificationData[k].content.decoded.data;
+        UA_DataChangeNotification *dataChangeNotification = (UA_DataChangeNotification *)msg->notificationData[k].content.decoded.data;
         for(size_t j = 0; j < dataChangeNotification->monitoredItemsSize; ++j) {
             UA_MonitoredItemNotification *mitemNot = &dataChangeNotification->monitoredItems[j];
             UA_Client_MonitoredItem *mon;
-            LIST_FOREACH(mon, &sub->MonitoredItems, listEntry) {
-                if(mon->ClientHandle == mitemNot->clientHandle) {
-                    mon->handler(mon->MonitoredItemId, &mitemNot->value, mon->handlerContext);
+            LIST_FOREACH(mon, &sub->monitoredItems, listEntry) {
+                if(mon->clientHandle == mitemNot->clientHandle) {
+                    mon->handler(mon->monitoredItemId, &mitemNot->value, mon->handlerContext);
                     break;
                 }
             }
             if(!mon)
                 UA_LOG_DEBUG(client->config.logger, UA_LOGCATEGORY_CLIENT,
                              "Could not process a notification with clienthandle %u on subscription %u",
-                             mitemNot->clientHandle, sub->SubscriptionID);
+                             mitemNot->clientHandle, sub->subscriptionID);
         }
     }
 
     /* Add to the list of pending acks */
-    UA_Client_NotificationsAckNumber *tmpAck = UA_malloc(sizeof(UA_Client_NotificationsAckNumber));
+    UA_Client_NotificationsAckNumber *tmpAck = (UA_Client_NotificationsAckNumber *)UA_malloc(sizeof(UA_Client_NotificationsAckNumber));
     tmpAck->subAck.sequenceNumber = msg->sequenceNumber;
-    tmpAck->subAck.subscriptionId = sub->SubscriptionID;
+    tmpAck->subAck.subscriptionId = sub->subscriptionID;
     LIST_INSERT_HEAD(&client->pendingNotificationsAcks, tmpAck, listEntry);
 }
 
@@ -26382,7 +28444,7 @@ UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *client) {
             ++request.subscriptionAcknowledgementsSize;
         if(request.subscriptionAcknowledgementsSize > 0) {
             request.subscriptionAcknowledgements =
-                UA_malloc(sizeof(UA_SubscriptionAcknowledgement) * request.subscriptionAcknowledgementsSize);
+                (UA_SubscriptionAcknowledgement *)UA_malloc(sizeof(UA_SubscriptionAcknowledgement) * request.subscriptionAcknowledgementsSize);
             if(!request.subscriptionAcknowledgements)
                 return UA_STATUSCODE_GOOD;
         }
@@ -26426,6 +28488,9 @@ UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *client) {
 #include <stdio.h> // snprintf
 #include <string.h> // memset
 #include <errno.h>
+#if UNDER_CE
+#define errno WSAGetLastError()
+#endif
 #ifdef _WIN32
 # ifndef __clang__
 #  include <malloc.h>
@@ -26530,7 +28595,7 @@ socket_write(UA_Connection *connection, UA_ByteString *buf) {
 
 static UA_StatusCode
 socket_recv(UA_Connection *connection, UA_ByteString *response, UA_UInt32 timeout) {
-    response->data = UA_malloc(connection->localConf.recvBufferSize);
+    response->data = (UA_Byte *)malloc(connection->localConf.recvBufferSize);
     if(!response->data) {
         response->length = 0;
         return UA_STATUSCODE_BADOUTOFMEMORY; /* not enough memory retry */
@@ -26622,7 +28687,7 @@ static UA_StatusCode socket_set_nonblocking(SOCKET sockfd) {
 
 static void FreeConnectionCallback(UA_Server *server, void *ptr) {
     UA_Connection_deleteMembers((UA_Connection*)ptr);
-    UA_free(ptr);
+    free(ptr);
  }
 
 /***************************/
@@ -26665,6 +28730,11 @@ static void FreeConnectionCallback(UA_Server *server, void *ptr) {
 #define MAXBACKLOG 100
 
 typedef struct {
+  UA_Connection *connection;
+  UA_Int32 sockfd;
+} ConnectionMapping;
+
+typedef struct {
     UA_ConnectionConfig conf;
     UA_UInt16 port;
     UA_Logger logger; // Set during start
@@ -26672,10 +28742,7 @@ typedef struct {
     /* open sockets and connections */
     UA_Int32 serversockfd;
     size_t mappingsSize;
-    struct ConnectionMapping {
-        UA_Connection *connection;
-        UA_Int32 sockfd;
-    } *mappings;
+    ConnectionMapping *mappings;
 } ServerNetworkLayerTCP;
 
 static UA_StatusCode
@@ -26722,7 +28789,7 @@ ServerNetworkLayerTCP_closeConnection(UA_Connection *connection) {
 #endif
 #if UA_LOGLEVEL <= 300
    //cppcheck-suppress unreadVariable
-    ServerNetworkLayerTCP *layer = connection->handle;
+    ServerNetworkLayerTCP *layer = (ServerNetworkLayerTCP *)connection->handle;
     UA_LOG_INFO(layer->logger, UA_LOGCATEGORY_NETWORK,
                 "Connection %i | Force closing the connection",
                 connection->sockfd);
@@ -26735,14 +28802,13 @@ ServerNetworkLayerTCP_closeConnection(UA_Connection *connection) {
 /* call only from the single networking thread */
 static UA_StatusCode
 ServerNetworkLayerTCP_add(ServerNetworkLayerTCP *layer, UA_Int32 newsockfd) {
-    UA_Connection *c = UA_malloc(sizeof(UA_Connection));
+    UA_Connection *c = (UA_Connection *)malloc(sizeof(UA_Connection));
     if(!c)
         return UA_STATUSCODE_BADINTERNALERROR;
 
     struct sockaddr_in addr;
     socklen_t addrlen = sizeof(struct sockaddr_in);
     int res = getpeername(newsockfd, (struct sockaddr*)&addr, &addrlen);
-    
     if(res == 0) {
         UA_LOG_INFO(layer->logger, UA_LOGCATEGORY_NETWORK,
                     "Connection %i | New connection over TCP from %s:%d",
@@ -26752,7 +28818,6 @@ ServerNetworkLayerTCP_add(ServerNetworkLayerTCP *layer, UA_Int32 newsockfd) {
                        "Connection %i | New connection over TCP, "
                        "getpeername failed with errno %i", newsockfd, errno);
     }
-
     memset(c, 0, sizeof(UA_Connection));
     c->sockfd = newsockfd;
     c->handle = layer;
@@ -26764,11 +28829,11 @@ ServerNetworkLayerTCP_add(ServerNetworkLayerTCP *layer, UA_Int32 newsockfd) {
     c->releaseSendBuffer = ServerNetworkLayerReleaseSendBuffer;
     c->releaseRecvBuffer = ServerNetworkLayerReleaseRecvBuffer;
     c->state = UA_CONNECTION_OPENING;
-    struct ConnectionMapping *nm;
-    nm = UA_realloc(layer->mappings, sizeof(struct ConnectionMapping)*(layer->mappingsSize+1));
+    ConnectionMapping *nm;
+    nm  = (ConnectionMapping *)realloc(layer->mappings, sizeof(ConnectionMapping)*(layer->mappingsSize+1));
     if(!nm) {
         UA_LOG_ERROR(layer->logger, UA_LOGCATEGORY_NETWORK, "No memory for a new Connection");
-        UA_free(c);
+        free(c);
         return UA_STATUSCODE_BADINTERNALERROR;
     }
     layer->mappings = nm;
@@ -26780,7 +28845,7 @@ ServerNetworkLayerTCP_add(ServerNetworkLayerTCP *layer, UA_Int32 newsockfd) {
 
 static UA_StatusCode
 ServerNetworkLayerTCP_start(UA_ServerNetworkLayer *nl, UA_Logger logger) {
-    ServerNetworkLayerTCP *layer = nl->handle;
+    ServerNetworkLayerTCP *layer = (ServerNetworkLayerTCP *)nl->handle;
     layer->logger = logger;
 
     /* get the discovery url from the hostname */
@@ -26824,9 +28889,11 @@ ServerNetworkLayerTCP_start(UA_ServerNetworkLayer *nl, UA_Logger logger) {
     }
 
     /* Bind socket to address */
-    const struct sockaddr_in serv_addr = {
-        .sin_family = AF_INET, .sin_addr.s_addr = INADDR_ANY,
-        .sin_port = htons(layer->port), .sin_zero = {0}};
+    struct sockaddr_in serv_addr;
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(layer->port);
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    memset(&(serv_addr.sin_zero), '\0', 8);
     if(bind(newsock, (const struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         UA_LOG_WARNING(layer->logger, UA_LOGCATEGORY_NETWORK,
                        "Error during binding of the server socket");
@@ -26851,7 +28918,7 @@ ServerNetworkLayerTCP_start(UA_ServerNetworkLayer *nl, UA_Logger logger) {
 
 static size_t
 ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt16 timeout) {
-    ServerNetworkLayerTCP *layer = nl->handle;
+    ServerNetworkLayerTCP *layer = (ServerNetworkLayerTCP *)nl->handle;
     fd_set fdset, errset;
     UA_Int32 highestfd = setFDSet(layer, &fdset);
     setFDSet(layer, &errset);
@@ -26876,7 +28943,7 @@ ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt1
             /* Send messages directly and do wait to merge packets (disable
                Nagle's algorithm) */
             int i = 1;
-            setsockopt(newsockfd, IPPROTO_TCP, TCP_NODELAY, (void *)&i, sizeof(i));
+            setsockopt(newsockfd, IPPROTO_TCP, TCP_NODELAY, (const char *)&i, sizeof(i));
             ServerNetworkLayerTCP_add(layer, (UA_Int32)newsockfd);
         }
     }
@@ -26885,7 +28952,7 @@ ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt1
        resulted socket */
     if(resultsize == 0)
         return 0;
-    UA_Job *js = UA_malloc(sizeof(UA_Job) * (size_t)resultsize * 2);
+    UA_Job *js = (UA_Job*)malloc(sizeof(UA_Job) * (size_t)resultsize * 2);
     if(!js)
         return 0;
 
@@ -26921,7 +28988,7 @@ ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt1
     }
 
     if(j == 0) {
-        UA_free(js);
+        free(js);
         js = NULL;
     }
 
@@ -26931,13 +28998,13 @@ ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt1
 
 static size_t
 ServerNetworkLayerTCP_stop(UA_ServerNetworkLayer *nl, UA_Job **jobs) {
-    ServerNetworkLayerTCP *layer = nl->handle;
+    ServerNetworkLayerTCP *layer = (ServerNetworkLayerTCP *)nl->handle;
     UA_LOG_INFO(layer->logger, UA_LOGCATEGORY_NETWORK,
                 "Shutting down the TCP network layer with %d open connection(s)",
                 layer->mappingsSize);
     shutdown((SOCKET)layer->serversockfd,2);
     CLOSESOCKET(layer->serversockfd);
-    UA_Job *items = UA_malloc(sizeof(UA_Job) * layer->mappingsSize * 2);
+    UA_Job *items = (UA_Job *)malloc(sizeof(UA_Job) * layer->mappingsSize * 2);
     if(!items)
         return 0;
     for(size_t i = 0; i < layer->mappingsSize; ++i) {
@@ -26957,9 +29024,9 @@ ServerNetworkLayerTCP_stop(UA_ServerNetworkLayer *nl, UA_Job **jobs) {
 
 /* run only when the server is stopped */
 static void ServerNetworkLayerTCP_deleteMembers(UA_ServerNetworkLayer *nl) {
-    ServerNetworkLayerTCP *layer = nl->handle;
-    UA_free(layer->mappings);
-    UA_free(layer);
+    ServerNetworkLayerTCP *layer = (ServerNetworkLayerTCP *)nl->handle;
+    free(layer->mappings);
+    free(layer);
     UA_String_deleteMembers(&nl->discoveryUrl);
 }
 
@@ -26974,7 +29041,7 @@ UA_ServerNetworkLayerTCP(UA_ConnectionConfig conf, UA_UInt16 port) {
 
     UA_ServerNetworkLayer nl;
     memset(&nl, 0, sizeof(UA_ServerNetworkLayer));
-    ServerNetworkLayerTCP *layer = UA_calloc(1,sizeof(ServerNetworkLayerTCP));
+    ServerNetworkLayerTCP *layer = (ServerNetworkLayerTCP *)calloc(1,sizeof(ServerNetworkLayerTCP));
     if(!layer)
         return nl;
     
@@ -27151,7 +29218,7 @@ activateSession_default(const UA_NodeId *sessionId, const UA_ExtensionObject *us
     /* anonymous login */
     if(enableAnonymousLogin &&
        userIdentityToken->content.decoded.type == &UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN]) {
-        const UA_AnonymousIdentityToken *token = userIdentityToken->content.decoded.data;
+        const UA_AnonymousIdentityToken *token = (UA_AnonymousIdentityToken *)userIdentityToken->content.decoded.data;
 
         /* Compatibility notice: Siemens OPC Scout v10 provides an empty
          * policyId. This is not compliant. For compatibility we will assume
@@ -27166,7 +29233,7 @@ activateSession_default(const UA_NodeId *sessionId, const UA_ExtensionObject *us
     /* username and password */
     if(enableUsernamePasswordLogin &&
        userIdentityToken->content.decoded.type == &UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN]) {
-        const UA_UserNameIdentityToken *token = userIdentityToken->content.decoded.data;
+        const UA_UserNameIdentityToken *token = (UA_UserNameIdentityToken *)userIdentityToken->content.decoded.data;
         if(!UA_String_equal(&token->policyId, &username_policy))
             return UA_STATUSCODE_BADIDENTITYTOKENINVALID;
 
@@ -27249,10 +29316,19 @@ allowDeleteReference_default(const UA_NodeId *sessionId, void *sessionHandle, co
 
 #include <time.h>
 #ifdef _WIN32
+/* Backup definition of SLIST_ENTRY on mingw winnt.h */
 # ifdef SLIST_ENTRY
-#  undef SLIST_ENTRY /* Fix redefinition of SLIST_ENTRY on mingw winnt.h */
+#  pragma push_macro("SLIST_ENTRY")
+#  undef SLIST_ENTRY
+#  define POP_SLIST_ENTRY
 # endif
 # include <windows.h>
+/* restore definition */
+# ifdef POP_SLIST_ENTRY
+#  undef SLIST_ENTRY
+#  undef POP_SLIST_ENTRY
+#  pragma pop_macro("SLIST_ENTRY")
+# endif
 #else
 # include <sys/time.h>
 #endif
@@ -27314,26 +29390,38 @@ UA_DateTime UA_DateTime_nowMonotonic(void) {
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef UA_ENABLE_MULTITHREADING
+#include <pthread.h>
+static pthread_mutex_t printf_mutex = PTHREAD_MUTEX_INITIALIZER;
+#endif
+
 const char *LogLevelNames[6] = {"trace", "debug", "info", "warning", "error", "fatal"};
 const char *LogCategoryNames[6] = {"network", "channel", "session", "server", "client", "userland"};
 
-#if (defined(__GNUC__) && defined(__GNUC_MINOR__) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 6) || defined(__clang__)
+#if (defined(__GNUC__) && defined(__GNUC_MINOR__) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 6) || \
+    defined(__clang__)
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #endif
 
-void UA_Log_Stdout(UA_LogLevel level, UA_LogCategory category, const char *msg, ...) {
+void
+UA_Log_Stdout(UA_LogLevel level, UA_LogCategory category,
+              const char *msg, va_list args) {
     UA_String t = UA_DateTime_toString(UA_DateTime_now());
+#ifdef UA_ENABLE_MULTITHREADING
+    pthread_mutex_lock(&printf_mutex);
+#endif
     printf("[%.23s] %s/%s\t", t.data, LogLevelNames[level], LogCategoryNames[category]);
-    UA_ByteString_deleteMembers(&t);
-    va_list append;
-    va_start(append, msg);
-    vprintf(msg, append);
-    va_end(append);
+    vprintf(msg, args);
     printf("\n");
+#ifdef UA_ENABLE_MULTITHREADING
+    pthread_mutex_unlock(&printf_mutex);
+#endif
+    UA_ByteString_deleteMembers(&t);
 }
 
-#if (defined(__GNUC__) && defined(__GNUC_MINOR__) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 6) || defined(__clang__)
+#if (defined(__GNUC__) && defined(__GNUC_MINOR__) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 6) || \
+    defined(__clang__)
 # pragma GCC diagnostic pop
 #endif
 
@@ -27348,11 +29436,11 @@ void UA_Log_Stdout(UA_LogLevel level, UA_LogCategory category, const char *msg, 
 /*******************************/
 
 const UA_EXPORT UA_ConnectionConfig UA_ConnectionConfig_standard = {
-    .protocolVersion = 0,
-    .sendBufferSize = 65535, /* 64k per chunk */
-    .recvBufferSize = 65535, /* 64k per chunk */
-    .maxMessageSize = 0, /* 0 -> unlimited */
-    .maxChunkCount = 0 /* 0 -> unlimited */
+    0, /* .protocolVersion */
+    65535, /* .sendBufferSize, 64k per chunk */
+    65535, /* .recvBufferSize, 64k per chunk */
+    0, /* .maxMessageSize, 0 -> unlimited */
+    0 /* .maxChunkCount, 0 -> unlimited */
 };
 
 /***************************/
@@ -27378,86 +29466,70 @@ const UA_EXPORT UA_ConnectionConfig UA_ConnectionConfig_standard = {
 const UA_Boolean enableAnonymousLogin = ENABLEANONYMOUSLOGIN;
 const UA_Boolean enableUsernamePasswordLogin = ENABLEUSERNAMEPASSWORDLOGIN;
 const size_t usernamePasswordsSize = 2;
-const UA_UsernamePasswordLogin *usernamePasswords = (UA_UsernamePasswordLogin[2]){
+
+UA_UsernamePasswordLogin UsernamePasswordLogin[2] = {
     { UA_STRING_STATIC("user1"), UA_STRING_STATIC("password") },
     { UA_STRING_STATIC("user2"), UA_STRING_STATIC("password1") } };
+const UA_UsernamePasswordLogin *usernamePasswords = UsernamePasswordLogin;
 
 const UA_EXPORT UA_ServerConfig UA_ServerConfig_standard = {
-    .nThreads = 1,
-    .logger = UA_Log_Stdout,
+    1, /* .nThreads */
+    UA_Log_Stdout, /* .logger */
 
     /* Server Description */
-    .buildInfo = {
-        .productUri = UA_STRING_STATIC(PRODUCT_URI),
-        .manufacturerName = UA_STRING_STATIC(MANUFACTURER_NAME),
-        .productName = UA_STRING_STATIC(PRODUCT_NAME),
-        .softwareVersion = UA_STRING_STATIC(VERSION(UA_OPEN62541_VER_MAJOR,
-                                                    UA_OPEN62541_VER_MINOR,
-                                                    UA_OPEN62541_VER_PATCH,
-                                                    UA_OPEN62541_VER_LABEL)),
-        .buildNumber = UA_STRING_STATIC(__DATE__ " " __TIME__),
-        .buildDate = 0 },
-    .applicationDescription = {
-        .applicationUri = UA_STRING_STATIC(APPLICATION_URI),
-        .productUri = UA_STRING_STATIC(PRODUCT_URI),
-        .applicationName = { .locale = UA_STRING_STATIC("en"),
-                             .text = UA_STRING_STATIC(APPLICATION_NAME) },
-        .applicationType = UA_APPLICATIONTYPE_SERVER,
-        .gatewayServerUri = UA_STRING_STATIC_NULL,
-        .discoveryProfileUri = UA_STRING_STATIC_NULL,
-        .discoveryUrlsSize = 0,
-        .discoveryUrls = NULL },
-    .serverCertificate = UA_STRING_STATIC_NULL,
-
-    /* Custom DataTypes */
-    .customDataTypesSize = 0,
-    .customDataTypes = NULL,
+    {UA_STRING_STATIC(PRODUCT_URI),
+     UA_STRING_STATIC(MANUFACTURER_NAME),
+     UA_STRING_STATIC(PRODUCT_NAME),
+     UA_STRING_STATIC(VERSION(UA_OPEN62541_VER_MAJOR, UA_OPEN62541_VER_MINOR,
+                              UA_OPEN62541_VER_PATCH, UA_OPEN62541_VER_LABEL)),
+     UA_STRING_STATIC(__DATE__ " " __TIME__), 0 }, /* .buildInfo */
+     
+    {UA_STRING_STATIC(APPLICATION_URI),
+     UA_STRING_STATIC(PRODUCT_URI),
+     {UA_STRING_STATIC("en"),UA_STRING_STATIC(APPLICATION_NAME) },
+      UA_APPLICATIONTYPE_SERVER,
+      UA_STRING_STATIC_NULL,
+      UA_STRING_STATIC_NULL,
+      0, NULL }, /* .applicationDescription */
+    UA_STRING_STATIC_NULL, /* .serverCertificate */
 
     /* Networking */
-    .networkLayersSize = 0,
-    .networkLayers = NULL,
+    0, /* .networkLayersSize */
+    NULL, /* .networkLayers */
 
-    /* NS0 and NS1 NodeStore */
-    .nodestore0 = NULL,
-    .nodestore1 = NULL,
+    /* NS0 and NS1 */
+    0, /* namespacesSize */
+    NULL, /* namespaces */
 
     /* Access Control */
-    .accessControl = {
-        .enableAnonymousLogin = ENABLEANONYMOUSLOGIN,
-        .enableUsernamePasswordLogin = ENABLEUSERNAMEPASSWORDLOGIN,
-        .activateSession = activateSession_default,
-        .closeSession = closeSession_default,
-        .getUserRightsMask = getUserRightsMask_default,
-        .getUserAccessLevel = getUserAccessLevel_default,
-        .getUserExecutable = getUserExecutable_default,
-        .getUserExecutableOnObject = getUserExecutableOnObject_default,
-        .allowAddNode = allowAddNode_default,
-        .allowAddReference = allowAddReference_default,
-        .allowDeleteNode = allowDeleteNode_default,
-        .allowDeleteReference = allowDeleteReference_default
-    },
+    {ENABLEANONYMOUSLOGIN, ENABLEUSERNAMEPASSWORDLOGIN,
+     activateSession_default, closeSession_default,
+     getUserRightsMask_default, getUserAccessLevel_default,
+     getUserExecutable_default, getUserExecutableOnObject_default,
+     allowAddNode_default, allowAddReference_default,
+     allowDeleteNode_default, allowDeleteReference_default},
 
     /* Limits for SecureChannels */
-    .maxSecureChannels = 40,
-    .maxSecurityTokenLifetime = 10 * 60 * 1000, /* 10 minutes */
+    40, /* .maxSecureChannels */
+    10 * 60 * 1000, /* .maxSecurityTokenLifetime, 10 minutes */
 
     /* Limits for Sessions */
-    .maxSessions = 100,
-    .maxSessionTimeout = 60.0 * 60.0 * 1000.0, /* 1h */
+    100, /* .maxSessions */
+    60.0 * 60.0 * 1000.0, /* .maxSessionTimeout, 1h */
 
     /* Limits for Subscriptions */
-    .publishingIntervalLimits = { .min = 100.0, .max = 3600.0 * 1000.0 },
-    .lifeTimeCountLimits = { .max = 15000, .min = 3 },
-    .keepAliveCountLimits = { .max = 100, .min = 1 },
-    .maxNotificationsPerPublish = 1000,
-    .maxRetransmissionQueueSize = 0, /* unlimited */
+    {100.0,3600.0 * 1000.0 }, /* .publishingIntervalLimits */
+    {3, 15000 }, /* .lifeTimeCountLimits */
+    {1,100}, /* .keepAliveCountLimits */
+    1000, /* .maxNotificationsPerPublish */
+    0, /* .maxRetransmissionQueueSize, unlimited */
 
     /* Limits for MonitoredItems */
-    .samplingIntervalLimits = { .min = 50.0, .max = 24.0 * 3600.0 * 1000.0 },
-    .queueSizeLimits = { .max = 100, .min = 1 }
+    {50.0, 24.0 * 3600.0 * 1000.0 }, /* .samplingIntervalLimits */
+    {1,100} /* .queueSizeLimits */
 
 #ifdef UA_ENABLE_DISCOVERY
-	,.discoveryCleanupTimeout = 60*60
+    , 60*60 /* .discoveryCleanupTimeout */
 #endif
 };
 
@@ -27466,21 +29538,20 @@ const UA_EXPORT UA_ServerConfig UA_ServerConfig_standard = {
 /***************************/
 
 const UA_EXPORT UA_ClientConfig UA_ClientConfig_standard = {
-    .timeout = 5000, /* 5 seconds */
-    .secureChannelLifeTime = 10 * 60 * 1000, /* 10 minutes */
-    .logger = UA_Log_Stdout,
-    .localConnectionConfig = {
-        .protocolVersion = 0,
-        .sendBufferSize = 65535, /* 64k per chunk */
-        .recvBufferSize  = 65535, /* 64k per chunk */
-        .maxMessageSize = 0, /* 0 -> unlimited */
-        .maxChunkCount = 0 /* 0 -> unlimited */
-    },
-    .connectionFunc = UA_ClientConnectionTCP,
+    5000, /* .timeout, 5 seconds */
+    10 * 60 * 1000, /* .secureChannelLifeTime, 10 minutes */
+    UA_Log_Stdout, /* .logger */
+    /* .localConnectionConfig */
+    {0, /* .protocolVersion */
+     65535, /* .sendBufferSize, 64k per chunk */
+     65535, /* .recvBufferSize, 64k per chunk */
+     0, /* .maxMessageSize, 0 -> unlimited */
+     0 }, /* .maxChunkCount, 0 -> unlimited */
+    UA_ClientConnectionTCP, /* .connectionFunc */
 
-    /* Custom DataTypes */
-    .customDataTypesSize = 0,
-    .customDataTypes = NULL
+    /* Namespaces */
+    0, /*namespacesSize*/
+    NULL /*namespaces*/
 };
 
 /****************************************/
@@ -27490,12 +29561,12 @@ const UA_EXPORT UA_ClientConfig UA_ClientConfig_standard = {
 #ifdef UA_ENABLE_SUBSCRIPTIONS
 
 const UA_SubscriptionSettings UA_SubscriptionSettings_standard = {
-    .requestedPublishingInterval = 500.0,
-    .requestedLifetimeCount = 10000,
-    .requestedMaxKeepAliveCount = 1,
-    .maxNotificationsPerPublish = 10,
-    .publishingEnabled = true,
-    .priority = 0
+    500.0, /* .requestedPublishingInterval */
+    10000, /* .requestedLifetimeCount */
+    1, /* .requestedMaxKeepAliveCount */
+    10, /* .maxNotificationsPerPublish */
+    true, /* .publishingEnabled */
+    0 /* .priority */
 };
 
 #endif
@@ -27506,17 +29577,19 @@ const UA_SubscriptionSettings UA_SubscriptionSettings_standard = {
 UA_NodestoreInterface
 UA_Nodestore_standard() {
     UA_NodestoreInterface nsi;
-    nsi.handle =        UA_NodeStore_new();
-    nsi.deleteNodeStore =        (UA_NodestoreInterface_delete)      UA_NodeStore_delete;
-    nsi.newNode =       (UA_NodestoreInterface_newNode)     UA_NodeStore_newNode;
-    nsi.deleteNode =    (UA_NodestoreInterface_deleteNode)  UA_NodeStore_deleteNode;
-    nsi.insert =        (UA_NodestoreInterface_insert)      UA_NodeStore_insert;
-    nsi.get =           (UA_NodestoreInterface_get)         UA_NodeStore_get;
-    nsi.getCopy =       (UA_NodestoreInterface_getCopy)     UA_NodeStore_getCopy;
-    nsi.replace =       (UA_NodestoreInterface_replace)     UA_NodeStore_replace;
-    nsi.remove =        (UA_NodestoreInterface_remove)      UA_NodeStore_remove,
-    nsi.iterate =       (UA_NodestoreInterface_iterate)     UA_NodeStore_iterate;
-    nsi.release =       (UA_NodestoreInterface_release)     UA_NodeStore_release;
+    nsi.handle =            UA_NodeStore_new();
+    nsi.deleteNodestore =   (UA_NodestoreInterface_deleteNodeStore) UA_NodeStore_delete;
+    nsi.newNode =           (UA_NodestoreInterface_newNode)         UA_NodeStore_newNode;
+    nsi.deleteNode =        (UA_NodestoreInterface_deleteNode)      UA_NodeStore_deleteNode;
+    nsi.insertNode =        (UA_NodestoreInterface_insertNode)      UA_NodeStore_insert;
+    nsi.getNode =           (UA_NodestoreInterface_getNode)         UA_NodeStore_get;
+    nsi.getNodeCopy =       (UA_NodestoreInterface_getNodeCopy)     UA_NodeStore_getCopy;
+    nsi.replaceNode =       (UA_NodestoreInterface_replaceNode)     UA_NodeStore_replace;
+    nsi.removeNode =        (UA_NodestoreInterface_removeNode)      UA_NodeStore_remove,
+    nsi.iterate =           (UA_NodestoreInterface_iterate)         UA_NodeStore_iterate;
+    nsi.releaseNode =       (UA_NodestoreInterface_releaseNode)     UA_NodeStore_release;
+    nsi.linkNamespace =     (UA_NodestoreInterface_linkNamespace)   UA_NodeStore_linkNamespace;
+    nsi.unlinkNamespace =   (UA_NodestoreInterface_unlinkNamespace) UA_NodeStore_unlinkNamespace;
     return nsi;
 }
 
@@ -27524,7 +29597,7 @@ void
 UA_Nodestore_standard_delete(UA_NodestoreInterface * nodestoreInterface){
     //No RCU Lock available, defined in server_interal
     //UA_RCU_LOCK();
-    nodestoreInterface->deleteNodeStore(nodestoreInterface->handle);
+    nodestoreInterface->deleteNodestore(nodestoreInterface->handle, UA_UINT16_MAX);
     //UA_RCU_UNLOCK();
     UA_free(nodestoreInterface->handle);
 }
@@ -27664,7 +29737,7 @@ uint32_t pcg32_random_r(pcg32_random_t* rng) {
  * /home/julian/playground/open62541/nsi/build/src_generated/ua_statuscode_descriptions.hgen -- do not modify
  **********************************************************
  * Generated from /home/julian/playground/open62541/nsi/tools/schema/Opc.Ua.StatusCodes.csv with script /home/julian/playground/open62541/nsi/tools/generate_statuscode_descriptions.py
- * on host jgvm1 by user julian at 2017-01-06 06:04:54
+ * on host altair by user julian at 2017-02-28 07:53:05
  **********************************************************/
 
 
@@ -27695,6 +29768,7 @@ static const UA_StatusCodeDescription statusCodeDescriptions[229] =
  {UA_STATUSCODE_BADSHUTDOWN, "BadShutdown", "The operation was cancelled because the application is shutting down."},
  {UA_STATUSCODE_BADSERVERNOTCONNECTED, "BadServerNotConnected", "The operation could not complete because the client is not connected to the server."},
  {UA_STATUSCODE_BADSERVERHALTED, "BadServerHalted", "The server has stopped and cannot process any requests."},
+ {UA_STATUSCODE_BADNOTHINGTODO, "BadNothingToDo", "There was nothing to do because the client passed a list of operations with no elements."},
  {UA_STATUSCODE_BADTOOMANYOPERATIONS, "BadTooManyOperations", "The request could not be processed because it specified too many operations."},
  {UA_STATUSCODE_BADTOOMANYMONITOREDITEMS, "BadTooManyMonitoredItems", "The request could not be processed because there are too many monitored items in the subscription."},
  {UA_STATUSCODE_BADDATATYPEIDUNKNOWN, "BadDataTypeIdUnknown", "The extension object cannot be (de)serialized because the data type id is not recognized."},
@@ -27916,17 +29990,5 @@ const UA_StatusCodeDescription * UA_StatusCode_description(UA_StatusCode code) {
             return &statusCodeDescriptions[i];
     }
     return &statusCodeDescriptions[statusCodeDescriptionsSize-1];
-}
-
-void addDataTypes(UA_Server* server, const UA_DataType *customDataTypes, size_t customDataTypesSize){
-	server->config.customDataTypes = customDataTypes;
-	server->config.customDataTypesSize = customDataTypesSize;
-}
-
-void* ov_database_calloc(OV_UINT num, OV_UINT size){
-	size_t total = num * size;
-	void *p = ov_database_malloc(total);
-	if (!p) return NULL;
-	return memset(p, 0, total);
 }
 

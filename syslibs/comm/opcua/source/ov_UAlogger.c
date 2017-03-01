@@ -21,13 +21,11 @@ static const char *LogLevelNames[6] = {"trace", "debug", "info", "warning", "err
 static const char *LogCategoryNames[6] = {"network", "securechannel", "session", "server", "client", "userland"};
 #endif
 
-static void ov_UAlogger(UA_LogLevel level, UA_LogCategory category, const char *msg, ...) {
+static void ov_UAlogger(UA_LogLevel level, UA_LogCategory category, const char *msg, va_list args) {
 #if LOG_UA
 	time_t now;
 	struct tm *ptr;
 	char str[60];
-	va_list	args;
-	va_start(args, msg);
 	now = time(NULL);
 	ptr = localtime(&now);
 	strftime(str ,100 , "%H:%M.%S",ptr);

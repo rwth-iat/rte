@@ -16,8 +16,6 @@ LIBRARY opcua
         IS_INSTANTIABLE;
         COMMENT = "Holds all necessarry data for a server - singleton. can only be instantiated once";
         VARIABLES
-            NameSpaceIndex            :    UINT
-                COMMENT    =    "Index of the OV-namespace as assigned on init.";
             LoginEnableAnonymous    :    BOOL
                 HAS_ACCESSORS
                 INITIALVALUE    =    TRUE;
@@ -41,11 +39,9 @@ LIBRARY opcua
                 COMMENT =    "Stack-specific representation of server configuration";
             serverData            :    C_TYPE    <OV_PTR_UA_Server>
                 COMMENT    =    "Stack-specific representation of server data";
-           // nodeStoreNsOV        :    C_TYPE    <UA_ExternalNodeStore>;
             networkLayerOv        :    C_TYPE    <UA_ServerNetworkLayer>
                 COMMENT    =    "Network layer within th ov-server";
-           nodeStoreInterface   : C_TYPE <UA_NodestoreInterface>;
-           customDataTypes      : C_TYPE <UA_CustomDataTypes>;
+           namespace            : C_TYPE <UA_Namespace>;
         END_VARIABLES;    
         OPERATIONS
             constructor            :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -525,7 +521,6 @@ LIBRARY opcua
                 COMMENT =    "Stack-specific representation of client configuration";
             clientData            :    C_TYPE    <OV_PTR_UA_Client>
                 COMMENT    =    "Stack-specific representation of client data";
-           customDataTypes      : C_TYPE <UA_CustomDataTypes>;
         END_VARIABLES;    
         OPERATIONS
             startup     : C_FUNCTION <OV_FNC_STARTUP>;

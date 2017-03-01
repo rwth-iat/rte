@@ -45,11 +45,11 @@ typedef UA_StatusCode UA_FNC_REPLACENODE(void* handle, UA_Node* node);
 typedef UA_StatusCode UA_FNC_REMOVENODE(void* handle, UA_NodeId* nodeId);
 typedef UA_NodestoreInterface* UA_FNC_OVNODESTOREINTERFACENEW(void);
 typedef void UA_FNC_OVNODESTOREINTERFACEDELETE(UA_NodestoreInterface * nodestoreInterface);
-typedef void UA_FNC_OVNODESTOREINTERFACE2NEW(UA_NodestoreInterface*);
+typedef UA_NodestoreInterface* UA_FNC_OVNODESTOREINTERFACE2NEW();
 typedef void UA_FNC_OVNODESTOREINTERFACE2DELETE(UA_NodestoreInterface * nodestoreInterface);
 	
 /* opcua-Server functions */
-typedef UA_StatusCode UA_FNC_ADDINFORMATIONMODEL(UA_NodestoreInterface *nsi, OV_STRING NameSpaceUri, OV_STRING StartFolder, opcua_loadInformationModel loadInfoModel, OV_UINT *NameSpaceIndexInformationModel, OV_UINT *NameSpaceIndexNodeStoreInterface, const UA_DataType *customDataTypes, OV_UINT customDataTypesSize);
+typedef UA_StatusCode UA_FNC_ADDINFORMATIONMODEL(UA_Namespace **namespace, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel);
 /* opcua Client functions */
 typedef UA_StatusCode UA_FNC_CONNECTTO(OV_INSTPTR_opcua_uaClient client);
 typedef UA_StatusCode UA_FNC_READVALUE(OV_INSTPTR_opcua_uaClient client, UA_NodeId nodeId, UA_Variant *value);
@@ -195,16 +195,17 @@ typedef void  UA_FNC_POSTCALLMETHOD(
 
 typedef UA_StatusCode UA_FNC_STARTNL(
 	struct UA_ServerNetworkLayer *nl, 
-	UA_Logger *logger
+	UA_Logger logger
 );
 
-typedef UA_Int32 UA_FNC_NLGETWORK(
+typedef size_t UA_FNC_NLGETWORK(
 	struct UA_ServerNetworkLayer *nl, 
 	UA_Job** jobs, 
 	UA_UInt16 timeout
 );
 
-typedef UA_Int32 UA_FNC_STOPNL(
+
+typedef size_t UA_FNC_STOPNL(
 	struct UA_ServerNetworkLayer *nl, 
 	UA_Job** jobs
 );
