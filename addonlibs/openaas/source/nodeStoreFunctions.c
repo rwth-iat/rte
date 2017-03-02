@@ -160,7 +160,7 @@ OV_DLLFNCEXPORT void openaas_nodeStoreFunctions_destructor(
     /*
     *   local variables
     */
-    OV_INSTPTR_openaas_nodeStoreFunctions pinst = Ov_StaticPtrCast(openaas_nodeStoreFunctions, pobj);
+    //OV_INSTPTR_openaas_nodeStoreFunctions pinst = Ov_StaticPtrCast(openaas_nodeStoreFunctions, pobj);
 
     /* do what */
 

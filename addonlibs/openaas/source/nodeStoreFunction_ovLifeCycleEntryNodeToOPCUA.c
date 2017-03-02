@@ -75,7 +75,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(pobj->v_identifier);
-	qName.name = UA_String_fromChars(pobj->v_identifier);
 	qName.namespaceIndex = 0;
 	newNode->browseName = qName;
 
@@ -117,7 +116,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 	// Variable specific attributes
 	// arrayDemensions
 	((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
-	((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
+	((UA_VariableNode*)newNode)->arrayDimensions = NULL; // UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 
 	// valuerank
 	((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
@@ -197,9 +196,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToO
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
-	((UA_VariableNode*)newNode)->dataType.identifierType = UA_NODEIDTYPE_NUMERIC;
-	((UA_VariableNode*)newNode)->dataType.namespaceIndex = pNodeStoreFunctions->v_modelnamespace.index;
-	((UA_VariableNode*)newNode)->dataType.identifier.numeric = UA_NS2ID_LIFECYCLEENTRY;
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_LIFECYCLEENTRY);
 
 
 	// References

@@ -115,7 +115,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	// Variable specific attributes
 	// arrayDemensions
 	((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
-	((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
+	((UA_VariableNode*)newNode)->arrayDimensions = NULL; //UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 
 	// valuerank
 	((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
@@ -188,9 +188,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
-	((UA_VariableNode*)newNode)->dataType.identifierType = UA_NODEIDTYPE_NUMERIC;
-	((UA_VariableNode*)newNode)->dataType.namespaceIndex = pNodeStoreFunctions->v_modelnamespace.index;
-	((UA_VariableNode*)newNode)->dataType.identifier.numeric = UA_NS2ID_PROPERTYVALUESTATEMENT;
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_PROPERTYVALUESTATEMENT);
 
 	// References
 	OV_INSTPTR_ov_object pchild = NULL;
@@ -202,7 +200,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
 	newNode->referencesSize = size_references;
-	size_t i = 0;
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 	newNode->references[0].isInverse = UA_TRUE;
@@ -226,7 +223,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	newNode->references[1].isInverse = UA_FALSE;
 	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
 
-	i = 1;
+	size_t i = 1;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
 	}

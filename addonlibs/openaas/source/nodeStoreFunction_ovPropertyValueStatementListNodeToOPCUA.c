@@ -73,7 +73,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(pobj->v_identifier);
-	qName.name = UA_String_fromChars(pobj->v_identifier);
 	qName.namespaceIndex = 0;
 	newNode->browseName = qName;
 
@@ -122,8 +121,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 		size_references++;
 	}
 
-	size_references = size_references + 1;// For Carrier
-
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
 	newNode->referencesSize = size_references;
@@ -151,17 +148,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovPropertyValueStatemen
 	newNode->references[1].isInverse = UA_FALSE;
 	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pNodeStoreFunctions->v_modelnamespace.index, UA_NS2ID_PROPERTYVALUESTATEMENTLISTTYPE);
 
-	// Carrier
-	newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-	newNode->references[2].isInverse = UA_FALSE;
-	tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "|");
-	ov_string_append(&tmpString, "Carrier");
-	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pNodeStoreFunctions->v_interfacenamespace.index, tmpString);
-	ov_database_free(tmpString);
-
-	i = 2;
+	i = 1;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
 		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
