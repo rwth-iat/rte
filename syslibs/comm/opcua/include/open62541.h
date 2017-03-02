@@ -1,10 +1,6 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
-<<<<<<< .mine
  * Git-Revision: 0.2-rc2-229-g2ed2a9e
-=======
- * Git-Revision: 0.2-rc2-228-gaac423f
->>>>>>> .r400
  */
 
 /*
@@ -44,11 +40,7 @@ extern "C" {
 #define UA_OPEN62541_VER_MINOR 2
 #define UA_OPEN62541_VER_PATCH 0
 #define UA_OPEN62541_VER_LABEL "-rc2" /* Release candidate label, etc. */
-<<<<<<< .mine
 #define UA_OPEN62541_VER_COMMIT "0.2-rc2-229-g2ed2a9e"
-=======
-#define UA_OPEN62541_VER_COMMIT "0.2-rc2-228-gaac423f"
->>>>>>> .r400
 
 /**
  * Options
@@ -1775,11 +1767,7 @@ UA_Guid UA_EXPORT UA_Guid_random(void);     /* no cryptographic entropy */
  * /home/julian/playground/open62541/nsi/build/src_generated/ua_nodeids.hgen -- do not modify
  **********************************************************
  * Generated from /home/julian/playground/open62541/nsi/tools/schema/NodeIds.csv with script /home/julian/playground/open62541/nsi/tools/generate_nodeids.py
-<<<<<<< .mine
  * on host altair by user julian at 2017-03-02 11:02:11
-=======
- * on host altair by user julian at 2017-02-28 07:53:05
->>>>>>> .r400
  **********************************************************/
  
 
@@ -3059,11 +3047,7 @@ UA_Guid UA_EXPORT UA_Guid_random(void);     /* no cryptographic entropy */
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_types_generated.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
-<<<<<<< .mine
  * on host altair by user julian at 2017-03-02 11:02:11 */
-=======
- * on host altair by user julian at 2017-02-28 07:53:05 */
->>>>>>> .r400
 
 
 #ifdef __cplusplus
@@ -5282,11 +5266,7 @@ typedef struct {
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_types_generated_handling.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
-<<<<<<< .mine
  * on host altair by user julian at 2017-03-02 11:02:11 */
-=======
- * on host altair by user julian at 2017-02-28 07:53:05 */
->>>>>>> .r400
 
 
 #ifdef __cplusplus
