@@ -1,6 +1,10 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
+<<<<<<< .mine
+ * Git-Revision: 0.2-rc2-229-g2ed2a9e
+=======
  * Git-Revision: 0.2-rc2-228-gaac423f
+>>>>>>> .r400
  */
 
 /*
@@ -872,7 +876,11 @@ size_t UA_calcSizeBinary(void *p, const UA_DataType *type);
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_types_generated_encoding_binary.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
+<<<<<<< .mine
+ * on host altair by user julian at 2017-03-02 11:02:11 */
+=======
  * on host altair by user julian at 2017-02-28 07:53:05 */
+>>>>>>> .r400
 
 #ifdef UA_NO_AMALGAMATION
 #endif
@@ -2610,7 +2618,11 @@ UA_QueryFirstRequest_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Q
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_transport_generated.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
+<<<<<<< .mine
+ * on host altair by user julian at 2017-03-02 11:02:12 */
+=======
  * on host altair by user julian at 2017-02-28 07:53:05 */
+>>>>>>> .r400
 
 
 #ifdef __cplusplus
@@ -2779,7 +2791,11 @@ typedef struct {
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_transport_generated_handling.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
+<<<<<<< .mine
+ * on host altair by user julian at 2017-03-02 11:02:12 */
+=======
  * on host altair by user julian at 2017-02-28 07:53:05 */
+>>>>>>> .r400
 
 
 #ifdef __cplusplus
@@ -3111,7 +3127,11 @@ UA_SecureConversationMessageHeader_delete(UA_SecureConversationMessageHeader *p)
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_transport_generated_encoding_binary.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
+<<<<<<< .mine
+ * on host altair by user julian at 2017-03-02 11:02:12 */
+=======
  * on host altair by user julian at 2017-02-28 07:53:05 */
+>>>>>>> .r400
 
 #ifdef UA_NO_AMALGAMATION
 #endif
@@ -7403,7 +7423,11 @@ UA_calcSizeBinary(void *p, const UA_DataType *type) {
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_types_generated.c" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
+<<<<<<< .mine
+ * on host altair by user julian at 2017-03-02 11:02:11 */
+=======
  * on host altair by user julian at 2017-02-28 07:53:05 */
+>>>>>>> .r400
 
 
 /* Boolean */
@@ -13561,6 +13585,7 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     WriteValue_members /* .members */ },
 
 /* MonitoredItemCreateResult */
+<<<<<<< .mine
 {
 #ifdef UA_ENABLE_TYPENAMES
     "MonitoredItemCreateResult", /* .typeName */
@@ -13574,6 +13599,21 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     748, /* .binaryEncodingId */
     MonitoredItemCreateResult_members /* .members */ },
+=======
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "MonitoredItemCreateResult", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {746}}, /* .typeId */
+    sizeof(UA_MonitoredItemCreateResult), /* .memSize */
+    UA_TYPES_MONITOREDITEMCREATERESULT, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    748, /* .binaryEncodingId */
+    MonitoredItemCreateResult_members /* .members */ },
+>>>>>>> .r400
 
 /* MessageSecurityMode */
 {
@@ -13741,6 +13781,7 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     BuildInfo_members /* .members */ },
 
 /* NodeClass */
+<<<<<<< .mine
 {
 #ifdef UA_ENABLE_TYPENAMES
     "NodeClass", /* .typeName */
@@ -13754,6 +13795,21 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
     0, /* .binaryEncodingId */
     NodeClass_members /* .members */ },
+=======
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "NodeClass", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_NodeClass), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    NodeClass_members /* .members */ },
+>>>>>>> .r400
 
 /* ChannelSecurityToken */
 {
@@ -13910,6 +13966,17 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
 #ifdef UA_ENABLE_TYPENAMES
     "DeleteMonitoredItemsResponse", /* .typeName */
 #endif
+<<<<<<< .mine
+    {0, UA_NODEIDTYPE_NUMERIC, {782}}, /* .typeId */
+    sizeof(UA_DeleteMonitoredItemsResponse), /* .memSize */
+    UA_TYPES_DELETEMONITOREDITEMSRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    784, /* .binaryEncodingId */
+    DeleteMonitoredItemsResponse_members /* .members */ },
+=======
     {0, UA_NODEIDTYPE_NUMERIC, {782}}, /* .typeId */
     sizeof(UA_DeleteMonitoredItemsResponse), /* .memSize */
     UA_TYPES_DELETEMONITOREDITEMSRESPONSE, /* .typeIndex */
@@ -13934,12 +14001,59 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     12209, /* .binaryEncodingId */
     FindServersOnNetworkResponse_members /* .members */ },
+>>>>>>> .r400
 
+<<<<<<< .mine
+/* FindServersOnNetworkResponse */
+{
+=======
 /* NodeAttributes */
 {
+>>>>>>> .r400
 #ifdef UA_ENABLE_TYPENAMES
+<<<<<<< .mine
+    "FindServersOnNetworkResponse", /* .typeName */
+=======
     "NodeAttributes", /* .typeName */
+>>>>>>> .r400
 #endif
+<<<<<<< .mine
+    {0, UA_NODEIDTYPE_NUMERIC, {12191}}, /* .typeId */
+    sizeof(UA_FindServersOnNetworkResponse), /* .memSize */
+    UA_TYPES_FINDSERVERSONNETWORKRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    12209, /* .binaryEncodingId */
+    FindServersOnNetworkResponse_members /* .members */ },
+=======
+    {0, UA_NODEIDTYPE_NUMERIC, {349}}, /* .typeId */
+    sizeof(UA_NodeAttributes), /* .memSize */
+    UA_TYPES_NODEATTRIBUTES, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    351, /* .binaryEncodingId */
+    NodeAttributes_members /* .members */ },
+>>>>>>> .r400
+
+<<<<<<< .mine
+/* NodeAttributes */
+{
+=======
+/* RegisterNodesRequest */
+{
+>>>>>>> .r400
+#ifdef UA_ENABLE_TYPENAMES
+<<<<<<< .mine
+    "NodeAttributes", /* .typeName */
+=======
+    "RegisterNodesRequest", /* .typeName */
+>>>>>>> .r400
+#endif
+<<<<<<< .mine
     {0, UA_NODEIDTYPE_NUMERIC, {349}}, /* .typeId */
     sizeof(UA_NodeAttributes), /* .memSize */
     UA_TYPES_NODEATTRIBUTES, /* .typeIndex */
@@ -13964,6 +14078,17 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     560, /* .binaryEncodingId */
     RegisterNodesRequest_members /* .members */ },
+=======
+    {0, UA_NODEIDTYPE_NUMERIC, {558}}, /* .typeId */
+    sizeof(UA_RegisterNodesRequest), /* .memSize */
+    UA_TYPES_REGISTERNODESREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    560, /* .binaryEncodingId */
+    RegisterNodesRequest_members /* .members */ },
+>>>>>>> .r400
 
 /* DeleteNodesRequest */
 {
@@ -14105,6 +14230,17 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
 #ifdef UA_ENABLE_TYPENAMES
     "ServerState", /* .typeName */
 #endif
+<<<<<<< .mine
+    {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_ServerState), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    0, /* .binaryEncodingId */
+    ServerState_members /* .members */ },
+=======
     {0, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
     sizeof(UA_ServerState), /* .memSize */
     UA_TYPES_INT32, /* .typeIndex */
@@ -14129,6 +14265,32 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     624, /* .binaryEncodingId */
     QueryNextResponse_members /* .members */ },
+>>>>>>> .r400
+
+<<<<<<< .mine
+/* QueryNextResponse */
+{
+=======
+/* DiscoveryConfiguration */
+{
+>>>>>>> .r400
+#ifdef UA_ENABLE_TYPENAMES
+<<<<<<< .mine
+    "QueryNextResponse", /* .typeName */
+=======
+    "DiscoveryConfiguration", /* .typeName */
+>>>>>>> .r400
+#endif
+<<<<<<< .mine
+    {0, UA_NODEIDTYPE_NUMERIC, {622}}, /* .typeId */
+    sizeof(UA_QueryNextResponse), /* .memSize */
+    UA_TYPES_QUERYNEXTRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    624, /* .binaryEncodingId */
+    QueryNextResponse_members /* .members */ },
 
 /* DiscoveryConfiguration */
 {
@@ -14144,6 +14306,17 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     true, /* .overlayable */ 
     12900, /* .binaryEncodingId */
     DiscoveryConfiguration_members /* .members */ },
+=======
+    {0, UA_NODEIDTYPE_NUMERIC, {12890}}, /* .typeId */
+    sizeof(UA_DiscoveryConfiguration), /* .memSize */
+    UA_TYPES_DISCOVERYCONFIGURATION, /* .typeIndex */
+    0, /* .membersSize */
+    false, /* .builtin */
+    true, /* .pointerFree */
+    true, /* .overlayable */ 
+    12900, /* .binaryEncodingId */
+    DiscoveryConfiguration_members /* .members */ },
+>>>>>>> .r400
 
 /* ActivateSessionResponse */
 {
@@ -14505,8 +14678,13 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     826, /* .binaryEncodingId */
     PublishRequest_members /* .members */ },
 
+<<<<<<< .mine
 /* AddNodesResponse */
 {
+=======
+/* AddNodesResponse */
+{
+>>>>>>> .r400
 #ifdef UA_ENABLE_TYPENAMES
     "AddNodesResponse", /* .typeName */
 #endif
@@ -14675,6 +14853,7 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
 #ifdef UA_ENABLE_TYPENAMES
     "CreateSubscriptionResponse", /* .typeName */
 #endif
+<<<<<<< .mine
     {0, UA_NODEIDTYPE_NUMERIC, {788}}, /* .typeId */
     sizeof(UA_CreateSubscriptionResponse), /* .memSize */
     UA_TYPES_CREATESUBSCRIPTIONRESPONSE, /* .typeIndex */
@@ -14699,6 +14878,52 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     850, /* .binaryEncodingId */
     DeleteSubscriptionsResponse_members /* .members */ },
+=======
+    {0, UA_NODEIDTYPE_NUMERIC, {788}}, /* .typeId */
+    sizeof(UA_CreateSubscriptionResponse), /* .memSize */
+    UA_TYPES_CREATESUBSCRIPTIONRESPONSE, /* .typeIndex */
+    5, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    790, /* .binaryEncodingId */
+    CreateSubscriptionResponse_members /* .members */ },
+>>>>>>> .r400
+
+<<<<<<< .mine
+/* RegisterServer2Response */
+{
+=======
+/* DeleteSubscriptionsResponse */
+{
+>>>>>>> .r400
+#ifdef UA_ENABLE_TYPENAMES
+<<<<<<< .mine
+    "RegisterServer2Response", /* .typeName */
+=======
+    "DeleteSubscriptionsResponse", /* .typeName */
+>>>>>>> .r400
+#endif
+<<<<<<< .mine
+    {0, UA_NODEIDTYPE_NUMERIC, {12194}}, /* .typeId */
+    sizeof(UA_RegisterServer2Response), /* .memSize */
+    UA_TYPES_REGISTERSERVER2RESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    12212, /* .binaryEncodingId */
+    RegisterServer2Response_members /* .members */ },
+=======
+    {0, UA_NODEIDTYPE_NUMERIC, {848}}, /* .typeId */
+    sizeof(UA_DeleteSubscriptionsResponse), /* .memSize */
+    UA_TYPES_DELETESUBSCRIPTIONSRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    850, /* .binaryEncodingId */
+    DeleteSubscriptionsResponse_members /* .members */ },
 
 /* RegisterServer2Response */
 {
@@ -14714,6 +14939,7 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     12212, /* .binaryEncodingId */
     RegisterServer2Response_members /* .members */ },
+>>>>>>> .r400
 
 /* RelativePath */
 {
@@ -14851,6 +15077,7 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     ModifyMonitoredItemsResponse_members /* .members */ },
 
 /* ReadResponse */
+<<<<<<< .mine
 {
 #ifdef UA_ENABLE_TYPENAMES
     "ReadResponse", /* .typeName */
@@ -14864,8 +15091,24 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     634, /* .binaryEncodingId */
     ReadResponse_members /* .members */ },
+=======
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "ReadResponse", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {632}}, /* .typeId */
+    sizeof(UA_ReadResponse), /* .memSize */
+    UA_TYPES_READRESPONSE, /* .typeIndex */
+    3, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    634, /* .binaryEncodingId */
+    ReadResponse_members /* .members */ },
+>>>>>>> .r400
 
 /* AddReferencesRequest */
+<<<<<<< .mine
 {
 #ifdef UA_ENABLE_TYPENAMES
     "AddReferencesRequest", /* .typeName */
@@ -14879,6 +15122,21 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     494, /* .binaryEncodingId */
     AddReferencesRequest_members /* .members */ },
+=======
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "AddReferencesRequest", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {492}}, /* .typeId */
+    sizeof(UA_AddReferencesRequest), /* .memSize */
+    UA_TYPES_ADDREFERENCESREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    494, /* .binaryEncodingId */
+    AddReferencesRequest_members /* .members */ },
+>>>>>>> .r400
 
 /* ReadRequest */
 {
@@ -15033,6 +15291,7 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
 /* ServiceFault */
 {
 #ifdef UA_ENABLE_TYPENAMES
+<<<<<<< .mine
     "ServiceFault", /* .typeName */
 #endif
     {0, UA_NODEIDTYPE_NUMERIC, {395}}, /* .typeId */
@@ -15044,7 +15303,21 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     397, /* .binaryEncodingId */
     ServiceFault_members /* .members */ },
+=======
+    "ServiceFault", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {395}}, /* .typeId */
+    sizeof(UA_ServiceFault), /* .memSize */
+    UA_TYPES_SERVICEFAULT, /* .typeIndex */
+    1, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    397, /* .binaryEncodingId */
+    ServiceFault_members /* .members */ },
+>>>>>>> .r400
 
+<<<<<<< .mine
 /* RegisterServerRequest */
 {
 #ifdef UA_ENABLE_TYPENAMES
@@ -15059,6 +15332,22 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
     false, /* .overlayable */ 
     437, /* .binaryEncodingId */
     RegisterServerRequest_members /* .members */ },
+=======
+/* RegisterServerRequest */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "RegisterServerRequest", /* .typeName */
+#endif
+    {0, UA_NODEIDTYPE_NUMERIC, {435}}, /* .typeId */
+    sizeof(UA_RegisterServerRequest), /* .memSize */
+    UA_TYPES_REGISTERSERVERREQUEST, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */ 
+    437, /* .binaryEncodingId */
+    RegisterServerRequest_members /* .members */ },
+>>>>>>> .r400
 
 /* FindServersResponse */
 {
@@ -15350,7 +15639,11 @@ UA_DataType UA_TYPES[UA_TYPES_COUNT] = {
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_transport_generated.c" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.Transport.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
+<<<<<<< .mine
+ * on host altair by user julian at 2017-03-02 11:02:12 */
+=======
  * on host altair by user julian at 2017-02-28 07:53:05 */
+>>>>>>> .r400
 
 
 /* SecureConversationMessageAbortBody */
@@ -15408,6 +15701,9 @@ static UA_DataTypeMember TcpHelloMessage_members[6] = {
 },
 {
 #ifdef UA_ENABLE_TYPENAMES
+<<<<<<< .mine
+    "receiveBufferSize", /* .memberName */
+=======
     "receiveBufferSize", /* .memberName */
 #endif
     UA_TYPES_UINT32, /* .memberTypeIndex */
@@ -15419,6 +15715,39 @@ static UA_DataTypeMember TcpHelloMessage_members[6] = {
 #ifdef UA_ENABLE_TYPENAMES
     "sendBufferSize", /* .memberName */
 #endif
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, sendBufferSize) - offsetof(UA_TcpHelloMessage, receiveBufferSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "maxMessageSize", /* .memberName */
+>>>>>>> .r400
+#endif
+<<<<<<< .mine
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, receiveBufferSize) - offsetof(UA_TcpHelloMessage, protocolVersion) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+=======
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, maxMessageSize) - offsetof(UA_TcpHelloMessage, sendBufferSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+>>>>>>> .r400
+#ifdef UA_ENABLE_TYPENAMES
+<<<<<<< .mine
+    "sendBufferSize", /* .memberName */
+=======
+    "maxChunkCount", /* .memberName */
+>>>>>>> .r400
+#endif
+<<<<<<< .mine
     UA_TYPES_UINT32, /* .memberTypeIndex */
     offsetof(UA_TcpHelloMessage, sendBufferSize) - offsetof(UA_TcpHelloMessage, receiveBufferSize) - sizeof(UA_UInt32), /* .padding */
     true, /* .namespaceZero */
@@ -15443,6 +15772,14 @@ static UA_DataTypeMember TcpHelloMessage_members[6] = {
     false /* .isArray */
 },
 {
+=======
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    offsetof(UA_TcpHelloMessage, maxChunkCount) - offsetof(UA_TcpHelloMessage, maxMessageSize) - sizeof(UA_UInt32), /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+>>>>>>> .r400
 #ifdef UA_ENABLE_TYPENAMES
     "endpointUrl", /* .memberName */
 #endif
@@ -15621,6 +15958,7 @@ static UA_DataTypeMember ChunkType_members[1] = {
 static UA_DataTypeMember SymmetricAlgorithmSecurityHeader_members[1] = {
 {
 #ifdef UA_ENABLE_TYPENAMES
+<<<<<<< .mine
     "tokenId", /* .memberName */
 #endif
     UA_TYPES_UINT32, /* .memberTypeIndex */
@@ -15628,6 +15966,15 @@ static UA_DataTypeMember SymmetricAlgorithmSecurityHeader_members[1] = {
     true, /* .namespaceZero */
     false /* .isArray */
 },};
+=======
+    "tokenId", /* .memberName */
+#endif
+    UA_TYPES_UINT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
+>>>>>>> .r400
 
 /* SecureConversationMessageHeader */
 static UA_DataTypeMember SecureConversationMessageHeader_members[2] = {
@@ -16535,6 +16882,23 @@ UA_SecureChannel_processChunks(UA_SecureChannel *channel, const UA_ByteString *c
             continue;
         }
 
+
+        if (chunks->length > 3 && chunks->data[offset] == 'E' &&
+                chunks->data[offset+1] == 'R' && chunks->data[offset+2] == 'R') {
+            UA_TcpMessageHeader header;
+            retval = UA_TcpMessageHeader_decodeBinary(chunks, &offset, &header);
+            if(retval != UA_STATUSCODE_GOOD)
+                break;
+
+            UA_TcpErrorMessage errorMessage;
+            retval = UA_TcpErrorMessage_decodeBinary(chunks, &offset, &errorMessage);
+            if(retval != UA_STATUSCODE_GOOD)
+                break;
+
+            callback(application, channel, UA_MESSAGETYPE_ERR, 0, (const UA_ByteString *)&errorMessage);
+            continue;
+        }
+
         /* Store the initial offset to compute the header length */
         size_t initial_offset = offset;
 
@@ -17242,9 +17606,28 @@ UA_Server_forEachChildNodeCall(UA_Server *server, UA_NodeId parentNodeId,
         UA_RCU_UNLOCK();
         return retval;
     }
+<<<<<<< .mine
 
     for(size_t i = parent->referencesSize; i > 0; --i) {
         UA_ReferenceNode *ref = &refs[i-1];
+=======
+
+    /* TODO: We need to do an ugly copy of the references array since users may
+     * delete references from within the callback. In single-threaded mode this
+     * changes the same node we point at here. In multi-threaded mode, this
+     * creates a new copy as nodes are truly immutable. */
+    UA_ReferenceNode *refs = NULL;
+    size_t refssize = parent->referencesSize;
+    UA_StatusCode retval = UA_Array_copy(parent->references, parent->referencesSize,
+                                         (void**)&refs, &UA_TYPES[UA_TYPES_REFERENCENODE]);
+    if(retval != UA_STATUSCODE_GOOD) {
+        UA_RCU_UNLOCK();
+        return retval;
+    }
+
+    for(size_t i = parent->referencesSize; i > 0; --i) {
+        UA_ReferenceNode *ref = &refs[i-1];
+>>>>>>> .r400
         retval |= callback(ref->targetId.nodeId, ref->isInverse,
                            ref->referenceTypeId, handle);
     }
@@ -18497,6 +18880,7 @@ register_server_with_discovery_server(UA_Server *server, const char* discoverySe
     request.requestHeader.timeoutHint = 10000;
 
     request.server.isOnline = !isUnregister;
+<<<<<<< .mine
     request.server.serverUri = server->config.applicationDescription.applicationUri;
     request.server.productUri = server->config.applicationDescription.productUri;
     request.server.serverType = server->config.applicationDescription.applicationType;
@@ -18507,13 +18891,44 @@ register_server_with_discovery_server(UA_Server *server, const char* discoverySe
 
     request.server.serverNames = &server->config.applicationDescription.applicationName;
     request.server.serverNamesSize = 1;
+=======
+    request.server.serverUri = server->config.applicationDescription.applicationUri;
+    request.server.productUri = server->config.applicationDescription.productUri;
+    request.server.serverType = server->config.applicationDescription.applicationType;
+    request.server.gatewayServerUri = server->config.applicationDescription.gatewayServerUri;
 
+    if(semaphoreFilePath)
+        request.server.semaphoreFilePath = UA_STRING((char*)(uintptr_t)semaphoreFilePath); /* dirty cast */
+>>>>>>> .r400
+
+<<<<<<< .mine
     /* Copy the discovery urls from the server config and the network layers*/
     size_t config_discurls = server->config.applicationDescription.discoveryUrlsSize;
     size_t nl_discurls = server->config.networkLayersSize;
     request.server.discoveryUrls = (UA_String*)UA_alloca(sizeof(UA_String) * (config_discurls + nl_discurls));
     request.server.discoveryUrlsSize = config_discurls + nl_discurls;
+=======
+    request.server.serverNames = &server->config.applicationDescription.applicationName;
+    request.server.serverNamesSize = 1;
+>>>>>>> .r400
 
+<<<<<<< .mine
+    for(size_t i = 0; i < config_discurls; ++i)
+        request.server.discoveryUrls[i] = server->config.applicationDescription.discoveryUrls[i];
+=======
+    /* Copy the discovery urls from the server config and the network layers*/
+    size_t config_discurls = server->config.applicationDescription.discoveryUrlsSize;
+    size_t nl_discurls = server->config.networkLayersSize;
+    request.server.discoveryUrls = (UA_String*)UA_alloca(sizeof(UA_String) * (config_discurls + nl_discurls));
+    request.server.discoveryUrlsSize = config_discurls + nl_discurls;
+>>>>>>> .r400
+
+<<<<<<< .mine
+    /* TODO: Add nl only if discoveryUrl not already present */
+    for(size_t i = 0; i < nl_discurls; ++i) {
+        UA_ServerNetworkLayer *nl = &server->config.networkLayers[i];
+        request.server.discoveryUrls[config_discurls + i] = nl->discoveryUrl;
+=======
     for(size_t i = 0; i < config_discurls; ++i)
         request.server.discoveryUrls[i] = server->config.applicationDescription.discoveryUrls[i];
 
@@ -18521,6 +18936,7 @@ register_server_with_discovery_server(UA_Server *server, const char* discoverySe
     for(size_t i = 0; i < nl_discurls; ++i) {
         UA_ServerNetworkLayer *nl = &server->config.networkLayers[i];
         request.server.discoveryUrls[config_discurls + i] = nl->discoveryUrl;
+>>>>>>> .r400
     }
 
     /* Call the service */
@@ -21316,15 +21732,33 @@ UA_NodeStore_unlinkNamespace(UA_NodeStore *ns, UA_UInt16 namespaceIndex){
 }
 
 void
+<<<<<<< .mine
+UA_NodeStore_release(void *handle, const UA_Node *node){};
+=======
 UA_NodeStore_release(void *handle, const UA_Node *node){};
 
 #endif /* UA_ENABLE_MULTITHREADING */
+>>>>>>> .r400
 
+<<<<<<< .mine
+#endif /* UA_ENABLE_MULTITHREADING */
+=======
 /*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_nodestore_switch.c" ***********************************/
+>>>>>>> .r400
 
+<<<<<<< .mine
+/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/src/server/ua_nodestore_switch.c" ***********************************/
+=======
+>>>>>>> .r400
+
+<<<<<<< .mine
 
 static UA_Boolean checkNSIndex(UA_Server* server, UA_UInt16 nsIdx){
     return (UA_Boolean) (nsIdx < (UA_UInt16)server->namespacesSize);
+=======
+static UA_Boolean checkNSIndex(UA_Server* server, UA_UInt16 nsIdx){
+    return (UA_Boolean) (nsIdx < (UA_UInt16)server->namespacesSize);
+>>>>>>> .r400
 }
 
 /*
@@ -21367,9 +21801,15 @@ UA_Node *
 UA_NodestoreSwitch_getNodeCopy(UA_Server* server, const UA_NodeId *nodeId) {
     if(!checkNSIndex(server, nodeId->namespaceIndex)){
         return NULL;
+<<<<<<< .mine
     }
     return server->namespaces[nodeId->namespaceIndex].nodestore->getNodeCopy(
             server->namespaces[nodeId->namespaceIndex].nodestore->handle, nodeId);
+=======
+    }
+    return server->namespaces[nodeId->namespaceIndex].nodestore->getNodeCopy(
+            server->namespaces[nodeId->namespaceIndex].nodestore->handle, nodeId);
+>>>>>>> .r400
 }
 UA_StatusCode
 UA_NodestoreSwitch_replaceNode(UA_Server* server, UA_Node *node) {
@@ -21981,8 +22421,13 @@ Service_CloseSession(UA_Server *server, UA_Session *session, const UA_CloseSessi
    nodelete. So the value is not deleted. Use with care! */
 static void
 forceVariantSetScalar(UA_Variant *v, const void *p, const UA_DataType *t) {
+<<<<<<< .mine
+    UA_Variant_setScalarCopy(v,p,t);
+    /* JGrothoff: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+=======
     UA_Variant_setScalarCopy(v,p,t);
     /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+>>>>>>> .r400
     UA_Variant_init(v);
     v->type = t;
     v->data = (void*)(uintptr_t)p;
@@ -22116,15 +22561,26 @@ convertToMatchingValue(UA_Server *server, const UA_Variant *value,
     if(targetDataType == &UA_TYPES[UA_TYPES_BYTE] &&
        value->type == &UA_TYPES[UA_TYPES_BYTESTRING] &&
        UA_Variant_isScalar(value)) {
+<<<<<<< .mine
+        if(value != editableValue){
+            UA_Variant_copy(value,editableValue);
+        }
+        editableValue->type = &UA_TYPES[UA_TYPES_BYTE];
+        /* JGrothoff: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+=======
         UA_Variant_copy(value,editableValue);
         editableValue->type = &UA_TYPES[UA_TYPES_BYTE];
         /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+>>>>>>> .r400
         UA_ByteString *str = (UA_ByteString*)value->data;
         editableValue->storageType = UA_VARIANT_DATA_NODELETE;
-        editableValue->type = &UA_TYPES[UA_TYPES_BYTE];
         editableValue->arrayLength = str->length;
         editableValue->data = str->data;
+<<<<<<< .mine
+         */
+=======
         */
+>>>>>>> .r400
         return editableValue;
     }
 
@@ -22133,12 +22589,20 @@ convertToMatchingValue(UA_Server *server, const UA_Variant *value,
     enum type_equivalence te1 = typeEquivalence(targetDataType);
     enum type_equivalence te2 = typeEquivalence(value->type);
     if(te1 != TYPE_EQUIVALENCE_NONE && te1 == te2) {
+<<<<<<< .mine
+        if(value != editableValue){
+            UA_Variant_copy(value,editableValue);
+        }
+        editableValue->type = targetDataType;
+        /* JGrothoff: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+=======
         UA_Variant_copy(value,editableValue);
         editableValue->type = targetDataType;
         /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+>>>>>>> .r400
         *editableValue = *value;
         editableValue->storageType = UA_VARIANT_DATA_NODELETE;
-        editableValue->type = targetDataType;
+        */
         */
         return editableValue;
     }
@@ -22211,9 +22675,15 @@ typeCheckValue(UA_Server *server, const UA_NodeId *targetDataTypeId,
 
 static UA_StatusCode
 readArrayDimensionsAttribute(const UA_VariableNode *vn, UA_DataValue *v) {
+<<<<<<< .mine
+    UA_Variant_setArrayCopy(&v->value, vn->arrayDimensions,
+                        vn->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);
+    /*JGrothoff: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+=======
     UA_Variant_setArrayCopy(&v->value, vn->arrayDimensions,
                         vn->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);
     /*JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+>>>>>>> .r400
     UA_Variant_setArray(&v->value, vn->arrayDimensions,
                         vn->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);
     v->value.storageType = UA_VARIANT_DATA_NODELETE;
@@ -22441,8 +22911,13 @@ readValueAttributeFromNode(UA_Server *server, const UA_VariableNode *vn, UA_Data
     }
     if(rangeptr)
         return UA_Variant_copyRange(&vn->value.data.value.value, &v->value, *rangeptr);
+<<<<<<< .mine
+    UA_DataValue_copy(&vn->value.data.value,v);
+    /*JGrothoff: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+=======
     UA_DataValue_copy(&vn->value.data.value,v);
     /*JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+>>>>>>> .r400
     *v = vn->value.data.value;
     v->value.storageType = UA_VARIANT_DATA_NODELETE;
     */
@@ -22558,7 +23033,11 @@ writeValueAttribute(UA_Server *server, UA_VariableNode *node,
 
     /* Copy the value into an editable "container" where e.g. the datatype can
      * be adjusted. The data itself is not written into. */
+<<<<<<< .mine
+     /*JGrothoff: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+=======
      /*JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
+>>>>>>> .r400
     UA_DataValue editableValue = *value;
     editableValue.value.storageType = UA_VARIANT_DATA_NODELETE;
     */
@@ -22611,8 +23090,13 @@ writeValueAttribute(UA_Server *server, UA_VariableNode *node,
  cleanup:
     if(rangeptr)
         UA_free(range.dimensions);
+<<<<<<< .mine
+         /*JGrothoff: editableValue has to be freed, because a copy is made */
+        UA_DataValue_deleteMembers(&editableValue);
+=======
          /*JGrothof: editableValue has to be freed, because a copy is made */
         UA_DataValue_deleteMembers(&editableValue);
+>>>>>>> .r400
     return retval;
 }
 
@@ -29740,7 +30224,11 @@ uint32_t pcg32_random_r(pcg32_random_t* rng) {
  * /home/julian/playground/open62541/nsi/build/src_generated/ua_statuscode_descriptions.hgen -- do not modify
  **********************************************************
  * Generated from /home/julian/playground/open62541/nsi/tools/schema/Opc.Ua.StatusCodes.csv with script /home/julian/playground/open62541/nsi/tools/generate_statuscode_descriptions.py
+<<<<<<< .mine
+ * on host altair by user julian at 2017-03-02 11:02:11
+=======
  * on host altair by user julian at 2017-02-28 07:53:05
+>>>>>>> .r400
  **********************************************************/
 
 
