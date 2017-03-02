@@ -99,7 +99,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovCarrierNodeToOPCUA(
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(plist[1]);
-	qName.namespaceIndex = pNodeStoreFunctions->v_NameSpaceIndexNodeStoreInterface
+	qName.namespaceIndex = pNodeStoreFunctions->v_interfacenamespace.index;
 	newNode->browseName = qName;
 
 	// Description
