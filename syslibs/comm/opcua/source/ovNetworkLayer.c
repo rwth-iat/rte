@@ -257,7 +257,7 @@ OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_getJobs(
 
 	counter += this->v_connsToCloseCount * 2;
 
-	newJobs = malloc(sizeof(UA_Job)*(counter+1));
+	newJobs = UA_malloc(sizeof(UA_Job)*(counter+1));
 	if(!newJobs){
 		jobs = NULL;
 		return 0;
@@ -291,7 +291,7 @@ OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_getJobs(
 	this->v_connsToCloseCount = 0;
 
 	if(counter == 0) {
-		free(newJobs);
+		UA_free(newJobs);
 		*jobs = NULL;
 	} else {
 		*jobs = newJobs;

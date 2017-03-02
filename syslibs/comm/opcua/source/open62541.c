@@ -20117,6 +20117,7 @@ UA_UInt16 UA_Server_run_iterate(UA_Server *server, UA_Boolean waitInternal) {
 
         /* Clean up jobs list */
         if(jobsSize > 0)
+
             UA_free(jobs);
     }
 
@@ -22116,6 +22117,7 @@ convertToMatchingValue(UA_Server *server, const UA_Variant *value,
        value->type == &UA_TYPES[UA_TYPES_BYTESTRING] &&
        UA_Variant_isScalar(value)) {
         UA_Variant_copy(value,editableValue);
+        editableValue->type = &UA_TYPES[UA_TYPES_BYTE];
         /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
         UA_ByteString *str = (UA_ByteString*)value->data;
         editableValue->storageType = UA_VARIANT_DATA_NODELETE;
@@ -22132,6 +22134,7 @@ convertToMatchingValue(UA_Server *server, const UA_Variant *value,
     enum type_equivalence te2 = typeEquivalence(value->type);
     if(te1 != TYPE_EQUIVALENCE_NONE && te1 == te2) {
         UA_Variant_copy(value,editableValue);
+        editableValue->type = targetDataType;
         /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
         *editableValue = *value;
         editableValue->storageType = UA_VARIANT_DATA_NODELETE;
@@ -29992,3 +29995,9 @@ const UA_StatusCodeDescription * UA_StatusCode_description(UA_StatusCode code) {
     return &statusCodeDescriptions[statusCodeDescriptionsSize-1];
 }
 
+void* ov_database_calloc(OV_UINT num, OV_UINT size){
+	size_t total = num * size;
+	void *p = ov_database_malloc(total);
+	if (!p) return NULL;
+	return memset(p, 0, total);
+}
