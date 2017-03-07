@@ -661,7 +661,7 @@ void PVSL_t_deleteMembers (PVSL_t* this){
 	SRV_ident_t_deleteMembers(&this->creatingInstance);
 	SRV_String_deleteMembers(&this->name);
 	if(this->pvs){
-		for(uint i = 0; i<this->numPvs; i++){
+		for(unsigned int i = 0; i<this->numPvs; i++){
 			PVS_t_deleteMembers(&this->pvs[i]);
 		}
 		free(this->pvs);
@@ -880,7 +880,7 @@ void getCoreDataRsp_t_deleteMembers(getCoreDataRsp_t* this){
 	if(!this)
 		return;
 	if(this->pvsl){
-		for(uint i = 0; i<this->numPvsl; i++){
+		for(unsigned int i = 0; i<this->numPvsl; i++){
 			PVSL_t_deleteMembers(&this->pvsl[i]);
 		}
 		free(this->pvsl);
