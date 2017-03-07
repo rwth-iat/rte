@@ -874,7 +874,6 @@ set system_libs {syslibs/comm/ksbase
 set addon_libs {addonlibs/hmi/cshmi 
 				addonlibs/commclient/ksapi 
 				addonlibs/commclient/fbcomlib 
-#				addonlibs/commclient/opcuafb 
 				addonlibs/functionblock/iec61131stdfb 
 				addonlibs/functionblock/vdivde3696 
 				addonlibs/functionblock/ACPLTlab003lindyn 
