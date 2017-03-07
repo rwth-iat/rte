@@ -816,9 +816,9 @@ proc create_systools_and_servers {} {
 	file copy $basedir/serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf 
 }
 
-#/*
-#* Recursively removes all .svn dirs from the given folder
-#*/
+#
+# Recursively removes all .svn dirs from the given folder
+#
 proc remove_svn_dirs {dir} {
 	global os
 	global basedir
@@ -874,7 +874,7 @@ set system_libs {syslibs/comm/ksbase
 set addon_libs {addonlibs/hmi/cshmi 
 				addonlibs/commclient/ksapi 
 				addonlibs/commclient/fbcomlib 
-				#addonlibs/commclient/opcuafb 
+#				addonlibs/commclient/opcuafb 
 				addonlibs/functionblock/iec61131stdfb 
 				addonlibs/functionblock/vdivde3696 
 				addonlibs/functionblock/ACPLTlab003lindyn 
