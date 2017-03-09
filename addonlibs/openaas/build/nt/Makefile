@@ -9,9 +9,9 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 SERVERSTARTKEYS = -w opcua -w openaas
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = -o
-EXTRA_CC_FLAGS = 
+EXTRA_CC_FLAGS = -DUA_EXTERNAL_NAMESPACES=1 -DLOG_KS=1 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DLOG_UA=1 -DLOG_UA_TO_OV=1 -DSTATIC_LINKING=1 -DDEBUG=1 -D_XOPEN_SOURCE=500 -D_GNU_SOURCE -Wextra -Wno-unused-parameter -Wno-declaration-after-statement -Wno-unused-functio
 EXTRA_LIBS = 
-LD_FLAGS = -lws2_32
+LD_FLAGS = 
 COMPILER = GCC
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
