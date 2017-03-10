@@ -58,53 +58,52 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 	OV_UINT len = 0;
 	OV_UINT len2 = 0;
-	OV_STRING tmpString_header = ".Header." ;
+	OV_STRING tmpString_header = NULL ;
 	OV_STRING *pathList = NULL;
 	OV_STRING *pathList2 = NULL;
 	OV_STRING path = NULL;
 	pathList = ov_string_split(pinst->v_Path, "/", &len);
 
+	ov_string_append(&tmpString_header, ".Header.");
 
 
-    if (len == 7){
-    	pathList2 = ov_string_split(pathList[7], ".",&len2);
+	if (len == 8){
+			    	pathList2 = ov_string_split(pathList[7], ".",&len2);
 
 
-	for (OV_UINT i = 4; i <= len; i++){
-		ov_string_append(&path, "/");
-		ov_string_append(&path, pathList[i]);
-		if (i==7){
-			ov_string_append(&path, pathList2[1]);
-			ov_string_append(&path, tmpString_header);
-			ov_string_append(&path, pathList2[2]);
-			break;
-		}
-	}
-    }
+				for (OV_UINT i = 4; i < len; i++){
+					ov_string_append(&path, "/");
+					ov_string_append(&path, pathList[i]);
+					if ( (i==6) && (len2>1) ){
+						ov_string_append(&path, "/");
+						ov_string_append(&path, pathList2[0]);
+						ov_string_append(&path, tmpString_header);
+						ov_string_append(&path, pathList2[1]);
+						break;
+					}
+				}
+			    }
+
+				else	if (len == 9){
+
+						for (OV_UINT i = 4; i < len; i++){
+							ov_string_append(&path, "/");
+
+							ov_string_append(&path, pathList[i]);
+							if(i==7)
+								ov_string_append(&path, ".Body");
+
+						}
 
 
-	else	if (len == 8){
 
-		for (OV_UINT i = 4; i <= len; i++){
-			ov_string_append(&path, "/");
-
-			ov_string_append(&path, pathList[i]);
-			if(i==6)
-				ov_string_append(&path, ".Body");
-
-		}
+					}
 
 
-
-	}
-
-
-    ov_string_freelist(pathList);
-    ov_string_freelist(pathList2);
 
 
 	pList = ov_path_getobjectpointer(path,2);
-	ov_database_free(path);
+
 
 
 	ov_string_setvalue(&pinst->v_ExpressionLogic, "");
@@ -199,7 +198,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 		}
 
 	ov_database_free(tmpString);
-
+	  ov_string_freelist(pathList);
+	    ov_string_freelist(pathList2);
+	    ov_database_free(path);
+	    	ov_database_free(tmpString_header);
     return;
 }
 
