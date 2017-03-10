@@ -4257,6 +4257,28 @@ cshmi.prototype = {
 			this.ResourceList.newRebuildObject.x = VisualObject.getAttribute("x");
 			this.ResourceList.newRebuildObject.y = VisualObject.getAttribute("y");
 		}
+		
+		/** clean up HTML div from playground */
+        if (!this.useforeignObject) {
+            var deleteRecursive = function (VisualObject) {
+                if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+                    for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+                        if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+                            HMI.Playground.removeChild(HMI.Playground.childNodes.item(i));
+                            i--;    // we are manipulating a liveNodelist
+                        }
+                    }
+                }
+                for (var i = 0; i < VisualObject.childNodes.length; i++) {
+                    if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+                        deleteRecursive(VisualObject.childNodes.item(i));
+                    }
+                }
+
+            };
+            deleteRecursive(VisualObject);
+        }		
+		
 		var newVisualObject = this._interpreteElementOrEventRecursive(VisualParentObject, ObjectPath, ObjectType, false);
 		this.ResourceList.newRebuildObject = Object();
 		
@@ -4319,6 +4341,20 @@ cshmi.prototype = {
 		//interprete onload Actions if we are already loaded
 		if (this.initStage === false){
 			this._interpreteOnloadCallStack();
+		}
+		
+		if(false === this.useforeignObject){
+			var blackboxes = csHMIgetElementsByClassName(null, this.cshmiBlackboxClass);
+			for (var i = 0; i < blackboxes.length; ++i){
+				var HTMLcontentNode = document.getElementById(blackboxes[i].id+"*Div");
+				if(HTMLcontentNode){
+					//push the blackbox thing to the end
+					HMI.Playground.appendChild(HTMLcontentNode);
+					//correct position of the blackbox. absolutey are not known before
+					HTMLcontentNode.style.top = blackboxes[i].getAttribute("absolutey")+"px";
+					HTMLcontentNode.style.left = blackboxes[i].getAttribute("absolutex")+"px";
+				}
+			}
 		}
 		
 		return true;
