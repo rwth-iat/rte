@@ -57,19 +57,51 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 
 	OV_UINT len = 0;
+	OV_UINT len2 = 0;
+	OV_STRING tmpString_header = ".Header." ;
 	OV_STRING *pathList = NULL;
+	OV_STRING *pathList2 = NULL;
 	OV_STRING path = NULL;
 	pathList = ov_string_split(pinst->v_Path, "/", &len);
 
 
 
-	for (OV_UINT i = 2; i < len; i++){
+    if (len == 6){
+    	pathList2 = ov_string_split(pathList[6], ".",&len2);
+
+
+	for (OV_UINT i = 4; i <= len; i++){
 		ov_string_append(&path, "/");
 		ov_string_append(&path, pathList[i]);
+		if (i==6){
+			ov_string_append(&path, pathList2[1]);
+			ov_string_append(&path, tmpString_header);
+			ov_string_append(&path, pathList2[2]);
+			break;
+		}
+	}
+    }
+
+
+	else	if (len == 7){
+
+		for (OV_UINT i = 4; i < len; i++){
+			ov_string_append(&path, "/");
+
+			ov_string_append(&path, pathList[i]);
+			if(i==5)
+				ov_string_append(&path, ".Body");
+
+		}
+
 
 
 	}
+
+
     ov_string_freelist(pathList);
+    ov_string_freelist(pathList2);
+
 
 	pList = ov_path_getobjectpointer(path,2);
 	ov_database_free(path);
@@ -125,20 +157,11 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 		ov_string_print(&tmpString, "%i", pchild->v_Visibility);
 		ov_string_append(&pinst->v_Visibility, tmpString);
 
-		//ov_string_print(&tmpString, "%i", pchild->v_identifier);
 
-
-		//ov_string_append(&pinst->v_Value, tmpString);
 
 		ov_string_append(&pinst->v_Name, pchild->v_identifier);
 
-		//ov_string_print(&tmpString, "%i", pchild->v_Value.value.valueunion.val_int);
-		//ov_string_append(&pinst->v_Value, tmpString);
 
-
-
-		//ov_string_print(&tmpString, "%i", pchild->v_Value.value.valueunion.val_int);
-		//ov_string_append(&pinst->v_Value, tmpString);
 
 		switch(pchild->v_Value.value.vartype & OV_VT_KSMASK){
 			case OV_VT_BOOL:
@@ -171,14 +194,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			break;
 		}
 
-	/*	switch(pchild->v_Value.value.vartype){
-			case OV_VT_INT:
-				ov_string_print(&tmpString, "%i", pchild->v_Value.value.valueunion.val_int);
-				ov_string_append(&pinst->v_Value, tmpString);
-				break;
-			default:
-			break;
-			}*/
+
 		i++;
 		}
 
