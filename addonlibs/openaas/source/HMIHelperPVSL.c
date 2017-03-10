@@ -66,14 +66,14 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 
 
-    if (len == 6){
-    	pathList2 = ov_string_split(pathList[6], ".",&len2);
+    if (len == 7){
+    	pathList2 = ov_string_split(pathList[7], ".",&len2);
 
 
 	for (OV_UINT i = 4; i <= len; i++){
 		ov_string_append(&path, "/");
 		ov_string_append(&path, pathList[i]);
-		if (i==6){
+		if (i==7){
 			ov_string_append(&path, pathList2[1]);
 			ov_string_append(&path, tmpString_header);
 			ov_string_append(&path, pathList2[2]);
@@ -83,13 +83,13 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
     }
 
 
-	else	if (len == 7){
+	else	if (len == 8){
 
-		for (OV_UINT i = 4; i < len; i++){
+		for (OV_UINT i = 4; i <= len; i++){
 			ov_string_append(&path, "/");
 
 			ov_string_append(&path, pathList[i]);
-			if(i==5)
+			if(i==6)
 				ov_string_append(&path, ".Body");
 
 		}
