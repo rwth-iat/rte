@@ -53,7 +53,7 @@ OV_DLLFNCEXPORT void openaas_FindPVSL_typemethod(
 	if(ptr){
 		paas = Ov_StaticPtrCast(openaas_aas, ptr);
 		if (paas){
-			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain,paas), ppvsl, openaas_PropertyValueStatementList) {
+			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain,paas->p_Body), ppvsl, openaas_PropertyValueStatementList) {
 				if (ov_string_compare(ppvsl->v_identifier, pinst->v_PVSL1Name) == OV_STRCMP_EQUAL){
 					ov_memstack_lock();
 					ov_string_setvalue(&pinst->v_PVSL1, ov_path_getcanonicalpath(ptr, 2));
@@ -66,7 +66,7 @@ OV_DLLFNCEXPORT void openaas_FindPVSL_typemethod(
 	if(ptr){
 		paas = Ov_StaticPtrCast(openaas_aas, ptr);
 		if (paas){
-			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain,paas), ppvsl, openaas_PropertyValueStatementList) {
+			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain,paas->p_Body), ppvsl, openaas_PropertyValueStatementList) {
 				if (ov_string_compare(ppvsl->v_identifier, pinst->v_PVSL2Name) == OV_STRCMP_EQUAL){
 					ov_memstack_lock();
 					ov_string_setvalue(&pinst->v_PVSL2, ov_path_getcanonicalpath(ptr, 2));
