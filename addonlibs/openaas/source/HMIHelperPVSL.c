@@ -1,4 +1,3 @@
-
 /******************************************************************************
 *
 *   FILE
@@ -159,7 +158,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 
 
-	/*	switch(pchild->v_ExpressionSemantic){
+	switch(pchild->v_ExpressionSemantic){
 		case 0:
 			ov_string_append(&pinst->v_ExpressionSemantic, "A");
 			break;
@@ -254,9 +253,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 				}
 
 
-*/
 
-		/*switch(pchild->v_Value.value.vartype & OV_VT_KSMASK){
+
+		switch(pchild->v_Value.value.vartype & OV_VT_KSMASK){
 			case OV_VT_BOOL:
 				if (pchild->v_Value.value.valueunion.val_bool == TRUE)
 					ov_string_append(&pinst->v_Value, "true");
@@ -286,7 +285,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			default:
 			break;
 		}
-*/
+
 
 		i++;
 		}
@@ -298,24 +297,3 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 	    	ov_database_free(tmpString_header);
     return;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
