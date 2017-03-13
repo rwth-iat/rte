@@ -253,8 +253,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 				}
 
-*/
 
+*/
 
 		switch(pchild->v_Value.value.vartype & OV_VT_KSMASK){
 			case OV_VT_BOOL:
@@ -267,10 +267,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 				ov_string_print(&tmpString, "%s", pchild->v_Value.value.valueunion.val_string);
 				ov_string_append(&pinst->v_Value, tmpString);
 			break;
-			case OV_VT_DOUBLE:
+			/*case OV_VT_DOUBLE:
 			    ov_string_print(&tmpString, "%lf", pchild->v_Value.value.valueunion.val_double);
 			    ov_string_append(&pinst->v_Value, tmpString);
-			break;
+			break;*/
 			case OV_VT_INT:
 				ov_string_print(&tmpString, "%i", pchild->v_Value.value.valueunion.val_int);
 				ov_string_append(&pinst->v_Value, tmpString);
