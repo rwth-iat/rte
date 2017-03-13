@@ -56,7 +56,7 @@ OV_DLLFNCEXPORT void openaas_FindPVSL_typemethod(
 			Ov_ForEachChildEx(ov_containment, &paas->p_Body, ppvsl, openaas_PropertyValueStatementList) {
 				if (ov_string_compare(ppvsl->v_identifier, pinst->v_PVSL1Name) == OV_STRCMP_EQUAL){
 					ov_memstack_lock();
-					ov_string_setvalue(&pinst->v_PVSL1, ov_path_getcanonicalpath(ptr, 2));
+					ov_string_setvalue(&pinst->v_PVSL1, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, ppvsl), 2));
 					ov_memstack_unlock();
 				}
 			}
@@ -69,7 +69,7 @@ OV_DLLFNCEXPORT void openaas_FindPVSL_typemethod(
 			Ov_ForEachChildEx(ov_containment, &paas->p_Body, ppvsl, openaas_PropertyValueStatementList) {
 				if (ov_string_compare(ppvsl->v_identifier, pinst->v_PVSL2Name) == OV_STRCMP_EQUAL){
 					ov_memstack_lock();
-					ov_string_setvalue(&pinst->v_PVSL2, ov_path_getcanonicalpath(ptr, 2));
+					ov_string_setvalue(&pinst->v_PVSL2, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, ppvsl), 2));
 					ov_memstack_unlock();
 				}
 			}
