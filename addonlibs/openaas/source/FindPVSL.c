@@ -22,6 +22,7 @@
 
 
 #include "openaas.h"
+#include "openaas_helpers.h"
 #include "libov/ov_macros.h"
 
 
