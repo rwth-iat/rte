@@ -157,6 +157,10 @@ OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 	OV_INSTPTR_openaas_AASConvertListType pListElement = NULL;
 	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
 
+	if (!pmodelmanager){
+		return "";
+	}
+
 	if (pmodelmanager->v_ListSize == 0){
 		return "";
 	}

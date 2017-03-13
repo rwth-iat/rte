@@ -316,27 +316,70 @@ LIBRARY openaas
         typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
     END_OPERATIONS;    
     END_CLASS;
-    
-    
-    
-    CLASS HMIHelperPVSL    :    CLASS fb/functionblock
+  	
+  	CLASS MatchPVSRA : CLASS fb/functionblock
+  		IS_INSTANTIABLE;
+  		VARIABLES
+  		    requirementPath : STRING FLAGS = "i";
+  		    assurancePath   : STRING FLAGS = "i";
+  		    match       : BOOL FLAGS = "o";
+  		    error       : UINT FLAGS = "o";
+  		    errortext   : STRING FLAGS = "o";
+  		END_VARIABLES;
+  		OPERATIONS 
+  			matchPVSRA : C_FUNCTION <OPENAAS_FNC_MATCHPVSRA>;
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+  		END_OPERATIONS;
+  	END_CLASS;
+  	
+  	CLASS MatchPVSLRA : CLASS fb/functionblock
         IS_INSTANTIABLE;
-    VARIABLES
-    	Path                 : STRING FLAGS = "i" INITIALVALUE    =   "";      
-        ExpressionLogic      : STRING FLAGS = "o" INITIALVALUE    =   "";
-        ExpressionSemantic   : STRING FLAGS = "o" INITIALVALUE    =   "";
-        Name                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-        Unit                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-        Value                : STRING FLAGS = "o" INITIALVALUE    =   "";
-        TimeStamp            : STRING FLAGS = "o" INITIALVALUE    =   "";
-        View                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-        Visibility           : STRING FLAGS = "o" INITIALVALUE    =   "";
-        IDType               : STRING FLAGS = "o" INITIALVALUE    =   "";
-        IDSpecification      : STRING FLAGS = "o" INITIALVALUE    =   "";
-    END_VARIABLES;
-    OPERATIONS
-        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-    END_OPERATIONS;
-    END_CLASS; 
+        VARIABLES
+            List1Path : STRING FLAGS = "i";
+            List2Path   : STRING FLAGS = "i";
+            match               : BOOL FLAGS = "o";
+            matchText           : STRING FLAGS = "o";
+            error               : UINT FLAGS = "o";
+            errortext           : STRING FLAGS = "o";
+        END_VARIABLES;
+        OPERATIONS 
+            matchPVSLRA : C_FUNCTION <OPENAAS_FNC_MATCHPVSLRA>;
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS FindAAS : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASID1STRING      : STRING FLAGS = "i";
+            AASID1TYPE        : UINT FLAGS = "i";
+            AASID2STRING      : STRING FLAGS = "i";
+            AASID2TYPE        : UINT FLAGS = "i";
+            FoundAAS1           : BOOL FLAGS = "o";
+            FoundAAS2           : BOOL FLAGS = "o";
+            NotFoundAAS1        : BOOL FLAGS = "o";
+            NotFoundAAS2        : BOOL FLAGS = "o";
+        END_VARIABLES;
+        OPERATIONS 
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+     CLASS FindPVSL : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASID1STRING      : STRING FLAGS = "i";
+            AASID1TYPE        : UINT FLAGS = "i";
+            AASID2STRING      : STRING FLAGS = "i";
+            AASID2TYPE        : UINT FLAGS = "i";
+            PVSL1Name         : STRING FLAGS = "i";
+            PVSL2Name         : STRING FLAGS = "i";
+            PVSL1             : STRING FLAGS = "o";
+            PVSL2             : STRING FLAGS = "o";
+        END_VARIABLES; 
+        OPERATIONS 
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
   	
 END_LIBRARY;
