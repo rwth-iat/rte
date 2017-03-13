@@ -131,12 +131,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			ov_string_append(&pinst->v_Value, ";");
 		}
 
-		ov_string_print(&tmpString, "%i", pchild->v_ExpressionLogic);
-		ov_string_append(&pinst->v_ExpressionLogic, tmpString);
-
-		ov_string_print(&tmpString, "%i", pchild->v_ExpressionSemantic);
-		ov_string_append(&pinst->v_ExpressionSemantic, tmpString);
-
 		ov_string_append(&pinst->v_IDSpecification, pchild->v_IDIdString);
 
 		ov_string_print(&tmpString, "%i", pchild->v_IDIdType);
@@ -146,11 +140,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		ov_string_append(&pinst->v_Unit, pchild->v_Unit);
 
-		ov_string_print(&tmpString, "%i", pchild->v_View);
-		ov_string_append(&pinst->v_View, tmpString);
 
-		ov_string_print(&tmpString, "%i", pchild->v_Visibility);
-		ov_string_append(&pinst->v_Visibility, tmpString);
 
 
 
@@ -179,22 +169,22 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		switch(pchild->v_ExpressionLogic){
 			case 0:
-				ov_string_append(&pinst->v_ExpressionLogic, "GT");
+				ov_string_append(&pinst->v_ExpressionLogic, ">");
 				break;
 			case 1:
-				ov_string_append(&pinst->v_ExpressionLogic, "GE");
+				ov_string_append(&pinst->v_ExpressionLogic, ">=");
 				break;
 			case 2:
-				ov_string_append(&pinst->v_ExpressionLogic, "E");
+				ov_string_append(&pinst->v_ExpressionLogic, "==");
 				break;
 			case 3:
-				ov_string_append(&pinst->v_ExpressionLogic, "NE");
+				ov_string_append(&pinst->v_ExpressionLogic, "!=");
 				break;
 			case 4:
-				ov_string_append(&pinst->v_ExpressionLogic, "LE");
+				ov_string_append(&pinst->v_ExpressionLogic, "<=");
 				break;
 			case 5:
-				ov_string_append(&pinst->v_ExpressionLogic, "LT");
+				ov_string_append(&pinst->v_ExpressionLogic, "<");
 				break;
 				default:
 				break;
@@ -238,13 +228,13 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		switch(pchild->v_Visibility){
 				case 0:
-					ov_string_append(&pinst->v_Visibility, "PR");
+					ov_string_append(&pinst->v_Visibility, "-");
 					break;
 				case 1:
-					ov_string_append(&pinst->v_Visibility, "C");
+					ov_string_append(&pinst->v_Visibility, "o");
 					break;
 				case 2:
-					ov_string_append(&pinst->v_Visibility, "PU");
+					ov_string_append(&pinst->v_Visibility, "+");
 					break;
 					default:
 					break;
