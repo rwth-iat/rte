@@ -159,7 +159,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 
 
-		switch(pchild->v_ExpressionSemantic){
+	/*	switch(pchild->v_ExpressionSemantic){
 		case 0:
 			ov_string_append(&pinst->v_ExpressionSemantic, "A");
 			break;
@@ -253,7 +253,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 				}
 
-
+*/
 
 
 		switch(pchild->v_Value.value.vartype & OV_VT_KSMASK){
