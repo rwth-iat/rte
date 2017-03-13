@@ -94,10 +94,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 								ov_string_append(&path, ".Body");
 
 						}
-
-
-
-					}
+				}
 
 
 
@@ -167,15 +164,15 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			ov_string_append(&pinst->v_ExpressionSemantic, "A");
 			break;
 		case 1:
-
-				ov_string_append(&pinst->v_ExpressionSemantic, "S");
+			ov_string_append(&pinst->v_ExpressionSemantic, "S");
 			break;
 		case 2:
-
 			ov_string_append(&pinst->v_ExpressionSemantic, "M");
 			break;
 		case 3:
 			ov_string_append(&pinst->v_ExpressionSemantic, "R");
+			break;
+			default:
 			break;
 
 
@@ -186,11 +183,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 				ov_string_append(&pinst->v_ExpressionLogic, "GT");
 				break;
 			case 1:
-
-					ov_string_append(&pinst->v_ExpressionLogic, "GE");
+				ov_string_append(&pinst->v_ExpressionLogic, "GE");
 				break;
 			case 2:
-
 				ov_string_append(&pinst->v_ExpressionLogic, "E");
 				break;
 			case 3:
@@ -202,6 +197,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			case 5:
 				ov_string_append(&pinst->v_ExpressionLogic, "LT");
 				break;
+				default:
+				break;
 
 
 			}
@@ -210,11 +207,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 					ov_string_append(&pinst->v_View, "B");
 					break;
 				case 1:
-
-						ov_string_append(&pinst->v_View, "C");
+					ov_string_append(&pinst->v_View, "C");
 					break;
 				case 2:
-
 					ov_string_append(&pinst->v_View, "P");
 					break;
 				case 3:
@@ -235,6 +230,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 				case 8:
 					ov_string_append(&pinst->v_View, "H");
 					break;
+					default:
+					break;
 
 
 				}
@@ -245,12 +242,12 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 					ov_string_append(&pinst->v_Visibility, "PR");
 					break;
 				case 1:
-
-						ov_string_append(&pinst->v_Visibility, "C");
+					ov_string_append(&pinst->v_Visibility, "C");
 					break;
 				case 2:
-
 					ov_string_append(&pinst->v_Visibility, "PU");
+					break;
+					default:
 					break;
 
 
