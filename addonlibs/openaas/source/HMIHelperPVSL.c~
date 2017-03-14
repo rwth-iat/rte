@@ -169,22 +169,22 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		switch(pchild->v_ExpressionLogic){
 			case 0:
-				ov_string_append(&pinst->v_ExpressionLogic, "GT");
+				ov_string_append(&pinst->v_ExpressionLogic, ">");
 				break;
 			case 1:
-				ov_string_append(&pinst->v_ExpressionLogic, "GE");
+				ov_string_append(&pinst->v_ExpressionLogic, ">=");
 				break;
 			case 2:
-				ov_string_append(&pinst->v_ExpressionLogic, "EQ");
+				ov_string_append(&pinst->v_ExpressionLogic, "==");
 				break;
 			case 3:
-				ov_string_append(&pinst->v_ExpressionLogic, "NE");
+				ov_string_append(&pinst->v_ExpressionLogic, "!=");
 				break;
 			case 4:
-				ov_string_append(&pinst->v_ExpressionLogic, "LE");
+				ov_string_append(&pinst->v_ExpressionLogic, "<=");
 				break;
 			case 5:
-				ov_string_append(&pinst->v_ExpressionLogic, "LT");
+				ov_string_append(&pinst->v_ExpressionLogic, "<");
 				break;
 				default:
 				break;
