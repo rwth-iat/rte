@@ -382,24 +382,43 @@ LIBRARY openaas
         END_OPERATIONS;
     END_CLASS;
     
-      CLASS HMIHelperPVSL    :    CLASS fb/functionblock
+    CLASS HMIHelperPVSL    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
-    VARIABLES
-        Path                 : STRING FLAGS = "i" INITIALVALUE    =   "";      
-        ExpressionLogic      : STRING FLAGS = "o" INITIALVALUE    =   "";
-        ExpressionSemantic   : STRING FLAGS = "o" INITIALVALUE    =   "";
-        Name                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-        Unit                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-        Value                : STRING FLAGS = "o" INITIALVALUE    =   "";
-        TimeStamp            : STRING FLAGS = "o" INITIALVALUE    =   "";
-        View                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-        Visibility           : STRING FLAGS = "o" INITIALVALUE    =   "";
-        IDType               : STRING FLAGS = "o" INITIALVALUE    =   "";
-        IDSpecification      : STRING FLAGS = "o" INITIALVALUE    =   "";
-    END_VARIABLES;
-    OPERATIONS
-        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-    END_OPERATIONS;
+        VARIABLES
+            Path                 : STRING FLAGS = "i" INITIALVALUE    =   "";      
+            ExpressionLogic      : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ExpressionSemantic   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Name                 : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Unit                 : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Value                : STRING FLAGS = "o" INITIALVALUE    =   "";
+            TimeStamp            : STRING FLAGS = "o" INITIALVALUE    =   "";
+            View                 : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Visibility           : STRING FLAGS = "o" INITIALVALUE    =   "";
+            IDType               : STRING FLAGS = "o" INITIALVALUE    =   "";
+            IDSpecification      : STRING FLAGS = "o" INITIALVALUE    =   "";
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS HMIHelperLCEList    :    CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            Path                        : STRING FLAGS = "i" INITIALVALUE    =   "";      
+            CreatingInstanceIdString    : STRING FLAGS = "o" INITIALVALUE    =   "";
+            CreatingInstanceIdType      : STRING FLAGS = "o" INITIALVALUE    =   "";
+            WritingInstanceIdString     : STRING FLAGS = "o" INITIALVALUE    =   "";
+            WritingInstanceIdType       : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Data                        : STRING FLAGS = "o" INITIALVALUE    =   "";
+            TimeStamp                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Subject                     : STRING FLAGS = "o" INITIALVALUE    =   "";
+            EventClass                  : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Id                          : STRING FLAGS = "o" INITIALVALUE    =   "";
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
     END_CLASS; 
   	
 END_LIBRARY;
