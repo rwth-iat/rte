@@ -56,15 +56,13 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 
 	paas = Ov_DynamicPtrCast(openaas_aas, pobj);
 
-	ov_string_setvalue(&pinst->v_CreatingInstanceIdString, "");
-	ov_string_setvalue(&pinst->v_CreatingInstanceIdType, "");
+	ov_string_setvalue(&pinst->v_CreatingInstanceId, "");
 	ov_string_setvalue(&pinst->v_Data, "");
 	ov_string_setvalue(&pinst->v_EventClass, "");
 	ov_string_setvalue(&pinst->v_Id, "");
 	ov_string_setvalue(&pinst->v_Subject, "");
 	ov_string_setvalue(&pinst->v_TimeStamp, "");
-	ov_string_setvalue(&pinst->v_WritingInstanceIdString, "");
-	ov_string_setvalue(&pinst->v_WritingInstanceIdType, "");
+	ov_string_setvalue(&pinst->v_WritingInstanceId, "");
 
 	if (!paas){
 		return;
@@ -73,21 +71,24 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 	OV_UINT i = 0;
 	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, openaas_LifeCycleEntry){
 		if (i != 0){
-			ov_string_append(&pinst->v_CreatingInstanceIdString, ";");
-			ov_string_append(&pinst->v_CreatingInstanceIdType, ";");
+			ov_string_append(&pinst->v_CreatingInstanceId, ";");
 			ov_string_append(&pinst->v_Data, ";");
 			ov_string_append(&pinst->v_EventClass, ";");
 			ov_string_append(&pinst->v_Id, ";");
 			ov_string_append(&pinst->v_Subject, ";");
 			ov_string_append(&pinst->v_TimeStamp, ";");
-			ov_string_append(&pinst->v_WritingInstanceIdString, ";");
-			ov_string_append(&pinst->v_WritingInstanceIdType, ";");
+			ov_string_append(&pinst->v_WritingInstanceId, ";");
 		}
 
-		ov_string_append(&pinst->v_CreatingInstanceIdString, pchild->v_CreatingInstanceIdString);
-
-		ov_string_print(&tmpString, "%i", pchild->v_CreatingInstanceIdType);
-		ov_string_append(&pinst->v_CreatingInstanceIdType, tmpString);
+		switch (pchild->v_CreatingInstanceIdType){
+			case URI:
+				ov_string_append(&pinst->v_CreatingInstanceId, "URI:");
+			break;
+			case ISO:
+				ov_string_append(&pinst->v_CreatingInstanceId, "ISO:");
+			break;
+		}
+		ov_string_append(&pinst->v_CreatingInstanceId, pchild->v_CreatingInstanceIdString);
 
 		ov_string_append(&pinst->v_EventClass, pchild->v_EventClass);
 
@@ -99,10 +100,16 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 
 		ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii(&pchild->v_TimeStamp));
 
-		ov_string_append(&pinst->v_WritingInstanceIdString, pchild->v_WritingInstanceIdString);
+		switch (pchild->v_WritingInstanceIdType){
+			case URI:
+				ov_string_append(&pinst->v_WritingInstanceId, "URI:");
+			break;
+			case ISO:
+				ov_string_append(&pinst->v_WritingInstanceId, "ISO:");
+			break;
+		}
+		ov_string_append(&pinst->v_WritingInstanceId, pchild->v_WritingInstanceIdString);
 
-		ov_string_print(&tmpString, "%i", pchild->v_WritingInstanceIdType);
-		ov_string_append(&pinst->v_WritingInstanceIdType, tmpString);
 		if(!(pchild->v_Data.value.vartype & OV_VT_ISVECTOR)){
 			switch(pchild->v_Data.value.vartype & OV_VT_KSMASK){
 				case OV_VT_BOOL:

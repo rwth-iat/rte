@@ -406,10 +406,8 @@ LIBRARY openaas
         IS_INSTANTIABLE;
         VARIABLES
             Path                        : STRING FLAGS = "i" INITIALVALUE    =   "";      
-            CreatingInstanceIdString    : STRING FLAGS = "o" INITIALVALUE    =   "";
-            CreatingInstanceIdType      : STRING FLAGS = "o" INITIALVALUE    =   "";
-            WritingInstanceIdString     : STRING FLAGS = "o" INITIALVALUE    =   "";
-            WritingInstanceIdType       : STRING FLAGS = "o" INITIALVALUE    =   "";
+            CreatingInstanceId          : STRING FLAGS = "o" INITIALVALUE    =   "";            
+            WritingInstanceId           : STRING FLAGS = "o" INITIALVALUE    =   "";
             Data                        : STRING FLAGS = "o" INITIALVALUE    =   "";
             TimeStamp                   : STRING FLAGS = "o" INITIALVALUE    =   "";
             Subject                     : STRING FLAGS = "o" INITIALVALUE    =   "";
