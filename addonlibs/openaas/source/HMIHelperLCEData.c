@@ -139,6 +139,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	OV_BOOL endLCE = FALSE;
 
 	OV_UINT lceCount = 0;
+	//ov_string_append(&pinst->v_yUnitStatic, pstartLCE->);
 	do {
 		if (lceCount == 0){
 			pchild = pstartLCE;

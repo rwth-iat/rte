@@ -407,7 +407,7 @@ LIBRARY openaas
     CLASS HMIHelperLCEList    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
-            AASPath                     : STRING FLAGS = "i" INITIALVALUE    =   "";      
+            AASPath                     : STRING FLAGS = "i" COMMENT = "Format: //IP:PORT/SERVERNAME/..." INITIALVALUE    =   "";      
             CreatingInstanceId          : STRING FLAGS = "o" INITIALVALUE    =   "";            
             WritingInstanceId           : STRING FLAGS = "o" INITIALVALUE    =   "";
             Data                        : STRING FLAGS = "o" INITIALVALUE    =   "";
@@ -426,11 +426,11 @@ LIBRARY openaas
     CLASS HMIHelperLCEData    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
-            AASPath                     : STRING FLAGS = "i" INITIALVALUE    =   ""; 
+            AASPath                     : STRING FLAGS = "i" COMMENT = "Format: //IP:PORT/SERVERNAME/..." INITIALVALUE    =   ""; 
             Subject                     : STRING FLAGS = "i" INITIALVALUE    =   "";
             EventClass                  : STRING FLAGS = "i" INITIALVALUE    =   "";
-            StartTime                   : STRING FLAGS = "i" INITIALVALUE    =   "";
-            StopTime                    : STRING FLAGS = "i" INITIALVALUE    =   "";
+            StartTime                   : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
+            StopTime                    : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
             xValueStatic                : STRING FLAGS = "o" INITIALVALUE    =   "";            
             yValueStatic                : STRING FLAGS = "o" INITIALVALUE    =   "";
             yUnitStatic                 : STRING FLAGS = "o" INITIALVALUE    =   "";
