@@ -2,7 +2,7 @@
 *
 *   FILE
 *   ----
-*   HMIHelperPVSL.c
+*   HMIHelperLCEList.c
 *
 *   History
 *   -------
@@ -41,21 +41,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 	OV_INSTPTR_openaas_aas paas = NULL;
 
 
-	OV_UINT len = 0;
-	OV_STRING *pathList = NULL;
-	OV_STRING path = NULL;
-	pathList = ov_string_split(pinst->v_Path, "/", &len);
-
-
-	for (OV_UINT i = 4; i < len; i++){
-		ov_string_append(&path, "/");
-		ov_string_append(&path, pathList[i]);
-	}
-
-	pobj = ov_path_getobjectpointer(path,2);
-
-	paas = Ov_DynamicPtrCast(openaas_aas, pobj);
-
 	ov_string_setvalue(&pinst->v_CreatingInstanceId, "");
 	ov_string_setvalue(&pinst->v_Data, "");
 	ov_string_setvalue(&pinst->v_EventClass, "");
@@ -64,9 +49,35 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 	ov_string_setvalue(&pinst->v_TimeStamp, "");
 	ov_string_setvalue(&pinst->v_WritingInstanceId, "");
 
-	if (!paas){
+	OV_UINT len = 0;
+	OV_STRING *pathList = NULL;
+	OV_STRING path = NULL;
+	pathList = ov_string_split(pinst->v_AASPath, "/", &len);
+
+
+	for (OV_UINT i = 4; i < len; i++){
+		ov_string_append(&path, "/");
+		ov_string_append(&path, pathList[i]);
+	}
+
+	pobj = ov_path_getobjectpointer(path,2);
+	if (!pobj){
+		pinst->v_Error = TRUE;
+		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object for this path");
+		ov_string_freelist(pathList);
+		ov_database_free(path);
 		return;
 	}
+
+	paas = Ov_DynamicPtrCast(openaas_aas, pobj);
+	if (!paas){
+		pinst->v_Error = TRUE;
+		ov_string_setvalue(&pinst->v_ErrorText, "Object is not of aas-Type");
+		ov_string_freelist(pathList);
+		ov_database_free(path);
+		return;
+	}
+
 	OV_STRING tmpString = NULL;
 	OV_UINT i = 0;
 	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, openaas_LifeCycleEntry){
@@ -119,8 +130,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 						ov_string_append(&pinst->v_Data, "false");
 				break;
 				case OV_VT_STRING:
-					ov_string_print(&tmpString, "%s", pchild->v_Data.value.valueunion.val_string);
-					ov_string_append(&pinst->v_Data, tmpString);
+					ov_string_append(&pinst->v_Data, pchild->v_Data.value.valueunion.val_string);
 				break;
 				case OV_VT_DOUBLE:
 					ov_string_print(&tmpString, "%lf", pchild->v_Data.value.valueunion.val_double);
@@ -139,6 +149,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 					ov_string_append(&pinst->v_Data, tmpString);
 				break;
 				default:
+					ov_string_append(&pinst->v_Data, "DataType not supported");
 				break;
 			}
 		}else{

@@ -396,6 +396,8 @@ LIBRARY openaas
             Visibility           : STRING FLAGS = "o" INITIALVALUE    =   "";
             IDType               : STRING FLAGS = "o" INITIALVALUE    =   "";
             IDSpecification      : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Error                : BOOL   FLAGS = "o";
+            ErrorText            : STRING FLAGS = "o" INITIALVALUE    =   "";
         END_VARIABLES;
         OPERATIONS
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -405,7 +407,7 @@ LIBRARY openaas
     CLASS HMIHelperLCEList    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
-            Path                        : STRING FLAGS = "i" INITIALVALUE    =   "";      
+            AASPath                     : STRING FLAGS = "i" INITIALVALUE    =   "";      
             CreatingInstanceId          : STRING FLAGS = "o" INITIALVALUE    =   "";            
             WritingInstanceId           : STRING FLAGS = "o" INITIALVALUE    =   "";
             Data                        : STRING FLAGS = "o" INITIALVALUE    =   "";
@@ -413,6 +415,29 @@ LIBRARY openaas
             Subject                     : STRING FLAGS = "o" INITIALVALUE    =   "";
             EventClass                  : STRING FLAGS = "o" INITIALVALUE    =   "";
             Id                          : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Error                       : BOOL   FLAGS = "o";
+            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS HMIHelperLCEData    :    CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASPath                     : STRING FLAGS = "i" INITIALVALUE    =   ""; 
+            Subject                     : STRING FLAGS = "i" INITIALVALUE    =   "";
+            EventClass                  : STRING FLAGS = "i" INITIALVALUE    =   "";
+            StartTime                   : STRING FLAGS = "i" INITIALVALUE    =   "";
+            StopTime                    : STRING FLAGS = "i" INITIALVALUE    =   "";
+            xValueStatic                : STRING FLAGS = "o" INITIALVALUE    =   "";            
+            yValueStatic                : STRING FLAGS = "o" INITIALVALUE    =   "";
+            yUnitStatic                 : STRING FLAGS = "o" INITIALVALUE    =   "";
+            yValueDynamic               : STRING FLAGS = "o" INITIALVALUE    =   "";
+            yUnitDynamic                : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Error                       : BOOL FLAGS = "o";
+            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
         END_VARIABLES;
         OPERATIONS
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;

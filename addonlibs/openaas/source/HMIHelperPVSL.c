@@ -25,20 +25,6 @@
 #include "libov/ov_time.h"
 
 
-
-OV_DLLFNCEXPORT OV_ACCESS openaas_HMIHelperPVSL_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
-) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_openaas_HMIHelperPVSL pinst = Ov_StaticPtrCast(openaas_HMIHelperPVSL, pobj);
-
-    return (OV_ACCESS)0;
-}
-
 OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
@@ -50,9 +36,22 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 
 	OV_INSTPTR_openaas_HMIHelperPVSL pinst = Ov_StaticPtrCast(openaas_HMIHelperPVSL, pfb);
-	OV_INSTPTR_ov_object pList = NULL;
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList pList = NULL;
 	OV_INSTPTR_openaas_PropertyValueStatement pchild = NULL;
 
+	ov_string_setvalue(&pinst->v_ExpressionLogic, "");
+	ov_string_setvalue(&pinst->v_ExpressionSemantic, "");
+	ov_string_setvalue(&pinst->v_IDSpecification, "");
+	ov_string_setvalue(&pinst->v_IDType, "");
+	ov_string_setvalue(&pinst->v_TimeStamp, "");
+	ov_string_setvalue(&pinst->v_Unit, "");
+	ov_string_setvalue(&pinst->v_View, "");
+	ov_string_setvalue(&pinst->v_Visibility, "");
+	ov_string_setvalue(&pinst->v_Name, "");
+	ov_string_setvalue(&pinst->v_Value, "");
+	ov_string_setvalue(&pinst->v_ErrorText, "");
+	pinst->v_Error = FALSE;
 
 
 	OV_UINT len = 0;
@@ -65,55 +64,48 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 	ov_string_append(&tmpString_header, ".Header.");
 
-
 	if (len == 8){
-			    	pathList2 = ov_string_split(pathList[7], ".",&len2);
+		pathList2 = ov_string_split(pathList[7], ".",&len2);
+		for (OV_UINT i = 4; i < len; i++){
+			ov_string_append(&path, "/");
+			ov_string_append(&path, pathList[i]);
+			if ( (i==6) && (len2>1) ){
+				ov_string_append(&path, "/");
+				ov_string_append(&path, pathList2[0]);
+				ov_string_append(&path, tmpString_header);
+				ov_string_append(&path, pathList2[1]);
+				break;
+			}
+		}
+	}else if (len == 9){
+		for (OV_UINT i = 4; i < len; i++){
+			ov_string_append(&path, "/");
+			ov_string_append(&path, pathList[i]);
+			if(i==7)
+				ov_string_append(&path, ".Body");
+		}
+	}
 
-
-				for (OV_UINT i = 4; i < len; i++){
-					ov_string_append(&path, "/");
-					ov_string_append(&path, pathList[i]);
-					if ( (i==6) && (len2>1) ){
-						ov_string_append(&path, "/");
-						ov_string_append(&path, pathList2[0]);
-						ov_string_append(&path, tmpString_header);
-						ov_string_append(&path, pathList2[1]);
-						break;
-					}
-				}
-			    }
-
-				else	if (len == 9){
-
-						for (OV_UINT i = 4; i < len; i++){
-							ov_string_append(&path, "/");
-
-							ov_string_append(&path, pathList[i]);
-							if(i==7)
-								ov_string_append(&path, ".Body");
-
-						}
-				}
-
-
-
-
-	pList = ov_path_getobjectpointer(path,2);
-
-
-
-	ov_string_setvalue(&pinst->v_ExpressionLogic, "");
-	ov_string_setvalue(&pinst->v_ExpressionSemantic, "");
-	ov_string_setvalue(&pinst->v_IDSpecification, "");
-	ov_string_setvalue(&pinst->v_IDType, "");
-	ov_string_setvalue(&pinst->v_TimeStamp, "");
-	ov_string_setvalue(&pinst->v_Unit, "");
-	ov_string_setvalue(&pinst->v_View, "");
-	ov_string_setvalue(&pinst->v_Visibility, "");
-	ov_string_setvalue(&pinst->v_Name, "");
-
-	ov_string_setvalue(&pinst->v_Value, "");
-
+	pobj = ov_path_getobjectpointer(path,2);
+	if (!pobj){
+		pinst->v_Error = TRUE;
+		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object for this path");
+		ov_string_freelist(pathList);
+		ov_string_freelist(pathList2);
+		ov_database_free(path);
+		ov_database_free(tmpString_header);
+		return;
+	}
+	pList = Ov_DynamicPtrCast(openaas_PropertyValueStatementList, pobj);
+	if (!pList){
+		pinst->v_Error = TRUE;
+		ov_string_setvalue(&pinst->v_ErrorText, "Object is not of PVSL-Type");
+		ov_string_freelist(pathList);
+		ov_string_freelist(pathList2);
+		ov_database_free(path);
+		ov_database_free(tmpString_header);
+		return;
+	}
 
 	OV_STRING tmpString = NULL;
 	OV_UINT i = 0;
@@ -140,32 +132,26 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		ov_string_append(&pinst->v_Unit, pchild->v_Unit);
 
+		ov_string_append(&pinst->v_Name, ((OV_INSTPTR_ov_object)pchild)->v_identifier);
 
-
-
-
-		ov_string_append(&pinst->v_Name, pchild->v_identifier);
-
-
-
-	switch(pchild->v_ExpressionSemantic){
-		case 0:
-			ov_string_append(&pinst->v_ExpressionSemantic, "A");
-			break;
-		case 1:
-			ov_string_append(&pinst->v_ExpressionSemantic, "S");
-			break;
-		case 2:
-			ov_string_append(&pinst->v_ExpressionSemantic, "M");
-			break;
-		case 3:
-			ov_string_append(&pinst->v_ExpressionSemantic, "R");
-			break;
+		switch(pchild->v_ExpressionSemantic){
+			case 0:
+				ov_string_append(&pinst->v_ExpressionSemantic, "A");
+				break;
+			case 1:
+				ov_string_append(&pinst->v_ExpressionSemantic, "S");
+				break;
+			case 2:
+				ov_string_append(&pinst->v_ExpressionSemantic, "M");
+				break;
+			case 3:
+				ov_string_append(&pinst->v_ExpressionSemantic, "R");
+				break;
 			default:
+				pinst->v_Error = TRUE;
+				ov_string_setvalue(&pinst->v_ErrorText, "ExpressionSemantic not supported");
 			break;
-
-
-		}
+			}
 
 		switch(pchild->v_ExpressionLogic){
 			case 0:
@@ -186,64 +172,61 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			case 5:
 				ov_string_append(&pinst->v_ExpressionLogic, "LT");
 				break;
-				default:
-				break;
-
-
+			default:
+				pinst->v_Error = TRUE;
+				ov_string_setvalue(&pinst->v_ErrorText, "ExpressionLogic not supported");
+			break;
 			}
+
 		switch(pchild->v_View){
-				case 0:
-					ov_string_append(&pinst->v_View, "B");
-					break;
-				case 1:
-					ov_string_append(&pinst->v_View, "C");
-					break;
-				case 2:
-					ov_string_append(&pinst->v_View, "P");
-					break;
-				case 3:
-					ov_string_append(&pinst->v_View, "F");
-					break;
-				case 4:
-					ov_string_append(&pinst->v_View, "L");
-					break;
-				case 5:
-					ov_string_append(&pinst->v_View, "S");
-					break;
-				case 6:
-					ov_string_append(&pinst->v_View, "N");
-					break;
-				case 7:
-					ov_string_append(&pinst->v_View, "L");
-					break;
-				case 8:
-					ov_string_append(&pinst->v_View, "H");
-					break;
-					default:
-					break;
-
-
-				}
-
+			case 0:
+				ov_string_append(&pinst->v_View, "B");
+				break;
+			case 1:
+				ov_string_append(&pinst->v_View, "C");
+				break;
+			case 2:
+				ov_string_append(&pinst->v_View, "P");
+				break;
+			case 3:
+				ov_string_append(&pinst->v_View, "F");
+				break;
+			case 4:
+				ov_string_append(&pinst->v_View, "L");
+				break;
+			case 5:
+				ov_string_append(&pinst->v_View, "S");
+				break;
+			case 6:
+				ov_string_append(&pinst->v_View, "N");
+				break;
+			case 7:
+				ov_string_append(&pinst->v_View, "L");
+				break;
+			case 8:
+				ov_string_append(&pinst->v_View, "H");
+				break;
+			default:
+				pinst->v_Error = TRUE;
+				ov_string_setvalue(&pinst->v_ErrorText, "View not supported");
+			break;
+			}
 
 		switch(pchild->v_Visibility){
-				case 0:
-					ov_string_append(&pinst->v_Visibility, "-");
-					break;
-				case 1:
-					ov_string_append(&pinst->v_Visibility, "o");
-					break;
-				case 2:
-					ov_string_append(&pinst->v_Visibility, "+");
-					break;
-					default:
-					break;
-
-
-				}
-
-
-
+			case 0:
+				ov_string_append(&pinst->v_Visibility, "-");
+				break;
+			case 1:
+				ov_string_append(&pinst->v_Visibility, "o");
+				break;
+			case 2:
+				ov_string_append(&pinst->v_Visibility, "+");
+				break;
+			default:
+				pinst->v_Error = TRUE;
+				ov_string_setvalue(&pinst->v_ErrorText, "Visibility not supported");
+			break;
+			}
 
 		switch(pchild->v_Value.value.vartype & OV_VT_KSMASK){
 			case OV_VT_BOOL:
@@ -273,17 +256,19 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 				ov_string_append(&pinst->v_Value, tmpString);
 			break;
 			default:
+				pinst->v_Error = TRUE;
+				ov_string_setvalue(&pinst->v_ErrorText, "DataTye not supported");
+				ov_string_append(&pinst->v_Value, "");
 			break;
 		}
 
-
-		i++;
-		}
+	i++;
+	}
 
 	ov_database_free(tmpString);
-	  ov_string_freelist(pathList);
-	    ov_string_freelist(pathList2);
-	    ov_database_free(path);
-	    	ov_database_free(tmpString_header);
+	ov_string_freelist(pathList);
+	ov_string_freelist(pathList2);
+	ov_database_free(path);
+	ov_database_free(tmpString_header);
     return;
 }
