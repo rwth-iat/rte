@@ -88,7 +88,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_String *tmpUAPVSLName = (UA_String*)(input[1].data);
 		UA_Identification *tmpUACarrier = (UA_Identification*)(input[2].data);
-		UA_Identification *tmpUACreatingInstance = (UA_Identification*)(input[2].data);
+		UA_Identification *tmpUACreatingInstance = (UA_Identification*)(input[3].data);
 
 		IdentificationType tmpOVAASId;
 		IdentificationType_init(&tmpOVAASId);
