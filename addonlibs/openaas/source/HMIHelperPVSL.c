@@ -132,7 +132,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		ov_string_append(&pinst->v_Unit, pchild->v_Unit);
 
-		ov_string_append(&pinst->v_Name, ((OV_INSTPTR_ov_object)pchild)->v_identifier);
+		ov_string_append(&pinst->v_Name, pchild->v_identifier);
 
 		switch(pchild->v_ExpressionSemantic){
 			case 0:
