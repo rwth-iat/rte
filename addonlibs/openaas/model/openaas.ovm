@@ -73,7 +73,9 @@ LIBRARY openaas
     CLASS LifeCycleArchive : CLASS ov/domain
     	IS_INSTANTIABLE;
     	VARIABLES
-    		LifeCycleEntrySize : UINT;
+    		LifeCycleEntrySize        : UINT;
+    		LifeCycleEntrySizeMax     : UINT INITIALVALUE = 1000;
+    		LifeCycleEntryNameCount   : UINT;
     	END_VARIABLES;
     	OPERATIONS
     		getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
