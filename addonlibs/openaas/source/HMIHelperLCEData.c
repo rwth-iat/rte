@@ -100,8 +100,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	}
 
 	// Search for Start and Stop LCE
+	OV_UINT lceCount = 0;
 	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, openaas_LifeCycleEntry){
 		if (ov_string_compare(pchild->v_EventClass, pinst->v_EventClass) == OV_STRCMP_EQUAL && ov_string_compare(pchild->v_Subject, pinst->v_Subject) == OV_STRCMP_EQUAL){
+			lceCount++;
 			// StartLCE
 			switch(ov_time_compare(&pchild->v_TimeStamp, &startTime)){
 				case OV_TIMECMP_AFTER:
@@ -129,6 +131,14 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 		}
 	}
 
+	if (lceCount == 0){
+		pinst->v_Error = TRUE;
+		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object in LifeCycleArchive");
+		ov_database_free(tmpString);
+		ov_string_freelist(pathList);
+		ov_database_free(path);
+		return;
+	}
 
 	// printing x- and y-values
 	OV_TIME xValue;
@@ -138,7 +148,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	timeSpan.usecs = 8000;
 	OV_BOOL endLCE = FALSE;
 
-	OV_UINT lceCount = 0;
+	lceCount = 0;
 	//ov_string_append(&pinst->v_yUnitStatic, pstartLCE->);
 	do {
 		if (lceCount == 0){
@@ -408,28 +418,11 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 
 	// for dynamic
 	pobj = NULL;
-	pobj = Ov_GetLastChild(ov_containment, &paas->p_LifeCycleArchive);
-	if (!pobj){
-		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object in LifeCycleArchive");
-		return;
-	}
 	pchild = NULL;
-	pchild = Ov_DynamicPtrCast(openaas_LifeCycleEntry, pobj);
-	if (!pchild){
-		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "Found LifeCycleArchive");
-		return;
-	}
 	i = 0;
 	do{
 		if (i == 0){
 			pobj = Ov_GetLastChild(ov_containment, &paas->p_LifeCycleArchive);
-			if (!pobj){
-				pinst->v_Error = TRUE;
-				ov_string_setvalue(&pinst->v_ErrorText, "Could not find an LCE-object in LifeCycleArchive");
-				break;
-			}
 			pchild = Ov_DynamicPtrCast(openaas_LifeCycleEntry, pobj);
 			if (!pchild){
 				i++;
@@ -438,16 +431,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 		}
 
 		pobj = Ov_GetPreviousChild(ov_containment, pchild);
-		if (!pobj){
-			pinst->v_Error = TRUE;
-			ov_string_setvalue(&pinst->v_ErrorText, "Could not find an LCE-object in LifeCycleArchive");
-			break;
-		}
 		pchild = Ov_DynamicPtrCast(openaas_LifeCycleEntry, pobj);
-		if (!pchild){
-			i++;
-			continue;
-		}
 	}while(ov_string_compare(pchild->v_EventClass, pinst->v_EventClass) != OV_STRCMP_EQUAL || ov_string_compare(pchild->v_Subject, pinst->v_Subject) != OV_STRCMP_EQUAL);
 
 	if (pinst->v_Error == FALSE){
