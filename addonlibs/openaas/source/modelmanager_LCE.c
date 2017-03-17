@@ -169,7 +169,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createLCE(IdentificationType 
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
 		OV_STRING tmpString = NULL;
-		if (paas->p_LifeCycleArchive.v_LifeCycleEntrySize > paas->p_LifeCycleArchive.v_LifeCycleEntrySizeMax){
+		if (paas->p_LifeCycleArchive.v_LifeCycleEntrySize > paas->p_LifeCycleArchive.v_LifeCycleEntrySizeMax-1){
 			ptr = Ov_GetFirstChild(ov_containment, &paas->p_LifeCycleArchive);
 			if (ptr){
 				plce = Ov_StaticPtrCast(openaas_LifeCycleEntry,ptr);
