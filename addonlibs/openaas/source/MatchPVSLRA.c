@@ -67,6 +67,12 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 	OV_BOOL tmpMatch = false;
 	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirementList), requirement, openaas_PropertyValueStatement){
 		if (requirement->v_ExpressionSemantic == REQUIREMENT){
+			if (assuranceSize == 0){
+				ov_string_print(matchText, "requirement %s do not match with the assurances", requirement->v_identifier);
+				ov_database_free(requirementPath);
+				ov_database_free(assurancePath);
+				return 0;
+			}
 			assuranceCounter = 0;
 			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, openaas_PropertyValueStatement){
 				if (assurance->v_ExpressionSemantic == ASSURANCE){
