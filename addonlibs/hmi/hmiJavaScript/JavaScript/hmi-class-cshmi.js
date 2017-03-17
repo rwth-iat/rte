@@ -5008,6 +5008,7 @@ cshmi.prototype = {
 		var jsOnload = requestList[ObjectPath]["jsOnload"];
 		
 		var HTMLcontentNode = null;
+		var HtmlFirstElement = null;
 		if(HTMLcontent !== ""){
 			//create foreignObject in <SVG>-Element
 			var SVGWidth = VisualObject.getAttribute("width");
@@ -5030,6 +5031,7 @@ cshmi.prototype = {
 				+HTML
 				+"</svg:svg>";
 				HTMLcontentNode = HMI.HMIDOMParser.parse(svgContent);
+				HtmlFirstElement = HTMLcontentNode.firstChild.firstElementChild.firstElementChild;
 				
 				//append foreignObject to VisualObject
 				parentObject = VisualObject;
@@ -5043,7 +5045,9 @@ cshmi.prototype = {
 				HTMLcontentNode.style.width = SVGWidth+"px";
 				HTMLcontentNode.style.height = SVGHeight+"px";
 				HTMLcontentNode.innerHTML = HTMLcontent;
-				
+
+				HtmlFirstElement = HTMLcontentNode.firstElementChild;
+
 				//the position will be later positioned to the Playground, so this is changed to "relative"
 				HMI.Playground.style.position = "relative";
 				HTMLcontentNode.style.position = "absolute";
@@ -5119,6 +5123,7 @@ cshmi.prototype = {
 			 */
 			var cshmimodel = new Object();
 			cshmimodel.SvgElement = VisualObject;
+			cshmimodel.HtmlFirstElement = HtmlFirstElement;
 			cshmimodel.Modelpath = ObjectPath;
 			cshmimodel.document = HMI.svgDocument;
 			cshmimodel.window = window;
