@@ -214,8 +214,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
     OV_INSTPTR_openaas_modelmanager pinst = Ov_StaticPtrCast(openaas_modelmanager, pobj);
     OV_RESULT    result;
     OV_INSTPTR_ov_object pOtherObject = NULL;
-    OV_INSTPTR_ov_domain pcommunication = NULL;
-	OV_INSTPTR_ov_domain pDomOpenAAS = NULL;
 	OV_INSTPTR_openaas_aas pComCo = NULL;
 	OV_INSTPTR_openaas_ExternalPostOffice pExternalPost = NULL;
 	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
@@ -250,31 +248,32 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 		}
 	 }
 
-	pcommunication = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "communication"));
-	if(!pcommunication) {
-		result = Ov_CreateObject(ov_domain, pcommunication, &(pdb->root), "communication");
-		if(Ov_Fail(result)) {
-			ov_logfile_error("Fatal: Could not create Object 'communication'");
-			return result;
-		}
-	}
-	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pcommunication)){
-		ov_logfile_error("Fatal: communication object found but not domain (or derived)");
-		return OV_ERR_GENERIC;
-	}
-
-	pDomOpenAAS = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pcommunication, "OpenAAS"));
-	if(!pDomOpenAAS) {
-		result = Ov_CreateObject(ov_domain, pDomOpenAAS, pcommunication, "OpenAAS");
-		if(Ov_Fail(result)){
-			ov_logfile_error("Fatal: could not create OpenAAS domain");
-			return result;
-		}
-	}
-	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pDomOpenAAS)){
-		ov_logfile_error("Fatal: OpenAAS object found but not domain (or derived)");
-		return OV_ERR_GENERIC;
-	}
+	 OV_INSTPTR_ov_domain pdata = NULL;
+	 OV_INSTPTR_ov_domain popenAAS = NULL;
+	 pdata = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "data"));
+	 if(!pdata) {
+	 	result = Ov_CreateObject(ov_domain, pdata, &(pdb->root), "data");
+	 	if(Ov_Fail(result)) {
+	 		ov_logfile_error("Fatal: Could not create Object 'data'");
+	 		return result;
+	 	}
+	 }
+	 else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pdata))	{
+	 	ov_logfile_error("Fatal: pdata object found but not domain (or derived)");
+	 	return OV_ERR_GENERIC;
+	 }
+	 popenAAS = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pdata, "openAAS"));
+	 if(!popenAAS) {
+	 	result = Ov_CreateObject(ov_domain, popenAAS, pdata, "openAAS");
+	 	if(Ov_Fail(result))	{
+	 		ov_logfile_error("Fatal: could not create openAAS domain");
+	 		return result;
+	 	}
+	 }
+	 else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) popenAAS)){
+	 	ov_logfile_error("Fatal: openAAS object found but not domain (or derived)");
+	 	return OV_ERR_GENERIC;
+	 }
 
 	// create sendAASMessage
 	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
@@ -283,7 +282,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 		}
 	}
 	if(!psendAASMessage){
-		result = Ov_CreateObject(ksapi_setVar, psendAASMessage, pDomOpenAAS, "SendAASMessage");
+		result = Ov_CreateObject(ksapi_setVar, psendAASMessage, popenAAS, "SendAASMessage");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create SendAASMessage object - reason: %s", ov_result_getresulttext(result));
 			return result;
@@ -297,7 +296,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 		}
 	}
 	if(!pGetComCoAddressFromAASDiscoveryServer){
-		result = Ov_CreateObject(ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, pDomOpenAAS, "GetComCoAddressFromAASDiscoveryServer");
+		result = Ov_CreateObject(ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, popenAAS, "GetComCoAddressFromAASDiscoveryServer");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create GetComCoAddressFromAASDiscoveryServer object - reason: %s", ov_result_getresulttext(result));
 			return result;
