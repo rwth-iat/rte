@@ -99,7 +99,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_StartLCEGenerator_set(
     pobj->v_StartLCEGenerator = value;
 	pobj->v_actimode = 1;
 	pobj->v_iexreq = TRUE;
-	pobj->v_cyctime.secs = 30;
     return OV_ERR_OK;
 }
 
