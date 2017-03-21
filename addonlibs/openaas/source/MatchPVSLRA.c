@@ -84,7 +84,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 					ov_string_setvalue(&assurancePath, assuranceListPath);
 					ov_string_append(&assurancePath, "/");
 					ov_string_append(&assurancePath, assurance->v_identifier);
-					if (openaas_MatchPVSRA_matchPVSRA(requirementPath, assurancePath, &tmpMatch, &tmpMatchText &tmpErrorText) != 0){
+					if (openaas_MatchPVSRA_matchPVSRA(requirementPath, assurancePath, &tmpMatch, &tmpMatchText, &tmpErrorText) != 0){
 						ov_string_setvalue(errorText, tmpErrorText);
 						ov_database_free(tmpMatchText);
 						ov_database_free(tmpErrorText);
