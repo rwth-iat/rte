@@ -310,19 +310,19 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 
 	// check
 	if (requirement->v_IDIdType != assurance->v_IDIdType){
-		ov_string_setvalue(errorText, "IDs are not the same");
+		ov_string_print(errorText, "requirement %s and assurance %s IDTypes are not the same", requirement->v_identifier, assurance->v_identifier);
 		return 1;
 	}
 	if (ov_string_compare(requirement->v_IDIdString, assurance->v_IDIdString) != OV_STRCMP_EQUAL){
-		ov_string_setvalue(errorText, "IDs are not the same");
+		ov_string_print(errorText, "requirement %s and assurance %s IDs are not the same", requirement->v_identifier, assurance->v_identifier);
 		return 1;
 	}
 	if(ov_string_compare(requirement->v_Unit, assurance->v_Unit) != OV_STRCMP_EQUAL){
-		ov_string_setvalue(errorText, "Units are not the same");
+		ov_string_print(errorText, "requirement %s and assurance %s Units are not the same", requirement->v_identifier, assurance->v_identifier);
 		return 1;
 	}
 	if (requirement->v_Value.value.vartype != assurance->v_Value.value.vartype){
-		ov_string_setvalue(errorText, "requirement and assurance have not the same datatype");
+		ov_string_print(errorText, "requirement %s and assurance %s have not the same datatype", requirement->v_identifier, assurance->v_identifier);
 		return 1;
 	}
 
@@ -348,7 +348,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 				*match = 0;
 				break;
 			default:
-				ov_string_setvalue(errorText, "unknown expression logic from assurance");
+				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
 				return 1;
 				break;
 			}
@@ -374,7 +374,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 				*match = 0;
 				break;
 			default:
-				ov_string_setvalue(errorText, "unknown expression logic from assurance");
+				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
 				return 1;
 				break;
 			}
@@ -400,7 +400,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 				*match = 0;
 				break;
 			default:
-				ov_string_setvalue(errorText, "unknown expression logic from assurance");
+				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
 				return 1;
 				break;
 			}
@@ -426,7 +426,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 				*match = LessThan(assurance->v_Value, requirement->v_Value);
 				break;
 			default:
-				ov_string_setvalue(errorText, "unknown expression logic from assurance");
+				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
 				return 1;
 				break;
 			}
@@ -452,7 +452,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 				*match = LessEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			default:
-				ov_string_setvalue(errorText, "unknown expression logic from assurance");
+				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
 				return 1;
 				break;
 			}
@@ -478,13 +478,13 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 				*match = LessThan(assurance->v_Value, requirement->v_Value);
 				break;
 			default:
-				ov_string_setvalue(errorText, "unknown expression logic from assurance");
+				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
 				return 1;
 				break;
 			}
 		break;
 	default:
-		ov_string_setvalue(errorText, "unknown expression logic from assurance");
+		ov_string_print(errorText, "unknown expression logic from requirement %s", requirement->v_identifier);
 		return 1;
 		break;
 	}
