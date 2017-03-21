@@ -93,12 +93,18 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 						return 1;
 					}
 					if (tmpMatch == true){
+						ov_database_free(tmpMatchText);
+						ov_database_free(tmpErrorText);
+						ov_database_free(requirementPath);
+						ov_database_free(assurancePath);
 						break;
 					}
 					if (tmpMatch == false && assuranceCounter >= assuranceSize){
 						*match = false;
 						ov_string_print(matchText, "requirement %s do not match with the assurances, ", requirement->v_identifier);
 						ov_string_append(matchText, tmpMatchText);
+						ov_database_free(tmpMatchText);
+						ov_database_free(tmpErrorText);
 						ov_database_free(requirementPath);
 						ov_database_free(assurancePath);
 						return 0;
