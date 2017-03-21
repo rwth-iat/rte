@@ -280,7 +280,7 @@ OV_BOOL LessThan (const OV_ANY any1, const OV_ANY any2){
 
 
 
-OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath, OV_STRING assurancePath, OV_BOOL *match, OV_STRING *errorText) {
+OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath, OV_STRING assurancePath, OV_BOOL *match, OV_STRING *matchText, OV_STRING *errorText) {
 	OV_INSTPTR_openaas_PropertyValueStatement requirement = NULL;
 	OV_INSTPTR_openaas_PropertyValueStatement assurance = NULL;
 	OV_INSTPTR_ov_object pobj = NULL;
@@ -310,20 +310,20 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 
 	// check
 	if (requirement->v_IDIdType != assurance->v_IDIdType){
-		ov_string_print(errorText, "requirement %s and assurance %s IDTypes are not the same", requirement->v_identifier, assurance->v_identifier);
-		return 1;
+		ov_string_print(matchText, "requirement %s and assurance %s IDTypes are not the same", requirement->v_identifier, assurance->v_identifier);
+		return 0;
 	}
 	if (ov_string_compare(requirement->v_IDIdString, assurance->v_IDIdString) != OV_STRCMP_EQUAL){
-		ov_string_print(errorText, "requirement %s and assurance %s IDs are not the same", requirement->v_identifier, assurance->v_identifier);
-		return 1;
+		ov_string_print(matchText, "requirement %s and assurance %s IDs are not the same", requirement->v_identifier, assurance->v_identifier);
+		return 0;
 	}
 	if(ov_string_compare(requirement->v_Unit, assurance->v_Unit) != OV_STRCMP_EQUAL){
-		ov_string_print(errorText, "requirement %s and assurance %s Units are not the same", requirement->v_identifier, assurance->v_identifier);
-		return 1;
+		ov_string_print(matchText, "requirement %s and assurance %s Units are not the same", requirement->v_identifier, assurance->v_identifier);
+		return 0;
 	}
 	if (requirement->v_Value.value.vartype != assurance->v_Value.value.vartype){
-		ov_string_print(errorText, "requirement %s and assurance %s have not the same datatype", requirement->v_identifier, assurance->v_identifier);
-		return 1;
+		ov_string_print(matchText, "requirement %s and assurance %s have not the same datatype", requirement->v_identifier, assurance->v_identifier);
+		return 0;
 	}
 
 	switch(requirement->v_ExpressionLogic){
@@ -505,7 +505,7 @@ OV_DLLFNCEXPORT void openaas_MatchPVSRA_typemethod(
 	pinst->v_match = false;
 
 	// Get Object pointer
-	pinst->v_error = openaas_MatchPVSRA_matchPVSRA(pinst->v_requirementPath, pinst->v_assurancePath, &pinst->v_match, &pinst->v_errortext);
+	pinst->v_error = openaas_MatchPVSRA_matchPVSRA(pinst->v_requirementPath, pinst->v_assurancePath, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
 
     return;
 }

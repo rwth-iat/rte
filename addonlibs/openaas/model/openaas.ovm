@@ -325,6 +325,7 @@ LIBRARY openaas
   		    requirementPath : STRING FLAGS = "i";
   		    assurancePath   : STRING FLAGS = "i";
   		    match       : BOOL FLAGS = "o";
+  		    matchText   : STRING FLAGS = "o";
   		    error       : UINT FLAGS = "o";
   		    errortext   : STRING FLAGS = "o";
   		END_VARIABLES;
