@@ -287,6 +287,8 @@ LIBRARY openaas
         LCEWritingInstanceIdType        : UINT HAS_SET_ACCESSOR;
         LCEEventClass                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
         LCESubject                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        LCETimeStamp                    : TIME HAS_SET_ACCESSOR;
+        LCETimeStampExtern              : BOOL HAS_SET_ACCESSOR INITIALVALUE = FALSE;
         LCEValue                        : ANY HAS_SET_ACCESSOR;
         StartLCEGenerator               : BOOL HAS_SET_ACCESSOR;
         StopLCEGenerator                : BOOL HAS_SET_ACCESSOR;

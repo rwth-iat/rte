@@ -85,6 +85,23 @@ OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCESubject_set(
     return ov_string_setvalue(&pobj->v_LCESubject,value);
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCETimeStamp_set(
+    OV_INSTPTR_openaas_LCEGenerator          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_LCETimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCETimeStampExtern_set(
+    OV_INSTPTR_openaas_LCEGenerator          pobj,
+    const OV_BOOL  value
+) {
+    pobj->v_LCETimeStampExtern = value;
+    return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCEValue_set(
     OV_INSTPTR_openaas_LCEGenerator          pobj,
     const OV_ANY*  value
@@ -147,7 +164,10 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 
 	Ov_SetAnyValue(&lce.data.Value, &pinst->v_LCEValue);
 
-	ov_time_gettime(&lce.data.TimeStamp);
+	if (pinst->v_LCETimeStampExtern == FALSE)
+		ov_time_gettime(&lce.data.TimeStamp);
+	else
+		lce.data.TimeStamp = pinst->v_LCETimeStamp;
 
 	IdentificationType aasId;
 	IdentificationType_init(&aasId);
