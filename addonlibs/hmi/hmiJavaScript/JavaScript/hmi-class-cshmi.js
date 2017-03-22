@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2015
+*	Copyright (C) 2017
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -1898,6 +1898,9 @@ cshmi.prototype = {
 			}
 			return true;
 		}else if (ParameterName === "elemVar"){
+			//some changes should trigger a resize of a blackbox
+			var correctedSizeOrPosition = false;
+
 			//some elemVars are special, as they are different in Model and SVG
 			if (ParameterValue === "strokeWidth"){
 				VisualObject.setAttribute("stroke-width", NewValue);
@@ -1935,6 +1938,20 @@ cshmi.prototype = {
 					
 					//load hidden elements now
 					this._interpreteHiddenChildrenElements(VisualObject);
+				}
+
+				/** align  HTML div from playground to the new setting */
+				if (!this.useforeignObject) {
+					for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+						if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+							if (NewValue == "FALSE"){
+								HMI.Playground.childNodes.item(i).setAttribute("display", "none");
+							}else{
+								HMI.Playground.childNodes.item(i).setAttribute("display", "block");
+							}
+							break;
+						}
+					}
 				}
 			}else if (ParameterValue === "rotate"){
 				if(!isNumeric(NewValue)){
@@ -1975,6 +1992,7 @@ cshmi.prototype = {
 				}
 				//we want to have offset parameter on all visual elements
 				HMI.saveAbsolutePosition(VisualObject);
+				correctedSizeOrPosition = true;
 			}else if (ParameterValue === "absolutey"){
 				var relativeY = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
@@ -1988,6 +2006,7 @@ cshmi.prototype = {
 				}
 				//we want to have offset parameter on all visual elements
 				HMI.saveAbsolutePosition(VisualObject);
+				correctedSizeOrPosition = true;
 			}else if (ParameterValue === "absoluterotate"){
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absoluterotate is calculated from the offset of the parentNode
@@ -2031,7 +2050,24 @@ cshmi.prototype = {
 				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "cx" || ParameterValue === "cy" || ParameterValue === "x1" || ParameterValue === "y1"){
 					HMI.saveAbsolutePosition(VisualObject);
 				}
+				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "width" || ParameterValue === "height"){
+					correctedSizeOrPosition = true;
+				}
 			}
+			/** align  HTML div from playground to the new setting */
+			if (correctedSizeOrPosition === true && !this.useforeignObject) {
+				for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+					if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+						var divElem = HMI.Playground.childNodes.item(i);
+						divElem.style.top = VisualObject.getAttribute("absolutey")+"px";
+						divElem.style.left = VisualObject.getAttribute("absolutex")+"px";
+						divElem.style.width = VisualObject.getAttribute("width")+"px";
+						divElem.style.height = VisualObject.getAttribute("height")+"px";
+						break;
+					}
+				}
+			}
+			
 			return true;
 		}else if (ParameterName === "globalVar"){
 			//globalVar
@@ -4259,25 +4295,24 @@ cshmi.prototype = {
 		}
 		
 		/** clean up HTML div from playground */
-        if (!this.useforeignObject) {
-            var deleteRecursive = function (VisualObject) {
-                if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
-                    for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
-                        if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
-                            HMI.Playground.removeChild(HMI.Playground.childNodes.item(i));
-                            i--;    // we are manipulating a liveNodelist
-                        }
-                    }
-                }
-                for (var i = 0; i < VisualObject.childNodes.length; i++) {
-                    if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
-                        deleteRecursive(VisualObject.childNodes.item(i));
-                    }
-                }
-
-            };
-            deleteRecursive(VisualObject);
-        }		
+		if (!this.useforeignObject) {
+			var deleteRecursive = function (VisualObject) {
+				if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+					for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+						if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+							HMI.Playground.removeChild(HMI.Playground.childNodes.item(i));
+							break;
+						}
+					}
+				}
+				for (var i = 0; i < VisualObject.childNodes.length; i++) {
+					if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+						deleteRecursive(VisualObject.childNodes.item(i));
+					}
+				}
+			};
+			deleteRecursive(VisualObject);
+		}
 		
 		var newVisualObject = this._interpreteElementOrEventRecursive(VisualParentObject, ObjectPath, ObjectType, false);
 		this.ResourceList.newRebuildObject = Object();
