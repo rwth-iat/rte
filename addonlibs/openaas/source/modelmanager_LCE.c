@@ -168,7 +168,6 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createLCE(IdentificationType 
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		OV_STRING tmpString = NULL;
 		if (paas->p_LifeCycleArchive.v_LifeCycleEntrySize > paas->p_LifeCycleArchive.v_LifeCycleEntrySizeMax-1){
 			ptr = Ov_GetFirstChild(ov_containment, &paas->p_LifeCycleArchive);
 			if (ptr){
@@ -193,10 +192,11 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createLCE(IdentificationType 
 				}
 			}
 		}
-
+		OV_STRING tmpString = NULL;
 		OV_UINT count = paas->p_LifeCycleArchive.v_LifeCycleEntryNameCount+1;
 		ov_string_print(&tmpString, "%u", count);
 		ovResult = Ov_CreateObject(openaas_LifeCycleEntry, plce, &paas->p_LifeCycleArchive, tmpString);
+		ov_database_free(tmpString);
 		if(Ov_Fail(ovResult)){
 			ov_logfile_error("Fatal: could not create LCE object - reason: %s", ov_result_getresulttext(ovResult));
 			return openaas_modelmanager_ovresultToAASStatusCode(ovResult);
