@@ -1942,16 +1942,27 @@ cshmi.prototype = {
 
 				/** align  HTML div from playground to the new setting */
 				if (!this.useforeignObject) {
-					for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
-						if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
-							if (NewValue == "FALSE"){
-								HMI.Playground.childNodes.item(i).setAttribute("display", "none");
-							}else{
-								HMI.Playground.childNodes.item(i).setAttribute("display", "block");
+					// recursive handling is needed because a changed parent visibility hides a child
+					var handleRecursive = function (VisualObject) {
+						if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+							for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+								if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+									if (NewValue == "FALSE"){
+										HMI.Playground.childNodes.item(i).setAttribute("display", "none");
+									}else{
+										HMI.Playground.childNodes.item(i).setAttribute("display", "block");
+									}
+									break;
+								}
 							}
-							break;
 						}
-					}
+						for (var i = 0; i < VisualObject.childNodes.length; i++) {
+							if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+								handleRecursive(VisualObject.childNodes.item(i));
+							}
+						}
+					};
+					handleRecursive(VisualObject);
 				}
 			}else if (ParameterValue === "rotate"){
 				if(!isNumeric(NewValue)){
@@ -2056,16 +2067,27 @@ cshmi.prototype = {
 			}
 			/** align  HTML div from playground to the new setting */
 			if (correctedSizeOrPosition === true && !this.useforeignObject) {
-				for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
-					if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
-						var divElem = HMI.Playground.childNodes.item(i);
-						divElem.style.top = VisualObject.getAttribute("absolutey")+"px";
-						divElem.style.left = VisualObject.getAttribute("absolutex")+"px";
-						divElem.style.width = VisualObject.getAttribute("width")+"px";
-						divElem.style.height = VisualObject.getAttribute("height")+"px";
-						break;
+				// recursive handling is needed because a changed parent position can change a child
+				var handleRecursive = function (VisualObject) {
+					if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+						for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+							if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+								var divElem = HMI.Playground.childNodes.item(i);
+								divElem.style.top = VisualObject.getAttribute("absolutey")+"px";
+								divElem.style.left = VisualObject.getAttribute("absolutex")+"px";
+								divElem.style.width = VisualObject.getAttribute("width")+"px";
+								divElem.style.height = VisualObject.getAttribute("height")+"px";
+								break;
+							}
+						}
 					}
-				}
+					for (var i = 0; i < VisualObject.childNodes.length; i++) {
+						if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+							handleRecursive(VisualObject.childNodes.item(i));
+						}
+					}
+				};
+				handleRecursive(VisualObject);
 			}
 			
 			return true;
