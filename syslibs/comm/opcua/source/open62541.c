@@ -21774,7 +21774,7 @@ void UA_Discovery_cleanupTimedOut(UA_Server *server, UA_DateTime nowMonotonic) {
         UA_Boolean semaphoreDeleted = UA_FALSE;
 
         if (current->registeredServer.semaphoreFilePath.length) {
-            char* filePath = (char *)malloc(sizeof(char)*current->registeredServer.semaphoreFilePath.length+1);
+            char* filePath = (char *)UA_malloc(sizeof(char)*current->registeredServer.semaphoreFilePath.length+1);
             memcpy( filePath, current->registeredServer.semaphoreFilePath.data, current->registeredServer.semaphoreFilePath.length );
             filePath[current->registeredServer.semaphoreFilePath.length] = '\0';
 #ifdef UNDER_CE
@@ -21785,7 +21785,7 @@ void UA_Discovery_cleanupTimedOut(UA_Server *server, UA_DateTime nowMonotonic) {
 #else
             semaphoreDeleted = access( filePath, 0 ) == -1;
 #endif
-            free(filePath);
+            UA_free(filePath);
         }
 
         if (semaphoreDeleted || (server->config.discoveryCleanupTimeout && current->lastSeen < timedOut)) {
@@ -26088,7 +26088,7 @@ void UA_Subscription_publishCallback(UA_Server *server, UA_Subscription *sub) {
     UA_NotificationMessageEntry *retransmission = NULL;
     if(notifications > 0) {
         /* Allocate the retransmission entry */
-        retransmission = (UA_NotificationMessageEntry *)malloc(sizeof(UA_NotificationMessageEntry));
+        retransmission = (UA_NotificationMessageEntry *)UA_malloc(sizeof(UA_NotificationMessageEntry));
         if(!retransmission) {
             UA_LOG_WARNING_SESSION(server->config.logger, sub->session,
                                    "Subscription %u | Could not allocate memory "
@@ -26869,7 +26869,7 @@ static void UA_Client_deleteMembers(UA_Client* client) {
     UA_Client_NotificationsAckNumber *n, *tmp;
     LIST_FOREACH_SAFE(n, &client->pendingNotificationsAcks, listEntry, tmp) {
         LIST_REMOVE(n, listEntry);
-        free(n);
+        UA_free(n);
     }
     UA_Client_Subscription *sub, *tmps;
     LIST_FOREACH_SAFE(sub, &client->subscriptions, listEntry, tmps)
@@ -26990,7 +26990,7 @@ static UA_StatusCode HelAckHandshake(UA_Client *client) {
 static UA_StatusCode
 SecureChannelHandshake(UA_Client *client, UA_Boolean renew) {
     /* Check if sc is still valid */
-    if(renew && client->nextChannelRenewal - UA_DateTime_nowMonotonic() > 0)
+    if(renew && client->nextChannelRenewal - UA_DateTime_nowMonotonic() > 0 && client->state == UA_CLIENTSTATE_CONNECTED)
         return UA_STATUSCODE_GOOD;
 
     UA_Connection *conn = &client->connection;
@@ -27554,6 +27554,7 @@ UA_StatusCode UA_Client_disconnect(UA_Client *client) {
 }
 
 UA_StatusCode UA_Client_manuallyRenewSecureChannel(UA_Client *client) {
+	printf("entered UA_Client_manuallyRenewSecureChannel \n");
     UA_StatusCode retval = SecureChannelHandshake(client, true);
     if(retval == UA_STATUSCODE_GOOD)
       client->state = UA_CLIENTSTATE_CONNECTED;
@@ -27658,7 +27659,11 @@ __UA_Client_Service(UA_Client *client, const void *request, const UA_DataType *r
                     void *response, const UA_DataType *responseType) {
     UA_init(response, responseType);
     UA_ResponseHeader *respHeader = (UA_ResponseHeader*)response;
+    printf("entered __UA_Client_Service\n");
 
+    if(client->state == UA_CLIENTSTATE_FAULTED){
+    	return;
+    }
     /* Make sure we have a valid session */
     UA_StatusCode retval = UA_Client_manuallyRenewSecureChannel(client);
     if(retval != UA_STATUSCODE_GOOD) {
@@ -28434,6 +28439,8 @@ UA_Client_processPublishResponse(UA_Client *client, UA_PublishRequest *request,
 
 UA_StatusCode
 UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *client) {
+	printf("entered subscriptin manuallySendPublishRequest \n");
+	UA_StatusCode retval = UA_STATUSCODE_GOOD;
     if (client->state == UA_CLIENTSTATE_ERRORED)
         return UA_STATUSCODE_BADSERVERNOTCONNECTED;
 
@@ -28461,13 +28468,22 @@ UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *client) {
         }
         
         UA_PublishResponse response = UA_Client_Service_publish(client, request);
-        UA_Client_processPublishResponse(client, &request, &response);
-        moreNotifications = response.moreNotifications;
+        if(response.resultsSize != request.subscriptionAcknowledgementsSize){
+        	retval = UA_STATUSCODE_BADNOSUBSCRIPTION;
+        }
+        else{
+			UA_Client_processPublishResponse(client, &request, &response);
+			moreNotifications = response.moreNotifications;
+			retval = UA_STATUSCODE_GOOD;
+        }
         
         UA_PublishResponse_deleteMembers(&response);
         UA_PublishRequest_deleteMembers(&request);
+        if(retval!=UA_STATUSCODE_GOOD){
+        	break;
+        }
     }
-    return UA_STATUSCODE_GOOD;
+    return retval;
 }
 
 #endif /* UA_ENABLE_SUBSCRIPTIONS */
@@ -28599,7 +28615,7 @@ socket_write(UA_Connection *connection, UA_ByteString *buf) {
 
 static UA_StatusCode
 socket_recv(UA_Connection *connection, UA_ByteString *response, UA_UInt32 timeout) {
-    response->data = (UA_Byte *)malloc(connection->localConf.recvBufferSize);
+    response->data = (UA_Byte *)UA_malloc(connection->localConf.recvBufferSize);
     if(!response->data) {
         response->length = 0;
         return UA_STATUSCODE_BADOUTOFMEMORY; /* not enough memory retry */
@@ -28691,7 +28707,7 @@ static UA_StatusCode socket_set_nonblocking(SOCKET sockfd) {
 
 static void FreeConnectionCallback(UA_Server *server, void *ptr) {
     UA_Connection_deleteMembers((UA_Connection*)ptr);
-    free(ptr);
+    UA_free(ptr);
  }
 
 /***************************/
@@ -28806,7 +28822,7 @@ ServerNetworkLayerTCP_closeConnection(UA_Connection *connection) {
 /* call only from the single networking thread */
 static UA_StatusCode
 ServerNetworkLayerTCP_add(ServerNetworkLayerTCP *layer, UA_Int32 newsockfd) {
-    UA_Connection *c = (UA_Connection *)malloc(sizeof(UA_Connection));
+    UA_Connection *c = (UA_Connection *)UA_malloc(sizeof(UA_Connection));
     if(!c)
         return UA_STATUSCODE_BADINTERNALERROR;
 
@@ -28837,7 +28853,7 @@ ServerNetworkLayerTCP_add(ServerNetworkLayerTCP *layer, UA_Int32 newsockfd) {
     nm  = (ConnectionMapping *)realloc(layer->mappings, sizeof(ConnectionMapping)*(layer->mappingsSize+1));
     if(!nm) {
         UA_LOG_ERROR(layer->logger, UA_LOGCATEGORY_NETWORK, "No memory for a new Connection");
-        free(c);
+        UA_free(c);
         return UA_STATUSCODE_BADINTERNALERROR;
     }
     layer->mappings = nm;
@@ -28956,7 +28972,7 @@ ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt1
        resulted socket */
     if(resultsize == 0)
         return 0;
-    UA_Job *js = (UA_Job*)malloc(sizeof(UA_Job) * (size_t)resultsize * 2);
+    UA_Job *js = (UA_Job*)UA_malloc(sizeof(UA_Job) * (size_t)resultsize * 2);
     if(!js)
         return 0;
 
@@ -28992,7 +29008,7 @@ ServerNetworkLayerTCP_getJobs(UA_ServerNetworkLayer *nl, UA_Job **jobs, UA_UInt1
     }
 
     if(j == 0) {
-        free(js);
+        UA_free(js);
         js = NULL;
     }
 
@@ -29008,7 +29024,7 @@ ServerNetworkLayerTCP_stop(UA_ServerNetworkLayer *nl, UA_Job **jobs) {
                 layer->mappingsSize);
     shutdown((SOCKET)layer->serversockfd,2);
     CLOSESOCKET(layer->serversockfd);
-    UA_Job *items = (UA_Job *)malloc(sizeof(UA_Job) * layer->mappingsSize * 2);
+    UA_Job *items = (UA_Job *)UA_malloc(sizeof(UA_Job) * layer->mappingsSize * 2);
     if(!items)
         return 0;
     for(size_t i = 0; i < layer->mappingsSize; ++i) {
@@ -29029,8 +29045,8 @@ ServerNetworkLayerTCP_stop(UA_ServerNetworkLayer *nl, UA_Job **jobs) {
 /* run only when the server is stopped */
 static void ServerNetworkLayerTCP_deleteMembers(UA_ServerNetworkLayer *nl) {
     ServerNetworkLayerTCP *layer = (ServerNetworkLayerTCP *)nl->handle;
-    free(layer->mappings);
-    free(layer);
+    UA_free(layer->mappings);
+    UA_free(layer);
     UA_String_deleteMembers(&nl->discoveryUrl);
 }
 
