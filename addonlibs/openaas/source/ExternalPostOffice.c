@@ -60,6 +60,10 @@ OV_DLLFNCEXPORT void openaas_ExternalPostOffice_typemethod(
 			break;
 		}
 	}
+    if(!pGetComCoAddressFromAASDiscoveryServer){
+    	return;
+    }
+
 	OV_INSTPTR_ksapi_KSApiCommon pKSApiGetCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, pGetComCoAddressFromAASDiscoveryServer);
 
 	OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
@@ -161,28 +165,30 @@ OV_DLLFNCEXPORT void openaas_ExternalPostOffice_typemethod(
 				break;
 			}
 		}
-		OV_INSTPTR_ksapi_KSApiCommon pKSApiSendCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
+		if(psendAASMessage){
+			OV_INSTPTR_ksapi_KSApiCommon pKSApiSendCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
 
-		ov_string_setvalue(&psendAASMessage->v_serverHost, pinst->v_tmpServerHost);
-		ov_string_setvalue(&psendAASMessage->v_serverName, pinst->v_tmpManagerName);
-		ov_string_setvalue(&psendAASMessage->v_path, pinst->v_tmpPath);
-		ov_string_append(&psendAASMessage->v_path, ".postoffice");
-		// send message
-		Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
-		psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
-		ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, pinst->v_postoffice);
-		psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
+			ov_string_setvalue(&psendAASMessage->v_serverHost, pinst->v_tmpServerHost);
+			ov_string_setvalue(&psendAASMessage->v_serverName, pinst->v_tmpManagerName);
+			ov_string_setvalue(&psendAASMessage->v_path, pinst->v_tmpPath);
+			ov_string_append(&psendAASMessage->v_path, ".postoffice");
+			// send message
+			Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
+			psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
+			ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, pinst->v_postoffice);
+			psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
 
-		ksapi_KSApiCommon_Reset_set(pKSApiSendCommon, FALSE);
-		ksapi_KSApiCommon_Reset_set(pKSApiSendCommon, TRUE);
-		ksapi_KSApiCommon_Submit_set(pKSApiSendCommon, FALSE);
-		ksapi_KSApiCommon_Submit_set(pKSApiSendCommon, TRUE);
+			ksapi_KSApiCommon_Reset_set(pKSApiSendCommon, FALSE);
+			ksapi_KSApiCommon_Reset_set(pKSApiSendCommon, TRUE);
+			ksapi_KSApiCommon_Submit_set(pKSApiSendCommon, FALSE);
+			ksapi_KSApiCommon_Submit_set(pKSApiSendCommon, TRUE);
 
-		ov_string_setvalue(&pinst->v_lastSendMessage, pinst->v_postoffice);
-		ov_string_setvalue(&pinst->v_postoffice,"");
-		pinst->v_state = 0;
-		pinst->v_actimode = 0;
-		pinst->v_iexreq = false;
+			ov_string_setvalue(&pinst->v_lastSendMessage, pinst->v_postoffice);
+			ov_string_setvalue(&pinst->v_postoffice,"");
+			pinst->v_state = 0;
+			pinst->v_actimode = 0;
+			pinst->v_iexreq = false;
+		}
 		break;
     }
     ov_database_free(getComCoAddressMsg);

@@ -47,8 +47,8 @@ void PropertyValueStatementList_init(PropertyValueStatementList *this){
 	this->pvsNumber = 0;
 }
 void PropertyValueStatementList_deleteMembers(PropertyValueStatementList *this){
-	IdentificationType_delete(&this->Carrier);
-	IdentificationType_delete(&this->CreatingInstance);
+	IdentificationType_deleteMembers(&this->Carrier);
+	IdentificationType_deleteMembers(&this->CreatingInstance);
 	for (OV_UINT i = 0; i < this->pvsNumber; i++){
 		PropertyValueStatement_deleteMembers(&(this->pvs)[i]);
 	}
@@ -104,7 +104,7 @@ void PropertyValueStatement_init(PropertyValueStatement *this){
 	this->value.Value.value.valueunion.val_uint_vec.veclen = 0;
 }
 void PropertyValueStatement_deleteMembers(PropertyValueStatement *this){
-	IdentificationType_delete(&this->ID);
+	IdentificationType_deleteMembers(&this->ID);
 	ov_database_free(this->pvsName);
 	ov_database_free(this->unit);
 	Ov_SetAnyValue(&this->value.Value, NULL);
@@ -155,8 +155,8 @@ void LifeCycleEntry_init(LifeCycleEntry *this){
 	this->data.Value.value.valueunion.val_uint_vec.veclen = 0;
 }
 void LifeCycleEntry_deleteMembers(LifeCycleEntry *this){
-	IdentificationType_delete(&this->creatingInstance);
-	IdentificationType_delete(&this->writingInstance);
+	IdentificationType_deleteMembers(&this->creatingInstance);
+	IdentificationType_deleteMembers(&this->writingInstance);
 	ov_database_free(this->eventClass);
 	ov_database_free(this->subject);
 	Ov_SetAnyValue(&this->data.Value, NULL);

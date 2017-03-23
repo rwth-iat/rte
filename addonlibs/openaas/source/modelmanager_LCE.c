@@ -195,6 +195,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createLCE(IdentificationType 
 		OV_STRING tmpString = NULL;
 		OV_UINT count = paas->p_LifeCycleArchive.v_LifeCycleEntryNameCount+1;
 		ov_string_print(&tmpString, "%u", count);
+		plce = NULL;
 		ovResult = Ov_CreateObject(openaas_LifeCycleEntry, plce, &paas->p_LifeCycleArchive, tmpString);
 		ov_database_free(tmpString);
 		if(Ov_Fail(ovResult)){

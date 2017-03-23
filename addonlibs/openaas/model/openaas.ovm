@@ -49,7 +49,6 @@ LIBRARY openaas
             TimeStamp               : TIME;
             Subject                 : STRING INITIALVALUE    =   "";
 			EventClass              : STRING INITIALVALUE    =   "";
-            Id                      : UINT;
         END_VARIABLES;
         OPERATIONS
         	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
@@ -73,9 +72,9 @@ LIBRARY openaas
     CLASS LifeCycleArchive : CLASS ov/domain
     	IS_INSTANTIABLE;
     	VARIABLES
-    		LifeCycleEntrySize        : UINT;
+    		LifeCycleEntrySize        : UINT INITIALVALUE = 0;
     		LifeCycleEntrySizeMax     : UINT INITIALVALUE = 1000;
-    		LifeCycleEntryNameCount   : UINT;
+    		LifeCycleEntryNameCount   : UINT INITIALVALUE = 0;
     	END_VARIABLES;
     	OPERATIONS
     		getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;

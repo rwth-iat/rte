@@ -61,6 +61,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 		ov_string_append(&path, "/");
 		ov_string_append(&path, pathList[i]);
 	}
+	ov_string_freelist(pathList);
 
 	pobj = ov_path_getobjectpointer(path,2);
 	if (!pobj){
@@ -68,6 +69,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object for this path");
 		return;
 	}
+	ov_database_free(path);
+
 
 	paas = Ov_DynamicPtrCast(openaas_aas, pobj);
 	if (!paas){
@@ -135,8 +138,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 		pinst->v_Error = TRUE;
 		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object in LifeCycleArchive");
 		ov_database_free(tmpString);
-		ov_string_freelist(pathList);
-		ov_database_free(path);
 		return;
 	}
 
@@ -179,28 +180,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 							ov_time_add(&xValue, &xValue, &timeSpan);
 						switch(ov_time_compare(&xValue, &startTime)){
 							case OV_TIMECMP_AFTER:
-								if (endLCE == TRUE){
-									switch(ov_time_compare(&xValue, &stopTime)){
-										case OV_TIMECMP_AFTER:
-											break;
-										break;
-										case OV_TIMECMP_EQUAL:
-											ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount]);
-											ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-										case OV_TIMECMP_BEFORE:
-											ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount]);
-											ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-									}
-								}else{
-									ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount]);
-									ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
-								break;
 							case OV_TIMECMP_EQUAL:
 								if (endLCE == TRUE){
 									switch(ov_time_compare(&xValue, &stopTime)){
@@ -237,28 +216,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 							ov_time_add(&xValue, &xValue, &timeSpan);
 						switch(ov_time_compare(&xValue, &startTime)){
 							case OV_TIMECMP_AFTER:
-								if (endLCE == TRUE){
-									switch(ov_time_compare(&xValue, &stopTime)){
-										case OV_TIMECMP_AFTER:
-											break;
-										break;
-										case OV_TIMECMP_EQUAL:
-											ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount]);
-											ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-										case OV_TIMECMP_BEFORE:
-											ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount]);
-											ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-									}
-								}else{
-									ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount]);
-									ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
-								break;
 							case OV_TIMECMP_EQUAL:
 								if (endLCE == TRUE){
 									switch(ov_time_compare(&xValue, &stopTime)){
@@ -295,28 +252,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 							ov_time_add(&xValue, &xValue, &timeSpan);
 						switch(ov_time_compare(&xValue, &startTime)){
 							case OV_TIMECMP_AFTER:
-								if (endLCE == TRUE){
-									switch(ov_time_compare(&xValue, &stopTime)){
-										case OV_TIMECMP_AFTER:
-											break;
-										break;
-										case OV_TIMECMP_EQUAL:
-											ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%f", pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount]);
-											ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-										case OV_TIMECMP_BEFORE:
-											ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%f", pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount]);
-											ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-									}
-								}else{
-									ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%f", pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount]);
-									ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
-								break;
 							case OV_TIMECMP_EQUAL:
 								if (endLCE == TRUE){
 									switch(ov_time_compare(&xValue, &stopTime)){
@@ -353,28 +288,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 							ov_time_add(&xValue, &xValue, &timeSpan);
 						switch(ov_time_compare(&xValue, &startTime)){
 							case OV_TIMECMP_AFTER:
-								if (endLCE == TRUE){
-									switch(ov_time_compare(&xValue, &stopTime)){
-										case OV_TIMECMP_AFTER:
-											break;
-										break;
-										case OV_TIMECMP_EQUAL:
-											ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%lf", pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount]);
-											ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-										case OV_TIMECMP_BEFORE:
-											ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%lf", pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount]);
-											ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-									}
-								}else{
-									ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%lf", pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount]);
-									ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
-								break;
 							case OV_TIMECMP_EQUAL:
 								if (endLCE == TRUE){
 									switch(ov_time_compare(&xValue, &stopTime)){
@@ -405,8 +318,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 					}
 				break;
 				default:
-					ov_string_append(&pinst->v_xValueStatic, "");
-					ov_string_append(&pinst->v_yValueStatic, "");
 					pinst->v_Error = TRUE;
 					ov_string_print(&pinst->v_ErrorText, "DataType of LCE:%s not supported", pchild->v_identifier);
 				break;
@@ -478,8 +389,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 
 
 	ov_database_free(tmpString);
-	ov_string_freelist(pathList);
-	ov_database_free(path);
 
     return;
 }
