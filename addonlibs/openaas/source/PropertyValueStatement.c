@@ -37,3 +37,25 @@ OV_DLLFNCEXPORT OV_ACCESS openaas_PropertyValueStatement_getaccess(
 
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT openaas_PropertyValueStatement_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_openaas_PropertyValueStatement pinst = Ov_StaticPtrCast(openaas_PropertyValueStatement, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = ov_object_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    pinst->v_Value.value.valueunion.val_int = 0;
+    pinst->v_Value.value.vartype = OV_VT_INT;
+
+    return OV_ERR_OK;
+}
+

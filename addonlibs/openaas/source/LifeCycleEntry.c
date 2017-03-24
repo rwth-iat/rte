@@ -37,3 +37,25 @@ OV_DLLFNCEXPORT OV_ACCESS openaas_LifeCycleEntry_getaccess(
     return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT openaas_LifeCycleEntry_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_openaas_LifeCycleEntry pinst = Ov_StaticPtrCast(openaas_LifeCycleEntry, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = ov_object_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    pinst->v_Data.value.valueunion.val_int = 0;
+    pinst->v_Data.value.vartype = OV_VT_INT;
+
+    return OV_ERR_OK;
+}
+

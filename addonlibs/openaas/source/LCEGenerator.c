@@ -194,3 +194,26 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
     return;
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_openaas_LCEGenerator pinst = Ov_StaticPtrCast(openaas_LCEGenerator, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = fb_functionblock_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    pinst->v_LCEValue.value.valueunion.val_int = 0;
+    pinst->v_LCEValue.value.vartype = OV_VT_INT;
+
+    return OV_ERR_OK;
+}
+
+

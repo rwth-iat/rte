@@ -38,6 +38,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
     OV_INSTPTR_openaas_aas          pobj,
     const OV_STRING  value
 ) {
+	return OV_ERR_OK;
 	OV_RESULT resultOV = OV_ERR_OK;
 	AASStatusCode result = AASSTATUSCODE_GOOD;
 
