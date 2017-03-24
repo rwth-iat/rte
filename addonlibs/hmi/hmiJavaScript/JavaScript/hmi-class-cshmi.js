@@ -1948,9 +1948,9 @@ cshmi.prototype = {
 							for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
 								if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
 									if (NewValue == "FALSE"){
-										HMI.Playground.childNodes.item(i).setAttribute("display", "none");
+										HMI.Playground.childNodes.item(i).style.display = "none";
 									}else{
-										HMI.Playground.childNodes.item(i).setAttribute("display", "block");
+										HMI.Playground.childNodes.item(i).style.display = "block";
 									}
 									break;
 								}
