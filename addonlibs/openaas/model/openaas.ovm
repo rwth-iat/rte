@@ -450,5 +450,42 @@ LIBRARY openaas
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS; 
+    
+    CLASS PluggingTwoComponents    :    CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASIdString1                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        AASIdType1                       : UINT HAS_SET_ACCESSOR;
+	        LCECreatingInstanceIdString1     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        LCECreatingInstanceIdType1       : UINT HAS_SET_ACCESSOR;
+	        LCEWritingInstanceIdString1      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        LCEWritingInstanceIdType1        : UINT HAS_SET_ACCESSOR;
+	        LCEEventClass1                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        LCESubject1                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        LCETimeStamp1                    : TIME HAS_SET_ACCESSOR;
+	        LCETimeStampExtern1              : BOOL HAS_SET_ACCESSOR INITIALVALUE = FALSE;
+	        PVSLName1                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        PVSName1                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        AASIdString2                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            AASIdType2                       : UINT HAS_SET_ACCESSOR;
+            LCECreatingInstanceIdString2     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            LCECreatingInstanceIdType2       : UINT HAS_SET_ACCESSOR;
+            LCEWritingInstanceIdString2      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            LCEWritingInstanceIdType2        : UINT HAS_SET_ACCESSOR;
+            LCEEventClass2                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            LCESubject2                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            LCETimeStamp2                    : TIME HAS_SET_ACCESSOR;
+            LCETimeStampExtern2              : BOOL HAS_SET_ACCESSOR INITIALVALUE = FALSE;
+            PVSLName2                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            PVSName2                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            Plugged                          : BOOL HAS_SET_ACCESSOR;
+            Generate                         : BOOL HAS_SET_ACCESSOR;
+            State                            : UINT;
+            Status                           : UINT;
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS; 
   	
 END_LIBRARY;

@@ -304,6 +304,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aas
 		if(ppvsl){
 			ppvs = Ov_StaticPtrCast(openaas_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,ppvsl), pvsName));
 			if(ppvs){
+				ov_string_setvalue(&pvs->pvsName, ppvs->v_identifier);
 				pvs->ExpressionLogic = ppvs->v_ExpressionLogic;
 				pvs->ExpressionSemantic = ppvs->v_ExpressionSemantic;
 				ov_variable_setanyvalue(&pvs->value.Value, &(ppvs->v_Value));
