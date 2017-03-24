@@ -330,6 +330,7 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 		break;
 	}
 
+	ov_database_free(tmpany.value.valueunion.val_string);
 	PropertyValueStatement_deleteMembers(&pvs1);
 	PropertyValueStatement_deleteMembers(&pvs2);
 	LifeCycleEntry_deleteMembers(&lce1);
