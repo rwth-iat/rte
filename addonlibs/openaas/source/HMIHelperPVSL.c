@@ -62,12 +62,15 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 	OV_STRING path = NULL;
 	pathList = ov_string_split(pinst->v_Path, "/", &len);
 
-	ov_string_append(&tmpString_header, ".Header.");
+	ov_string_setvalue(&tmpString_header, ".Header.");
 
 	if (len == 8){
 		pathList2 = ov_string_split(pathList[7], ".",&len2);
 		for (OV_UINT i = 4; i < len; i++){
-			ov_string_append(&path, "/");
+			if (i == 4)
+				ov_string_setvalue(&path, "/");
+			else
+				ov_string_append(&path, "/");
 			ov_string_append(&path, pathList[i]);
 			if ( (i==6) && (len2>1) ){
 				ov_string_append(&path, "/");
@@ -79,7 +82,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 		}
 	}else if (len == 9){
 		for (OV_UINT i = 4; i < len; i++){
-			ov_string_append(&path, "/");
+			if (i == 4)
+				ov_string_setvalue(&path, "/");
+			else
+				ov_string_append(&path, "/");
 			ov_string_append(&path, pathList[i]);
 			if(i==7)
 				ov_string_append(&path, ".Body");
@@ -123,29 +129,56 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			ov_string_append(&pinst->v_Value, ";");
 		}
 
-		ov_string_append(&pinst->v_IDSpecification, pchild->v_IDIdString);
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_IDSpecification, pchild->v_IDIdString);
+		else
+			ov_string_append(&pinst->v_IDSpecification, pchild->v_IDIdString);
 
 		ov_string_print(&tmpString, "%i", pchild->v_IDIdType);
-		ov_string_append(&pinst->v_IDType, tmpString);
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_IDType, tmpString);
+		else
+			ov_string_append(&pinst->v_IDType, tmpString);
 
-		ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii(&pchild->v_TimeStamp));
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_TimeStamp, ov_time_timetoascii(&pchild->v_TimeStamp));
+		else
+			ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii(&pchild->v_TimeStamp));
 
-		ov_string_append(&pinst->v_Unit, pchild->v_Unit);
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_Unit, pchild->v_Unit);
+		else
+			ov_string_append(&pinst->v_Unit, pchild->v_Unit);
 
-		ov_string_append(&pinst->v_Name, pchild->v_identifier);
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_Name, pchild->v_identifier);
+		else
+			ov_string_append(&pinst->v_Name, pchild->v_identifier);
 
 		switch(pchild->v_ExpressionSemantic){
 			case 0:
-				ov_string_append(&pinst->v_ExpressionSemantic, "A");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionSemantic, "A");
+				else
+					ov_string_append(&pinst->v_ExpressionSemantic, "A");
 				break;
 			case 1:
-				ov_string_append(&pinst->v_ExpressionSemantic, "S");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionSemantic, "S");
+				else
+					ov_string_append(&pinst->v_ExpressionSemantic, "S");
 				break;
 			case 2:
-				ov_string_append(&pinst->v_ExpressionSemantic, "M");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionSemantic, "M");
+				else
+					ov_string_append(&pinst->v_ExpressionSemantic, "M");
 				break;
 			case 3:
-				ov_string_append(&pinst->v_ExpressionSemantic, "R");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionSemantic, "R");
+				else
+					ov_string_append(&pinst->v_ExpressionSemantic, "R");
 				break;
 			default:
 				pinst->v_Error = TRUE;
@@ -155,22 +188,40 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		switch(pchild->v_ExpressionLogic){
 			case 0:
-				ov_string_append(&pinst->v_ExpressionLogic, "GT");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionLogic, "GT");
+				else
+					ov_string_append(&pinst->v_ExpressionLogic, "GT");
 				break;
 			case 1:
-				ov_string_append(&pinst->v_ExpressionLogic, "GE");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionLogic, "GE");
+				else
+					ov_string_append(&pinst->v_ExpressionLogic, "GE");
 				break;
 			case 2:
-				ov_string_append(&pinst->v_ExpressionLogic, "EQ");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionLogic, "EQ");
+				else
+					ov_string_append(&pinst->v_ExpressionLogic, "EQ");
 				break;
 			case 3:
-				ov_string_append(&pinst->v_ExpressionLogic, "NE");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionLogic, "NE");
+				else
+					ov_string_append(&pinst->v_ExpressionLogic, "NE");
 				break;
 			case 4:
-				ov_string_append(&pinst->v_ExpressionLogic, "LE");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionLogic, "LE");
+				else
+					ov_string_append(&pinst->v_ExpressionLogic, "LE");
 				break;
 			case 5:
-				ov_string_append(&pinst->v_ExpressionLogic, "LT");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_ExpressionLogic, "LT");
+				else
+					ov_string_append(&pinst->v_ExpressionLogic, "LT");
 				break;
 			default:
 				pinst->v_Error = TRUE;
@@ -180,31 +231,58 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		switch(pchild->v_View){
 			case 0:
-				ov_string_append(&pinst->v_View, "B");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "B");
+				else
+					ov_string_append(&pinst->v_View, "B");
 				break;
 			case 1:
-				ov_string_append(&pinst->v_View, "C");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "C");
+				else
+					ov_string_append(&pinst->v_View, "C");
 				break;
 			case 2:
-				ov_string_append(&pinst->v_View, "P");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "P");
+				else
+					ov_string_append(&pinst->v_View, "P");
 				break;
 			case 3:
-				ov_string_append(&pinst->v_View, "F");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "F");
+				else
+					ov_string_append(&pinst->v_View, "F");
 				break;
 			case 4:
-				ov_string_append(&pinst->v_View, "L");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "L");
+				else
+					ov_string_append(&pinst->v_View, "L");
 				break;
 			case 5:
-				ov_string_append(&pinst->v_View, "S");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "S");
+				else
+					ov_string_append(&pinst->v_View, "S");
 				break;
 			case 6:
-				ov_string_append(&pinst->v_View, "N");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "N");
+				else
+					ov_string_append(&pinst->v_View, "N");
 				break;
 			case 7:
-				ov_string_append(&pinst->v_View, "L");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "L");
+				else
+					ov_string_append(&pinst->v_View, "L");
 				break;
 			case 8:
-				ov_string_append(&pinst->v_View, "H");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_View, "H");
+				else
+					ov_string_append(&pinst->v_View, "H");
 				break;
 			default:
 				pinst->v_Error = TRUE;
@@ -214,13 +292,22 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 		switch(pchild->v_Visibility){
 			case 0:
-				ov_string_append(&pinst->v_Visibility, "-");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_Visibility, "-");
+				else
+					ov_string_append(&pinst->v_Visibility, "-");
 				break;
 			case 1:
-				ov_string_append(&pinst->v_Visibility, "o");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_Visibility, "o");
+				else
+					ov_string_append(&pinst->v_Visibility, "o");
 				break;
 			case 2:
-				ov_string_append(&pinst->v_Visibility, "+");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_Visibility, "+");
+				else
+					ov_string_append(&pinst->v_Visibility, "+");
 				break;
 			default:
 				pinst->v_Error = TRUE;
@@ -231,34 +318,54 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 		switch(pchild->v_Value.value.vartype & OV_VT_KSMASK){
 			case OV_VT_BOOL:
 				if (pchild->v_Value.value.valueunion.val_bool == TRUE)
-					ov_string_append(&pinst->v_Value, "true");
+					if (i == 0)
+						ov_string_setvalue(&pinst->v_Value, "true");
+					else
+						ov_string_append(&pinst->v_Value, "true");
 				else
-					ov_string_append(&pinst->v_Value, "false");
+					if (i == 0)
+						ov_string_setvalue(&pinst->v_Value, "false");
+					else
+						ov_string_append(&pinst->v_Value, "false");
 			break;
 			case OV_VT_STRING:
 				ov_string_print(&tmpString, "%s", pchild->v_Value.value.valueunion.val_string);
-				ov_string_append(&pinst->v_Value, tmpString);
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_Value, tmpString);
+				else
+					ov_string_append(&pinst->v_Value, tmpString);
 			break;
 			case OV_VT_DOUBLE:
 			    ov_string_print(&tmpString, "%lf", pchild->v_Value.value.valueunion.val_double);
-			    ov_string_append(&pinst->v_Value, tmpString);
+			    if (i == 0)
+					ov_string_setvalue(&pinst->v_Value, tmpString);
+				else
+					ov_string_append(&pinst->v_Value, tmpString);
 			break;
 			case OV_VT_INT:
 				ov_string_print(&tmpString, "%i", pchild->v_Value.value.valueunion.val_int);
-				ov_string_append(&pinst->v_Value, tmpString);
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_Value, tmpString);
+				else
+					ov_string_append(&pinst->v_Value, tmpString);
 			break;
 			case OV_VT_UINT:
 				ov_string_print(&tmpString, "%u", pchild->v_Value.value.valueunion.val_uint);
-				ov_string_append(&pinst->v_Value, tmpString);
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_Value, tmpString);
+				else
+					ov_string_append(&pinst->v_Value, tmpString);
 			break;
 			case OV_VT_SINGLE:
 				ov_string_print(&tmpString, "%f", pchild->v_Value.value.valueunion.val_single);
-				ov_string_append(&pinst->v_Value, tmpString);
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_Value, tmpString);
+				else
+					ov_string_append(&pinst->v_Value, tmpString);
 			break;
 			default:
 				pinst->v_Error = TRUE;
 				ov_string_setvalue(&pinst->v_ErrorText, "DataTye not supported");
-				ov_string_append(&pinst->v_Value, "");
 			break;
 		}
 

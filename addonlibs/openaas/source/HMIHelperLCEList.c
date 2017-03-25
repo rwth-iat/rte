@@ -48,6 +48,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 	ov_string_setvalue(&pinst->v_Subject, "");
 	ov_string_setvalue(&pinst->v_TimeStamp, "");
 	ov_string_setvalue(&pinst->v_WritingInstanceId, "");
+	pinst->v_Error = FALSE;
+	ov_string_setvalue(&pinst->v_ErrorText, "");
 
 	OV_UINT len = 0;
 	OV_STRING *pathList = NULL;
@@ -56,7 +58,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 
 
 	for (OV_UINT i = 4; i < len; i++){
-		ov_string_append(&path, "/");
+		if (i == 4)
+			ov_string_setvalue(&path, "/");
+		else
+			ov_string_append(&path, "/");
 		ov_string_append(&path, pathList[i]);
 	}
 
@@ -93,28 +98,53 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 
 		switch (pchild->v_CreatingInstanceIdType){
 			case URI:
-				ov_string_append(&pinst->v_CreatingInstanceId, "URI:");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_CreatingInstanceId, "URI:");
+				else
+					ov_string_append(&pinst->v_CreatingInstanceId, "URI:");
 			break;
 			case ISO:
-				ov_string_append(&pinst->v_CreatingInstanceId, "ISO:");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_CreatingInstanceId, "ISO:");
+				else
+					ov_string_append(&pinst->v_CreatingInstanceId, "ISO:");
 			break;
 		}
+
 		ov_string_append(&pinst->v_CreatingInstanceId, pchild->v_CreatingInstanceIdString);
 
-		ov_string_append(&pinst->v_EventClass, pchild->v_EventClass);
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_EventClass, pchild->v_EventClass);
+		else
+			ov_string_append(&pinst->v_EventClass, pchild->v_EventClass);
 
-		ov_string_append(&pinst->v_Id, pchild->v_identifier);
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_Id, pchild->v_identifier);
+		else
+			ov_string_append(&pinst->v_Id, pchild->v_identifier);
 
-		ov_string_append(&pinst->v_Subject, pchild->v_Subject);
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_Subject, pchild->v_Subject);
+		else
+			ov_string_append(&pinst->v_Subject, pchild->v_Subject);
 
-		ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii_utc(&pchild->v_TimeStamp));
+		if (i == 0)
+			ov_string_setvalue(&pinst->v_TimeStamp, ov_time_timetoascii_utc(&pchild->v_TimeStamp));
+		else
+			ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii_utc(&pchild->v_TimeStamp));
 
 		switch (pchild->v_WritingInstanceIdType){
 			case URI:
-				ov_string_append(&pinst->v_WritingInstanceId, "URI:");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_WritingInstanceId, "URI:");
+				else
+					ov_string_append(&pinst->v_WritingInstanceId, "URI:");
 			break;
 			case ISO:
-				ov_string_append(&pinst->v_WritingInstanceId, "ISO:");
+				if (i == 0)
+					ov_string_setvalue(&pinst->v_WritingInstanceId, "ISO:");
+				else
+					ov_string_append(&pinst->v_WritingInstanceId, "ISO:");
 			break;
 		}
 		ov_string_append(&pinst->v_WritingInstanceId, pchild->v_WritingInstanceIdString);
@@ -123,39 +153,58 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 			switch(pchild->v_Data.value.vartype & OV_VT_KSMASK){
 				case OV_VT_BOOL:
 					if (pchild->v_Data.value.valueunion.val_bool == TRUE)
-						ov_string_append(&pinst->v_Data, "true");
+						if (i == 0)
+							ov_string_setvalue(&pinst->v_Data, "true");
+						else
+							ov_string_append(&pinst->v_Data, "true");
 					else
-						ov_string_append(&pinst->v_Data, "false");
+						if (i == 0)
+							ov_string_setvalue(&pinst->v_Data, "false");
+						else
+							ov_string_append(&pinst->v_Data, "false");
 				break;
 				case OV_VT_STRING:
-					ov_string_append(&pinst->v_Data, pchild->v_Data.value.valueunion.val_string);
+					if (i == 0)
+						ov_string_setvalue(&pinst->v_Data, pchild->v_Data.value.valueunion.val_string);
+					else
+						ov_string_append(&pinst->v_Data, pchild->v_Data.value.valueunion.val_string);
 				break;
 				case OV_VT_DOUBLE:
 					ov_string_print(&tmpString, "%lf", pchild->v_Data.value.valueunion.val_double);
-					ov_string_append(&pinst->v_Data, tmpString);
+					if (i == 0)
+						ov_string_setvalue(&pinst->v_Data, tmpString);
+					else
+						ov_string_append(&pinst->v_Data, tmpString);
 				break;
 				case OV_VT_INT:
 					ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int);
-					ov_string_append(&pinst->v_Data, tmpString);
+					if (i == 0)
+						ov_string_setvalue(&pinst->v_Data, tmpString);
+					else
+						ov_string_append(&pinst->v_Data, tmpString);
 				break;
 				case OV_VT_UINT:
 					ov_string_print(&tmpString, "%u", pchild->v_Data.value.valueunion.val_uint);
-					ov_string_append(&pinst->v_Data, tmpString);
+					if (i == 0)
+						ov_string_setvalue(&pinst->v_Data, tmpString);
+					else
+						ov_string_append(&pinst->v_Data, tmpString);
 				break;
 				case OV_VT_SINGLE:
 					ov_string_print(&tmpString, "%f", pchild->v_Data.value.valueunion.val_single);
-					ov_string_append(&pinst->v_Data, tmpString);
+					if (i == 0)
+						ov_string_setvalue(&pinst->v_Data, tmpString);
+					else
+						ov_string_append(&pinst->v_Data, tmpString);
 				break;
 				default:
 					pinst->v_Error = TRUE;
 					ov_string_setvalue(&pinst->v_ErrorText, "DataType not supported");
-					ov_string_append(&pinst->v_Data, "");
 				break;
 			}
 		}else{
 			pinst->v_Error = TRUE;
 			ov_string_setvalue(&pinst->v_ErrorText, "Arrays not supported");
-			ov_string_append(&pinst->v_Data, "");
 		}
 
 	i++;
