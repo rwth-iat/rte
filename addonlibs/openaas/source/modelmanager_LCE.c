@@ -232,6 +232,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteLCE(IdentificationType 
 		OV_STRING tmpString = NULL;
 		ov_string_print(&tmpString, "%lu", lceId);
 		lce = Ov_StaticPtrCast(openaas_LifeCycleEntry, Ov_SearchChild(ov_containment, &paas->p_LifeCycleArchive, tmpString));
+		ov_database_free(tmpString);
 		if(lce){
 			ovResult = Ov_DeleteObject(lce);
 			if(Ov_Fail(ovResult)){

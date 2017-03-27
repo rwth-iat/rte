@@ -149,30 +149,7 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
     *   local variables
     */
     OV_INSTPTR_openaas_LCEGenerator pinst = Ov_StaticPtrCast(openaas_LCEGenerator, pfb);
-    LifeCycleEntry lce;
-	LifeCycleEntry_init(&lce);
 
-	ov_string_setvalue(&lce.creatingInstance.IdSpec, pinst->v_LCECreatingInstanceIdString);
-	lce.creatingInstance.IdType =  pinst->v_LCECreatingInstanceIdType;
-
-	ov_string_setvalue(&lce.writingInstance.IdSpec,  pinst->v_LCEWritingInstanceIdString);
-	lce.writingInstance.IdType =  pinst->v_LCEWritingInstanceIdType;
-
-	ov_string_setvalue(&lce.eventClass,  pinst->v_LCEEventClass);
-
-	ov_string_setvalue(&lce.subject,  pinst->v_LCESubject);
-
-	Ov_SetAnyValue(&lce.data.Value, &pinst->v_LCEValue);
-
-	if (pinst->v_LCETimeStampExtern == FALSE)
-		ov_time_gettime(&lce.data.TimeStamp);
-	else
-		lce.data.TimeStamp = pinst->v_LCETimeStamp;
-
-	IdentificationType aasId;
-	IdentificationType_init(&aasId);
-	ov_string_setvalue(&aasId.IdSpec, pinst->v_AASIdString);
-	aasId.IdType = pinst->v_AASIdType;
 
 	switch(pinst->v_State){
 	case 0:
@@ -180,7 +157,36 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 			pinst->v_State = 1;
 		break;
 	case 1:
+	{
+		LifeCycleEntry lce;
+		LifeCycleEntry_init(&lce);
+
+		ov_string_setvalue(&lce.creatingInstance.IdSpec, pinst->v_LCECreatingInstanceIdString);
+		lce.creatingInstance.IdType =  pinst->v_LCECreatingInstanceIdType;
+
+		ov_string_setvalue(&lce.writingInstance.IdSpec,  pinst->v_LCEWritingInstanceIdString);
+		lce.writingInstance.IdType =  pinst->v_LCEWritingInstanceIdType;
+
+		ov_string_setvalue(&lce.eventClass,  pinst->v_LCEEventClass);
+
+		ov_string_setvalue(&lce.subject,  pinst->v_LCESubject);
+
+		Ov_SetAnyValue(&lce.data.Value, &pinst->v_LCEValue);
+
+		if (pinst->v_LCETimeStampExtern == FALSE)
+			ov_time_gettime(&lce.data.TimeStamp);
+		else
+			lce.data.TimeStamp = pinst->v_LCETimeStamp;
+
+		IdentificationType aasId;
+		IdentificationType_init(&aasId);
+		ov_string_setvalue(&aasId.IdSpec, pinst->v_AASIdString);
+		aasId.IdType = pinst->v_AASIdType;
 		pinst->v_Status = openaas_modelmanager_createLCE(aasId, lce);
+
+		LifeCycleEntry_deleteMembers(&lce);
+		IdentificationType_deleteMembers(&aasId);
+	}
 		pinst->v_State = 2;
 		break;
 	case 2:
@@ -188,9 +194,6 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 			pinst->v_State = 0;
 		break;
 	}
-
-	LifeCycleEntry_deleteMembers(&lce);
-	IdentificationType_deleteMembers(&aasId);
     return;
 }
 
