@@ -210,8 +210,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_constructor(
          return result;
 
     /* do what */
-    pinst->v_LCEValue.value.valueunion.val_int = 0;
-    pinst->v_LCEValue.value.vartype = OV_VT_INT;
+    pinst->v_LCEValue.value.vartype = OV_VT_VOID;
 
     return OV_ERR_OK;
 }

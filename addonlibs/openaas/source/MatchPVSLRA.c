@@ -29,8 +29,6 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 
 	OV_INSTPTR_ov_object requirementList = NULL;
 	OV_INSTPTR_ov_object assuranceList = NULL;
-	OV_STRING tmpErrorText = NULL;
-	OV_STRING tmpMatchText = NULL;
 
 	requirementList = ov_path_getobjectpointer(requirementListPath, 2);
 	if (!requirementList){
@@ -54,9 +52,6 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 
 	OV_INSTPTR_openaas_PropertyValueStatement requirement = NULL;
 	OV_INSTPTR_openaas_PropertyValueStatement assurance = NULL;
-	OV_STRING requirementPath = NULL;
-	OV_STRING assurancePath = NULL;
-
 	OV_UINT assuranceSize = 0;
 	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, openaas_PropertyValueStatement){
 		if (assurance->v_ExpressionSemantic == ASSURANCE){
@@ -66,12 +61,18 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 
 	OV_UINT assuranceCounter = 0;
 	OV_BOOL tmpMatch = false;
+	OV_STRING tmpErrorText = NULL;
+	OV_STRING tmpMatchText = NULL;
+	OV_STRING requirementPath = NULL;
+	OV_STRING assurancePath = NULL;
 	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirementList), requirement, openaas_PropertyValueStatement){
 		if (requirement->v_ExpressionSemantic == REQUIREMENT){
 			if (assuranceSize == 0){
 				ov_string_print(matchText, "requirement %s do not match with the assurances", requirement->v_identifier);
 				ov_database_free(requirementPath);
 				ov_database_free(assurancePath);
+				ov_database_free(tmpErrorText);
+				ov_database_free(tmpMatchText);
 				return 0;
 			}
 			assuranceCounter = 0;

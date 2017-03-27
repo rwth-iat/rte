@@ -230,79 +230,7 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
     OV_INSTPTR_openaas_PluggingTwoComponents pinst = Ov_StaticPtrCast(openaas_PluggingTwoComponents, pfb);
 
     pinst->v_Status = 0;
-    LifeCycleEntry lce1;
-	LifeCycleEntry_init(&lce1);
 
-	ov_string_setvalue(&lce1.creatingInstance.IdSpec, pinst->v_LCECreatingInstanceIdString1);
-	lce1.creatingInstance.IdType =  pinst->v_LCECreatingInstanceIdType1;
-
-	ov_string_setvalue(&lce1.writingInstance.IdSpec,  pinst->v_LCEWritingInstanceIdString1);
-	lce1.writingInstance.IdType =  pinst->v_LCECreatingInstanceIdType1;
-
-	ov_string_setvalue(&lce1.eventClass,  pinst->v_LCEEventClass1);
-
-	ov_string_setvalue(&lce1.subject,  pinst->v_LCESubject1);
-
-	if (pinst->v_LCETimeStampExtern1 == FALSE)
-		ov_time_gettime(&lce1.data.TimeStamp);
-	else
-		lce1.data.TimeStamp = pinst->v_LCETimeStamp2;
-
-	IdentificationType aasId1;
-	IdentificationType_init(&aasId1);
-	ov_string_setvalue(&aasId1.IdSpec, pinst->v_AASIdString1);
-	aasId1.IdType = pinst->v_AASIdType1;
-
-	PropertyValueStatement pvs1;
-	PropertyValueStatement_init(&pvs1);
-
-	LifeCycleEntry lce2;
-	LifeCycleEntry_init(&lce2);
-
-	ov_string_setvalue(&lce2.creatingInstance.IdSpec, pinst->v_LCECreatingInstanceIdString2);
-	lce2.creatingInstance.IdType =  pinst->v_LCECreatingInstanceIdType2;
-
-	ov_string_setvalue(&lce2.writingInstance.IdSpec,  pinst->v_LCEWritingInstanceIdString2);
-	lce2.writingInstance.IdType =  pinst->v_LCECreatingInstanceIdType2;
-
-	ov_string_setvalue(&lce2.eventClass,  pinst->v_LCEEventClass2);
-
-	ov_string_setvalue(&lce2.subject,  pinst->v_LCESubject2);
-
-	if (pinst->v_LCETimeStampExtern1 == FALSE)
-		ov_time_gettime(&lce2.data.TimeStamp);
-	else
-		lce2.data.TimeStamp = pinst->v_LCETimeStamp2;
-
-	IdentificationType aasId2;
-	IdentificationType_init(&aasId2);
-	ov_string_setvalue(&aasId2.IdSpec, pinst->v_AASIdString2);
-	aasId2.IdType = pinst->v_AASIdType2;
-
-	PropertyValueStatement pvs2;
-	PropertyValueStatement_init(&pvs2);
-
-	OV_ANY tmpany;
-	tmpany.value.vartype = OV_VT_STRING;
-	tmpany.value.valueunion.val_string = NULL;
-	OV_STRING tmpString1 = NULL;
-	if (aasId1.IdType == URI)
-		ov_string_setvalue(&tmpString1, "URI:");
-	else if (aasId1.IdType == ISO)
-		ov_string_setvalue(&tmpString1, "ISO:");
-	OV_STRING tmpString2 = NULL;
-	if (aasId2.IdType == URI)
-		ov_string_setvalue(&tmpString2, "URI:");
-	else if (aasId2.IdType == ISO)
-		ov_string_setvalue(&tmpString2, "ISO:");
-
-	if (pinst->v_Plugged == TRUE)
-		ov_string_print(&tmpany.value.valueunion.val_string, "AASId: %s%s and AASId: %s%s plugged", tmpString1, pinst->v_AASIdString1, tmpString2, pinst->v_AASIdString2);
-	else
-		ov_string_print(&tmpany.value.valueunion.val_string, "AASId: %s%s and AASId: %s%s unplugged", tmpString1, pinst->v_AASIdString1, tmpString2, pinst->v_AASIdString2);
-
-	Ov_SetAnyValue(&lce1.data.Value, &tmpany);
-	Ov_SetAnyValue(&lce2.data.Value, &tmpany);
 
 	switch(pinst->v_State){
 	case 0:
@@ -310,6 +238,81 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 			pinst->v_State = 1;
 		break;
 	case 1:
+	{
+		LifeCycleEntry lce1;
+		LifeCycleEntry_init(&lce1);
+
+		ov_string_setvalue(&lce1.creatingInstance.IdSpec, pinst->v_LCECreatingInstanceIdString1);
+		lce1.creatingInstance.IdType =  pinst->v_LCECreatingInstanceIdType1;
+
+		ov_string_setvalue(&lce1.writingInstance.IdSpec,  pinst->v_LCEWritingInstanceIdString1);
+		lce1.writingInstance.IdType =  pinst->v_LCECreatingInstanceIdType1;
+
+		ov_string_setvalue(&lce1.eventClass,  pinst->v_LCEEventClass1);
+
+		ov_string_setvalue(&lce1.subject,  pinst->v_LCESubject1);
+
+		if (pinst->v_LCETimeStampExtern1 == FALSE)
+			ov_time_gettime(&lce1.data.TimeStamp);
+		else
+			lce1.data.TimeStamp = pinst->v_LCETimeStamp2;
+
+		IdentificationType aasId1;
+		IdentificationType_init(&aasId1);
+		ov_string_setvalue(&aasId1.IdSpec, pinst->v_AASIdString1);
+		aasId1.IdType = pinst->v_AASIdType1;
+
+		PropertyValueStatement pvs1;
+		PropertyValueStatement_init(&pvs1);
+
+		LifeCycleEntry lce2;
+		LifeCycleEntry_init(&lce2);
+
+		ov_string_setvalue(&lce2.creatingInstance.IdSpec, pinst->v_LCECreatingInstanceIdString2);
+		lce2.creatingInstance.IdType =  pinst->v_LCECreatingInstanceIdType2;
+
+		ov_string_setvalue(&lce2.writingInstance.IdSpec,  pinst->v_LCEWritingInstanceIdString2);
+		lce2.writingInstance.IdType =  pinst->v_LCECreatingInstanceIdType2;
+
+		ov_string_setvalue(&lce2.eventClass,  pinst->v_LCEEventClass2);
+
+		ov_string_setvalue(&lce2.subject,  pinst->v_LCESubject2);
+
+		if (pinst->v_LCETimeStampExtern1 == FALSE)
+			ov_time_gettime(&lce2.data.TimeStamp);
+		else
+			lce2.data.TimeStamp = pinst->v_LCETimeStamp2;
+
+		IdentificationType aasId2;
+		IdentificationType_init(&aasId2);
+		ov_string_setvalue(&aasId2.IdSpec, pinst->v_AASIdString2);
+		aasId2.IdType = pinst->v_AASIdType2;
+
+		PropertyValueStatement pvs2;
+		PropertyValueStatement_init(&pvs2);
+
+		OV_ANY tmpany;
+		tmpany.value.vartype = OV_VT_STRING;
+		tmpany.value.valueunion.val_string = NULL;
+		OV_STRING tmpString1 = NULL;
+		if (aasId1.IdType == URI)
+			ov_string_setvalue(&tmpString1, "URI:");
+		else if (aasId1.IdType == ISO)
+			ov_string_setvalue(&tmpString1, "ISO:");
+		OV_STRING tmpString2 = NULL;
+		if (aasId2.IdType == URI)
+			ov_string_setvalue(&tmpString2, "URI:");
+		else if (aasId2.IdType == ISO)
+			ov_string_setvalue(&tmpString2, "ISO:");
+
+		if (pinst->v_Plugged == TRUE)
+			ov_string_print(&tmpany.value.valueunion.val_string, "AASId: %s%s and AASId: %s%s plugged", tmpString1, pinst->v_AASIdString1, tmpString2, pinst->v_AASIdString2);
+		else
+			ov_string_print(&tmpany.value.valueunion.val_string, "AASId: %s%s and AASId: %s%s unplugged", tmpString1, pinst->v_AASIdString1, tmpString2, pinst->v_AASIdString2);
+
+		Ov_SetAnyValue(&lce1.data.Value, &tmpany);
+		Ov_SetAnyValue(&lce2.data.Value, &tmpany);
+
 		pinst->v_Status = openaas_modelmanager_createLCE(aasId1, lce1);
 		pinst->v_Status |= openaas_modelmanager_createLCE(aasId2, lce2);
 		pinst->v_Status |= openaas_modelmanager_getPVS(aasId1, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
@@ -322,6 +325,17 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 			pvs2.value.Value.value.valueunion.val_bool = pinst->v_Plugged;
 			pinst->v_Status |= openaas_modelmanager_setPVS(aasId2, pinst->v_PVSLName2, pvs2);
 		}
+
+		ov_database_free(tmpany.value.valueunion.val_string);
+		PropertyValueStatement_deleteMembers(&pvs1);
+		PropertyValueStatement_deleteMembers(&pvs2);
+		LifeCycleEntry_deleteMembers(&lce1);
+		LifeCycleEntry_deleteMembers(&lce2);
+		IdentificationType_deleteMembers(&aasId1);
+		IdentificationType_deleteMembers(&aasId2);
+		ov_database_free(tmpString1);
+		ov_database_free(tmpString2);
+	}
 		pinst->v_State = 2;
 		break;
 	case 2:
@@ -329,16 +343,6 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 			pinst->v_State = 0;
 		break;
 	}
-
-	ov_database_free(tmpany.value.valueunion.val_string);
-	PropertyValueStatement_deleteMembers(&pvs1);
-	PropertyValueStatement_deleteMembers(&pvs2);
-	LifeCycleEntry_deleteMembers(&lce1);
-	LifeCycleEntry_deleteMembers(&lce2);
-	IdentificationType_deleteMembers(&aasId1);
-	IdentificationType_deleteMembers(&aasId2);
-	ov_database_free(tmpString1);
-	ov_database_free(tmpString2);
 
     return;
 }
