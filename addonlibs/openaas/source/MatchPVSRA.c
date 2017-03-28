@@ -311,19 +311,19 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSRA_matchPVSRA(OV_STRING requirementPath,
 	// check
 	if (requirement->v_IDIdType != assurance->v_IDIdType){
 		ov_string_print(matchText, "requirement %s and assurance %s IDTypes are not the same", requirement->v_identifier, assurance->v_identifier);
-		return 1;
+		return 0;
 	}
 	if (ov_string_compare(requirement->v_IDIdString, assurance->v_IDIdString) != OV_STRCMP_EQUAL){
 		ov_string_print(matchText, "requirement %s and assurance %s IDs are not the same", requirement->v_identifier, assurance->v_identifier);
-		return 1;
+		return 0;
 	}
 	if(ov_string_compare(requirement->v_Unit, assurance->v_Unit) != OV_STRCMP_EQUAL){
 		ov_string_print(matchText, "requirement %s and assurance %s Units are not the same", requirement->v_identifier, assurance->v_identifier);
-		return 1;
+		return 0;
 	}
 	if (requirement->v_Value.value.vartype != assurance->v_Value.value.vartype){
 		ov_string_print(matchText, "requirement %s and assurance %s have not the same datatype", requirement->v_identifier, assurance->v_identifier);
-		return 1;
+		return 0;
 	}
 
 	switch(requirement->v_ExpressionLogic){
