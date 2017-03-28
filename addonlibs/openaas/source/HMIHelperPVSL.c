@@ -181,8 +181,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 					ov_string_append(&pinst->v_ExpressionSemantic, "R");
 				break;
 			default:
-				pinst->v_Error = TRUE;
-				ov_string_setvalue(&pinst->v_ErrorText, "ExpressionSemantic not supported");
+				if (pinst->v_Error == FALSE){
+					pinst->v_Error = TRUE;
+					ov_string_setvalue(&pinst->v_ErrorText, "ExpressionSemantic not supported");
+				}
 			break;
 			}
 
@@ -224,8 +226,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 					ov_string_append(&pinst->v_ExpressionLogic, "LT");
 				break;
 			default:
-				pinst->v_Error = TRUE;
-				ov_string_setvalue(&pinst->v_ErrorText, "ExpressionLogic not supported");
+				if (pinst->v_Error == FALSE){
+					pinst->v_Error = TRUE;
+					ov_string_setvalue(&pinst->v_ErrorText, "ExpressionLogic not supported");
+				}
 			break;
 			}
 
@@ -285,8 +289,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 					ov_string_append(&pinst->v_View, "H");
 				break;
 			default:
-				pinst->v_Error = TRUE;
-				ov_string_setvalue(&pinst->v_ErrorText, "View not supported");
+				if (pinst->v_Error == FALSE){
+					pinst->v_Error = TRUE;
+					ov_string_setvalue(&pinst->v_ErrorText, "View not supported");
+				}
 			break;
 			}
 
@@ -310,8 +316,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 					ov_string_append(&pinst->v_Visibility, "+");
 				break;
 			default:
-				pinst->v_Error = TRUE;
-				ov_string_setvalue(&pinst->v_ErrorText, "Visibility not supported");
+				if (pinst->v_Error == FALSE){
+					pinst->v_Error = TRUE;
+					ov_string_setvalue(&pinst->v_ErrorText, "Visibility not supported");
+				}
 			break;
 			}
 
@@ -364,8 +372,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 					ov_string_append(&pinst->v_Value, tmpString);
 			break;
 			default:
-				pinst->v_Error = TRUE;
-				ov_string_setvalue(&pinst->v_ErrorText, "DataTye not supported");
+				if (pinst->v_Error == FALSE){
+					pinst->v_Error = TRUE;
+					ov_string_setvalue(&pinst->v_ErrorText, "DataTye not supported");
+				}
 			break;
 		}
 

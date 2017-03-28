@@ -445,6 +445,35 @@ LIBRARY openaas
             yUnitDynamic                : STRING FLAGS = "o" INITIALVALUE    =   "";
             Error                       : BOOL FLAGS = "o";
             ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ErrorStatic                 : BOOL FLAGS = "o";
+            ErrorTextStatic             : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ErrorDynamic                : BOOL FLAGS = "o";
+            ErrorTextDynamic            : STRING FLAGS = "o" INITIALVALUE    =   "";
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS HMIHelperLCEData2    :    CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASPath                     : STRING FLAGS = "i" COMMENT = "Format: //IP:PORT/SERVERNAME/..." INITIALVALUE    =   ""; 
+            Subject                     : STRING FLAGS = "i" INITIALVALUE    =   "";
+            EventClass                  : STRING FLAGS = "i" INITIALVALUE    =   "";
+            StartTime                   : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
+            StopTime                    : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
+            xValueStatic[]              : TIME FLAGS = "o";            
+            yValueStatic[]              : DOUBLE FLAGS = "o";
+            yUnitStatic                 : STRING FLAGS = "o" INITIALVALUE    =   "";
+            yValueDynamic               : STRING FLAGS = "o" INITIALVALUE    =   "";
+            yUnitDynamic                : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Error                       : BOOL FLAGS = "o";
+            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ErrorStatic                 : BOOL FLAGS = "o";
+            ErrorTextStatic             : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ErrorDynamic                : BOOL FLAGS = "o";
+            ErrorTextDynamic            : STRING FLAGS = "o" INITIALVALUE    =   "";
         END_VARIABLES;
         OPERATIONS
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;

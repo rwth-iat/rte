@@ -198,13 +198,17 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 						ov_string_append(&pinst->v_Data, tmpString);
 				break;
 				default:
-					pinst->v_Error = TRUE;
-					ov_string_setvalue(&pinst->v_ErrorText, "DataType not supported");
+					if (pinst->v_Error == FALSE){
+						pinst->v_Error = TRUE;
+						ov_string_setvalue(&pinst->v_ErrorText, "DataType not supported");
+					}
 				break;
 			}
 		}else{
-			pinst->v_Error = TRUE;
-			ov_string_setvalue(&pinst->v_ErrorText, "Arrays not supported");
+			if (pinst->v_Error == FALSE){
+				pinst->v_Error = TRUE;
+				ov_string_setvalue(&pinst->v_ErrorText, "Arrays not supported");
+			}
 		}
 
 	i++;

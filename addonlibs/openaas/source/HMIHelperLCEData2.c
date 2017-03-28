@@ -1,12 +1,13 @@
+
 /******************************************************************************
 *
 *   FILE
 *   ----
-*   HMIHelperLCEData.c
+*   HMIHelperLCEData2.c
 *
 *   History
 *   -------
-*   2017-03-08   File created
+*   2017-03-28   File created
 *
 *******************************************************************************
 *
@@ -22,20 +23,17 @@
 
 #include "openaas.h"
 #include "libov/ov_macros.h"
-#include "libov/ov_time.h"
 
 
-OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
+OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
-
     *   local variables
     */
-
 	OV_RESULT result = 0;
-	OV_INSTPTR_openaas_HMIHelperLCEData pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEData, pfb);
+	OV_INSTPTR_openaas_HMIHelperLCEData2 pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEData2, pfb);
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_INSTPTR_openaas_LifeCycleEntry pchild = NULL;
 	OV_INSTPTR_openaas_LifeCycleEntry pstartLCE = NULL;
@@ -43,8 +41,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	OV_INSTPTR_openaas_aas paas = NULL;
 
 
-	ov_string_setvalue(&pinst->v_xValueStatic, "");
-	ov_string_setvalue(&pinst->v_yValueStatic, "");
+	Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, 0, TIME);
+	Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, 0, DOUBLE);
 	ov_string_setvalue(&pinst->v_yUnitStatic, "");
 	ov_string_setvalue(&pinst->v_yValueDynamic, "");
 	ov_string_setvalue(&pinst->v_yUnitDynamic, "");
@@ -166,11 +164,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	OV_STRING tmpString = NULL;
 
 	lceCount = 0;
-	//ov_string_append(&pinst->v_yUnitStatic, pstartLCE->);
 	do {
+		endLCE = FALSE;
 		if (lceCount == 0){
 			pchild = pstartLCE;
-
 		}else{
 			pobj = NULL;
 			pobj = Ov_GetNextChild(ov_containment, pchild);
@@ -210,28 +207,18 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 										break;
 										case OV_TIMECMP_EQUAL:
 										case OV_TIMECMP_BEFORE:
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											else
-												ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount]);
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-											else
-												ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
+											Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+											pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+											Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+											pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount];
+											break;
 									}
 								}else{
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									else
-										ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount]);
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-									else
-										ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
+									Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+									pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+									Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+									pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount];
+									}
 								break;
 							case OV_TIMECMP_BEFORE:
 								// Do nothing
@@ -254,27 +241,17 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 										break;
 										case OV_TIMECMP_EQUAL:
 										case OV_TIMECMP_BEFORE:
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											else
-												ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount]);
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-											else
-												ov_string_append(&pinst->v_yValueStatic, tmpString);
+											Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+											pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+											Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+											pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount];
 										break;
 									}
 								}else{
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									else
-										ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount]);
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-									else
-										ov_string_append(&pinst->v_yValueStatic, tmpString);
+									Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+									pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+									Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+									pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount];
 								}
 								break;
 							case OV_TIMECMP_BEFORE:
@@ -298,27 +275,17 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 										break;
 										case OV_TIMECMP_EQUAL:
 										case OV_TIMECMP_BEFORE:
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											else
-												ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount]);
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-											else
-												ov_string_append(&pinst->v_yValueStatic, tmpString);
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount];
 										break;
 									}
 								}else{
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									else
-										ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount]);
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-									else
-										ov_string_append(&pinst->v_yValueStatic, tmpString);
+									Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+									pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+									Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+									pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount];
 								}
 								break;
 							case OV_TIMECMP_BEFORE:
@@ -342,27 +309,17 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 										break;
 										case OV_TIMECMP_EQUAL:
 										case OV_TIMECMP_BEFORE:
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											else
-												ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount]);
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-											else
-												ov_string_append(&pinst->v_yValueStatic, tmpString);
+											Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+											pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+											Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+											pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount];
 										break;
 									}
 								}else{
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									else
-										ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount]);
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-									else
-										ov_string_append(&pinst->v_yValueStatic, tmpString);
+									Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+									pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+									Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+									pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount];
 								}
 								break;
 							case OV_TIMECMP_BEFORE:
@@ -379,8 +336,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 				break;
 			}
 		}
-		ov_string_append(&pinst->v_xValueStatic, ";");
-		ov_string_append(&pinst->v_yValueStatic, ";");
 		lceCount++;
 	}while(endLCE == FALSE);
 
@@ -448,7 +403,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
 				break;
 				default:
-					if (pinst->v_ErrorDynamic){
+					if (pinst->v_ErrorDynamic == FALSE){
 						pinst->v_ErrorDynamic = TRUE;
 						ov_string_setvalue(&pinst->v_ErrorTextDynamic, "DataType not supported");
 						ov_string_setvalue(&pinst->v_yValueDynamic, "");
@@ -468,5 +423,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 
 	ov_database_free(tmpString);
 
-    return;
+	return;
 }
+
