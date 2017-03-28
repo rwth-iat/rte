@@ -5350,7 +5350,11 @@ cshmi.prototype = {
 		//load scripts and call jsonload script on load (or direct, if no source was requested)
 		var result = loadScriptUrls(
 			sourceListSplitted, 
-			function(){HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload")}, 
+			function(){
+				if(jsOnload){
+					HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
+				}
+			}, 
 			false,
 			null,
 			null
@@ -5367,6 +5371,9 @@ cshmi.prototype = {
 	 * @param {String} locationidentifier (could be jsOnload, or onglobalvarchanged)
 	 */
 	_executeScript: function(VisualObject, ObjectPath, evalcode, locationidentifier){
+		if(!evalcode){
+			return;
+		}
 		//declare object 'cshmimodel' for further use [usage e.g.: 'cshmimodel.variables.<VARNAME>.getValue();']
 		var cshmimodel = VisualObject.ResourceList.cshmimodel;
 		cshmimodel.VisualObject = VisualObject;
@@ -6304,6 +6311,28 @@ cshmi.prototype = {
 			//interprete onload Actions if we are already loaded
 			if (this.initStage === false){
 				this._interpreteOnloadCallStack();
+
+				/** align  HTML div from playground to the new setting */
+				if (!this.useforeignObject) {
+					// recursive handling is needed because a changed parent visibility hides a child
+					var handleRecursive = function (VisualObject) {
+						if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+							for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+								if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+									HMI.Playground.childNodes.item(i).style.top = VisualObject.getAttribute("absolutey")+"px";
+									HMI.Playground.childNodes.item(i).style.left = VisualObject.getAttribute("absolutex")+"px";
+									break;
+								}
+							}
+						}
+						for (var i = 0; i < VisualObject.childNodes.length; i++) {
+							if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+								handleRecursive(VisualObject.childNodes.item(i));
+							}
+						}
+					};
+					handleRecursive(VisualParentObject);
+				}
 			}
 			
 			// mark the class as complete
