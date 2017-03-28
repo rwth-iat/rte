@@ -466,7 +466,7 @@ LIBRARY openaas
             xValueStatic[]              : TIME FLAGS = "o";            
             yValueStatic[]              : DOUBLE FLAGS = "o";
             yUnitStatic                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-            yValueDynamic               : STRING FLAGS = "o" INITIALVALUE    =   "";
+            yValueDynamic               : DOUBLE FLAGS = "o";
             yUnitDynamic                : STRING FLAGS = "o" INITIALVALUE    =   "";
             Error                       : BOOL FLAGS = "o";
             ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";

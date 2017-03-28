@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 	Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, 0, TIME);
 	Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, 0, DOUBLE);
 	ov_string_setvalue(&pinst->v_yUnitStatic, "");
-	ov_string_setvalue(&pinst->v_yValueDynamic, "");
+	pinst->v_yValueDynamic = 0;
 	ov_string_setvalue(&pinst->v_yUnitDynamic, "");
 	pinst->v_Error = FALSE;
 	ov_string_setvalue(&pinst->v_ErrorText, "");
@@ -377,36 +377,25 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 	if (pinst->v_ErrorDynamic == FALSE){
 		if(!(pchild->v_Data.value.vartype & OV_VT_ISVECTOR)){
 			switch(pchild->v_Data.value.vartype & OV_VT_KSMASK){
-				case OV_VT_BOOL:
-					if (pchild->v_Data.value.valueunion.val_bool == TRUE)
-						ov_string_setvalue(&pinst->v_yValueDynamic, "true");
-					else
-						ov_string_setvalue(&pinst->v_yValueDynamic, "false");
-				break;
-				case OV_VT_STRING:
-					ov_string_setvalue(&pinst->v_yValueDynamic, pchild->v_Data.value.valueunion.val_string);
-				break;
 				case OV_VT_DOUBLE:
-					ov_string_print(&tmpString, "%lf", pchild->v_Data.value.valueunion.val_double);
-					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
+					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_double;
 				break;
 				case OV_VT_INT:
-					ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int);
-					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
+					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_int;
 				break;
 				case OV_VT_UINT:
-					ov_string_print(&tmpString, "%u", pchild->v_Data.value.valueunion.val_uint);
-					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
+					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_uint;
 				break;
 				case OV_VT_SINGLE:
-					ov_string_print(&tmpString, "%f", pchild->v_Data.value.valueunion.val_single);
-					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
+					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_single;
 				break;
+				case OV_VT_BOOL:
+				case OV_VT_STRING:
 				default:
 					if (pinst->v_ErrorDynamic == FALSE){
 						pinst->v_ErrorDynamic = TRUE;
 						ov_string_setvalue(&pinst->v_ErrorTextDynamic, "DataType not supported");
-						ov_string_setvalue(&pinst->v_yValueDynamic, "");
+						pinst->v_yValueDynamic = 0;
 					}
 				break;
 			}
@@ -414,7 +403,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 			if (pinst->v_ErrorDynamic == FALSE){
 				pinst->v_ErrorDynamic = TRUE;
 				ov_string_setvalue(&pinst->v_ErrorTextDynamic, "Arrays are not supported");
-				ov_string_setvalue(&pinst->v_yValueDynamic, "");
+				pinst->v_yValueDynamic = 0;
 			}
 		}
 	}
