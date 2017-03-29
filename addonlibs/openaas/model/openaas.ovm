@@ -463,6 +463,9 @@ LIBRARY openaas
             EventClass                  : STRING FLAGS = "i" INITIALVALUE    =   "";
             StartTime                   : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
             StopTime                    : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
+            FastValues                  : BOOL FLAGS = "i";
+            maxTimeSpanFastValues       : TIME_SPAN FLAGS = "i";
+            maxTimeSpanSlowValues       : TIME_SPAN FLAGS = "i";
             xValueStatic[]              : TIME FLAGS = "o";            
             yValueStatic[]              : DOUBLE FLAGS = "o";
             yUnitStatic                 : STRING FLAGS = "o" INITIALVALUE    =   "";

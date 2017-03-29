@@ -58,6 +58,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 	OV_STRING path = NULL;
 	pathList = ov_string_split(pinst->v_AASPath, "/", &len);
 
+	if(ov_string_compare(pathList[5], "AssemblyGroupAcceleration") == OV_STRCMP_EQUAL)
+		pinst->v_FastValues = TRUE;
+	else
+		pinst->v_FastValues = FALSE;
 
 	for (OV_UINT i = 4; i < len; i++){
 		if (i == 4)
@@ -103,6 +107,19 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 		pinst->v_Error = TRUE;
 		ov_string_setvalue(&pinst->v_ErrorText, "StartTime is after StopTime");
 		return;
+	}
+
+	OV_TIME_SPAN difftime;
+	OV_TIME_SPAN maxTimeSpan;
+	if (pinst->v_FastValues == TRUE)
+		maxTimeSpan = pinst->v_maxTimeSpanFastValues;
+	else
+		maxTimeSpan = pinst->v_maxTimeSpanSlowValues;
+
+	ov_time_diff(&difftime, &startTime, &stopTime);
+	if (difftime.secs > maxTimeSpan.secs ||  (difftime.secs == maxTimeSpan.secs && difftime.usecs > maxTimeSpan.usecs)){
+		startTime.secs = stopTime.secs - maxTimeSpan.secs;
+		startTime.usecs = stopTime.usecs - maxTimeSpan.usecs;
 	}
 
 	// Search for Start and Stop LCE
