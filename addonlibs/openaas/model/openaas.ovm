@@ -541,5 +541,25 @@ LIBRARY openaas
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS; 
+    
+    CLASS SwitchForLCEGenerator    :    CLASS fb/functionblock
+          IS_INSTANTIABLE;
+        VARIABLES
+            AASIdString1                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            AASIdType1                       : UINT HAS_SET_ACCESSOR;
+            PVSLName1                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            PVSName1                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            AASIdString2                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            AASIdType2                       : UINT HAS_SET_ACCESSOR;
+            PVSLName2                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            PVSName2                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            AASIDStringOut                   : STRING FLAGS = "o" INITIALVALUE = "";
+            AASIDTypeOut                     : UINT FLAGS = "o";
+            Error                            : UINT;
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS; 
   	
 END_LIBRARY;
