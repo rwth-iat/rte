@@ -69,6 +69,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 		if (requirement->v_ExpressionSemantic == REQUIREMENT){
 			if (assuranceSize == 0){
 				ov_string_print(matchText, "requirement %s do not match with the assurances", requirement->v_identifier);
+				*match = FALSE;
 				ov_database_free(requirementPath);
 				ov_database_free(assurancePath);
 				ov_database_free(tmpErrorText);
