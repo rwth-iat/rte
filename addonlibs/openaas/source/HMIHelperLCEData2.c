@@ -116,7 +116,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 	else
 		maxTimeSpan = pinst->v_maxTimeSpanSlowValues;
 
-	ov_time_diff(&difftime, &startTime, &stopTime);
+	ov_time_diff(&difftime, &stopTime, &startTime);
 	if (difftime.secs > maxTimeSpan.secs ||  (difftime.secs == maxTimeSpan.secs && difftime.usecs > maxTimeSpan.usecs)){
 		startTime.secs = stopTime.secs - maxTimeSpan.secs;
 		startTime.usecs = stopTime.usecs - maxTimeSpan.usecs;
