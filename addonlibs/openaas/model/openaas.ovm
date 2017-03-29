@@ -474,6 +474,7 @@ LIBRARY openaas
             ErrorTextStatic             : STRING FLAGS = "o" INITIALVALUE    =   "";
             ErrorDynamic                : BOOL FLAGS = "o";
             ErrorTextDynamic            : STRING FLAGS = "o" INITIALVALUE    =   "";
+            OutputType                  : UINT FLAGS = "o" COMMENT = "0:Error; 1: STATIC; 2:DYNAMIC";
         END_VARIABLES;
         OPERATIONS
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;

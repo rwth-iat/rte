@@ -40,7 +40,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 	OV_INSTPTR_openaas_LifeCycleEntry pstopLCE = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 
-
+	pinst->v_OutputType = 0;
 	Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, 0, TIME);
 	Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, 0, DOUBLE);
 	ov_string_setvalue(&pinst->v_yUnitStatic, "");
@@ -195,6 +195,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 				case OV_VT_UINT_VEC:
 					xValue = pchild->v_TimeStamp;
 					for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_uint_vec.veclen; arrayCount++){
+						pinst->v_OutputType = 1;
 						if (arrayCount > 0)
 							ov_time_add(&xValue, &xValue, &timeSpan);
 						switch(ov_time_compare(&xValue, &startTime)){
@@ -229,6 +230,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 				case OV_VT_INT_VEC:
 					xValue = pchild->v_TimeStamp;
 					for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_int_vec.veclen; arrayCount++){
+						pinst->v_OutputType = 1;
 						if (arrayCount > 0)
 							ov_time_add(&xValue, &xValue, &timeSpan);
 						switch(ov_time_compare(&xValue, &startTime)){
@@ -263,6 +265,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 				case OV_VT_SINGLE_VEC:
 					xValue = pchild->v_TimeStamp;
 					for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_single_vec.veclen; arrayCount++){
+						pinst->v_OutputType = 1;
 						if (arrayCount > 0)
 							ov_time_add(&xValue, &xValue, &timeSpan);
 						switch(ov_time_compare(&xValue, &startTime)){
@@ -297,6 +300,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 				case OV_VT_DOUBLE_VEC:
 					xValue = pchild->v_TimeStamp;
 					for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_double_vec.veclen; arrayCount++){
+						pinst->v_OutputType = 1;
 						if (arrayCount > 0)
 							ov_time_add(&xValue, &xValue, &timeSpan);
 						switch(ov_time_compare(&xValue, &startTime)){
@@ -347,13 +351,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 		if (i == 0){
 			i++;
 			pobj = Ov_GetLastChild(ov_containment, &paas->p_LifeCycleArchive);
-			if (!pobj){
-				if (pinst->v_ErrorDynamic == FALSE){
-					pinst->v_ErrorDynamic = TRUE;
-					ov_string_setvalue(&pinst->v_ErrorTextDynamic, "Could not find an object for dynamic values");
-				}
-				break;
-			}
 			pchild = Ov_DynamicPtrCast(openaas_LifeCycleEntry, pobj);
 			if (!pchild){
 				continue;
@@ -379,15 +376,19 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 			switch(pchild->v_Data.value.vartype & OV_VT_KSMASK){
 				case OV_VT_DOUBLE:
 					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_double;
+					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_INT:
 					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_int;
+					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_UINT:
 					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_uint;
+					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_SINGLE:
 					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_single;
+					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_BOOL:
 				case OV_VT_STRING:
