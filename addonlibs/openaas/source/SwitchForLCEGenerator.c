@@ -132,7 +132,7 @@ OV_DLLFNCEXPORT void openaas_SwitchForLCEGenerator_typemethod(
 		if (aasID1Plugged == TRUE){
 			ov_string_setvalue(&pinst->v_AASIDStringOut, aasId1.IdSpec);
 			pinst->v_AASIDTypeOut = aasId1.IdType;
-		}else{
+		}else if (aasID2Plugged == TRUE){
 			ov_string_setvalue(&pinst->v_AASIDStringOut, aasId2.IdSpec);
 			pinst->v_AASIDTypeOut = aasId2.IdType;
 		}
