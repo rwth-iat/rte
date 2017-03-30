@@ -141,9 +141,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			ov_string_append(&pinst->v_IDType, tmpString);
 
 		if (i == 0)
-			ov_string_setvalue(&pinst->v_TimeStamp, ov_time_timetoascii(&pchild->v_TimeStamp));
+			ov_string_setvalue(&pinst->v_TimeStamp, ov_time_timetoascii_local(&pchild->v_TimeStamp));
 		else
-			ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii(&pchild->v_TimeStamp));
+			ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii_local(&pchild->v_TimeStamp));
 
 		if (i == 0)
 			ov_string_setvalue(&pinst->v_Unit, pchild->v_Unit);

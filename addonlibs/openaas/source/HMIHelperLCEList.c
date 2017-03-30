@@ -129,9 +129,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 			ov_string_append(&pinst->v_Subject, pchild->v_Subject);
 
 		if (i == 0)
-			ov_string_setvalue(&pinst->v_TimeStamp, ov_time_timetoascii_utc(&pchild->v_TimeStamp));
+			ov_string_setvalue(&pinst->v_TimeStamp, ov_time_timetoascii_local(&pchild->v_TimeStamp));
 		else
-			ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii_utc(&pchild->v_TimeStamp));
+			ov_string_append(&pinst->v_TimeStamp, ov_time_timetoascii_local(&pchild->v_TimeStamp));
 
 		switch (pchild->v_WritingInstanceIdType){
 			case URI:

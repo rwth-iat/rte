@@ -86,7 +86,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData3_typemethod(
 	result = ov_time_asciitotime_local(&time, pinst->v_TimeStamp);
 	if (result){
 		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "Converting StartTime failed");
+		ov_string_setvalue(&pinst->v_ErrorText, "Converting TimeStamp failed");
 		return;
 	}
 
@@ -235,18 +235,22 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData3_typemethod(
 		if(!(pchild->v_Data.value.vartype & OV_VT_ISVECTOR)){
 			switch(pchild->v_Data.value.vartype & OV_VT_KSMASK){
 				case OV_VT_DOUBLE:
+					pinst->v_xValueDynamic = pchild->v_TimeStamp;
 					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_double;
 					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_INT:
+					pinst->v_xValueDynamic = pchild->v_TimeStamp;
 					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_int;
 					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_UINT:
+					pinst->v_xValueDynamic = pchild->v_TimeStamp;
 					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_uint;
 					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_SINGLE:
+					pinst->v_xValueDynamic = pchild->v_TimeStamp;
 					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_single;
 					pinst->v_OutputType = 2;
 				break;
@@ -257,6 +261,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData3_typemethod(
 						pinst->v_ErrorDynamic = TRUE;
 						ov_string_setvalue(&pinst->v_ErrorTextDynamic, "DataType not supported");
 						pinst->v_yValueDynamic = 0;
+						pinst->v_xValueDynamic.secs = 0;
+						pinst->v_xValueDynamic.usecs = 0;
 					}
 				break;
 			}
@@ -265,6 +271,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData3_typemethod(
 				pinst->v_ErrorDynamic = TRUE;
 				ov_string_setvalue(&pinst->v_ErrorTextDynamic, "Arrays are not supported");
 				pinst->v_yValueDynamic = 0;
+				pinst->v_xValueDynamic.secs = 0;
+				pinst->v_xValueDynamic.usecs = 0;
 			}
 		}
 	}
