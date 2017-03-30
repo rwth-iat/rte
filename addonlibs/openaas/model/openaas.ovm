@@ -484,6 +484,32 @@ LIBRARY openaas
         END_OPERATIONS;
     END_CLASS; 
     
+    CLASS HMIHelperLCEData3    :    CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASPath                     : STRING FLAGS = "i" COMMENT = "Format: //IP:PORT/SERVERNAME/..." INITIALVALUE    =   ""; 
+            Subject                     : STRING FLAGS = "i" INITIALVALUE    =   "";
+            EventClass                  : STRING FLAGS = "i" INITIALVALUE    =   "";
+            TimeStamp                   : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
+            TimeSpanBetweenValues       : TIME_SPAN FLAGS = "i";
+            xValueStatic[]              : TIME FLAGS = "o";            
+            yValueStatic[]              : DOUBLE FLAGS = "o";
+            yUnitStatic                 : STRING FLAGS = "o" INITIALVALUE    =   "";
+            yValueDynamic               : DOUBLE FLAGS = "o";
+            yUnitDynamic                : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Error                       : BOOL FLAGS = "o";
+            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ErrorStatic                 : BOOL FLAGS = "o";
+            ErrorTextStatic             : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ErrorDynamic                : BOOL FLAGS = "o";
+            ErrorTextDynamic            : STRING FLAGS = "o" INITIALVALUE    =   "";
+            OutputType                  : UINT FLAGS = "o" COMMENT = "0:Error; 1: STATIC; 2:DYNAMIC";
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
     CLASS PluggingTwoComponents    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
