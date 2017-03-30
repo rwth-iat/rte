@@ -105,17 +105,18 @@ typedef uint8_t bool;
 
 // VALGRIND
 #include "libov/ov_database.h"
+/*
 #define UA_free(ptr) ov_database_free(ptr)
 #define UA_malloc(size)  ov_database_malloc(size)
 #define UA_calloc(num, size) ov_database_calloc(num, size)
 #define UA_realloc(ptr, size) ov_database_realloc(ptr, size)
+*/
 
-/*
 #define UA_free(ptr) free(ptr)
 #define UA_malloc(size) malloc(size)
 #define UA_calloc(num, size) calloc(num, size)
 #define UA_realloc(ptr, size) realloc(ptr, size)
-*/
+
 
 #ifndef NO_ALLOCA
 # if defined(__GNUC__) || defined(__clang__)

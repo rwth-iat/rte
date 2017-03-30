@@ -27554,7 +27554,7 @@ UA_StatusCode UA_Client_disconnect(UA_Client *client) {
 }
 
 UA_StatusCode UA_Client_manuallyRenewSecureChannel(UA_Client *client) {
-	printf("entered UA_Client_manuallyRenewSecureChannel \n");
+	//printf("entered UA_Client_manuallyRenewSecureChannel \n");
     UA_StatusCode retval = SecureChannelHandshake(client, true);
     if(retval == UA_STATUSCODE_GOOD)
       client->state = UA_CLIENTSTATE_CONNECTED;
@@ -27659,7 +27659,7 @@ __UA_Client_Service(UA_Client *client, const void *request, const UA_DataType *r
                     void *response, const UA_DataType *responseType) {
     UA_init(response, responseType);
     UA_ResponseHeader *respHeader = (UA_ResponseHeader*)response;
-    printf("entered __UA_Client_Service\n");
+    //printf("entered __UA_Client_Service\n");
 
     if(client->state == UA_CLIENTSTATE_FAULTED){
     	return;
@@ -28439,7 +28439,7 @@ UA_Client_processPublishResponse(UA_Client *client, UA_PublishRequest *request,
 
 UA_StatusCode
 UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *client) {
-	printf("entered subscriptin manuallySendPublishRequest \n");
+	//printf("entered subscriptin manuallySendPublishRequest \n");
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
     if (client->state == UA_CLIENTSTATE_ERRORED)
         return UA_STATUSCODE_BADSERVERNOTCONNECTED;
