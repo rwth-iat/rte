@@ -12756,7 +12756,7 @@ extern "C" {
 
 extern UA_EXPORT const UA_ServerConfig UA_ServerConfig_standard;
 extern UA_EXPORT const UA_ClientConfig UA_ClientConfig_standard;
-UA_EXPORT void* ov_database_calloc(OV_UINT num, OV_UINT size);
+//UA_EXPORT void* ov_database_calloc(OV_UINT num, OV_UINT size);
 #ifdef __cplusplus
 }
 #endif
