@@ -337,11 +337,10 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 						ov_string_append(&pinst->v_Value, "false");
 			break;
 			case OV_VT_STRING:
-				ov_string_print(&tmpString, "%s", pchild->v_Value.value.valueunion.val_string);
 				if (i == 0)
-					ov_string_setvalue(&pinst->v_Value, tmpString);
+					ov_string_setvalue(&pinst->v_Value, pchild->v_Value.value.valueunion.val_string);
 				else
-					ov_string_append(&pinst->v_Value, tmpString);
+					ov_string_append(&pinst->v_Value, pchild->v_Value.value.valueunion.val_string);
 			break;
 			case OV_VT_DOUBLE:
 			    ov_string_print(&tmpString, "%lf", pchild->v_Value.value.valueunion.val_double);
