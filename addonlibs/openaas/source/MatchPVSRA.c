@@ -37,13 +37,6 @@ OV_BOOL GreaterThan (const OV_ANY any1, const OV_ANY any2){
 			STDFB_GT(SINGLE, single);
 			STDFB_GT(DOUBLE, double);
 
-			case OV_VT_STRING:
-				if(ov_string_compare(any1.value.valueunion.val_string, any2.value.valueunion.val_string) > 0)
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
 			case OV_VT_TIME:
 				if(STDFB_GT_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
 					return TRUE;
@@ -78,14 +71,7 @@ OV_BOOL GreaterEqual (const OV_ANY any1, const OV_ANY any2){
 			STDFB_GE(INT, int);
 			STDFB_GE(SINGLE, single);
 			STDFB_GE(DOUBLE, double);
-
-			case OV_VT_STRING:
-				if(ov_string_compare(any1.value.valueunion.val_string, any2.value.valueunion.val_string) >= 0)
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
+				
 			case OV_VT_TIME:
 				if(STDFB_GE_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
 					return TRUE;
@@ -204,14 +190,7 @@ OV_BOOL LessEqual (const OV_ANY any1, const OV_ANY any2){
 			STDFB_LE(INT, int);
 			STDFB_LE(SINGLE, single);
 			STDFB_LE(DOUBLE, double);
-
-			case OV_VT_STRING:
-				if(ov_string_compare(any1.value.valueunion.val_string, any2.value.valueunion.val_string) <= 0)
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
+				
 			case OV_VT_TIME:
 				if(STDFB_LE_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
 					return TRUE;
@@ -246,14 +225,7 @@ OV_BOOL LessThan (const OV_ANY any1, const OV_ANY any2){
 			STDFB_LT(INT, int);
 			STDFB_LT(SINGLE, single);
 			STDFB_LT(DOUBLE, double);
-
-			case OV_VT_STRING:
-				if(ov_string_compare(any1.value.valueunion.val_string, any2.value.valueunion.val_string) < 0)
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
+				
 			case OV_VT_TIME:
 				if(STDFB_LT_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
 					return TRUE;
