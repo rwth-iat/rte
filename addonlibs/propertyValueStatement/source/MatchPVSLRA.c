@@ -16,16 +16,17 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_openaas
-#define OV_COMPILE_LIBRARY_openaas
+#ifndef OV_COMPILE_LIBRARY_propertyValueStatement
+#define OV_COMPILE_LIBRARY_propertyValueStatement
 #endif
 
 
-#include "openaas.h"
+#include "propertyValueStatement.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_path.h"
 
 
-OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementListPath, OV_STRING assuranceListPath, OV_BOOL *match, OV_STRING *matchText, OV_STRING *errorText) {
+OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING requirementListPath, OV_STRING assuranceListPath, OV_BOOL *match, OV_STRING *matchText, OV_STRING *errorText) {
 
 	OV_INSTPTR_ov_object requirementList = NULL;
 	OV_INSTPTR_ov_object assuranceList = NULL;
@@ -35,7 +36,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 		ov_string_setvalue(errorText, "requirementListPath is not valid");
 		return 1;
 	}
-	if (!Ov_CanCastTo(openaas_PropertyValueStatementList, requirementList)){
+	if (!Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, requirementList)){
 		ov_string_setvalue(errorText, "requirementListPath is not a path to an PropertyValueStatement");
 		return 1;
 	}
@@ -45,15 +46,15 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 		ov_string_setvalue(errorText, "assuranceListPath is not valid");
 		return 1;
 	}
-	if (!Ov_CanCastTo(openaas_PropertyValueStatementList, assuranceList)){
+	if (!Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, assuranceList)){
 		ov_string_setvalue(errorText, "assuranceListPath is not a path to an PropertyValueStatement");
 		return 1;
 	}
 
-	OV_INSTPTR_openaas_PropertyValueStatement requirement = NULL;
-	OV_INSTPTR_openaas_PropertyValueStatement assurance = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyValueStatement requirement = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyValueStatement assurance = NULL;
 	OV_UINT assuranceSize = 0;
-	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, openaas_PropertyValueStatement){
+	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
 		if (assurance->v_ExpressionSemantic == ASSURANCE){
 			assuranceSize++;
 		}
@@ -65,7 +66,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 	OV_STRING tmpMatchText = NULL;
 	OV_STRING requirementPath = NULL;
 	OV_STRING assurancePath = NULL;
-	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirementList), requirement, openaas_PropertyValueStatement){
+	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirementList), requirement, propertyValueStatement_PropertyValueStatement){
 		if (requirement->v_ExpressionSemantic == REQUIREMENT){
 			if (assuranceSize == 0){
 				ov_string_print(matchText, "requirement %s do not match with the assurances", requirement->v_identifier);
@@ -77,7 +78,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 				return 0;
 			}
 			assuranceCounter = 0;
-			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, openaas_PropertyValueStatement){
+			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
 				if (assurance->v_ExpressionSemantic == ASSURANCE){
 					assuranceCounter++;
 					ov_string_setvalue(&requirementPath, requirementListPath);
@@ -86,7 +87,7 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
 					ov_string_setvalue(&assurancePath, assuranceListPath);
 					ov_string_append(&assurancePath, "/");
 					ov_string_append(&assurancePath, assurance->v_identifier);
-					if (openaas_MatchPVSRA_matchPVSRA(requirementPath, assurancePath, &tmpMatch, &tmpMatchText, &tmpErrorText) != 0){
+					if (propertyValueStatement_MatchPVSRA_matchPVSRA(requirementPath, assurancePath, &tmpMatch, &tmpMatchText, &tmpErrorText) != 0){
 						ov_string_setvalue(errorText, tmpErrorText);
 						ov_database_free(tmpMatchText);
 						ov_database_free(tmpErrorText);
@@ -119,23 +120,23 @@ OV_DLLFNCEXPORT OV_UINT openaas_MatchPVSLRA_matchPVSLRA(OV_STRING requirementLis
     return 0;
 }
 
-OV_DLLFNCEXPORT void openaas_MatchPVSLRA_typemethod(
+OV_DLLFNCEXPORT void propertyValueStatement_MatchPVSLRA_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_openaas_MatchPVSLRA pinst = Ov_StaticPtrCast(openaas_MatchPVSLRA, pfb);
+    OV_INSTPTR_propertyValueStatement_MatchPVSLRA pinst = Ov_StaticPtrCast(propertyValueStatement_MatchPVSLRA, pfb);
     pinst->v_error = 0;
 	ov_string_setvalue(&pinst->v_errortext, "");
 	ov_string_setvalue(&pinst->v_matchText, "");
 	pinst->v_match = false;
 
-    pinst->v_error = openaas_MatchPVSLRA_matchPVSLRA(pinst->v_List1Path, pinst->v_List2Path, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
+    pinst->v_error = propertyValueStatement_MatchPVSLRA_matchPVSLRA(pinst->v_List1Path, pinst->v_List2Path, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
     if (pinst->v_error != 0 || pinst->v_match == false)
     	return;
-    pinst->v_error = openaas_MatchPVSLRA_matchPVSLRA(pinst->v_List2Path, pinst->v_List1Path, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
+    pinst->v_error = propertyValueStatement_MatchPVSLRA_matchPVSLRA(pinst->v_List2Path, pinst->v_List1Path, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
     return;
 }
 

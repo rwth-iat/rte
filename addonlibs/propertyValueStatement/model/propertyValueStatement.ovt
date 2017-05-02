@@ -1,0 +1,78 @@
+#ifndef propertyValueStatement_OVT_INCLUDED
+#define propertyValueStatement_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+
+typedef enum ExpressionSemanticEnum{
+    ASSURANCE,
+    SETTING,
+    MEASUREMENT,
+    REQUIREMENT
+}ExpressionSemanticEnum;
+
+typedef enum ExpressionLogicEnum{
+    GREATER_THAN,
+    GREATER_EQUAL,
+    EQUAL,
+    NOT_EQUAL,
+    LESS_EQUAL,
+    LESS_THAN
+}ExpressionLogicEnum;
+
+
+typedef enum ViewEnum{
+    BUSINESS,
+    CONSTRUCTION,
+    POWER,
+    FUNCTIONAL,
+    LOCATION,
+    SECURITY,
+    NETWORK,
+    LIFECYCLE,
+    HUMAN
+}ViewEnum;
+
+typedef enum VisibilityEnum{
+    PRIVAT,
+    CONTRACT,
+    PUBLIC
+}VisibilityEnum;
+
+
+typedef struct IdentificationType{
+    OV_STRING IdSpec;
+    enum IdType{
+        URI,
+        ISO
+    }IdType;
+}IdentificationType;
+
+typedef struct DataValue{
+    OV_ANY Value;
+    OV_TIME TimeStamp;
+}DataValue;
+
+typedef struct PropertyValueStatement{
+    OV_STRING pvsName;
+    ExpressionLogicEnum ExpressionLogic;
+    ExpressionSemanticEnum ExpressionSemantic;
+    DataValue value;
+    OV_STRING unit;
+    IdentificationType ID;
+    ViewEnum view;
+    OV_INT Visibility;  
+}PropertyValueStatement;
+
+
+typedef struct PropertyValueStatementList{
+    IdentificationType Carrier;
+    IdentificationType CreatingInstance;
+    OV_TIME CreationTime;
+    OV_STRING pvslName;
+    PropertyValueStatement *pvs;
+    OV_UINT pvsNumber;  
+}PropertyValueStatementList;
+
+#endif

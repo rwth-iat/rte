@@ -687,10 +687,10 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	}else if(Ov_CanCastTo(openaas_LifeCycleEntry, pobj)){
 		if (openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_PropertyValueStatementList, pobj)){
+	}else if(Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pobj)){
 		if (openaas_nodeStoreFunctions_ovPropertyValueStatementListNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_PropertyValueStatement, pobj)){
+	}else if(Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pobj)){
 		if (openaas_nodeStoreFunctions_ovPropertyValueStatementNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if (Ov_CanCastTo(openaas_modelmanager, pobj)){
@@ -787,7 +787,7 @@ static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
 			return result;
 		}
 
-		if (Ov_CanCastTo(openaas_PropertyValueStatement, pobj)){ // PVS
+		if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pobj)){ // PVS
 			OV_ELEMENT tmpPart;
 			tmpPart.elemtype = OV_ET_NONE;
 			OV_ELEMENT tmpParrent;
