@@ -61,7 +61,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 	}
 
 	OV_UINT assuranceCounter = 0;
-	OV_BOOL tmpMatch = false;
+	OV_BOOL tmpMatch = FALSE;
 	OV_STRING tmpErrorText = NULL;
 	OV_STRING tmpMatchText = NULL;
 	OV_STRING requirementPath = NULL;
@@ -95,15 +95,15 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 						ov_database_free(assurancePath);
 						return 1;
 					}
-					if (tmpMatch == true){
+					if (tmpMatch == TRUE){
 						ov_database_free(tmpMatchText);
 						ov_database_free(tmpErrorText);
 						ov_database_free(requirementPath);
 						ov_database_free(assurancePath);
 						break;
 					}
-					if (tmpMatch == false && assuranceCounter >= assuranceSize){
-						*match = false;
+					if (tmpMatch == FALSE && assuranceCounter >= assuranceSize){
+						*match = FALSE;
 						ov_string_print(matchText, "requirement %s do not match with the assurances, ", requirement->v_identifier);
 						ov_string_append(matchText, tmpMatchText);
 						ov_database_free(tmpMatchText);
@@ -116,7 +116,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 			}
 		}
 	}
-	*match = true;
+	*match = TRUE;
     return 0;
 }
 
@@ -131,10 +131,10 @@ OV_DLLFNCEXPORT void propertyValueStatement_MatchPVSLRA_typemethod(
     pinst->v_error = 0;
 	ov_string_setvalue(&pinst->v_errortext, "");
 	ov_string_setvalue(&pinst->v_matchText, "");
-	pinst->v_match = false;
+	pinst->v_match = FALSE;
 
     pinst->v_error = propertyValueStatement_MatchPVSLRA_matchPVSLRA(pinst->v_List1Path, pinst->v_List2Path, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
-    if (pinst->v_error != 0 || pinst->v_match == false)
+    if (pinst->v_error != 0 || pinst->v_match == FALSE)
     	return;
     pinst->v_error = propertyValueStatement_MatchPVSLRA_matchPVSLRA(pinst->v_List2Path, pinst->v_List1Path, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
     return;
