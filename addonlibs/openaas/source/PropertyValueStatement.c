@@ -16,16 +16,16 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_propertyValueStatement
-#define OV_COMPILE_LIBRARY_propertyValueStatement
+#ifndef OV_COMPILE_LIBRARY_openaas
+#define OV_COMPILE_LIBRARY_openaas
 #endif
 
 
-#include "propertyValueStatement.h"
+#include "openaas.h"
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_ACCESS propertyValueStatement_PropertyValueStatement_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS openaas_PropertyValueStatement_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -38,13 +38,13 @@ OV_DLLFNCEXPORT OV_ACCESS propertyValueStatement_PropertyValueStatement_getacces
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_PropertyValueStatement_constructor(
+OV_DLLFNCEXPORT OV_RESULT openaas_PropertyValueStatement_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_propertyValueStatement_PropertyValueStatement pinst = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, pobj);
+    OV_INSTPTR_openaas_PropertyValueStatement pinst = Ov_StaticPtrCast(openaas_PropertyValueStatement, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */

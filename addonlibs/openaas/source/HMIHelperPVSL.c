@@ -37,8 +37,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 	OV_INSTPTR_openaas_HMIHelperPVSL pinst = Ov_StaticPtrCast(openaas_HMIHelperPVSL, pfb);
 	OV_INSTPTR_ov_object pobj = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pList = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatement pchild = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList pList = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatement pchild = NULL;
 
 	ov_string_setvalue(&pinst->v_ExpressionLogic, "");
 	ov_string_setvalue(&pinst->v_ExpressionSemantic, "");
@@ -102,7 +102,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 		ov_database_free(tmpString_header);
 		return;
 	}
-	pList = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatementList, pobj);
+	pList = Ov_DynamicPtrCast(openaas_PropertyValueStatementList, pobj);
 	if (!pList){
 		pinst->v_Error = TRUE;
 		ov_string_setvalue(&pinst->v_ErrorText, "Object is not of PVSL-Type");
@@ -115,7 +115,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 	OV_STRING tmpString = NULL;
 	OV_UINT i = 0;
-	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain,pList), pchild, propertyValueStatement_PropertyValueStatement){
+	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain,pList), pchild, openaas_PropertyValueStatement){
 		if (i != 0){
 			ov_string_append(&pinst->v_ExpressionLogic, ";");
 			ov_string_append(&pinst->v_ExpressionSemantic, ";");

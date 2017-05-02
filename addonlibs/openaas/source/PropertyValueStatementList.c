@@ -16,16 +16,16 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_propertyValueStatement
-#define OV_COMPILE_LIBRARY_propertyValueStatement
+#ifndef OV_COMPILE_LIBRARY_openaas
+#define OV_COMPILE_LIBRARY_openaas
 #endif
 
 
-#include "propertyValueStatement.h"
+#include "openaas.h"
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_ACCESS propertyValueStatement_PropertyValueStatementList_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS openaas_PropertyValueStatementList_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket

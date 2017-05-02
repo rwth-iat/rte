@@ -179,18 +179,18 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatement ppvs = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,&paas->p_Body), pvslName));
+		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,&paas->p_Body), pvslName));
 		if(ppvsl){
-			ppvs = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), pvs.pvsName));
+			ppvs = Ov_StaticPtrCast(openaas_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), pvs.pvsName));
 			if(!ppvs){
-				result = Ov_CreateObject(propertyValueStatement_PropertyValueStatement, ppvs, ppvsl, pvs.pvsName);
+				result = Ov_CreateObject(openaas_PropertyValueStatement, ppvs, ppvsl, pvs.pvsName);
 				if(Ov_Fail(result)){
 					ov_logfile_error("Fatal: could not create PVS object - reason: %s", ov_result_getresulttext(result));
 					return openaas_modelmanager_ovresultToAASStatusCode(result);
@@ -221,16 +221,16 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSTime(IdentificationT
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatement ppvs = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,&paas->p_Body), pvslName));
+		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,&paas->p_Body), pvslName));
 		if(ppvsl){
-			result = Ov_CreateObject(propertyValueStatement_PropertyValueStatement, ppvs, ppvsl, pvs.pvsName);
+			result = Ov_CreateObject(openaas_PropertyValueStatement, ppvs, ppvsl, pvs.pvsName);
 			if(Ov_Fail(result)){
 				ov_logfile_error("Fatal: could not create PVS object - reason: %s", ov_result_getresulttext(result));
 				return openaas_modelmanager_ovresultToAASStatusCode(result);
@@ -257,18 +257,18 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType 
 		OV_RESULT result = OV_ERR_OK;
 		OV_INSTPTR_openaas_aas paas = NULL;
 		OV_INSTPTR_ov_object ptr = NULL;
-		OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
-		OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
+		OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
+		OV_INSTPTR_openaas_PropertyValueStatement ppvs = NULL;
 		ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 		if (!ptr)
 			return AASSTATUSCODE_BADAASID;
 		paas = Ov_StaticPtrCast(openaas_aas, ptr);
 		if (paas){
-			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+			ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
 			if(!ppvsl)
-				ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
+				ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
 			if(ppvsl){
-				ppvs = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,ppvsl), pvsName));
+				ppvs = Ov_StaticPtrCast(openaas_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,ppvsl), pvsName));
 				if (ppvs){
 					result = Ov_DeleteObject(ppvs);
 					if(Ov_Fail(result)){
@@ -291,18 +291,18 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, PropertyValueStatement *pvs) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatement ppvs = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
 		if(!ppvsl)
-			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
+			ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
 		if(ppvsl){
-			ppvs = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,ppvsl), pvsName));
+			ppvs = Ov_StaticPtrCast(openaas_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,ppvsl), pvsName));
 			if(ppvs){
 				ov_string_setvalue(&pvs->pvsName, ppvs->v_identifier);
 				pvs->ExpressionLogic = ppvs->v_ExpressionLogic;
@@ -329,18 +329,18 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aas
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aasId, OV_STRING pvslName, PropertyValueStatement pvs) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatement ppvs = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
 		if(!ppvsl)
-			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
+			ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
 		if(ppvsl){
-			ppvs = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,ppvsl), pvs.pvsName));
+			ppvs = Ov_StaticPtrCast(openaas_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,ppvsl), pvs.pvsName));
 			if (ppvs){
 				ppvs->v_ExpressionLogic = pvs.ExpressionLogic;
 				ppvs->v_ExpressionSemantic = pvs.ExpressionSemantic;

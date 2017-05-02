@@ -3,19 +3,41 @@
 #include "fb.ovm"
 #include "opcua.ovm"
 #include "ksapi.ovm"
-#include "propertyValueStatement.ovm"
 
 LIBRARY openaas
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
     AUTHOR    = "Torben Deppe";
     COPYRIGHT = "";
     COMMENT   = "";
-     
+    
 	/**
 		Documentation of aas.
 		@note Javadoc syntax is allowed here.
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
-	*/   
+	*/
+	 
+	CLASS PropertyValueStatement : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+        	ExpressionSemantic : INT 
+        	   COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+        	ExpressionLogic : INT 
+        	   COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+            Unit                   : STRING INITIALVALUE    =   "";
+            Value                  : ANY;
+            TimeStamp              : TIME;
+            IDIdString               : STRING INITIALVALUE    =   "";
+            IDIdType                 : UINT;
+            View                   : INT
+                COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURITY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+            Visibility             : INT COMMENT = "0:PRIVAT,1:CONTRACT,2:PUBLIC";
+        END_VARIABLES;
+        OPERATIONS
+        	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        	constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
     
     CLASS LifeCycleEntry : CLASS ov/object
         IS_INSTANTIABLE;
@@ -34,7 +56,21 @@ LIBRARY openaas
         	constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
         END_OPERATIONS;
     END_CLASS;
-        
+    
+    CLASS PropertyValueStatementList : CLASS ov/domain
+    	IS_INSTANTIABLE;
+        VARIABLES
+            CarrierIdString  : STRING INITIALVALUE    =   "";
+            CarrierIdType    : UINT;
+            CreatingInstanceIdString : STRING INITIALVALUE    =   "";
+            CreatingInstanceIdType : UINT;
+            CreationTime : TIME;
+        END_VARIABLES;
+        OPERATIONS
+        	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
     CLASS LifeCycleArchive : CLASS ov/domain
     	IS_INSTANTIABLE;
     	VARIABLES
@@ -52,7 +88,7 @@ LIBRARY openaas
         VARIABLES
         END_VARIABLES;
         PARTS
-        	Config : CLASS propertyValueStatement/PropertyValueStatementList;
+        	Config : CLASS openaas/PropertyValueStatementList;
         END_PARTS;
         OPERATIONS
         END_OPERATIONS;
@@ -286,7 +322,39 @@ LIBRARY openaas
         typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
     END_OPERATIONS;    
     END_CLASS;
-  	    
+  	
+  	CLASS MatchPVSRA : CLASS fb/functionblock
+  		IS_INSTANTIABLE;
+  		VARIABLES
+  		    requirementPath : STRING FLAGS = "i" INITIALVALUE    =   "";
+  		    assurancePath   : STRING FLAGS = "i" INITIALVALUE    =   "";
+  		    match       : BOOL FLAGS = "o";
+  		    matchText   : STRING FLAGS = "o" INITIALVALUE    =   "";
+  		    error       : UINT FLAGS = "o";
+  		    errortext   : STRING FLAGS = "o" INITIALVALUE    =   "";
+  		END_VARIABLES;
+  		OPERATIONS 
+  			matchPVSRA : C_FUNCTION <OPENAAS_FNC_MATCHPVSRA>;
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+  		END_OPERATIONS;
+  	END_CLASS;
+  	
+  	CLASS MatchPVSLRA : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            List1Path : STRING FLAGS = "i" INITIALVALUE    =   "";
+            List2Path   : STRING FLAGS = "i" INITIALVALUE    =   "";
+            match               : BOOL FLAGS = "o";
+            matchText           : STRING FLAGS = "o" INITIALVALUE    =   "";
+            error               : UINT FLAGS = "o";
+            errortext           : STRING FLAGS = "o" INITIALVALUE    =   "";
+        END_VARIABLES;
+        OPERATIONS 
+            matchPVSLRA : C_FUNCTION <OPENAAS_FNC_MATCHPVSLRA>;
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
     CLASS FindAAS : CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
@@ -519,6 +587,6 @@ LIBRARY openaas
         OPERATIONS
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
-    END_CLASS;
+    END_CLASS; 
   	
 END_LIBRARY;

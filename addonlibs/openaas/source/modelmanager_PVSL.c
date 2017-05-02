@@ -124,15 +124,15 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
 		if(!ppvsl){
-			result = Ov_CreateObject(propertyValueStatement_PropertyValueStatementList, ppvsl, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName);
+			result = Ov_CreateObject(openaas_PropertyValueStatementList, ppvsl, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName);
 			if(Ov_Fail(result)){
 				ov_logfile_error("Fatal: could not create PVSL object - reason: %s", ov_result_getresulttext(result));
 				return openaas_modelmanager_ovresultToAASStatusCode(result);
@@ -155,15 +155,15 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSLTime(Identification
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
 		if(!ppvsl){
-			result = Ov_CreateObject(propertyValueStatement_PropertyValueStatementList, ppvsl, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName);
+			result = Ov_CreateObject(openaas_PropertyValueStatementList, ppvsl, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName);
 			if(Ov_Fail(result)){
 				ov_logfile_error("Fatal: could not create PVSL object - reason: %s", ov_result_getresulttext(result));
 				return openaas_modelmanager_ovresultToAASStatusCode(result);
@@ -187,13 +187,13 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVSL(IdentificationType
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
+	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		ppvsl = Ov_StaticPtrCast(openaas_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
 		if(ppvsl){
 			result = Ov_DeleteObject(ppvsl);
 			if(Ov_Fail(result)){
