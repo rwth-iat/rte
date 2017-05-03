@@ -37,7 +37,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 
 	OV_INSTPTR_openaas_HMIHelperLCEList pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEList, pfb);
 	OV_INSTPTR_ov_object pobj = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry pchild = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pchild = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 
 
@@ -85,7 +85,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 
 	OV_STRING tmpString = NULL;
 	OV_UINT i = 0;
-	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, openaas_LifeCycleEntry){
+	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, lifeCycleEntry_LifeCycleEntry){
 		if (i != 0){
 			ov_string_append(&pinst->v_CreatingInstanceId, ";");
 			ov_string_append(&pinst->v_Data, ";");

@@ -153,9 +153,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovLifeCycleArchiveNodeT
 		i++;
 		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 		newNode->references[i].isInverse = UA_FALSE;
-		if (Ov_CanCastTo(openaas_LifeCycleEntry, pchild)){
-			OV_INSTPTR_openaas_LifeCycleEntry pref =
-									Ov_DynamicPtrCast(openaas_LifeCycleEntry,pchild);
+		if (Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pchild)){
+			OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pref =
+									Ov_DynamicPtrCast(lifeCycleEntry_LifeCycleEntry,pchild);
 			OV_STRING tmpString = NULL;
 			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 			ov_string_append(&tmpString, "/");

@@ -159,8 +159,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		copyOPCUAStringToOV(tmpUAWritingInstance->idSpec, &(lce.writingInstance.IdSpec));
 		lce.writingInstance.IdType = tmpUAWritingInstance->idType;
 
-		ov_VariantToAny(&(tmpUAValue->value), &lce.data.Value);
-		lce.data.TimeStamp = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
+		ov_VariantToAny(&(tmpUAValue->value), &lce.data);
+		lce.data.time = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
 
 		result = openaas_modelmanager_createLCE(tmpOVAASId, lce);
 
@@ -222,9 +222,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		UA_DataValue tmpUAValue;
 		UA_DataValue_init(&tmpUAValue);
-		ov_AnyToVariant(&lce.data.Value, &tmpUAValue.value);
+		ov_AnyToVariant(&lce.data, &tmpUAValue.value);
 		tmpUAValue.hasValue = true;
-		tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(lce.data.TimeStamp);
+		tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(lce.data.time);
 		tmpUAValue.hasSourceTimestamp = true;
 
 		UA_Variant_setScalarCopy(&output[0], &tmpUACreatingInstance, &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
@@ -270,9 +270,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 			tmpUALifeCycleEntry[i].writingInstance.idType = lce[i].writingInstance.IdType;
 			tmpUALifeCycleEntry[i].eventClass = UA_String_fromChars(lce[i].eventClass);
 			tmpUALifeCycleEntry[i].subject = UA_String_fromChars(lce[i].subject);
-			ov_AnyToVariant(&lce[i].data.Value, &tmpUALifeCycleEntry[i].data.value);
+			ov_AnyToVariant(&lce[i].data, &tmpUALifeCycleEntry[i].data.value);
 			tmpUALifeCycleEntry[i].data.hasValue = true;
-			tmpUALifeCycleEntry[i].data.sourceTimestamp = ov_ovTimeTo1601nsTime(lce[i].data.TimeStamp);
+			tmpUALifeCycleEntry[i].data.sourceTimestamp = ov_ovTimeTo1601nsTime(lce[i].data.time);
 			tmpUALifeCycleEntry[i].data.hasSourceTimestamp = true;
 			tmpUALifeCycleEntry[i].id = lce[i].lceId;
 			}
@@ -319,8 +319,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 		copyOPCUAStringToOV(tmpUAWritingInstance->idSpec, &(lce.writingInstance.IdSpec));
 		lce.writingInstance.IdType = tmpUAWritingInstance->idType;
 
-		ov_VariantToAny(&(tmpUAValue->value), &lce.data.Value);
-		lce.data.TimeStamp = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
+		ov_VariantToAny(&(tmpUAValue->value), &lce.data);
+		lce.data.time = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
 
 		result = openaas_modelmanager_setLCE(tmpOVAASId, lce);
 
@@ -357,8 +357,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		pvs.ExpressionSemantic = *tmpUAExpressionSemantic;
 
-		ov_VariantToAny(&(tmpUAValue->value), &pvs.value.Value);
-		pvs.value.TimeStamp = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
+		ov_VariantToAny(&(tmpUAValue->value), &pvs.value);
+		pvs.value.time = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
 
 		copyOPCUAStringToOV(*tmpUAUnit, &pvs.unit);
 
@@ -429,9 +429,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		UA_DataValue tmpUAValue;
 		UA_DataValue_init(&tmpUAValue);
-		ov_AnyToVariant(&pvs.value.Value, &tmpUAValue.value);
+		ov_AnyToVariant(&pvs.value, &tmpUAValue.value);
 		tmpUAValue.hasValue = true;
-		tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(pvs.value.TimeStamp);
+		tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(pvs.value.time);
 		tmpUAValue.hasSourceTimestamp = true;
 
 		UA_String tmpUAUnit;
@@ -495,8 +495,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_MethodCallbackStandard(
 
 		pvs.ExpressionSemantic = *tmpUAExpressionSemantic;
 
-		ov_VariantToAny(&(tmpUAValue->value), &pvs.value.Value);
-		pvs.value.TimeStamp = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
+		ov_VariantToAny(&(tmpUAValue->value), &pvs.value);
+		pvs.value.time = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
 
 		copyOPCUAStringToOV(*tmpUAUnit, &pvs.unit);
 
@@ -681,16 +681,16 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	}else if(Ov_CanCastTo(openaas_aas, pobj)){
 		if (openaas_nodeStoreFunctions_ovOpenAASNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_LifeCycleArchive, pobj)){
+	}else if(Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pobj)){
 		if (openaas_nodeStoreFunctions_ovLifeCycleArchiveNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_LifeCycleEntry, pobj)){
+	}else if(Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pobj)){
 		if (openaas_nodeStoreFunctions_ovLifeCycleEntryNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_PropertyValueStatementList, pobj)){
+	}else if(Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pobj)){
 		if (openaas_nodeStoreFunctions_ovPropertyValueStatementListNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_PropertyValueStatement, pobj)){
+	}else if(Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pobj)){
 		if (openaas_nodeStoreFunctions_ovPropertyValueStatementNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if (Ov_CanCastTo(openaas_modelmanager, pobj)){
@@ -787,7 +787,7 @@ static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
 			return result;
 		}
 
-		if (Ov_CanCastTo(openaas_PropertyValueStatement, pobj)){ // PVS
+		if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pobj)){ // PVS
 			OV_ELEMENT tmpPart;
 			tmpPart.elemtype = OV_ET_NONE;
 			OV_ELEMENT tmpParrent;
@@ -813,7 +813,7 @@ static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
 				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "View") == OV_STRCMP_EQUAL)
 					*(UA_UInt32*)tmpPart.pvalue = tmpPropertyValueStatement->view;
 			} while(true);
-		}else if (Ov_CanCastTo(openaas_LifeCycleEntry, pobj)){ // LCE
+		}else if (Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pobj)){ // LCE
 			OV_ELEMENT tmpPart;
 			tmpPart.elemtype = OV_ET_NONE;
 			OV_ELEMENT tmpParrent;

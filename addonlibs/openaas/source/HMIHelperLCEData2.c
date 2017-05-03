@@ -35,9 +35,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 	OV_RESULT result = 0;
 	OV_INSTPTR_openaas_HMIHelperLCEData2 pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEData2, pfb);
 	OV_INSTPTR_ov_object pobj = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry pchild = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry pstartLCE = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry pstopLCE = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pchild = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pstartLCE = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pstopLCE = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 
 	pinst->v_OutputType = 0;
@@ -124,7 +124,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 
 	// Search for Start and Stop LCE
 	OV_UINT lceCount = 0;
-	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, openaas_LifeCycleEntry){
+	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, lifeCycleEntry_LifeCycleEntry){
 		if (ov_string_compare(pchild->v_EventClass, pinst->v_EventClass) == OV_STRCMP_EQUAL && ov_string_compare(pchild->v_Subject, pinst->v_Subject) == OV_STRCMP_EQUAL){
 			lceCount++;
 			// StartLCE
@@ -189,7 +189,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 			pobj = NULL;
 			pobj = Ov_GetNextChild(ov_containment, pchild);
 			pchild = NULL;
-			pchild = Ov_DynamicPtrCast(openaas_LifeCycleEntry, pobj);
+			pchild = Ov_DynamicPtrCast(lifeCycleEntry_LifeCycleEntry, pobj);
 			if (!pchild){
 				continue;
 			}
@@ -368,7 +368,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 		if (i == 0){
 			i++;
 			pobj = Ov_GetLastChild(ov_containment, &paas->p_LifeCycleArchive);
-			pchild = Ov_DynamicPtrCast(openaas_LifeCycleEntry, pobj);
+			pchild = Ov_DynamicPtrCast(lifeCycleEntry_LifeCycleEntry, pobj);
 			if (!pchild){
 				continue;
 			}
@@ -382,7 +382,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData2_typemethod(
 			}
 			break;
 		}
-		pchild = Ov_DynamicPtrCast(openaas_LifeCycleEntry, pobj);
+		pchild = Ov_DynamicPtrCast(lifeCycleEntry_LifeCycleEntry, pobj);
 		if (!pchild){
 			continue;
 		}

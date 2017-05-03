@@ -30,8 +30,8 @@ extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationType aasId, OV_UINT *number, PropertyValueStatementList **pvsl) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_PropertyValueStatementList ppvsl = NULL;
-	OV_INSTPTR_openaas_PropertyValueStatement ppvs = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
 	OV_UINT pvslSize = 0;
 	OV_UINT pvsSize = 0;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -39,13 +39,13 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ppvsl, openaas_PropertyValueStatementList){
+		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ppvsl, propertyValueStatement_PropertyValueStatementList){
 			pvslSize++;
 		}
 		PropertyValueStatementList *pvsltmp = ov_database_malloc(sizeof(PropertyValueStatementList)*pvslSize);
 		*number = pvslSize;
 		pvslSize = 0;
-		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ppvsl, openaas_PropertyValueStatementList){
+		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ppvsl, propertyValueStatement_PropertyValueStatementList){
 			PropertyValueStatementList_init(&pvsltmp[pvslSize]);
 			ov_string_setvalue(&pvsltmp[pvslSize].Carrier.IdSpec, ppvsl->v_CarrierIdString);
 			pvsltmp[pvslSize].Carrier.IdType = ppvsl->v_CarrierIdType;
@@ -55,14 +55,14 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 			ov_string_setvalue(&pvsltmp[pvslSize].pvslName, ppvsl->v_identifier);
 
 			pvsSize = 0;
-			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, openaas_PropertyValueStatement){
+			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, propertyValueStatement_PropertyValueStatement){
 				if (ppvs->v_Visibility == 2)
 					pvsSize++;
 			}
 			pvsltmp[pvslSize].pvs = ov_database_malloc(sizeof(PropertyValueStatement)*pvsSize);
 			pvsltmp[pvslSize].pvsNumber = pvsSize;
 			pvsSize = 0;
-			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, openaas_PropertyValueStatement){
+			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, propertyValueStatement_PropertyValueStatement){
 				if (ppvs->v_Visibility == 2){
 					PropertyValueStatement_init(&(pvsltmp[pvslSize].pvs[pvsSize]));
 					pvsltmp[pvslSize].pvs[pvsSize].ExpressionLogic = ppvs->v_ExpressionLogic;
@@ -72,8 +72,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 					pvsltmp[pvslSize].pvs[pvsSize].Visibility = ppvs->v_Visibility;
 					ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].pvsName, ppvs->v_identifier);
 					ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].unit, ppvs->v_Unit);
-					Ov_SetAnyValue(&pvsltmp[pvslSize].pvs[pvsSize].value.Value, &ppvs->v_Value);
-					pvsltmp[pvslSize].pvs[pvsSize].value.TimeStamp = ppvs->v_TimeStamp;
+					Ov_SetAnyValue(&pvsltmp[pvslSize].pvs[pvsSize].value, &ppvs->v_Value);
+					pvsltmp[pvslSize].pvs[pvsSize].value.time = ppvs->v_TimeStamp;
 					pvsltmp[pvslSize].pvs[pvsSize].view = ppvs->v_View;
 					pvsSize++;
 				}

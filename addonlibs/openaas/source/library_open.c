@@ -44,6 +44,36 @@
 	/*
 	 * Your code goes here.
 	 */
+	 OV_INSTPTR_ov_library pLibLIFECYCLEENTRY = NULL;
+	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibLIFECYCLEENTRY, ov_library){
+		if(ov_string_compare(pLibLIFECYCLEENTRY->v_identifier, "lifeCycleEntry") == OV_STRCMP_EQUAL){
+			break;
+		}
+	 }
+	 if(!pLibLIFECYCLEENTRY){
+		result = Ov_CreateObject(ov_library, pLibLIFECYCLEENTRY, &(pdb->acplt), "lifeCycleEntry");
+		if(Ov_Fail(result)){
+			ov_memstack_lock();
+			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library lifeCycleEntry Reason: %s", ov_result_getresulttext(result));
+			ov_memstack_unlock();
+			return result;
+		}
+	 }
+	 OV_INSTPTR_ov_library pLibPROPERTYVALUESTATEMENT = NULL;
+	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibPROPERTYVALUESTATEMENT, ov_library){
+		if(ov_string_compare(pLibPROPERTYVALUESTATEMENT->v_identifier, "propertyValueStatement") == OV_STRCMP_EQUAL){
+			break;
+		}
+	 }
+	 if(!pLibPROPERTYVALUESTATEMENT){
+		result = Ov_CreateObject(ov_library, pLibPROPERTYVALUESTATEMENT, &(pdb->acplt), "propertyValueStatement");
+		if(Ov_Fail(result)){
+			ov_memstack_lock();
+			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library propertyValueStatement Reason: %s", ov_result_getresulttext(result));
+			ov_memstack_unlock();
+			return result;
+		}
+	 }
 
 	return result;
 	}

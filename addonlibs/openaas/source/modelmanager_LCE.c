@@ -125,8 +125,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_LCECreate_set(
 		lce.creatingInstance.IdType = pobj->v_LCECreatingInstanceIdType;
 		lce.writingInstance.IdSpec = pobj->v_LCEWritingInstanceIdString;
 		lce.writingInstance.IdType = pobj->v_LCEWritingInstanceIdType;
-		lce.data.Value = pobj->v_LCEValue;
-		lce.data.TimeStamp = pobj->v_LCETimeStamp;
+		lce.data = pobj->v_LCEValue;
+		lce.data.time = pobj->v_LCETimeStamp;
 		lce.eventClass = pobj->v_LCEEventClass;
 		lce.lceId = pobj->v_LCEId;
 		lce.subject = pobj->v_LCESubject;
@@ -162,7 +162,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createLCE(IdentificationType 
 	OV_RESULT ovResult = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry plce = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
@@ -171,12 +171,12 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createLCE(IdentificationType 
 		if (paas->p_LifeCycleArchive.v_LifeCycleEntrySize > paas->p_LifeCycleArchive.v_LifeCycleEntrySizeMax-1){
 			ptr = Ov_GetFirstChild(ov_containment, &paas->p_LifeCycleArchive);
 			if (ptr){
-				plce = Ov_StaticPtrCast(openaas_LifeCycleEntry,ptr);
+				plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry,ptr);
 				if(!plce){
 					do{
 						ptr = Ov_GetNextChild(ov_containment, &paas->p_LifeCycleArchive);
 						if (ptr){
-							plce = Ov_StaticPtrCast(openaas_LifeCycleEntry,ptr);
+							plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry,ptr);
 						}else{
 							break;
 						}
@@ -196,7 +196,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createLCE(IdentificationType 
 		OV_UINT count = paas->p_LifeCycleArchive.v_LifeCycleEntryNameCount+1;
 		ov_string_print(&tmpString, "%u", count);
 		plce = NULL;
-		ovResult = Ov_CreateObject(openaas_LifeCycleEntry, plce, &paas->p_LifeCycleArchive, tmpString);
+		ovResult = Ov_CreateObject(lifeCycleEntry_LifeCycleEntry, plce, &paas->p_LifeCycleArchive, tmpString);
 		ov_database_free(tmpString);
 		if(Ov_Fail(ovResult)){
 			ov_logfile_error("Fatal: could not create LCE object - reason: %s", ov_result_getresulttext(ovResult));
@@ -210,8 +210,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createLCE(IdentificationType 
 		plce->v_WritingInstanceIdType = lce.writingInstance.IdType;
 		ov_string_setvalue(&(plce->v_EventClass), lce.eventClass);
 		ov_string_setvalue(&(plce->v_Subject), lce.subject);
-		ov_variable_setanyvalue(&(plce->v_Data), &lce.data.Value);
-		plce->v_TimeStamp = lce.data.TimeStamp;
+		ov_variable_setanyvalue(&(plce->v_Data), &lce.data);
+		plce->v_TimeStamp = lce.data.time;
 	}else{
 		result = AASSTATUSCODE_BADUNEXPECTEDERROR;
 	}
@@ -223,7 +223,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteLCE(IdentificationType 
 	OV_RESULT ovResult = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry lce = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry lce = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
@@ -231,7 +231,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteLCE(IdentificationType 
 	if (paas){
 		OV_STRING tmpString = NULL;
 		ov_string_print(&tmpString, "%lu", lceId);
-		lce = Ov_StaticPtrCast(openaas_LifeCycleEntry, Ov_SearchChild(ov_containment, &paas->p_LifeCycleArchive, tmpString));
+		lce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, Ov_SearchChild(ov_containment, &paas->p_LifeCycleArchive, tmpString));
 		ov_database_free(tmpString);
 		if(lce){
 			ovResult = Ov_DeleteObject(lce);
@@ -254,7 +254,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteLCE(IdentificationType 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getLCE(IdentificationType aasId, OV_UINT64 lceId, LifeCycleEntry *lce) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry plce = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
 	OV_STRING lceName = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
@@ -263,7 +263,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getLCE(IdentificationType aas
 	if (paas){
 		lceName = NULL;
 		ov_string_print(&lceName, "%lu", lceId);
-		plce = Ov_StaticPtrCast(openaas_LifeCycleEntry, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_LifeCycleArchive), lceName));
+		plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_LifeCycleArchive), lceName));
 		if (plce){
 			ov_string_setvalue(&lce->creatingInstance.IdSpec, plce->v_CreatingInstanceIdString);
 			lce->creatingInstance.IdType = plce->v_CreatingInstanceIdType;
@@ -271,8 +271,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getLCE(IdentificationType aas
 			lce->writingInstance.IdType = plce->v_WritingInstanceIdType;
 			ov_string_setvalue(&lce->eventClass, plce->v_EventClass);
 			ov_string_setvalue(&lce->subject, plce->v_Subject);
-			ov_variable_setanyvalue(&lce->data.Value, &(plce->v_Data));
-			lce->data.TimeStamp = plce->v_TimeStamp;
+			ov_variable_setanyvalue(&lce->data, &(plce->v_Data));
+			lce->data.time = plce->v_TimeStamp;
 			lce->lceId = atoi(plce->v_identifier);
 		}else{
 			return AASSTATUSCODE_BADLCEID;
@@ -287,14 +287,14 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getLCE(IdentificationType aas
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getLastLCEs(IdentificationType aasId, OV_UINT count, LifeCycleEntry **lce, OV_UINT *arrayDimension) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry plce = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
 	OV_UINT lceSize = 0;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_LifeCycleArchive), plce, openaas_LifeCycleEntry){
+		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_LifeCycleArchive), plce, lifeCycleEntry_LifeCycleEntry){
 			lceSize++;
 		}
 		if (lceSize > count){
@@ -315,10 +315,10 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getLastLCEs(IdentificationTyp
 			}else{
 				ptr = Ov_GetPreviousChild(ov_containment, Ov_StaticPtrCast(ov_domain, ptr));
 			}
-			if (!Ov_CanCastTo(openaas_LifeCycleEntry, ptr))
+			if (!Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, ptr))
 				continue;
 
-			plce = Ov_StaticPtrCast(openaas_LifeCycleEntry, ptr);
+			plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, ptr);
 
 			LifeCycleEntry_init(&((*lce)[i]));
 			ov_string_setvalue(&((*lce)[i].creatingInstance.IdSpec), plce->v_CreatingInstanceIdString);
@@ -327,8 +327,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getLastLCEs(IdentificationTyp
 			(*lce)[i].writingInstance.IdType = plce->v_WritingInstanceIdType;
 			ov_string_setvalue(&((*lce)[i].eventClass), plce->v_EventClass);
 			ov_string_setvalue(&((*lce)[i].subject), plce->v_Subject);
-			ov_variable_setanyvalue(&((*lce)[i].data.Value), &(plce->v_Data));
-			(*lce)[i].data.TimeStamp = plce->v_TimeStamp;
+			ov_variable_setanyvalue(&((*lce)[i].data), &(plce->v_Data));
+			(*lce)[i].data.time = plce->v_TimeStamp;
 			(*lce)[i].lceId = atoi(plce->v_identifier);
 			i++;
 		}while(i < *arrayDimension);
@@ -342,7 +342,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getLastLCEs(IdentificationTyp
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setLCE(IdentificationType aasId, LifeCycleEntry lce) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_LifeCycleEntry plce = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
 	OV_STRING lceName = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (!ptr)
@@ -351,7 +351,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setLCE(IdentificationType aas
 	if (paas){
 		lceName = NULL;
 		ov_string_print(&lceName, "%lu", lce.lceId);
-		plce = Ov_StaticPtrCast(openaas_LifeCycleEntry, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_LifeCycleArchive), lceName));
+		plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_LifeCycleArchive), lceName));
 		if (plce){
 			ov_string_setvalue(&(plce->v_CreatingInstanceIdString), lce.creatingInstance.IdSpec);
 			plce->v_CreatingInstanceIdType = lce.creatingInstance.IdType;
@@ -359,8 +359,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setLCE(IdentificationType aas
 			plce->v_WritingInstanceIdType = lce.writingInstance.IdType;
 			ov_string_setvalue(&(plce->v_EventClass), lce.eventClass);
 			ov_string_setvalue(&(plce->v_Subject), lce.subject);
-			ov_variable_setanyvalue(&(plce->v_Data), &lce.data.Value);
-			plce->v_TimeStamp = lce.data.TimeStamp;
+			ov_variable_setanyvalue(&(plce->v_Data), &lce.data);
+			plce->v_TimeStamp = lce.data.time;
 		}else{
 			return AASSTATUSCODE_BADLCEID;
 		}

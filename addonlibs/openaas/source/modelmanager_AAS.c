@@ -103,7 +103,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ov_domain ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_INSTPTR_openaas_PropertyValueStatement pPropertyValueStatement = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyValueStatement pPropertyValueStatement = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
 	ptr2 = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (ptr2)
@@ -129,7 +129,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 		paas->p_Header.p_Config.v_CreatingInstanceIdType = aasId.IdType;
 		ov_time_gettime(&paas->p_Header.p_Config.v_CreationTime);
 
-		result = Ov_CreateObject(openaas_PropertyValueStatement, pPropertyValueStatement, Ov_StaticPtrCast(ov_domain, &paas->p_Header.p_Config), "Asset");
+		result = Ov_CreateObject(propertyValueStatement_PropertyValueStatement, pPropertyValueStatement, Ov_StaticPtrCast(ov_domain, &paas->p_Header.p_Config), "Asset");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create AssetPVS object - reason: %s", ov_result_getresulttext(result));
 			return openaas_modelmanager_ovresultToAASStatusCode(result);

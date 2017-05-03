@@ -3,7 +3,7 @@
 *
 *   FILE
 *   ----
-*   PropertyValueStatement.c
+*   LifeCycleEntry.c
 *
 *   History
 *   -------
@@ -16,16 +16,16 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_openaas
-#define OV_COMPILE_LIBRARY_openaas
+#ifndef OV_COMPILE_LIBRARY_lifeCycleEntry
+#define OV_COMPILE_LIBRARY_lifeCycleEntry
 #endif
 
 
-#include "openaas.h"
+#include "lifeCycleEntry.h"
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_ACCESS openaas_PropertyValueStatement_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS lifeCycleEntry_LifeCycleEntry_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -33,18 +33,18 @@ OV_DLLFNCEXPORT OV_ACCESS openaas_PropertyValueStatement_getaccess(
     /*    
     *   local variables
     */
-	return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
 
+    return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PropertyValueStatement_constructor(
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleEntry_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_openaas_PropertyValueStatement pinst = Ov_StaticPtrCast(openaas_PropertyValueStatement, pobj);
+    OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pinst = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -53,8 +53,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_PropertyValueStatement_constructor(
          return result;
 
     /* do what */
-    pinst->v_Value.value.valueunion.val_int = 0;
-    pinst->v_Value.value.vartype = OV_VT_INT;
+    pinst->v_Data.value.valueunion.val_int = 0;
+    pinst->v_Data.value.vartype = OV_VT_INT;
 
     return OV_ERR_OK;
 }

@@ -253,9 +253,9 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 		ov_string_setvalue(&lce1.subject,  pinst->v_LCESubject1);
 
 		if (pinst->v_LCETimeStampExtern1 == FALSE)
-			ov_time_gettime(&lce1.data.TimeStamp);
+			ov_time_gettime(&lce1.data.time);
 		else
-			lce1.data.TimeStamp = pinst->v_LCETimeStamp2;
+			lce1.data.time = pinst->v_LCETimeStamp2;
 
 		IdentificationType aasId1;
 		IdentificationType_init(&aasId1);
@@ -279,9 +279,9 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 		ov_string_setvalue(&lce2.subject,  pinst->v_LCESubject2);
 
 		if (pinst->v_LCETimeStampExtern1 == FALSE)
-			ov_time_gettime(&lce2.data.TimeStamp);
+			ov_time_gettime(&lce2.data.time);
 		else
-			lce2.data.TimeStamp = pinst->v_LCETimeStamp2;
+			lce2.data.time = pinst->v_LCETimeStamp2;
 
 		IdentificationType aasId2;
 		IdentificationType_init(&aasId2);
@@ -310,19 +310,19 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 		else
 			ov_string_print(&tmpany.value.valueunion.val_string, "AASId: %s%s and AASId: %s%s unplugged", tmpString1, pinst->v_AASIdString1, tmpString2, pinst->v_AASIdString2);
 
-		Ov_SetAnyValue(&lce1.data.Value, &tmpany);
-		Ov_SetAnyValue(&lce2.data.Value, &tmpany);
+		Ov_SetAnyValue(&lce1.data, &tmpany);
+		Ov_SetAnyValue(&lce2.data, &tmpany);
 
 		pinst->v_Status = openaas_modelmanager_createLCE(aasId1, lce1);
 		pinst->v_Status |= openaas_modelmanager_createLCE(aasId2, lce2);
 		pinst->v_Status |= openaas_modelmanager_getPVS(aasId1, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
-		if ((pvs1.value.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
-			pvs1.value.Value.value.valueunion.val_bool = pinst->v_Plugged;
+		if ((pvs1.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
+			pvs1.value.value.valueunion.val_bool = pinst->v_Plugged;
 			pinst->v_Status |= openaas_modelmanager_setPVS(aasId1, pinst->v_PVSLName1, pvs1);
 		}
 		pinst->v_Status |= openaas_modelmanager_getPVS(aasId2, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
-		if ((pvs2.value.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
-			pvs2.value.Value.value.valueunion.val_bool = pinst->v_Plugged;
+		if ((pvs2.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
+			pvs2.value.value.valueunion.val_bool = pinst->v_Plugged;
 			pinst->v_Status |= openaas_modelmanager_setPVS(aasId2, pinst->v_PVSLName2, pvs2);
 		}
 

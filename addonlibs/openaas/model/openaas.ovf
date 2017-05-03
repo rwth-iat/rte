@@ -11,6 +11,9 @@
 #include "openaas.ovt"
 #include "open62541.h"
 #include "opcua_helpers.h"
+#include "identification_helpers.h"
+#include "lifeCycleEntry_helpers.h"
+#include "propertyValueStatement_helpers.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 #include "libov/ov_result.h"
@@ -69,6 +72,5 @@ typedef void OPENAAS_FNC_AASCONVERTLISTADD(IdentificationType aasId, OV_STRING a
 typedef void OPENAAS_FNC_AASCONVERTLISTDELETE(IdentificationType aasId);
 typedef OV_STRING OPENAAS_FNC_AASCONVERTLISTGET(IdentificationType aasId);
 	
-typedef OV_UINT OPENAAS_FNC_MATCHPVSRA(OV_STRING requirementPath, OV_STRING assurancePath, OV_BOOL *match, OV_STRING *matchText, OV_STRING *errorText);
-typedef OV_UINT OPENAAS_FNC_MATCHPVSLRA(OV_STRING requirementListPath, OV_STRING assuranceListPath, OV_BOOL *match, OV_STRING *matchText, OV_STRING *errorText);
+
 #endif

@@ -159,11 +159,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaas_nodeStoreFunctions_ovHeaderNodeToOPCUA(
 	size_t i = 2;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
-		if (Ov_CanCastTo(openaas_PropertyValueStatementList, pchild)){
+		if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pchild)){
 			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 			newNode->references[i].isInverse = UA_FALSE;
-			OV_INSTPTR_openaas_PropertyValueStatementList pref =
-									Ov_DynamicPtrCast(openaas_PropertyValueStatementList,pchild);
+			OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pref =
+									Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatementList,pchild);
 			tmpString = NULL;
 			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 			ov_string_append(&tmpString, "/");

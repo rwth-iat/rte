@@ -171,12 +171,12 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 
 		ov_string_setvalue(&lce.subject,  pinst->v_LCESubject);
 
-		Ov_SetAnyValue(&lce.data.Value, &pinst->v_LCEValue);
+		Ov_SetAnyValue(&lce.data, &pinst->v_LCEValue);
 
 		if (pinst->v_LCETimeStampExtern == FALSE)
-			ov_time_gettime(&lce.data.TimeStamp);
+			ov_time_gettime(&lce.data.time);
 		else
-			lce.data.TimeStamp = pinst->v_LCETimeStamp;
+			lce.data.time = pinst->v_LCETimeStamp;
 
 		IdentificationType aasId;
 		IdentificationType_init(&aasId);
