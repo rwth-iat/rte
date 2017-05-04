@@ -1,7 +1,5 @@
 #include "ov.ovm"
-//#include "ksbase.ovm"
 #include "fb.ovm"
-#include "opcua.ovm"
 #include "ksapi.ovm"
 #include "identification.ovm"
 #include "propertyValueStatement.ovm"
@@ -51,39 +49,17 @@ LIBRARY openaas
 	END_CLASS; 
 	
 
-    CLASS nodeStoreFunctions    :    CLASS ov/object
-    	IS_INSTANTIABLE;
-        COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
+    CLASS InterfaceDiscoveryServer    :    CLASS ov/object
+    	IS_INSTANTIABLE;        
     VARIABLES
-        modelnamespace : C_TYPE <UA_Namespace>;
-        interfacenamespace : C_TYPE <UA_Namespace>;
         IPAddressServer                 : STRING    COMMENT = "IP address of this server" INITIALVALUE    =   "";
         IPAddressAASDiscoveryServer     : STRING    COMMENT = "IP address of the AASDiscoveryServer" INITIALVALUE    =   "";
         ManagerNameAASDiscoveryServer   : STRING    COMMENT = "Manager Name of the AASDiscoveryServer" INITIALVALUE    =   "";
         PathToAASDiscoveryServer        : STRING    COMMENT = "Path to the AASDiscoveryServer" INITIALVALUE    =   "";
     END_VARIABLES;
-    OPERATIONS
-    	ovModelManagerNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERNODETOOPCUA>;
-    	ovModelManagerMethodNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA>;
-        ovOpenAASNodeToOPCUA : C_FUNCTION <UA_FNC_OVOPENAASNODETOOPCUA>;
-        ovOpenAASFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVOPENAASFOLDERNODETOOPCUA>;
-        ovAASFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVAASFOLDERNODETOOPCUA>;
-        ovLifeCycleArchiveNodeToOPCUA : C_FUNCTION <UA_FNC_OVLIFECYCLEARCHIVENODETOOPCUA>;
-        ovLifeCycleEntryNodeToOPCUA : C_FUNCTION <UA_FNC_OVLIFECYCLEENTRYNODETOOPCUA>;
-        ovPropertyValueStatementListNodeToOPCUA : C_FUNCTION <UA_FNC_OVPROPERTYVALUESTATEMENTLISTNODETOOPCUA>;
-        ovPropertyValueStatementNodeToOPCUA : C_FUNCTION <UA_FNC_OVPROPERTYVALUESTATEMENTNODETOOPCUA>;
-        ovViewsNodeToOPCUA : C_FUNCTION <UA_FNC_OVVIEWSNODETOOPCUA>;
-        ovBodyNodeToOPCUA : C_FUNCTION <UA_FNC_OVBODYNODETOOPCUA>;
-        ovHeaderNodeToOPCUA : C_FUNCTION <UA_FNC_OVHEADERNODETOOPCUA>;
-        ovCarrierNodeToOPCUA : C_FUNCTION <UA_FNC_OVCARRIERNODETOOPCUA>;
-         
-        ovNodeStoreInterfaceOpenAASNew : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASNEW>;
-        ovNodeStoreInterfaceOpenAASDelete : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASDELETE>;
-        MethodCallbackStandard  : C_FUNCTION <UA_FNC_METHODCALLBACKSTANDARD>;
-        
-        constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-        startup: C_FUNCTION <OV_FNC_STARTUP>;
-        destructor: C_FUNCTION <OV_FNC_DESTRUCTOR>;
+    OPERATIONS        
+    	constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+        destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;
         getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
     END_OPERATIONS;    
     END_CLASS;
@@ -177,12 +153,8 @@ LIBRARY openaas
         getLCE     : C_FUNCTION <UA_FNC_GETLCE>;
         getLastLCEs: C_FUNCTION <UA_FNC_GETLASTLCES>;
         setLCE     : C_FUNCTION <UA_FNC_SETLCE>;
-        getAASNodeId : C_FUNCTION <UA_FNC_GETAASNODEID>;
         getCoreData : C_FUNCTION <UA_FNC_GETCOREDATA>;
-        triggerGetCoreData : C_FUNCTION <UA_FNC_TRIGGERGETCOREDATA>;
-        startGetAssetLCEData : C_FUNCTION <UA_FNC_STARTGETASSETLCEDATA>;
-        stopGetAssetLCEData : C_FUNCTION <UA_FNC_STOPGETASSETLCEDATA>;
-        
+        triggerGetCoreData : C_FUNCTION <UA_FNC_TRIGGERGETCOREDATA>;        
         ovresultToAASStatusCode : C_FUNCTION <UA_FNC_OVRESULTTOAASSTATUSCODE>;
         AASConvertListGet : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTGET>;
         AASConvertListAdd : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTADD>;
@@ -192,24 +164,6 @@ LIBRARY openaas
         constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
         destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;
         startup : C_FUNCTION <OV_FNC_STARTUP>;
-    END_OPERATIONS;    
-    END_CLASS;
-    
-   CLASS aasDI    :    CLASS fb/functionblock 
-        IS_INSTANTIABLE;
-    VARIABLES
-        AssetIPAddress                  : STRING HAS_SET_ACCESSOR  INITIALVALUE    =   "";
-        AssetAASIdString                : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        AssetAASIdType                  : UINT HAS_SET_ACCESSOR;
-        AASIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        AASIdType                       : UINT HAS_SET_ACCESSOR;
-        StartAASDI                      : BOOL HAS_SET_ACCESSOR;
-        StopAASDI                       : BOOL HAS_SET_ACCESSOR;
-        Status                          : UINT;
-    END_VARIABLES;
-    OPERATIONS
-        getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
-        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
     END_OPERATIONS;    
     END_CLASS;
     

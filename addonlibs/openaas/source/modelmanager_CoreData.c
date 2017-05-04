@@ -25,7 +25,6 @@
 #include "libov/ov_result.h"
 #include "openaas_helpers.h"
 
-extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationType aasId, OV_UINT *number, PropertyValueStatementList **pvsl) {
 	OV_INSTPTR_openaas_aas paas = NULL;

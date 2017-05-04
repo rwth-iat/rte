@@ -64,7 +64,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASCreate_set(
 ) {
 	AASStatusCode result = AASSTATUSCODE_GOOD;
     pobj->v_AASCreate = value;
-    if (pobj->v_AASCreate == true){
+    if (pobj->v_AASCreate == TRUE){
     	IdentificationType tmpAASId;
     	tmpAASId.IdSpec = pobj->v_AASIdString;
     	tmpAASId.IdType = pobj->v_AASIdType;
@@ -75,7 +75,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASCreate_set(
 
     	result = openaas_modelmanager_createAAS(tmpAASId, pobj->v_AASName, tmpAssetId);
     }
-    pobj->v_AASCreate = false;
+    pobj->v_AASCreate = FALSE;
     pobj->v_AASStatus = result;
     return OV_ERR_OK;
 }
@@ -86,13 +86,13 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASDelete_set(
 ) {
 	AASStatusCode result = AASSTATUSCODE_GOOD;
     pobj->v_AASDelete = value;
-    if (pobj->v_AASDelete == true){
+    if (pobj->v_AASDelete == TRUE){
     	IdentificationType tmpAASId;
     	tmpAASId.IdSpec = pobj->v_AASIdString;
 		tmpAASId.IdType = pobj->v_AASIdType;
     	result = openaas_modelmanager_deleteAAS(tmpAASId);
     }
-    pobj->v_AASDelete = false;
+    pobj->v_AASDelete = FALSE;
     pobj->v_AASStatus = result;
     return OV_ERR_OK;
 }

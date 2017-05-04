@@ -424,9 +424,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 			switch(pchild->v_Data.value.vartype & OV_VT_KSMASK){
 				case OV_VT_BOOL:
 					if (pchild->v_Data.value.valueunion.val_bool == TRUE)
-						ov_string_setvalue(&pinst->v_yValueDynamic, "true");
+						ov_string_setvalue(&pinst->v_yValueDynamic, "TRUE");
 					else
-						ov_string_setvalue(&pinst->v_yValueDynamic, "false");
+						ov_string_setvalue(&pinst->v_yValueDynamic, "FALSE");
 				break;
 				case OV_VT_STRING:
 					ov_string_setvalue(&pinst->v_yValueDynamic, pchild->v_Data.value.valueunion.val_string);

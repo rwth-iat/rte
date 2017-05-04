@@ -82,7 +82,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreate_set(
 ) {
 	AASStatusCode result = AASSTATUSCODE_GOOD;
 	pobj->v_PVSLCreate = value;
-	if (pobj->v_PVSLCreate == true){
+	if (pobj->v_PVSLCreate == TRUE){
 		IdentificationType tmpAASId;
 		tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
 		tmpAASId.IdType = pobj->v_PVSLAASIdType;
@@ -97,7 +97,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreate_set(
 
 		result = openaas_modelmanager_createPVSL(tmpAASId, pobj->v_PVSLName, tmpCarrier, tmpCreatingInstance);
 	}
-	pobj->v_PVSLCreate = false;
+	pobj->v_PVSLCreate = FALSE;
 	pobj->v_PVSLStatus = result;
 	return OV_ERR_OK;
 }
@@ -108,14 +108,14 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLDelete_set(
 ) {
 	AASStatusCode result = AASSTATUSCODE_GOOD;
 	pobj->v_PVSLDelete = value;
-	if (pobj->v_PVSLDelete == true){
+	if (pobj->v_PVSLDelete == TRUE){
 		IdentificationType tmpAASId;
 		tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
 		tmpAASId.IdType = pobj->v_PVSLAASIdType;
 
 		result = openaas_modelmanager_deletePVSL(tmpAASId, pobj->v_PVSLName);
 	}
-	pobj->v_PVSLDelete = false;
+	pobj->v_PVSLDelete = FALSE;
 	pobj->v_PVSLStatus = result;
 	return OV_ERR_OK;
 }

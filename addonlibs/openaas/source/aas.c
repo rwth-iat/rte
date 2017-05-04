@@ -31,7 +31,7 @@
 #include "openaas_helpers.h"
 #include "jsonparsing.h"
 
-extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
+extern OV_INSTPTR_openaas_InterfaceDiscoveryServer pInterfaceDiscoveryServer;
 
 
 OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
@@ -360,13 +360,13 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			getLCERsp.lce.writingInstance.idType = lce.writingInstance.IdType;
 
 			ov_string_setvalue(&getLCERsp.lce.eventClass.data, lce.eventClass);
-			getLCERsp.lce.hasEventClass = true;
+			getLCERsp.lce.hasEventClass = TRUE;
 
 			ov_string_setvalue(&getLCERsp.lce.subject.data, lce.subject);
-			getLCERsp.lce.hasSubject = true;
+			getLCERsp.lce.hasSubject = TRUE;
 
 			OVDataValueToserviceValue(lce.data, &getLCERsp.lce.dataType, &getLCERsp.lce.data, &getLCERsp.lce.dataTime);
-			getLCERsp.lce.hastDataTime = true;
+			getLCERsp.lce.hastDataTime = TRUE;
 
 			getLCERsp.status = result;
 
@@ -523,7 +523,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			OVDataValueToserviceValue(pvs.value, &getPVSRsp.pvs.valType, &getPVSRsp.pvs.value, &getPVSRsp.pvs.valTime);
 
 			ov_string_setvalue(&getPVSRsp.pvs.unit.data, pvs.unit);
-			getPVSRsp.pvs.hasUnit = true;
+			getPVSRsp.pvs.hasUnit = TRUE;
 
 			ov_string_setvalue(&getPVSRsp.pvs.ID.idSpec.data, pvs.ID.IdSpec);
 			getPVSRsp.pvs.ID.idType = pvs.ID.IdType;
@@ -568,9 +568,9 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 					SRV_String_setCopy(&getCoreDataRsp.pvsl[i].creatingInstance.idSpec, ppvs[i].CreatingInstance.IdSpec, ov_string_getlength(ppvs[i].CreatingInstance.IdSpec));
 					getCoreDataRsp.pvsl[i].creatingInstance.idType = ppvs[i].CreatingInstance.IdType;
 					getCoreDataRsp.pvsl[i].creationTime = ov_ovTimeTo1601nsTime(ppvs[i].CreationTime);
-					getCoreDataRsp.pvsl[i].hasCreationTime = true;
+					getCoreDataRsp.pvsl[i].hasCreationTime = TRUE;
 					SRV_String_setCopy(&getCoreDataRsp.pvsl[i].name, ppvs[i].pvslName, ov_string_getlength(ppvs[i].pvslName));
-					getCoreDataRsp.pvsl[i].hasName = true;
+					getCoreDataRsp.pvsl[i].hasName = TRUE;
 					getCoreDataRsp.pvsl[i].numPvs = ppvs[i].pvsNumber;
 					getCoreDataRsp.pvsl[i].pvs = malloc(sizeof(PVS_t)*ppvs[i].pvsNumber);
 					for (OV_UINT j = 0; j < ppvs[i].pvsNumber; j++){
@@ -579,11 +579,11 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].ID.idSpec, ppvs[i].pvs[j].ID.IdSpec, ov_string_getlength(ppvs[i].pvs[j].ID.IdSpec));
 						getCoreDataRsp.pvsl[i].pvs[j].ID.idType = ppvs[i].pvs[j].ID.IdType;
 						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].name, ppvs[i].pvs[j].pvsName, ov_string_getlength(ppvs[i].pvs[j].pvsName));
-						getCoreDataRsp.pvsl[i].pvs[j].hasName = true;
+						getCoreDataRsp.pvsl[i].pvs[j].hasName = TRUE;
 						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].unit, ppvs[i].pvs[j].unit, ov_string_getlength(ppvs[i].pvs[j].unit));
-						getCoreDataRsp.pvsl[i].pvs[j].hasUnit = true;
+						getCoreDataRsp.pvsl[i].pvs[j].hasUnit = TRUE;
 						OVDataValueToserviceValue(ppvs[i].pvs[j].value, &getCoreDataRsp.pvsl[i].pvs[j].valType, &getCoreDataRsp.pvsl[i].pvs[j].value, &getCoreDataRsp.pvsl[i].pvs[j].valTime);
-						getCoreDataRsp.pvsl[i].pvs[j].hasValTime = true;
+						getCoreDataRsp.pvsl[i].pvs[j].hasValTime = TRUE;
 						getCoreDataRsp.pvsl[i].pvs[j].view = ppvs[i].pvs[j].view;
 						getCoreDataRsp.pvsl[i].pvs[j].visibility = ppvs[i].pvs[j].Visibility;
 					}

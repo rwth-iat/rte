@@ -25,7 +25,7 @@
 #include "libov/ov_macros.h"
 #include "openaas_helpers.h"
 
-extern OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions;
+extern OV_INSTPTR_openaas_InterfaceDiscoveryServer pInterfaceDiscoveryServer;
 
 void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING aasName){
 	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
@@ -63,9 +63,9 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 		}
 	}
 
-	ov_string_setvalue(&psendAASMessage->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-	ov_string_setvalue(&psendAASMessage->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-	ov_string_setvalue(&psendAASMessage->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+	ov_string_setvalue(&psendAASMessage->v_serverHost, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
+	ov_string_setvalue(&psendAASMessage->v_serverName, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
+	ov_string_setvalue(&psendAASMessage->v_path, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
 	ov_string_append(&psendAASMessage->v_path, ".AddOVDataForAAS");
 
 	OV_STRING tmpHexString = NULL;
@@ -87,7 +87,7 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[0] = NULL;
 	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[0], tmpHexString);
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[1] = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[1], pNodeStoreFunctions->v_IPAddressServer);
+	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[1], pInterfaceDiscoveryServer->v_IPAddressServer);
 	OV_ANY tmpServername;
 	ov_vendortree_getservername(&tmpServername, NULL);
 	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[2] = NULL;
@@ -124,9 +124,9 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 				}
 			}
 
-			ov_string_setvalue(&psendAASMessage->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-			ov_string_setvalue(&psendAASMessage->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-			ov_string_setvalue(&psendAASMessage->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+			ov_string_setvalue(&psendAASMessage->v_serverHost, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
+			ov_string_setvalue(&psendAASMessage->v_serverName, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
+			ov_string_setvalue(&psendAASMessage->v_path, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
 			ov_string_append(&psendAASMessage->v_path, ".DeleteOVDataForAAS");
 
 			OV_STRING tmpHexString = NULL;
@@ -171,13 +171,6 @@ OV_STRING openaas_modelmanager_AASConvertListGet(IdentificationType aasId){
 		}
 	}
 	return "";
-}
-
-
-
-
-OV_DLLFNCEXPORT UA_NodeId openaas_modelmanager_getAASNodeId(IdentificationType aasId) {
-    return UA_NODEID_STRING_ALLOC(pNodeStoreFunctions->v_interfacenamespace.index, openaas_modelmanager_AASConvertListGet(aasId));;
 }
 
 

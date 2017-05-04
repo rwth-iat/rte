@@ -113,7 +113,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_LCECreate_set(
 ) {
 	AASStatusCode result = AASSTATUSCODE_GOOD;
 	pobj->v_LCECreate = value;
-	if (pobj->v_LCECreate == true){
+	if (pobj->v_LCECreate == TRUE){
 		IdentificationType tmpAASId;
 		IdentificationType_init(&tmpAASId);
 		tmpAASId.IdSpec = pobj->v_LCEAASIdString;
@@ -133,7 +133,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_LCECreate_set(
 
 		result = openaas_modelmanager_createLCE(tmpAASId, lce);
 	}
-	pobj->v_LCECreate = false;
+	pobj->v_LCECreate = FALSE;
 	pobj->v_LCEStatus = result;
 	return OV_ERR_OK;
 }
@@ -144,14 +144,14 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_LCEDelete_set(
 ) {
 	AASStatusCode result = AASSTATUSCODE_GOOD;
 	pobj->v_LCEDelete = value;
-	if (pobj->v_LCEDelete == true){
+	if (pobj->v_LCEDelete == TRUE){
 		IdentificationType tmpAASId;
 		tmpAASId.IdSpec = pobj->v_LCEAASIdString;
 		tmpAASId.IdType = pobj->v_LCEAASIdType;
 
 		result = openaas_modelmanager_deleteLCE(tmpAASId, pobj->v_LCEId);
 	}
-	pobj->v_LCEDelete = false;
+	pobj->v_LCEDelete = FALSE;
 	pobj->v_LCEStatus = result;
 	return OV_ERR_OK;
 }

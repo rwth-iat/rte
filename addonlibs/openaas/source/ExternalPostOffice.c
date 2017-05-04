@@ -30,7 +30,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_ExternalPostOffice_postoffice_set(
     const OV_STRING  value
 ) {
 	pobj->v_actimode = 1;
-	pobj->v_iexreq = true;
+	pobj->v_iexreq = TRUE;
     return ov_string_setvalue(&pobj->v_postoffice,value);
 }
 
@@ -66,15 +66,15 @@ OV_DLLFNCEXPORT void openaas_ExternalPostOffice_typemethod(
 
 	OV_INSTPTR_ksapi_KSApiCommon pKSApiGetCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, pGetComCoAddressFromAASDiscoveryServer);
 
-	OV_INSTPTR_openaas_nodeStoreFunctions pNodeStoreFunctions = NULL;
-	pNodeStoreFunctions = Ov_StaticPtrCast(openaas_nodeStoreFunctions, Ov_GetFirstChild(ov_instantiation, pclass_openaas_nodeStoreFunctions));
+	OV_INSTPTR_openaas_InterfaceDiscoveryServer pInterfaceDiscoveryServer = NULL;
+	pInterfaceDiscoveryServer = Ov_StaticPtrCast(openaas_InterfaceDiscoveryServer, Ov_GetFirstChild(ov_instantiation, pclass_openaas_InterfaceDiscoveryServer));
 	OV_STRING getComCoAddressMsg = NULL;
     switch (pinst->v_state){
     case 0:
 		// Get ServerHost of ComCo
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
 		ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
 		getComCoAddressMsg = NULL;
 		ov_string_print(&getComCoAddressMsg, "%x", pinst->v_ReceiverAASIdType);
@@ -101,9 +101,9 @@ OV_DLLFNCEXPORT void openaas_ExternalPostOffice_typemethod(
 		ov_string_setvalue(&pinst->v_tmpServerHost, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
 
 		// Get Manager Name of ComCo
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
 		ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
 		getComCoAddressMsg = NULL;
 		ov_string_print(&getComCoAddressMsg, "%x", pinst->v_ReceiverAASIdType);
@@ -130,9 +130,9 @@ OV_DLLFNCEXPORT void openaas_ExternalPostOffice_typemethod(
 		ov_string_setvalue(&pinst->v_tmpManagerName, pGetComCoAddressFromAASDiscoveryServer->v_varValue.value.valueunion.val_string);
 
 		// Get Path of ComCo
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pNodeStoreFunctions->v_IPAddressAASDiscoveryServer);
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pNodeStoreFunctions->v_ManagerNameAASDiscoveryServer);
-		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pNodeStoreFunctions->v_PathToAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverHost, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_serverName, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
+		ov_string_setvalue(&pGetComCoAddressFromAASDiscoveryServer->v_path, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
 		ov_string_append(&pGetComCoAddressFromAASDiscoveryServer->v_path, "/");
 		getComCoAddressMsg = NULL;
 		ov_string_print(&getComCoAddressMsg, "%x", pinst->v_ReceiverAASIdType);
@@ -187,7 +187,7 @@ OV_DLLFNCEXPORT void openaas_ExternalPostOffice_typemethod(
 			ov_string_setvalue(&pinst->v_postoffice,"");
 			pinst->v_state = 0;
 			pinst->v_actimode = 0;
-			pinst->v_iexreq = false;
+			pinst->v_iexreq = FALSE;
 		}
 		break;
     }

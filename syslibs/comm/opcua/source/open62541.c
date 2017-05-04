@@ -28517,9 +28517,9 @@ UA_Client_Subscriptions_manuallySendPublishRequest(UA_Client *client) {
 #define errno WSAGetLastError()
 #endif
 #ifdef _WIN32
-# ifndef __clang__
-#  include <malloc.h>
-# endif
+	# ifndef __clang__
+		#  include <malloc.h>
+	# endif
 /* Fix redefinition of SLIST_ENTRY on mingw winnt.h */
 # ifdef SLIST_ENTRY
 #  undef SLIST_ENTRY

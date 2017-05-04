@@ -3,7 +3,6 @@
 /* 
 	Define your data types here. 
 */
-#include "propertyValueStatement_helpers.h"
 
 ENUMDEF(AASStatusCode)
 #define AASSTATUSCODE_GOOD                  ENUMVAL(OV_VAR_TYPE, 0x00)

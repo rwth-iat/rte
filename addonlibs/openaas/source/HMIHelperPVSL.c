@@ -327,14 +327,14 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 			case OV_VT_BOOL:
 				if (pchild->v_Value.value.valueunion.val_bool == TRUE)
 					if (i == 0)
-						ov_string_setvalue(&pinst->v_Value, "true");
+						ov_string_setvalue(&pinst->v_Value, "TRUE");
 					else
-						ov_string_append(&pinst->v_Value, "true");
+						ov_string_append(&pinst->v_Value, "TRUE");
 				else
 					if (i == 0)
-						ov_string_setvalue(&pinst->v_Value, "false");
+						ov_string_setvalue(&pinst->v_Value, "FALSE");
 					else
-						ov_string_append(&pinst->v_Value, "false");
+						ov_string_append(&pinst->v_Value, "FALSE");
 			break;
 			case OV_VT_STRING:
 				if (i == 0)

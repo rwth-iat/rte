@@ -1,0 +1,72 @@
+#include "ov.ovm"
+#include "fb.ovm"
+#include "opcua.ovm"
+#include "openaas.ovm"
+
+LIBRARY openaasOPCUAInterface
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "Torben Deppe";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of interface.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS interface : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
+		VARIABLES
+			modelnamespace : C_TYPE <UA_Namespace>;
+            interfacenamespace : C_TYPE <UA_Namespace>;
+		END_VARIABLES;
+		OPERATIONS
+			ovModelManagerNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERNODETOOPCUA>;
+	        ovModelManagerMethodNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA>;
+	        ovOpenAASNodeToOPCUA : C_FUNCTION <UA_FNC_OVOPENAASNODETOOPCUA>;
+	        ovOpenAASFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVOPENAASFOLDERNODETOOPCUA>;
+	        ovAASFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVAASFOLDERNODETOOPCUA>;
+	        ovLifeCycleArchiveNodeToOPCUA : C_FUNCTION <UA_FNC_OVLIFECYCLEARCHIVENODETOOPCUA>;
+	        ovLifeCycleEntryNodeToOPCUA : C_FUNCTION <UA_FNC_OVLIFECYCLEENTRYNODETOOPCUA>;
+	        ovPropertyValueStatementListNodeToOPCUA : C_FUNCTION <UA_FNC_OVPROPERTYVALUESTATEMENTLISTNODETOOPCUA>;
+	        ovPropertyValueStatementNodeToOPCUA : C_FUNCTION <UA_FNC_OVPROPERTYVALUESTATEMENTNODETOOPCUA>;
+	        ovViewsNodeToOPCUA : C_FUNCTION <UA_FNC_OVVIEWSNODETOOPCUA>;
+	        ovBodyNodeToOPCUA : C_FUNCTION <UA_FNC_OVBODYNODETOOPCUA>;
+	        ovHeaderNodeToOPCUA : C_FUNCTION <UA_FNC_OVHEADERNODETOOPCUA>;
+	        ovCarrierNodeToOPCUA : C_FUNCTION <UA_FNC_OVCARRIERNODETOOPCUA>;
+	         
+	        ovNodeStoreInterfaceOpenAASNew : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASNEW>;
+	        ovNodeStoreInterfaceOpenAASDelete : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASDELETE>;
+	        MethodCallbackStandard  : C_FUNCTION <UA_FNC_METHODCALLBACKSTANDARD>;
+	        getAASNodeId : C_FUNCTION <UA_FNC_GETAASNODEID>;
+	        
+            startGetAssetLCEData : C_FUNCTION <UA_FNC_STARTGETASSETLCEDATA>;
+            stopGetAssetLCEData : C_FUNCTION <UA_FNC_STOPGETASSETLCEDATA>;
+			
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			startup: C_FUNCTION <OV_FNC_STARTUP>;
+	        destructor: C_FUNCTION <OV_FNC_DESTRUCTOR>;
+	        getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS; 
+	
+	CLASS aasDI    :    CLASS fb/functionblock 
+        IS_INSTANTIABLE;
+        VARIABLES
+            AssetIPAddress                  : STRING HAS_SET_ACCESSOR  INITIALVALUE    =   "";
+            AssetAASIdString                : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            AssetAASIdType                  : UINT HAS_SET_ACCESSOR;
+            AASIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            AASIdType                       : UINT HAS_SET_ACCESSOR;
+            StartAASDI                      : BOOL HAS_SET_ACCESSOR;
+            StopAASDI                       : BOOL HAS_SET_ACCESSOR;
+            Status                          : UINT;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+       END_OPERATIONS;    
+    END_CLASS;
+	
+END_LIBRARY;

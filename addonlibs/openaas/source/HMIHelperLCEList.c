@@ -154,14 +154,14 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 				case OV_VT_BOOL:
 					if (pchild->v_Data.value.valueunion.val_bool == TRUE)
 						if (i == 0)
-							ov_string_setvalue(&pinst->v_Data, "true");
+							ov_string_setvalue(&pinst->v_Data, "TRUE");
 						else
-							ov_string_append(&pinst->v_Data, "true");
+							ov_string_append(&pinst->v_Data, "TRUE");
 					else
 						if (i == 0)
-							ov_string_setvalue(&pinst->v_Data, "false");
+							ov_string_setvalue(&pinst->v_Data, "FALSE");
 						else
-							ov_string_append(&pinst->v_Data, "false");
+							ov_string_append(&pinst->v_Data, "FALSE");
 				break;
 				case OV_VT_STRING:
 					if (i == 0)

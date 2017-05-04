@@ -27,7 +27,7 @@
 #define TOSECONDS				10000000LL
 #define TOMICROSECONDS			10LL
 
-UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
+OV_DLLFNCEXPORT UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
 	switch(result){
 	case OV_ERR_OK:
 		return UA_STATUSCODE_GOOD;
@@ -68,7 +68,7 @@ UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
 	}
 }
 
-UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type){
+OV_DLLFNCEXPORT UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type){
 	UA_NodeId varType;
 	UA_NodeId_init(&varType);
 	varType.namespaceIndex = 0;
@@ -118,7 +118,7 @@ UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type){
 	return varType;
 }
 
-UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
+OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	const void *value = NULL;
 	UA_Boolean tempBool;	/*	has different byte size in ov and ua hence we need a temp variable	*/
@@ -465,7 +465,7 @@ UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 	}
 }
 
-UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
+OV_DLLFNCEXPORT UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 	OV_UINT iterator = 0;
 	if(pVariant->arrayLength == 0 && pVariant->data > UA_EMPTY_ARRAY_SENTINEL){
 		/*	scalar values	*/
@@ -694,7 +694,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 }
 
 
-OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst) {
+OV_DLLFNCEXPORT OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst) {
 	if(src.data == NULL)
 		return OV_ERR_OK;
 	*dst = ov_database_malloc(sizeof(char)*(src.length+1));
@@ -705,7 +705,7 @@ OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst) {
 	return OV_ERR_OK;
 }
 
-UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
 	OV_STRING tmpString = NULL;
 	OV_RESULT result;
 	switch(nodeId.identifierType){
@@ -747,7 +747,7 @@ UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH*
  * call ov_memstack_lock() /_unlock() around this one
  */
 
-OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvObject(UA_NodeId *nodeId){
+OV_DLLFNCEXPORT OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvObject(UA_NodeId *nodeId){
 	OV_STRING tmpString = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
 	switch(nodeId->identifierType){
@@ -775,7 +775,7 @@ OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvObject(UA_NodeId 
 }
 
 
-UA_Int32 opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access){
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access){
 	switch(pelem->elemtype){
 	case OV_ET_OBJECT:
 	case OV_ET_OPERATION:
@@ -804,7 +804,7 @@ UA_Int32 opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem
 	return UA_STATUSCODE_GOOD;
 }
 
-UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess){
+OV_DLLFNCEXPORT UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess){
 	OV_VTBLPTR_ov_object	pVtbl	=	NULL;
 	if(pAccess){
 		if(!pElem->pobj){
@@ -838,7 +838,7 @@ UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pA
 	}
 }
 
-OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess){
+OV_DLLFNCEXPORT OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess){
 	UA_Int32 nodeClass = opcua_nsOv_getNodeClassAndAccess(pElem, pAccess);
 	if(mask == 0){
 		return TRUE; //if no bit is set, all attributes should be returned

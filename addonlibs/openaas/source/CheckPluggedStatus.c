@@ -121,7 +121,7 @@ OV_DLLFNCEXPORT void openaas_CheckPluggedStatus_typemethod(
 	pinst->v_Error |= openaas_modelmanager_getPVS(aasId1, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
 	if ((pvs1.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 		if (pvs1.value.value.valueunion.val_bool == pinst->v_Plugged){
-			if (pinst->v_Plugged == true)
+			if (pinst->v_Plugged == TRUE)
 				ov_string_setvalue(&pinst->v_Status, "AAS1 allready plugged");
 			else
 				ov_string_setvalue(&pinst->v_Status, "AAS1 allready deplugged");
@@ -130,7 +130,7 @@ OV_DLLFNCEXPORT void openaas_CheckPluggedStatus_typemethod(
 	pinst->v_Error |= openaas_modelmanager_getPVS(aasId2, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
 	if ((pvs2.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 		if (pvs2.value.value.valueunion.val_bool == pinst->v_Plugged){
-			if (pinst->v_Plugged == true)
+			if (pinst->v_Plugged == TRUE)
 				ov_string_setvalue(&pinst->v_Status, "AAS2 allready plugged");
 			else
 				ov_string_setvalue(&pinst->v_Status, "AAS2 allready deplugged");
