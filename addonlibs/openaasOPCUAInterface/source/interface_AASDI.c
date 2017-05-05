@@ -16,8 +16,8 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_openaas
-#define OV_COMPILE_LIBRARY_openaas
+#ifndef OV_COMPILE_LIBRARY_openaasOPCUAInterface
+#define OV_COMPILE_LIBRARY_openaasOPCUAInterface
 #endif
 
 #include "openaasOPCUAInterface.h"
