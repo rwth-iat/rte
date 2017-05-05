@@ -107,6 +107,49 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
 		}
 	}
 
+	// Create Folder for AAS
+	OV_INSTPTR_ov_domain pTechUnits = NULL;
+	pTechUnits = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "TechUnits"));
+	if(!pTechUnits) {
+		result = Ov_CreateObject(ov_domain, pTechUnits, &(pdb->root), "TechUnits");
+		if(Ov_Fail(result)) {
+			ov_logfile_error("Fatal: Could not create Object 'pTechUnits'");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pTechUnits))	{
+		ov_logfile_error("Fatal: pTechUnits object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	OV_INSTPTR_ov_domain popenAASFolder = NULL;
+	popenAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pTechUnits, "openAAS"));
+	if(!popenAASFolder) {
+		result = Ov_CreateObject(ov_domain, popenAASFolder, pTechUnits, "openAAS");
+		if(Ov_Fail(result))	{
+			ov_logfile_error("Fatal: could not create openAAS domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) popenAASFolder)){
+		ov_logfile_error("Fatal: openAAS object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	OV_INSTPTR_ov_domain pAASFolder = NULL;
+	pAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, popenAASFolder, "AASFolder"));
+	if(!pAASFolder) {
+		result = Ov_CreateObject(ov_domain, pAASFolder, popenAASFolder, "AASFolder");
+		if(Ov_Fail(result))	{
+			ov_logfile_error("Fatal: could not create AASFolder domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pAASFolder)){
+		ov_logfile_error("Fatal: AASFolder object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
 	pinterface = pinst;
 
     return OV_ERR_OK;
