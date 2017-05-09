@@ -1,3 +1,4 @@
+
 /******************************************************************************
 *
 *   FILE
@@ -6,7 +7,7 @@
 *
 *   History
 *   -------
-*   2017-03-08   File created
+*   2017-03-30   File created
 *
 *******************************************************************************
 *
@@ -22,7 +23,6 @@
 
 #include "openaas.h"
 #include "libov/ov_macros.h"
-#include "libov/ov_time.h"
 
 
 OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
@@ -30,23 +30,19 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	OV_TIME						*pltc
 ) {
     /*    
-
     *   local variables
     */
-
 	OV_RESULT result = 0;
-	OV_INSTPTR_openaas_HMIHelperLCEData pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEData, pfb);
-	OV_INSTPTR_ov_object pobj = NULL;
+    OV_INSTPTR_openaas_HMIHelperLCEData pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEData, pfb);
+    OV_INSTPTR_ov_object pobj = NULL;
 	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pchild = NULL;
-	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pstartLCE = NULL;
-	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pstopLCE = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 
-
-	ov_string_setvalue(&pinst->v_xValueStatic, "");
-	ov_string_setvalue(&pinst->v_yValueStatic, "");
+	pinst->v_OutputType = 0;
+	Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, 0, TIME);
+	Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, 0, DOUBLE);
 	ov_string_setvalue(&pinst->v_yUnitStatic, "");
-	ov_string_setvalue(&pinst->v_yValueDynamic, "");
+	pinst->v_yValueDynamic = 0;
 	ov_string_setvalue(&pinst->v_yUnitDynamic, "");
 	pinst->v_Error = FALSE;
 	ov_string_setvalue(&pinst->v_ErrorText, "");
@@ -59,7 +55,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	OV_STRING *pathList = NULL;
 	OV_STRING path = NULL;
 	pathList = ov_string_split(pinst->v_AASPath, "/", &len);
-
 
 	for (OV_UINT i = 4; i < len; i++){
 		if (i == 4)
@@ -87,51 +82,116 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 
 	// for static
 	OV_UINT i = 0;
-	OV_TIME startTime;
-	OV_TIME stopTime;
-	result = ov_time_asciitotime_local(&startTime, pinst->v_StartTime);
+	OV_TIME time;
+	result = ov_time_asciitotime_local(&time, pinst->v_TimeStamp);
 	if (result){
 		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "Converting StartTime failed");
-		return;
-	}
-	result = ov_time_asciitotime_local(&stopTime, pinst->v_StopTime);
-	if (result){
-		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "Converting StopTime failed");
-		return;
-	}
-	if (ov_time_compare(&startTime, &stopTime) ==  OV_TIMECMP_AFTER){
-		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "StartTime is after StopTime");
+		ov_string_setvalue(&pinst->v_ErrorText, "Converting TimeStamp failed");
 		return;
 	}
 
 	// Search for Start and Stop LCE
 	OV_UINT lceCount = 0;
+	// printing x- and y-values
+	OV_TIME xValue;
+	OV_STRING tmpString = NULL;
 	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, lifeCycleEntry_LifeCycleEntry){
 		if (ov_string_compare(pchild->v_EventClass, pinst->v_EventClass) == OV_STRCMP_EQUAL && ov_string_compare(pchild->v_Subject, pinst->v_Subject) == OV_STRCMP_EQUAL){
-			lceCount++;
-			// StartLCE
-			switch(ov_time_compare(&pchild->v_TimeStamp, &startTime)){
+			// find fitting LCE
+			switch(ov_time_compare(&pchild->v_TimeStamp, &time)){
 				case OV_TIMECMP_AFTER:
-					if (!pstartLCE)
-						pstartLCE = pchild;
 				break;
 				case OV_TIMECMP_EQUAL:
-				case OV_TIMECMP_BEFORE:
-					pstartLCE = pchild;
+					lceCount = 1;
+					if(!(pchild->v_Data.value.vartype & OV_VT_ISVECTOR)){
+						if (pinst->v_ErrorStatic == FALSE){
+							pinst->v_ErrorStatic = TRUE;
+							ov_string_setvalue(&pinst->v_ErrorTextStatic, "Only Arrays in Data supported");
+						}
+					}else{
+						switch (pchild->v_Data.value.vartype & OV_VT_KSMASK) {
+							case OV_VT_UINT_VEC:
+								xValue = pchild->v_TimeStamp;
+								for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_uint_vec.veclen; arrayCount++){
+									pinst->v_OutputType = 1;
+									if (arrayCount > 0){
+										ov_time_add(&xValue, &xValue, &pinst->v_TimeSpanBetweenValues);
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount];
+									}else{
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount];
+									}
+								}
+							break;
+							case OV_VT_INT_VEC:
+								xValue = pchild->v_TimeStamp;
+								for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_int_vec.veclen; arrayCount++){
+									pinst->v_OutputType = 1;
+									if (arrayCount > 0){
+										ov_time_add(&xValue, &xValue, &pinst->v_TimeSpanBetweenValues);
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount];
+									}else{
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount];
+									}
+								}
+							break;
+							case OV_VT_SINGLE_VEC:
+								xValue = pchild->v_TimeStamp;
+								for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_single_vec.veclen; arrayCount++){
+									pinst->v_OutputType = 1;
+									if (arrayCount > 0){
+										ov_time_add(&xValue, &xValue, &pinst->v_TimeSpanBetweenValues);
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount];
+									}else{
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount];
+									}
+								}
+							break;
+							case OV_VT_DOUBLE_VEC:
+								xValue = pchild->v_TimeStamp;
+								for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_double_vec.veclen; arrayCount++){
+									pinst->v_OutputType = 1;
+									if (arrayCount > 0){
+										ov_time_add(&xValue, &xValue, &pinst->v_TimeSpanBetweenValues);
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount];
+									}else{
+										Ov_SetDynamicVectorLength(&pinst->v_xValueStatic, pinst->v_xValueStatic.veclen + 1, TIME);
+										pinst->v_xValueStatic.value[pinst->v_xValueStatic.veclen-1] = xValue;
+										Ov_SetDynamicVectorLength(&pinst->v_yValueStatic, pinst->v_yValueStatic.veclen + 1, DOUBLE);
+										pinst->v_yValueStatic.value[pinst->v_yValueStatic.veclen-1] = pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount];
+									}
+								}
+							break;
+							default:
+								if (pinst->v_ErrorStatic == FALSE){
+									pinst->v_ErrorStatic = TRUE;
+									ov_string_print(&pinst->v_ErrorTextStatic, "DataType of LCE:%s not supported", pchild->v_identifier);
+								}
+							break;
+						}
+					}
 				break;
-			}
-			// StopLCE
-			switch(ov_time_compare(&pchild->v_TimeStamp, &stopTime)){
-				case OV_TIMECMP_AFTER:
-					if (!pstopLCE)
-						pstopLCE = pchild;
-				break;
-				case OV_TIMECMP_EQUAL:
 				case OV_TIMECMP_BEFORE:
-					pstopLCE = pchild;
 				break;
 			}
 		}
@@ -139,250 +199,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 
 	if (lceCount == 0){
 		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object in LifeCycleArchive");
+		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an fitting object in LifeCycleArchive");
 		return;
 	}
-
-	if (!pstartLCE){
-		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object after StartTime");
-		return;
-	}
-
-	if (!pstopLCE){
-		pinst->v_Error = TRUE;
-		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object before StopTime");
-		return;
-	}
-
-
-	// printing x- and y-values
-	OV_TIME xValue;
-	// TODO: The timeSpan between the Values have to be saved, maybe in an object under the LCE object
-	OV_TIME_SPAN timeSpan; // Static for the HMI2017 with EvoSoft
-	timeSpan.secs = 0;
-	timeSpan.usecs = 8000;
-	OV_BOOL endLCE = FALSE;
-	OV_STRING tmpString = NULL;
-
-	lceCount = 0;
-	//ov_string_append(&pinst->v_yUnitStatic, pstartLCE->);
-	do {
-		if (lceCount == 0){
-			pchild = pstartLCE;
-
-		}else{
-			pobj = NULL;
-			pobj = Ov_GetNextChild(ov_containment, pchild);
-			pchild = NULL;
-			pchild = Ov_DynamicPtrCast(lifeCycleEntry_LifeCycleEntry, pobj);
-			if (!pchild){
-				continue;
-			}
-		}
-		if (pchild == pstopLCE){
-			endLCE = TRUE;
-		}
-
-		if (ov_string_compare(pchild->v_EventClass, pinst->v_EventClass) != OV_STRCMP_EQUAL || ov_string_compare(pchild->v_Subject, pinst->v_Subject) != OV_STRCMP_EQUAL){
-			continue;
-		}
-
-		if(!(pchild->v_Data.value.vartype & OV_VT_ISVECTOR)){
-			if (pinst->v_ErrorStatic == FALSE){
-				pinst->v_ErrorStatic = TRUE;
-				ov_string_setvalue(&pinst->v_ErrorTextStatic, "Only Arrays in Data supported");
-			}
-		}else{
-			switch (pchild->v_Data.value.vartype & OV_VT_KSMASK) {
-				case OV_VT_UINT_VEC:
-					xValue = pchild->v_TimeStamp;
-					for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_uint_vec.veclen; arrayCount++){
-						if (arrayCount > 0)
-							ov_time_add(&xValue, &xValue, &timeSpan);
-						switch(ov_time_compare(&xValue, &startTime)){
-							case OV_TIMECMP_AFTER:
-							case OV_TIMECMP_EQUAL:
-								if (endLCE == TRUE){
-									switch(ov_time_compare(&xValue, &stopTime)){
-										case OV_TIMECMP_AFTER:
-											break;
-										break;
-										case OV_TIMECMP_EQUAL:
-										case OV_TIMECMP_BEFORE:
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											else
-												ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount]);
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-											else
-												ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-									}
-								}else{
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									else
-										ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_uint_vec.value[arrayCount]);
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-									else
-										ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
-								break;
-							case OV_TIMECMP_BEFORE:
-								// Do nothing
-							break;
-						}
-					}
-				break;
-				case OV_VT_INT_VEC:
-					xValue = pchild->v_TimeStamp;
-					for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_int_vec.veclen; arrayCount++){
-						if (arrayCount > 0)
-							ov_time_add(&xValue, &xValue, &timeSpan);
-						switch(ov_time_compare(&xValue, &startTime)){
-							case OV_TIMECMP_AFTER:
-							case OV_TIMECMP_EQUAL:
-								if (endLCE == TRUE){
-									switch(ov_time_compare(&xValue, &stopTime)){
-										case OV_TIMECMP_AFTER:
-											break;
-										break;
-										case OV_TIMECMP_EQUAL:
-										case OV_TIMECMP_BEFORE:
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											else
-												ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount]);
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-											else
-												ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-									}
-								}else{
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									else
-										ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int_vec.value[arrayCount]);
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-									else
-										ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
-								break;
-							case OV_TIMECMP_BEFORE:
-								// Do nothing
-							break;
-						}
-					}
-				break;
-				case OV_VT_SINGLE_VEC:
-					xValue = pchild->v_TimeStamp;
-					for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_single_vec.veclen; arrayCount++){
-						if (arrayCount > 0)
-							ov_time_add(&xValue, &xValue, &timeSpan);
-						switch(ov_time_compare(&xValue, &startTime)){
-							case OV_TIMECMP_AFTER:
-							case OV_TIMECMP_EQUAL:
-								if (endLCE == TRUE){
-									switch(ov_time_compare(&xValue, &stopTime)){
-										case OV_TIMECMP_AFTER:
-											break;
-										break;
-										case OV_TIMECMP_EQUAL:
-										case OV_TIMECMP_BEFORE:
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											else
-												ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount]);
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-											else
-												ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-									}
-								}else{
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									else
-										ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_single_vec.value[arrayCount]);
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-									else
-										ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
-								break;
-							case OV_TIMECMP_BEFORE:
-								// Do nothing
-							break;
-						}
-					}
-				break;
-				case OV_VT_DOUBLE_VEC:
-					xValue = pchild->v_TimeStamp;
-					for (OV_UINT arrayCount = 0; arrayCount < pchild->v_Data.value.valueunion.val_double_vec.veclen; arrayCount++){
-						if (arrayCount > 0)
-							ov_time_add(&xValue, &xValue, &timeSpan);
-						switch(ov_time_compare(&xValue, &startTime)){
-							case OV_TIMECMP_AFTER:
-							case OV_TIMECMP_EQUAL:
-								if (endLCE == TRUE){
-									switch(ov_time_compare(&xValue, &stopTime)){
-										case OV_TIMECMP_AFTER:
-											break;
-										break;
-										case OV_TIMECMP_EQUAL:
-										case OV_TIMECMP_BEFORE:
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											else
-												ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-											ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount]);
-											if (lceCount == 0 && arrayCount == 0)
-												ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-											else
-												ov_string_append(&pinst->v_yValueStatic, tmpString);
-										break;
-									}
-								}else{
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									else
-										ov_string_append(&pinst->v_xValueStatic, ov_time_timetoascii_local(&xValue));
-									ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_double_vec.value[arrayCount]);
-									if (lceCount == 0 && arrayCount == 0)
-										ov_string_setvalue(&pinst->v_yValueStatic, tmpString);
-									else
-										ov_string_append(&pinst->v_yValueStatic, tmpString);
-								}
-								break;
-							case OV_TIMECMP_BEFORE:
-								// Do nothing
-							break;
-						}
-					}
-				break;
-				default:
-					if (pinst->v_ErrorStatic == FALSE){
-						pinst->v_ErrorStatic = TRUE;
-						ov_string_print(&pinst->v_ErrorTextStatic, "DataType of LCE:%s not supported", pchild->v_identifier);
-					}
-				break;
-			}
-		}
-		ov_string_append(&pinst->v_xValueStatic, ";");
-		ov_string_append(&pinst->v_yValueStatic, ";");
-		lceCount++;
-	}while(endLCE == FALSE);
 
 	// for dynamic
 	pobj = NULL;
@@ -392,13 +211,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 		if (i == 0){
 			i++;
 			pobj = Ov_GetLastChild(ov_containment, &paas->p_LifeCycleArchive);
-			if (!pobj){
-				if (pinst->v_ErrorDynamic == FALSE){
-					pinst->v_ErrorDynamic = TRUE;
-					ov_string_setvalue(&pinst->v_ErrorTextDynamic, "Could not find an object for dynamic values");
-				}
-				break;
-			}
 			pchild = Ov_DynamicPtrCast(lifeCycleEntry_LifeCycleEntry, pobj);
 			if (!pchild){
 				continue;
@@ -422,36 +234,35 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	if (pinst->v_ErrorDynamic == FALSE){
 		if(!(pchild->v_Data.value.vartype & OV_VT_ISVECTOR)){
 			switch(pchild->v_Data.value.vartype & OV_VT_KSMASK){
-				case OV_VT_BOOL:
-					if (pchild->v_Data.value.valueunion.val_bool == TRUE)
-						ov_string_setvalue(&pinst->v_yValueDynamic, "TRUE");
-					else
-						ov_string_setvalue(&pinst->v_yValueDynamic, "FALSE");
-				break;
-				case OV_VT_STRING:
-					ov_string_setvalue(&pinst->v_yValueDynamic, pchild->v_Data.value.valueunion.val_string);
-				break;
 				case OV_VT_DOUBLE:
-					ov_string_print(&tmpString, "%lf", pchild->v_Data.value.valueunion.val_double);
-					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
+					pinst->v_xValueDynamic = pchild->v_TimeStamp;
+					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_double;
+					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_INT:
-					ov_string_print(&tmpString, "%i", pchild->v_Data.value.valueunion.val_int);
-					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
+					pinst->v_xValueDynamic = pchild->v_TimeStamp;
+					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_int;
+					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_UINT:
-					ov_string_print(&tmpString, "%u", pchild->v_Data.value.valueunion.val_uint);
-					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
+					pinst->v_xValueDynamic = pchild->v_TimeStamp;
+					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_uint;
+					pinst->v_OutputType = 2;
 				break;
 				case OV_VT_SINGLE:
-					ov_string_print(&tmpString, "%f", pchild->v_Data.value.valueunion.val_single);
-					ov_string_setvalue(&pinst->v_yValueDynamic, tmpString);
+					pinst->v_xValueDynamic = pchild->v_TimeStamp;
+					pinst->v_yValueDynamic = pchild->v_Data.value.valueunion.val_single;
+					pinst->v_OutputType = 2;
 				break;
+				case OV_VT_BOOL:
+				case OV_VT_STRING:
 				default:
-					if (pinst->v_ErrorDynamic){
+					if (pinst->v_ErrorDynamic == FALSE){
 						pinst->v_ErrorDynamic = TRUE;
 						ov_string_setvalue(&pinst->v_ErrorTextDynamic, "DataType not supported");
-						ov_string_setvalue(&pinst->v_yValueDynamic, "");
+						pinst->v_yValueDynamic = 0;
+						pinst->v_xValueDynamic.secs = 0;
+						pinst->v_xValueDynamic.usecs = 0;
 					}
 				break;
 			}
@@ -459,7 +270,9 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 			if (pinst->v_ErrorDynamic == FALSE){
 				pinst->v_ErrorDynamic = TRUE;
 				ov_string_setvalue(&pinst->v_ErrorTextDynamic, "Arrays are not supported");
-				ov_string_setvalue(&pinst->v_yValueDynamic, "");
+				pinst->v_yValueDynamic = 0;
+				pinst->v_xValueDynamic.secs = 0;
+				pinst->v_xValueDynamic.usecs = 0;
 			}
 		}
 	}
@@ -468,5 +281,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 
 	ov_database_free(tmpString);
 
-    return;
+	return;
 }
+
