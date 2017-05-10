@@ -1,7 +1,7 @@
 This is the source code of a runtime environment for the process control domain. It is developed since around 1999 at the [Chair of Process Control Engineering](http://www.plt.rwth-aachen.de) at the RWTH Aachen University.
 It is well known in the German process control community under the name of the core technology ACPLT/OV.
 
-#Compiling
+# Compiling
 You need tcl, bison and flex 
 tcl:
 ```sh
@@ -36,15 +36,15 @@ on Raspberry Pi.
 
 The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
 
-#Documentation
+# Documentation
 An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
 
-#Releases
+# Releases
 A Release list can be found here: [Releases](http://acplt.github.io/rte-www/releases/)
 
-#Using the environment
+# Using the environment
 
-##start the Runtime Environment:
+## start the Runtime Environment:
 build a new database file:
 ```sh
 cd &&./build/acplt/servers/MANAGER/build_database.sh
