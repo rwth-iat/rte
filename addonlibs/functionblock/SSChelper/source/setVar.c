@@ -139,7 +139,7 @@ OV_RESULT SSChelper_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, cons
 
 	if(pTargetObj == NULL){
 			return OV_ERR_BADPARAM;
-	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)&& !Ov_CanCastTo(ssc_SequentialControlChart, pTargetObj)&&ov_string_compare(targetVarname,"CMD")!=OV_STRCMP_EQUAL){
+	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)&& !Ov_CanCastTo(ssc_SequentialStateChart, pTargetObj)&&ov_string_compare(targetVarname,"CMD")!=OV_STRCMP_EQUAL){
 		//set variable in a functionchart
 		result = fb_functionchart_setport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
 	}else{
