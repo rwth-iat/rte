@@ -497,14 +497,14 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 	}
 
 	// clear senderID if this exists
-	orderVar.value.vartype = OV_VT_STRING;
-	orderVar.value.valueunion.val_string = NULL;
-	(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, pinst), CC_SENDERID_VARIABLENAME, &orderVar);
+//	orderVar.value.vartype = OV_VT_STRING;
+//	orderVar.value.valueunion.val_string = NULL;
+//	(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, pinst), CC_SENDERID_VARIABLENAME, &orderVar);
 
 	//clear all variables which are references with the ORDEREXECUTOR to get rid of old commands
-	for(iterator = 0;iterator < pinst->v_ORDEREXECUTOR.veclen;iterator++){
-		(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, pinst), pinst->v_ORDEREXECUTOR.value[iterator], &orderVar);
-	}
+//	for(iterator = 0;iterator < pinst->v_ORDEREXECUTOR.veclen;iterator++){
+//		(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, pinst), pinst->v_ORDEREXECUTOR.value[iterator], &orderVar);
+//	}
 
 	return OV_ERR_OK;
 }
