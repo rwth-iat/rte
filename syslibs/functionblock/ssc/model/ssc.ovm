@@ -70,7 +70,7 @@ LIBRARY ssc
 
 
 
-	CLASS SequentialControlChart : CLASS fb/functionchart
+	CLASS SequentialStateChart : CLASS fb/functionchart
 		IS_INSTANTIABLE;
 		COMMENT = "holds all steps and transitions and does the call logic";
 		VARIABLES

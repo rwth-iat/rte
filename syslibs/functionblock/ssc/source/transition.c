@@ -34,7 +34,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
 	 *   local variables
 	 */
 	OV_INSTPTR_ssc_transition pinst = Ov_StaticPtrCast(ssc_transition, pobj);
-	OV_INSTPTR_ssc_SequentialControlChart pSSC = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pinst));
+	OV_INSTPTR_ssc_SequentialStateChart pSSC = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pinst));
 
 	OV_RESULT    result;
 
@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 	OV_INSTPTR_ssc_step  		pPrevStep = Ov_GetParent(ssc_nextTransitions, pinst);
 	OV_INSTPTR_ssc_step  		pNextStep = Ov_GetParent(ssc_previousTransitions, pinst);
 
-	OV_INSTPTR_ssc_SequentialControlChart	pSSC = Ov_StaticPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pinst));
+	OV_INSTPTR_ssc_SequentialStateChart	pSSC = Ov_StaticPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pinst));
 
 	// check location and links
 	if ( !pSSC){
@@ -100,7 +100,7 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_transition_getaccess(
 	/*
 	*   local variables
 	*/
-	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pobj));
+	OV_INSTPTR_ssc_SequentialStateChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pobj));
 	OV_ACCESS access_code = fb_functionblock_getaccess(pobj, pelem, pticket);
 
 	/*

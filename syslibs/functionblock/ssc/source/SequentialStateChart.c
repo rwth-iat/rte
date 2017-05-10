@@ -23,12 +23,12 @@
 
 #include "ssclib.h"
 
-OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_initStepName_set(
-		OV_INSTPTR_ssc_SequentialControlChart          pobj,
+OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_initStepName_set(
+		OV_INSTPTR_ssc_SequentialStateChart          pobj,
 		const OV_STRING  value
 )
 {
-	OV_INSTPTR_ssc_SequentialControlChart pinst = Ov_StaticPtrCast(ssc_SequentialControlChart, pobj);
+	OV_INSTPTR_ssc_SequentialStateChart pinst = Ov_StaticPtrCast(ssc_SequentialStateChart, pobj);
 
 	OV_INSTPTR_ssc_step pstep;
 	OV_INSTPTR_ssc_step foundStep = NULL;
@@ -73,12 +73,12 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_initStepName_set(
 	return ov_string_setvalue(&pobj->v_initStepName, value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_endStepName_set(
-		OV_INSTPTR_ssc_SequentialControlChart          pobj,
+OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_endStepName_set(
+		OV_INSTPTR_ssc_SequentialStateChart          pobj,
 		const OV_STRING  value
 )
 {
-	OV_INSTPTR_ssc_SequentialControlChart pinst = Ov_StaticPtrCast(ssc_SequentialControlChart, pobj);
+	OV_INSTPTR_ssc_SequentialStateChart pinst = Ov_StaticPtrCast(ssc_SequentialStateChart, pobj);
 	OV_UINT count = 0; // count of end step strings
 	OV_UINT i = 0; // loop variable
 	OV_UINT n = 1;
@@ -110,13 +110,13 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_endStepName_set(
 	return ov_string_setvalue(&pobj->v_endStepName,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_constructor(
+OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_constructor(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_ssc_SequentialControlChart pinst = Ov_StaticPtrCast(ssc_SequentialControlChart, pobj);
+	OV_INSTPTR_ssc_SequentialStateChart pinst = Ov_StaticPtrCast(ssc_SequentialStateChart, pobj);
 	OV_INSTPTR_ssc_step pInitStep = NULL;
 	OV_INSTPTR_ssc_step pEndStep = NULL;
 	OV_RESULT    result;
@@ -141,14 +141,14 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_constructor(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
+OV_DLLFNCEXPORT void ssc_SequentialStateChart_typemethod(
 		OV_INSTPTR_fb_functionblock	pfb,
 		OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_ssc_SequentialControlChart pinst = Ov_StaticPtrCast(ssc_SequentialControlChart, pfb);
+    OV_INSTPTR_ssc_SequentialStateChart pinst = Ov_StaticPtrCast(ssc_SequentialStateChart, pfb);
     OV_INSTPTR_ssc_step      pActiveStep = NULL;
     OV_INSTPTR_fb_task      taskActivestep = Ov_GetPartPtr(taskActiveStep, pinst);
     OV_INSTPTR_fb_task    pTrans = Ov_GetPartPtr(trans, pinst);
@@ -204,7 +204,7 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
 
     			/* init/do: */
     			// reset ssc
-    			result=Ov_Call0 (ssc_SequentialControlChart, pinst, resetSsc);
+    			result=Ov_Call0 (ssc_SequentialStateChart, pinst, resetSsc);
     			if(Ov_Fail(result)) return;
 
     			// generic part
@@ -376,7 +376,7 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
 
         	/* stop/do: */
         	// reset ssc
-        	result=Ov_Call0 (ssc_SequentialControlChart, pinst, resetSsc);
+        	result=Ov_Call0 (ssc_SequentialStateChart, pinst, resetSsc);
         	if(Ov_Fail(result)) return;
 
         	// generic part
@@ -417,7 +417,7 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
     	case SSC_WOST_TERMINATE:
     		if (pinst->v_EN == SSC_CMD_RESET){
     			// reset ssc
-    			result=Ov_Call0 (ssc_SequentialControlChart, pinst, resetSsc);
+    			result=Ov_Call0 (ssc_SequentialStateChart, pinst, resetSsc);
     			if(Ov_Fail(result)) return;
 
     			// generic part
@@ -444,15 +444,15 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
 	return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
-	OV_INSTPTR_ssc_SequentialControlChart    pinst
+OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_resetSsc(
+	OV_INSTPTR_ssc_SequentialStateChart    pinst
 ) {
 	OV_INSTPTR_ssc_step      pStep = NULL;
 	OV_INSTPTR_ssc_step      pInitStep = NULL;
 	OV_INSTPTR_fb_task 		 taskActivestep = Ov_GetPartPtr(taskActiveStep, pinst);
 	OV_INSTPTR_fb_task       pTransTaskParent = Ov_GetParent(fb_tasklist, pInitStep);
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
-	OV_INSTPTR_ssc_SequentialControlChart pSscAction = NULL;
+	OV_INSTPTR_ssc_SequentialStateChart pSscAction = NULL;
 	OV_RESULT result = OV_ERR_OK;
 	OV_ANY orderVar;
 	OV_UINT iterator = 0;
@@ -484,12 +484,12 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 	// reset all actions (FB, CFC or SSC) under .actions folder
 	Ov_ForEachChildEx(ov_containment, Ov_GetPartPtr(actions, pinst), pFbAction, fb_functionblock){
 		// reset subSSC action
-		pSscAction=Ov_DynamicPtrCast(ssc_SequentialControlChart,pFbAction);
+		pSscAction=Ov_DynamicPtrCast(ssc_SequentialStateChart,pFbAction);
 		if (pSscAction != NULL){
 			pSscAction->v_actimode = FB_AM_ON;
 			pSscAction->v_EN=SSC_CMD_STOP;
 			//Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pSscAction), execute, &pTime);
-			result = Ov_Call0 (ssc_SequentialControlChart, pSscAction, resetSsc);
+			result = Ov_Call0 (ssc_SequentialStateChart, pSscAction, resetSsc);
 			if(Ov_Fail(result)){
 				return result;
 			}
@@ -512,7 +512,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 /**
  * disallow deletion in run state
  */
-OV_DLLFNCEXPORT OV_ACCESS ssc_SequentialControlChart_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS ssc_SequentialStateChart_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -520,7 +520,7 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_SequentialControlChart_getaccess(
 	/*
 	*   local variables
 	*/
-	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_StaticPtrCast(ssc_SequentialControlChart, pobj);
+	OV_INSTPTR_ssc_SequentialStateChart activeHeader = Ov_StaticPtrCast(ssc_SequentialStateChart, pobj);
 
 	OV_ACCESS access_code = fb_functionblock_getaccess(pobj, pelem, pticket);
 	/*
@@ -548,8 +548,8 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_SequentialControlChart_getaccess(
 	return access_code;
 }
 
-OV_DLLFNCEXPORT OV_STRING ssc_SequentialControlChart_activeStep_get(
-		OV_INSTPTR_ssc_SequentialControlChart          pinst
+OV_DLLFNCEXPORT OV_STRING ssc_SequentialStateChart_activeStep_get(
+		OV_INSTPTR_ssc_SequentialStateChart          pinst
 ) {
 	OV_INSTPTR_fb_task	taskActivestep = Ov_GetPartPtr(taskActiveStep, pinst);
 	OV_INSTPTR_fb_task	pTaskChild = NULL;

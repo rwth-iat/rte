@@ -86,7 +86,7 @@ static OV_RESULT ssc_getObjectAndVarnameFromSetVariable(
 	OV_STRING targetPathname = NULL;
 	OV_STRING pathRelativeobject = NULL;
 	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pStep));
+	OV_INSTPTR_ssc_SequentialStateChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_domain containerDomain = NULL;
 
 	*pTargetObj = NULL;

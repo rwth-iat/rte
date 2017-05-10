@@ -4,7 +4,7 @@
 
 
 typedef OV_RESULT SSC_FNC_RESETSSC(
-	OV_INSTPTR_ssc_SequentialControlChart       pSSC
+	OV_INSTPTR_ssc_SequentialStateChart       pSSC
 );
 typedef OV_RESULT SSC_FNC_RESETSTEP(
 	OV_INSTPTR_ssc_step       pStep

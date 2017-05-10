@@ -39,7 +39,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
 	OV_INSTPTR_fb_task    pDo 	 = Ov_GetPartPtr(do, pinst);
 	OV_INSTPTR_fb_task    pExit  = Ov_GetPartPtr(exit, pinst);
 
-	OV_INSTPTR_ssc_SequentialControlChart pSSC = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pinst));
+	OV_INSTPTR_ssc_SequentialStateChart pSSC = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pinst));
 	OV_RESULT    result;
 
 	/* do what the base class does first */
@@ -49,7 +49,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
 
 	// check location
 	if (pSSC==NULL){
-		ov_logfile_error("ssc_step_constructor: step must be encapsulated in a SequentialControlChart.");
+		ov_logfile_error("ssc_step_constructor: step must be encapsulated in a SequentialStateChart.");
 		return OV_ERR_BADPLACEMENT;
 	}
 
@@ -76,9 +76,9 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     OV_INSTPTR_fb_task    pEntry = Ov_GetPartPtr(entry, pinst);
     OV_INSTPTR_fb_task    pDo 	 = Ov_GetPartPtr(do, pinst);
     OV_INSTPTR_fb_task    pExit  = Ov_GetPartPtr(exit, pinst);
-    OV_INSTPTR_ssc_SequentialControlChart pSSC = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_ssc_SequentialStateChart pSSC = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_ssc_step pNextStep = NULL;
-    OV_INSTPTR_ssc_SequentialControlChart pSubSsc=NULL;
+    OV_INSTPTR_ssc_SequentialStateChart pSubSsc=NULL;
     OV_INSTPTR_ssc_execute pExecute = NULL;
     OV_INSTPTR_fb_functionblock pTargetObj = NULL;
 	OV_INSTPTR_ssc_transition pTransition = NULL;
@@ -91,12 +91,12 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     // check location
     if (pSSC==NULL)
     {
-      	ov_logfile_error("ssc_step_constructor: step must be encapsulated in a SequentialControlChart.");
+      	ov_logfile_error("ssc_step_constructor: step must be encapsulated in a SequentialStateChart.");
       	return;
     }
 
     // TODO:
-    // check if SequentialControlChart is the taskparent.
+    // check if SequentialStateChart is the taskparent.
 
     // init variables
     pinst->v_cyctime.secs = 0;
@@ -179,9 +179,9 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 				Ov_ForEachChildEx(ov_containment, pinst, pExecute, ssc_execute){
 					ssc_getObjectFromExecute(pExecute, pExecute->v_targetObject, &pTargetObj);
 					// find all subSSCs for do
-					if (pTargetObj != NULL && Ov_CanCastTo(ssc_SequentialControlChart, pTargetObj) && pExecute->v_actionQualifier == SSC_QUALIFIER_DO){
+					if (pTargetObj != NULL && Ov_CanCastTo(ssc_SequentialStateChart, pTargetObj) && pExecute->v_actionQualifier == SSC_QUALIFIER_DO){
 						// stop subSSC
-						pSubSsc = Ov_StaticPtrCast(ssc_SequentialControlChart, pTargetObj);
+						pSubSsc = Ov_StaticPtrCast(ssc_SequentialStateChart, pTargetObj);
     					pSubSsc->v_EN = SSC_CMD_STOP;
     					Ov_Call1(fb_task, Ov_PtrUpCast(fb_task, pSubSsc), execute, pltc);
 					}
@@ -194,7 +194,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 
     			/* exit */
     			Ov_Call1 (fb_task, pExit, execute, pltc);
-    			// unlink from SequentialControlChart.taskActiveStep
+    			// unlink from SequentialStateChart.taskActiveStep
     			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
     			pinst->v_X = FALSE;
     			pinst->v_qualifier = SSC_QUALIFIER_ENTRY;
@@ -280,7 +280,7 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_step_getaccess(
 	/*
 	*   local variables
 	*/
-	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pobj));
+	OV_INSTPTR_ssc_SequentialStateChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pobj));
 	OV_ACCESS access_code = fb_functionblock_getaccess(pobj, pelem, pticket);
 
 	/*
