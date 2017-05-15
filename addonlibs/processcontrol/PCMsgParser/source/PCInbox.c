@@ -59,7 +59,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	OV_INSTPTR_ov_object	pNextMsgObj = NULL;
 	OV_INSTPTR_ov_domain	pParentDomain = NULL;
 	OV_INSTPTR_fb_functionchart pParentChart = NULL;
-	OV_INSTPTR_ssc_controlchart pParentControlChart = NULL;
+	OV_INSTPTR_fb_controlchart pParentControlChart = NULL;
 	OV_INSTPTR_cmdlib_processcontrol pProcessControl = NULL;
 	OV_BOOL parentIsPC = FALSE;
 	OV_UINT waitingMsgs = 0;
@@ -83,7 +83,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	{
 		parentIsPC = FALSE;
 		pParentChart = Ov_StaticPtrCast(fb_functionchart, pParentDomain);
-		pParentControlChart = Ov_DynamicPtrCast(ssc_controlchart, pParentDomain);
+		pParentControlChart = Ov_DynamicPtrCast(fb_controlchart, pParentDomain);
 	}
 	else if(Ov_CanCastTo(cmdlib_processcontrol, pParentDomain))
 	{
@@ -240,7 +240,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			{
 
 				if(pParentControlChart){
-					if(Ov_Fail(ssc_controlchart_CMD_set(pParentControlChart, order))){
+					if(Ov_Fail(fb_controlchart_CMD_set(pParentControlChart, order))){
 						ov_logfile_error("Could not set \"CMD\" of parent control chart.");
 					}
 				} else {
