@@ -885,12 +885,12 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/processcontrol/PCMsgParser 
 				addonlibs/processcontrol/PCMsgCreator 
 				addonlibs/functionblock/SSChelper
-				addonlibs/identification
-				addonlibs/lifeCycleEntry
-				addonlibs/propertyValueStatement
-				addonlibs/openaas
-				addonlibs/openaasOPCUAInterface
-				addonlibs/openAASDiscoveryServer}
+				addonlibs/administration/identification
+				addonlibs/administration/lifeCycleEntry
+				addonlibs/administration/propertyValueStatement
+				addonlibs/administration/openaas
+				addonlibs/administration/openaasOPCUAInterface
+				addonlibs/administration/openAASDiscoveryServer}
 				
 print_msg "checking out all libraries of the acplt system"
 
