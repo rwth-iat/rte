@@ -37,10 +37,13 @@ on Raspberry Pi.
 The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
 
 # Documentation
-An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
+* An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
+* Link to technological overview (german): [ACPLT-Technologiekonzept](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/ACPLT-Technologiekonzept.pdf)  
+* Link to functionblock and sequencial-state-chart overview (german): [ACPLT-Funktionsbausteine_und_SSCs](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/Funktionsbausteine_und_SSCs.pdf)
+* Old but useful documentations can be found at: [ACPLT-OV Doc old](https://github.com/acplt/rte-www/blob/gh-pages/doc/old)
 
-# Releases
-A Release list can be found here: [Releases](http://acplt.github.io/rte-www/releases/)
+## releases
+Here you'll find the latest 10 releases (of the 10 latest building commits) for linux (32 and 64 bit), windows 32 and Raspberry Pi: [Releases](http://acplt.github.io/rte-www/releases/)
 
 # Using the environment
 
