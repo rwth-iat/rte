@@ -2,21 +2,22 @@ This is the source code of a runtime environment for the process control domain.
 It is well known in the German process control community under the name of the core technology ACPLT/OV.
 
 # Compiling
-On Linux you need tcl, bison, flex:
+To compile the ACPLT/RTE yourself you need to follow the steps presented here. Otherwise you can use the [Releases](http://acplt.github.io/rte-www/releases/).  
+On Linux you need tcl, bison and flex:
 ```sh
 sudo apt-get install tcl bison flex
 
 ```
-You also need a C/C++ compiler:
+You also need a C/C++ compiler. For example:
 ```sh
 sudo apt-get install gcc g++
 ```
-to compile the runtime environment. Clone the acplt/rte project from github, navigate to build folder and start the build process:
+Clone the acplt/rte project from github. You only need the "acplt" folder for building. So, navigate to build folder and start the build process:
 ```sh
 git clone https://github.com/acplt/rte.git
 cd rte/build && make
 ```
-Your architecture is detected automatically via tcl script. Otherwise you can specify it by calling the buildscript in the build directory yourself:
+Your architecture is detected automatically via a tcl script. Otherwise you can specify it by calling the buildscript in the build directory yourself:
 ```sh
 tclsh acplt_build.tcl 64 no_dbcommands
 ```
@@ -29,7 +30,7 @@ For cross compilation see [README_CROSSCOMPILATION.md](http://acplt.github.io/rt
 * Link to functionblock and sequencial-state-chart overview (german): [ACPLT-Funktionsbausteine_und_SSCs](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/Funktionsbausteine_und_SSCs.pdf)
 * Old but useful documentations can be found at: [ACPLT-OV Doc old](https://github.com/acplt/rte-www/blob/gh-pages/doc/old)
 
-## releases
+## Releases
 Here you'll find the latest 10 releases (of the 10 latest building commits) for linux (32 and 64 bit), windows 32 and Raspberry Pi: [Releases](http://acplt.github.io/rte-www/releases/)
 
 # Using the environment
