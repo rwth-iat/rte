@@ -2,39 +2,26 @@ This is the source code of a runtime environment for the process control domain.
 It is well known in the German process control community under the name of the core technology ACPLT/OV.
 
 # Compiling
-You need tcl, bison and flex 
-tcl:
+On Linux you need tcl, bison, flex:
 ```sh
-sudo apt-get install tcl
-```
-bison:
-```sh
-sudo apt-get install bison
-```
-flex:
-```sh
-sudo apt-get install flex
-```
-to compile the runtime environment. Navigate to build folder and make the script executable
-```sh
-cd build && sudo chmod +x tclsh acplt_build.tcl
-```
-and run the build command:
-```sh
-tclsh acplt_build.tcl
-```
-or
-```sh
-cd build && tclsh acplt_build.tcl no_dbcommands 64
-```
-for a 64 bit build and
+sudo apt-get install tcl bison flex
 
-```sh
-cd build && tclsh acplt_build.tcl no_dbcommands
 ```
-on Raspberry Pi.
-
+You also need a C/C++ compiler:
+```sh
+sudo apt-get install gcc g++
+```
+to compile the runtime environment. Clone the acplt/rte project from github, navigate to build folder and start the build process:
+```sh
+git clone https://github.com/acplt/rte.git
+cd rte/build && make
+```
+Your architecture is detected automatically via tcl script. Otherwise you can specify it by calling the buildscript in the build directory yourself:
+```sh
+tclsh acplt_build.tcl 64 no_dbcommands
+```
 The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
+For cross compilation see [README_CROSSCOMPILATION.md](http://acplt.github.io/rte/build/README_CROSSCOMPILATION.md).
 
 # Documentation
 * An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
@@ -64,3 +51,4 @@ further settings(e.g., which libs should be loaded at start up) of the RTE can b
 The runtime environment is used at industry scale in the petro chemical plants at INEOS in Cologne.
 
 [![Build Status](https://travis-ci.org/acplt/rte.svg?branch=master)](https://travis-ci.org/acplt/rte)
+

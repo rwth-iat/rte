@@ -6,7 +6,7 @@
 # Author: Holger Jeromin <h.jeromin@plt.rwth-aachen.de>
 # Author: Lars Evertz <l.evertz@plt.rwth-aachen.de>
 #
-# Usage: tclsh acplt_build.tcl (release) (compileonly) (cross FILENAME) (repo REPOSITORY_URL)
+# Usage: tclsh acplt_build.tcl (32|64) (checkout) (release) (compileonly) (no_dbcommands) (cross FILENAME) (repo REPOSITORY_URL)
 set release 0
 set checkout 0
 set compileonly 0
