@@ -186,6 +186,11 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		case SRV_createPVSLReq:{
 			createPVSLReq_t *createPVSLReq = (createPVSLReq_t*)srvStructReceive;
 
+			IdentificationType tmpOVSubModelId;
+			IdentificationType_init(&tmpOVSubModelId);
+			ov_string_setvalue(&tmpOVSubModelId.IdSpec, createPVSLReq->subModelId.idSpec.data);
+			tmpOVSubModelId.IdType = createPVSLReq->subModelId.idType;
+
 			OV_STRING tmpOVPVSLName = NULL;
 			ov_string_setvalue(&tmpOVPVSLName, createPVSLReq->pvslName.data);
 
@@ -199,7 +204,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, createPVSLReq->carrier.idSpec.data);
 			tmpOVCreatingInstance.IdType = createPVSLReq->carrier.idType;
 
-			result = openaas_modelmanager_createPVSL(aasId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance);
+			result = openaas_modelmanager_createPVSL(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance);
 
 			createPVSLRsp_t createPVSLRsp;
 			createPVSLRsp_t_init(&createPVSLRsp);
@@ -222,10 +227,15 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		case SRV_deletePVSLReq:{
 			deletePVSLReq_t *deletePVSLReq = (deletePVSLReq_t*)srvStructReceive;
 
+			IdentificationType tmpOVSubModelId;
+			IdentificationType_init(&tmpOVSubModelId);
+			ov_string_setvalue(&tmpOVSubModelId.IdSpec, deletePVSLReq->subModelId.idSpec.data);
+			tmpOVSubModelId.IdType = deletePVSLReq->subModelId.idType;
+
 			OV_STRING tmpOVPVSLName = NULL;
 			ov_string_setvalue(&tmpOVPVSLName, deletePVSLReq->pvslName.data);
 
-			result = openaas_modelmanager_deletePVSL(aasId, tmpOVPVSLName);
+			result = openaas_modelmanager_deletePVSL(aasId, tmpOVSubModelId, tmpOVPVSLName);
 
 			deletePVSLRsp_t deletePVSLRsp;
 			deletePVSLRsp_t_init(&deletePVSLRsp);
@@ -384,6 +394,11 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		case SRV_createPVSReq:{
 			createPVSReq_t *createPVSReq = (createPVSReq_t*)srvStructReceive;
 
+			IdentificationType tmpOVSubModelId;
+			IdentificationType_init(&tmpOVSubModelId);
+			ov_string_setvalue(&tmpOVSubModelId.IdSpec, createPVSReq->subModelId.idSpec.data);
+			tmpOVSubModelId.IdType = createPVSReq->subModelId.idType;
+
 			OV_STRING tmpOVPVSLName = NULL;
 			ov_string_setvalue(&tmpOVPVSLName, createPVSReq->pvslName.data);
 
@@ -407,7 +422,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 			pvs.Visibility = createPVSReq->pvs.visibility;
 
-			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, pvs);
+			result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
 
 			createPVSRsp_t createPVSRsp;
 			createPVSRsp_t_init(&createPVSRsp);
@@ -429,13 +444,18 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		case SRV_deletePVSReq:{
 			deletePVSReq_t *deletePVSReq = (deletePVSReq_t*)srvStructReceive;
 
+			IdentificationType tmpOVSubModelId;
+			IdentificationType_init(&tmpOVSubModelId);
+			ov_string_setvalue(&tmpOVSubModelId.IdSpec, deletePVSReq->subModelId.idSpec.data);
+			tmpOVSubModelId.IdType = deletePVSReq->subModelId.idType;
+
 			OV_STRING tmpOVPVSLName = NULL;
 			ov_string_setvalue(&tmpOVPVSLName, deletePVSReq->pvslName.data);
 
 			OV_STRING tmpOVPVSName = NULL;
 			ov_string_setvalue(&tmpOVPVSName, deletePVSReq->pvsName.data);
 
-			result = openaas_modelmanager_deletePVS(aasId, tmpOVPVSLName, tmpOVPVSName);
+			result = openaas_modelmanager_deletePVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName);
 
 			deletePVSRsp_t deletePVSRsp;
 			deletePVSRsp_t_init(&deletePVSRsp);
@@ -456,6 +476,11 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		}break;
 		case SRV_setPVSReq:{
 			setPVSReq_t *setPVSReq = (setPVSReq_t*)srvStructReceive;
+
+			IdentificationType tmpOVSubModelId;
+			IdentificationType_init(&tmpOVSubModelId);
+			ov_string_setvalue(&tmpOVSubModelId.IdSpec, setPVSReq->subModelId.idSpec.data);
+			tmpOVSubModelId.IdType = setPVSReq->subModelId.idType;
 
 			OV_STRING tmpOVPVSLName = NULL;
 			ov_string_setvalue(&tmpOVPVSLName, setPVSReq->pvslName.data);
@@ -480,7 +505,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 			pvs.Visibility = setPVSReq->pvs.visibility;
 
-			result = openaas_modelmanager_createPVS(aasId, tmpOVPVSLName, pvs);
+			result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
 
 			setPVSRsp_t setPVSRsp;
 			setPVSRsp_t_init(&setPVSRsp);
@@ -502,6 +527,11 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 		case SRV_getPVSReq:{
 			getPVSReq_t *getPVSReq = (getPVSReq_t*)srvStructReceive;
 
+			IdentificationType tmpOVSubModelId;
+			IdentificationType_init(&tmpOVSubModelId);
+			ov_string_setvalue(&tmpOVSubModelId.IdSpec, getPVSReq->subModelId.idSpec.data);
+			tmpOVSubModelId.IdType = getPVSReq->subModelId.idType;
+
 			OV_STRING tmpOVPVSLName = NULL;
 			ov_string_setvalue(&tmpOVPVSLName, getPVSReq->pvslName.data);
 
@@ -511,7 +541,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 			PropertyValueStatement pvs;
 			PropertyValueStatement_init(&pvs);
 
-			result = openaas_modelmanager_getPVS(aasId, tmpOVPVSLName, tmpOVPVSName, &pvs);
+			result = openaas_modelmanager_getPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName, &pvs);
 
 			getPVSRsp_t getPVSRsp;
 			getPVSRsp_t_init(&getPVSRsp);
@@ -619,7 +649,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 					OV_TIME tmpOVCreatingTime  = ov_1601nsTimeToOvTime(getCoreDataRsp->pvsl[i].creationTime);
 
-					result = openaas_modelmanager_createPVSLTime(aasId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance, tmpOVCreatingTime);
+					IdentificationType tmpOVSubModelId;
+					IdentificationType_init(&tmpOVSubModelId);
+
+					result = openaas_modelmanager_createPVSLTime(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance, tmpOVCreatingTime);
 					for (OV_UINT j = 0; j < getCoreDataRsp->pvsl[i].numPvs; j++){
 						OV_STRING tmpOVPVSLName = NULL;
 						ov_string_setvalue(&tmpOVPVSLName, getCoreDataRsp->pvsl[i].name.data);
@@ -644,7 +677,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_aas_postoffice_set(
 
 						pvs.Visibility = getCoreDataRsp->pvsl[i].pvs[j].visibility;
 
-						result = openaas_modelmanager_createPVSTime(aasId, tmpOVPVSLName, pvs);
+						IdentificationType tmpOVSubModelId;
+						IdentificationType_init(&tmpOVSubModelId);
+
+						result = openaas_modelmanager_createPVSTime(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
 						PropertyValueStatement_deleteMembers(&pvs);
 						ov_database_free(tmpOVPVSLName);
 					}

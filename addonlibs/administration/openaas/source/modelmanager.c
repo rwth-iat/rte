@@ -55,52 +55,6 @@ void openaas_modelmanager_AASConvertListAdd(IdentificationType aasId, OV_STRING 
 	ov_string_setvalue(&pListElement->v_AASPath, tmpString);
 	ov_database_free(tmpString);
 
-	// Get the pointer to object for send the Message
-	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
-	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
-		if(ov_string_compare(psendAASMessage->v_identifier, "SendAASMessage") == OV_STRCMP_EQUAL){
-			break;
-		}
-	}
-
-	ov_string_setvalue(&psendAASMessage->v_serverHost, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
-	ov_string_setvalue(&psendAASMessage->v_serverName, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
-	ov_string_setvalue(&psendAASMessage->v_path, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
-	ov_string_append(&psendAASMessage->v_path, ".AddOVDataForAAS");
-
-	OV_STRING tmpHexString = NULL;
-	ov_string_print(&tmpHexString, "%x", aasId.IdType);
-
-	for (OV_UINT i = 0; i < ov_string_getlength(aasId.IdSpec); i++){
-		OV_STRING tmpHexString2 = NULL;
-		ov_string_print(&tmpHexString2, "%x", aasId.IdSpec[i]);
-		ov_string_append(&tmpHexString, tmpHexString2);
-		ov_database_free(tmpHexString2);
-	}
-
-	Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
-	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING_VEC;
-	psendAASMessage->v_varValue.value.valueunion.val_string_vec.veclen = 0;
-	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value = NULL;
-	Ov_SetDynamicVectorLength(&psendAASMessage->v_varValue.value.valueunion.val_string_vec, 4, STRING);
-
-	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[0] = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[0], tmpHexString);
-	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[1] = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[1], pInterfaceDiscoveryServer->v_IPAddressServer);
-	OV_ANY tmpServername;
-	ov_vendortree_getservername(&tmpServername, NULL);
-	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[2] = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[2], tmpServername.value.valueunion.val_string);
-	psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3] = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string_vec.value[3], "/TechUnits/openAAS/AASFolder/ComCo");
-	ov_database_free(tmpHexString);
-
-	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
-	ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
-	ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
-	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
-	ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 	return;
 }
 
@@ -113,38 +67,9 @@ void openaas_modelmanager_AASConvertListDelete(IdentificationType aasId){
 
 	Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, pmodelmanager), pListElement, openaas_AASConvertListType){
 		if (ov_string_compare(pListElement->v_AASIdString, aasId.IdSpec) == OV_STRCMP_EQUAL && pListElement->v_AASIdType == aasId.IdType){
-			if (Ov_Fail(Ov_DeleteObject(pListElement)))
+			if (Ov_Fail(Ov_DeleteObject(pListElement))){
 				return;
-
-			// Get the pointer to object for send the Message
-			OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
-			Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
-				if(ov_string_compare(psendAASMessage->v_identifier, "SendAASMessage") == OV_STRCMP_EQUAL){
-					break;
-				}
 			}
-
-			ov_string_setvalue(&psendAASMessage->v_serverHost, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
-			ov_string_setvalue(&psendAASMessage->v_serverName, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
-			ov_string_setvalue(&psendAASMessage->v_path, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
-			ov_string_append(&psendAASMessage->v_path, ".DeleteOVDataForAAS");
-
-			OV_STRING tmpHexString = NULL;
-			ov_string_print(&tmpHexString, "%x", aasId.IdType);
-
-			for (OV_UINT i = 0; i < ov_string_getlength(aasId.IdSpec); i++){
-				OV_STRING tmpHexString2 = NULL;
-				ov_string_print(&tmpHexString2, "%x", aasId.IdSpec[i]);
-				ov_string_append(&tmpHexString, tmpHexString2);
-				ov_database_free(tmpHexString2);
-			}
-			Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
-			ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, tmpHexString);
-			ov_database_free(tmpHexString);
-
-			OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
-			ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
-			ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
 			pmodelmanager->v_ListSize -= 1;
 			return;
 		}
@@ -295,6 +220,15 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 		result = Ov_CreateObject(ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, popenAAS, "GetComCoAddressFromAASDiscoveryServer");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create GetComCoAddressFromAASDiscoveryServer object - reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+	}
+
+	// create InterfaceDiscoveryServer
+	if(!pInterfaceDiscoveryServer){
+		result = Ov_CreateObject(openaas_InterfaceDiscoveryServer, pInterfaceDiscoveryServer, popenAAS, "InterfaceDiscoveryServer");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create InterfaceDiscoveryServer object - reason: %s", ov_result_getresulttext(result));
 			return result;
 		}
 	}

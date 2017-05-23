@@ -1,5 +1,5 @@
-/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/parser/tools/generate_datatypes.py
- * on host ubuntu-VirtualBox by user ubuntu at 2017-02-09 10:14:25 */
+/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/open62541/tools/generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2017-05-23 02:23:01 */
 
 #ifdef UA_NO_AMALGAMATION
 #include "ua_types_encoding_binary.h"

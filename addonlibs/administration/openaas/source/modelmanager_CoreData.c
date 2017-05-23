@@ -87,54 +87,15 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(IdentificationType sourceAASId, IdentificationType targetAASId) {
-	OV_RESULT resultOV = 0;
 	AASStatusCode result = 0;
-	SRV_String *srvStringSend = NULL;
-	SRV_msgHeader *headerSend = SRV_msgHeader_t_new();
 	void *srvStructSend = NULL;
-	SRV_service_t srvTypeSend;
-
-	SRV_String_setCopy(&headerSend->sender.idSpec, targetAASId.IdSpec, ov_string_getlength(targetAASId.IdSpec));
-	headerSend->sender.idType = targetAASId.IdType;
-	SRV_String_setCopy(&headerSend->receiver.idSpec, sourceAASId.IdSpec, ov_string_getlength(sourceAASId.IdSpec));
-	headerSend->receiver.idType = sourceAASId.IdType;
 
 	getCoreDataReq_t getCoreDataReq;
 	getCoreDataReq_t_init(&getCoreDataReq);
 	srvStructSend = &getCoreDataReq;
-	srvTypeSend = SRV_getCoreDataReq;
 
-	resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, SRV_JSON);
-	if (resultOV)
-		return AASSTATUSCODE_BADUNEXPECTEDERROR;
-
-	getCoreDataReq_t_deleteMembers(&getCoreDataReq);
-	// Get the pointer to object for send the Message
-	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
-	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
-		if(ov_string_compare(psendAASMessage->v_identifier, "SendAASMessage") == OV_STRCMP_EQUAL){
-			break;
-		}
-	}
-
-	ov_string_setvalue(&psendAASMessage->v_serverHost, "localhost");
-	ov_string_setvalue(&psendAASMessage->v_serverName, "MANAGER");
-	ov_string_setvalue(&psendAASMessage->v_path, "/TechUnits/openAAS/AASFolder/ComCo.postoffice");
-
-	// send message
-	Ov_SetAnyValue(&psendAASMessage->v_varValue, NULL);
-	psendAASMessage->v_varValue.value.valueunion.val_string = NULL;
-	ov_string_setvalue(&psendAASMessage->v_varValue.value.valueunion.val_string, srvStringSend->data);
-	psendAASMessage->v_varValue.value.vartype = OV_VT_STRING;
-
-	OV_INSTPTR_ksapi_KSApiCommon pKSApiCommon = Ov_StaticPtrCast(ksapi_KSApiCommon, psendAASMessage);
-	ksapi_KSApiCommon_Reset_set(pKSApiCommon, FALSE);
-	ksapi_KSApiCommon_Reset_set(pKSApiCommon, TRUE);
-	ksapi_KSApiCommon_Submit_set(pKSApiCommon, FALSE);
-	ksapi_KSApiCommon_Submit_set(pKSApiCommon, TRUE);
-
-	SRV_msgHeader_t_delete(headerSend);
-	SRV_String_delete(srvStringSend);
+	openaas_AASComponentManager_sendMessage((OV_INSTPTR_openaas_AASComponentManager) ov_path_getobjectpointer("/TechUnits/openaas/AASFolder/ComCo.ComponentManager",2), sourceAASId, targetAASId, 0, SRV_getCoreDataReq, srvStructSend);
+	SRV_serviceGeneric_delete(srvStructSend, SRV_getCoreDataReq);
 
     return result;
 }

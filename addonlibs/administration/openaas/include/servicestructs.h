@@ -198,6 +198,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
+	SRV_ident_t subModelId;
 	SRV_String pvslName;
 	SRV_ident_t carrier;
 } createPVSLReq_t;
@@ -209,6 +210,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
+	SRV_ident_t subModelId;
 	SRV_String pvslName;
 } deletePVSLReq_t;
 
@@ -219,6 +221,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
+	SRV_ident_t subModelId;
 	SRV_String pvslName;
 	PVS_t pvs;
 } createPVSReq_t;
@@ -230,6 +233,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
+	SRV_ident_t subModelId;
 	SRV_String pvslName;
 	SRV_String pvsName;
 } deletePVSReq_t;
@@ -260,6 +264,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
+	SRV_ident_t subModelId;
 	SRV_String pvslName;
 	SRV_String pvsName;
 } getPVSReq_t;
@@ -271,6 +276,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
+	SRV_ident_t subModelId;
 	SRV_String pvslName;
 	//SRV_String pvsName;
 	PVS_t pvs;

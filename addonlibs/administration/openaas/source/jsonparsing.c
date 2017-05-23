@@ -139,6 +139,11 @@ JSON_RC ISOToDateTime(char* iso, int len, SRV_DateTime* jsonTime){
 	tm.tm_mon = mon -1;
 	tm.tm_isdst = -1;
 
+	// check time struct ranges
+	if(tm.tm_year<70 || tm.tm_mon<0 || tm.tm_mon>11 || tm.tm_mday<1 || tm.tm_mday>31 ||
+			tm.tm_hour<0 || tm.tm_hour>59 || tm.tm_min<0 || tm.tm_min>59 || tm.tm_sec<0 || tm.tm_sec>61)
+		return JSON_RC_WRONG_VALUE;
+
 	if(mktime(&tm)<0)
 		return JSON_RC_WRONG_VALUE;
 
@@ -1047,11 +1052,17 @@ JSON_RC jsonparseCreatePVSLReq(createPVSLReq_t* cPvslReq, const jsmntok_t* t, co
 			if(rc)
 				return rc;
 			fields |= 2;
+		} else if(jsoneq(js->data, &t[i], "SubModelId")==0){
+			i++;
+			rc = jsonparseId(t, js, i, n, &cPvslReq->subModelId, &i);
+			if(rc)
+				return rc;
+			fields |= 4;
 		}
 		i++;
 	}
 
-	if(fields!=3)
+	if(fields!=7)
 		return JSON_RC_MISSING_FIELD;
 
 	return JSON_RC_OK;
@@ -1085,11 +1096,17 @@ JSON_RC jsonparseDeletePVSLReq(deletePVSLReq_t* dPvslReq, const jsmntok_t* t, co
 			if(rc)
 				return rc;
 			fields |= 1;
+		} else if(jsoneq(js->data, &t[i], "SubModelId")==0){
+			i++;
+			rc = jsonparseId(t, js, i, n, &dPvslReq->subModelId, &i);
+			if(rc)
+				return rc;
+			fields |= 2;
 		}
 		i++;
 	}
 
-	if(fields!=1)
+	if(fields!=3)
 		return JSON_RC_MISSING_FIELD;
 
 	return JSON_RC_OK;
@@ -1136,11 +1153,17 @@ JSON_RC jsonparseCreatePVSReq(createPVSReq_t* cPvsReq, const jsmntok_t* t, const
 					cPvsReq->pvs.valType!=SRV_VT_undefined &&
 					cPvsReq->pvs.view!=SRV_VIEW_undefined)
 				fields |= 2;
+		} else if(jsoneq(js->data, &t[i], "SubModelId")==0){
+			i++;
+			rc = jsonparseId(t, js, i, n, &cPvsReq->subModelId, &i);
+			if(rc)
+				return rc;
+			fields |= 4;
 		}
 		i++;
 	}
 
-	if(fields!=3)
+	if(fields!=7)
 		return JSON_RC_MISSING_FIELD;
 
 	return JSON_RC_OK;
@@ -1179,11 +1202,17 @@ JSON_RC jsonparseDeletePVSReq(deletePVSReq_t* dPvsReq, const jsmntok_t* t, const
 			if(rc)
 				return rc;
 			fields |= 2;
+		} else if(jsoneq(js->data, &t[i], "SubModelId")==0){
+			i++;
+			rc = jsonparseId(t, js, i, n, &dPvsReq->subModelId, &i);
+			if(rc)
+				return rc;
+			fields |= 4;
 		}
 		i++;
 	}
 
-	if(fields!=3)
+	if(fields!=7)
 		return JSON_RC_MISSING_FIELD;
 
 	return JSON_RC_OK;
@@ -1301,11 +1330,17 @@ JSON_RC jsonparseGetPVSReq(getPVSReq_t* gPvsReq, const jsmntok_t* t, const SRV_S
 			if(rc)
 				return rc;
 			fields |= 2;
+		} else if(jsoneq(js->data, &t[i], "SubModelId")==0){
+			i++;
+			rc = jsonparseId(t, js, i, n, &gPvsReq->subModelId, &i);
+			if(rc)
+				return rc;
+			fields |= 4;
 		}
 		i++;
 	}
 
-	if(fields!=3)
+	if(fields!=7)
 		return JSON_RC_MISSING_FIELD;
 
 	return JSON_RC_OK;
@@ -1392,11 +1427,17 @@ JSON_RC jsonparseSetPVSReq(setPVSReq_t* sPvsReq, const jsmntok_t* t, const SRV_S
 					sPvsReq->pvs.valType!=SRV_VT_undefined &&
 					sPvsReq->pvs.view!=SRV_VIEW_undefined)
 				fields |= 2;
+		} else if(jsoneq(js->data, &t[i], "SubModelId")==0){
+			i++;
+			rc = jsonparseId(t, js, i, n, &sPvsReq->subModelId, &i);
+			if(rc)
+				return rc;
+			fields |= 4;
 		}
 		i++;
 	}
 
-	if(fields!=3)
+	if(fields!=7)
 		return JSON_RC_MISSING_FIELD;
 
 	return JSON_RC_OK;
@@ -1898,6 +1939,11 @@ JSON_RC jsonGenCreatePVSLReq(SRV_String* json, int* length, const createPVSLReq_
 	pos = json_append(json, pos, "\"serviceName\":\"createPVSLReq\",\"serviceParameter\":{",-1 ,*length);
 
 	// add serviceParameter
+	pos = json_appendKey(json, pos, "SubModelId", 10, *length, &first);
+	rc = jsonGenId(json, length, &pos, &cPvslReq->subModelId);
+	if(rc)
+		return rc;
+
 	pos = json_appendKey(json, pos, "PVSLName", -1, *length, &first);
 	pos = json_appendSrvStr(json, pos, &cPvslReq->pvslName, *length);
 
@@ -1926,13 +1972,20 @@ JSON_RC jsonGenCreatePVSLRsp(SRV_String* json, int* length, const createPVSLRsp_
 
 JSON_RC jsonGenDeletePVSLReq(SRV_String* json, int* length, const deletePVSLReq_t* dPvslReq){
 
+	JSON_RC rc;
 	int pos = 0;
+	int first = 1;
 
 	//add static structure
 	pos = json_append(json, pos, "\"serviceName\":\"deletePVSLReq\",\"serviceParameter\":{",-1 ,*length);
 
 	// add serviceParameter
-	pos = json_appendKey(json, pos, "PVSLName", 8, *length, NULL);
+	pos = json_appendKey(json, pos, "SubModelId", 10, *length, &first);
+	rc = jsonGenId(json, length, &pos, &dPvslReq->subModelId);
+	if(rc)
+		return rc;
+
+	pos = json_appendKey(json, pos, "PVSLName", 8, *length, &first);
 	pos = json_appendSrvStr(json, pos, &dPvslReq->pvslName, *length);
 
 	pos = json_append(json, pos, "}", 1, *length);
@@ -1963,6 +2016,11 @@ JSON_RC jsonGenCreatePVSReq(SRV_String* json, int* length, const createPVSReq_t*
 	pos = json_append(json, pos, "\"serviceName\":\"createPVSReq\",\"serviceParameter\":{",-1 ,*length);
 
 	// add serviceParameter
+	pos = json_appendKey(json, pos, "SubModelId", 10, *length, &first);
+	rc = jsonGenId(json, length, &pos, &cPvsReq->subModelId);
+	if(rc)
+		return rc;
+
 	pos = json_appendKey(json, pos, "PVSLName", 8, *length, &first);
 	pos = json_appendSrvStr(json, pos, &cPvsReq->pvslName, *length);
 
@@ -1991,6 +2049,7 @@ JSON_RC jsonGenCreatePVSRsp(SRV_String* json, int* length, const createPVSRsp_t*
 
 JSON_RC jsonGenDeletePVSReq(SRV_String* json, int* length, const deletePVSReq_t* dPvsReq){
 
+	JSON_RC rc;
 	int pos = 0;
 	int first = 1;
 
@@ -1998,6 +2057,11 @@ JSON_RC jsonGenDeletePVSReq(SRV_String* json, int* length, const deletePVSReq_t*
 	pos = json_append(json, pos, "\"serviceName\":\"deletePVSReq\",\"serviceParameter\":{",-1 ,*length);
 
 	// add serviceParameter
+	pos = json_appendKey(json, pos, "SubModelId", 10, *length, &first);
+	rc = jsonGenId(json, length, &pos, &dPvsReq->subModelId);
+	if(rc)
+		return rc;
+
 	pos = json_appendKey(json, pos, "PVSLName", 8, *length, &first);
 	pos = json_appendSrvStr(json, pos, &dPvsReq->pvslName, *length);
 
@@ -2083,6 +2147,7 @@ JSON_RC jsonGenDeleteLCERsp(SRV_String* json, int* length, const deleteLCERsp_t*
 
 JSON_RC jsonGenGetPVSReq(SRV_String* json, int* length, const getPVSReq_t* gPvsReq){
 
+	JSON_RC rc;
 	int pos = 0;
 	int first = 1;
 
@@ -2090,6 +2155,11 @@ JSON_RC jsonGenGetPVSReq(SRV_String* json, int* length, const getPVSReq_t* gPvsR
 	pos = json_append(json, pos, "\"serviceName\":\"getPVSReq\",\"serviceParameter\":{",-1 ,*length);
 
 	// add serviceParameter
+	pos = json_appendKey(json, pos, "SubModelId", 10, *length, &first);
+	rc = jsonGenId(json, length, &pos, &gPvsReq->subModelId);
+	if(rc)
+		return rc;
+
 	pos = json_appendKey(json, pos, "PVSLName", 8, *length, &first);
 	pos = json_appendSrvStr(json, pos, &gPvsReq->pvslName, *length);
 
@@ -2149,6 +2219,11 @@ JSON_RC jsonGenSetPVSReq(SRV_String* json, int* length, const setPVSReq_t* sPvsR
 	pos = json_append(json, pos, "\"serviceName\":\"setPVSReq\",\"serviceParameter\":{",-1 ,*length);
 
 	// add serviceParameter
+	pos = json_appendKey(json, pos, "SubModelId", 10, *length, &first);
+	rc = jsonGenId(json, length, &pos, &sPvsReq->subModelId);
+	if(rc)
+		return rc;
+
 	pos = json_appendKey(json, pos, "PVSLName", 8, *length, &first);
 	pos = json_appendSrvStr(json, pos, &sPvsReq->pvslName, *length);
 

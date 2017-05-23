@@ -18,6 +18,7 @@ typedef UA_StatusCode UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA(void *handle, const
 typedef UA_StatusCode UA_FNC_OVOPENAASNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVOPENAASFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVAASFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVSUBMODELNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVLIFECYCLEARCHIVENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVLIFECYCLEENTRYNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVPROPERTYVALUESTATEMENTLISTNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);

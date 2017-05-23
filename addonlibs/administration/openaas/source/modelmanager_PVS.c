@@ -40,6 +40,21 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSAASIdType_set(
     return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSSubModelIdString_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_PVSSubModelIdString,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSSubModelIdType_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_PVSSubModelIdType = value;
+    return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSPVSLName_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_STRING  value
@@ -137,6 +152,11 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSCreate_set(
 		tmpAASId.IdSpec = pobj->v_PVSAASIdString;
 		tmpAASId.IdType = pobj->v_PVSAASIdType;
 
+		IdentificationType tmpSubModelId;
+		IdentificationType_init(&tmpSubModelId);
+		tmpSubModelId.IdSpec = pobj->v_PVSSubModelIdString;
+		tmpSubModelId.IdType = pobj->v_PVSSubModelIdType;
+
 		PropertyValueStatement pvs;
 		PropertyValueStatement_init(&pvs);
 		pvs.ExpressionSemantic = pobj->v_PVSExpressionSemantic;
@@ -150,7 +170,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSCreate_set(
 		pvs.value.time = pobj->v_PVSTimeStamp;
 		pvs.view = pobj->v_PVSView;
 
-		result = openaas_modelmanager_createPVS(tmpAASId, pobj->v_PVSPVSLName, pvs);
+		result = openaas_modelmanager_createPVS(tmpAASId, tmpSubModelId, pobj->v_PVSPVSLName, pvs);
 	}
 	pobj->v_PVSCreate = FALSE;
 	pobj->v_PVSStatus = result;
@@ -168,17 +188,23 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSDelete_set(
 		tmpAASId.IdSpec = pobj->v_PVSAASIdString;
 		tmpAASId.IdType = pobj->v_PVSAASIdType;
 
-		result = openaas_modelmanager_deletePVS(tmpAASId, pobj->v_PVSPVSLName, pobj->v_PVSName);
+		IdentificationType tmpSubModelId;
+		IdentificationType_init(&tmpSubModelId);
+		tmpSubModelId.IdSpec = pobj->v_PVSSubModelIdString;
+		tmpSubModelId.IdType = pobj->v_PVSSubModelIdType;
+
+		result = openaas_modelmanager_deletePVS(tmpAASId, tmpSubModelId, pobj->v_PVSPVSLName, pobj->v_PVSName);
 	}
 	pobj->v_PVSDelete = FALSE;
 	pobj->v_PVSStatus = result;
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType aasId, OV_STRING pvslName, PropertyValueStatement pvs) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, PropertyValueStatement pvs) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_SubModel psm = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -186,7 +212,22 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,&paas->p_Body), pvslName));
+		if (!subModelId.IdSpec){
+			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		}else{
+			Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ptr){
+				if (ptr && Ov_CanCastTo(openaas_SubModel,ptr)){
+					psm = Ov_StaticPtrCast(openaas_SubModel, ptr);
+					if (ov_string_compare(subModelId.IdSpec, psm->v_IdString) == OV_STRCMP_EQUAL && subModelId.IdType == psm->v_IdType){
+						break;
+					}
+				}
+			}
+			if (!ptr){
+				return AASSTATUSCODE_BADSMID;
+			}
+			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, psm), pvslName));
+		}
 		if(ppvsl){
 			ppvs = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), pvs.pvsName));
 			if(!ppvs){
@@ -217,10 +258,11 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 }
 
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSTime(IdentificationType aasId, OV_STRING pvslName, PropertyValueStatement pvs) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSTime(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, PropertyValueStatement pvs) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_SubModel psm = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -228,7 +270,22 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSTime(IdentificationT
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain,&paas->p_Body), pvslName));
+		if (!subModelId.IdSpec){
+			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		}else{
+			Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ptr){
+				if (ptr && Ov_CanCastTo(openaas_SubModel,ptr)){
+					psm = Ov_StaticPtrCast(openaas_SubModel, ptr);
+					if (ov_string_compare(subModelId.IdSpec, psm->v_IdString) == OV_STRCMP_EQUAL && subModelId.IdType == psm->v_IdType){
+						break;
+					}
+				}
+			}
+			if (!ptr){
+				return AASSTATUSCODE_BADSMID;
+			}
+			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, psm), pvslName));
+		}
 		if(ppvsl){
 			result = Ov_CreateObject(propertyValueStatement_PropertyValueStatement, ppvs, ppvsl, pvs.pvsName);
 			if(Ov_Fail(result)){
@@ -253,10 +310,11 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSTime(IdentificationT
     return AASSTATUSCODE_GOOD;
 }
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, OV_STRING pvsName) {
 		OV_RESULT result = OV_ERR_OK;
 		OV_INSTPTR_openaas_aas paas = NULL;
 		OV_INSTPTR_ov_object ptr = NULL;
+		OV_INSTPTR_openaas_SubModel psm = NULL;
 		OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
 		OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
 		ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -264,7 +322,22 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType 
 			return AASSTATUSCODE_BADAASID;
 		paas = Ov_StaticPtrCast(openaas_aas, ptr);
 		if (paas){
-			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+			if (!subModelId.IdSpec){
+				ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+			}else{
+				Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ptr){
+					if (ptr && Ov_CanCastTo(openaas_SubModel,ptr)){
+						psm = Ov_StaticPtrCast(openaas_SubModel, ptr);
+						if (ov_string_compare(subModelId.IdSpec, psm->v_IdString) == OV_STRCMP_EQUAL && subModelId.IdType == psm->v_IdType){
+							break;
+						}
+					}
+				}
+				if (!ptr){
+					return AASSTATUSCODE_BADSMID;
+				}
+				ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, psm), pvslName));
+			}
 			if(!ppvsl)
 				ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
 			if(ppvsl){
@@ -288,9 +361,10 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType 
 }
 
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aasId, OV_STRING pvslName, OV_STRING pvsName, PropertyValueStatement *pvs) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, OV_STRING pvsName, PropertyValueStatement *pvs) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_SubModel psm = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -298,7 +372,22 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aas
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		if (!subModelId.IdSpec){
+			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		}else{
+			Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ptr){
+				if (ptr && Ov_CanCastTo(openaas_SubModel,ptr)){
+					psm = Ov_StaticPtrCast(openaas_SubModel, ptr);
+					if (ov_string_compare(subModelId.IdSpec, psm->v_IdString) == OV_STRCMP_EQUAL && subModelId.IdType == psm->v_IdType){
+						break;
+					}
+				}
+			}
+			if (!ptr){
+				return AASSTATUSCODE_BADSMID;
+			}
+			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, psm), pvslName));
+		}
 		if(!ppvsl)
 			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
 		if(ppvsl){
@@ -326,9 +415,10 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aas
 	return AASSTATUSCODE_GOOD;
 }
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aasId, OV_STRING pvslName, PropertyValueStatement pvs) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, PropertyValueStatement pvs) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_SubModel psm = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -336,7 +426,22 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aas
 		return AASSTATUSCODE_BADAASID;
 	paas = Ov_StaticPtrCast(openaas_aas, ptr);
 	if (paas){
-		ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		if (!subModelId.IdSpec){
+			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), pvslName));
+		}else{
+			Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ptr){
+				if (ptr && Ov_CanCastTo(openaas_SubModel,ptr)){
+					psm = Ov_StaticPtrCast(openaas_SubModel, ptr);
+					if (ov_string_compare(subModelId.IdSpec, psm->v_IdString) == OV_STRCMP_EQUAL && subModelId.IdType == psm->v_IdType){
+						break;
+					}
+				}
+			}
+			if (!ptr){
+				return AASSTATUSCODE_BADSMID;
+			}
+			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, psm), pvslName));
+		}
 		if(!ppvsl)
 			ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Header), pvslName));
 		if(ppvsl){

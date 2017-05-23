@@ -4,6 +4,7 @@
 #include "identification.ovm"
 #include "propertyValueStatement.ovm"
 #include "lifeCycleEntry.ovm"
+#include "MessageSys.ovm"
 
 LIBRARY openaas
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -28,6 +29,60 @@ LIBRARY openaas
         END_OPERATIONS;
     END_CLASS;
 	
+	CLASS Service : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+            IdString       : STRING INITIALVALUE    =   "";
+            IdType         : UINT;
+            Version        : INT COMMENT = "Version of the service";
+            Revision       : INT COMMENT ="Revision number of the service";
+            WSDL           : STRING COMMENT ="WSDL Description of the service";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+	
+	CLASS SubModel : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            IdString       : STRING INITIALVALUE    =   "";
+            IdType         : UINT;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+
+	CLASS AASComponentManager : CLASS fb/functionblock 
+		IS_INSTANTIABLE;
+		VARIABLES
+			messageBoxSize   : UINT FLAGS = "n" COMMENT = "Determines the size of the messageBox, default size == 1";
+            messageBoxIsFiFo : BOOL FLAGS = "n" COMMENT = "Determines if messages are handled FiFo (First in First out) or as Stack. Default is FiFo.";
+            state            : UINT FLAGS = "o" COMMENT = "0:Waiting for AASID;1:Sending Register-Request and wait for answer;2:Process incoming messages;3:Forward Message,4:Sending Unregister-Request and wait for answer;5:Ready for Delete,6:Error";
+            registered       : BOOL FLAGS = "o" COMMENT = "Determines if the ComponentManager is registered to the DiscoveryServer or not";
+            messageTimeOut   : TIME_SPAN FLAGS = "n" COMMENT = "TimeOut in second for Register and Unregister Response until the next Request will be send";
+            messageCount     : UINT FLAGS = "n" COMMENT = "TimeCount since the last Request" ;
+            errorText        : STRING FLAGS = "o" COMMENT = "Error description";
+            reset            : BOOL HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Reset to state 0";
+            receiverForMessageForwardedIdString : STRING INITIALVALUE = "";
+            receiverForMessageForwardedIdType : UINT;
+            senderForMessageForwardedIdString : STRING INITIALVALUE = "";
+            senderForMessageForwardedIdType : UINT;
+            MsgIdForMessageForwarded : STRING FLAGS = "n" COMMENT = "Id of forwarded Message";
+            MsgIdForGetAASIdRequest  : STRING FLAGS = "n" COMMENT = "Id of getAASIdRequest Message";
+		END_VARIABLES;
+		PARTS
+			INBOX  : CLASS MessageSys/inbox;
+			OUTBOX : CLASS MessageSys/inbox;  
+		END_PARTS;
+		OPERATIONS
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+            sendMessage : C_FUNCTION <UA_FNC_SENDAASMESSAGEINSYSTEM>;
+		END_OPERATIONS;
+	END_CLASS;
 	 
 	CLASS aas : CLASS ov/domain
 		IS_INSTANTIABLE;
@@ -41,21 +96,21 @@ LIBRARY openaas
 			Header           : CLASS openaas/Header;
 			Body             : CLASS ov/domain;
 			LifeCycleArchive : CLASS lifeCycleEntry/LifeCycleArchive;
-			Views            : CLASS ov/domain;			
+			Views            : CLASS ov/domain;		
+			ComponentManager : CLASS openaas/AASComponentManager;
 		END_PARTS;
 		OPERATIONS
 			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
 		END_OPERATIONS;
 	END_CLASS; 
-	
 
     CLASS InterfaceDiscoveryServer    :    CLASS ov/object
     	IS_INSTANTIABLE;        
     VARIABLES
-        IPAddressServer                 : STRING    COMMENT = "IP address of this server" INITIALVALUE    =   "";
-        IPAddressAASDiscoveryServer     : STRING    COMMENT = "IP address of the AASDiscoveryServer" INITIALVALUE    =   "";
-        ManagerNameAASDiscoveryServer   : STRING    COMMENT = "Manager Name of the AASDiscoveryServer" INITIALVALUE    =   "";
-        PathToAASDiscoveryServer        : STRING    COMMENT = "Path to the AASDiscoveryServer" INITIALVALUE    =   "";
+        IPAddressServer                 : STRING    COMMENT = "IP address of this server" INITIALVALUE    =   "127.0.0.1";
+        IPAddressAASDiscoveryServer     : STRING    COMMENT = "IP address of the AASDiscoveryServer" INITIALVALUE    =   "127.0.0.1";
+        ManagerNameAASDiscoveryServer   : STRING    COMMENT = "Manager Name of the AASDiscoveryServer" INITIALVALUE    =   "MANAGER";
+        PathToAASDiscoveryServer        : STRING    COMMENT = "Path to the AASDiscoveryServer" INITIALVALUE    =   "/TechUnits/DiscoveryServer";
     END_VARIABLES;
     OPERATIONS        
     	constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -88,9 +143,11 @@ LIBRARY openaas
         AASStatus                       : UINT; 
     	AASCreate                       : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create an AAS";
     	AASDelete                       : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete an AAS";   
-    	 
-    	PVSLAASIdString                 : STRING INITIALVALUE    =   "";
+         
+    	PVSLAASIdString                 : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
         PVSLAASIdType                   : UINT HAS_SET_ACCESSOR;
+        PVSLSubModelIdString            : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLSubModelIdType              : UINT HAS_SET_ACCESSOR;        
     	PVSLName                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
     	PVSLCarrierIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
     	PVSLCarrierIdType               : UINT HAS_SET_ACCESSOR;
@@ -103,6 +160,8 @@ LIBRARY openaas
 	    
 	    PVSAASIdString                  : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
         PVSAASIdType                    : UINT HAS_SET_ACCESSOR;
+        PVSSubModelIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSSubModelIdType               : UINT HAS_SET_ACCESSOR;
         PVSPVSLName                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
 	    PVSName                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
 	    PVSExpressionLogic              : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
@@ -196,7 +255,7 @@ LIBRARY openaas
     
     CLASS ExternalPostOffice    :    CLASS fb/functionblock 
         IS_INSTANTIABLE;
-    VARIABLES
+    VARIABLES 
         postoffice           : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE    =   "";
         ReceiverAASIdString  : STRING INITIALVALUE    =   "";
         ReceiverAASIdType    : UINT;

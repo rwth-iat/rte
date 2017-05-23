@@ -1,5 +1,6 @@
 #include "ov.ovm"
 #include "fb.ovm"
+#include "MessageSys.ovm"
 
 LIBRARY openAASDiscoveryServer
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -32,23 +33,33 @@ LIBRARY openAASDiscoveryServer
 		END_OPERATIONS;
 	END_CLASS;
 	
+	CLASS ComponentManager : CLASS fb/functionblock 
+        IS_INSTANTIABLE;
+        VARIABLES
+            messageBoxSize : UINT FLAGS = "n" COMMENT="Determines the size of the messageBox, default size == 1";
+            messageBoxIsFiFo : BOOL FLAGS = "n" COMMENT = "Determines if messages are handled FiFo (First in First out) or as Stack. Default is FiFo.";
+        END_VARIABLES;
+        PARTS
+            INBOX  : CLASS MessageSys/inbox;
+            OUTBOX : CLASS MessageSys/inbox;  
+        END_PARTS;
+        OPERATIONS
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
 	
 	CLASS DiscoveryServer : CLASS ov/domain
 		IS_INSTANTIABLE;
 		VARIABLES
-			AddOVDataForAAS[4] : STRING HAS_SET_ACCESSOR FLAGS = "i"
-			    COMMENT         =   "Add the ComCo Data to this AAS"
-                INITIALVALUE    =   {"","","",""};
-            DeleteOVDataForAAS : STRING HAS_SET_ACCESSOR FLAGS = "i"
-                COMMENT         =   "Delete the ComCo Data to this AAS"
-                INITIALVALUE    =   "";
-            result             : STRING FLAGS = "o" 
-                COMMENT         =   "Result"
-                INITIALVALUE    =   "";
 		END_VARIABLES;
+		PARTS 
+            ComponentManager : CLASS openAASDiscoveryServer/ComponentManager;
+        END_PARTS;
 		OPERATIONS
 			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
-		END_OPERATIONS;
+		END_OPERATIONS;		
 	END_CLASS;
 	
 END_LIBRARY;
