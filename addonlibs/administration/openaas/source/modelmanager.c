@@ -133,11 +133,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
     OV_RESULT    result;
     OV_INSTPTR_ov_object pOtherObject = NULL;
 	OV_INSTPTR_openaas_aas pComCo = NULL;
-	OV_INSTPTR_openaas_ExternalPostOffice pExternalPost = NULL;
-	OV_INSTPTR_ksapi_setVar psendAASMessage = NULL;
-	OV_INSTPTR_ksapi_getVar pGetComCoAddressFromAASDiscoveryServer = NULL;
-	OV_INSTPTR_ov_library pLibKSAPI = NULL;
-	OV_INSTPTR_fb_task	purtask = NULL;
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))
@@ -153,21 +148,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 			return OV_ERR_ALREADYEXISTS;
 		}
 	}
-
-    Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibKSAPI, ov_library){
-		if(ov_string_compare(pLibKSAPI->v_identifier, "ksapi") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pLibKSAPI){
-		result = Ov_CreateObject(ov_library, pLibKSAPI, &(pdb->acplt), "ksapi");
-		if(Ov_Fail(result)){
-			ov_memstack_lock();
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library ksapi Reason: %s", ov_result_getresulttext(result));
-			ov_memstack_unlock();
-			return result;
-		}
-	 }
 
 	 OV_INSTPTR_ov_domain pdata = NULL;
 	 OV_INSTPTR_ov_domain popenAAS = NULL;
@@ -195,34 +175,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 	 	ov_logfile_error("Fatal: openAAS object found but not domain (or derived)");
 	 	return OV_ERR_GENERIC;
 	 }
-
-	// create sendAASMessage
-	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_setVar, psendAASMessage, ksapi_setVar){
-		if(ov_string_compare(psendAASMessage->v_identifier, "SendAASMessage") == OV_STRCMP_EQUAL){
-			break;
-		}
-	}
-	if(!psendAASMessage){
-		result = Ov_CreateObject(ksapi_setVar, psendAASMessage, popenAAS, "SendAASMessage");
-		if(Ov_Fail(result)){
-			ov_logfile_error("Fatal: could not create SendAASMessage object - reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	}
-
-	// create getComCoAddressFromAASDiscoveryServer
-	Ov_ForEachChildEx(ov_instantiation, pclass_ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, ksapi_getVar){
-		if(ov_string_compare(pGetComCoAddressFromAASDiscoveryServer->v_identifier, "GetComCoAddressFromAASDiscoveryServer") == OV_STRCMP_EQUAL){
-			break;
-		}
-	}
-	if(!pGetComCoAddressFromAASDiscoveryServer){
-		result = Ov_CreateObject(ksapi_getVar, pGetComCoAddressFromAASDiscoveryServer, popenAAS, "GetComCoAddressFromAASDiscoveryServer");
-		if(Ov_Fail(result)){
-			ov_logfile_error("Fatal: could not create GetComCoAddressFromAASDiscoveryServer object - reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	}
 
 	// create InterfaceDiscoveryServer
 	if(!pInterfaceDiscoveryServer){
@@ -296,26 +248,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 		if (AASSTATUSCODE_FAIL(openaas_modelmanager_createAAS(aasId, "ComCo", assetId))){
 			ov_logfile_error("Fatal: Could not create Object 'ComCo'");
 			return OV_ERR_GENERIC;
-		}
-	}
-
-	// create ExternalPostOffice
-	Ov_ForEachChildEx(ov_instantiation, pclass_openaas_ExternalPostOffice, pExternalPost, openaas_ExternalPostOffice){
-		if(ov_string_compare(pExternalPost->v_identifier, "ExternalPostOffice") == OV_STRCMP_EQUAL){
-			break;
-		}
-	}
-	if(!pExternalPost){
-		result = Ov_CreateObject(openaas_ExternalPostOffice, pExternalPost, pAASFolder, "ExternalPostOffice");
-		if(Ov_Fail(result)){
-			ov_logfile_error("Fatal: could not create externalPostOffice object - reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-		purtask = (OV_INSTPTR_fb_task)ov_path_getobjectpointer("/Tasks/UrTask", 2);
-		result = Ov_Link(fb_tasklist, purtask, pExternalPost);
-		if (Ov_Fail(result)) {
-			ov_logfile_error("Fatal: could not link externalPostOffice object - reason: %s", ov_result_getresulttext(result));
-			return result;
 		}
 	}
     return OV_ERR_OK;

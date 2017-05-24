@@ -87,12 +87,8 @@ LIBRARY openaas
 	CLASS aas : CLASS ov/domain
 		IS_INSTANTIABLE;
 		VARIABLES   
-			postoffice           : STRING HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "JSON String as message communication" INITIALVALUE    =   "";
-			lastReceivedMessage  : STRING COMMENT = "Last arrived and processed message" INITIALVALUE   =   "";
-			lastSendMessage      : STRING COMMENT = "Last send message" INITIALVALUE    =   "";
-			result               : UINT FLAGS = "o" INITIALVALUE = 0;
 		END_VARIABLES;
-		PARTS
+		PARTS 
 			Header           : CLASS openaas/Header;
 			Body             : CLASS ov/domain;
 			LifeCycleArchive : CLASS lifeCycleEntry/LifeCycleArchive;
@@ -252,26 +248,7 @@ LIBRARY openaas
         constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
     END_OPERATIONS;    
     END_CLASS;
-    
-    CLASS ExternalPostOffice    :    CLASS fb/functionblock 
-        IS_INSTANTIABLE;
-    VARIABLES 
-        postoffice           : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE    =   "";
-        ReceiverAASIdString  : STRING INITIALVALUE    =   "";
-        ReceiverAASIdType    : UINT;
-        lastSendMessage      : STRING COMMENT = "Last send message" INITIALVALUE    =   "";
-        tmpServerHost        : STRING INITIALVALUE    =   "";
-        tmpManagerName       : STRING INITIALVALUE    =   "";
-        tmpPath              : STRING INITIALVALUE    =   "";
-        result               : UINT FLAGS = "o" INITIALVALUE = 0;
-        state                : UINT;
-    END_VARIABLES;
-    OPERATIONS
-        getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
-        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-    END_OPERATIONS;    
-    END_CLASS;
-  	    
+     	    
     CLASS FindAAS : CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES

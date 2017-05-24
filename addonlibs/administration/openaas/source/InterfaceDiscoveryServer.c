@@ -33,6 +33,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_InterfaceDiscoveryServer_constructor(
     *   local variables
     */
     OV_INSTPTR_openaas_InterfaceDiscoveryServer pinst = Ov_StaticPtrCast(openaas_InterfaceDiscoveryServer, pobj);
+    OV_INSTPTR_ov_object pOtherObject = NULL;
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -41,6 +42,14 @@ OV_DLLFNCEXPORT OV_RESULT openaas_InterfaceDiscoveryServer_constructor(
          return result;
 
     /* do what */
+
+    Ov_ForEachChild(ov_instantiation, pclass_openaas_InterfaceDiscoveryServer, pOtherObject){
+		if(pOtherObject != pobj){
+			ov_logfile_error("%s: cannot instantiate - interfaceDiscoveryServer instance already exists", pinst->v_identifier);
+			return OV_ERR_ALREADYEXISTS;
+		}
+    }
+
 
     pInterfaceDiscoveryServer = pinst;
 
