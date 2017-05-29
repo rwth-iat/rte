@@ -55,41 +55,15 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 
 	OV_UINT len = 0;
-	OV_UINT len2 = 0;
-	OV_STRING tmpString_header = NULL ;
 	OV_STRING *pathList = NULL;
-	OV_STRING *pathList2 = NULL;
 	OV_STRING path = NULL;
 	pathList = ov_string_split(pinst->v_Path, "/", &len);
-
-	ov_string_setvalue(&tmpString_header, ".Header.");
-
-	if (len == 8){
-		pathList2 = ov_string_split(pathList[7], ".",&len2);
-		for (OV_UINT i = 4; i < len; i++){
-			if (i == 4)
-				ov_string_setvalue(&path, "/");
-			else
-				ov_string_append(&path, "/");
-			ov_string_append(&path, pathList[i]);
-			if ( (i==6) && (len2>1) ){
-				ov_string_append(&path, "/");
-				ov_string_append(&path, pathList2[0]);
-				ov_string_append(&path, tmpString_header);
-				ov_string_append(&path, pathList2[1]);
-				break;
-			}
-		}
-	}else if (len == 9){
-		for (OV_UINT i = 4; i < len; i++){
-			if (i == 4)
-				ov_string_setvalue(&path, "/");
-			else
-				ov_string_append(&path, "/");
-			ov_string_append(&path, pathList[i]);
-			if(i==7)
-				ov_string_append(&path, ".Body");
-		}
+	for (OV_UINT i = 4; i < len; i++){
+		if (i == 4)
+			ov_string_setvalue(&path, "/");
+		else
+			ov_string_append(&path, "/");
+		ov_string_append(&path, pathList[i]);
 	}
 
 	pobj = ov_path_getobjectpointer(path,2);
@@ -97,9 +71,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 		pinst->v_Error = TRUE;
 		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object for this path");
 		ov_string_freelist(pathList);
-		ov_string_freelist(pathList2);
 		ov_database_free(path);
-		ov_database_free(tmpString_header);
 		return;
 	}
 	pList = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatementList, pobj);
@@ -107,9 +79,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 		pinst->v_Error = TRUE;
 		ov_string_setvalue(&pinst->v_ErrorText, "Object is not of PVSL-Type");
 		ov_string_freelist(pathList);
-		ov_string_freelist(pathList2);
 		ov_database_free(path);
-		ov_database_free(tmpString_header);
 		return;
 	}
 
@@ -383,8 +353,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 
 	ov_database_free(tmpString);
 	ov_string_freelist(pathList);
-	ov_string_freelist(pathList2);
 	ov_database_free(path);
-	ov_database_free(tmpString_header);
     return;
 }
