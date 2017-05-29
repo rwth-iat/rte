@@ -32,7 +32,7 @@
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
 
-OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(
+OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -63,9 +63,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 		return result;
 	}
 
-	*nodeClass = UA_NODECLASS_OBJECT;
-	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ObjectNode));
 
+	*nodeClass = UA_NODECLASS_METHOD;
+	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_MethodNode));
 
 	// Basic Attribute
 	// BrowseName
@@ -111,19 +111,25 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 
 	((UA_ObjectNode*)newNode)->eventNotifier = 0;
 
+	((UA_MethodNode*)newNode)->executable = TRUE;
+	((UA_MethodNode*)newNode)->attachedMethod = openaasOPCUAInterface_interface_MethodCallback;
+	((UA_MethodNode*)newNode)->methodHandle = pobj;
+
 	// References
-	OV_INSTPTR_ov_object pchild = NULL;
 	size_t size_references = 0;
+
+	OV_INSTPTR_ov_object pchild = NULL;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		size_references++;
 	}
 
-	size_references = size_references + 2;// For Parent&TypeNode
+	size_references = size_references + 2;// For Input-&Outputarguments
+	size_references = size_references + 2;// For Parent&Type
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
 	newNode->referencesSize = size_references;
 
-	// Parent Node
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+	// ParentNode
+	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[0].isInverse = UA_TRUE;
 	OV_UINT len = 0;
 	OV_STRING *plist = NULL;
@@ -140,38 +146,25 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 	ov_string_freelist(plist);
 	ov_database_free(tmpString);
 
-	// TypeNode
+	// Type
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SUBMODELTYPE);
+	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS0ID_METHODNODE);
 
-	size_t i = 1;
+	size_t i = 2;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
-		if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pchild)){
+		if (Ov_CanCastTo(openaas_ServiceInputArguments, pchild) || Ov_CanCastTo(openaas_ServiceOutputArguments, pchild)){
 			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 			newNode->references[i].isInverse = UA_FALSE;
-			OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pref =
-									Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatementList,pchild);
 			OV_STRING tmpString = NULL;
 			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 			ov_string_append(&tmpString, "/");
-			ov_string_append(&tmpString, pref->v_identifier);
+			ov_string_append(&tmpString, pchild->v_identifier);
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 			ov_database_free(tmpString);
 		}
-		if (Ov_CanCastTo(openaas_Service, pchild)){
-			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-			newNode->references[i].isInverse = UA_FALSE;
-			OV_INSTPTR_openaas_Service pref =
-									Ov_DynamicPtrCast(openaas_Service,pchild);
-			OV_STRING tmpString = NULL;
-			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-			ov_string_append(&tmpString, "/");
-			ov_string_append(&tmpString, pref->v_identifier);
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-			ov_database_free(tmpString);
-		}
+
 	}
 
 	*opcuaNode = newNode;

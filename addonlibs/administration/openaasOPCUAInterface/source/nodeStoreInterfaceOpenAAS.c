@@ -22,7 +22,7 @@
 #include "openaas_helpers.h"
 
 
-OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackStandard(void *methodHandle, const UA_NodeId *objectId,
+OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackModelmanager(void *methodHandle, const UA_NodeId *objectId,
                      const UA_NodeId *sessionId, void *sessionHandle,
                      size_t inputSize, const UA_Variant *input,
                      size_t outputSize, UA_Variant *output) {
@@ -618,6 +618,43 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackStan
     return resultOV;
 }
 
+
+OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(void *methodHandle, const UA_NodeId *objectId,
+                     const UA_NodeId *sessionId, void *sessionHandle,
+                     size_t inputSize, const UA_Variant *input,
+                     size_t outputSize, UA_Variant *output) {
+	//UA_Int32 abc = *((UA_Int32*)(input[0].data)) + *((UA_Int32*)(input[1].data));
+	//UA_Variant_setScalarCopy(output, &abc, &UA_TYPES[UA_TYPES_INT32]);
+
+
+	OV_VTBLPTR_openaas_Service pvtable;
+	OV_INSTPTR_openaas_Service pService = (OV_INSTPTR_openaas_Service)methodHandle;
+	Ov_GetVTablePtr(openaas_Service, pvtable, pService);
+
+	void **inputs = malloc(sizeof(void*)*inputSize);
+	for (int i = 0; i < inputSize; i++){
+		inputs[i] = input[i].data;
+	}
+	void **outputs = malloc(sizeof(void*)*outputSize);
+	for (int i = 0; i < outputSize; i++){
+		outputs[i] = output[i].data;
+	}
+	OV_UINT *typeArray= ov_database_malloc(sizeof(OV_UINT)*outputSize);
+	pvtable->m_CallMethod(pService, inputSize, (const void**)inputs, outputSize, outputs, typeArray);
+	for (int i = 0; i < outputSize; i++){
+		switch (typeArray[i]){
+		case 1:
+			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_INT32]);
+			break;
+		default:
+			break;
+		}
+	}
+	free(inputs);
+	free(outputs);
+	return (UA_StatusCode)0;
+}
+
 static void OV_NodeStore_deleteNodestore(void *handle, UA_UInt16 namespaceIndex){
 
 }
@@ -669,13 +706,15 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			ov_database_free(tmpString);
 			return NULL;
 		}
-		if (openaasOPCUAInterface_interface_ovModelManagerMethodNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
-			ov_string_freelist(plist);
-			ov_string_freelist(plist2);
-			ov_string_freelist(plist3);
-			ov_string_freelist(plist4);
-			ov_database_free(tmpString);
-			return (UA_Node*) opcuaNode;
+		if (Ov_CanCastTo(openaas_modelmanager, pobj)){
+			if (openaasOPCUAInterface_interface_ovModelManagerMethodNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+				ov_string_freelist(plist);
+				ov_string_freelist(plist2);
+				ov_string_freelist(plist3);
+				ov_string_freelist(plist4);
+				ov_database_free(tmpString);
+				return (UA_Node*) opcuaNode;
+			}
 		}
 
 	}else if (len4 > 1 ){
@@ -723,6 +762,15 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(openaas_SubModel, pobj)){
 		if (openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			tmpNode = opcuaNode;
+	}else if(Ov_CanCastTo(openaas_ServiceInputArguments, pobj)){
+		if (openaasOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			tmpNode = opcuaNode;
+	}else if(Ov_CanCastTo(openaas_ServiceOutputArguments, pobj)){
+		if (openaasOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			tmpNode = opcuaNode;
+	}else if(Ov_CanCastTo(openaas_Service, pobj)){
+		if (openaasOPCUAInterface_interface_ovServiceNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pobj)){
 		if (openaasOPCUAInterface_interface_ovLifeCycleArchiveNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)

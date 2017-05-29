@@ -37,3 +37,38 @@ OV_DLLFNCEXPORT OV_ACCESS openaas_Service_getaccess(
     return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT openaas_Service_CallMethod(
+  OV_INSTPTR_openaas_Service pobj,
+  OV_UINT numberofInputArgs,
+  const void **packedInputArgList,
+  OV_UINT numberofOutputArgs,
+  void **packedOutputArgList,
+  OV_UINT *typeArray
+) {
+
+    return OV_ERR_OK;
+}
+
+
+
+OV_DLLFNCEXPORT OV_RESULT openaas_Service_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    //OV_INSTPTR_openaas_Service pinst = Ov_StaticPtrCast(openaas_Service, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = ov_object_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+
+
+    return OV_ERR_OK;
+}
+

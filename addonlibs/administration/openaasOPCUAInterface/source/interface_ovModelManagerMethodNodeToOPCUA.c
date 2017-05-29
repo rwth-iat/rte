@@ -151,7 +151,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	newNode->writeMask 	= writeMask;
 
 	((UA_MethodNode*)newNode)->executable = TRUE;
-	((UA_MethodNode*)newNode)->attachedMethod = openaasOPCUAInterface_interface_MethodCallbackStandard;
+	((UA_MethodNode*)newNode)->attachedMethod = openaasOPCUAInterface_interface_MethodCallbackModelmanager;
 	((UA_MethodNode*)newNode)->methodHandle = tmpElement.elemunion.pop->v_identifier;
 
 	// References

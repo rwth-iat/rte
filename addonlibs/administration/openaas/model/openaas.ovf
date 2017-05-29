@@ -43,6 +43,15 @@ typedef AASStatusCode UA_FNC_OVRESULTTOAASSTATUSCODE(OV_RESULT result);
 typedef void OPENAAS_FNC_AASCONVERTLISTADD(IdentificationType aasId, OV_STRING aasName);
 typedef void OPENAAS_FNC_AASCONVERTLISTDELETE(IdentificationType aasId);
 typedef OV_STRING OPENAAS_FNC_AASCONVERTLISTGET(IdentificationType aasId);
-	
+     
+typedef OV_RESULT   UA_FNC_CALLEDMETHOD(      
+  OV_INSTPTR_openaas_Service pobj,       
+  OV_UINT numberofInputArgs,       
+  const void **packedInputArgList,       
+  OV_UINT numberofOutputArgs,      
+  void **packedOutputArgList,
+  OV_UINT *typeArray       
+);        
+
 
 #endif
