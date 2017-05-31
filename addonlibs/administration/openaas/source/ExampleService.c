@@ -57,11 +57,13 @@ OV_DLLFNCEXPORT OV_RESULT openaas_ExampleService_CallMethod(
 	typeArray[4] = OV_VT_DOUBLE;
 
 	packedOutputArgList[5] = malloc(sizeof(OV_STRING));
+	*(OV_STRING*)packedOutputArgList[5] = NULL;
 	*(OV_STRING*)packedOutputArgList[5] = malloc(ov_string_getlength(*(OV_STRING*)(packedInputArgList[5]))+1);
 	strcpy(*(OV_STRING*)packedOutputArgList[5], *(OV_STRING*)(packedInputArgList[5]));
 	typeArray[5] = OV_VT_STRING;
 
 	packedOutputArgList[6] = malloc(sizeof(OV_BOOL_VEC));
+	(*(OV_BOOL_VEC*)packedOutputArgList[6]).value = NULL;
 	(*(OV_BOOL_VEC*)packedOutputArgList[6]).value = malloc((*(OV_BOOL_VEC*)(packedInputArgList[6])).veclen*sizeof(OV_BOOL));
 	for (OV_UINT i = 0; i < (*(OV_BOOL_VEC*)(packedInputArgList[6])).veclen; i++){
 		(*(OV_BOOL_VEC*)packedOutputArgList[6]).value[i] = (*(OV_BOOL_VEC*)packedInputArgList[6]).value[i];
@@ -70,6 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_ExampleService_CallMethod(
 	typeArray[6] = OV_VT_BOOL_VEC;
 
 	packedOutputArgList[7] = malloc(sizeof(OV_INT_VEC));
+	(*(OV_INT_VEC*)packedOutputArgList[7]).value = NULL;
 	(*(OV_INT_VEC*)packedOutputArgList[7]).value = malloc((*(OV_INT_VEC*)(packedInputArgList[7])).veclen*sizeof(OV_INT));
 	for (OV_UINT i = 0; i < (*(OV_INT_VEC*)(packedInputArgList[7])).veclen; i++){
 		(*(OV_INT_VEC*)packedOutputArgList[7]).value[i] = (*(OV_INT_VEC*)packedInputArgList[7]).value[i];
@@ -78,6 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_ExampleService_CallMethod(
 	typeArray[7] = OV_VT_INT_VEC;
 
 	packedOutputArgList[8] = malloc(sizeof(OV_UINT_VEC));
+	(*(OV_UINT_VEC*)packedOutputArgList[8]).value = NULL;
 	(*(OV_UINT_VEC*)packedOutputArgList[8]).value = malloc((*(OV_UINT_VEC*)(packedInputArgList[8])).veclen*sizeof(OV_UINT));
 	for (OV_UINT i = 0; i < (*(OV_UINT_VEC*)(packedInputArgList[8])).veclen; i++){
 		(*(OV_UINT_VEC*)packedOutputArgList[8]).value[i] = (*(OV_UINT_VEC*)packedInputArgList[8]).value[i];
@@ -86,6 +90,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_ExampleService_CallMethod(
 	typeArray[8] = OV_VT_UINT_VEC;
 
 	packedOutputArgList[9] = malloc(sizeof(OV_SINGLE_VEC));
+	(*(OV_SINGLE_VEC*)packedOutputArgList[9]).value = NULL;
 	(*(OV_SINGLE_VEC*)packedOutputArgList[9]).value = malloc((*(OV_SINGLE_VEC*)(packedInputArgList[9])).veclen*sizeof(OV_SINGLE));
 	for (OV_UINT i = 0; i < (*(OV_SINGLE_VEC*)(packedInputArgList[9])).veclen; i++){
 		(*(OV_SINGLE_VEC*)packedOutputArgList[9]).value[i] = (*(OV_SINGLE_VEC*)packedInputArgList[9]).value[i];
@@ -94,6 +99,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_ExampleService_CallMethod(
 	typeArray[9] = OV_VT_SINGLE_VEC;
 
 	packedOutputArgList[10] = malloc(sizeof(OV_DOUBLE_VEC));
+	(*(OV_DOUBLE_VEC*)packedOutputArgList[10]).value = NULL;
 	(*(OV_DOUBLE_VEC*)packedOutputArgList[10]).value = malloc((*(OV_DOUBLE_VEC*)(packedInputArgList[10])).veclen*sizeof(OV_DOUBLE));
 	for (OV_UINT i = 0; i < (*(OV_DOUBLE_VEC*)(packedInputArgList[10])).veclen; i++){
 		(*(OV_DOUBLE_VEC*)packedOutputArgList[10]).value[i] = (*(OV_DOUBLE_VEC*)packedInputArgList[10]).value[i];
@@ -102,9 +108,11 @@ OV_DLLFNCEXPORT OV_RESULT openaas_ExampleService_CallMethod(
 	typeArray[10] = OV_VT_DOUBLE_VEC;
 
 	packedOutputArgList[11] = malloc(sizeof(OV_STRING_VEC));
+	(*(OV_STRING_VEC*)packedOutputArgList[11]).value = NULL;
 	(*(OV_STRING_VEC*)packedOutputArgList[11]).value = malloc((*(OV_STRING_VEC*)(packedInputArgList[11])).veclen*sizeof(OV_STRING));
 	for (OV_UINT i = 0; i < (*(OV_STRING_VEC*)(packedInputArgList[11])).veclen; i++){
-		(*(OV_STRING_VEC*)packedOutputArgList[11]).value[i] = malloc(ov_string_getlength((*(OV_STRING_VEC*)packedInputArgList[11]).value[i]) + 1);
+		(*(OV_STRING_VEC*)packedOutputArgList[11]).value[i] = NULL;
+		(*(OV_STRING_VEC*)packedOutputArgList[11]).value[i] = malloc(ov_string_getlength((*(OV_STRING_VEC*)(packedInputArgList[11])).value[i]) + 1);
 		strcpy((*(OV_STRING_VEC*)packedOutputArgList[11]).value[i], (*(OV_STRING_VEC*)packedInputArgList[11]).value[i]);
 	}
 	(*(OV_STRING_VEC*)packedOutputArgList[11]).veclen = (*(OV_STRING_VEC*)packedInputArgList[11]).veclen;

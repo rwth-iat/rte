@@ -194,12 +194,54 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceOutputArg
 			((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].name = UA_STRING_ALLOC(tmpPart.elemunion.pvar->v_identifier);
 			((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;
 			switch(tmpPart.elemunion.pvar->v_vartype){
-				case OV_VT_INT:
-					((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_INT32].typeId;
-					break;
-				case OV_VT_UINT:
-					((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_UINT32].typeId;
-				default:
+			case OV_VT_BOOL:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_BOOLEAN].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;
+				break;
+			case OV_VT_INT:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_INT32].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;
+				break;
+			case OV_VT_UINT:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_UINT32].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;
+				break;
+			case OV_VT_SINGLE:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_FLOAT].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;
+				break;
+			case OV_VT_DOUBLE:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_DOUBLE].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;
+				break;
+			case OV_VT_STRING:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_STRING].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;
+				break;
+			case OV_VT_BOOL_VEC:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_BOOLEAN].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = 1;
+				break;
+			case OV_VT_INT_VEC:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_INT32].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = 1;
+				break;
+			case OV_VT_UINT_VEC:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_UINT32].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = 1;
+				break;
+			case OV_VT_SINGLE_VEC:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_FLOAT].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = 1;
+				break;
+			case OV_VT_DOUBLE_VEC:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_DOUBLE].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = 1;
+				break;
+			case OV_VT_STRING_VEC:
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_STRING].typeId;
+				((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = 1;
+				break;
 					break;
 			}
 			count++;

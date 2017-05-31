@@ -623,9 +623,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(voi
                      const UA_NodeId *sessionId, void *sessionHandle,
                      size_t inputSize, const UA_Variant *input,
                      size_t outputSize, UA_Variant *output) {
-	//UA_Int32 abc = *((UA_Int32*)(input[0].data)) + *((UA_Int32*)(input[1].data));
-	//UA_Variant_setScalarCopy(output, &abc, &UA_TYPES[UA_TYPES_INT32]);
-
+	UA_String tmpString;
+	UA_String *tmpStringArray = NULL;
 
 	OV_VTBLPTR_openaas_Service pvtable;
 	OV_INSTPTR_openaas_Service pService = (OV_INSTPTR_openaas_Service)methodHandle;
@@ -633,21 +632,114 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(voi
 
 	void **inputs = malloc(sizeof(void*)*inputSize);
 	for (int i = 0; i < inputSize; i++){
-		inputs[i] = input[i].data;
+		inputs[i] = NULL;
+		if (input[i].arrayLength == 0){
+			switch (input[i].type->typeIndex){
+				case UA_TYPES_BOOLEAN:
+				case UA_TYPES_INT32:
+				case UA_TYPES_UINT32:
+				case UA_TYPES_FLOAT:
+				case UA_TYPES_DOUBLE:
+					inputs[i] = input[i].data;
+					break;
+				case UA_TYPES_STRING:
+					inputs[i] = malloc(sizeof(OV_STRING));
+					copyOPCUAStringToOV(*((UA_String*)(input[i].data)), (OV_STRING*)(inputs[i]));
+					break;
+				default:
+					break;
+			}
+		}else{
+			switch (input[i].type->typeIndex){
+				case UA_TYPES_BOOLEAN:
+					inputs[i] = malloc(sizeof(OV_BOOL_VEC));
+					(*(OV_BOOL_VEC*)(inputs[i])).veclen = input[i].arrayLength;
+					(*(OV_BOOL_VEC*)(inputs[i])).value = input[i].data;
+					break;
+				case UA_TYPES_INT32:
+					inputs[i] = malloc(sizeof(OV_INT_VEC));
+					(*(OV_INT_VEC*)(inputs[i])).veclen = input[i].arrayLength;
+					(*(OV_INT_VEC*)(inputs[i])).value = input[i].data;
+					break;
+				case UA_TYPES_UINT32:
+					inputs[i] = malloc(sizeof(OV_UINT_VEC));
+					(*(OV_UINT_VEC*)(inputs[i])).veclen = input[i].arrayLength;
+					(*(OV_UINT_VEC*)(inputs[i])).value = input[i].data;
+					break;
+				case UA_TYPES_FLOAT:
+					inputs[i] = malloc(sizeof(OV_SINGLE_VEC));
+					(*(OV_SINGLE_VEC*)(inputs[i])).veclen = input[i].arrayLength;
+					(*(OV_SINGLE_VEC*)(inputs[i])).value = input[i].data;
+					break;
+				case UA_TYPES_DOUBLE:
+					inputs[i] = malloc(sizeof(OV_DOUBLE_VEC));
+					(*(OV_DOUBLE_VEC*)(inputs[i])).veclen = input[i].arrayLength;
+					(*(OV_DOUBLE_VEC*)(inputs[i])).value = input[i].data;
+					break;
+				case UA_TYPES_STRING:
+					inputs[i] = malloc(sizeof(OV_STRING_VEC));
+					(*(OV_STRING_VEC*)(inputs[i])).veclen = input[i].arrayLength;
+					(*(OV_STRING_VEC*)(inputs[i])).value = malloc(input[i].arrayLength*sizeof(OV_STRING));
+					for (OV_UINT j = 0; j < input[i].arrayLength; j++){
+						(*(OV_STRING_VEC*)(inputs[i])).value[j] = NULL;
+						copyOPCUAStringToOV(((UA_String*)(input[i].data))[j], &((*(OV_STRING_VEC*)(inputs[i])).value[j]));
+					}
+					break;
+				default:
+					break;
+			}
+		}
 	}
 	void **outputs = malloc(sizeof(void*)*outputSize);
 	for (int i = 0; i < outputSize; i++){
-		outputs[i] = output[i].data;
+		outputs[i] = NULL;
 	}
 	OV_UINT *typeArray= ov_database_malloc(sizeof(OV_UINT)*outputSize);
 	pvtable->m_CallMethod(pService, inputSize, (const void**)inputs, outputSize, outputs, typeArray);
 	for (int i = 0; i < outputSize; i++){
 		switch (typeArray[i]){
+		case OV_VT_BOOL:
+			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_BOOLEAN]);
+			break;
 		case OV_VT_INT:
 			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_INT32]);
 			break;
 		case OV_VT_UINT:
 			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_UINT32]);
+			break;
+		case OV_VT_SINGLE:
+			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_FLOAT]);
+			break;
+		case OV_VT_DOUBLE:
+			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_DOUBLE]);
+			break;
+		case OV_VT_STRING:
+			tmpString = UA_String_fromChars(*(OV_STRING*)outputs[i]);
+			UA_Variant_setScalarCopy(&output[i], &tmpString, &UA_TYPES[UA_TYPES_STRING]);
+			UA_String_deleteMembers(&tmpString);
+			break;
+		case OV_VT_BOOL_VEC:
+			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_BOOLEAN]);
+			break;
+		case OV_VT_INT_VEC:
+			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_INT32]);
+			break;
+		case OV_VT_UINT_VEC:
+			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_UINT32]);
+			break;
+		case OV_VT_SINGLE_VEC:
+			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_FLOAT]);
+			break;
+		case OV_VT_DOUBLE_VEC:
+			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_DOUBLE]);
+			break;
+		case OV_VT_STRING_VEC:
+			tmpStringArray = UA_Array_new((*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_STRING]);
+			for (OV_UINT j = 0; j < (*(OV_GENERIC_VEC*)(outputs[i])).veclen; j++){
+				tmpStringArray[j] = UA_String_fromChars((*(OV_STRING_VEC*)outputs[i]).value[j]);
+			}
+			UA_Variant_setArrayCopy(&output[i], tmpStringArray, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_STRING]);
+			UA_Array_delete(tmpStringArray, (*(OV_GENERIC_VEC*)(outputs[i])).veclen,&UA_TYPES[UA_TYPES_STRING]);
 			break;
 		default:
 			break;
