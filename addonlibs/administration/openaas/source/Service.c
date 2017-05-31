@@ -74,7 +74,14 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 
 
 		void **inputs = malloc(sizeof(void*)*sizeInput);
+		for (OV_UINT i = 0; i < sizeInput; i++){
+			inputs[i] = NULL;
+		}
+
 		void **outputs = malloc(sizeof(void*)*sizeOutput);
+		for (OV_UINT i = 0; i < sizeOutput; i++){
+			outputs[i] = NULL;
+		}
 
 		tmpPart.elemtype = OV_ET_NONE;
 		tmpPart.pobj = NULL;
@@ -105,7 +112,128 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 			if (tmpPart.elemtype == OV_ET_NONE)
 				break;
 			if (tmpPart.elemunion.pvar->v_flags == 16384){ // OutputFlag is set
-				*(tmpPart.pvalue) = *(OV_BYTE*)(outputs[countOutputs]);
+				OV_ANY tmpAny;
+				tmpAny.value.vartype = OV_VT_VOID;
+				switch (tmpPart.elemunion.pvar->v_vartype){
+					case OV_VT_BOOL:
+						tmpAny.value.valueunion.val_bool = *(OV_BOOL*)(outputs[countOutputs]);
+						tmpAny.value.vartype = OV_VT_BOOL;
+						break;
+					case OV_VT_INT:
+						tmpAny.value.valueunion.val_int = *(OV_INT*)(outputs[countOutputs]);
+						tmpAny.value.vartype = OV_VT_INT;
+						break;
+					case OV_VT_UINT:
+						tmpAny.value.valueunion.val_uint = *(OV_UINT*)(outputs[countOutputs]);
+						tmpAny.value.vartype = OV_VT_UINT;
+						break;
+					case OV_VT_SINGLE:
+						tmpAny.value.valueunion.val_single = *(OV_SINGLE*)(outputs[countOutputs]);
+						tmpAny.value.vartype = OV_VT_SINGLE;
+						break;
+					case OV_VT_DOUBLE:
+						tmpAny.value.valueunion.val_double = *(OV_DOUBLE*)(outputs[countOutputs]);
+						tmpAny.value.vartype = OV_VT_DOUBLE;
+						break;
+					case OV_VT_STRING:
+						tmpAny.value.valueunion.val_string = NULL;
+						ov_string_setvalue(&tmpAny.value.valueunion.val_string, *(OV_STRING*)(outputs[countOutputs]));
+						tmpAny.value.vartype = OV_VT_STRING;
+						break;
+					case OV_VT_BOOL_VEC:
+						tmpAny.value.valueunion.val_bool_vec.value = NULL;
+						tmpAny.value.valueunion.val_bool_vec.veclen = 0;
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_bool_vec, (*(OV_BOOL_VEC*)(outputs[countOutputs])).veclen, BOOL);
+						for (OV_UINT i = 0; i < (*(OV_BOOL_VEC*)(outputs[countOutputs])).veclen; i++){
+							tmpAny.value.valueunion.val_bool_vec.value[i] = (*(OV_BOOL_VEC*)(outputs[countOutputs])).value[i];
+						}
+						tmpAny.value.vartype = OV_VT_BOOL_VEC;
+						break;
+					case OV_VT_INT_VEC:
+						tmpAny.value.valueunion.val_int_vec.value = NULL;
+						tmpAny.value.valueunion.val_int_vec.veclen = 0;
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_int_vec, (*(OV_INT_VEC*)(outputs[countOutputs])).veclen, INT);
+						for (OV_UINT i = 0; i < (*(OV_INT_VEC*)(outputs[countOutputs])).veclen; i++){
+							tmpAny.value.valueunion.val_int_vec.value[i] = (*(OV_INT_VEC*)(outputs[countOutputs])).value[i];
+						}
+						tmpAny.value.vartype = OV_VT_INT_VEC;
+						break;
+					case OV_VT_UINT_VEC:
+						tmpAny.value.valueunion.val_uint_vec.value = NULL;
+						tmpAny.value.valueunion.val_uint_vec.veclen = 0;
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_uint_vec, (*(OV_UINT_VEC*)(outputs[countOutputs])).veclen, UINT);
+						for (OV_UINT i = 0; i < (*(OV_UINT_VEC*)(outputs[countOutputs])).veclen; i++){
+							tmpAny.value.valueunion.val_uint_vec.value[i] = (*(OV_UINT_VEC*)(outputs[countOutputs])).value[i];
+						}
+						tmpAny.value.vartype = OV_VT_UINT_VEC;
+						break;
+					case OV_VT_SINGLE_VEC:
+						tmpAny.value.valueunion.val_single_vec.value = NULL;
+						tmpAny.value.valueunion.val_single_vec.veclen = 0;
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_single_vec, (*(OV_SINGLE_VEC*)(outputs[countOutputs])).veclen, SINGLE);
+						for (OV_UINT i = 0; i < (*(OV_SINGLE_VEC*)(outputs[countOutputs])).veclen; i++){
+							tmpAny.value.valueunion.val_single_vec.value[i] = (*(OV_SINGLE_VEC*)(outputs[countOutputs])).value[i];
+						}
+						tmpAny.value.vartype = OV_VT_SINGLE_VEC;
+						break;
+					case OV_VT_DOUBLE_VEC:
+						tmpAny.value.valueunion.val_double_vec.value = NULL;
+						tmpAny.value.valueunion.val_double_vec.veclen = 0;
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_double_vec, (*(OV_DOUBLE_VEC*)(outputs[countOutputs])).veclen, DOUBLE);
+						for (OV_UINT i = 0; i < (*(OV_DOUBLE_VEC*)(outputs[countOutputs])).veclen; i++){
+							tmpAny.value.valueunion.val_double_vec.value[i] = (*(OV_DOUBLE_VEC*)(outputs[countOutputs])).value[i];
+						}
+						tmpAny.value.vartype = OV_VT_DOUBLE_VEC;
+						break;
+					case OV_VT_STRING_VEC:
+						tmpAny.value.valueunion.val_string_vec.value = NULL;
+						tmpAny.value.valueunion.val_string_vec.veclen = 0;
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_string_vec, (*(OV_STRING_VEC*)(outputs[countOutputs])).veclen, STRING);
+						for (OV_UINT i = 0; i < (*(OV_STRING_VEC*)(outputs[countOutputs])).veclen; i++){
+							tmpAny.value.valueunion.val_string_vec.value[i] = NULL;
+							ov_string_setvalue(&tmpAny.value.valueunion.val_string_vec.value[i], (*(OV_STRING_VEC*)(outputs[countOutputs])).value[i]);
+						}
+						tmpAny.value.vartype = OV_VT_STRING_VEC;
+						break;
+					default:
+						break;
+				}
+
+				pvtable->m_setvar(tmpPart.pobj, &tmpPart, &tmpAny);
+
+				switch (tmpPart.elemunion.pvar->v_vartype){
+					case OV_VT_BOOL:
+					case OV_VT_INT:
+					case OV_VT_UINT:
+					case OV_VT_SINGLE:
+					case OV_VT_DOUBLE:
+						break;
+					case OV_VT_STRING:
+						ov_string_setvalue(&tmpAny.value.valueunion.val_string, NULL);
+							free(*(OV_STRING*)(outputs[countOutputs]));
+						break;
+					case OV_VT_BOOL_VEC:
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_bool_vec, 0 , BOOL);
+						break;
+					case OV_VT_INT_VEC:
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_int_vec, 0 , INT);
+						break;
+					case OV_VT_UINT_VEC:
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_uint_vec, 0 , UINT);
+						break;
+					case OV_VT_SINGLE_VEC:
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_single_vec, 0 , SINGLE);
+						break;
+					case OV_VT_DOUBLE_VEC:
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_double_vec, 0 , DOUBLE);
+						break;
+					case OV_VT_STRING_VEC:
+						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_string_vec, 0 , STRING);
+						break;
+					default:
+						break;
+				}
+				free(outputs[countOutputs]);
 				countOutputs++;
 			}
 			if (countOutputs == sizeOutput){
@@ -114,9 +242,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 				continue;
 			}
 		} while(TRUE);
-		for (OV_UINT i = 0; i < sizeOutput; i++){
-			free(outputs[i]);
-		}
+		ov_database_free(typeArray);
 		free(inputs);
 		free(outputs);
 	}
