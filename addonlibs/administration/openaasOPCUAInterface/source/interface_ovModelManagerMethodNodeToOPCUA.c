@@ -73,7 +73,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	}else{
 		tmpNodeId.identifier.string = UA_String_fromChars(plist[0]);
 	}
-
+	ov_string_freelist(plist);
 	ov_memstack_lock();
 	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
 	if(result != UA_STATUSCODE_GOOD){

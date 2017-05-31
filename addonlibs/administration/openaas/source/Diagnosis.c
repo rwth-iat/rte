@@ -25,20 +25,6 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_ACCESS openaas_Diagnosis_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
-) {
-    /*    
-    *   local variables
-    */
-    //OV_INSTPTR_openaas_Diagnosis pinst = Ov_StaticPtrCast(openaas_Diagnosis, pobj);
-
-	return (OV_ACCESS)(OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE);
-}
-
-
 OV_DLLFNCEXPORT OV_RESULT openaas_Diagnosis_CallMethod(
   OV_INSTPTR_openaas_Service pobj,       
   OV_UINT numberofInputArgs,       
@@ -48,50 +34,23 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Diagnosis_CallMethod(
   OV_UINT *typeArray
 ) {
 
-	OV_INT inputs[2];
+	OV_INT inputs[3];
 	inputs[0] = *(OV_UINT*)packedInputArgList[0];
 	inputs[1] = *(OV_UINT*)packedInputArgList[1];
+	inputs[2] = *(OV_UINT*)packedInputArgList[2];
 
-	OV_INT abc = inputs[0] + inputs[1];
+	OV_INT abc = inputs[0] + inputs[1] + inputs[2];
+	OV_UINT abc2 = inputs[1] - inputs[0];
 
 	packedOutputArgList[0] = malloc(sizeof(OV_INT));
+	packedOutputArgList[1] = malloc(sizeof(OV_UINT));
 
 	*(OV_INT*)packedOutputArgList[0] = abc;
-	typeArray[0] = 1;
+	typeArray[0] = OV_VT_INT;
+	*(OV_INT*)packedOutputArgList[1] = abc2;
+	typeArray[1] = OV_VT_UINT;
 
     return OV_ERR_OK;
 }
 
-
-OV_DLLFNCEXPORT OV_RESULT openaas_Diagnosis_constructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_openaas_Diagnosis pinst = Ov_StaticPtrCast(openaas_Diagnosis, pobj);
-    OV_RESULT    result;
-
-    /* do what the base class does first */
-    result = openaas_Service_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-
-    //Create Input- & Outputarguments
-    OV_INSTPTR_openaas_ServiceInputArguments pArgs = NULL;
-    OV_INSTPTR_openaas_ServiceOutputArguments pArgs2 = NULL;
-    result = Ov_CreateObject(openaas_DiagnosisInputArguments, pArgs, pinst, "InputArguments");
-	if(Ov_Fail(result)){
-		ov_logfile_error("Fatal: could not create InputArguments object - reason: %s", ov_result_getresulttext(result));
-		return result;
-	}
-	result = Ov_CreateObject(openaas_DiagnosisOutputArguments, pArgs2, pinst, "OutputArguments");
-	if(Ov_Fail(result)){
-		ov_logfile_error("Fatal: could not create OutputArguments object - reason: %s", ov_result_getresulttext(result));
-		return result;
-	}
-    return OV_ERR_OK;
-}
 

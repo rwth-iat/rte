@@ -151,20 +151,29 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceNodeToOPC
 	newNode->references[1].isInverse = UA_FALSE;
 	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS0ID_METHODNODE);
 
+	// InputArguments
+	newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	newNode->references[2].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "InputArguments");
+	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
+	// OutputArguments
+	newNode->references[3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	newNode->references[3].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "OutputArguments");
+	newNode->references[3].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
 	size_t i = 2;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
-		if (Ov_CanCastTo(openaas_ServiceInputArguments, pchild) || Ov_CanCastTo(openaas_ServiceOutputArguments, pchild)){
-			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-			newNode->references[i].isInverse = UA_FALSE;
-			OV_STRING tmpString = NULL;
-			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-			ov_string_append(&tmpString, "/");
-			ov_string_append(&tmpString, pchild->v_identifier);
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-			ov_database_free(tmpString);
-		}
-
 	}
 
 	*opcuaNode = newNode;

@@ -47,13 +47,29 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceOutputArg
 	OV_ACCESS				access;
 	UA_NodeClass 			*nodeClass = NULL;
 	OV_ELEMENT				element;
+	OV_STRING 				tmpString = NULL;
+	OV_UINT 				len = 0;
+	OV_STRING 				*plist = NULL;
+
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	plist = ov_string_split(tmpString, "||", &len);
+	ov_database_free(tmpString);
+	tmpString = NULL;
+
+	UA_NodeId tmpNodeId;
+	UA_NodeId_init(&tmpNodeId);
+	tmpNodeId.namespaceIndex = nodeId->namespaceIndex;
+	tmpNodeId.identifierType = nodeId->identifierType;
+	tmpNodeId.identifier.string = UA_String_fromChars(plist[0]);
+	ov_string_freelist(plist);
 
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &path);
+	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
 	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
@@ -73,7 +89,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceOutputArg
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
-	qName.name = UA_String_fromChars(pobj->v_identifier);
+	qName.name = UA_String_fromChars("OutputArguments");
 	qName.namespaceIndex = 0; //pinterface->v_interfacenamespace.index;
 	newNode->browseName = qName;
 
@@ -90,7 +106,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceOutputArg
 
 	// DisplayName
 	lText.locale = UA_String_fromChars("en");
-	lText.text = UA_String_fromChars(pobj->v_identifier);
+	lText.text = UA_String_fromChars("OutputArguments");
 	newNode->displayName = lText;
 
 	// NodeId
@@ -120,7 +136,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceOutputArg
 	OV_ELEMENT tmpParrent;
 	tmpParrent.pobj = pobj;
 	tmpParrent.elemtype = OV_ET_OBJECT;
-	OV_STRING tmpString = NULL;
 	OV_UINT sizeOutput = 0;
 	do {
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
@@ -226,11 +241,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceOutputArg
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 	newNode->references[0].isInverse = UA_TRUE;
-	OV_UINT len = 0;
-	OV_STRING *plist = NULL;
+	len = 0;
+	plist = NULL;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	plist = ov_string_split(tmpString, ".", &len);
+	plist = ov_string_split(tmpString, "||", &len);
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, plist[0]);
 	ov_string_freelist(plist);
 	ov_database_free(tmpString);

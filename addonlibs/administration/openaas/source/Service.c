@@ -30,13 +30,99 @@ OV_DLLFNCEXPORT OV_ACCESS openaas_Service_getaccess(
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
 ) {
-    /*    
+    /*
     *   local variables
     */
-
-    return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
+	return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
+    OV_INSTPTR_openaas_Service          pobj,
+    const OV_BOOL  value
+) {
+
+	OV_RESULT result = OV_ERR_OK;
+	if (value == TRUE){
+		OV_VTBLPTR_openaas_Service pvtable;
+		Ov_GetVTablePtr(openaas_Service, pvtable, pobj);
+
+		// InputArguments & OutputArguments
+		OV_ELEMENT tmpPart;
+		tmpPart.elemtype = OV_ET_NONE;
+		tmpPart.pobj = NULL;
+		OV_ELEMENT tmpParrent;
+		tmpParrent.pobj = Ov_StaticPtrCast(ov_object, pobj);
+		tmpParrent.elemtype = OV_ET_OBJECT;
+		OV_UINT sizeInput = 0;
+		OV_UINT sizeOutput = 0;
+		do {
+			ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
+			if (tmpPart.elemtype == OV_ET_NONE)
+				break;
+
+			if (tmpPart.elemunion.pvar->v_flags == 256){ // InputFlag is set
+				sizeInput++;
+				continue;
+			}
+			if (tmpPart.elemunion.pvar->v_flags == 16384){ // OutputFlag is set
+				sizeOutput++;
+				continue;
+			}
+		} while(TRUE);
+
+
+
+		void **inputs = malloc(sizeof(void*)*sizeInput);
+		void **outputs = malloc(sizeof(void*)*sizeOutput);
+
+		tmpPart.elemtype = OV_ET_NONE;
+		tmpPart.pobj = NULL;
+		OV_UINT countInputs = 0;
+		do {
+			ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
+			if (tmpPart.elemtype == OV_ET_NONE)
+				break;
+			if (tmpPart.elemunion.pvar->v_flags == 256){ // InputFlag is set
+				inputs[countInputs] = tmpPart.pvalue;
+				countInputs++;
+			}
+			if (countInputs == sizeInput){
+				break;
+			}else{
+				continue;
+			}
+		} while(TRUE);
+
+		OV_UINT *typeArray= ov_database_malloc(sizeof(OV_UINT)*sizeOutput);
+		result = pvtable->m_CallMethod(pobj, sizeInput, (const void**)inputs, sizeOutput, outputs, typeArray);
+
+		tmpPart.elemtype = OV_ET_NONE;
+		tmpPart.pobj = NULL;
+		OV_UINT countOutputs = 0;
+		do {
+			ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
+			if (tmpPart.elemtype == OV_ET_NONE)
+				break;
+			if (tmpPart.elemunion.pvar->v_flags == 16384){ // OutputFlag is set
+				*(tmpPart.pvalue) = *(OV_BYTE*)(outputs[countOutputs]);
+				countOutputs++;
+			}
+			if (countOutputs == sizeOutput){
+				break;
+			}else{
+				continue;
+			}
+		} while(TRUE);
+		for (OV_UINT i = 0; i < sizeOutput; i++){
+			free(outputs[i]);
+		}
+		free(inputs);
+		free(outputs);
+	}
+    pobj->v_execute = value;
+    return result;
+}
 
 OV_DLLFNCEXPORT OV_RESULT openaas_Service_CallMethod(
   OV_INSTPTR_openaas_Service pobj,
@@ -46,28 +132,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_CallMethod(
   void **packedOutputArgList,
   OV_UINT *typeArray
 ) {
-
-    return OV_ERR_OK;
-}
-
-
-
-OV_DLLFNCEXPORT OV_RESULT openaas_Service_constructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*
-    *   local variables
-    */
-    //OV_INSTPTR_openaas_Service pinst = Ov_StaticPtrCast(openaas_Service, pobj);
-    OV_RESULT    result;
-
-    /* do what the base class does first */
-    result = ov_object_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-
 
     return OV_ERR_OK;
 }

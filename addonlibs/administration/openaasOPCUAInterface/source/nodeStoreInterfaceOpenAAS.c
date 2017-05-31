@@ -643,12 +643,18 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(voi
 	pvtable->m_CallMethod(pService, inputSize, (const void**)inputs, outputSize, outputs, typeArray);
 	for (int i = 0; i < outputSize; i++){
 		switch (typeArray[i]){
-		case 1:
+		case OV_VT_INT:
 			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_INT32]);
+			break;
+		case OV_VT_UINT:
+			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_UINT32]);
 			break;
 		default:
 			break;
 		}
+	}
+	for (int i = 0; i < outputSize; i++){
+		free(outputs[i]);
 	}
 	free(inputs);
 	free(outputs);
@@ -716,6 +722,27 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 				return (UA_Node*) opcuaNode;
 			}
 		}
+		if (Ov_CanCastTo(openaas_Service, pobj)){
+			if (ov_string_compare(plist3[1], "InputArguments") == OV_STRCMP_EQUAL){
+				if (openaasOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+					ov_string_freelist(plist);
+					ov_string_freelist(plist2);
+					ov_string_freelist(plist3);
+					ov_string_freelist(plist4);
+					ov_database_free(tmpString);
+					return (UA_Node*) opcuaNode;
+				}
+			}else if (ov_string_compare(plist3[1], "OutputArguments") == OV_STRCMP_EQUAL){
+				if (openaasOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+					ov_string_freelist(plist);
+					ov_string_freelist(plist2);
+					ov_string_freelist(plist3);
+					ov_string_freelist(plist4);
+					ov_database_free(tmpString);
+					return (UA_Node*) opcuaNode;
+				}
+			}
+		}
 
 	}else if (len4 > 1 ){
 		pobj = ov_path_getobjectpointer(plist4[0], 2);
@@ -762,12 +789,6 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(openaas_SubModel, pobj)){
 		if (openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_ServiceInputArguments, pobj)){
-		if (openaasOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_ServiceOutputArguments, pobj)){
-		if (openaasOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(openaas_Service, pobj)){
 		if (openaasOPCUAInterface_interface_ovServiceNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)

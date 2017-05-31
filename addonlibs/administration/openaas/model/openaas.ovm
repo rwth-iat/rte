@@ -36,61 +36,25 @@ LIBRARY openaas
             Version        : INT COMMENT = "Version of the service";
             Revision       : INT COMMENT ="Revision number of the service";
             WSDL           : STRING COMMENT ="WSDL Description of the service";
+            execute        : BOOL HAS_SET_ACCESSOR COMMENT = "Execute service";
         END_VARIABLES; 
         OPERATIONS
-            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
-            CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
-            constructor      : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-        END_OPERATIONS;
-    END_CLASS;
-    
-    CLASS ServiceInputArguments : CLASS ov/object        
-        VARIABLES
-        END_VARIABLES;
-        OPERATIONS
-            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
-        END_OPERATIONS;
-    END_CLASS;
-    
-    CLASS ServiceOutputArguments : CLASS ov/object        
-        VARIABLES
-        END_VARIABLES;
-        OPERATIONS
-            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
-        END_OPERATIONS;
-    END_CLASS;
-         
-    CLASS DiagnosisInputArguments : CLASS openaas/ServiceInputArguments
-        IS_INSTANTIABLE;
-        VARIABLES
-        	Test     : INT   FLAGS="i";
-        	sfdgdzgh     : INT   FLAGS="i";
-        	dfttz     : UINT  FLAGS="i";
-        END_VARIABLES;
-        OPERATIONS
-            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
-        END_OPERATIONS;
-    END_CLASS;
-    
-    CLASS DiagnosisOutputArguments : CLASS openaas/ServiceOutputArguments
-        IS_INSTANTIABLE;
-        VARIABLES
-            vcbe     : INT   FLAGS="o";
-            utzi5frt     : UINT  FLAGS="o";
-        END_VARIABLES;
-        OPERATIONS
-            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;            
         END_OPERATIONS;
     END_CLASS;
     
     CLASS Diagnosis : CLASS openaas/Service
     	IS_INSTANTIABLE;
 	    VARIABLES 
+	    	Test     : INT   FLAGS="i";
+            sfdgdzgh     : INT   FLAGS="i";
+            dfttz     : UINT  FLAGS="i";
+            vcbe     : INT   FLAGS="o";
+            utzi5frt     : UINT  FLAGS="o";
 	    END_VARIABLES;
 	    OPERATIONS
-	        getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
 	        CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
-	        constructor       : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 	    END_OPERATIONS;
 	END_CLASS;
 	
