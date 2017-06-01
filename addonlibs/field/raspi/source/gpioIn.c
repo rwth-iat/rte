@@ -76,7 +76,7 @@ OV_DLLFNCEXPORT OV_RESULT raspi_gpioIn_constructor(
 	if(Ov_Fail(result))
 		 return result;
 
-	wiringPiSetupGpio();
+    wiringPiSetup();
 
     return OV_ERR_OK;
 }
