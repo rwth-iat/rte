@@ -54,6 +54,29 @@ LIBRARY raspi
             constructor  : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
         END_OPERATIONS;
     END_CLASS;
+    
+    CLASS gpioOut : CLASS raspi/gpio
+        IS_INSTANTIABLE;
+        VARIABLES
+            pin : INT FLAGS = "i" COMMENT = "pin that should be set";
+            pullUpDown : INT FLAGS = "i" COMMENT = "Pull off=0/up=1/down=2";
+            input : BOOL FLAGS = "i" COMMENT = "set value";
+            
+            // Add variables here. The syntax is:
+            // <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
+            // Example:
+            // varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
+            // Example for a fb/functionblock based class
+            // inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+        END_VARIABLES;
+        OPERATIONS
+            // Declare functions here. You may use your own function types, e.g. MY_FUNC,
+            // if MY_FUNC is declared in raspi.ovf. Implement the functions in gpio.c.
+            // fb/functionblock based classes have to implement typemethod
+            typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+            constructor  : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS;
 	
 	/**
 		Add associations and their documentation here.
