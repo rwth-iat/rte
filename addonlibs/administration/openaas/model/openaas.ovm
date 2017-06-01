@@ -44,14 +44,33 @@ LIBRARY openaas
         END_OPERATIONS;
     END_CLASS;
     
-    CLASS Diagnosis : CLASS openaas/Service
+    CLASS ExampleService : CLASS openaas/Service
     	IS_INSTANTIABLE;
 	    VARIABLES 
-	    	Test     : INT   FLAGS="i";
-            sfdgdzgh     : INT   FLAGS="i";
-            dfttz     : UINT  FLAGS="i";
-            vcbe     : INT   FLAGS="o";
-            utzi5frt     : UINT  FLAGS="o";
+	    	Input1     : BOOL   FLAGS="i";
+	    	Input2     : INT    FLAGS="i";
+	    	Input3     : UINT   FLAGS="i";
+	    	Input4     : SINGLE FLAGS="i";
+	    	Input5     : DOUBLE FLAGS="i";
+	    	Input6     : STRING FLAGS="i";
+	    	Input7[]   : BOOL   FLAGS="i";
+            Input8[]   : INT    FLAGS="i";
+            Input9[]   : UINT   FLAGS="i";
+            Input10[]  : SINGLE FLAGS="i";
+            Input11[]  : DOUBLE FLAGS="i";
+            Input12[]  : STRING FLAGS="i";
+	    	Output1    : BOOL   FLAGS="o";
+	    	Output2    : INT    FLAGS="o";
+	    	Output3    : UINT   FLAGS="o";
+	    	Output4    : SINGLE FLAGS="o";
+	    	Output5    : DOUBLE FLAGS="o";
+	    	Output6    : STRING FLAGS="o";
+	    	Output7[]  : BOOL   FLAGS="o";
+            Output8[]  : INT    FLAGS="o";
+            Output9[]  : UINT   FLAGS="o";
+            Output10[] : SINGLE FLAGS="o";
+            Output11[] : DOUBLE FLAGS="o";
+            Output12[] : STRING FLAGS="o";
 	    END_VARIABLES;
 	    OPERATIONS
 	        CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;

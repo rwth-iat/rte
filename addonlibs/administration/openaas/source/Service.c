@@ -78,11 +78,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 			inputs[i] = NULL;
 		}
 
-		void **outputs = malloc(sizeof(void*)*sizeOutput);
-		for (OV_UINT i = 0; i < sizeOutput; i++){
-			outputs[i] = NULL;
-		}
-
 		tmpPart.elemtype = OV_ET_NONE;
 		tmpPart.pobj = NULL;
 		OV_UINT countInputs = 0;
@@ -91,6 +86,36 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 			if (tmpPart.elemtype == OV_ET_NONE)
 				break;
 			if (tmpPart.elemunion.pvar->v_flags == 256){ // InputFlag is set
+				switch (tmpPart.elemunion.pvar->v_vartype){
+					case OV_VT_BOOL:
+					case OV_VT_INT:
+					case OV_VT_UINT:
+					case OV_VT_SINGLE:
+					case OV_VT_DOUBLE:
+						break;
+					case OV_VT_STRING:
+						if (ov_string_compare(*(OV_STRING*)tmpPart.pvalue, "") == OV_STRCMP_EQUAL){
+							free(inputs);
+							return OV_ERR_BADPARAM;
+						}
+						break;
+					case OV_VT_BOOL_VEC:
+					case OV_VT_INT_VEC:
+					case OV_VT_UINT_VEC:
+					case OV_VT_SINGLE_VEC:
+					case OV_VT_DOUBLE_VEC:
+						break;
+					case OV_VT_STRING_VEC:
+						for (OV_UINT k = 0; k < (*(OV_STRING_VEC*)(tmpPart.pvalue)).veclen; k++){
+							if (ov_string_compare((*(OV_STRING_VEC*)(tmpPart.pvalue)).value[k], "") == OV_STRCMP_EQUAL){
+								free(inputs);
+								return OV_ERR_BADPARAM;
+							}
+						}
+						break;
+					default:
+						break;
+				}
 				inputs[countInputs] = tmpPart.pvalue;
 				countInputs++;
 			}
@@ -100,6 +125,11 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 				continue;
 			}
 		} while(TRUE);
+
+		void **outputs = malloc(sizeof(void*)*sizeOutput);
+		for (OV_UINT i = 0; i < sizeOutput; i++){
+			outputs[i] = NULL;
+		}
 
 		OV_UINT *typeArray= ov_database_malloc(sizeof(OV_UINT)*sizeOutput);
 		result = pvtable->m_CallMethod(pobj, sizeInput, (const void**)inputs, sizeOutput, outputs, typeArray);
@@ -118,27 +148,42 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 					case OV_VT_BOOL:
 						tmpAny.value.valueunion.val_bool = *(OV_BOOL*)(outputs[countOutputs]);
 						tmpAny.value.vartype = OV_VT_BOOL;
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_INT:
 						tmpAny.value.valueunion.val_int = *(OV_INT*)(outputs[countOutputs]);
 						tmpAny.value.vartype = OV_VT_INT;
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_UINT:
 						tmpAny.value.valueunion.val_uint = *(OV_UINT*)(outputs[countOutputs]);
 						tmpAny.value.vartype = OV_VT_UINT;
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_SINGLE:
 						tmpAny.value.valueunion.val_single = *(OV_SINGLE*)(outputs[countOutputs]);
 						tmpAny.value.vartype = OV_VT_SINGLE;
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_DOUBLE:
 						tmpAny.value.valueunion.val_double = *(OV_DOUBLE*)(outputs[countOutputs]);
 						tmpAny.value.vartype = OV_VT_DOUBLE;
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_STRING:
 						tmpAny.value.valueunion.val_string = NULL;
 						ov_string_setvalue(&tmpAny.value.valueunion.val_string, *(OV_STRING*)(outputs[countOutputs]));
 						tmpAny.value.vartype = OV_VT_STRING;
+						if (*(OV_STRING*)outputs[countOutputs])
+							ov_database_free(*(OV_STRING*)outputs[countOutputs]);
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
+
 						break;
 					case OV_VT_BOOL_VEC:
 						tmpAny.value.valueunion.val_bool_vec.value = NULL;
@@ -148,6 +193,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 							tmpAny.value.valueunion.val_bool_vec.value[i] = (*(OV_BOOL_VEC*)(outputs[countOutputs])).value[i];
 						}
 						tmpAny.value.vartype = OV_VT_BOOL_VEC;
+						if ((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value)
+							ov_database_free((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value);
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_INT_VEC:
 						tmpAny.value.valueunion.val_int_vec.value = NULL;
@@ -157,6 +206,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 							tmpAny.value.valueunion.val_int_vec.value[i] = (*(OV_INT_VEC*)(outputs[countOutputs])).value[i];
 						}
 						tmpAny.value.vartype = OV_VT_INT_VEC;
+						if ((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value)
+							ov_database_free((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value);
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_UINT_VEC:
 						tmpAny.value.valueunion.val_uint_vec.value = NULL;
@@ -166,6 +219,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 							tmpAny.value.valueunion.val_uint_vec.value[i] = (*(OV_UINT_VEC*)(outputs[countOutputs])).value[i];
 						}
 						tmpAny.value.vartype = OV_VT_UINT_VEC;
+						if ((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value)
+							ov_database_free((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value);
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_SINGLE_VEC:
 						tmpAny.value.valueunion.val_single_vec.value = NULL;
@@ -175,6 +232,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 							tmpAny.value.valueunion.val_single_vec.value[i] = (*(OV_SINGLE_VEC*)(outputs[countOutputs])).value[i];
 						}
 						tmpAny.value.vartype = OV_VT_SINGLE_VEC;
+						if ((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value)
+							ov_database_free((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value);
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_DOUBLE_VEC:
 						tmpAny.value.valueunion.val_double_vec.value = NULL;
@@ -184,6 +245,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 							tmpAny.value.valueunion.val_double_vec.value[i] = (*(OV_DOUBLE_VEC*)(outputs[countOutputs])).value[i];
 						}
 						tmpAny.value.vartype = OV_VT_DOUBLE_VEC;
+						if ((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value)
+							ov_database_free((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value);
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_STRING_VEC:
 						tmpAny.value.valueunion.val_string_vec.value = NULL;
@@ -194,6 +259,14 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 							ov_string_setvalue(&tmpAny.value.valueunion.val_string_vec.value[i], (*(OV_STRING_VEC*)(outputs[countOutputs])).value[i]);
 						}
 						tmpAny.value.vartype = OV_VT_STRING_VEC;
+						if ((*(OV_STRING_VEC*)(outputs[countOutputs])).value)
+							for (OV_UINT k = 0; k < (*(OV_STRING_VEC*)(outputs[countOutputs])).veclen; k++){
+								ov_database_free(((*(OV_STRING_VEC*)(outputs[countOutputs])).value)[k]);
+							}
+						if ((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value)
+							ov_database_free((*(OV_GENERIC_VEC*)(outputs[countOutputs])).value);
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					default:
 						break;
@@ -210,7 +283,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 						break;
 					case OV_VT_STRING:
 						ov_string_setvalue(&tmpAny.value.valueunion.val_string, NULL);
-							free(*(OV_STRING*)(outputs[countOutputs]));
 						break;
 					case OV_VT_BOOL_VEC:
 						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_bool_vec, 0 , BOOL);
@@ -233,7 +305,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 					default:
 						break;
 				}
-				free(outputs[countOutputs]);
 				countOutputs++;
 			}
 			if (countOutputs == sizeOutput){
@@ -243,9 +314,10 @@ OV_DLLFNCEXPORT OV_RESULT openaas_Service_execute_set(
 			}
 		} while(TRUE);
 		ov_database_free(typeArray);
-		free(inputs);
 		free(outputs);
+		free(inputs);
 	}
+
     pobj->v_execute = value;
     return result;
 }

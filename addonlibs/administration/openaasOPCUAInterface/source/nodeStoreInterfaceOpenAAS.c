@@ -625,13 +625,16 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(voi
                      size_t outputSize, UA_Variant *output) {
 	UA_String tmpString;
 	UA_String *tmpStringArray = NULL;
+	UA_StatusCode result = UA_STATUSCODE_GOOD;
 
 	OV_VTBLPTR_openaas_Service pvtable;
 	OV_INSTPTR_openaas_Service pService = (OV_INSTPTR_openaas_Service)methodHandle;
 	Ov_GetVTablePtr(openaas_Service, pvtable, pService);
 
 	void **inputs = malloc(sizeof(void*)*inputSize);
+	OV_UINT inputCounts = 0;
 	for (int i = 0; i < inputSize; i++){
+		inputCounts++;
 		inputs[i] = NULL;
 		if (input[i].arrayLength == 0){
 			switch (input[i].type->typeIndex){
@@ -643,6 +646,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(voi
 					inputs[i] = input[i].data;
 					break;
 				case UA_TYPES_STRING:
+					if ((*((UA_String*)(input[i].data))).length == 0){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					inputs[i] = malloc(sizeof(OV_STRING));
 					copyOPCUAStringToOV(*((UA_String*)(input[i].data)), (OV_STRING*)(inputs[i]));
 					break;
@@ -652,36 +659,64 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(voi
 		}else{
 			switch (input[i].type->typeIndex){
 				case UA_TYPES_BOOLEAN:
+					if (input[i].data == NULL){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					inputs[i] = malloc(sizeof(OV_BOOL_VEC));
 					(*(OV_BOOL_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_BOOL_VEC*)(inputs[i])).value = input[i].data;
 					break;
 				case UA_TYPES_INT32:
+					if (input[i].data == NULL){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					inputs[i] = malloc(sizeof(OV_INT_VEC));
 					(*(OV_INT_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_INT_VEC*)(inputs[i])).value = input[i].data;
 					break;
 				case UA_TYPES_UINT32:
+					if (input[i].data == NULL){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					inputs[i] = malloc(sizeof(OV_UINT_VEC));
 					(*(OV_UINT_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_UINT_VEC*)(inputs[i])).value = input[i].data;
 					break;
 				case UA_TYPES_FLOAT:
+					if (input[i].data == NULL){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					inputs[i] = malloc(sizeof(OV_SINGLE_VEC));
 					(*(OV_SINGLE_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_SINGLE_VEC*)(inputs[i])).value = input[i].data;
 					break;
 				case UA_TYPES_DOUBLE:
+					if (input[i].data == NULL){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					inputs[i] = malloc(sizeof(OV_DOUBLE_VEC));
 					(*(OV_DOUBLE_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_DOUBLE_VEC*)(inputs[i])).value = input[i].data;
 					break;
 				case UA_TYPES_STRING:
+					if (input[i].data == NULL){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					inputs[i] = malloc(sizeof(OV_STRING_VEC));
 					(*(OV_STRING_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_STRING_VEC*)(inputs[i])).value = malloc(input[i].arrayLength*sizeof(OV_STRING));
 					for (OV_UINT j = 0; j < input[i].arrayLength; j++){
 						(*(OV_STRING_VEC*)(inputs[i])).value[j] = NULL;
+						if (((UA_String*)(input[i].data))[j].length == 0){
+							result = UA_STATUSCODE_BADARGUMENTSMISSING;
+							goto cleanup;
+						}
 						copyOPCUAStringToOV(((UA_String*)(input[i].data))[j], &((*(OV_STRING_VEC*)(inputs[i])).value[j]));
 					}
 					break;
@@ -696,42 +731,78 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(voi
 	}
 	OV_UINT *typeArray= ov_database_malloc(sizeof(OV_UINT)*outputSize);
 	pvtable->m_CallMethod(pService, inputSize, (const void**)inputs, outputSize, outputs, typeArray);
+
+
 	for (int i = 0; i < outputSize; i++){
 		switch (typeArray[i]){
 		case OV_VT_BOOL:
 			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_BOOLEAN]);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_INT:
 			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_INT32]);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_UINT:
 			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_UINT32]);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_SINGLE:
 			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_FLOAT]);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_DOUBLE:
 			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_DOUBLE]);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_STRING:
 			tmpString = UA_String_fromChars(*(OV_STRING*)outputs[i]);
 			UA_Variant_setScalarCopy(&output[i], &tmpString, &UA_TYPES[UA_TYPES_STRING]);
 			UA_String_deleteMembers(&tmpString);
+			if (*(OV_STRING*)outputs[i])
+				ov_database_free(*(OV_STRING*)outputs[i]);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_BOOL_VEC:
 			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_BOOLEAN]);
+			if ((*(OV_GENERIC_VEC*)(outputs[i])).value)
+				ov_database_free((*(OV_GENERIC_VEC*)(outputs[i])).value);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_INT_VEC:
 			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_INT32]);
+			if ((*(OV_GENERIC_VEC*)(outputs[i])).value)
+				ov_database_free((*(OV_GENERIC_VEC*)(outputs[i])).value);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_UINT_VEC:
 			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_UINT32]);
+			if ((*(OV_GENERIC_VEC*)(outputs[i])).value)
+				ov_database_free((*(OV_GENERIC_VEC*)(outputs[i])).value);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_SINGLE_VEC:
 			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_FLOAT]);
+			if ((*(OV_GENERIC_VEC*)(outputs[i])).value)
+				ov_database_free((*(OV_GENERIC_VEC*)(outputs[i])).value);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_DOUBLE_VEC:
 			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_DOUBLE]);
+			if ((*(OV_GENERIC_VEC*)(outputs[i])).value)
+				ov_database_free((*(OV_GENERIC_VEC*)(outputs[i])).value);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_STRING_VEC:
 			tmpStringArray = UA_Array_new((*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_STRING]);
@@ -740,17 +811,98 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallback(voi
 			}
 			UA_Variant_setArrayCopy(&output[i], tmpStringArray, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_STRING]);
 			UA_Array_delete(tmpStringArray, (*(OV_GENERIC_VEC*)(outputs[i])).veclen,&UA_TYPES[UA_TYPES_STRING]);
+
+			if ((*(OV_STRING_VEC*)(outputs[i])).value)
+				for (int k = 0; k < (*(OV_STRING_VEC*)(outputs[i])).veclen; k++){
+					ov_database_free(((*(OV_STRING_VEC*)(outputs[i])).value)[k]);
+				}
+			if ((*(OV_GENERIC_VEC*)(outputs[i])).value)
+				ov_database_free((*(OV_GENERIC_VEC*)(outputs[i])).value);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
 			break;
 		default:
 			break;
 		}
 	}
-	for (int i = 0; i < outputSize; i++){
-		free(outputs[i]);
-	}
-	free(inputs);
+
 	free(outputs);
-	return (UA_StatusCode)0;
+
+	cleanup:
+    	for (int i = 0; i < inputCounts; i++){
+			if (input[i].arrayLength == 0){
+				switch (input[i].type->typeIndex){
+					case UA_TYPES_BOOLEAN:
+					case UA_TYPES_INT32:
+					case UA_TYPES_UINT32:
+					case UA_TYPES_FLOAT:
+					case UA_TYPES_DOUBLE:
+						inputs[i] = NULL;
+						break;
+					case UA_TYPES_STRING:
+						if (inputs[i] != NULL)
+							ov_database_free(*(OV_STRING*)(inputs[i]));
+						break;
+					default:
+						break;
+				}
+			}else{
+				switch (input[i].type->typeIndex){
+					case UA_TYPES_BOOLEAN:
+						if (inputs[i] != NULL){
+							(*(OV_BOOL_VEC*)(inputs[i])).veclen = 0;
+							(*(OV_BOOL_VEC*)(inputs[i])).value = NULL;
+							free(inputs[i]);
+						}
+						break;
+					case UA_TYPES_INT32:
+						if (inputs[i] != NULL){
+							(*(OV_INT_VEC*)(inputs[i])).veclen = 0;
+							(*(OV_INT_VEC*)(inputs[i])).value = NULL;
+							free(inputs[i]);
+						}
+						break;
+					case UA_TYPES_UINT32:
+						if (inputs[i] != NULL){
+							(*(OV_UINT_VEC*)(inputs[i])).veclen = 0;
+							(*(OV_UINT_VEC*)(inputs[i])).value = NULL;
+							free(inputs[i]);
+						}
+						break;
+					case UA_TYPES_FLOAT:
+						if (inputs[i] != NULL){
+							(*(OV_SINGLE_VEC*)(inputs[i])).veclen = 0;
+							(*(OV_SINGLE_VEC*)(inputs[i])).value = NULL;
+							free(inputs[i]);
+						}
+						break;
+					case UA_TYPES_DOUBLE:
+						if (inputs[i] != NULL){
+							(*(OV_DOUBLE_VEC*)(inputs[i])).veclen = 0;
+							(*(OV_DOUBLE_VEC*)(inputs[i])).value = NULL;
+							free(inputs[i]);
+						}
+						break;
+					case UA_TYPES_STRING:
+						if (inputs[i] != NULL){
+
+							for (OV_UINT j = 0; j < (*(OV_STRING_VEC*)(inputs[i])).veclen; j++){
+								if ((*(OV_STRING_VEC*)(inputs[i])).value[j] != NULL)
+									ov_database_free((*(OV_STRING_VEC*)(inputs[i])).value[j]);
+							}
+							(*(OV_STRING_VEC*)(inputs[i])).value = NULL;
+							(*(OV_STRING_VEC*)(inputs[i])).veclen = 0;
+							free(inputs[i]);
+						}
+						break;
+					default:
+						break;
+				}
+			}
+    	}
+    free(inputs);
+
+	return result;
 }
 
 static void OV_NodeStore_deleteNodestore(void *handle, UA_UInt16 namespaceIndex){
