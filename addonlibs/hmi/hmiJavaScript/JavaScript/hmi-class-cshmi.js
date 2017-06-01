@@ -1312,6 +1312,7 @@ cshmi.prototype = {
 					HMI.hmi_log_info_onwebsite("Sorry, your browser does not support textinput. If this is IE10 Metro mode, try desktop mode.");
 				}else if (splittedValueParameter.length > 1){
 					textinputHint = splittedValueParameter[1];
+					textinputHint=textinputHint.concat("\nFor vector inputs, type in \'vec\' then use space as a separator");
 					//e.g. "textinput:Some textinputHint:TemplateFBReferenceVariable:InputVarPath"
 					if (splittedValueParameter.length > 3){
 						this.ResourceList.Actions["tempPath"] = new Object();
@@ -1333,15 +1334,31 @@ cshmi.prototype = {
 						input = window.prompt(textinputHint, "");
 					}
 				}else{
-					textinputHint = 'Please input a new value';
+					textinputHint = 'Please input a new value.\nFor Vector inputs, type in \'vec\' then use space as a separator';
 					input = window.prompt(textinputHint, "");
-				}
-				if (input !== null){
-					return input;
-				}else{
-					//intentionally no value
-					return null;
-				}
+				}				
+				//	text = null;
+					if (input.length !== 0) {
+						splitinput=input.split(" ");
+						if(splitinput.length!==1)
+							{
+							if(splitinput[0]==="vec"){
+								return splitinput.splice(1);
+							}
+							return input;
+							}
+ 						else {
+						return input;
+					}
+				} else {
+						return " ";
+					}
+//				if (input !== null){
+//					return input;
+//				}else{
+//					//intentionally no value
+//					return null;
+//				}
 			}else if(ParameterValue === "mousex"){
 				var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, HMI.Playground.firstChild)[0];
 				if (!isNaN(newX)){
