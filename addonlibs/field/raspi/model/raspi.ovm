@@ -59,7 +59,6 @@ LIBRARY raspi
         IS_INSTANTIABLE;
         VARIABLES
             pin : INT FLAGS = "i" COMMENT = "pin that should be set";
-            pullUpDown : INT FLAGS = "i" COMMENT = "Pull off=0/up=1/down=2";
             input : BOOL FLAGS = "i" COMMENT = "set value";
             
             // Add variables here. The syntax is:

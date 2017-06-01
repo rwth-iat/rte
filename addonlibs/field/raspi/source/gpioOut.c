@@ -38,21 +38,6 @@ OV_DLLFNCEXPORT void raspi_gpioOut_typemethod(
 
 	if(!pinst->v_initialized){
 		pinMode(pinst->v_pin, OUTPUT);
-		switch(pinst->v_pullUpDown){
-		case 0:
-			pullUpDnControl(pinst->v_pin,PUD_OFF);
-			break;
-		case 1:
-			pullUpDnControl(pinst->v_pin,PUD_UP);
-			break;
-		case 2:
-			pullUpDnControl(pinst->v_pin,PUD_DOWN);
-			break;
-		default:
-			pinst->v_error = TRUE;
-			ov_string_setvalue(&pinst->v_errorMsg,"wrong value for pull up/down resistor");
-			return;
-		}
 		pinst->v_initialized = TRUE;
 	}
 	digitalWrite(pinst->v_pin, pinst->v_input);
@@ -76,7 +61,7 @@ OV_DLLFNCEXPORT OV_RESULT raspi_gpioOut_constructor(
          return result;
 
     /* do what */
-    wiringPiSetup();
+    wiringPiSetupGpio();
 
     return OV_ERR_OK;
 }
