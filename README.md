@@ -22,7 +22,7 @@ Your architecture is detected automatically via a tcl script. Otherwise you can 
 tclsh acplt_build.tcl 64 no_dbcommands
 ```
 The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
-For cross compilation see [README_CROSSCOMPILATION.md](http://acplt.github.io/rte/build/README_CROSSCOMPILATION.md).
+For cross compilation see [README_CROSSCOMPILATION.md](https://github.com/acplt/rte/blob/master/build/README_CROSSCOMPILATION.md).
 
 # Documentation
 * An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
