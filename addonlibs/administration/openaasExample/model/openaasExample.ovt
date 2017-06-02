@@ -1,0 +1,7 @@
+#ifndef openaasExample_OVT_INCLUDED
+#define openaasExample_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+#endif

@@ -1,0 +1,31 @@
+#include "ov.ovm"
+#include "openaas.ovm"
+#include "raspi.ovm"
+#include "iec61131stdfb.ovm"
+
+LIBRARY openaasExample
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of example.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	   CLASS Diagnosis : CLASS openaas/Service
+        IS_INSTANTIABLE;
+        VARIABLES 
+            Mode     : STRING   FLAGS="i" COMMENT="FAST or FULL";
+            Result   : STRING   FLAGS="o" COMMENT="OK or FAILED";
+            GPIOOutPointer : C_TYPE <OV_INSTPTR_raspi_gpioOut>;
+            Timer    : C_TYPE <OV_INSTPTR_iec61131stdfb_TP>;  
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
+            constructor       :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS;
+	
+END_LIBRARY;
