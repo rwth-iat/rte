@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   gpioIn.c
+*   gpioOut.c
 *
 *   History
 *   -------
-*   2017-02-19   File created
+*   2017-06-01   File created
 *
 *******************************************************************************
 *
@@ -25,57 +25,42 @@
 #include "libov/ov_macros.h"
 #include <wiringPi.h>
 
-OV_DLLFNCEXPORT void raspi_gpioIn_typemethod(
+
+OV_DLLFNCEXPORT void raspi_gpioOut_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-
 	/* do what */
-	OV_INSTPTR_raspi_gpioIn pinst = Ov_StaticPtrCast(raspi_gpioIn, pfb);
+	OV_INSTPTR_raspi_gpioOut pinst = Ov_StaticPtrCast(raspi_gpioOut, pfb);
 
 	if(!pinst->v_initialized){
-		pinMode(pinst->v_pin, INPUT);
-		switch(pinst->v_pullUpDown){
-		case 0:
-			pullUpDnControl(pinst->v_pin,PUD_OFF);
-			break;
-		case 1:
-			pullUpDnControl(pinst->v_pin,PUD_UP);
-			break;
-		case 2:
-			pullUpDnControl(pinst->v_pin,PUD_DOWN);
-			break;
-		default:
-			pinst->v_error = TRUE;
-			ov_string_setvalue(&pinst->v_errorMsg,"wrong value for pull up/down resistor");
-			return;
-		}
+		pinMode(pinst->v_pin, OUTPUT);
 		pinst->v_initialized = TRUE;
 	}
-	pinst->v_output = digitalRead(pinst->v_pin);
+	digitalWrite(pinst->v_pin, pinst->v_input);
 	pinst->v_error = 0;
 	ov_string_setvalue(&pinst->v_errorMsg,"");
-
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT raspi_gpioIn_constructor(
+OV_DLLFNCEXPORT OV_RESULT raspi_gpioOut_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-	//OV_INSTPTR_raspi_gpioIn pinst = Ov_StaticPtrCast(raspi_gpioIn, pobj);
-	OV_RESULT    result;
+    //OV_INSTPTR_raspi_gpioOut pinst = Ov_StaticPtrCast(raspi_gpioOut, pobj);
+    OV_RESULT    result;
 
-	/* do what the base class does first */
-	result = fb_functionblock_constructor(pobj);
-	if(Ov_Fail(result))
-		 return result;
+    /* do what the base class does first */
+    result = fb_functionblock_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
 
+    /* do what */
     wiringPiSetup();
 
     return OV_ERR_OK;
