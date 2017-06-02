@@ -39,26 +39,26 @@ OV_DLLFNCEXPORT OV_RESULT openaasExample_Diagnosis_CallMethod(
 
 	OV_INSTPTR_openaasExample_Diagnosis pinst = Ov_StaticPtrCast(openaasExample_Diagnosis, pobj);
 
-	pinst->v_Timer->v_Released = TRUE;
-	pinst->v_Timer->v_Counting = FALSE;
+	pinst->p_Timer.v_Released = TRUE;
+	pinst->p_Timer.v_Counting = FALSE;
 
 	packedOutputArgList[0] = ov_database_malloc(sizeof(OV_STRING));
 	*(OV_STRING*)packedOutputArgList[5] = NULL;
 
 	if (ov_string_compare(*(OV_STRING*)(packedInputArgList[0]), "FULL") == OV_STRCMP_EQUAL){
-		pinst->v_GPIOOutPointer->v_pin = 23;
-		pinst->v_Timer->v_IN = TRUE;
+		pinst->p_GPIOOut.v_pin = 23;
+		pinst->p_Timer.v_IN = TRUE;
 		*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength("OK")+1);
 		strcpy(*(OV_STRING*)packedOutputArgList[0], "OK");
 		typeArray[0] = OV_VT_STRING;
 	}else if (ov_string_compare(*(OV_STRING*)(packedInputArgList[0]), "FAST") == OV_STRCMP_EQUAL){
-		pinst->v_GPIOOutPointer->v_pin = 24;
-		pinst->v_Timer->v_IN = TRUE;
+		pinst->p_GPIOOut.v_pin = 24;
+		pinst->p_Timer.v_IN = TRUE;
 		*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength("OK")+1);
 		strcpy(*(OV_STRING*)packedOutputArgList[0], "OK");
 		typeArray[0] = OV_VT_STRING;
 	}else{
-		pinst->v_Timer->v_IN = FALSE;
+		pinst->p_Timer.v_IN = FALSE;
 		*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength("FAILED")+1);
 		strcpy(*(OV_STRING*)packedOutputArgList[0], "FAILED");
 		typeArray[0] = OV_VT_STRING;
@@ -84,16 +84,7 @@ OV_DLLFNCEXPORT OV_RESULT openaasExample_Diagnosis_constructor(
          return result;
 
     /* do what */
-    OV_INSTPTR_raspi_gpioOut pGPIOOut = NULL;
-    Ov_CreateObject(raspi_gpioOut, pGPIOOut, Ov_StaticPtrCast(ov_domain, pinst), "setOutput");
-
-    OV_INSTPTR_iec61131stdfb_TP pTP = NULL;
-	Ov_CreateObject(iec61131stdfb_TP, pTP, Ov_StaticPtrCast(ov_domain, pinst), "Timer");
-
-    pinst->v_GPIOOutPointer = pGPIOOut;
-    pinst->v_Timer = pTP;
 
 
     return OV_ERR_OK;
 }
-

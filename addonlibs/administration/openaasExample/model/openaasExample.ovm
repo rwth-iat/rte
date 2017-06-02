@@ -19,9 +19,11 @@ LIBRARY openaasExample
         VARIABLES 
             Mode     : STRING   FLAGS="i" COMMENT="FAST or FULL";
             Result   : STRING   FLAGS="o" COMMENT="OK or FAILED";
-            GPIOOutPointer : C_TYPE <OV_INSTPTR_raspi_gpioOut>;
-            Timer    : C_TYPE <OV_INSTPTR_iec61131stdfb_TP>;  
         END_VARIABLES;
+        PARTS
+        	GPIOOut  : CLASS raspi/gpioOut;
+            Timer    : CLASS iec61131stdfb/TP;  
+        END_PARTS;
         OPERATIONS
             CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
             constructor       :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
