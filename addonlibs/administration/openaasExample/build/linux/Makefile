@@ -11,7 +11,7 @@ SERVERSTARTKEYS = -w iec61131stdfb -w openaas -w raspi -w openaasExample
 MAKMAKOPTIONS = -o
 EXTRA_CC_FLAGS = -DUA_EXTERNAL_NAMESPACES=1 -DLOG_KS=1 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DLOG_UA=1 -DLOG_UA_TO_OV=1 -DSTATIC_LINKING=1 -DDEBUG=1 -D_XOPEN_SOURCE=500 -D_GNU_SOURCE -Wextra -Wno-unused-parameter -Wno-declaration-after-statement -Wno-unused-functio
 EXTRA_LIBS = 
-LD_FLAGS = 
+LD_FLAGS = -lwiringPi 
 COMPILER = GCC
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
