@@ -890,9 +890,7 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/propertyValueStatement
 				addonlibs/administration/openaas
 				addonlibs/administration/openaasOPCUAInterface
-				addonlibs/administration/openAASDiscoveryServer
-				addonlibs/field/raspi
-				addonlibs/administration/openaasExample}
+				addonlibs/administration/openAASDiscoveryServer}
 				
 print_msg "checking out all libraries of the acplt system"
 
