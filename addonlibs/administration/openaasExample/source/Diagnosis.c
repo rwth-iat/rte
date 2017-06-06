@@ -23,6 +23,7 @@
 
 #include "openaasExample.h"
 #include "libov/ov_macros.h"
+#include "fb_database.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT openaasExample_Diagnosis_CallMethod(      
@@ -43,7 +44,7 @@ OV_DLLFNCEXPORT OV_RESULT openaasExample_Diagnosis_CallMethod(
 	pinst->p_Timer.v_Counting = FALSE;
 
 	packedOutputArgList[0] = ov_database_malloc(sizeof(OV_STRING));
-	*(OV_STRING*)packedOutputArgList[5] = NULL;
+	*(OV_STRING*)packedOutputArgList[0] = NULL;
 
 	if (ov_string_compare(*(OV_STRING*)(packedInputArgList[0]), "FULL") == OV_STRCMP_EQUAL){
 		pinst->p_GPIOOut.v_pin = 23;
@@ -85,11 +86,34 @@ OV_DLLFNCEXPORT OV_RESULT openaasExample_Diagnosis_constructor(
 
     /* do what */
     pinst->p_Timer.v_PT.secs = 5;
-    ov_string_setvalue(&pinst->p_connection.v_sourceport, pinst->p_Timer.v_identifier);
-    ov_string_append(&pinst->p_connection.v_sourceport, ".Q");
-    ov_string_setvalue(&pinst->p_connection.v_targetport, pinst->p_GPIOOut.v_identifier);
-	ov_string_append(&pinst->p_connection.v_targetport, ".input");
+    Ov_Link(fb_inputconnections, &pinst->p_GPIOOut, &pinst->p_connection);
+    Ov_Link(fb_outputconnections, &pinst->p_Timer, &pinst->p_connection);
+    //Ov_Link()
+    //pinst->p_connection.v_sourceelem = pinst->p_Timer;
+    ov_string_append(&pinst->p_connection.v_sourceport, "Q");
+    //pinst->p_connection.v_targetelem = pinst->p_GPIOOut;
+	ov_string_append(&pinst->p_connection.v_targetport, "input");
 	pinst->p_connection.v_on = TRUE;
+
+	OV_INSTPTR_fb_task pTaskParent = NULL;
+	pTaskParent = (OV_INSTPTR_fb_task)fb_database_geturtask();
+	if (pTaskParent != NULL){
+		Ov_Link(fb_tasklist, pTaskParent, &pinst->p_GPIOOut);
+	}
+	else {
+		ov_logfile_error("Cannot link GPIOOut to tasklist");
+	}
+	pinst->p_GPIOOut.v_actimode = 1;
+	pinst->p_GPIOOut.v_iexreq = TRUE;
+
+	if (pTaskParent != NULL){
+		Ov_Link(fb_tasklist, pTaskParent, &pinst->p_Timer);
+	}
+	else {
+		ov_logfile_error("Cannot link Timer to tasklist");
+	}
+	pinst->p_Timer.v_actimode = 1;
+	pinst->p_Timer.v_iexreq = TRUE;
 
 	return OV_ERR_OK;
 }
