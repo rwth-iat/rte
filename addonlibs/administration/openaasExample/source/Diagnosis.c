@@ -84,7 +84,12 @@ OV_DLLFNCEXPORT OV_RESULT openaasExample_Diagnosis_constructor(
          return result;
 
     /* do what */
+    pinst->p_Timer.v_PT.secs = 5;
+    ov_string_setvalue(&pinst->p_connection.v_sourceport, pinst->p_Timer.v_identifier);
+    ov_string_append(&pinst->p_connection.v_sourceport, ".Q");
+    ov_string_setvalue(&pinst->p_connection.v_targetport, pinst->p_GPIOOut.v_identifier);
+	ov_string_append(&pinst->p_connection.v_targetport, ".input");
+	pinst->p_connection.v_on = TRUE;
 
-
-    return OV_ERR_OK;
+	return OV_ERR_OK;
 }

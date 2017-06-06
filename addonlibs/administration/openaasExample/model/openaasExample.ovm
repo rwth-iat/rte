@@ -23,6 +23,7 @@ LIBRARY openaasExample
         PARTS
         	GPIOOut  : CLASS raspi/gpioOut;
             Timer    : CLASS iec61131stdfb/TP;  
+            connection : CLASS fb/connection;
         END_PARTS;
         OPERATIONS
             CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
