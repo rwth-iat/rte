@@ -35,7 +35,7 @@ LIBRARY raspi
     CLASS gpioIn : CLASS raspi/gpio
         IS_INSTANTIABLE;
         VARIABLES
-            pin : INT FLAGS = "i" COMMENT = "pin that should be read";
+            pin : INT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "pin that should be read";
             pullUpDown : INT FLAGS = "i" COMMENT = "Pull off=0/up=1/down=2";
             output : BOOL FLAGS = "o" COMMENT = "read value";
             
@@ -58,7 +58,7 @@ LIBRARY raspi
     CLASS gpioOut : CLASS raspi/gpio
         IS_INSTANTIABLE;
         VARIABLES
-            pin : INT FLAGS = "i" COMMENT = "pin that should be set";
+            pin : INT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "pin that should be set";
             input : BOOL FLAGS = "i" COMMENT = "set value";
             
             // Add variables here. The syntax is:
