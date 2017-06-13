@@ -20,7 +20,6 @@
 #define OV_COMPILE_LIBRARY_openaasExample
 #endif
 
-
 #include "openaasExample.h"
 #include "libov/ov_macros.h"
 #include "fb_database.h"
