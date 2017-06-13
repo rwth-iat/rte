@@ -91,7 +91,7 @@ static UA_ByteString loadCertificate(void) {
 
 		fseek(fp, 0, SEEK_END);
 		certificate.length = ftell(fp);
-		certificate.data = malloc(certificate.length*sizeof(UA_Byte));
+		certificate.data = UA_malloc(certificate.length*sizeof(UA_Byte));
 		if(!certificate.data){
 			fclose(fp);
 			return certificate;
@@ -102,16 +102,20 @@ static UA_ByteString loadCertificate(void) {
 		}
 		fclose(fp);
 	}
+	//OV_PATH p;
+
     return certificate;
 }
 
-static UA_Int32 opcua_uaServer_destroyNodeStore(void *ensHandle){
-	return 0;
+
+static void acpltDeleteNode(UA_Node* node)
+{
+
 }
 
 static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	UA_Logger logger;
-	UA_String url;
+	//UA_String url;
 	OV_STRING tempStackString = NULL;
 	UA_Int32 port;
 	UA_Int32 ksPort;
@@ -122,7 +126,6 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	OV_RESULT		result;
 	OV_ELEMENT		parent;
 	OV_ELEMENT		child;
-	UA_UInt16		assignedNamespaceIndex;
 
 	/*	determine port....	*/
 	ov_memstack_lock();
@@ -138,6 +141,7 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 		//	no port specified in either way --> use OPC-UA standard 16664
 		port = 16664;
 	}
+
 	if(port != ksPort){
 		Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibrary, ov_library){
 			if(ov_string_compare(pLibrary->v_identifier, "TCPbind") == OV_STRCMP_EQUAL){
@@ -183,7 +187,6 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 		}
 	}
 
-
 	logger = ov_UAlogger_new();
 	pinst->v_serverConfig.logger = logger;
 	pinst->v_serverConfig.serverCertificate = loadCertificate();
@@ -192,30 +195,29 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	pinst->v_serverConfig.networkLayersSize = 1;
 
 	pinst->v_serverData = UA_Server_new(pinst->v_serverConfig);
-	url = UA_String_fromChars(OV_UA_NAMESPACEURI);
 
-	//Services on Namespace OV (1)
-	opcua_pUaServer->v_nodeStoreNsOV.addNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_addNodes;
-	opcua_pUaServer->v_nodeStoreNsOV.addReferences = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_addReferences;
-	opcua_pUaServer->v_nodeStoreNsOV.addOneWayReference = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_addOneWayReference;
-	opcua_pUaServer->v_nodeStoreNsOV.browseNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_browseNodes;
-	opcua_pUaServer->v_nodeStoreNsOV.deleteNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_deleteNodes;
-	opcua_pUaServer->v_nodeStoreNsOV.deleteReferences = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_deleteReferences;
-	opcua_pUaServer->v_nodeStoreNsOV.readNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_readNodes;
-	opcua_pUaServer->v_nodeStoreNsOV.translateBrowsePathsToNodeIds = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_translateBrowsePathsToNodeIDs;
-	opcua_pUaServer->v_nodeStoreNsOV.writeNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_writeNodes;
-	opcua_pUaServer->v_nodeStoreNsOV.destroy = opcua_uaServer_destroyNodeStore;
-	opcua_pUaServer->v_nodeStoreNsOV.call = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_call;
-	UA_Server_addExternalNamespace(opcua_pUaServer->v_serverData,&url,&opcua_pUaServer->v_nodeStoreNsOV, &assignedNamespaceIndex);
-	opcua_pUaServer->v_NameSpaceIndex = assignedNamespaceIndex;
-	UA_String_deleteMembers(&url);
+	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
+	UA_Namespace_init(&pinst->v_namespace, &tmpNamespaceName);
+	UA_String_deleteMembers(&tmpNamespaceName);
+
+	pinst->v_namespace.nodestore = opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
+
+	if(UA_Server_addNamespace_full(pinst->v_serverData, &(pinst->v_namespace)) != UA_STATUSCODE_GOOD){
+		ov_logfile_error("%s - init: could not add ov-namespace to ua server", pinst->v_identifier);
+	}
+
 	/*	add reference to ov root	*/
+	OV_STRING tmpString = pdb->root.v_identifier;
 	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_NUMERIC(opcua_pUaServer->v_NameSpaceIndex, 0), true) != UA_STATUSCODE_GOOD){
+			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pinst->v_namespace.index, tmpString), true) != UA_STATUSCODE_GOOD){
 		ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
 	}
-	UA_Server_run_startup(opcua_pUaServer->v_serverData);
 
+	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
+				UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pinst->v_namespace.index, "/acplt/ov/domain"), true) != UA_STATUSCODE_GOOD){
+			ov_logfile_error("%s - init: could not create reference to ov-namespace library", pinst->v_identifier);
+		}
+	UA_Server_run_startup(opcua_pUaServer->v_serverData);
 	return;
 }
 
@@ -224,6 +226,7 @@ static void opcua_uaServer_stopServer(OV_INSTPTR_opcua_uaServer pinst){
 	UA_ByteString_deleteMembers(&pinst->v_serverConfig.serverCertificate);
 	pinst->v_networkLayerOv.deleteMembers(&(pinst->v_networkLayerOv));
 	UA_Server_delete(pinst->v_serverData);
+	UA_Namespace_deleteMembers(&(pinst->v_namespace));
 	return;
 }
 
@@ -237,12 +240,12 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginEnableAnonymous_set(
     OV_INSTPTR_opcua_uaServer          pobj,
     const OV_BOOL  value
 ) {
-    if(value != pobj->v_serverConfig.enableAnonymousLogin){
+    if(value != pobj->v_serverConfig.accessControl.enableAnonymousLogin){
     	if(pobj->v_objectstate >= OV_OS_STARTED){
     		opcua_uaServer_stopServer(pobj);
     	}
     	pobj->v_LoginEnableAnonymous = value;
-    	pobj->v_serverConfig.enableAnonymousLogin = value;
+    	pobj->v_serverConfig.accessControl.enableAnonymousLogin = value;
     	if(pobj->v_objectstate >= OV_OS_STARTED){
     		opcua_uaServer_initServer(pobj);
     	}
@@ -260,12 +263,12 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginEnableUsernamePassword_set(
     OV_INSTPTR_opcua_uaServer          pobj,
     const OV_BOOL  value
 ) {
-	if(value != pobj->v_serverConfig.enableUsernamePasswordLogin){
+	if(value != pobj->v_serverConfig.accessControl.enableUsernamePasswordLogin){
 		if(pobj->v_objectstate >= OV_OS_STARTED){
 			opcua_uaServer_stopServer(pobj);
 		}
 		pobj->v_LoginEnableUsernamePassword = value;
-		pobj->v_serverConfig.enableUsernamePasswordLogin = value;
+		pobj->v_serverConfig.accessControl.enableUsernamePasswordLogin = value;
 		if(pobj->v_objectstate >= OV_OS_STARTED){
 			opcua_uaServer_initServer(pobj);
 		}
@@ -286,12 +289,13 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginUsernames_set(
     const OV_STRING*  value,
     const OV_UINT veclen
 ) {
-	OV_UINT iterator;
+	//OV_UINT iterator;
 	OV_RESULT result;
 	if(pobj->v_objectstate >= OV_OS_STARTED){
 		opcua_uaServer_stopServer(pobj);
 	}
 	/*	set the vector in the database and adjust length of passwords vector at the same time	*/
+	/* TODO: New AccessControl
 	if(veclen != pobj->v_serverConfig.usernamePasswordLoginsSize){
 		pobj->v_serverConfig.usernamePasswordLoginsSize = veclen;
 		Ov_HeapFree(pobj->v_serverConfig.usernamePasswordLogins);
@@ -304,18 +308,24 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginUsernames_set(
 			return result;
 		}
 	}
+	*/
 	result = Ov_SetDynamicVectorValue(&(pobj->v_LoginUsernames), value, veclen, STRING);
 	if(Ov_Fail(result)){
 		return result;
 	}
+
+
 	/*	copy to server config struct	*/
+	/* TODO: New AccessControl
 	for(iterator = 0; iterator < veclen; iterator++){
-		/*	this works for different length ONLY because OV_SetDynamicVeclen sets unused memory to zero and ov_sting_getlength can catch this	*/
+		//	this works for different length ONLY because OV_SetDynamicVeclen sets unused memory to zero and ov_sting_getlength can catch this
 		pobj->v_serverConfig.usernamePasswordLogins[iterator].username.data = (UA_Byte*)pobj->v_LoginUsernames.value[iterator];
 		pobj->v_serverConfig.usernamePasswordLogins[iterator].username.length = ov_string_getlength(pobj->v_LoginUsernames.value[iterator]);
 		pobj->v_serverConfig.usernamePasswordLogins[iterator].password.data = (UA_Byte*)pobj->v_LoginPasswords.value[iterator];
 		pobj->v_serverConfig.usernamePasswordLogins[iterator].password.length = ov_string_getlength(pobj->v_LoginPasswords.value[iterator]);
 	    }
+	 */
+
 	if(pobj->v_objectstate >= OV_OS_STARTED){
 		opcua_uaServer_initServer(pobj);
 	}
@@ -335,12 +345,15 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginPasswords_set(
     const OV_STRING*  value,
     const OV_UINT veclen
 ) {
-	OV_UINT iterator;
+	//OV_UINT iterator;
 	OV_RESULT result;
 	/*	usernames have to be set before	*/
+	/* TODO: New AccessControl
 	if(veclen != pobj->v_serverConfig.usernamePasswordLoginsSize){
 		return OV_ERR_BADVALUE;
 	}
+	*/
+
 	if(pobj->v_objectstate >= OV_OS_STARTED){
 		opcua_uaServer_stopServer(pobj);
 	}
@@ -348,11 +361,15 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginPasswords_set(
 	if(Ov_Fail(result)){
 		return result;
 	}
+
 	/*	copy to server config struct	*/
+	/* TODO: New AccessControl
 	for(iterator = 0; iterator < veclen; iterator++){
 		pobj->v_serverConfig.usernamePasswordLogins[iterator].password.data = (UA_Byte*)pobj->v_LoginPasswords.value[iterator];
 		pobj->v_serverConfig.usernamePasswordLogins[iterator].password.length = ov_string_getlength(pobj->v_LoginPasswords.value[iterator]);
 	}
+	*/
+
 	if(pobj->v_objectstate >= OV_OS_STARTED){
 		opcua_uaServer_initServer(pobj);
 	}
@@ -362,7 +379,10 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginPasswords_set(
 OV_DLLFNCEXPORT OV_UINT opcua_uaServer_LoginLoginsCount_get(
     OV_INSTPTR_opcua_uaServer          pobj
 ) {
+	/* TODO: New AccessControl
     return pobj->v_serverConfig.usernamePasswordLoginsSize;
+	*/
+	return 0;
 }
 
 OV_DLLFNCEXPORT OV_STRING opcua_uaServer_ApplicationURI_get(
@@ -434,6 +454,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_constructor(
     OV_STRING	uName2	= "programmer";
     OV_STRING	pw1		= "PWoperator";
     OV_STRING	pw2		= "PWprogrammer";
+    OV_INSTPTR_opcua_uaIdentificator pIdentificator = NULL;
     OV_STRING_VEC usernames = {.veclen = 2, .value = (OV_STRING[]) {uName1, uName2}};
     OV_STRING_VEC pws = {.veclen = 2, .value = (OV_STRING[]) {pw1, pw2}};
 
@@ -458,6 +479,19 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_constructor(
     if(Ov_Fail(result)){
     	return result;
     }
+
+    /*	create protocol identificator for OPCUA	*/
+    pIdentificator = Ov_StaticPtrCast(opcua_uaIdentificator, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pobj), "Identificator"));
+    if(pIdentificator)
+    	Ov_DeleteObject(pIdentificator);
+    pIdentificator = NULL;
+
+    result = Ov_CreateObject(opcua_uaIdentificator, pIdentificator, Ov_StaticPtrCast(ov_domain, pobj), "Identificator");
+    if(Ov_Fail(result)){
+    	ov_logfile_error("Fatal: could not create Identificator object");
+    	return result;
+    }
+
     return OV_ERR_OK;
 }
 
@@ -468,7 +502,6 @@ OV_DLLFNCEXPORT void opcua_uaServer_destructor(
     *   local variables
     */
 	//OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
-	//OV_UINT	iterator;
     /* do what */
 
     /* destroy object */
@@ -485,7 +518,7 @@ OV_DLLFNCEXPORT void opcua_uaServer_startup(
     *   local variables
     */
     OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
-    OV_UINT	iterator = 0;
+    //OV_UINT	iterator = 0;
     /* do what the base class does first */
     ov_object_startup(pobj);
 
@@ -493,13 +526,16 @@ OV_DLLFNCEXPORT void opcua_uaServer_startup(
     opcua_pUaServer = pinst;
 
     /*	initialize config struct as standard and copy in variables from the server object	*/
+
+
     pinst->v_serverConfig = UA_ServerConfig_standard;
+    /* TODO: New AccessControl
     pinst->v_serverConfig.enableAnonymousLogin = pinst->v_LoginEnableAnonymous;
     pinst->v_serverConfig.enableUsernamePasswordLogin = pinst->v_LoginEnableUsernamePassword;
     pinst->v_serverConfig.usernamePasswordLoginsSize = pinst->v_LoginUsernames.veclen;
     pinst->v_serverConfig.usernamePasswordLogins = Ov_HeapMalloc(pinst->v_serverConfig.usernamePasswordLoginsSize * sizeof(UA_UsernamePasswordLogin));
     if(!pinst->v_serverConfig.usernamePasswordLogins){
-    	/*	we're out of memory. a printf does not make sense so just dont start up...	*/
+    	//	we're out of memory. a printf does not make sense so just dont start up...
     	return;
     }
     for(iterator = 0; iterator < pinst->v_serverConfig.usernamePasswordLoginsSize; iterator++){
@@ -508,6 +544,7 @@ OV_DLLFNCEXPORT void opcua_uaServer_startup(
     	pinst->v_serverConfig.usernamePasswordLogins[iterator].password.data = (UA_Byte*)pinst->v_LoginPasswords.value[iterator];
     	pinst->v_serverConfig.usernamePasswordLogins[iterator].password.length = ov_string_getlength(pinst->v_LoginPasswords.value[iterator]);
     }
+    */
     pinst->v_serverConfig.applicationDescription.applicationName.text.length = ov_string_getlength(pinst->v_ApplicationName);
     pinst->v_serverConfig.applicationDescription.applicationName.text.data = (UA_Byte*)pinst->v_ApplicationName;
     pinst->v_serverConfig.applicationDescription.applicationUri.length = ov_string_getlength(pinst->v_ApplicationURI);
@@ -532,7 +569,6 @@ OV_DLLFNCEXPORT void opcua_uaServer_shutdown(
     opcua_pUaServer = NULL;
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
-
 
     return;
 }
@@ -574,3 +610,51 @@ OV_DLLFNCEXPORT void opcua_uaServer_typemethod (
 	UA_Server_run_iterate(thisServer->v_serverData, false);
     return;
 }
+
+OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(UA_Namespace **namespace, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel) {
+	UA_StatusCode result = UA_STATUSCODE_GOOD;
+	OV_STRING tmpString = NULL;
+
+	for (OV_UINT i = 0; i < namespaceSize; i++){
+		result = UA_Server_addNamespace_full(opcua_pUaServer->v_serverData, namespace[i]);
+		if (result != UA_STATUSCODE_GOOD){
+			for (OV_UINT k = 0; k < i; k++){
+				tmpString = NULL;
+				copyOPCUAStringToOV(namespace[k]->uri, &tmpString);
+				UA_Server_deleteNamespace(opcua_pUaServer->v_serverData, tmpString);
+				ov_database_free(tmpString);
+			}
+			return result;
+		}
+	}
+
+	UA_Namespace *tmpNamespace = NULL;
+	UA_UInt16 tmpNamespacesSize = 0;
+	if (loadInfoModel != NULL)
+		result = loadInfoModel(opcua_pUaServer->v_serverData, &tmpNamespacesSize, &tmpNamespace);
+
+	if (result != UA_STATUSCODE_GOOD){
+		for (OV_UINT i = 0; i < namespaceSize; i++){
+			tmpString = NULL;
+			copyOPCUAStringToOV(namespace[i]->uri, &tmpString);
+			UA_Server_deleteNamespace(opcua_pUaServer->v_serverData, tmpString);
+			ov_database_free(tmpString);
+		}
+		return result;
+	}
+
+	for (OV_UINT i = 0; i < namespaceSize; i++){
+		if (StartFolder[i] == NULL)
+			continue;
+		if(UA_Server_addReference(opcua_pUaServer->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(namespace[i]->index, StartFolder[i]), true) != UA_STATUSCODE_GOOD){
+			tmpString = NULL;
+			copyOPCUAStringToOV(namespace[i]->uri, &tmpString);
+			ov_logfile_error("%s - init: could not create reference to %s-namespace", opcua_pUaServer->v_identifier, tmpString);
+			ov_database_free(tmpString);
+		}
+	}
+
+	return result;
+}
+

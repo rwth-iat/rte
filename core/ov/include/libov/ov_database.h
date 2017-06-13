@@ -40,8 +40,8 @@ extern "C" {
 *	Maximum size of a database file
 */
 #ifndef OV_DATABASE_MAXSIZE
-/* #define OV_DATABASE_MAXSIZE	2147483648  2 GByte */
-#define OV_DATABASE_MAXSIZE	524288000UL	/* 500 MByte */
+ #define OV_DATABASE_MAXSIZE	2147483648     //   2 GByte 
+//#define OV_DATABASE_MAXSIZE	524288000UL    // 500 MByte 
 #endif
 
 

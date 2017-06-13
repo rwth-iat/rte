@@ -20,11 +20,12 @@
 #define OV_COMPILE_LIBRARY_opcua
 #endif
 
-#if OV_SYSTEM_UNIX
+#ifndef _WIN32
 //	for gethostname
 #define _BSD_SOURCE
 #include <unistd.h>
 #endif
+
 
 #include "opcua.h"
 #include "libov/ov_macros.h"
@@ -229,13 +230,13 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_ovNetworkLayer_getaccess(
 
 OV_DLLFNCEXPORT UA_StatusCode opcua_ovNetworkLayer_start(
 	struct UA_ServerNetworkLayer *nl,
-	UA_Logger *logger
+	UA_Logger logger
 ) {
 
     return (UA_StatusCode)0;
 }
 
-OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
+OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_getJobs(
 	struct UA_ServerNetworkLayer *nl,
 	UA_Job** jobs,
 	UA_UInt16 timeout
@@ -257,7 +258,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
 
 	counter += this->v_connsToCloseCount * 2;
 
-	newJobs = malloc(sizeof(UA_Job)*(counter+1));
+	newJobs = UA_malloc(sizeof(UA_Job)*(counter+1));
 	if(!newJobs){
 		jobs = NULL;
 		return 0;
@@ -291,7 +292,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
 	this->v_connsToCloseCount = 0;
 
 	if(counter == 0) {
-		free(newJobs);
+		UA_free(newJobs);
 		*jobs = NULL;
 	} else {
 		*jobs = newJobs;
@@ -300,7 +301,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
 	return counter;
 }
 
-OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_stop(
+OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_stop(
 	struct UA_ServerNetworkLayer *nl,
 	UA_Job** jobs
 ) {
@@ -317,4 +318,3 @@ OV_DLLFNCEXPORT void opcua_ovNetworkLayer_delete(
 	pOVNetworkLayer = NULL;
     return;
 }
-

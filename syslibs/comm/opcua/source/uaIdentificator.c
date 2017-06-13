@@ -97,7 +97,7 @@ OV_DLLFNCEXPORT OV_RESULT read_xdr_string_tomemstack(UA_ByteString data, OV_UINT
 OV_DLLFNCEXPORT OV_RESULT opcua_uaIdentificator_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
+    /*
     *   local variables
     */
     OV_INSTPTR_opcua_uaIdentificator pinst = Ov_StaticPtrCast(opcua_uaIdentificator, pobj);
@@ -195,7 +195,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaIdentificator_createClientHandler (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
 ) {
-    /*    
+    /*
     *   local variables
     */
 	OV_INSTPTR_opcua_uaConnection pClientHandler = NULL;
@@ -236,4 +236,3 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaIdentificator_createClientHandler (
 		return result;
 	}
 }
-

@@ -37,7 +37,7 @@ OV_RESULT ssc_getObjectFromExecute(
 ) {
 	OV_STRING pathRelativeobject = NULL;
 	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pStep));
+	OV_INSTPTR_ssc_SequentialStateChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_domain containerDomain = NULL;
 
 	*pTargetObj = NULL;
@@ -89,7 +89,7 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	 */
 	OV_INSTPTR_ssc_execute pinst = Ov_StaticPtrCast(ssc_execute, pfb);
 
-	OV_INSTPTR_ssc_SequentialControlChart  	pTargetSequentialControlChart = NULL;
+	OV_INSTPTR_ssc_SequentialStateChart  	pTargetSequentialControlChart = NULL;
 	OV_INSTPTR_fb_functionblock pTargetObj = NULL;
 	OV_INT targetActimode = FB_AM_ON;
 	OV_INT targetCyctimeSecs = 0;
@@ -114,8 +114,8 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	pTargetObj->v_cyctime.usecs = 0;
 	pTargetObj->v_iexreq = TRUE;
 
-	if(Ov_CanCastTo(ssc_SequentialControlChart, pTargetObj)){
-		pTargetSequentialControlChart = Ov_StaticPtrCast(ssc_SequentialControlChart, pTargetObj);
+	if(Ov_CanCastTo(ssc_SequentialStateChart, pTargetObj)){
+		pTargetSequentialControlChart = Ov_StaticPtrCast(ssc_SequentialStateChart, pTargetObj);
 		// activate SSC
 		pTargetSequentialControlChart->v_EN = SSC_CMD_START;
 	}

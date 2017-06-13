@@ -69,10 +69,6 @@
 
 // TODO:  Cmd mapping
 
-#define CC_OCCUPANCY_ORDEROCCUPY "ALLOCATE"
-#define CC_OCCUPANCY_ORDERFREE "FREE"
-#define CC_OCCUPY_VARIABLENAME "occupiedBy"
-#define CC_SENDERID_VARIABLENAME "senderID"
 
 /***********************************************************************
 	command

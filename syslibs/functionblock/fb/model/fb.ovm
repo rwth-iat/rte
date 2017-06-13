@@ -335,7 +335,20 @@ LIBRARY fb
         END_VARIABLES;
     END_CLASS;
     
-    
+    	CLASS controlchart : CLASS fb/functionchart
+		IS_INSTANTIABLE;
+		COMMENT = "a Chart with ability to provide services";
+		VARIABLES
+			CMD			: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "Command input for services";
+			ORDERLIST[]	: STRING	FLAGS = "i" COMMENT = "Command list for services";
+			ORDEREXECUTOR[]	: STRING	FLAGS = "i" COMMENT = "Name of Order executor";
+		END_VARIABLES;
+			OPERATIONS
+			typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
     ASSOCIATION variables : ONE_TO_MANY
         PARENT funchart  : CLASS fb/functionchart;
         CHILD  ports : CLASS fb/port;

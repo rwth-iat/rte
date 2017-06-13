@@ -43,26 +43,11 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny);
 UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess);
 OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess);
 
-UA_StatusCode opcua_nsOv_fillReferenceDescription(
-		OV_ELEMENT* pElement, UA_UInt16 referenceTypeNamespaceIndex, UA_Int32 referenceType, UA_Boolean isForward, UA_UInt32 resultMask, UA_ReferenceDescription* dst);
-/*
-UA_StatusCode opcua_ns0_fillReferenceDescription(
-		OV_INSTPTR_opcua_uaBaseNodeType pNode, UA_Int32 referenceType, UA_UInt32 resultMask, UA_ReferenceDescription* dst);
-*/
-/**
- * resolves a UA-nodeId to an OV_PATH object
- * the nodeId has to be of type STRING
- * call ov_memstack_lock() /_unlock() around this one
- */
-
-UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath);
-
-UA_Int32 opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access);
-
 UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port);
 
 OV_INSTPTR_opcua_ovNetworkLayer getOvNetworkLayer();
 void opcua_ovNetworklayer_addConnToDelete(UA_Connection* connection);
 void opcua_ovNetworklayer_addConnToClose(UA_Connection* connection);
 
+OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst);
 #endif /* opcua_HELPERS_H_ */

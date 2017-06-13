@@ -1,0 +1,41 @@
+#include "ov.ovm" 
+
+LIBRARY identification
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of Identification.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS Identification : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			// Add variables here. The syntax is:
+			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
+			// Example:
+			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
+			// Example for a fb/functionblock based class
+			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+		END_VARIABLES;
+		OPERATIONS
+			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
+			// if MY_FUNC is declared in identification.ovf. Implement the functions in Identification.c.
+			// fb/functionblock based classes have to implement typemethod
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

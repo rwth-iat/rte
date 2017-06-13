@@ -1,0 +1,45 @@
+#include "ov.ovm"
+#include "identification.ovm"
+
+LIBRARY lifeCycleEntry
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of LifeCycleEntry.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS LifeCycleEntry : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+            CreatingInstanceIdString  : STRING INITIALVALUE    =   "";
+            CreatingInstanceIdType    : UINT;
+            WritingInstanceIdString   : STRING INITIALVALUE    =   "";
+            WritingInstanceIdType     : UINT;
+            Data                    : ANY;
+            TimeStamp               : TIME;
+            Subject                 : STRING INITIALVALUE    =   "";
+            EventClass              : STRING INITIALVALUE    =   "";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS;
+        
+    CLASS LifeCycleArchive : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+            LifeCycleEntrySize        : UINT INITIALVALUE = 0;
+            LifeCycleEntrySizeMax     : UINT INITIALVALUE = 1000;
+            LifeCycleEntryNameCount   : UINT INITIALVALUE = 0;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+	
+END_LIBRARY;

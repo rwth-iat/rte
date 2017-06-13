@@ -86,7 +86,7 @@ static OV_RESULT ssc_getObjectAndVarnameFromSetVariable(
 	OV_STRING targetPathname = NULL;
 	OV_STRING pathRelativeobject = NULL;
 	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pStep));
+	OV_INSTPTR_ssc_SequentialStateChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_domain containerDomain = NULL;
 
 	*pTargetObj = NULL;
@@ -245,6 +245,7 @@ OV_DLLFNCEXPORT OV_BOOL ssc_setVariable_checkAction(
 	if(pTargetObj == NULL){
 		pinst->v_error = TRUE;
 		ov_string_setvalue(&pinst->v_errorDetail, "Configured Object not found.");
+		ov_string_setvalue(&targetVarname, NULL);
 		return FALSE;
 	}
 	if(Ov_CanCastTo(fb_port, pTargetObj)){
@@ -252,11 +253,13 @@ OV_DLLFNCEXPORT OV_BOOL ssc_setVariable_checkAction(
 	}else if(targetVarname == NULL){
 		pinst->v_error = TRUE;
 		ov_string_setvalue(&pinst->v_errorDetail, "Configured Object does not have the requested variable.");
+		ov_string_setvalue(&targetVarname, NULL);
 		return FALSE;
 	}
 
 	pinst->v_error = FALSE;
-	ov_string_setvalue(&pinst->v_errorDetail, NULL);
+	ov_string_setvalue(&targetVarname, NULL);
+	ov_string_setvalue(&pinst->v_errorDetail, "");
 
 	return TRUE;
 }

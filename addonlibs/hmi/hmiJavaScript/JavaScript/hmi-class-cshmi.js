@@ -1,5 +1,5 @@
 /*
-*   Copyright (C) 2015
+*   Copyright (C) 2017
 *   Lehrstuhl fuer Prozessleittechnik,
 *   D-52056 Aachen, Germany.
 *   All rights reserved.
@@ -1296,6 +1296,7 @@ cshmi.prototype = {
 					HMI.hmi_log_info_onwebsite("Sorry, your browser does not support textinput. If this is IE10 Metro mode, try desktop mode.");
 				}else if (splittedValueParameter.length > 1){
 					textinputHint = splittedValueParameter[1];
+					textinputHint=textinputHint.concat("\nFor vector inputs, type in \'vec\' then use space as a separator");
 					//e.g. "textinput:Some textinputHint:TemplateFBReferenceVariable:InputVarPath"
 					if (splittedValueParameter.length > 3){
 						this.ResourceList.Actions["tempPath"] = new Object();
@@ -1317,15 +1318,31 @@ cshmi.prototype = {
 						input = window.prompt(textinputHint, "");
 					}
 				}else{
-					textinputHint = 'Please input a new value';
+					textinputHint = 'Please input a new value.\nFor Vector inputs, type in \'vec\' then use space as a separator';
 					input = window.prompt(textinputHint, "");
-				}
-				if (input !== null){
-					return input;
-				}else{
-					//intentionally no value
-					return null;
-				}
+				}				
+				//	text = null;
+					if (input.length !== 0) {
+						splitinput=input.split(" ");
+						if(splitinput.length!==1)
+							{
+							if(splitinput[0]==="vec"){
+								return splitinput.splice(1);
+							}
+							return input;
+							}
+ 						else {
+						return input;
+					}
+				} else {
+						return " ";
+					}
+//				if (input !== null){
+//					return input;
+//				}else{
+//					//intentionally no value
+//					return null;
+//				}
 			}else if(ParameterValue === "mousex"){
 				var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, HMI.Playground.firstChild)[0];
 				if (!isNaN(newX)){
@@ -1882,6 +1899,9 @@ cshmi.prototype = {
 			}
 			return true;
 		}else if (ParameterName === "elemVar"){
+			//some changes should trigger a resize of a blackbox
+			var correctedSizeOrPosition = false;
+
 			//some elemVars are special, as they are different in Model and SVG
 			if (ParameterValue === "strokeWidth"){
 				VisualObject.setAttribute("stroke-width", NewValue);
@@ -1919,6 +1939,31 @@ cshmi.prototype = {
 					
 					//load hidden elements now
 					this._interpreteHiddenChildrenElements(VisualObject);
+				}
+
+				/** align  HTML div from playground to the new setting */
+				if (!this.useforeignObject) {
+					// recursive handling is needed because a changed parent visibility hides a child
+					var handleRecursive = function (VisualObject) {
+						if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+							for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+								if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+									if (NewValue == "FALSE"){
+										HMI.Playground.childNodes.item(i).style.display = "none";
+									}else{
+										HMI.Playground.childNodes.item(i).style.display = "block";
+									}
+									break;
+								}
+							}
+						}
+						for (var i = 0; i < VisualObject.childNodes.length; i++) {
+							if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+								handleRecursive(VisualObject.childNodes.item(i));
+							}
+						}
+					};
+					handleRecursive(VisualObject);
 				}
 			}else if (ParameterValue === "rotate"){
 				if(!isNumeric(NewValue)){
@@ -1959,6 +2004,7 @@ cshmi.prototype = {
 				}
 				//we want to have offset parameter on all visual elements
 				HMI.saveAbsolutePosition(VisualObject);
+				correctedSizeOrPosition = true;
 			}else if (ParameterValue === "absolutey"){
 				var relativeY = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
@@ -1972,6 +2018,7 @@ cshmi.prototype = {
 				}
 				//we want to have offset parameter on all visual elements
 				HMI.saveAbsolutePosition(VisualObject);
+				correctedSizeOrPosition = true;
 			}else if (ParameterValue === "absoluterotate"){
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absoluterotate is calculated from the offset of the parentNode
@@ -2015,7 +2062,35 @@ cshmi.prototype = {
 				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "cx" || ParameterValue === "cy" || ParameterValue === "x1" || ParameterValue === "y1"){
 					HMI.saveAbsolutePosition(VisualObject);
 				}
+				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "width" || ParameterValue === "height"){
+					correctedSizeOrPosition = true;
+				}
 			}
+			/** align  HTML div from playground to the new setting */
+			if (correctedSizeOrPosition === true && !this.useforeignObject) {
+				// recursive handling is needed because a changed parent position can change a child
+				var handleRecursive = function (VisualObject) {
+					if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+						for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+							if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+								var divElem = HMI.Playground.childNodes.item(i);
+								divElem.style.top = VisualObject.getAttribute("absolutey")+"px";
+								divElem.style.left = VisualObject.getAttribute("absolutex")+"px";
+								divElem.style.width = VisualObject.getAttribute("width")+"px";
+								divElem.style.height = VisualObject.getAttribute("height")+"px";
+								break;
+							}
+						}
+					}
+					for (var i = 0; i < VisualObject.childNodes.length; i++) {
+						if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+							handleRecursive(VisualObject.childNodes.item(i));
+						}
+					}
+				};
+				handleRecursive(VisualObject);
+			}
+			
 			return true;
 		}else if (ParameterName === "globalVar"){
 			//globalVar
@@ -4241,6 +4316,27 @@ cshmi.prototype = {
 			this.ResourceList.newRebuildObject.x = VisualObject.getAttribute("x");
 			this.ResourceList.newRebuildObject.y = VisualObject.getAttribute("y");
 		}
+		
+		/** clean up HTML div from playground */
+		if (!this.useforeignObject) {
+			var deleteRecursive = function (VisualObject) {
+				if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+					for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+						if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+							HMI.Playground.removeChild(HMI.Playground.childNodes.item(i));
+							break;
+						}
+					}
+				}
+				for (var i = 0; i < VisualObject.childNodes.length; i++) {
+					if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+						deleteRecursive(VisualObject.childNodes.item(i));
+					}
+				}
+			};
+			deleteRecursive(VisualObject);
+		}
+		
 		var newVisualObject = this._interpreteElementOrEventRecursive(VisualParentObject, ObjectPath, ObjectType, false);
 		this.ResourceList.newRebuildObject = Object();
 		
@@ -4303,6 +4399,20 @@ cshmi.prototype = {
 		//interprete onload Actions if we are already loaded
 		if (this.initStage === false){
 			this._interpreteOnloadCallStack();
+		}
+		
+		if(false === this.useforeignObject){
+			var blackboxes = csHMIgetElementsByClassName(null, this.cshmiBlackboxClass);
+			for (var i = 0; i < blackboxes.length; ++i){
+				var HTMLcontentNode = document.getElementById(blackboxes[i].id+"*Div");
+				if(HTMLcontentNode){
+					//push the blackbox thing to the end
+					HMI.Playground.appendChild(HTMLcontentNode);
+					//correct position of the blackbox. absolutey are not known before
+					HTMLcontentNode.style.top = blackboxes[i].getAttribute("absolutey")+"px";
+					HTMLcontentNode.style.left = blackboxes[i].getAttribute("absolutex")+"px";
+				}
+			}
 		}
 		
 		return true;
@@ -4956,6 +5066,7 @@ cshmi.prototype = {
 		var jsOnload = requestList[ObjectPath]["jsOnload"];
 		
 		var HTMLcontentNode = null;
+		var HtmlFirstElement = null;
 		if(HTMLcontent !== ""){
 			//create foreignObject in <SVG>-Element
 			var SVGWidth = VisualObject.getAttribute("width");
@@ -4978,6 +5089,7 @@ cshmi.prototype = {
 				+HTML
 				+"</svg:svg>";
 				HTMLcontentNode = HMI.HMIDOMParser.parse(svgContent);
+				HtmlFirstElement = HTMLcontentNode.firstChild.firstElementChild.firstElementChild;
 				
 				//append foreignObject to VisualObject
 				parentObject = VisualObject;
@@ -4991,7 +5103,9 @@ cshmi.prototype = {
 				HTMLcontentNode.style.width = SVGWidth+"px";
 				HTMLcontentNode.style.height = SVGHeight+"px";
 				HTMLcontentNode.innerHTML = HTMLcontent;
-				
+
+				HtmlFirstElement = HTMLcontentNode.firstElementChild;
+
 				//the position will be later positioned to the Playground, so this is changed to "relative"
 				HMI.Playground.style.position = "relative";
 				HTMLcontentNode.style.position = "absolute";
@@ -5067,6 +5181,7 @@ cshmi.prototype = {
 			 */
 			var cshmimodel = new Object();
 			cshmimodel.SvgElement = VisualObject;
+			cshmimodel.HtmlFirstElement = HtmlFirstElement;
 			cshmimodel.Modelpath = ObjectPath;
 			cshmimodel.document = HMI.svgDocument;
 			cshmimodel.window = window;
@@ -5236,7 +5351,11 @@ cshmi.prototype = {
 		//load scripts and call jsonload script on load (or direct, if no source was requested)
 		var result = loadScriptUrls(
 			sourceListSplitted, 
-			function(){HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload")}, 
+			function(){
+				if(jsOnload){
+					HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
+				}
+			}, 
 			false,
 			null,
 			null
@@ -5253,6 +5372,9 @@ cshmi.prototype = {
 	 * @param {String} locationidentifier (could be jsOnload, or onglobalvarchanged)
 	 */
 	_executeScript: function(VisualObject, ObjectPath, evalcode, locationidentifier){
+		if(!evalcode){
+			return;
+		}
 		//declare object 'cshmimodel' for further use [usage e.g.: 'cshmimodel.variables.<VARNAME>.getValue();']
 		var cshmimodel = VisualObject.ResourceList.cshmimodel;
 		cshmimodel.VisualObject = VisualObject;
@@ -6190,6 +6312,28 @@ cshmi.prototype = {
 			//interprete onload Actions if we are already loaded
 			if (this.initStage === false){
 				this._interpreteOnloadCallStack();
+
+				/** align  HTML div from playground to the new setting */
+				if (!this.useforeignObject) {
+					// recursive handling is needed because a changed parent visibility hides a child
+					var handleRecursive = function (VisualObject) {
+						if (VisualObject.classList.contains(HMI.cshmi.cshmiBlackboxClass)) {
+							for (var i = 0; i < HMI.Playground.childNodes.length; i++) {
+								if (HMI.Playground.childNodes.item(i).id === VisualObject.id + "*Div") {
+									HMI.Playground.childNodes.item(i).style.top = VisualObject.getAttribute("absolutey")+"px";
+									HMI.Playground.childNodes.item(i).style.left = VisualObject.getAttribute("absolutex")+"px";
+									break;
+								}
+							}
+						}
+						for (var i = 0; i < VisualObject.childNodes.length; i++) {
+							if (VisualObject.childNodes.item(i).tagName === "svg" || VisualObject.childNodes.item(i).tagName === "g") {
+								handleRecursive(VisualObject.childNodes.item(i));
+							}
+						}
+					};
+					handleRecursive(VisualParentObject);
+				}
 			}
 			
 			// mark the class as complete

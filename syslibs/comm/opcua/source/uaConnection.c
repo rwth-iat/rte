@@ -44,7 +44,9 @@ static void ReleaseMallocedBuffer(UA_Connection *connection, UA_ByteString *buf)
 }
 
 static void ReleaseReceiveBuffer(UA_Connection *connection, UA_ByteString *buf) {
-	ksbase_free_KSDATAPACKET(&((OV_INSTPTR_opcua_uaConnection)connection->handle)->v_buffer);
+	if (connection->handle != NULL)
+		ksbase_free_KSDATAPACKET(&((OV_INSTPTR_opcua_uaConnection)connection->handle)->v_buffer);
+	UA_ByteString_deleteMembers(buf);
 }
 
 /*	callback functions	*/
@@ -91,7 +93,7 @@ static OV_RESULT create_UA_Connection(OV_INSTPTR_opcua_uaConnection pinst){
 	    	ov_logfile_error("%s: could not allocate memory for UA_Connection. Aborting", pinst->v_identifier);
 	    	return OV_ERR_HEAPOUTOFMEMORY;
 	    }
-	    UA_Connection_init(pinst->v_connection);
+	    memset(pinst->v_connection, 0, sizeof(UA_Connection));
 	    pinst->v_connection->sockfd = 0;
 	    pinst->v_connection->handle = pinst;
 	    pinst->v_connection->localConf = getOvNetworkLayer()->v_localConfig;
@@ -107,7 +109,7 @@ static OV_RESULT create_UA_Connection(OV_INSTPTR_opcua_uaConnection pinst){
 OV_DLLFNCEXPORT OV_RESULT opcua_uaConnection_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
+    /*
     *   local variables
     */
     OV_INSTPTR_opcua_uaConnection pinst = Ov_StaticPtrCast(opcua_uaConnection, pobj);
@@ -126,7 +128,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaConnection_constructor(
 OV_DLLFNCEXPORT void opcua_uaConnection_destructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
+    /*
     *   local variables
     */
 //    OV_INSTPTR_opcua_uaConnection pinst = Ov_StaticPtrCast(opcua_uaConnection, pobj);
@@ -142,7 +144,7 @@ OV_DLLFNCEXPORT void opcua_uaConnection_destructor(
 OV_DLLFNCEXPORT void opcua_uaConnection_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
+    /*
     *   local variables
     */
 	OV_INSTPTR_opcua_uaConnection pinst = Ov_StaticPtrCast(opcua_uaConnection, pobj);
@@ -162,7 +164,7 @@ OV_DLLFNCEXPORT void opcua_uaConnection_startup(
 OV_DLLFNCEXPORT void opcua_uaConnection_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
+    /*
     *   local variables
     */
     OV_INSTPTR_opcua_uaConnection pinst = Ov_StaticPtrCast(opcua_uaConnection, pobj);
@@ -182,7 +184,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaConnection_HandleRequest(
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 ) {
-    /*    
+    /*
     *   local variables
     */
 	OV_RESULT result;

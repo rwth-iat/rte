@@ -6,7 +6,7 @@
 # Author: Holger Jeromin <h.jeromin@plt.rwth-aachen.de>
 # Author: Lars Evertz <l.evertz@plt.rwth-aachen.de>
 #
-# Usage: tclsh acplt_build.tcl (release) (compileonly) (cross FILENAME) (repo REPOSITORY_URL)
+# Usage: tclsh acplt_build.tcl (32|64) (checkout) (release) (compileonly) (no_dbcommands) (cross FILENAME) (repo REPOSITORY_URL)
 set release 0
 set checkout 0
 set compileonly 0
@@ -816,9 +816,9 @@ proc create_systools_and_servers {} {
 	file copy $basedir/serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf 
 }
 
-#/*
-#* Recursively removes all .svn dirs from the given folder
-#*/
+#
+# Recursively removes all .svn dirs from the given folder
+#
 proc remove_svn_dirs {dir} {
 	global os
 	global basedir
@@ -874,7 +874,6 @@ set system_libs {syslibs/comm/ksbase
 set addon_libs {addonlibs/hmi/cshmi 
 				addonlibs/commclient/ksapi 
 				addonlibs/commclient/fbcomlib 
-				addonlibs/commclient/opcuafb 
 				addonlibs/functionblock/iec61131stdfb 
 				addonlibs/functionblock/vdivde3696 
 				addonlibs/functionblock/ACPLTlab003lindyn 
@@ -885,7 +884,13 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/processcontrol/cmdlib 
 				addonlibs/processcontrol/PCMsgParser 
 				addonlibs/processcontrol/PCMsgCreator 
-				addonlibs/functionblock/SSChelper}
+				addonlibs/functionblock/SSChelper
+				addonlibs/administration/identification
+				addonlibs/administration/lifeCycleEntry
+				addonlibs/administration/propertyValueStatement
+				addonlibs/administration/openaas
+				addonlibs/administration/openaasOPCUAInterface
+				addonlibs/administration/openAASDiscoveryServer}
 				
 print_msg "checking out all libraries of the acplt system"
 
