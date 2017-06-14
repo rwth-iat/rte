@@ -25412,7 +25412,6 @@ getArgumentsVariableNode(UA_Server *server, const UA_MethodNode *ofMethod,
             if(refTarget->nodeClass == UA_NODECLASS_VARIABLE &&
                 refTarget->browseName.namespaceIndex == 0 &&
                 UA_String_equal(&withBrowseName, &refTarget->browseName.name)) {
-                UA_NodestoreSwitch_releaseNode(server, refTarget);
                 return (const UA_VariableNode*) refTarget;
             }
             UA_NodestoreSwitch_releaseNode(server, refTarget);
@@ -25529,7 +25528,7 @@ Service_Call_single(UA_Server *server, UA_Session *session,
             UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
             return;
         }
-    } else {
+	} else {
         result->statusCode = argumentsConformsToDefinition(server, inputArguments,
                                                            request->inputArgumentsSize,
                                                            request->inputArguments);
@@ -25539,6 +25538,7 @@ Service_Call_single(UA_Server *server, UA_Session *session,
             return;
         }
     }
+    if (inputArguments) UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)inputArguments);
 
     /* Allocate the output arguments */
     result->outputArgumentsSize = 0; /* the default */
@@ -25555,6 +25555,7 @@ Service_Call_single(UA_Server *server, UA_Session *session,
         }
         result->outputArgumentsSize = outputArguments->value.data.value.value.arrayLength;
     }
+    if (outputArguments) UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)outputArguments);
 
     /* Call the method */
 #if defined(UA_ENABLE_METHODCALLS) && defined(UA_ENABLE_SUBSCRIPTIONS)
