@@ -3,13 +3,9 @@ This library supports functionalities for the openAAS project. It also has an in
 Objects
 -AAS: This is an example how AAS could be structured and implemented. It has Folder for Property Value Statement Lists and a Lifecycle Archive for Lifecycleentries. Additionally an AAS has an Postoffice for receiving and sending messages from/to other AAS encoded with JSON.
 
--modelmanager: This is a manager object for creating and deleting AAS and there components. Also it supports the message sending in a network with an ComCo and an External Postoffice. Also it supports methods for opcua to interact with an AAS object.
-
--nodesStoreFunctions: This object is for the interoperability with opcua. It adds an Nodestore to the opcua server and with an interface it supports the browsing and reading of AAS objects. Moreover it enable the methods of the modelmanager object.
-
--aasDI: This object is for transferring Lifecycle-Entries from an asset to an AAS. The Lifecycle-Entries have to be in a Lifecycle-Archive of an AAS on the asset which also have to be an rte-Server with an modelmanager and an object from nodeStoreFunctionType.
+-modelmanager: This is a manager object for creating and deleting AAS and there components. Also it supports methods for opcua to interact with an AAS object.
 
 -LCEGenerator: With this Object you can generate Lifecycle-Entries in an AAS of your choice.
 
-
+-Service: With this abstract class you can implement your own services, which can be located everywhere. You just have to define your Inputs and Outputs with the Flags "i" or "o" and reimplement the "CallMethod"-function. ExampleService-Object is an example how to implement a new service (all supported types are shown).
 
