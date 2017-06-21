@@ -46,13 +46,13 @@ OV_DLLFNCEXPORT OV_RESULT openaasExample_Diagnosis_CallMethod(
 	*(OV_STRING*)packedOutputArgList[0] = NULL;
 
 	if (ov_string_compare(*(OV_STRING*)(packedInputArgList[0]), "FULL") == OV_STRCMP_EQUAL){
-		pinst->p_GPIOOut.v_pin = 23;
+		raspi_gpioOut_pin_set(&pinst->p_GPIOOut, 23);
 		pinst->p_Timer.v_IN = TRUE;
 		*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength("OK")+1);
 		strcpy(*(OV_STRING*)packedOutputArgList[0], "OK");
 		typeArray[0] = OV_VT_STRING;
 	}else if (ov_string_compare(*(OV_STRING*)(packedInputArgList[0]), "FAST") == OV_STRCMP_EQUAL){
-		pinst->p_GPIOOut.v_pin = 24;
+		raspi_gpioOut_pin_set(&pinst->p_GPIOOut, 24);
 		pinst->p_Timer.v_IN = TRUE;
 		*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength("OK")+1);
 		strcpy(*(OV_STRING*)packedOutputArgList[0], "OK");
