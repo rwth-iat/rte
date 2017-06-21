@@ -146,8 +146,10 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 		OV_ANY tmpAny;
 		tmpAny.value.valueunion.val_string = NULL;
 		ov_string_setvalue(&tmpAny.value.valueunion.val_string, tmpString);
+		ov_string_setvalue(&tmpString, NULL);
 		tmpAny.value.vartype = OV_VT_STRING;
 		Ov_SetAnyValue(&pPropertyValueStatement->v_Value, &tmpAny);
+		ov_string_setvalue(&tmpAny.value.valueunion.val_string, NULL);
 		pPropertyValueStatement->v_IDIdString = "http://openaas.org/properties/assetId";
 		pPropertyValueStatement->v_IDIdType = URI;
 		pPropertyValueStatement->v_View = FUNCTIONAL;

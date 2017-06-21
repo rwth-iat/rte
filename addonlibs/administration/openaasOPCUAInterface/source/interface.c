@@ -215,6 +215,7 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_interface_startup(
 		UA_Namespace_deleteMembers(&(pinst->v_interfacenamespace));
 		return;
 	}
+	UA_free(nsArray);
 
     return;
 }

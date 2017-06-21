@@ -45,7 +45,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
-	UA_NodeClass 			*nodeClass = NULL;
+	UA_NodeClass 			nodeClass;
 	OV_ELEMENT				element;
 
 	ov_memstack_lock();
@@ -61,13 +61,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 		return result;
 	}
 
-	nodeClass = UA_NodeClass_new();
-	if(!nodeClass){
-		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		return result;
-	}
-
-	*nodeClass = UA_NODECLASS_VARIABLE;
+	nodeClass = UA_NODECLASS_VARIABLE;
 	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableNode));
 
 	// Basic Attribute
@@ -97,7 +91,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	UA_NodeId_copy(nodeId, &newNode->nodeId);
 
 	// NodeClass
-	newNode->nodeClass 	= *nodeClass;
+	newNode->nodeClass 	= nodeClass;
 
 	// WriteMask
 	UA_UInt32 writeMask = 0;
@@ -201,6 +195,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
+	if (!newNode->references){
+		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+		UA_free(newNode);
+		return result;
+	}
 	newNode->referencesSize = size_references;
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
@@ -218,7 +217,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	}
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_freelist(plist);
-	ov_database_free(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
