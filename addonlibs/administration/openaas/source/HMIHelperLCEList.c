@@ -34,7 +34,6 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
     *   local variables
     */
 
-
 	OV_INSTPTR_openaas_HMIHelperLCEList pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEList, pfb);
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pchild = NULL;
@@ -64,13 +63,12 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 			ov_string_append(&path, "/");
 		ov_string_append(&path, pathList[i]);
 	}
-
+	ov_string_freelist(pathList);
 	pobj = ov_path_getobjectpointer(path,2);
 	if (!pobj){
 		pinst->v_Error = TRUE;
 		ov_string_setvalue(&pinst->v_ErrorText, "Could not find an object for this path");
-		ov_string_freelist(pathList);
-		ov_database_free(path);
+		ov_string_setvalue(&path, NULL);
 		return;
 	}
 
@@ -78,8 +76,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 	if (!paas){
 		pinst->v_Error = TRUE;
 		ov_string_setvalue(&pinst->v_ErrorText, "Object is not of aas-Type");
-		ov_string_freelist(pathList);
-		ov_database_free(path);
+		ov_string_setvalue(&path, NULL);
 		return;
 	}
 
@@ -214,9 +211,8 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEList_typemethod(
 	i++;
 	}
 
-	ov_database_free(tmpString);
-	ov_string_freelist(pathList);
-	ov_database_free(path);
+	ov_string_setvalue(&tmpString, NULL);
+	ov_string_setvalue(&path, NULL);
 
     return;
 }

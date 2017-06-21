@@ -35,7 +35,7 @@ LIBRARY openaas
             IdType         : UINT;
             Version        : INT COMMENT = "Version of the service";
             Revision       : INT COMMENT ="Revision number of the service";
-            WSDL           : STRING COMMENT ="WSDL Description of the service";
+            WSDL           : STRING COMMENT ="WSDL Description of the service" INITIALVALUE = "";
             execute        : BOOL HAS_SET_ACCESSOR COMMENT = "Execute service";
         END_VARIABLES; 
         OPERATIONS
@@ -47,12 +47,12 @@ LIBRARY openaas
     CLASS ExampleService : CLASS openaas/Service
     	IS_INSTANTIABLE;
 	    VARIABLES 
-	    	Input1     : BOOL   FLAGS="i";
+	    	Input1     : BOOL   FLAGS="i" ;
 	    	Input2     : INT    FLAGS="i";
 	    	Input3     : UINT   FLAGS="i";
 	    	Input4     : SINGLE FLAGS="i";
 	    	Input5     : DOUBLE FLAGS="i";
-	    	Input6     : STRING FLAGS="i";
+	    	Input6     : STRING FLAGS="i" INITIALVALUE = "";
 	    	Input7[]   : BOOL   FLAGS="i";
             Input8[]   : INT    FLAGS="i";
             Input9[]   : UINT   FLAGS="i";
@@ -64,7 +64,7 @@ LIBRARY openaas
 	    	Output3    : UINT   FLAGS="o";
 	    	Output4    : SINGLE FLAGS="o";
 	    	Output5    : DOUBLE FLAGS="o";
-	    	Output6    : STRING FLAGS="o";
+	    	Output6    : STRING FLAGS="o" INITIALVALUE = "";
 	    	Output7[]  : BOOL   FLAGS="o";
             Output8[]  : INT    FLAGS="o";
             Output9[]  : UINT   FLAGS="o";
@@ -97,14 +97,14 @@ LIBRARY openaas
             registered       : BOOL FLAGS = "o" COMMENT = "Determines if the ComponentManager is registered to the DiscoveryServer or not";
             messageTimeOut   : TIME_SPAN FLAGS = "n" COMMENT = "TimeOut in second for Register and Unregister Response until the next Request will be send";
             messageCount     : UINT FLAGS = "n" COMMENT = "TimeCount since the last Request" ;
-            errorText        : STRING FLAGS = "o" COMMENT = "Error description";
+            errorText        : STRING FLAGS = "o" COMMENT = "Error description" INITIALVALUE = "";
             reset            : BOOL HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Reset to state 0";
             receiverForMessageForwardedIdString : STRING INITIALVALUE = "";
             receiverForMessageForwardedIdType : UINT;
             senderForMessageForwardedIdString : STRING INITIALVALUE = "";
             senderForMessageForwardedIdType : UINT;
-            MsgIdForMessageForwarded : STRING FLAGS = "n" COMMENT = "Id of forwarded Message";
-            MsgIdForGetAASIdRequest  : STRING FLAGS = "n" COMMENT = "Id of getAASIdRequest Message";
+            MsgIdForMessageForwarded : STRING FLAGS = "n" COMMENT = "Id of forwarded Message" INITIALVALUE = "";
+            MsgIdForGetAASIdRequest  : STRING FLAGS = "n" COMMENT = "Id of getAASIdRequest Message" INITIALVALUE = "";
 		END_VARIABLES;
 		PARTS
 			INBOX  : CLASS MessageSys/inbox;
@@ -117,7 +117,7 @@ LIBRARY openaas
             sendMessage : C_FUNCTION <UA_FNC_SENDAASMESSAGEINSYSTEM>;
 		END_OPERATIONS;
 	END_CLASS;
-	 
+	
 	CLASS aas : CLASS ov/domain
 		IS_INSTANTIABLE;
 		VARIABLES   
@@ -251,8 +251,6 @@ LIBRARY openaas
         
         getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
         constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-        destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;
-        startup : C_FUNCTION <OV_FNC_STARTUP>;
     END_OPERATIONS;    
     END_CLASS;
     
@@ -339,6 +337,7 @@ LIBRARY openaas
         END_OPERATIONS;
     END_CLASS; 
     
+    
     CLASS HMIHelperLCEList    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
@@ -358,7 +357,6 @@ LIBRARY openaas
         END_OPERATIONS;
     END_CLASS; 
     
-      
     CLASS HMIHelperLCEData    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
@@ -385,6 +383,7 @@ LIBRARY openaas
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS;
+    
     
     CLASS PluggingTwoComponents    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
@@ -422,8 +421,8 @@ LIBRARY openaas
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
      END_CLASS; 
-       
-        
+
+     
      CLASS CheckPluggedStatus    :    CLASS fb/functionblock
           IS_INSTANTIABLE;
         VARIABLES
@@ -443,7 +442,7 @@ LIBRARY openaas
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS; 
-    
+
     CLASS SwitchForLCEGenerator    :    CLASS fb/functionblock
           IS_INSTANTIABLE;
         VARIABLES
@@ -463,5 +462,5 @@ LIBRARY openaas
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS;
-  	
+ 
 END_LIBRARY;

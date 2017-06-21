@@ -246,44 +246,13 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 		assetId.IdType = 0;
 
 		if (AASSTATUSCODE_FAIL(openaas_modelmanager_createAAS(aasId, "ComCo", assetId))){
+			ov_string_setvalue(&aasId.IdSpec, NULL);
+			ov_string_setvalue(&assetId.IdSpec, NULL);
 			ov_logfile_error("Fatal: Could not create Object 'ComCo'");
 			return OV_ERR_GENERIC;
 		}
+		ov_string_setvalue(&aasId.IdSpec, NULL);
+		ov_string_setvalue(&assetId.IdSpec, NULL);
 	}
     return OV_ERR_OK;
 }
-
-OV_DLLFNCEXPORT void openaas_modelmanager_destructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*
-    *   local variables
-    */
-    //OV_INSTPTR_openaas_modelmanager pinst = Ov_StaticPtrCast(openaas_modelmanager, pobj);
-
-    /* do what */
-
-    /* destroy object */
-    ov_object_destructor(pobj);
-
-    return;
-}
-
-
-
-OV_DLLFNCEXPORT void openaas_modelmanager_startup(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*
-    *   local variables
-    */
-    //OV_INSTPTR_openaas_modelmanager pinst = Ov_StaticPtrCast(openaas_modelmanager, pobj);
-
-    /* do what the base class does first */
-    ov_object_startup(pobj);
-
-    /* do what */
-
-    return;
-}
-

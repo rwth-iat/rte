@@ -191,6 +191,7 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	ov_vendortree_getservername(&srvnameprops, NULL);
 	ov_string_setvalue(&servername,srvnameprops.value.valueunion.val_string);
 	MessageSys_Message_senderName_set(pRequestMessage,servername);
+	ov_string_setvalue(&servername, NULL);
 
 	// Path
 	ov_memstack_lock();

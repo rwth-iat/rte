@@ -1153,10 +1153,12 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	//  								references, &result);
 	//  }
 	for (size_t i = 0; i < newNode->referencesSize; i++){
-		newNode->references[i].referenceTypeId = references[i].referenceTypeId;
-		newNode->references[i].targetId = references[i].nodeId;
+		UA_NodeId_copy(&(references[i].referenceTypeId), &(newNode->references[i].referenceTypeId));
+		UA_ExpandedNodeId_copy(&(references[i].nodeId), &(newNode->references[i].targetId));
 		newNode->references[i].isInverse = !references[i].isForward;
 	}
+	UA_BrowseDescription_delete(browseDescriptions);
+	UA_Array_delete(references, newNode->referencesSize, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
 	return newNode;
 }
 static UA_Node * OV_NodeStore2_getCopyNode(void *handle, const UA_NodeId *nodeId){

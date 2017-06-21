@@ -42,7 +42,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
-	UA_NodeClass 			*nodeClass = NULL;
+	UA_NodeClass 			nodeClass;
 	OV_ELEMENT				element;
 
 	ov_memstack_lock();
@@ -58,13 +58,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 		return result;
 	}
 
-	nodeClass = UA_NodeClass_new();
-	if(!nodeClass){
-		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		return result;
-	}
-
-	*nodeClass = UA_NODECLASS_OBJECT;
+	nodeClass = UA_NODECLASS_OBJECT;
 	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ObjectNode));
 
 
@@ -95,7 +89,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 	UA_NodeId_copy(nodeId, &newNode->nodeId);
 
 	// NodeClass
-	newNode->nodeClass 	= *nodeClass;
+	newNode->nodeClass 	= nodeClass;
 
 	// WriteMask
 	UA_UInt32 writeMask = 0;
@@ -124,6 +118,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
+	if (!newNode->references){
+		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+		UA_free(newNode);
+		return result;
+	}
 	newNode->referencesSize = size_references;
 
 	// ParentNode
@@ -134,7 +133,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 	OV_STRING tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "/", &len);
-	ov_string_setvalue(&tmpString, "");
+	ov_string_setvalue(&tmpString, NULL);
 	for (OV_UINT i = 0; i < len-1; i++){
 		if (i != 0)
 			ov_string_append(&tmpString, "/");
@@ -142,7 +141,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 	}
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_freelist(plist);
-	ov_database_free(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
@@ -158,7 +157,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 	ov_string_append(&tmpString, ".");
 	ov_string_append(&tmpString, ptr->p_Header.v_identifier);
 	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-	ov_database_free(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 
 	// BodyNode
 	newNode->references[3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
@@ -168,7 +167,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 	ov_string_append(&tmpString, ".");
 	ov_string_append(&tmpString, ptr->p_Body.v_identifier);
 	newNode->references[3].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-	ov_database_free(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 
 	// LifeCycleArchivNode
 	newNode->references[4].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
@@ -178,7 +177,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 	ov_string_append(&tmpString, ".");
 	ov_string_append(&tmpString, ptr->p_LifeCycleArchive.v_identifier);
 	newNode->references[4].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-	ov_database_free(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 
 	// ViewsNode
 	newNode->references[5].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
@@ -188,7 +187,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 	ov_string_append(&tmpString, ".");
 	ov_string_append(&tmpString, ptr->p_Views.v_identifier);
 	newNode->references[5].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-	ov_database_free(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 
 	size_t i = 5;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
@@ -203,7 +202,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASNodeToOPC
 			ov_string_append(&tmpString, "/");
 			ov_string_append(&tmpString, pref->v_identifier);
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-			ov_database_free(tmpString);
+			ov_string_setvalue(&tmpString, NULL);
 		}
 	}
 	*opcuaNode = newNode;
