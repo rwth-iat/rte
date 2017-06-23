@@ -313,30 +313,7 @@ LIBRARY openaas
         OPERATIONS 
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
-    END_CLASS;
-    
-    CLASS HMIHelperPVSL    :    CLASS fb/functionblock
-        IS_INSTANTIABLE;
-        VARIABLES
-            Path                 : STRING FLAGS = "i" INITIALVALUE    =   "";      
-            ExpressionLogic      : STRING FLAGS = "o" INITIALVALUE    =   "";
-            ExpressionSemantic   : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Name                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Unit                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Value                : STRING FLAGS = "o" INITIALVALUE    =   "";
-            TimeStamp            : STRING FLAGS = "o" INITIALVALUE    =   "";
-            View                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Visibility           : STRING FLAGS = "o" INITIALVALUE    =   "";
-            IDType               : STRING FLAGS = "o" INITIALVALUE    =   "";
-            IDSpecification      : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Error                : BOOL   FLAGS = "o";
-            ErrorText            : STRING FLAGS = "o" INITIALVALUE    =   "";
-        END_VARIABLES;
-        OPERATIONS
-            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-        END_OPERATIONS;
     END_CLASS; 
-    
     
     CLASS HMIHelperLCEList    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
