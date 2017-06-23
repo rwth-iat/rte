@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2017-05-02   File created
+*   2017-06-20   File created
 *
 *******************************************************************************
 *
@@ -25,21 +25,3 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT identification_Identification_constructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*    
-    *   local variables
-    */
-	OV_RESULT    result;
-
-    /* do what the base class does first */
-    result = ov_object_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-
-
-    return OV_ERR_OK;
-}

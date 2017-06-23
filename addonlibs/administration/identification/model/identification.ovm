@@ -14,6 +14,8 @@ LIBRARY identification
 	CLASS Identification : CLASS ov/object
 		IS_INSTANTIABLE;
 		VARIABLES
+			IdSpec : STRING INITIALVALUE = "";
+			IdType : UINT COMMENT = "0:URI, 1:ISO";
 			// Add variables here. The syntax is:
 			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
 			// Example:
@@ -25,7 +27,6 @@ LIBRARY identification
 			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
 			// if MY_FUNC is declared in identification.ovf. Implement the functions in Identification.c.
 			// fb/functionblock based classes have to implement typemethod
-			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
 	
