@@ -9,41 +9,69 @@ LIBRARY propertyValueStatement
 	COMMENT   = "";
 	
  
-	CLASS PropertyValueStatement : CLASS ov/object
+	CLASS PropertyValueStatement : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES
-            ExpressionSemantic : INT 
-               COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
-            ExpressionLogic : INT 
-               COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
-            Unit                   : STRING INITIALVALUE    =   "";
             Value                  : ANY;
-            TimeStamp              : TIME;
-            IDIdString               : STRING INITIALVALUE    =   "";
-            IDIdType                 : UINT;
-            View                   : INT
-                COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURITY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
-            Visibility             : INT COMMENT = "0:PRIVAT,1:CONTRACT,2:PUBLIC";
         END_VARIABLES;
         OPERATIONS
             getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
             constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
         END_OPERATIONS;
     END_CLASS;  
+    
+    CLASS CarrierId : CLASS identification/Identification
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS PropertyId : CLASS identification/Identification
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS ExpressionLogic : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+        	ExpressionLogicEnum : UINT COMMENT = "0:GREATER_THAN, 1:GREATER_EQUAL, 2:EQUAL, 3:NOT_EQUAL, 4:LESS_EQUAL, 5:LESS_THAN";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS ExpressionSemantic : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+        	ExpressionSemanticEnum : UINT COMMENT = "0:ASSURANCE, 1:SETTING, 2:MEASUREMENT, 3:REQUIREMENT";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
 
 	CLASS PropertyValueStatementList : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES
-            CarrierIdString  : STRING INITIALVALUE    =   "";
-            CarrierIdType    : UINT;
-            CreatingInstanceIdString : STRING INITIALVALUE    =   "";
-            CreatingInstanceIdType : UINT;
-            CreationTime : TIME;
         END_VARIABLES;
         OPERATIONS
             getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
         END_OPERATIONS;
     END_CLASS; 
+    
     
     CLASS MatchPVSRA : CLASS fb/functionblock
         IS_INSTANTIABLE;
@@ -76,5 +104,6 @@ LIBRARY propertyValueStatement
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS;
+    
 	
 END_LIBRARY;

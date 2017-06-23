@@ -89,11 +89,11 @@ OV_BOOL GreaterEqual (const OV_ANY any1, const OV_ANY any2){
 			break;
 
 			default:
-				ov_logfile_error("%s: comparison of given datatype not implementes");
+				ov_logfile_error("comparison of given datatype not implementes");
 				return FALSE;
 		}
 	}else{
-		ov_logfile_error("%s: comparison of given datatype not implementes");
+		ov_logfile_error("comparison of given datatype not implementes");
 		return FALSE;
 	}
 }
@@ -283,26 +283,137 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 	assurance = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pobj2);
 
 	// check
-	if (requirement->v_IDIdType != assurance->v_IDIdType){
-		ov_string_print(matchText, "requirement %s and assurance %s IDTypes are not the same", requirement->v_identifier, assurance->v_identifier);
+	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyId pPropertyId = NULL;
+	OV_INSTPTR_propertyValueStatement_ExpressionLogic pExpressionLogic = NULL;
+
+	OV_UINT rCarrierIdIdType = 0;
+	OV_STRING rCarrierIdIdString = NULL;
+	OV_UINT rPropertyIdIdType = 0;
+	OV_STRING rPropertyIdIdString = NULL;
+	OV_UINT rExpressionLogic = 0;
+
+	OV_INSTPTR_ov_object pchild = NULL;
+	OV_BOOL rCarrierIdFound = FALSE;
+	OV_BOOL rPropertyIdFound = FALSE;
+	OV_BOOL rExpressionLogicFound = FALSE;
+	OV_INSTPTR_ov_domain prparent = NULL;
+	prparent = Ov_GetParent(ov_containment, requirement);
+	Ov_ForEachChild(ov_containment, prparent, pchild){
+		if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+			pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+			rCarrierIdIdType = pCarrierId->v_IdType;
+			ov_string_setvalue(&rCarrierIdIdString, pCarrierId->v_IdSpec);
+			pCarrierId = NULL;
+			rCarrierIdFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+			pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
+			rPropertyIdIdType = pPropertyId->v_IdType;
+			ov_string_setvalue(&rPropertyIdIdString, pPropertyId->v_IdSpec);
+			pPropertyId = NULL;
+			rPropertyIdFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+			pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+			rExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+			pExpressionLogic = NULL;
+			rExpressionLogicFound = TRUE;
+		}
+	}
+	if (rCarrierIdFound == FALSE || rPropertyIdFound == FALSE || rExpressionLogicFound == FALSE){
+		Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain, requirement), pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				rCarrierIdIdType = pCarrierId->v_IdType;
+				ov_string_setvalue(&rCarrierIdIdString, pCarrierId->v_IdSpec);
+				pCarrierId = NULL;
+			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+				pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
+				rPropertyIdIdType = pPropertyId->v_IdType;
+				ov_string_setvalue(&rPropertyIdIdString, pPropertyId->v_IdSpec);
+				pPropertyId = NULL;
+			}else if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+				pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+				rExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+				pExpressionLogic = NULL;
+			}
+		}
+	}
+
+
+	OV_UINT aCarrierIdIdType = 0;
+	OV_STRING aCarrierIdIdString = NULL;
+	OV_UINT aPropertyIdIdType = 0;
+	OV_STRING aPropertyIdIdString = NULL;
+	OV_UINT aExpressionLogic = 0;
+	OV_BOOL aCarrierIdFound = FALSE;
+	OV_BOOL aPropertyIdFound = FALSE;
+	OV_BOOL aExpressionLogicFound = FALSE;
+	OV_INSTPTR_ov_domain paparent = NULL;
+	paparent = Ov_GetParent(ov_containment, assurance);
+	Ov_ForEachChild(ov_containment, paparent, pchild){
+		if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+			pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+			aCarrierIdIdType = pCarrierId->v_IdType;
+			ov_string_setvalue(&aCarrierIdIdString, pCarrierId->v_IdSpec);
+			pCarrierId = NULL;
+			aCarrierIdFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+			pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
+			aPropertyIdIdType = pPropertyId->v_IdType;
+			ov_string_setvalue(&aPropertyIdIdString, pPropertyId->v_IdSpec);
+			pPropertyId = NULL;
+			aPropertyIdFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+			pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+			aExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+			pExpressionLogic = NULL;
+			aExpressionLogicFound = TRUE;
+		}
+	}
+	if (rCarrierIdFound == FALSE || rPropertyIdFound == FALSE || rExpressionLogicFound == FALSE){
+		Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain, assurance), pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				aCarrierIdIdType = pCarrierId->v_IdType;
+				ov_string_setvalue(&aCarrierIdIdString, pCarrierId->v_IdSpec);
+				pCarrierId = NULL;
+			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+				pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
+				aPropertyIdIdType = pPropertyId->v_IdType;
+				ov_string_setvalue(&aPropertyIdIdString, pPropertyId->v_IdSpec);
+				pPropertyId = NULL;
+			}else if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+				pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+				aExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+				pExpressionLogic = NULL;
+			}
+		}
+	}
+
+	if (rCarrierIdIdType != aCarrierIdIdType){
+		ov_string_print(matchText, "requirement %s and assurance %s CarrierIdTypes are not the same", requirement->v_identifier, assurance->v_identifier);
+		*match = 0;
 		return 0;
 	}
-	if (ov_string_compare(requirement->v_IDIdString, assurance->v_IDIdString) != OV_STRCMP_EQUAL){
-		ov_string_print(matchText, "requirement %s and assurance %s IDs are not the same", requirement->v_identifier, assurance->v_identifier);
+	if (ov_string_compare(rCarrierIdIdString, aCarrierIdIdString) != OV_STRCMP_EQUAL){
+		ov_string_print(matchText, "requirement %s and assurance %s CarrierIds are not the same", requirement->v_identifier, assurance->v_identifier);
+		*match = 0;
 		return 0;
 	}
-	if(ov_string_compare(requirement->v_Unit, assurance->v_Unit) != OV_STRCMP_EQUAL){
-		ov_string_print(matchText, "requirement %s and assurance %s Units are not the same", requirement->v_identifier, assurance->v_identifier);
+	if (rPropertyIdIdType != aPropertyIdIdType){
+		ov_string_print(matchText, "requirement %s and assurance %s PropertyIdTypes are not the same", requirement->v_identifier, assurance->v_identifier);
+		*match = 0;
 		return 0;
 	}
-	if (requirement->v_Value.value.vartype != assurance->v_Value.value.vartype){
-		ov_string_print(matchText, "requirement %s and assurance %s have not the same datatype", requirement->v_identifier, assurance->v_identifier);
+	if (ov_string_compare(rPropertyIdIdString, aPropertyIdIdString) != OV_STRCMP_EQUAL){
+		ov_string_print(matchText, "requirement %s and assurance %s PropertyIds are not the same", requirement->v_identifier, assurance->v_identifier);
+		*match = 0;
 		return 0;
 	}
 
-	switch(requirement->v_ExpressionLogic){
+	switch(rExpressionLogic){
 	case GREATER_THAN:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = GreaterThan(assurance->v_Value, requirement->v_Value);
 				break;
@@ -328,7 +439,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case GREATER_EQUAL:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = GreaterEqual(assurance->v_Value, requirement->v_Value);
 				break;
@@ -354,7 +465,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case EQUAL:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = 0;
 				break;
@@ -380,7 +491,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case NOT_EQUAL:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = GreaterThan(assurance->v_Value, requirement->v_Value);
 				break;
@@ -406,7 +517,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case LESS_EQUAL:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = 0;
 				break;
@@ -432,7 +543,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case LESS_THAN:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = 0;
 				break;
@@ -473,14 +584,17 @@ OV_DLLFNCEXPORT void propertyValueStatement_MatchPVSRA_typemethod(
     /*
     *   local variables
     */
+
     OV_INSTPTR_propertyValueStatement_MatchPVSRA pinst = Ov_StaticPtrCast(propertyValueStatement_MatchPVSRA, pfb);
     pinst->v_error = 0;
     ov_string_setvalue(&pinst->v_errortext, "");
 	pinst->v_match = FALSE;
+	ov_string_setvalue(&pinst->v_matchText, "");
 
 	// Get Object pointer
 	pinst->v_error = propertyValueStatement_MatchPVSRA_matchPVSRA(pinst->v_requirementPath, pinst->v_assurancePath, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
 
     return;
 }
+
 

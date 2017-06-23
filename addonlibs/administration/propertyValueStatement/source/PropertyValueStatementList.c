@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2016-12-16   File created
+*   2017-06-22   File created
 *
 *******************************************************************************
 *
@@ -34,5 +34,31 @@ OV_DLLFNCEXPORT OV_ACCESS propertyValueStatement_PropertyValueStatementList_geta
     *   local variables
     */
 	return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
+}
+
+OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_PropertyValueStatementList_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*    
+    *   local variables
+    */
+    OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pinst = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = ov_object_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    OV_INSTPTR_ov_domain pparent = NULL;
+    pparent = Ov_GetParent(ov_containment, pobj);
+    if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pparent)){
+    	ov_logfile_error("%s: cannot instantiate - Parent should not be from class propertyValueStatementList", pinst->v_identifier);
+		return OV_ERR_ALREADYEXISTS;
+    }
+
+
+    return OV_ERR_OK;
 }
 
