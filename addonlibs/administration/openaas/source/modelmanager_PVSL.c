@@ -20,7 +20,7 @@
 
 #include "openaas.h"
 
-
+/*
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLAASIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_STRING  value
@@ -298,3 +298,4 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVSL(IdentificationType
 
 
 
+*/

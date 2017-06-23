@@ -213,9 +213,9 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	switch(requestType){
 	case 0:
 		ov_string_append(&answerBody, "RegisterAASReq:");
-		ov_string_append(&answerBody, paas->p_Header.p_Config.v_CarrierIdString);
+		//ov_string_append(&answerBody, paas->p_Header.p_Config.v_CarrierIdString);
 		ov_string_append(&answerBody, ",");
-		ov_string_print(&tempString, "%i", paas->p_Header.p_Config.v_CarrierIdType);
+		//ov_string_print(&tempString, "%i", paas->p_Header.p_Config.v_CarrierIdType);
 		ov_string_append(&answerBody, tempString);
 		ov_string_setvalue(&tempString, NULL);
 		ov_string_append(&answerBody, ",");
@@ -227,9 +227,9 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		break;
 	case 1:
 		ov_string_append(&answerBody, "UnregisterAASReq:");
-		ov_string_append(&answerBody, paas->p_Header.p_Config.v_CarrierIdString);
+		//ov_string_append(&answerBody, paas->p_Header.p_Config.v_CarrierIdString);
 		ov_string_append(&answerBody, ",");
-		ov_string_print(&tempString, "%i", paas->p_Header.p_Config.v_CarrierIdType);
+		//ov_string_print(&tempString, "%i", paas->p_Header.p_Config.v_CarrierIdType);
 		ov_string_append(&answerBody, tempString);
 		ov_string_setvalue(&tempString, NULL);
 		break;
@@ -314,13 +314,13 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		pinst->v_messageCount = 0;
 		pinst->v_registered = FALSE;
 		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
-		if (ov_string_compare(paas->p_Header.p_Config.v_CarrierIdString, "") != OV_STRCMP_EQUAL){ // Send Register-Request
+		//if (ov_string_compare(paas->p_Header.p_Config.v_CarrierIdString, "") != OV_STRCMP_EQUAL){ // Send Register-Request
 			IdentificationType tmpAASId;
 			sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
 			pinst->v_state = 1;
-		}else{
+		//}else{
 			// Wait for the setting of AASId
-		}
+		//}
 		break;
 	case 1: //Sending Register-Request and wait for answer
 		// Get the next message, if any.
@@ -445,8 +445,8 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
 		IdentificationType aasId;
 		IdentificationType_init(&aasId);
-		ov_string_setvalue(&aasId.IdSpec, paas->p_Header.p_Config.v_CarrierIdString);
-		aasId.IdType = paas->p_Header.p_Config.v_CarrierIdType;
+		//ov_string_setvalue(&aasId.IdSpec, paas->p_Header.p_Config.v_CarrierIdString);
+		//aasId.IdType = paas->p_Header.p_Config.v_CarrierIdType;
 
 		OV_BOOL sendAnswer = FALSE;
 

@@ -25,6 +25,7 @@
 #include "libov/ov_result.h"
 #include "openaas_helpers.h"
 
+/*
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationType aasId, OV_UINT *number, PropertyValueStatementList **pvsl) {
 	OV_INSTPTR_openaas_aas paas = NULL;
@@ -99,3 +100,4 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(Identifica
 
     return result;
 }
+*/

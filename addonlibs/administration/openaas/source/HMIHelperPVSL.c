@@ -24,15 +24,11 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_time.h"
 
-
+/*
 OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
-    /*    
-
-    *   local variables
-    */
 
 
 	OV_INSTPTR_openaas_HMIHelperPVSL pinst = Ov_StaticPtrCast(openaas_HMIHelperPVSL, pfb);
@@ -356,3 +352,4 @@ OV_DLLFNCEXPORT void openaas_HMIHelperPVSL_typemethod(
 	ov_database_free(path);
     return;
 }
+*/

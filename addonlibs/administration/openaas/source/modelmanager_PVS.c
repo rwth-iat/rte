@@ -23,7 +23,7 @@
 #include "libov/ov_result.h"
 #include "openaas_helpers.h"
 
-
+/*
 
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSAASIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
@@ -467,3 +467,4 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aas
 	}
 	return AASSTATUSCODE_GOOD;
 }
+*/

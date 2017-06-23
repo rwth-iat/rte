@@ -19,7 +19,7 @@
 #endif
 
 #include "openaas.h"
-
+/*
 
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
@@ -190,3 +190,4 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteAAS(IdentificationType 
 
 
 
+*/
