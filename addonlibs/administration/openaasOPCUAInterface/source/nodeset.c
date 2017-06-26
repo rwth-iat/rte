@@ -19,8 +19,8 @@ UA_INLINE UA_StatusCode nodeset_returnNamespaces(
   UA_String_deleteMembers(&tempNsUri);
   retval |= UA_Server_addNamespace_full(server, &nsArray[0]);
   UA_UInt16 nsIdx_0 = nsArray[0].index;
-  //Adding namespace for old namespace index = 2 with uri: http://openAAS.org/AAS/
-  tempNsUri = UA_String_fromChars("http://openAAS.org/AAS/");
+  //Adding namespace for old namespace index = 2 with uri: http://acplt.org/openaas/
+  tempNsUri = UA_String_fromChars("http://acplt.org/openaas/");
   UA_Namespace_init(&nsArray[1], &tempNsUri);
   UA_String_deleteMembers(&tempNsUri);
   retval |= UA_Server_addNamespace_full(server, &nsArray[1]);

@@ -205,6 +205,9 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	if(UA_Server_addNamespace_full(pinst->v_serverData, &(pinst->v_namespace)) != UA_STATUSCODE_GOOD){
 		ov_logfile_error("%s - init: could not add ov-namespace to ua server", pinst->v_identifier);
 	}
+	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 1, STRING);
+	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[0], OV_UA_NAMESPACEURI);
+
 
 	/*	add reference to ov root	*/
 	OV_STRING tmpString = pdb->root.v_identifier;
@@ -653,6 +656,17 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(UA_Namespace **
 			ov_logfile_error("%s - init: could not create reference to %s-namespace", opcua_pUaServer->v_identifier, tmpString);
 			ov_database_free(tmpString);
 		}
+	}
+
+	OV_UINT oldlength = opcua_pUaServer->v_namespaceNames.veclen;
+	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, opcua_pUaServer->v_namespaceNames.veclen + namespaceSize, STRING);
+	OV_UINT j = 0;
+	for (OV_UINT i = oldlength; i < opcua_pUaServer->v_namespaceNames.veclen; i ++){
+		OV_STRING tmpNamespaceUri = NULL;
+		copyOPCUAStringToOV(namespace[j]->uri, &tmpNamespaceUri);
+		ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[i], tmpNamespaceUri);
+		ov_string_setvalue(&tmpNamespaceUri, NULL);
+		j++;
 	}
 
 	return result;
