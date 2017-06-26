@@ -186,13 +186,13 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_interface_startup(
 
     /* do what */
 
-    UA_String tmpNamespaceName = UA_String_fromChars("http://openAAS.org/AAS/");
+    UA_String tmpNamespaceName = UA_String_fromChars("http://acplt.org/openaas/");
     UA_Namespace_init(&pinst->v_modelnamespace, &tmpNamespaceName);
     UA_String_deleteMembers(&tmpNamespaceName);
     pinst->v_modelnamespace.dataTypes = UA_OPENAAS;
     pinst->v_modelnamespace.dataTypesSize = UA_OPENAAS_COUNT;
 
-    tmpNamespaceName = UA_String_fromChars("http://openAAS.org/AAS/Ov");
+    tmpNamespaceName = UA_String_fromChars("http://acplt.org/openaas/Ov");
 	UA_Namespace_init(&pinst->v_interfacenamespace, &tmpNamespaceName);
 	UA_String_deleteMembers(&tmpNamespaceName);
 	pinst->v_interfacenamespace.nodestore = openaasOPCUAInterface_interface_ovNodeStoreInterfaceOpenAASNew();
