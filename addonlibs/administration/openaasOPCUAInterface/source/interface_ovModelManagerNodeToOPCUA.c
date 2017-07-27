@@ -27,7 +27,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
+#include "nodeset_openaas.h"
 #include "libov/ov_element.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
@@ -37,7 +37,7 @@ extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
-	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
+/*	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
 	OV_TICKET 				*pTicket = NULL;
@@ -333,8 +333,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerNode
 	ov_string_append(&tmpString, "stopGetAssetLCEData");
 	newNode->references[18].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
-
+*/
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }
-

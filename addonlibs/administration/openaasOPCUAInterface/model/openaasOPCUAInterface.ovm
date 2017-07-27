@@ -2,6 +2,9 @@
 #include "fb.ovm"
 #include "opcua.ovm"
 #include "openaas.ovm"
+#include "identificationOPCUAInterface.ovm"
+#include "propertyValueStatementOPCUAInterface.ovm"
+#include "lifeCycleEntryOPCUAInterface.ovm"
 
 LIBRARY openaasOPCUAInterface
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -20,13 +23,14 @@ LIBRARY openaasOPCUAInterface
 		VARIABLES
 			modelnamespace : C_TYPE <UA_Namespace>;
             interfacenamespace : C_TYPE <UA_Namespace>;
+            modelnamespaceIndexIdentification : UINT;
+            modelnamespaceIndexlifeCycleEntry : UINT;
+            modelnamespaceIndexPropertyValueStatement : UINT;
 		END_VARIABLES;
 		OPERATIONS
 			ovModelManagerNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERNODETOOPCUA>;
 	        ovModelManagerMethodNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA>;
-	        ovOpenAASNodeToOPCUA : C_FUNCTION <UA_FNC_OVOPENAASNODETOOPCUA>;
-	        ovOpenAASFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVOPENAASFOLDERNODETOOPCUA>;
-	        ovAASFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVAASFOLDERNODETOOPCUA>;
+	        ovAASNodeToOPCUA : C_FUNCTION <UA_FNC_OVAASNODETOOPCUA>;
 	        ovSubModelNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSUBMODELNODETOOPCUA>;
 	        ovServiceNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSERVICENODETOOPCUA>;
 	        ovServiceInputArgumentsNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSERVICEINPUTARGUMENTSNODETOOPCUA>;
@@ -39,6 +43,10 @@ LIBRARY openaasOPCUAInterface
 	        ovBodyNodeToOPCUA : C_FUNCTION <UA_FNC_OVBODYNODETOOPCUA>;
 	        ovHeaderNodeToOPCUA : C_FUNCTION <UA_FNC_OVHEADERNODETOOPCUA>;
 	        ovCarrierNodeToOPCUA : C_FUNCTION <UA_FNC_OVCARRIERNODETOOPCUA>;
+	        ovPropertyIdCarrierIdNodeToOPCUA : C_FUNCTION <UA_FNC_OVPROPERTYIDCARRIERIDNODETOOPCUA>;
+	        ovExpressionLogicNodeToOPCUA : C_FUNCTION <UA_FNC_OVEXPRESSIONLOGICNODETOOPCUA>;
+	        ovExpressionSemanticNodeToOPCUA : C_FUNCTION <UA_FNC_OVEXPRESSIONSEMANTICNODETOOPCUA>;
+	        ovPropertyValueStatementValueNodeToOPCUA : C_FUNCTION <UA_FNC_OVPROPERTYVALUESTATEMENTVALUENODETOOPCUA>;
 	         
 	        ovNodeStoreInterfaceOpenAASNew : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASNEW>;
 	        ovNodeStoreInterfaceOpenAASDelete : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASDELETE>;

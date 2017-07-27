@@ -1,5 +1,5 @@
-/* Generated from Opc.Ua.Types.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/open62541/tools/generate_datatypes.py
- * on host ubuntu-VirtualBox by user ubuntu at 2017-05-23 02:23:01 */
+/* Generated from Opc.Ua.Types.bsd, identification.bsd, lce.bsd, pvs.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/opcuaParser/tools/generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2017-07-26 10:43:58 */
 
 #ifndef UA_OPENAAS_GENERATED_H_
 #define UA_OPENAAS_GENERATED_H_
@@ -16,45 +16,20 @@ extern "C" {
  #include "open62541.h"
 #endif
 
+#include "ua_lifeCycleEntry_generated.h"
+#include "ua_propertyValueStatement_generated.h"
+
 /**
  * Every type is assigned an index in an array containing the type descriptions.
  * These descriptions are used during type handling (copying, deletion,
  * binary encoding, ...). */
-#define UA_OPENAAS_COUNT 8
+#define UA_OPENAAS_COUNT 2
 extern UA_EXPORT UA_DataType UA_OPENAAS[UA_OPENAAS_COUNT];
-
-/**
- * ExpressionSemanticEnum
- * ^^^^^^^^^^^^^^^^^^^^^^
- * Specifies the semantic of the property value statement */
-typedef enum {
-    UA_EXPRESSIONSEMANTICENUM_CONFIRMATION = 0,
-    UA_EXPRESSIONSEMANTICENUM_SETTING = 1,
-    UA_EXPRESSIONSEMANTICENUM_MEASUREMENT = 2,
-    UA_EXPRESSIONSEMANTICENUM_REQUIREMENT = 3
-} UA_ExpressionSemanticEnum;
-
-#define UA_OPENAAS_EXPRESSIONSEMANTICENUM 0
-
-/**
- * ExpressionLogicEnum
- * ^^^^^^^^^^^^^^^^^^^
- */
-typedef enum {
-    UA_EXPRESSIONLOGICENUM_GREATER_THAN = 0,
-    UA_EXPRESSIONLOGICENUM_GREATER_EQUAL = 1,
-    UA_EXPRESSIONLOGICENUM_EQUAL = 2,
-    UA_EXPRESSIONLOGICENUM_NOT_EQUAL = 3,
-    UA_EXPRESSIONLOGICENUM_LESS_EQUAL = 4,
-    UA_EXPRESSIONLOGICENUM_LESS_THAN = 5
-} UA_ExpressionLogicEnum;
-
-#define UA_OPENAAS_EXPRESSIONLOGICENUM 1
 
 /**
  * ViewEnum
  * ^^^^^^^^
- * Kind of View */
+ */
 typedef enum {
     UA_VIEWENUM_BUSINESS = 0,
     UA_VIEWENUM_CONSTRUCTION = 1,
@@ -67,72 +42,19 @@ typedef enum {
     UA_VIEWENUM_HUMAN = 8
 } UA_ViewEnum;
 
-#define UA_OPENAAS_VIEWENUM 2
+#define UA_OPENAAS_VIEWENUM 0
 
 /**
  * VisibilityEnum
  * ^^^^^^^^^^^^^^
- * Kind of Visibilty */
+ */
 typedef enum {
-    UA_VISIBILITYENUM_PRIVATE = 0,
+    UA_VISIBILITYENUM_PRIVAT = 0,
     UA_VISIBILITYENUM_CONTRACT = 1,
     UA_VISIBILITYENUM_PUBLIC = 2
 } UA_VisibilityEnum;
 
-#define UA_OPENAAS_VISIBILITYENUM 3
-
-/**
- * IdEnum
- * ^^^^^^
- * Determines which kind of Id is specified */
-typedef enum {
-    UA_IDENUM_URI = 0,
-    UA_IDENUM_ISO = 1
-} UA_IdEnum;
-
-#define UA_OPENAAS_IDENUM 4
-
-/**
- * Identification
- * ^^^^^^^^^^^^^^
- * Identification */
-typedef struct {
-    UA_String idSpec;
-    UA_IdEnum idType;
-} UA_Identification;
-
-#define UA_OPENAAS_IDENTIFICATION 5
-
-/**
- * LifeCycleEntry
- * ^^^^^^^^^^^^^^
- * LifeCycleEntry  */
-typedef struct {
-    UA_Identification creatingInstance;
-    UA_Identification writingInstance;
-    UA_DataValue data;
-    UA_String subject;
-    UA_String eventClass;
-    UA_Int64 id;
-} UA_LifeCycleEntry;
-
-#define UA_OPENAAS_LIFECYCLEENTRY 6
-
-/**
- * PropertyValueStatement
- * ^^^^^^^^^^^^^^^^^^^^^^
- * Property Value Statement */
-typedef struct {
-    UA_ExpressionSemanticEnum expressionSemantic;
-    UA_ExpressionLogicEnum expressionLogic;
-    UA_String unit;
-    UA_Variant value;
-    UA_Identification iD;
-    UA_ViewEnum view;
-    UA_VisibilityEnum visibility;
-} UA_PropertyValueStatement;
-
-#define UA_OPENAAS_PROPERTYVALUESTATEMENT 7
+#define UA_OPENAAS_VISIBILITYENUM 1
 
 #ifdef __cplusplus
 } // extern "C"

@@ -27,7 +27,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
+#include "nodeset_openaas.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 

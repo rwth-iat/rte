@@ -44,16 +44,45 @@
 	/*
 	 * Your code goes here.
 	 */
-	 OV_INSTPTR_ov_library pOPCUA = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pOPCUA, ov_library){
-		if(ov_string_compare(pOPCUA->v_identifier, "opcua") == OV_STRCMP_EQUAL){
+
+	 OV_INSTPTR_ov_library pidentificationOPCUAInterface = NULL;
+	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pidentificationOPCUAInterface, ov_library){
+		if(ov_string_compare(pidentificationOPCUAInterface->v_identifier, "identificationOPCUAInterface") == OV_STRCMP_EQUAL){
 			break;
 		}
 	 }
-	 if(!pOPCUA){
-		result = Ov_CreateObject(ov_library, pOPCUA, &(pdb->acplt), "opcua");
+	 if(!pidentificationOPCUAInterface){
+		result = Ov_CreateObject(ov_library, pidentificationOPCUAInterface, &(pdb->acplt), "identificationOPCUAInterface");
 		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library opcua Reason: %s", ov_result_getresulttext(result));
+			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library identificationOPCUAInterface Reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+	 }
+
+	 OV_INSTPTR_ov_library plifeCycleEntryOPCUAInterface = NULL;
+	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plifeCycleEntryOPCUAInterface, ov_library){
+		if(ov_string_compare(plifeCycleEntryOPCUAInterface->v_identifier, "lifeCycleEntryOPCUAInterface") == OV_STRCMP_EQUAL){
+			break;
+		}
+	 }
+	 if(!plifeCycleEntryOPCUAInterface){
+		result = Ov_CreateObject(ov_library, plifeCycleEntryOPCUAInterface, &(pdb->acplt), "lifeCycleEntryOPCUAInterface");
+		if(Ov_Fail(result)){
+			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library lifeCycleEntryOPCUAInterface Reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+	 }
+
+	 OV_INSTPTR_ov_library ppropertyValueStatementOPCUAInterface = NULL;
+	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, ppropertyValueStatementOPCUAInterface, ov_library){
+		if(ov_string_compare(ppropertyValueStatementOPCUAInterface->v_identifier, "propertyValueStatementOPCUAInterface") == OV_STRCMP_EQUAL){
+			break;
+		}
+	 }
+	 if(!ppropertyValueStatementOPCUAInterface){
+		result = Ov_CreateObject(ov_library, ppropertyValueStatementOPCUAInterface, &(pdb->acplt), "propertyValueStatementOPCUAInterface");
+		if(Ov_Fail(result)){
+			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library propertyValueStatementOPCUAInterface Reason: %s", ov_result_getresulttext(result));
 			return result;
 		}
 	 }

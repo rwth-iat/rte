@@ -27,12 +27,13 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
+#include "nodeset_openaas.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
 
 
-OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASFolderNodeToOPCUA(
+OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -103,12 +104,17 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASFolderNod
 	}
 	newNode->writeMask 	= writeMask;
 
+
 	((UA_ObjectNode*)newNode)->eventNotifier = 0;
 
 	// References
-	size_t size_references = 0;
+	size_t size_references = 4; //For Header & Body & LifeCycleArchive & Views
 
-	size_references = size_references + 2;// For ModelManager & AASFolder
+
+	OV_INSTPTR_ov_object pchild = NULL;
+	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
+			size_references++;
+		}
 
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
@@ -122,36 +128,83 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovOpenAASFolderNod
 	// ParentNode
 	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 	newNode->references[0].isInverse = UA_TRUE;
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
+	OV_UINT len = 0;
+	OV_STRING *plist = NULL;
+	OV_STRING tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	plist = ov_string_split(tmpString, "/", &len);
+	ov_string_setvalue(&tmpString, NULL);
+	for (OV_UINT i = 0; i < len-1; i++){
+		if (i != 0)
+			ov_string_append(&tmpString, "/");
+		ov_string_append(&tmpString, plist[i]);
+	}
+	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_freelist(plist);
+	ov_string_setvalue(&tmpString, NULL);
 
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE);
+	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_ASSETADMINISTRATIONSHELLTYPE);
 
+	// HeaderNode
+	newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[2].isInverse = UA_FALSE;
+	OV_INSTPTR_openaas_aas ptr = Ov_DynamicPtrCast(openaas_aas,pobj);
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".");
+	ov_string_append(&tmpString, ptr->p_Header.v_identifier);
+	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 
-	// ModelManager
-	OV_INSTPTR_openaas_modelmanager pmodelmanager = NULL;
-	pmodelmanager = Ov_StaticPtrCast(openaas_modelmanager, Ov_GetFirstChild(ov_instantiation, pclass_openaas_modelmanager));
-	OV_STRING tmpString = NULL;
-	if (pmodelmanager){
-		newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-		newNode->references[2].isInverse = UA_FALSE;
-		ov_memstack_lock();
-		tmpString = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pmodelmanager), 2);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-		ov_memstack_unlock();
-	}
-
-	// AASFolder
-	newNode->references[3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+	// BodyNode
+	newNode->references[3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[3].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "/AASFolder");
+	ov_string_append(&tmpString, ".");
+	ov_string_append(&tmpString, ptr->p_Body.v_identifier);
 	newNode->references[3].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
+	// LifeCycleArchivNode
+	newNode->references[4].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[4].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".");
+	ov_string_append(&tmpString, ptr->p_LifeCycleArchive.v_identifier);
+	newNode->references[4].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
+	// ViewsNode
+	newNode->references[5].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[5].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".");
+	ov_string_append(&tmpString, ptr->p_Views.v_identifier);
+	newNode->references[5].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
+	size_t i = 5;
+	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
+		i++;
+		if (Ov_CanCastTo(openaas_aas, pchild)){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+			newNode->references[i].isInverse = UA_FALSE;
+			OV_INSTPTR_openaas_aas pref =
+									Ov_DynamicPtrCast(openaas_aas,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}
+	}
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }

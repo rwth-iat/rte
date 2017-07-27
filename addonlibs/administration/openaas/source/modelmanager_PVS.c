@@ -23,7 +23,7 @@
 #include "libov/ov_result.h"
 #include "openaas_helpers.h"
 
-/*
+
 
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSAASIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
@@ -170,7 +170,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSCreate_set(
 		pvs.value.time = pobj->v_PVSTimeStamp;
 		pvs.view = pobj->v_PVSView;
 
-		result = openaas_modelmanager_createPVS(tmpAASId, tmpSubModelId, pobj->v_PVSPVSLName, pvs);
+		//result = openaas_modelmanager_createPVS(tmpAASId, tmpSubModelId, pobj->v_PVSPVSLName, pvs);
 	}
 	pobj->v_PVSCreate = FALSE;
 	pobj->v_PVSStatus = result;
@@ -193,13 +193,13 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSDelete_set(
 		tmpSubModelId.IdSpec = pobj->v_PVSSubModelIdString;
 		tmpSubModelId.IdType = pobj->v_PVSSubModelIdType;
 
-		result = openaas_modelmanager_deletePVS(tmpAASId, tmpSubModelId, pobj->v_PVSPVSLName, pobj->v_PVSName);
+		//result = openaas_modelmanager_deletePVS(tmpAASId, tmpSubModelId, pobj->v_PVSPVSLName, pobj->v_PVSName);
 	}
 	pobj->v_PVSDelete = FALSE;
 	pobj->v_PVSStatus = result;
 	return OV_ERR_OK;
 }
-
+/*
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, PropertyValueStatement pvs) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;

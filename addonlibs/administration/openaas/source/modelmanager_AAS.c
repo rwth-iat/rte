@@ -19,7 +19,7 @@
 #endif
 
 #include "openaas.h"
-/*
+
 
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
@@ -73,7 +73,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASCreate_set(
     	tmpAssetId.IdSpec = pobj->v_AASAssetIdString;
     	tmpAssetId.IdType = pobj->v_AASAssetIdType;
 
-    	result = openaas_modelmanager_createAAS(tmpAASId, pobj->v_AASName, tmpAssetId);
+    	//result = openaas_modelmanager_createAAS(tmpAASId, pobj->v_AASName, tmpAssetId);
     }
     pobj->v_AASCreate = FALSE;
     pobj->v_AASStatus = result;
@@ -90,7 +90,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASDelete_set(
     	IdentificationType tmpAASId;
     	tmpAASId.IdSpec = pobj->v_AASIdString;
 		tmpAASId.IdType = pobj->v_AASIdType;
-    	result = openaas_modelmanager_deleteAAS(tmpAASId);
+    	//result = openaas_modelmanager_deleteAAS(tmpAASId);
     }
     pobj->v_AASDelete = FALSE;
     pobj->v_AASStatus = result;
@@ -98,7 +98,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASDelete_set(
 }
 
 
-
+/*
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType aasId, OV_STRING aasName, IdentificationType assetId) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ov_domain ptr = NULL;

@@ -23,7 +23,7 @@
 
 #include "openaasOPCUAInterface.h"
 #include "libov/ov_macros.h"
-#include "nodeset.h"
+#include "nodeset_openaas.h"
 #include "ua_openaas_generated.h"
 
 OV_INSTPTR_openaasOPCUAInterface_interface pinterface = NULL;
@@ -36,9 +36,10 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
     */
     OV_INSTPTR_openaasOPCUAInterface_interface pinst = Ov_StaticPtrCast(openaasOPCUAInterface_interface, pobj);
     OV_RESULT    result;
-    OV_INSTPTR_ov_library pLibOPCUA = NULL;
     OV_INSTPTR_ov_object pOtherObject = NULL;
-    OV_INSTPTR_opcua_uaServer puaServer = NULL;
+    OV_INSTPTR_identificationOPCUAInterface_interface pidentificationOPCUAInterface = NULL;
+    OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface plifeCycleEntryOPCUAInterface = NULL;
+    OV_INSTPTR_propertyValueStatementOPCUAInterface_interface ppropertyValueStatementOPCUAInterface = NULL;
     OV_INSTPTR_ov_domain pcommunication = NULL;
 	OV_INSTPTR_ov_domain pDomOPCUA = NULL;
 
@@ -54,101 +55,68 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
 			return OV_ERR_ALREADYEXISTS;
 		}
 	}
-
-    Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibOPCUA, ov_library){
-		if(ov_string_compare(pLibOPCUA->v_identifier, "opcua") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pLibOPCUA){
-		result = Ov_CreateObject(ov_library, pLibOPCUA, &(pdb->acplt), "opcua");
-		if(Ov_Fail(result)){
-			ov_memstack_lock();
-			ov_logfile_error("openaasOPCUAInterface: Fatal: Couldn't load dependency Library opcua Reason: %s", ov_result_getresulttext(result));
-			ov_memstack_unlock();
+    pcommunication = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "communication"));
+	if(!pcommunication) {
+		result = Ov_CreateObject(ov_domain, pcommunication, &(pdb->root), "communication");
+		if(Ov_Fail(result)) {
+			ov_logfile_error("Fatal: Could not create Object 'communication'");
 			return result;
 		}
-	 }
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pcommunication)){
+		ov_logfile_error("Fatal: communication object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
 
-	// create ua Server
-	Ov_ForEachChildEx(ov_instantiation, pclass_opcua_uaServer, puaServer, opcua_uaServer){
+	pDomOPCUA = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pcommunication, "opcua"));
+	if(!pDomOPCUA) {
+		result = Ov_CreateObject(ov_domain, pDomOPCUA, pcommunication, "opcua");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create opcua domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pDomOPCUA)){
+		ov_logfile_error("Fatal: opcua object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+    // create identificationOPCUAInterface
+  	Ov_ForEachChildEx(ov_instantiation, pclass_identificationOPCUAInterface_interface, pidentificationOPCUAInterface, identificationOPCUAInterface_interface){
+  		break;
+  	}
+  	if(!pidentificationOPCUAInterface){
+  		result = Ov_CreateObject(identificationOPCUAInterface_interface, pidentificationOPCUAInterface, pDomOPCUA, "IdentificationOPCUAInterface");
+  		if(Ov_Fail(result)){
+  			ov_logfile_error("Fatal: could not create IdentificationOPCUAInterface");
+  			return result;
+  		}
+  	}
+  	// create lifeCycleEntryOPCUAInterface
+	Ov_ForEachChildEx(ov_instantiation, pclass_lifeCycleEntryOPCUAInterface_interface, plifeCycleEntryOPCUAInterface, lifeCycleEntryOPCUAInterface_interface){
 		break;
 	}
-	if(!puaServer){
-		pcommunication = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "communication"));
-		if(!pcommunication) {
-			result = Ov_CreateObject(ov_domain, pcommunication, &(pdb->root), "communication");
-			if(Ov_Fail(result)) {
-				ov_logfile_error("Fatal: Could not create Object 'communication'");
-				return result;
-			}
-		}
-		else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pcommunication)){
-			ov_logfile_error("Fatal: communication object found but not domain (or derived)");
-			return OV_ERR_GENERIC;
-		}
-
-		pDomOPCUA = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pcommunication, "opcua"));
-		if(!pDomOPCUA) {
-			result = Ov_CreateObject(ov_domain, pDomOPCUA, pcommunication, "opcua");
-			if(Ov_Fail(result)){
-				ov_logfile_error("Fatal: could not create opcua domain");
-				return result;
-			}
-		}
-		else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pDomOPCUA)){
-			ov_logfile_error("Fatal: opcua object found but not domain (or derived)");
-			return OV_ERR_GENERIC;
-		}
-		result = Ov_CreateObject(opcua_uaServer, puaServer, pDomOPCUA, "uaServer");
+	if(!plifeCycleEntryOPCUAInterface){
+		result = Ov_CreateObject(lifeCycleEntryOPCUAInterface_interface, plifeCycleEntryOPCUAInterface, pDomOPCUA, "LifeCycleEntryOPCUAInterface");
 		if(Ov_Fail(result)){
-			ov_logfile_error("Fatal: could not create uaServer");
+			ov_logfile_error("Fatal: could not create LifeCycleEntryOPCUAInterface");
+			return result;
+		}
+	}
+	// create propertyValueStatementOPCUAInterface
+	Ov_ForEachChildEx(ov_instantiation, pclass_propertyValueStatementOPCUAInterface_interface, ppropertyValueStatementOPCUAInterface, propertyValueStatementOPCUAInterface_interface){
+		break;
+	}
+	if(!ppropertyValueStatementOPCUAInterface){
+		result = Ov_CreateObject(propertyValueStatementOPCUAInterface_interface, ppropertyValueStatementOPCUAInterface, pDomOPCUA, "PropertyValueStatementOPCUAInterface");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create PropertyValueStatementOPCUAInterface");
 			return result;
 		}
 	}
 
-	// Create Folder for AAS
-	OV_INSTPTR_ov_domain pTechUnits = NULL;
-	pTechUnits = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "TechUnits"));
-	if(!pTechUnits) {
-		result = Ov_CreateObject(ov_domain, pTechUnits, &(pdb->root), "TechUnits");
-		if(Ov_Fail(result)) {
-			ov_logfile_error("Fatal: Could not create Object 'pTechUnits'");
-			return result;
-		}
-	}
-	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pTechUnits))	{
-		ov_logfile_error("Fatal: pTechUnits object found but not domain (or derived)");
-		return OV_ERR_GENERIC;
-	}
-
-	OV_INSTPTR_ov_domain popenAASFolder = NULL;
-	popenAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pTechUnits, "openAAS"));
-	if(!popenAASFolder) {
-		result = Ov_CreateObject(ov_domain, popenAASFolder, pTechUnits, "openAAS");
-		if(Ov_Fail(result))	{
-			ov_logfile_error("Fatal: could not create openAAS domain");
-			return result;
-		}
-	}
-	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) popenAASFolder)){
-		ov_logfile_error("Fatal: openAAS object found but not domain (or derived)");
-		return OV_ERR_GENERIC;
-	}
-
-	OV_INSTPTR_ov_domain pAASFolder = NULL;
-	pAASFolder = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, popenAASFolder, "AASFolder"));
-	if(!pAASFolder) {
-		result = Ov_CreateObject(ov_domain, pAASFolder, popenAASFolder, "AASFolder");
-		if(Ov_Fail(result))	{
-			ov_logfile_error("Fatal: could not create AASFolder domain");
-			return result;
-		}
-	}
-	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pAASFolder)){
-		ov_logfile_error("Fatal: AASFolder object found but not domain (or derived)");
-		return OV_ERR_GENERIC;
-	}
+	pinst->v_modelnamespaceIndexIdentification = pidentificationOPCUAInterface->v_modelnamespace.index;
+	pinst->v_modelnamespaceIndexPropertyValueStatement = ppropertyValueStatementOPCUAInterface->v_modelnamespace.index;
+	pinst->v_modelnamespaceIndexlifeCycleEntry = plifeCycleEntryOPCUAInterface->v_modelnamespace.index;
 
 	pinterface = pinst;
 
@@ -203,7 +171,7 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_interface_startup(
 
     OV_STRING startFolder[2];
     startFolder[0] = NULL;
-    startFolder[1] = "/TechUnits/openAAS";
+    startFolder[1] = NULL;
 
     // Add InformationModel & NodeStoreInterface & Reference to AASFolder
 	UA_StatusCode ret = UA_STATUSCODE_GOOD;

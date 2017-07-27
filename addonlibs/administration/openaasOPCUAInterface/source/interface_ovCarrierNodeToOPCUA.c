@@ -27,9 +27,9 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
-#include "ua_openaas_generated.h"
-#include "ua_openaas_generated_handling.h"
+#include "nodeset_identification.h"
+#include "ua_identification_generated.h"
+#include "ua_identification_generated_handling.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
@@ -129,7 +129,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovCarrierNodeToOPC
 	tmpIdentification.idSpec = UA_String_fromChars(*(OV_STRING*)element.pvalue);
 	tmpIdentification.idType = *(UA_IdEnum*)element2.pvalue;
 
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_OPENAAS[UA_OPENAAS_IDENTIFICATION];
+	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION];
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_Identification_new();
 	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
@@ -169,7 +169,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovCarrierNodeToOPC
 	}
 	newNode->referencesSize = size_references;
 	// ParentNode
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 	newNode->references[0].isInverse = UA_TRUE;
 	ov_string_freelist(plist);
 	len = 0;

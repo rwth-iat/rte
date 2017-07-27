@@ -470,7 +470,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					ov_string_setvalue(&tmpOVAssetId.IdSpec, createAASReq->assetId.idSpec.data);
 					tmpOVAssetId.IdType = createAASReq->assetId.idType;
 
-					result = openaas_modelmanager_createAAS(tmpOVAASId, tmpOVName, tmpOVAssetId);
+					//result = openaas_modelmanager_createAAS(tmpOVAASId, tmpOVName, tmpOVAssetId);
 
 					createAASRsp_t createAASRsp;
 					createAASRsp_t_init(&createAASRsp);
@@ -514,7 +514,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					tmpOVAASId.IdType = deleteAASReq->aasId.idType;
 
 
-					result = openaas_modelmanager_deleteAAS(tmpOVAASId);
+					//result = openaas_modelmanager_deleteAAS(tmpOVAASId);
 
 					deleteAASRsp_t deleteAASRsp;
 					deleteAASRsp_t_init(&deleteAASRsp);
@@ -567,7 +567,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, createPVSLReq->carrier.idSpec.data);
 				tmpOVCreatingInstance.IdType = createPVSLReq->carrier.idType;
 
-				result = openaas_modelmanager_createPVSL(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance);
+				//result = openaas_modelmanager_createPVSL(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance);
 
 				createPVSLRsp_t createPVSLRsp;
 				createPVSLRsp_t_init(&createPVSLRsp);
@@ -599,7 +599,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				OV_STRING tmpOVPVSLName = NULL;
 				ov_string_setvalue(&tmpOVPVSLName, deletePVSLReq->pvslName.data);
 
-				result = openaas_modelmanager_deletePVSL(aasId, tmpOVSubModelId, tmpOVPVSLName);
+				//result = openaas_modelmanager_deletePVSL(aasId, tmpOVSubModelId, tmpOVPVSLName);
 
 				deletePVSLRsp_t deletePVSLRsp;
 				deletePVSLRsp_t_init(&deletePVSLRsp);
@@ -791,7 +791,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 				pvs.Visibility = createPVSReq->pvs.visibility;
 
-				result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
+				//result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
 
 				createPVSRsp_t createPVSRsp;
 				createPVSRsp_t_init(&createPVSRsp);
@@ -825,7 +825,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				OV_STRING tmpOVPVSName = NULL;
 				ov_string_setvalue(&tmpOVPVSName, deletePVSReq->pvsName.data);
 
-				result = openaas_modelmanager_deletePVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName);
+				//result = openaas_modelmanager_deletePVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName);
 
 				deletePVSRsp_t deletePVSRsp;
 				deletePVSRsp_t_init(&deletePVSRsp);
@@ -876,7 +876,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 				pvs.Visibility = setPVSReq->pvs.visibility;
 
-				result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
+				//result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
 
 				setPVSRsp_t setPVSRsp;
 				setPVSRsp_t_init(&setPVSRsp);
@@ -913,7 +913,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				PropertyValueStatement pvs;
 				PropertyValueStatement_init(&pvs);
 
-				result = openaas_modelmanager_getPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName, &pvs);
+				//result = openaas_modelmanager_getPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName, &pvs);
 
 				getPVSRsp_t getPVSRsp;
 				getPVSRsp_t_init(&getPVSRsp);
@@ -955,7 +955,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 				PropertyValueStatementList *ppvs = NULL;
 
-				result = openaas_modelmanager_getCoreData(aasId, &tmpNumber, &ppvs);
+				//result = openaas_modelmanager_getCoreData(aasId, &tmpNumber, &ppvs);
 				ov_logfile_debug("Anzahl: %i", tmpNumber);
 				free(messageContent);
 				getCoreDataRsp_t getCoreDataRsp;
@@ -1026,7 +1026,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 						IdentificationType tmpSubModelId;
 						IdentificationType_init(&tmpSubModelId);
 
-						result = openaas_modelmanager_createPVSLTime(aasId, tmpSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance, tmpOVCreatingTime);
+						//result = openaas_modelmanager_createPVSLTime(aasId, tmpSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance, tmpOVCreatingTime);
 						for (OV_UINT j = 0; j < getCoreDataRsp->pvsl[i].numPvs; j++){
 							OV_STRING tmpOVPVSLName = NULL;
 							ov_string_setvalue(&tmpOVPVSLName, getCoreDataRsp->pvsl[i].name.data);
@@ -1051,7 +1051,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 							pvs.Visibility = getCoreDataRsp->pvsl[i].pvs[j].visibility;
 
-							result = openaas_modelmanager_createPVSTime(aasId, tmpSubModelId, tmpOVPVSLName, pvs);
+							//result = openaas_modelmanager_createPVSTime(aasId, tmpSubModelId, tmpOVPVSLName, pvs);
 							PropertyValueStatement_deleteMembers(&pvs);
 							ov_database_free(tmpOVPVSLName);
 						}

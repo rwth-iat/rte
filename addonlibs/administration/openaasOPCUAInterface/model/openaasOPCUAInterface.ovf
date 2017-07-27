@@ -15,9 +15,7 @@
 
 typedef UA_StatusCode UA_FNC_OVMODELMANAGERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVOPENAASNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVOPENAASFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVAASFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVAASNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVSUBMODELNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVSERVICENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVSERVICEINPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
@@ -30,6 +28,10 @@ typedef UA_StatusCode UA_FNC_OVVIEWSNODETOOPCUA(void *handle, const UA_NodeId *n
 typedef UA_StatusCode UA_FNC_OVHEADERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVBODYNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVCARRIERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVPROPERTYIDCARRIERIDNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVEXPRESSIONLOGICNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVEXPRESSIONSEMANTICNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVPROPERTYVALUESTATEMENTVALUENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 	
 	
 

@@ -27,6 +27,10 @@
 #include "ua_openaas_generated.h"
 #include "ua_openaas_generated_handling.h"
 #include "ua_openaas_generated_encoding_binary.h"
+#include "ua_lifeCycleEntry_generated_encoding_binary.h"
+#include "ua_lifeCycleEntry_generated_handling.h"
+#include "ua_identification_generated_handling.h"
+
 
 OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_aasDI_AssetIPAddress_set(
     OV_INSTPTR_openaasOPCUAInterface_aasDI          pobj,
@@ -131,7 +135,7 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_aasDI_typemethod(
 	UA_UInt32 count = 100000;
 
 	UA_Variant_setScalarCopy(&inputArgs[0], &AASId,
-			&UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
+			&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
 	UA_Variant_setScalarCopy(&inputArgs[1], &count, &UA_TYPES[UA_TYPES_UINT32]);
 
 	UA_NodeId methNodeId = UA_NODEID_STRING(4,
@@ -196,7 +200,7 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_aasDI_typemethod(
 				UA_UInt64 lceId = tmpUALifeCycleEntry.id;
 
 				UA_Variant_setScalarCopy(&inputArgs2[0], &AASId,
-						&UA_OPENAAS[UA_OPENAAS_IDENTIFICATION]);
+						&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
 				UA_Variant_setScalarCopy(&inputArgs2[1], &lceId, &UA_TYPES[UA_TYPES_UINT64]);
 
 				UA_NodeId methNodeId2 = UA_NODEID_STRING(4,

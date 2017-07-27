@@ -27,7 +27,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
+#include "nodeset_propertyValueStatement.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
@@ -116,6 +116,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	}
 
 	size_references = size_references + 2;// For Parent&TypeNode
+
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
 	if (!newNode->references){
 		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
@@ -145,16 +146,60 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_PROPERTYVALUESTATEMENTLISTTYPE);
+	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespaceIndexPropertyValueStatement, UA_NS2ID_PROPERTYVALUESTATEMENTLISTTYPE);
 
 	i = 1;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
-		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-		newNode->references[i].isInverse = UA_FALSE;
 		if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pchild)){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+			newNode->references[i].isInverse = UA_FALSE;
 			OV_INSTPTR_propertyValueStatement_PropertyValueStatement pref =
 									Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}else if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].isInverse = UA_FALSE;
+			OV_INSTPTR_propertyValueStatement_CarrierId pref =
+									Ov_DynamicPtrCast(propertyValueStatement_CarrierId,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].isInverse = UA_FALSE;
+			OV_INSTPTR_propertyValueStatement_PropertyId pref =
+									Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}else if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].isInverse = UA_FALSE;
+			OV_INSTPTR_propertyValueStatement_ExpressionLogic pref =
+									Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}else if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].isInverse = UA_FALSE;
+			OV_INSTPTR_propertyValueStatement_ExpressionSemantic pref =
+									Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic,pchild);
 			OV_STRING tmpString = NULL;
 			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 			ov_string_append(&tmpString, "/");

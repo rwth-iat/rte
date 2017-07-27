@@ -27,7 +27,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
+#include "nodeset_openaas.h"
 #include "ua_openaas_generated.h"
 #include "ua_openaas_generated_handling.h"
 

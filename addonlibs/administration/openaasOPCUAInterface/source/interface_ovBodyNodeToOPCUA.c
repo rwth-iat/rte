@@ -122,17 +122,17 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovBodyNodeToOPCUA(
 	newNode->referencesSize = size_references;
 
 	// Parent Node
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[0].isInverse = UA_TRUE;
 	OV_UINT len = 0;
 	OV_STRING *plist = NULL;
 	OV_STRING tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	plist = ov_string_split(tmpString, "/", &len);
+	plist = ov_string_split(tmpString, ".", &len);
 	ov_string_setvalue(&tmpString, NULL);
 	for (OV_UINT i = 0; i < len-1; i++){
 		if (i != 0)
-			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, ".");
 		ov_string_append(&tmpString, plist[i]);
 	}
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
@@ -148,7 +148,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovBodyNodeToOPCUA(
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
 		if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pchild)){
-			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 			newNode->references[i].isInverse = UA_FALSE;
 			OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pref =
 									Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatementList,pchild);
@@ -159,7 +159,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovBodyNodeToOPCUA(
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 			ov_string_setvalue(&tmpString, NULL);
 		}else if (Ov_CanCastTo(openaas_SubModel, pchild)){
-			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 			newNode->references[i].isInverse = UA_FALSE;
 			OV_INSTPTR_openaas_SubModel pref =
 									Ov_DynamicPtrCast(openaas_SubModel,pchild);

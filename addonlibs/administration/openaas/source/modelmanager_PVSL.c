@@ -20,7 +20,7 @@
 
 #include "openaas.h"
 
-/*
+
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLAASIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_STRING  value
@@ -123,7 +123,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreate_set(
 		tmpCreatingInstance.IdSpec = pobj->v_PVSLCreatingInstanceIdString;
 		tmpCreatingInstance.IdType = pobj->v_PVSLCreatingInstanceIdType;
 
-		result = openaas_modelmanager_createPVSL(tmpAASId, tmpSubModelId, pobj->v_PVSLName, tmpCarrier, tmpCreatingInstance);
+		//result = openaas_modelmanager_createPVSL(tmpAASId, tmpSubModelId, pobj->v_PVSLName, tmpCarrier, tmpCreatingInstance);
 	}
 	pobj->v_PVSLCreate = FALSE;
 	pobj->v_PVSLStatus = result;
@@ -145,13 +145,13 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLDelete_set(
 		tmpSubModelId.IdSpec = pobj->v_PVSLSubModelIdString;
 		tmpSubModelId.IdType = pobj->v_PVSSubModelIdType;
 
-		result = openaas_modelmanager_deletePVSL(tmpAASId, tmpSubModelId, pobj->v_PVSLName);
+		//result = openaas_modelmanager_deletePVSL(tmpAASId, tmpSubModelId, pobj->v_PVSLName);
 	}
 	pobj->v_PVSLDelete = FALSE;
 	pobj->v_PVSLStatus = result;
 	return OV_ERR_OK;
 }
-
+/*
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, IdentificationType carrier, IdentificationType creatingInstance) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_openaas_aas paas = NULL;

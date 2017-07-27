@@ -121,7 +121,7 @@ OV_DLLFNCEXPORT void openaas_CheckPluggedStatus_typemethod(
 	IdentificationType tmpOVSubModelId;
 	IdentificationType_init(&tmpOVSubModelId);
 
-	pinst->v_Error |= openaas_modelmanager_getPVS(aasId1, tmpOVSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
+	//pinst->v_Error |= openaas_modelmanager_getPVS(aasId1, tmpOVSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
 	if ((pvs1.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 		if (pvs1.value.value.valueunion.val_bool == pinst->v_Plugged){
 			if (pinst->v_Plugged == TRUE)
@@ -130,7 +130,7 @@ OV_DLLFNCEXPORT void openaas_CheckPluggedStatus_typemethod(
 				ov_string_setvalue(&pinst->v_Status, "AAS1 allready deplugged");
 		}
 	}
-	pinst->v_Error |= openaas_modelmanager_getPVS(aasId2, tmpOVSubModelId, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
+	//pinst->v_Error |= openaas_modelmanager_getPVS(aasId2, tmpOVSubModelId, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
 	if ((pvs2.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 		if (pvs2.value.value.valueunion.val_bool == pinst->v_Plugged){
 			if (pinst->v_Plugged == TRUE)

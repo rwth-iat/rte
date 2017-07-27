@@ -27,9 +27,10 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
-#include "ua_openaas_generated.h"
-#include "ua_openaas_generated_handling.h"
+#include "nodeset_lifeCycleEntry.h"
+#include "ua_lifeCycleEntry_generated.h"
+#include "ua_lifeCycleEntry_generated_handling.h"
+
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
@@ -168,7 +169,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovLifeCycleEntryNo
 	} while(TRUE);
 
 
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_OPENAAS[UA_OPENAAS_LIFECYCLEENTRY];
+	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY];
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_LifeCycleEntry_new();
 	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
@@ -194,7 +195,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovLifeCycleEntryNo
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
-	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_LIFECYCLEENTRY);
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespaceIndexlifeCycleEntry, UA_NS2ID_LIFECYCLEENTRY);
 
 
 	// References
@@ -213,7 +214,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovLifeCycleEntryNo
 	}
 	newNode->referencesSize = size_references;
 	// ParentNode
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 	newNode->references[0].isInverse = UA_TRUE;
 	OV_UINT len = 0;
 	OV_STRING *plist = NULL;

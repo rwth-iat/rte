@@ -1,6 +1,6 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
- * Git-Revision: 0.2-rc2-229-g2ed2a9e
+ * Git-Revision: v0.1.0-RC4-1948-g2ed2a9e
  */
 
 /*
@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_config.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/build/src_generated/ua_config.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,7 +40,7 @@ extern "C" {
 #define UA_OPEN62541_VER_MINOR 2
 #define UA_OPEN62541_VER_PATCH 0
 #define UA_OPEN62541_VER_LABEL "-rc2" /* Release candidate label, etc. */
-#define UA_OPEN62541_VER_COMMIT "0.2-rc2-229-g2ed2a9e"
+#define UA_OPEN62541_VER_COMMIT "v0.1.0-RC4-1948-g2ed2a9e"
 
 /**
  * Options
@@ -60,7 +60,7 @@ extern "C" {
 /* #undef UA_ENABLE_EMBEDDED_LIBC */
 /* #undef UA_ENABLE_DETERMINISTIC_RNG */
 #define UA_ENABLE_LOAD_NAMESPACE0
-/* #undef UA_ENABLE_GENERATE_NAMESPACE0 */
+#define UA_ENABLE_GENERATE_NAMESPACE0
 /* #undef UA_ENABLE_EXTERNAL_NAMESPACES */
 /* #undef UA_ENABLE_NONSTANDARD_STATELESS */
 /* #undef UA_ENABLE_NONSTANDARD_UDP */
@@ -103,20 +103,10 @@ typedef uint8_t bool;
 # endif
 #endif
 
-// VALGRIND
-#include "libov/ov_database.h"
-/*
-#define UA_free(ptr) ov_database_free(ptr)
-#define UA_malloc(size)  ov_database_malloc(size)
-#define UA_calloc(num, size) ov_database_calloc(num, size)
-#define UA_realloc(ptr, size) ov_database_realloc(ptr, size)
-*/
-
 #define UA_free(ptr) free(ptr)
 #define UA_malloc(size) malloc(size)
 #define UA_calloc(num, size) calloc(num, size)
 #define UA_realloc(ptr, size) realloc(ptr, size)
-
 
 #ifndef NO_ALLOCA
 # if defined(__GNUC__) || defined(__clang__)
@@ -268,7 +258,7 @@ typedef uint8_t bool;
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/deps/ms_stdint.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/deps/ms_stdint.h" ***********************************/
 
 // ISO C9x  compliant stdint.h for Microsoft Visual Studio
 // Based on ISO/IEC 9899:TC2 Committee draft (May 6, 2005) WG14/N1124 
@@ -525,7 +515,7 @@ typedef uint64_t  uintmax_t;
 
 #endif // !defined(_MSC_VER) || _MSC_VER >= 1600 ]
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_constants.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_constants.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -856,7 +846,7 @@ typedef enum {
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_types.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_types.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -1762,13 +1752,13 @@ UA_Guid UA_EXPORT UA_Guid_random(void);     /* no cryptographic entropy */
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_nodeids.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/build/src_generated/ua_nodeids.h" ***********************************/
 
 /**********************************************************
- * /home/julian/playground/open62541/nsi/build/src_generated/ua_nodeids.hgen -- do not modify
+ * /home/julian/playground/open62541/test/build/src_generated/ua_nodeids.hgen -- do not modify
  **********************************************************
- * Generated from /home/julian/playground/open62541/nsi/tools/schema/NodeIds.csv with script /home/julian/playground/open62541/nsi/tools/generate_nodeids.py
- * on host altair by user julian at 2017-03-02 11:02:11
+ * Generated from /home/julian/playground/open62541/test/tools/schema/NodeIds.csv with script /home/julian/playground/open62541/test/tools/generate_nodeids.py
+ * on host altair by user julian at 2017-07-18 10:46:38
  **********************************************************/
  
 
@@ -3045,10 +3035,10 @@ UA_Guid UA_EXPORT UA_Guid_random(void);     /* no cryptographic entropy */
 #define UA_NS0ID_HASMODELPARENT 50 // ReferenceType
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_types_generated.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/build/src_generated/ua_types_generated.h" ***********************************/
 
-/* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
- * on host altair by user julian at 2017-03-02 11:02:11 */
+/* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/test/tools/generate_datatypes.py
+ * on host altair by user julian at 2017-07-18 10:46:38 */
 
 
 #ifdef __cplusplus
@@ -5264,10 +5254,10 @@ typedef struct {
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/build/src_generated/ua_types_generated_handling.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/build/src_generated/ua_types_generated_handling.h" ***********************************/
 
-/* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/nsi/tools/generate_datatypes.py
- * on host altair by user julian at 2017-03-02 11:02:11 */
+/* Generated from Opc.Ua.Types.bsd with script /home/julian/playground/open62541/test/tools/generate_datatypes.py
+ * on host altair by user julian at 2017-07-18 10:46:38 */
 
 
 #ifdef __cplusplus
@@ -9756,7 +9746,7 @@ UA_QueryFirstRequest_delete(UA_QueryFirstRequest *p) {
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_connection.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_connection.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9886,7 +9876,7 @@ UA_EndpointUrl_split(const char *endpointUrl, char *hostname,
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_job.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_job.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9933,7 +9923,7 @@ typedef struct {
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_log.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_log.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this 
@@ -10068,7 +10058,7 @@ UA_LOG_FATAL(UA_Logger logger, UA_LogCategory category, const char *msg, ...) {
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_nodes.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_nodes.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10537,7 +10527,7 @@ typedef struct {
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_nodestore_interface.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_nodestore_interface.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
 *  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10665,7 +10655,7 @@ typedef struct UA_NodestoreInterface {
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_namespace.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_namespace.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
 *  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10713,7 +10703,7 @@ UA_Namespace_updateNodestores(UA_Namespace * namespacesToUpdate, size_t namespac
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_server.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_server.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11622,7 +11612,7 @@ UA_Server_deleteReference(UA_Server *server, const UA_NodeId sourceNodeId,
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_client.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_client.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11992,7 +11982,7 @@ UA_Client_Service_publish(UA_Client *client, const UA_PublishRequest request) {
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/include/ua_client_highlevel.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/include/ua_client_highlevel.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12615,7 +12605,7 @@ UA_Client_forEachChildNodeCall(UA_Client *client, UA_NodeId parentNodeId,
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/plugins/ua_nodestore_standard.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/plugins/ua_nodestore_standard.h" ***********************************/
 
 /*
  * Copyright (C) 2014 the contributors as stated in the AUTHORS file
@@ -12649,7 +12639,7 @@ UA_EXPORT void UA_Nodestore_standard_delete(UA_NodestoreInterface * nodestoreInt
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/plugins/ua_network_tcp.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/plugins/ua_network_tcp.h" ***********************************/
 
 /* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
  * See http://creativecommons.org/publicdomain/zero/1.0/ for more information. */
@@ -12671,7 +12661,7 @@ UA_ClientConnectionTCP(UA_ConnectionConfig conf, const char *endpointUrl, UA_Log
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/plugins/ua_accesscontrol_default.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/plugins/ua_accesscontrol_default.h" ***********************************/
 
 /* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
  * See http://creativecommons.org/publicdomain/zero/1.0/ for more information. */
@@ -12723,7 +12713,7 @@ allowDeleteReference_default(const UA_NodeId *sessionId, void *sessionHandle, co
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/plugins/ua_log_stdout.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/plugins/ua_log_stdout.h" ***********************************/
 
 /* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
  * See http://creativecommons.org/publicdomain/zero/1.0/ for more information. */
@@ -12743,7 +12733,7 @@ UA_Log_Stdout(UA_LogLevel level, UA_LogCategory category,
 #endif
 
 
-/*********************************** amalgamated original file "/home/julian/playground/open62541/nsi/plugins/ua_config_standard.h" ***********************************/
+/*********************************** amalgamated original file "/home/julian/playground/open62541/test/plugins/ua_config_standard.h" ***********************************/
 
 /* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
  * See http://creativecommons.org/publicdomain/zero/1.0/ for more information. */
@@ -12756,7 +12746,7 @@ extern "C" {
 
 extern UA_EXPORT const UA_ServerConfig UA_ServerConfig_standard;
 extern UA_EXPORT const UA_ClientConfig UA_ClientConfig_standard;
-//UA_EXPORT void* ov_database_calloc(OV_UINT num, OV_UINT size);
+
 #ifdef __cplusplus
 }
 #endif

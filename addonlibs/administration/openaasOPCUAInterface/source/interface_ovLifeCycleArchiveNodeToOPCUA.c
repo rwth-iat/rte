@@ -27,7 +27,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
+#include "nodeset_lifeCycleEntry.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
@@ -124,17 +124,17 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovLifeCycleArchive
 	}
 	newNode->referencesSize = size_references;
 	// ParentNode
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[0].isInverse = UA_TRUE;
 	OV_UINT len = 0;
 	OV_STRING *plist = NULL;
 	OV_STRING tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	plist = ov_string_split(tmpString, "/", &len);
+	plist = ov_string_split(tmpString, ".", &len);
 	ov_string_setvalue(&tmpString, NULL);
 	for (OV_UINT i = 0; i < len-1; i++){
 		if (i != 0)
-			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, ".");
 		ov_string_append(&tmpString, plist[i]);
 	}
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
@@ -144,13 +144,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovLifeCycleArchive
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_LIFECYCLEARCHIVETYPE);
+	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespaceIndexlifeCycleEntry, UA_NS2ID_LIFECYCLEARCHIVETYPE);
 
 
 	size_t i = 1;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
-		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 		newNode->references[i].isInverse = UA_FALSE;
 		if (Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pchild)){
 			OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pref =

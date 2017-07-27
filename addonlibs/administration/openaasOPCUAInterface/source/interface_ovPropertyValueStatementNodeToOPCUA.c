@@ -27,9 +27,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
-#include "ua_openaas_generated.h"
-#include "ua_openaas_generated_handling.h"
+#include "nodeset_propertyValueStatement.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
@@ -63,6 +61,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 
 	nodeClass = UA_NODECLASS_VARIABLE;
 	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableNode));
+
 
 	// Basic Attribute
 	// BrowseName
@@ -109,7 +108,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	// Variable specific attributes
 	// arrayDemensions
 	((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
-	((UA_VariableNode*)newNode)->arrayDimensions = NULL; //UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
+	((UA_VariableNode*)newNode)->arrayDimensions = NULL; // UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 
 	// valuerank
 	((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
@@ -121,54 +120,30 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	OV_ELEMENT tmpParrent;
 	tmpParrent.pobj = pobj;
 	tmpParrent.elemtype = OV_ET_OBJECT;
-	UA_PropertyValueStatement tmpPropertyValueStatement;
-	UA_PropertyValueStatement_init(&tmpPropertyValueStatement);
+	UA_Variant tmpValue;
+	UA_Variant_init(&tmpValue);
 	do {
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
 		if (tmpPart.elemtype == OV_ET_NONE)
 			break;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "ExpressionSemantic") == OV_STRCMP_EQUAL){
-			tmpPropertyValueStatement.expressionSemantic = *(UA_UInt32*)tmpPart.pvalue;
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "ExpressionLogic") == OV_STRCMP_EQUAL){
-			tmpPropertyValueStatement.expressionLogic = *(UA_UInt32*)tmpPart.pvalue;
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Unit") == OV_STRCMP_EQUAL){
-			if (*(OV_STRING*)tmpPart.pvalue != NULL)
-				tmpPropertyValueStatement.unit = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
-			continue;
-		}
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Value") == OV_STRCMP_EQUAL){
-			ov_AnyToVariant((OV_ANY*)tmpPart.pvalue, &tmpPropertyValueStatement.value);
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "IDIdString") == OV_STRCMP_EQUAL){
-			if (*(OV_STRING*)tmpPart.pvalue != NULL)
-				tmpPropertyValueStatement.iD.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "IDIdType") == OV_STRCMP_EQUAL){
-			tmpPropertyValueStatement.iD.idType = *(UA_UInt32*)tmpPart.pvalue;
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "View") == OV_STRCMP_EQUAL){
-			tmpPropertyValueStatement.view = *(UA_UInt32*)tmpPart.pvalue;
-			continue;
+			ov_AnyToVariant((OV_ANY*)tmpPart.pvalue, &tmpValue);
+			break;
 		}
 	} while(TRUE);
 
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_OPENAAS[UA_OPENAAS_PROPERTYVALUESTATEMENT];
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_PropertyValueStatement_new();
+
+	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_VARIANT];
+	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_Variant_new();
 	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
 		return result;
 	}
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
-	UA_PropertyValueStatement_copy(&tmpPropertyValueStatement, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
-	UA_PropertyValueStatement_deleteMembers(&tmpPropertyValueStatement);
+	UA_Variant_copy(&tmpValue, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
+	UA_Variant_deleteMembers(&tmpValue);
+
 
 	// accessLevel
 	UA_Byte accessLevel = 0;
@@ -184,7 +159,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
-	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_PROPERTYVALUESTATEMENT);
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespaceIndexPropertyValueStatement, UA_NS2ID_PROPERTYVALUESTATEMENTTYPE);
+
+
 
 	// References
 	OV_INSTPTR_ov_object pchild = NULL;
@@ -194,6 +171,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	}
 
 	size_references = size_references + 2;// For Parent&TypeNode
+	size_references = size_references + 1;// For Value
+
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
 	if (!newNode->references){
 		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
@@ -201,8 +180,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 		return result;
 	}
 	newNode->referencesSize = size_references;
+	size_t i = 0;
 	// ParentNode
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 	newNode->references[0].isInverse = UA_TRUE;
 	OV_UINT len = 0;
 	OV_STRING *plist = NULL;
@@ -222,12 +202,61 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
+	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespaceIndexPropertyValueStatement, UA_NS2ID_PROPERTYVALUESTATEMENTTYPE);
 
-	size_t i = 1;
+	// Value
+	newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	newNode->references[2].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "|Value");
+	newNode->references[2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
+	i = 2;
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
+		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+		newNode->references[i].isInverse = UA_FALSE;
+		if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+			OV_INSTPTR_propertyValueStatement_CarrierId pref =
+									Ov_DynamicPtrCast(propertyValueStatement_CarrierId,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+			OV_INSTPTR_propertyValueStatement_PropertyId pref =
+									Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}else if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+			OV_INSTPTR_propertyValueStatement_ExpressionLogic pref =
+									Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}else if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
+			OV_INSTPTR_propertyValueStatement_ExpressionSemantic pref =
+									Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}
 	}
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }
+

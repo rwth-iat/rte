@@ -80,7 +80,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 		ov_string_append(&tmpString, plibrary->v_identifier);
 		ov_string_append(&tmpString, "/Ov");
 		if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString) == OV_STRCMP_EQUAL){
-			dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index + i;
+			dst->nodeId.nodeId.namespaceIndex = i;
 			break;
 		}else{
 			dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
@@ -132,7 +132,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 			ov_string_append(&tmpString, plibrary->v_identifier);
 			ov_string_append(&tmpString, "/Ov");
 			if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString) == OV_STRCMP_EQUAL){
-				dst->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index + i;
+				dst->browseName.namespaceIndex = i;
 				break;
 			}else{
 				dst->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
@@ -698,7 +698,24 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	// BrowseName
 	UA_QualifiedName_init(&newNode->browseName);
 	newNode->browseName.name = UA_String_fromChars(pobj->v_identifier);
-	newNode->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
+
+	for (OV_UINT i = 0; i < opcua_pUaServer->v_namespaceNames.veclen; i++){
+		OV_INSTPTR_ov_class pclass = Ov_GetClassPtr(pobj);
+		OV_INSTPTR_ov_domain plibrary = Ov_GetParent(ov_containment, pclass);
+		OV_STRING tmpString = NULL;
+		ov_string_setvalue(&tmpString, "http://acplt.org/");
+		ov_string_append(&tmpString, plibrary->v_identifier);
+		ov_string_append(&tmpString, "/Ov");
+		if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString) == OV_STRCMP_EQUAL){
+			newNode->browseName.namespaceIndex = i;
+			break;
+		}else{
+			newNode->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
+		}
+		pclass = NULL;
+		plibrary = NULL;
+		ov_string_setvalue(&tmpString, NULL);
+	}
 
 	// Description
 	UA_LocalizedText_init(&newNode->description);
@@ -718,7 +735,24 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 	// NodeId
 	UA_NodeId_init(&newNode->nodeId);
 	newNode->nodeId.identifierType = nodeId->identifierType;
-	newNode->nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
+	for (OV_UINT i = 0; i < opcua_pUaServer->v_namespaceNames.veclen; i++){
+		OV_INSTPTR_ov_class pclass = Ov_GetClassPtr(pobj);
+		OV_INSTPTR_ov_domain plibrary = Ov_GetParent(ov_containment, pclass);
+		OV_STRING tmpString = NULL;
+		ov_string_setvalue(&tmpString, "http://acplt.org/");
+		ov_string_append(&tmpString, plibrary->v_identifier);
+		ov_string_append(&tmpString, "/Ov");
+		if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString) == OV_STRCMP_EQUAL){
+			newNode->nodeId.namespaceIndex = i;
+			break;
+		}else{
+			newNode->nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
+		}
+		pclass = NULL;
+		plibrary = NULL;
+		ov_string_setvalue(&tmpString, NULL);
+	}
+
 	switch(newNode->nodeId.identifierType){
 	case UA_NODEIDTYPE_NUMERIC:
 		newNode->nodeId.identifier.numeric = nodeId->identifier.numeric;

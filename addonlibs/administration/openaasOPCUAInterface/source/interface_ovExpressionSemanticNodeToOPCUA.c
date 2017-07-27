@@ -27,12 +27,17 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
+#include "ua_propertyValueStatement_generated.h"
+#include "ua_propertyValueStatement_generated_handling.h"
+#include "nodeset_propertyValueStatement.h"
+
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
 
 
-OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASFolderNodeToOPCUA(
+
+OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovExpressionLogicNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -52,14 +57,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASFolderNodeToO
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&element, pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
 
-	nodeClass = UA_NODECLASS_OBJECT;
-	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ObjectNode));
+	nodeClass = UA_NODECLASS_VARIABLE;
+	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_VariableNode));
 
 
 	// Basic Attribute
@@ -70,7 +74,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASFolderNodeToO
 	newNode->browseName = qName;
 
 	// Description
-	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &element);
+	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &(element));
 	UA_LocalizedText lText;
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
@@ -104,12 +108,66 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASFolderNodeToO
 	}
 	newNode->writeMask 	= writeMask;
 
-	((UA_ObjectNode*)newNode)->eventNotifier = 0;
+	// Variable specific attributes
+	// arrayDemensions
+	((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
+	((UA_VariableNode*)newNode)->arrayDimensions = NULL; // UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
+
+	// valuerank
+	((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
+
+
+	// value
+	OV_ELEMENT tmpPart;
+	tmpPart.elemtype = OV_ET_NONE;
+	OV_ELEMENT tmpParrent;
+	tmpParrent.pobj = pobj;
+	tmpParrent.elemtype = OV_ET_OBJECT;
+	UA_ExpressionLogicEnum tmpExpressionLogic = 0;
+	do {
+		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
+		if (tmpPart.elemtype == OV_ET_NONE)
+			break;
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "ExpressionLogicEnum") == OV_STRCMP_EQUAL){
+			tmpExpressionLogic = *(UA_UInt32*)tmpPart.pvalue;
+			break;
+		}
+	} while(TRUE);
+
+
+	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_EXPRESSIONLOGICENUM];
+	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_ExpressionLogicEnum_new();
+	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
+		result = UA_STATUSCODE_BADOUTOFMEMORY;
+		return result;
+	}
+	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
+	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
+	UA_ExpressionLogicEnum_copy(&tmpExpressionLogic, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
+	UA_ExpressionLogicEnum_deleteMembers(&tmpExpressionLogic);
+
+
+	// accessLevel
+	UA_Byte accessLevel = 0;
+	if(access & OV_AC_READ){
+		accessLevel |= (1<<0);
+	}
+	if(access & OV_AC_WRITE){
+		accessLevel |= (1<<1);
+	}
+	((UA_VariableNode*)newNode)->accessLevel = accessLevel;
+	// minimumSamplingInterval
+	((UA_VariableNode*)newNode)->minimumSamplingInterval = -1;
+	// historizing
+	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
+	// dataType
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespaceIndexPropertyValueStatement, UA_NS2ID_EXPRESSIONLOGICENUM);
+
 
 	// References
 	OV_INSTPTR_ov_object pchild = NULL;
 	size_t size_references = 0;
-	Ov_ForEachChild(ov_instantiation, pclass_openaas_aas, pchild) {
+	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		size_references++;
 	}
 
@@ -121,9 +179,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASFolderNodeToO
 		return result;
 	}
 	newNode->referencesSize = size_references;
-
 	// ParentNode
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 	newNode->references[0].isInverse = UA_TRUE;
 	OV_UINT len = 0;
 	OV_STRING *plist = NULL;
@@ -143,19 +200,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASFolderNodeToO
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE);
-
+	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
 
 	size_t i = 1;
-	Ov_ForEachChild(ov_instantiation, pclass_openaas_aas, pchild) {
+
+	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
-		newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-		newNode->references[i].isInverse = UA_FALSE;
-		OV_STRING tmpString = NULL;
-		ov_memstack_lock();
-		tmpString = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pchild), 2);
-		newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-		ov_memstack_unlock();
 	}
 
 	*opcuaNode = newNode;

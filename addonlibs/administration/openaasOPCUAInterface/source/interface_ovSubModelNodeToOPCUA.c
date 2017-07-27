@@ -27,7 +27,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
+#include "nodeset_openaas.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
@@ -148,7 +148,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
 		i++;
 		if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pchild)){
-			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 			newNode->references[i].isInverse = UA_FALSE;
 			OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pref =
 									Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatementList,pchild);
@@ -160,7 +160,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 			ov_string_setvalue(&tmpString, NULL);
 		}
 		if (Ov_CanCastTo(openaas_Service, pchild)){
-			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 			newNode->references[i].isInverse = UA_FALSE;
 			OV_INSTPTR_openaas_Service pref =
 									Ov_DynamicPtrCast(openaas_Service,pchild);

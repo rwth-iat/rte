@@ -1,0 +1,11 @@
+#ifndef lifeCycleEntryOPCUAInterface_OVF_INCLUDED
+#define lifeCycleEntryOPCUAInterface_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+#endif

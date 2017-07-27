@@ -370,7 +370,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			aExpressionLogicFound = TRUE;
 		}
 	}
-	if (rCarrierIdFound == FALSE || rPropertyIdFound == FALSE || rExpressionLogicFound == FALSE){
+	if (aCarrierIdFound == FALSE || aPropertyIdFound == FALSE || aExpressionLogicFound == FALSE){
 		Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain, assurance), pchild){
 			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
 				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
