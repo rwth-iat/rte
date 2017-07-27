@@ -889,8 +889,11 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/lifeCycleEntry
 				addonlibs/administration/propertyValueStatement
 				addonlibs/administration/openaas
-				addonlibs/administration/openaasOPCUAInterface
-				addonlibs/administration/openAASDiscoveryServer}
+				addonlibs/administration/openAASDiscoveryServer
+				addonlibs/administration/identificationOPCUAInterface
+				addonlibs/administration/lifeCycleEntryOPCUAInterface
+				addonlibs/administration/propertyValueStatementOPCUAInterface
+				addonlibs/administration/openaasOPCUAInterface}
 				
 print_msg "checking out all libraries of the acplt system"
 
