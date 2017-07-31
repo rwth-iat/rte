@@ -1,5 +1,5 @@
 /* Generated from Opc.Ua.Types.bsd, identification.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/opcuaParser/tools/generate_datatypes.py
- * on host ubuntu-VirtualBox by user ubuntu at 2017-07-24 10:38:08 */
+ * on host ubuntu-VirtualBox by user ubuntu at 2017-07-31 01:27:48 */
 
 #include "stddef.h"
 #include "ua_lifeCycleEntry_generated.h"
@@ -28,7 +28,7 @@ static UA_DataTypeMember LifeCycleEntry_members[6] = {
 #ifdef UA_ENABLE_TYPENAMES
     "data", /* .memberName */
 #endif
-    UA_TYPES_DATAVALUE, /* .memberTypeIndex */
+    UA_TYPES_VARIANT, /* .memberTypeIndex */
     offsetof(UA_LifeCycleEntry, data) - offsetof(UA_LifeCycleEntry, writingInstance) - sizeof(UA_Identification), /* .padding */
     true, /* .namespaceZero */
     false /* .isArray */
@@ -38,7 +38,7 @@ static UA_DataTypeMember LifeCycleEntry_members[6] = {
     "subject", /* .memberName */
 #endif
     UA_TYPES_STRING, /* .memberTypeIndex */
-    offsetof(UA_LifeCycleEntry, subject) - offsetof(UA_LifeCycleEntry, data) - sizeof(UA_DataValue), /* .padding */
+    offsetof(UA_LifeCycleEntry, subject) - offsetof(UA_LifeCycleEntry, data) - sizeof(UA_Variant), /* .padding */
     true, /* .namespaceZero */
     false /* .isArray */
 },

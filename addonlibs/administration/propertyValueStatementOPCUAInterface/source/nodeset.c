@@ -127,6 +127,7 @@ UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXP
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6009), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6009), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
+
 /*
 do {
 // Referencing node found and declared as parent: i=93/OPC Binary using i=47/HasComponent
