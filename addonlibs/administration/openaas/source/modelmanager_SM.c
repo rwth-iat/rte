@@ -20,91 +20,67 @@
 
 #include "openaas.h"
 
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASIdString_set(
+/*
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_AASIdString,value);
+    return ov_string_setvalue(&pobj->v_SMIdString,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASIdType_set(
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMIdType_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_UINT  value
 ) {
-    pobj->v_AASIdType = value;
+    pobj->v_SMIdType = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASName_set(
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMName_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_AASName,value);
+    return ov_string_setvalue(&pobj->v_SMName,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASAssetIdString_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_AASAssetIdString,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASAssetIdType_set(
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_Revision_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_UINT  value
 ) {
-    pobj->v_AASAssetIdType = value;
+    pobj->v_Revision = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASCreate_set(
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_Version_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_Version = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMCreate_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_BOOL  value
 ) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-    pobj->v_AASCreate = value;
-    if (pobj->v_AASCreate == TRUE){
-    	IdentificationType tmpAASId;
-    	tmpAASId.IdSpec = pobj->v_AASIdString;
-    	tmpAASId.IdType = pobj->v_AASIdType;
-
-    	IdentificationType tmpAssetId;
-    	tmpAssetId.IdSpec = pobj->v_AASAssetIdString;
-    	tmpAssetId.IdType = pobj->v_AASAssetIdType;
-
-    	result = openaas_modelmanager_createAAS(tmpAASId, pobj->v_AASName, tmpAssetId);
-    }
-    pobj->v_AASCreate = FALSE;
-    pobj->v_AASStatus = result;
+    pobj->v_SMCreate = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_AASDelete_set(
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMDelete_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_BOOL  value
 ) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-    pobj->v_AASDelete = value;
-    if (pobj->v_AASDelete == TRUE){
-    	IdentificationType tmpAASId;
-    	tmpAASId.IdSpec = pobj->v_AASIdString;
-		tmpAASId.IdType = pobj->v_AASIdType;
-    	result = openaas_modelmanager_deleteAAS(tmpAASId);
-    }
-    pobj->v_AASDelete = FALSE;
-    pobj->v_AASStatus = result;
+    pobj->v_SMDelete = value;
     return OV_ERR_OK;
 }
 
 
-
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType aasId, OV_STRING aasName, IdentificationType assetId) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSM(IdentificationType smId, OV_STRING aasName, UINT revision, UINT version) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ov_domain ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatement pPropertyValueStatement = NULL;
-	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
+	OV_INSTPTR_openaas_SubModel pSubModel = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
 	ptr2 = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (ptr2)
@@ -190,7 +166,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 }
 
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteAAS(IdentificationType aasId) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteSM(IdentificationType smId) {
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_RESULT result = OV_ERR_OK;
@@ -214,3 +190,4 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteAAS(IdentificationType 
 
 	return AASSTATUSCODE_GOOD;
 }
+*/

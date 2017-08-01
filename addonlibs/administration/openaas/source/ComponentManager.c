@@ -161,12 +161,12 @@ static void cleanupMessageBox(OV_INSTPTR_openaas_AASComponentManager this) {
 // 1:UnregisterAAS
 // 2:GetAAS
 static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponentManager this, OV_UINT requestType, IdentificationType requestedAASId) {
-	OV_INSTPTR_openaas_aas paas;
+	//OV_INSTPTR_openaas_aas paas;
 	OV_STRING tempString = NULL;
 	OV_RESULT resultOV = OV_ERR_OK;
 	OV_INSTPTR_MessageSys_Message pRequestMessage = NULL;
 	OV_INSTPTR_MessageSys_MsgDelivery pmsgDelivery = NULL;
-	paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
+	//paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
 	// Create MessageObject in Outbox
 	ov_string_setvalue(&tempString, NULL);
 	ov_string_setvalue(&tempString, "Request");
@@ -1021,7 +1021,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 						ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, getCoreDataRsp->pvsl[i].creatingInstance.idSpec.data);
 						tmpOVCreatingInstance.IdType = getCoreDataRsp->pvsl[i].creatingInstance.idType;
 
-						OV_TIME tmpOVCreatingTime  = ov_1601nsTimeToOvTime(getCoreDataRsp->pvsl[i].creationTime);
+						//OV_TIME tmpOVCreatingTime  = ov_1601nsTimeToOvTime(getCoreDataRsp->pvsl[i].creationTime);
 
 						IdentificationType tmpSubModelId;
 						IdentificationType_init(&tmpSubModelId);

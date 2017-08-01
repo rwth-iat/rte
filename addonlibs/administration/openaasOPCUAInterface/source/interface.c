@@ -24,7 +24,6 @@
 #include "openaasOPCUAInterface.h"
 #include "libov/ov_macros.h"
 #include "nodeset_openaas.h"
-#include "ua_openaas_generated.h"
 
 OV_INSTPTR_openaasOPCUAInterface_interface pinterface = NULL;
 
@@ -157,8 +156,6 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_interface_startup(
     UA_String tmpNamespaceName = UA_String_fromChars("http://acplt.org/openaas/");
     UA_Namespace_init(&pinst->v_modelnamespace, &tmpNamespaceName);
     UA_String_deleteMembers(&tmpNamespaceName);
-    pinst->v_modelnamespace.dataTypes = UA_OPENAAS;
-    pinst->v_modelnamespace.dataTypesSize = UA_OPENAAS_COUNT;
 
     tmpNamespaceName = UA_String_fromChars("http://acplt.org/openaas/Ov");
 	UA_Namespace_init(&pinst->v_interfacenamespace, &tmpNamespaceName);

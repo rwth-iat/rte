@@ -28,8 +28,6 @@
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "nodeset_openaas.h"
-#include "ua_openaas_generated.h"
-#include "ua_openaas_generated_handling.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 

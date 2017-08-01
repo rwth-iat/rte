@@ -20,6 +20,8 @@
 // modelmanager functions
 typedef AASStatusCode UA_FNC_CREATEAAS(IdentificationType aasId, OV_STRING aasName, IdentificationType assetId);
 typedef AASStatusCode UA_FNC_DELETEAAS(IdentificationType aasId);
+//typedef AASStatusCode UA_FNC_CREATESM(IdentificationType smId, OV_STRING aasName, OV_UINT revision, OV_UINT version);
+//typedef AASStatusCode UA_FNC_DELETESM(IdentificationType smId);
 typedef AASStatusCode UA_FNC_CREATEPVSL(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, IdentificationType carrier, IdentificationType creatingInstance);
 typedef AASStatusCode UA_FNC_CREATEPVSLTIME(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, IdentificationType carrier, IdentificationType creatingInstance, OV_TIME creatingTime);
 typedef AASStatusCode UA_FNC_DELETEPVSL(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName);

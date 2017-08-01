@@ -31,6 +31,8 @@ typedef UA_StatusCode UA_FNC_OVCARRIERNODETOOPCUA(void *handle, const UA_NodeId 
 typedef UA_StatusCode UA_FNC_OVPROPERTYIDCARRIERIDNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVEXPRESSIONLOGICNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVEXPRESSIONSEMANTICNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVVIEWNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVVISIBILITYNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVPROPERTYVALUESTATEMENTVALUENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 	
 	

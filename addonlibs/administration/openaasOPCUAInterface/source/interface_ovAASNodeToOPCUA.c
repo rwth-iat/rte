@@ -146,7 +146,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 	// TypeNode
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_ASSETADMINISTRATIONSHELLTYPE);
+	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_ASSETADMINITRATIONSHELLTYPE);
 
 	// HeaderNode
 	newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);

@@ -206,6 +206,17 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 			ov_string_append(&tmpString, pref->v_identifier);
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 			ov_string_setvalue(&tmpString, NULL);
+		}else if (Ov_CanCastTo(propertyValueStatement_View, pchild)){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			newNode->references[i].isInverse = UA_FALSE;
+			OV_INSTPTR_propertyValueStatement_View pref =
+									Ov_DynamicPtrCast(propertyValueStatement_View,pchild);
+			OV_STRING tmpString = NULL;
+			copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pref->v_identifier);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
 		}
 	}
 	*opcuaNode = newNode;

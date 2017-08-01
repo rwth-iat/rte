@@ -17,8 +17,6 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "ua_openaas_generated.h"
-#include "ua_openaas_generated_handling.h"
 #include "ua_identification_generated.h"
 #include "ua_identification_generated_handling.h"
 #include "ua_lifeCycleEntry_generated.h"
@@ -492,8 +490,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		UA_Variant_setScalarCopy(&output[2], &tmpUAValue, &UA_TYPES[UA_TYPES_DATAVALUE]);
 		UA_Variant_setScalarCopy(&output[3], &tmpUAUnit, &UA_TYPES[UA_TYPES_STRING]);
 		UA_Variant_setScalarCopy(&output[4], &tmpUAID, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
-		UA_Variant_setScalarCopy(&output[5], &tmpUAView, &UA_OPENAAS[UA_OPENAAS_VIEWENUM]);
-		UA_Variant_setScalarCopy(&output[6], &tmpUAVisibility, &UA_OPENAAS[UA_OPENAAS_VISIBILITYENUM]);
+		UA_Variant_setScalarCopy(&output[5], &tmpUAView, &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_VIEWENUM]);
+		UA_Variant_setScalarCopy(&output[6], &tmpUAVisibility, &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_VISIBILITYENUM]);
 		UA_Variant_setScalarCopy(&output[7], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 
 		UA_DataValue_deleteMembers(&tmpUAValue);
@@ -1069,6 +1067,12 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			tmpNode = opcuaNode;
 	}else if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pobj)){
 		if (openaasOPCUAInterface_interface_ovExpressionSemanticNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			tmpNode = opcuaNode;
+	}else if (Ov_CanCastTo(propertyValueStatement_View, pobj)){
+		if (openaasOPCUAInterface_interface_ovViewNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			tmpNode = opcuaNode;
+	}else if (Ov_CanCastTo(propertyValueStatement_Visibility, pobj)){
+		if (openaasOPCUAInterface_interface_ovVisibilityNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if (Ov_CanCastTo(openaas_modelmanager, pobj)){
 		if (openaasOPCUAInterface_interface_ovModelManagerNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
