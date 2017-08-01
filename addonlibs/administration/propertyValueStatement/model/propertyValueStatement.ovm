@@ -61,6 +61,28 @@ LIBRARY propertyValueStatement
             constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
         END_OPERATIONS;
     END_CLASS; 
+    
+    CLASS View : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+            ViewEnum : UINT COMMENT = "0:BUSINESS, 1:CONSTRUCTION, 2:POWER, 3:FUNCTIONAL, 4:LOCATION, 5:SECURITY, 6:NETWORK, 7:LIFECYCLE, 8:HUMAN";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS Visibility : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+            VisibilityEnum : UINT COMMENT = "0:PRIVAT, 1:CONTRACT, 2:PUBLIC";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
 
 	CLASS PropertyValueStatementList : CLASS ov/domain
         IS_INSTANTIABLE;

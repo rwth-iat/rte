@@ -62,6 +62,8 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_PropertyValueStatement_construc
 	OV_BOOL PropertyIdFound = FALSE;
 	OV_BOOL ExpressionLogicFound = FALSE;
 	OV_BOOL ExpressionSemanticFound = FALSE;
+	OV_BOOL ViewFound = FALSE;
+	OV_BOOL VisibilityFound = FALSE;
 	OV_INSTPTR_ov_object pchild = NULL;
 	Ov_ForEachChild(ov_containment, pparent, pchild){
 		if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
@@ -72,6 +74,10 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_PropertyValueStatement_construc
 			ExpressionLogicFound = TRUE;
 		}else if(Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
 			ExpressionSemanticFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_View, pchild)){
+			ViewFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_Visibility, pchild)){
+			VisibilityFound = TRUE;
 		}
 	}
 
@@ -103,7 +109,20 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_PropertyValueStatement_construc
 			return result;
 		}
 	}
-
+	if (ViewFound == FALSE){
+		result = Ov_CreateObject(propertyValueStatement_View, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "View");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create View");
+			return result;
+		}
+	}
+	if (VisibilityFound == FALSE){
+		result = Ov_CreateObject(propertyValueStatement_Visibility, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "Visibility");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create Visibility");
+			return result;
+		}
+	}
     return OV_ERR_OK;
 }
 

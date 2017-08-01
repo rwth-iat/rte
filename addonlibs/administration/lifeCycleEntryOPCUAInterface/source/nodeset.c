@@ -52,6 +52,7 @@ UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "LifeCycleEntry");
 UA_Server_addDataTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, NULL, NULL);
 } while(0);
+
 /*
 do {
 // Referencing node found and declared as parent: i=93/OPC Binary using i=47/HasComponent
