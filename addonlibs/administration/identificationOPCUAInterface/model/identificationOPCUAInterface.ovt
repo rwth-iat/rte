@@ -1,0 +1,7 @@
+#ifndef identificationOPCUAInterface_OVT_INCLUDED
+#define identificationOPCUAInterface_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+#endif
