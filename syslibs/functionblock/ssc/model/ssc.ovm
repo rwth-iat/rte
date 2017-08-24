@@ -44,7 +44,7 @@
 ***********************************************************************/
 
 #include "fb.ovm"
-
+#include "ov.ovm"
 LIBRARY ssc
 
 	VERSION   = "1.0";
@@ -152,6 +152,7 @@ LIBRARY ssc
     VARIABLES
       variable			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The variable name (relative to the SequentialControlChart, its action domain or absolute path)";
       value				: ANY 			HAS_SET_ACCESSOR FLAGS = "i"	COMMENT = "The value to be set";
+      parameter			: STRING		FLAGS = "p"	COMMENT = "optional parameters to send";
     END_VARIABLES;
     OPERATIONS
       typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
