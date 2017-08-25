@@ -150,6 +150,7 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	OV_INSTPTR_ssc_step  		pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
 	OV_INSTPTR_ssc_SequentialStateChart  	pOwnSSC = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_object pTargetObj = NULL;
+	OV_INSTPTR_ov_object pESE = NULL;
 	OV_RESULT    			 result;
 	OV_ANY ovvariable;
 	ovvariable.value.vartype = OV_VT_STRING;
@@ -166,7 +167,13 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	}
 
 	//setting sender
-	ov_string_setvalue(&ovvariable.value.valueunion.val_string, pOwnSSC->v_identifier);
+	pESE=(OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,(OV_INSTPTR_ov_object)pOwnSSC);
+	if(Ov_CanCastTo(fb_controlchart,pESE)==TRUE){
+		ov_string_setvalue(&ovvariable.value.valueunion.val_string, pESE->v_identifier);
+	}else{
+		ov_string_setvalue(&ovvariable.value.valueunion.val_string, pOwnSSC->v_identifier);
+	}
+
 	result = ssc_setNamedVariable(pTargetObj, "sender", &ovvariable);
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
