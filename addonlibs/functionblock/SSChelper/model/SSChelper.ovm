@@ -151,7 +151,7 @@ LIBRARY SSChelper
 		VARIABLES
 			path : STRING  FLAGS = "i" COMMENT = "Path to target";
 			var : ANY  FLAGS = "i" COMMENT = "var";
-			port : STRING  FLAGS = "i" COMMENT = "Nanme of the port";
+			port : STRING  FLAGS = "i" COMMENT = "Name of the port";
 		
 			
 			// Add variables here. The syntax is:
@@ -165,6 +165,28 @@ LIBRARY SSChelper
 			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
 			// if MY_FUNC is declared in SSChelper.ovf. Implement the functions in decoder.c.
 			// fb/functionblock based classes have to implement typemethod
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getVar : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			path : STRING  FLAGS = "i" COMMENT = "Path to target";
+			var : ANY  FLAGS = "o" COMMENT = "var";
+			port : STRING  FLAGS = "i" COMMENT = "Name of the port";
+		END_VARIABLES;
+		OPERATIONS
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getSSCInfo : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			id : STRING  FLAGS = "o" COMMENT = "Identifier of the parent SSC.";
+		END_VARIABLES;
+		OPERATIONS
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
