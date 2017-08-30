@@ -207,7 +207,6 @@ OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_createLCE(OV_INSTP
 	}else{
 		result = LCESTATUSCODE_BADUNEXPECTEDERROR;
 	}
-
     return result;
 }
 
@@ -311,7 +310,7 @@ OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_getLastLCEs(OV_INS
 	return LCESTATUSCODE_GOOD;
 }
 
-OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_setLCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, OV_UINT64 lceId, LifeCycleEntry lce) {
+OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_setLCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, LifeCycleEntry lce) {
 	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
 	OV_STRING lceName = NULL;
 	if (pobj){

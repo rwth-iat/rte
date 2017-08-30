@@ -50,7 +50,7 @@ LIBRARY lifeCycleEntry
 	        LCEDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a LCE";
         END_VARIABLES;
         OPERATIONS
-            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
             createLCE  : C_FUNCTION <LCE_FNC_CREATELCE>;
             deleteLCE  : C_FUNCTION <LCE_FNC_DELETELCE>;
             getLCE     : C_FUNCTION <LCE_FNC_GETLCE>;

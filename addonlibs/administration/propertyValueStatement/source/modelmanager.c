@@ -30,7 +30,7 @@
 
 
 
-OV_DLLFNCEXPORT PVSStatusCode openaas_modelmanager_ovresultToPVSStatusCode(OV_RESULT result) {
+OV_DLLFNCEXPORT PVSStatusCode pvs_modelmanager_ovresultToPVSStatusCode(OV_RESULT result) {
 	switch(result){
 	case OV_ERR_OK:
 		return PVSSTATUSCODE_GOOD;
@@ -374,14 +374,14 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_createPVSL(Ide
 	result = Ov_CreateObject(propertyValueStatement_PropertyValueStatementList, ppvsl, Ov_StaticPtrCast(ov_domain, ptr), pvslName);
 	if(Ov_Fail(result)){
 		ov_logfile_error("Fatal: could not create PVSL object - reason: %s", ov_result_getresulttext(result));
-		return openaas_modelmanager_ovresultToPVSStatusCode(result);
+		return pvs_modelmanager_ovresultToPVSStatusCode(result);
 	}
 
 	if (mask & 0x01){ //CarrierID
 		result = Ov_CreateObject(propertyValueStatement_CarrierId, pCarrierId, Ov_StaticPtrCast(ov_domain, ppvsl), "CarrierId");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create Carrier object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToPVSStatusCode(result);
+			return pvs_modelmanager_ovresultToPVSStatusCode(result);
 		}
 		ov_string_setvalue(&pCarrierId->v_IdSpec, carrier.IdSpec);
 		pCarrierId->v_IdType = carrier.IdType;
@@ -390,7 +390,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_createPVSL(Ide
 		result = Ov_CreateObject(propertyValueStatement_ExpressionLogic, pExpressionLogic, Ov_StaticPtrCast(ov_domain, ppvsl), "ExpressionLogic");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create ExpressionLogic object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToPVSStatusCode(result);
+			return pvs_modelmanager_ovresultToPVSStatusCode(result);
 		}
 		pExpressionLogic->v_ExpressionLogicEnum = expressionLogic;
 	}
@@ -398,7 +398,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_createPVSL(Ide
 		result = Ov_CreateObject(propertyValueStatement_ExpressionSemantic, pExpressionSemantic, Ov_StaticPtrCast(ov_domain, ppvsl), "ExpressionSemantic");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create ExpressionSemantic object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToPVSStatusCode(result);
+			return pvs_modelmanager_ovresultToPVSStatusCode(result);
 		}
 		pExpressionSemantic->v_ExpressionSemanticEnum = expressionSemantic;
 	}
@@ -406,7 +406,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_createPVSL(Ide
 		result = Ov_CreateObject(propertyValueStatement_PropertyId, pPropertyId, Ov_StaticPtrCast(ov_domain, ppvsl), "PropertyID");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create PropertyID object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToPVSStatusCode(result);
+			return pvs_modelmanager_ovresultToPVSStatusCode(result);
 		}
 		ov_string_setvalue(&pPropertyId->v_IdSpec, propertyId.IdSpec);
 		pPropertyId->v_IdType = propertyId.IdType;
@@ -415,7 +415,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_createPVSL(Ide
 		result = Ov_CreateObject(propertyValueStatement_View, pView, Ov_StaticPtrCast(ov_domain, ppvsl), "View");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create View object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToPVSStatusCode(result);
+			return pvs_modelmanager_ovresultToPVSStatusCode(result);
 		}
 		pView->v_ViewEnum = view;
 	}
@@ -423,7 +423,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_createPVSL(Ide
 		result = Ov_CreateObject(propertyValueStatement_Visibility, pVisibility, Ov_StaticPtrCast(ov_domain, ppvsl), "Visibility");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create Visibility object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToPVSStatusCode(result);
+			return pvs_modelmanager_ovresultToPVSStatusCode(result);
 		}
 		pVisibility->v_VisibilityEnum = visibility;
 	}
@@ -450,7 +450,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_deletePVSL(Ide
 	result = Ov_DeleteObject(ptr);
 	if(Ov_Fail(result)){
 		ov_logfile_error("Fatal: could not delete PVSL object - reason: %s", ov_result_getresulttext(result));
-		return openaas_modelmanager_ovresultToPVSStatusCode(result);
+		return pvs_modelmanager_ovresultToPVSStatusCode(result);
 	}
     return (PVSStatusCode)0;
 }
@@ -483,7 +483,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_createPVS(Iden
 	result = Ov_CreateObject(propertyValueStatement_PropertyValueStatement, ppvs, Ov_StaticPtrCast(ov_domain, ppvsl), pvsName);
 	if(Ov_Fail(result)){
 		ov_logfile_error("Fatal: could not create PVS object - reason: %s", ov_result_getresulttext(result));
-		return openaas_modelmanager_ovresultToPVSStatusCode(result);
+		return pvs_modelmanager_ovresultToPVSStatusCode(result);
 	}
 
 	ov_variable_setanyvalue(&ppvs->v_Value, &value);
@@ -534,7 +534,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_deletePVS(Iden
 	result = Ov_DeleteObject(ptr);
 	if(Ov_Fail(result)){
 		ov_logfile_error("Fatal: could not delete PVS object - reason: %s", ov_result_getresulttext(result));
-		return openaas_modelmanager_ovresultToPVSStatusCode(result);
+		return pvs_modelmanager_ovresultToPVSStatusCode(result);
 	}
     return (PVSStatusCode)0;
 }
