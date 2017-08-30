@@ -20,7 +20,75 @@
 
 #include "openaas.h"
 
-/*
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMAASIdString_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_SMAASIdString,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMAASIdType_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_SMAASIdType = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMParentIdString_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_SMParentIdString,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMParentIdType_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_SMParentIdType = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMModelIdString_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_SMModelIdString,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMModelIdType_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_SMModelIdType = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMName_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_SMName,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMRevision_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_SMRevision = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMVersion_set(
+    OV_INSTPTR_openaas_modelmanager          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_SMVersion = value;
+    return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_STRING  value
@@ -36,33 +104,29 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMIdType_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMName_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_SMName,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_Revision_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_UINT  value
-) {
-    pobj->v_Revision = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_Version_set(
-    OV_INSTPTR_openaas_modelmanager          pobj,
-    const OV_UINT  value
-) {
-    pobj->v_Version = value;
-    return OV_ERR_OK;
-}
-
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMCreate_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_BOOL  value
 ) {
+	AASStatusCode result = AASSTATUSCODE_GOOD;
+	pobj->v_SMCreate = value;
+	if (pobj->v_SMCreate == TRUE){
+		IdentificationType tmpAASId;
+		tmpAASId.IdSpec = pobj->v_SMAASIdString;
+		tmpAASId.IdType = pobj->v_SMAASIdType;
+
+		IdentificationType tmpParentId;
+		tmpParentId.IdSpec = pobj->v_SMParentIdString;
+		tmpParentId.IdType = pobj->v_SMParentIdType;
+
+		IdentificationType tmpModelId;
+		tmpModelId.IdSpec = pobj->v_SMModelIdString;
+		tmpModelId.IdType = pobj->v_SMModelIdType;
+
+		result = openaas_modelmanager_createSM(tmpAASId, tmpParentId, tmpModelId, pobj->v_SMName, pobj->v_SMRevision, pobj->v_SMVersion);
+
+	}
+	pobj->v_AASStatus = result;
     pobj->v_SMCreate = value;
     return OV_ERR_OK;
 }
@@ -71,118 +135,69 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMDelete_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_BOOL  value
 ) {
-    pobj->v_SMDelete = value;
+	AASStatusCode result = AASSTATUSCODE_GOOD;
+	pobj->v_SMDelete = value;
+	if (pobj->v_SMDelete == TRUE){
+		IdentificationType tmpAASId;
+		tmpAASId.IdSpec = pobj->v_SMAASIdString;
+		tmpAASId.IdType = pobj->v_SMAASIdType;
+
+		IdentificationType tmpSMId;
+		tmpSMId.IdSpec = pobj->v_SMIdString;
+		tmpSMId.IdType = pobj->v_SMIdType;
+		result = openaas_modelmanager_deleteSM(tmpAASId,tmpSMId);
+	}
+	pobj->v_SMDelete = FALSE;
+	pobj->v_AASStatus = result;
     return OV_ERR_OK;
 }
 
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSM(IdentificationType smId, OV_STRING aasName, UINT revision, UINT version) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSM(IdentificationType aasId, IdentificationType parentID, IdentificationType modelId, OV_STRING smName, OV_UINT revision, OV_UINT version){
 	OV_RESULT result = OV_ERR_OK;
-	OV_INSTPTR_ov_domain ptr = NULL;
+	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_openaas_SubModel pSubModel = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
-	ptr2 = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
-	if (ptr2)
-		return AASSTATUSCODE_BADAASID;
-	ptr = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &pdb->root, "TechUnits"));
-	ptr = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, ptr, "openAAS"));
-	ptr = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, ptr, "AASFolder"));
-	if(ptr){
-		paas = Ov_StaticPtrCast(openaas_aas, Ov_SearchChild(ov_containment, ptr, aasName));
-		if (paas)
-			return AASSTATUSCODE_BADAASNAME;
-		result = Ov_CreateObject(openaas_aas, paas, ptr, aasName);
-		if(Ov_Fail(result)){
-			ov_logfile_error("Fatal: could not create AAS object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToAASStatusCode(result);
-		}
-		if (ov_string_compare(aasName, "ComCo") != OV_STRCMP_EQUAL)
-			openaas_modelmanager_AASConvertListAdd(aasId, aasName);
-
-		result = Ov_CreateObject(propertyValueStatement_CarrierId, pCarrierId, Ov_StaticPtrCast(ov_domain, &paas->p_Header), "CarrierID");
-		if(Ov_Fail(result)){
-			ov_logfile_error("Fatal: could not create Carrier object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToAASStatusCode(result);
-		}
-		pCarrierId->v_IdSpec = NULL;
-		ov_string_setvalue(&pCarrierId->v_IdSpec, aasId.IdSpec);
-		pCarrierId->v_IdType = aasId.IdType;
-
-		result = Ov_CreateObject(propertyValueStatement_PropertyValueStatement, pPropertyValueStatement, Ov_StaticPtrCast(ov_domain, &paas->p_Header.p_Config), "Asset");
-		if(Ov_Fail(result)){
-			ov_logfile_error("Fatal: could not create AssetPVS object - reason: %s", ov_result_getresulttext(result));
-			return openaas_modelmanager_ovresultToAASStatusCode(result);
-		}
-		OV_INSTPTR_ov_object pchild = NULL;
-		Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pPropertyValueStatement), pchild) {
-			if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
-				OV_INSTPTR_propertyValueStatement_ExpressionLogic pref =
-										Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic,pchild);
-				pref->v_ExpressionLogicEnum = SETTING;
-			}else if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
-				OV_INSTPTR_propertyValueStatement_ExpressionSemantic pref =
-										Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic,pchild);
-				pref->v_ExpressionSemanticEnum = EQUAL;
-			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
-				OV_INSTPTR_propertyValueStatement_PropertyId pref =
-										Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);
-				pref->v_IdSpec = "http://openaas.org/properties/assetId";
-				pref->v_IdType = URI;
-			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
-				OV_INSTPTR_propertyValueStatement_PropertyId pref =
-										Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);
-				pref->v_IdSpec = "http://openaas.org/properties/assetId";
-				pref->v_IdType = URI;
-			}else if (Ov_CanCastTo(propertyValueStatement_View, pchild)){
-				OV_INSTPTR_propertyValueStatement_View pref =
-										Ov_DynamicPtrCast(propertyValueStatement_View,pchild);
-				pref->v_ViewEnum = FUNCTIONAL;
-			}else if (Ov_CanCastTo(propertyValueStatement_Visibility, pchild)){
-				OV_INSTPTR_propertyValueStatement_Visibility pref =
-										Ov_DynamicPtrCast(propertyValueStatement_Visibility,pchild);
-				pref->v_VisibilityEnum = PUBLIC;
-			}
-		}
-		OV_STRING tmpString = NULL;
-		if (assetId.IdType == URI)
-			ov_string_setvalue(&tmpString, "URI:");
-		else
-			ov_string_setvalue(&tmpString, "ISO:");
-		ov_string_append(&tmpString, assetId.IdSpec);
-		OV_ANY tmpAny;
-		tmpAny.value.valueunion.val_string = NULL;
-		ov_string_setvalue(&tmpAny.value.valueunion.val_string, tmpString);
-		ov_string_setvalue(&tmpString, NULL);
-		tmpAny.value.vartype = OV_VT_STRING;
-		Ov_SetAnyValue(&pPropertyValueStatement->v_Value, &tmpAny);
-		ov_string_setvalue(&tmpAny.value.valueunion.val_string, NULL);
-		ov_time_gettime(&pPropertyValueStatement->v_Value.time);
-	}else{
-		return AASSTATUSCODE_BADUNEXPECTEDERROR;
-	}
-
-	return AASSTATUSCODE_GOOD;
-}
-
-
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteSM(IdentificationType smId) {
-	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_RESULT result = OV_ERR_OK;
+	OV_INSTPTR_ov_domain ptr3 = NULL;
+	OV_BOOL parentIsInAAS = FALSE;
 
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if(ptr){
 		paas = Ov_StaticPtrCast(openaas_aas, ptr);
 		if (paas){
-			result = Ov_DeleteObject(paas);
+			if (parentID.IdType != URI){
+				return AASSTATUSCODE_BADSMID;
+			}
+			ptr2 = ov_path_getobjectpointer(parentID.IdSpec, 2);
+			if (ptr2)
+				return AASSTATUSCODE_BADSMID;
+
+			ptr3 = Ov_GetParent(ov_containment, ptr2);
+			do{
+				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
+					parentIsInAAS = TRUE;
+					break;
+				}
+				ptr3 = Ov_GetParent(ov_containment, ptr3);
+			}while (ptr3);
+
+			if (parentIsInAAS == FALSE){
+				return AASSTATUSCODE_BADSMID;
+			}
+
+			result = Ov_CreateObject(openaas_SubModel, pSubModel, Ov_StaticPtrCast(ov_domain, ptr2), smName);
 			if(Ov_Fail(result)){
-				ov_logfile_error("Fatal: could not delete AAS object - reason: %s", ov_result_getresulttext(result));
+				ov_logfile_error("Fatal: could not create SubModel object - reason: %s", ov_result_getresulttext(result));
 				return openaas_modelmanager_ovresultToAASStatusCode(result);
 			}
-			openaas_modelmanager_AASConvertListDelete(aasId);
+
+			ov_string_setvalue(&pSubModel->v_ModelIdString, modelId.IdSpec);
+			pSubModel->v_ModelIdType = modelId.IdType;
+			pSubModel->v_Revision = revision;
+			pSubModel->v_Version = version;
 		}else{
-			return AASSTATUSCODE_BADUNEXPECTEDERROR;
+			return AASSTATUSCODE_BADAASID;
 		}
 	}else{
 		return AASSTATUSCODE_BADAASID;
@@ -190,4 +205,58 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteSM(IdentificationType s
 
 	return AASSTATUSCODE_GOOD;
 }
-*/
+
+
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteSM(IdentificationType aasId, IdentificationType smId) {
+	OV_RESULT result = OV_ERR_OK;
+	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_aas paas = NULL;
+	OV_INSTPTR_openaas_SubModel pSubModel = NULL;
+	OV_INSTPTR_ov_object ptr2 = NULL;
+	OV_INSTPTR_ov_domain ptr3 = NULL;
+	OV_BOOL SMIsInAAS = FALSE;
+
+	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
+	if(ptr){
+		paas = Ov_StaticPtrCast(openaas_aas, ptr);
+		if (paas){
+			if (smId.IdType != URI){
+				return AASSTATUSCODE_BADSMID;
+			}
+			ptr2 = ov_path_getobjectpointer(smId.IdSpec, 2);
+			if (ptr2)
+				return AASSTATUSCODE_BADSMID;
+
+			ptr3 = Ov_GetParent(ov_containment, ptr2);
+			do{
+				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
+					SMIsInAAS = TRUE;
+					break;
+				}
+				ptr3 = Ov_GetParent(ov_containment, ptr3);
+			}while (ptr3);
+
+			if (SMIsInAAS == FALSE){
+				return AASSTATUSCODE_BADSMID;
+			}
+
+			pSubModel = Ov_StaticPtrCast(openaas_SubModel, ptr2);
+			if (pSubModel){
+				result = Ov_DeleteObject(pSubModel);
+				if(Ov_Fail(result)){
+					ov_logfile_error("Fatal: could not delete SubModel object - reason: %s", ov_result_getresulttext(result));
+					return openaas_modelmanager_ovresultToAASStatusCode(result);
+				}
+			}else{
+				return AASSTATUSCODE_BADUNEXPECTEDERROR;
+			}
+		}else{
+			return AASSTATUSCODE_BADAASID;
+		}
+	}else{
+		return AASSTATUSCODE_BADAASID;
+	}
+
+	return AASSTATUSCODE_GOOD;
+}
+

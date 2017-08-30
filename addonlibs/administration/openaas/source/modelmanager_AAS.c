@@ -124,7 +124,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 		if (ov_string_compare(aasName, "ComCo") != OV_STRCMP_EQUAL)
 			openaas_modelmanager_AASConvertListAdd(aasId, aasName);
 
-		result = Ov_CreateObject(propertyValueStatement_CarrierId, pCarrierId, Ov_StaticPtrCast(ov_domain, &paas->p_Header), "CarrierID");
+		result = Ov_CreateObject(propertyValueStatement_CarrierId, pCarrierId, Ov_StaticPtrCast(ov_domain, &paas->p_Header.p_Config), "CarrierID");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create Carrier object - reason: %s", ov_result_getresulttext(result));
 			return openaas_modelmanager_ovresultToAASStatusCode(result);
@@ -143,11 +143,11 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 			if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
 				OV_INSTPTR_propertyValueStatement_ExpressionLogic pref =
 										Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic,pchild);
-				pref->v_ExpressionLogicEnum = SETTING;
+				pref->v_ExpressionLogicEnum = EQUAL;
 			}else if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
 				OV_INSTPTR_propertyValueStatement_ExpressionSemantic pref =
 										Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic,pchild);
-				pref->v_ExpressionSemanticEnum = EQUAL;
+				pref->v_ExpressionSemanticEnum = SETTING;
 			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
 				OV_INSTPTR_propertyValueStatement_PropertyId pref =
 										Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);

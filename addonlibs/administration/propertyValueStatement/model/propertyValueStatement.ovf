@@ -14,8 +14,10 @@
 
 typedef OV_UINT PVS_FNC_MATCHPVSRA(OV_STRING requirementPath, OV_STRING assurancePath, OV_BOOL *match, OV_STRING *matchText, OV_STRING *errorText);
 typedef OV_UINT PVS_FNC_MATCHPVSLRA(OV_STRING requirementListPath, OV_STRING assuranceListPath, OV_BOOL *match, OV_STRING *matchText, OV_STRING *errorText);
+	
 typedef PVSStatusCode PVS_FNC_CREATEPVSL(IdentificationType parentId, OV_STRING pvslName, OV_UINT mask, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility);
 typedef PVSStatusCode PVS_FNC_DELETEPVSL(IdentificationType pvslId);
+	
 typedef PVSStatusCode PVS_FNC_CREATEPVS(IdentificationType listId, OV_STRING pvsName, OV_ANY value, OV_UINT mask, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility);
 typedef PVSStatusCode PVS_FNC_DELETEPVS(IdentificationType pvsId);
 typedef PVSStatusCode PVS_FNC_SETPVS(IdentificationType pvsId, OV_UINT mask, OV_STRING pvsName, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility, OV_ANY value);
