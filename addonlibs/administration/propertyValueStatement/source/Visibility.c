@@ -51,16 +51,36 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_Visibility_constructor(
          return result;
 
     /* do what */
-    OV_INSTPTR_ov_domain pparent = NULL;
+	OV_INSTPTR_ov_domain pparent = NULL;
 	pparent = Ov_GetParent(ov_containment, pobj);
-	if (!Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pparent)){
-		ov_logfile_error("%s: cannot instantiate - Parent have to be from class propertyValueStatement", pinst->v_identifier);
+	if (!Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pparent) && !Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pparent)){
+		ov_logfile_error("%s: cannot instantiate - Parent have to be from class propertyValueStatement or propertyValueStatementList", pinst->v_identifier);
 		return OV_ERR_ALREADYEXISTS;
 	}
 
 	OV_INSTPTR_ov_object pchild = NULL;
+	if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pparent)){
+		Ov_ForEachChild(ov_containment, pparent, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_Visibility, pchild) && pchild != pobj){
+				ov_logfile_error("%s: cannot instantiate - Visibility instance already exists", pinst->v_identifier);
+				return OV_ERR_ALREADYEXISTS;
+			}else if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pchild)){
+				ov_logfile_error("%s: cannot instantiate - at least one instance from class propertyValueStatement already exists", pinst->v_identifier);
+				return OV_ERR_ALREADYEXISTS;
+			}
+		}
+	}
+
 	pchild = NULL;
 	if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pparent)){
+		Ov_ForEachChild(ov_containment, pparent, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_Visibility, pchild) && pchild != pobj){
+				ov_logfile_error("%s: cannot instantiate - Visibility instance already exists", pinst->v_identifier);
+				return OV_ERR_ALREADYEXISTS;
+			}
+		}
+		pparent = Ov_GetParent(ov_containment, pparent);
+		pchild = NULL;
 		Ov_ForEachChild(ov_containment, pparent, pchild){
 			if (Ov_CanCastTo(propertyValueStatement_Visibility, pchild) && pchild != pobj){
 				ov_logfile_error("%s: cannot instantiate - Visibility instance already exists", pinst->v_identifier);

@@ -147,5 +147,59 @@ LIBRARY propertyValueStatement
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS; 
+    
+    CLASS modelmanager    :    CLASS ov/domain
+        IS_INSTANTIABLE;
+        COMMENT    =    "Implementations of model functions to act like a factory";
+    VARIABLES 
+        PVSLParentIdString              : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLParentIdType                : UINT HAS_SET_ACCESSOR;        
+        PVSLName                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLMask                        : UINT HAS_SET_ACCESSOR     COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has following bits: 0x01:CarrierID;0x02:ExpressionLogic;0x04:ExpressionSemantic;0x08:PropertyID;0x10:View;0x20:Visibility";
+        PVSLCarrierIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLCarrierIdType               : UINT HAS_SET_ACCESSOR;
+        PVSLExpressionLogic             : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+        PVSLExpressionSemantic          : INT HAS_SET_ACCESSOR     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+        PVSLPropertyIdString            : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLPropertyIdType              : UINT HAS_SET_ACCESSOR;
+        PVSLView                        : INT HAS_SET_ACCESSOR     COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+        PVSLVisibility                  : INT HAS_SET_ACCESSOR     COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+        PVSLIdString                    : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLIdType                      : UINT HAS_SET_ACCESSOR;
+        PVSLStatus                      : UINT; 
+        PVSLCreate                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVSL";
+        PVSLDelete                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVSL"; 
+        
+        PVSListIdString                 : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSListIdType                   : UINT HAS_SET_ACCESSOR;        
+        PVSName                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSValue                        : ANY HAS_SET_ACCESSOR;
+        PVSMask                         : UINT HAS_SET_ACCESSOR     COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility";
+        PVSCarrierIdString              : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSCarrierIdType                : UINT HAS_SET_ACCESSOR;
+        PVSExpressionLogic              : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+        PVSExpressionSemantic           : INT HAS_SET_ACCESSOR     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+        PVSPropertyIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSPropertyIdType               : UINT HAS_SET_ACCESSOR;
+        PVSView                         : INT HAS_SET_ACCESSOR     COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+        PVSVisibility                   : INT HAS_SET_ACCESSOR     COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+        PVSIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSIdType                       : UINT HAS_SET_ACCESSOR;
+        PVSStatus                       : UINT;  
+        PVSCreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVS";
+        PVSDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVS";      
+    END_VARIABLES;
+    OPERATIONS
+        createPVSL : C_FUNCTION <PVS_FNC_CREATEPVSL>;
+        deletePVSL : C_FUNCTION <PVS_FNC_DELETEPVSL>;
+        createPVS  : C_FUNCTION <PVS_FNC_CREATEPVS>;
+        deletePVS  : C_FUNCTION <PVS_FNC_DELETEPVS>;
+        getPVS     : C_FUNCTION <PVS_FNC_GETPVS>;
+        setPVS     : C_FUNCTION <PVS_FNC_SETPVS>;
+        
+        getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+    END_OPERATIONS;    
+    END_CLASS;
 
 END_LIBRARY;
