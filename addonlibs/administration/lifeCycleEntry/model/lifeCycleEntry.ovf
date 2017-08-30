@@ -8,5 +8,15 @@
 		OV_STRING varName
 	);
 */
+#include "lifeCycleEntry.ovt"
+#include "identification_helpers.h"
+#include "lifeCycleEntry_helpers.h"
+
+typedef LCEStatusCode LCE_FNC_CREATELCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, LifeCycleEntry lce);
+typedef LCEStatusCode LCE_FNC_DELETELCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, OV_UINT64 lceId);
+typedef LCEStatusCode LCE_FNC_SETLCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, OV_UINT64 lceId, LifeCycleEntry lce);
+typedef LCEStatusCode LCE_FNC_GETLCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, OV_UINT64 lceId, LifeCycleEntry *lce);
+typedef LCEStatusCode LCE_FNC_GETLASTLCES(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, OV_UINT count, LifeCycleEntry **lce, OV_UINT *arrayDimension);
+
 
 #endif

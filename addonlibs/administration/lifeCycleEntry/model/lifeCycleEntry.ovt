@@ -5,6 +5,12 @@
 	Define your data types here. 
 */
 
-
+ENUMDEF(LCEStatusCode)
+#define LCESTATUSCODE_GOOD                  ENUMVAL(OV_VAR_TYPE, 0x00)
+#define LCESTATUSCODE_BADUNEXPECTEDERROR    ENUMVAL(OV_VAR_TYPE, 0x01)
+#define LCESTATUSCODE_BADLCEID              ENUMVAL(OV_VAR_TYPE, 0x02)
+#define LCESTATUSCODE_BADLCENAME            ENUMVAL(OV_VAR_TYPE, 0x03)
+#define LCESTATUSCODE_OK(result)   ((result) == LCESTATUSCODE_GOOD)
+#define LCESTATUSCODE_FAIL(result) ((result) != LCESTATUSCODE_GOOD)
 
 #endif

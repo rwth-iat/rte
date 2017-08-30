@@ -33,12 +33,29 @@ LIBRARY lifeCycleEntry
     CLASS LifeCycleArchive : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES
-            LifeCycleEntrySize        : UINT INITIALVALUE = 0;
-            LifeCycleEntrySizeMax     : UINT INITIALVALUE = 1000;
-            LifeCycleEntryNameCount   : UINT INITIALVALUE = 0;
+            LifeCycleEntrySize              : UINT INITIALVALUE = 0;
+            LifeCycleEntrySizeMax           : UINT INITIALVALUE = 1000;
+            LifeCycleEntryNameCount         : UINT INITIALVALUE = 0;
+	        LCEId                           : UINT HAS_SET_ACCESSOR;
+	        LCECreatingInstanceIdString     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        LCECreatingInstanceIdType       : UINT HAS_SET_ACCESSOR;
+	        LCEWritingInstanceIdString      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        LCEWritingInstanceIdType        : UINT HAS_SET_ACCESSOR;
+	        LCEEventClass                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        LCESubject                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+	        LCEValue                        : ANY HAS_SET_ACCESSOR;
+	        LCETimeStamp                    : TIME HAS_SET_ACCESSOR;
+	        LCEStatus                       : UINT;
+	        LCECreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a LCE";
+	        LCEDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a LCE";
         END_VARIABLES;
         OPERATIONS
             getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            createLCE  : C_FUNCTION <LCE_FNC_CREATELCE>;
+            deleteLCE  : C_FUNCTION <LCE_FNC_DELETELCE>;
+            getLCE     : C_FUNCTION <LCE_FNC_GETLCE>;
+            getLastLCEs: C_FUNCTION <LCE_FNC_GETLASTLCES>;
+            setLCE     : C_FUNCTION <LCE_FNC_SETLCE>;
         END_OPERATIONS;
     END_CLASS;
 	
