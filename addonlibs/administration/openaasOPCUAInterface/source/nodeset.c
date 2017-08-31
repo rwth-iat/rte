@@ -82,7 +82,7 @@ do {
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "TypeDictionary");
-attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://acplt.org/openaas/");
+attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://yourorganisation.org/openaas/");
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_ByteString *opcua_node_variable_t_ns_5_i_6002_variant_DataContents =  UA_ByteString_new();
@@ -111,7 +111,7 @@ attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_String *opcua_node_variable_t_ns_5_i_6003_variant_DataContents =  UA_String_new();
-*opcua_node_variable_t_ns_5_i_6003_variant_DataContents = UA_STRING_ALLOC("http://acplt.org/openaas/");
+*opcua_node_variable_t_ns_5_i_6003_variant_DataContents = UA_STRING_ALLOC("http://yourorganisation.org/openaas/");
 UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_5_i_6003_variant_DataContents, &UA_TYPES[UA_TYPES_STRING]);
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6003);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
@@ -132,7 +132,7 @@ do {
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "TypeDictionary");
-attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://acplt.org/openaas/");
+attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://yourorganisation.org/openaas/");
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_ByteString *opcua_node_variable_t_ns_5_i_6004_variant_DataContents =  UA_ByteString_new();
@@ -161,7 +161,7 @@ attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_String *opcua_node_variable_t_ns_5_i_6005_variant_DataContents =  UA_String_new();
-*opcua_node_variable_t_ns_5_i_6005_variant_DataContents = UA_STRING_ALLOC("http://acplt.org/openaas/Types.xsd");
+*opcua_node_variable_t_ns_5_i_6005_variant_DataContents = UA_STRING_ALLOC("http://yourorganisation.org/openaas/Types.xsd");
 UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_5_i_6005_variant_DataContents, &UA_TYPES[UA_TYPES_STRING]);
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6005);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
@@ -241,7 +241,7 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6018), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7002), 1:createlifeCycleEntry
+// Node: opcua_node_method_t(ns=5;i=7002), 1:createLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
@@ -249,11 +249,11 @@ inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ParentID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("lifeCycleEntry");
+inputArguments[1].name = UA_STRING("LCE");
 inputArguments[1].valueRank = -1;
 inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_3, 3002);
 
@@ -265,13 +265,13 @@ outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "createlifeCycleEntry");
+attr.displayName = UA_LOCALIZEDTEXT("", "createLCE");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7002);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "createlifeCycleEntry");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "createLCE");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
@@ -285,7 +285,87 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6020), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7013), 1:createpropertyValueStatement
+// Node: opcua_node_method_t(ns=5;i=7013), 1:createPVS
+UA_Argument *inputArguments = NULL;
+UA_Argument *outputArguments = NULL;
+
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 11);
+int inputArgumentCnt;
+for (inputArgumentCnt=0; inputArgumentCnt<11; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[0].name = UA_STRING("AAID");
+inputArguments[0].valueRank = -1;
+inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("ListID");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[2].name = UA_STRING("PVSName");
+inputArguments[2].valueRank = -1;
+inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[3].name = UA_STRING("Value");
+inputArguments[3].valueRank = -1;
+inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
+inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility");
+inputArguments[4].name = UA_STRING("Mask");
+inputArguments[4].valueRank = -1;
+inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
+inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[5].name = UA_STRING("CarrierID");
+inputArguments[5].valueRank = -1;
+inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[6].name = UA_STRING("ExpressionLogic");
+inputArguments[6].valueRank = -1;
+inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3002);
+inputArguments[7].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[7].name = UA_STRING("ExpressionSemantic");
+inputArguments[7].valueRank = -1;
+inputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3003);
+inputArguments[8].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[8].name = UA_STRING("PropertyID");
+inputArguments[8].valueRank = -1;
+inputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[9].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[9].name = UA_STRING("View");
+inputArguments[9].valueRank = -1;
+inputArguments[9].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3004);
+inputArguments[10].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[10].name = UA_STRING("Visibility");
+inputArguments[10].valueRank = -1;
+inputArguments[10].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3005);
+
+outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
+int outputArgumentCnt;
+for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
+outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
+outputArguments[0].name = UA_STRING("Status");
+outputArguments[0].valueRank = -1;
+UA_MethodAttributes attr;
+UA_MethodAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "createPVS");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.executable = true;
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7013);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "createPVS");
+UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , attr, (UA_MethodCallback) NULL, NULL, 11, inputArguments,  1, outputArguments, NULL);
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7013), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6041), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7013), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7013), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6042), true);
+//  Creating this node has resolved the following open references:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6041), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 7013), false);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6042), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 7013), false);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
+// Node: opcua_node_method_t(ns=5;i=7011), 1:createPVSL
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
@@ -293,18 +373,18 @@ inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 10);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<10; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ListID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("propertyValueStatementName");
+inputArguments[1].name = UA_STRING("ParentID");
 inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("Value");
+inputArguments[2].name = UA_STRING("PVSLName");
 inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01: CarrierID; 0x02: ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:IsPublic");
+inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility");
 inputArguments[3].name = UA_STRING("Mask");
 inputArguments[3].valueRank = -1;
 inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
@@ -329,9 +409,9 @@ inputArguments[8].name = UA_STRING("View");
 inputArguments[8].valueRank = -1;
 inputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3004);
 inputArguments[9].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[9].name = UA_STRING("IsPublic");
+inputArguments[9].name = UA_STRING("Visibility");
 inputArguments[9].valueRank = -1;
-inputArguments[9].dataType = UA_NODEID_NUMERIC(nsIdx_0, 1);
+inputArguments[9].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3005);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -341,79 +421,15 @@ outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "createpropertyValueStatement");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.executable = true;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7013);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "createpropertyValueStatement");
-UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 10, inputArguments,  1, outputArguments, NULL);
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7013), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6041), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7013), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7013), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6042), true);
-//  Creating this node has resolved the following open references:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6041), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 7013), false);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6042), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 7013), false);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7011), 1:createpropertyValueStatementL
-UA_Argument *inputArguments = NULL;
-UA_Argument *outputArguments = NULL;
-
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 7);
-int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<7; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
-inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ParentID");
-inputArguments[0].valueRank = -1;
-inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("propertyValueStatementLName");
-inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has following bits: 0x01:CarrierID; 0x02:ExpressionLogic;0x04:ExpressionSemantic;0x08:PropertyID");
-inputArguments[2].name = UA_STRING("Mask");
-inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("CarrierID");
-inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
-inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("ExpressionLogic");
-inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3002);
-inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("ExpressionSemantic");
-inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3003);
-inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[6].name = UA_STRING("PropertyID");
-inputArguments[6].valueRank = -1;
-inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
-
-outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
-int outputArgumentCnt;
-for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_init(&outputArguments[outputArgumentCnt]); 
-outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[0].name = UA_STRING("Status");
-outputArguments[0].valueRank = -1;
-UA_MethodAttributes attr;
-UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "createpropertyValueStatementL");
+attr.displayName = UA_LOCALIZEDTEXT("", "createPVSL");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7011);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "createpropertyValueStatementL");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "createPVSL");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 7, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 10, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7011), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6037), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7011), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -429,29 +445,33 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 5);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 6);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<5; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<6; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ParentId");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("ID");
+inputArguments[1].name = UA_STRING("ParentID");
 inputArguments[1].valueRank = -1;
 inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("Name");
+inputArguments[2].name = UA_STRING("ModelID");
 inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("Revision");
+inputArguments[3].name = UA_STRING("Name");
 inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
+inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 22);
 inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("Version");
+inputArguments[4].name = UA_STRING("Revision");
 inputArguments[4].valueRank = -1;
 inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
+inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[5].name = UA_STRING("Version");
+inputArguments[5].valueRank = -1;
+inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -469,7 +489,7 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "createSubModel");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 5, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 6, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7009), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6033), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7009), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -521,17 +541,21 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6022), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7004), 1:deletelifeCycleEntry
+// Node: opcua_node_method_t(ns=5;i=7004), 1:deleteLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("lifeCycleEntryId");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("LCEID");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -541,15 +565,15 @@ outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "deletelifeCycleEntry");
+attr.displayName = UA_LOCALIZEDTEXT("", "deleteLCE");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7004);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "deletelifeCycleEntry");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "deleteLCE");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7004), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6023), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7004), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -561,17 +585,21 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6024), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7014), 1:deletepropertyValueStatement
+// Node: opcua_node_method_t(ns=5;i=7014), 1:deletePVS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("ID");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -581,15 +609,15 @@ outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "deletepropertyValueStatement");
+attr.displayName = UA_LOCALIZEDTEXT("", "deletePVS");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7014);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "deletepropertyValueStatement");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "deletePVS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7014), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6043), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7014), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -601,17 +629,21 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6044), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7012), 1:deletepropertyValueStatementL
+// Node: opcua_node_method_t(ns=5;i=7012), 1:deletePVSL
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("ID");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -621,15 +653,15 @@ outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "deletepropertyValueStatementL");
+attr.displayName = UA_LOCALIZEDTEXT("", "deletePVSL");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7012);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "deletepropertyValueStatementL");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "deletePVSL");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7012), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6039), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7012), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -645,13 +677,17 @@ do {
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("ID");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -669,7 +705,7 @@ UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "deleteSubModel");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7010), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6035), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7010), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -689,7 +725,7 @@ inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int inputArgumentCnt;
 for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("AASId");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 
@@ -722,7 +758,7 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6026), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7006), 1:getLastlifeCycleEntrys
+// Node: opcua_node_method_t(ns=5;i=7006), 1:getLastLCEs
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
@@ -745,22 +781,22 @@ outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[1].name = UA_STRING("LastlifeCycleEntrys");
+outputArguments[1].name = UA_STRING("LastLCEs");
 outputArguments[1].valueRank = 1;
 outputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_3, 3002);
 outputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[2].name = UA_STRING("LastlifeCycleEntrysCount");
+outputArguments[2].name = UA_STRING("LastLCEsCount");
 outputArguments[2].valueRank = -1;
 outputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "getLastlifeCycleEntrys");
+attr.displayName = UA_LOCALIZEDTEXT("", "getLastLCEs");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7006);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "getLastlifeCycleEntrys");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "getLastLCEs");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  3, outputArguments, NULL);
 // This node has the following references that can be created:
@@ -774,17 +810,21 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6028), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7007), 1:getlifeCycleEntry
+// Node: opcua_node_method_t(ns=5;i=7007), 1:getLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("lifeCycleEntryId");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("LCEID");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int outputArgumentCnt;
@@ -793,20 +833,20 @@ outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[1].name = UA_STRING("lifeCycleEntryData");
+outputArguments[1].name = UA_STRING("LCEData");
 outputArguments[1].valueRank = -1;
 outputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_3, 3002);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "getlifeCycleEntry");
+attr.displayName = UA_LOCALIZEDTEXT("", "getLCE");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7007);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "getlifeCycleEntry");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "getLCE");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  2, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  2, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7007), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6029), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7007), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -818,17 +858,21 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6030), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7018), 1:getlifeCycleEntrySimple
+// Node: opcua_node_method_t(ns=5;i=7018), 1:getLCESimple
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("lifeCycleEntryID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("LCEID");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 6);
 int outputArgumentCnt;
@@ -858,15 +902,15 @@ outputArguments[5].valueRank = -1;
 outputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "getlifeCycleEntrySimple");
+attr.displayName = UA_LOCALIZEDTEXT("", "getLCESimple");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7018);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "getlifeCycleEntrySimple");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "getLCESimple");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  6, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  6, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7018), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6051), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7018), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -878,17 +922,21 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6052), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7016), 1:getpropertyValueStatement
+// Node: opcua_node_method_t(ns=5;i=7016), 1:getPVS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<1; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[1].name = UA_STRING("ID");
+inputArguments[1].valueRank = -1;
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 9);
 int outputArgumentCnt;
@@ -897,7 +945,7 @@ outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[1].name = UA_STRING("propertyValueStatementName");
+outputArguments[1].name = UA_STRING("PVSName");
 outputArguments[1].valueRank = -1;
 outputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 outputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
@@ -921,24 +969,24 @@ outputArguments[6].name = UA_STRING("View");
 outputArguments[6].valueRank = -1;
 outputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3004);
 outputArguments[7].description = UA_LOCALIZEDTEXT("en_US","");
-outputArguments[7].name = UA_STRING("IsPublic");
+outputArguments[7].name = UA_STRING("Visibility");
 outputArguments[7].valueRank = -1;
-outputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_0, 1);
+outputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3005);
 outputArguments[8].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[8].name = UA_STRING("Value");
 outputArguments[8].valueRank = -1;
 outputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "getpropertyValueStatement");
+attr.displayName = UA_LOCALIZEDTEXT("", "getPVS");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7016);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "getpropertyValueStatement");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "getPVS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 1, inputArguments,  9, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  9, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7016), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6047), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7016), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -950,21 +998,25 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6048), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7008), 1:setlifeCycleEntry
+// Node: opcua_node_method_t(ns=5;i=7008), 1:setLCE
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 2);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 3);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<2; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<3; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("lifeCycleEntryID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("lifeCycleEntryData");
+inputArguments[1].name = UA_STRING("LCEID");
 inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_3, 3002);
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[2].name = UA_STRING("LCEData");
+inputArguments[2].valueRank = -1;
+inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_3, 3002);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -974,15 +1026,15 @@ outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "setlifeCycleEntry");
+attr.displayName = UA_LOCALIZEDTEXT("", "setLCE");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7008);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "setlifeCycleEntry");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "setLCE");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 2, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 3, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7008), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6031), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7008), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -994,37 +1046,41 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6032), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7017), 1:setlifeCycleEntrySimple
+// Node: opcua_node_method_t(ns=5;i=7017), 1:setLCESimple
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 6);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 7);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<6; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<7; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("lifeCycleEntryID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[1].name = UA_STRING("CreatingInstance");
+inputArguments[1].name = UA_STRING("LCEID");
 inputArguments[1].valueRank = -1;
 inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("WritingInstance");
+inputArguments[2].name = UA_STRING("CreatingInstance");
 inputArguments[2].valueRank = -1;
 inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("EventClass");
+inputArguments[3].name = UA_STRING("WritingInstance");
 inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("Subject");
+inputArguments[4].name = UA_STRING("EventClass");
 inputArguments[4].valueRank = -1;
 inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("Value");
+inputArguments[5].name = UA_STRING("Subject");
 inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
+inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[6].name = UA_STRING("Value");
+inputArguments[6].valueRank = -1;
+inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -1034,15 +1090,15 @@ outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "setlifeCycleEntrySimple");
+attr.displayName = UA_LOCALIZEDTEXT("", "setLCESimple");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7017);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "setlifeCycleEntrySimple");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "setLCESimple");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 6, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 7, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7017), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6049), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7017), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -1054,53 +1110,57 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6050), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1005/1:AASFactoryType using i=47/HasComponent
-// Node: opcua_node_method_t(ns=5;i=7015), 1:setpropertyValueStatement
+// Node: opcua_node_method_t(ns=5;i=7015), 1:setPVS
 UA_Argument *inputArguments = NULL;
 UA_Argument *outputArguments = NULL;
 
-inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 10);
+inputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 11);
 int inputArgumentCnt;
-for (inputArgumentCnt=0; inputArgumentCnt<10; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
+for (inputArgumentCnt=0; inputArgumentCnt<11; ++inputArgumentCnt) UA_Argument_init(&inputArguments[inputArgumentCnt]); 
 inputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[0].name = UA_STRING("ID");
+inputArguments[0].name = UA_STRING("AASID");
 inputArguments[0].valueRank = -1;
 inputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
-inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:propertyValueStatementName; 0x02:CarrierID; 0x04:ExpressionLogic; 0x08:ExpressionSemantic; 0x10PropertyID; 0x20:View; 0x40:IsPublic; 0x80:Value");
-inputArguments[1].name = UA_STRING("Mask");
+inputArguments[1].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:PVSName; 0x02:CarrierID; 0x04:ExpressionLogic; 0x08:ExpressionSemantic; 0x10PropertyID; 0x20:View; 0x40Visibility; 0x80:Value");
+inputArguments[1].name = UA_STRING("ID");
 inputArguments[1].valueRank = -1;
-inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
+inputArguments[1].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[2].name = UA_STRING("propertyValueStatementName");
+inputArguments[2].name = UA_STRING("Mask");
 inputArguments[2].valueRank = -1;
-inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
+inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
 inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[3].name = UA_STRING("CarrierID");
+inputArguments[3].name = UA_STRING("PVSName");
 inputArguments[3].valueRank = -1;
-inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
 inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[4].name = UA_STRING("ExpressionLogic");
+inputArguments[4].name = UA_STRING("CarrierID");
 inputArguments[4].valueRank = -1;
-inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3002);
+inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[5].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[5].name = UA_STRING("ExpressionSemantic");
+inputArguments[5].name = UA_STRING("ExpressionLogic");
 inputArguments[5].valueRank = -1;
-inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3003);
+inputArguments[5].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3002);
 inputArguments[6].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[6].name = UA_STRING("PropertyID");
+inputArguments[6].name = UA_STRING("ExpressionSemantic");
 inputArguments[6].valueRank = -1;
-inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+inputArguments[6].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3003);
 inputArguments[7].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[7].name = UA_STRING("View");
+inputArguments[7].name = UA_STRING("PropertyID");
 inputArguments[7].valueRank = -1;
-inputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3004);
+inputArguments[7].dataType = UA_NODEID_NUMERIC(nsIdx_2, 3002);
 inputArguments[8].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[8].name = UA_STRING("IsPublic");
+inputArguments[8].name = UA_STRING("View");
 inputArguments[8].valueRank = -1;
-inputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_0, 1);
+inputArguments[8].dataType = UA_NODEID_NUMERIC(nsIdx_4, 3004);
 inputArguments[9].description = UA_LOCALIZEDTEXT("en_US","");
-inputArguments[9].name = UA_STRING("Value");
+inputArguments[9].name = UA_STRING("Visibility");
 inputArguments[9].valueRank = -1;
 inputArguments[9].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
+inputArguments[10].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[10].name = UA_STRING("Value");
+inputArguments[10].valueRank = -1;
+inputArguments[10].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
 
 outputArguments = (UA_Argument *) UA_malloc(sizeof(UA_Argument) * 1);
 int outputArgumentCnt;
@@ -1110,15 +1170,15 @@ outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "setpropertyValueStatement");
+attr.displayName = UA_LOCALIZEDTEXT("", "setPVS");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.executable = true;
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 7015);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "setpropertyValueStatement");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "setPVS");
 UA_Server_addMethodNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, (UA_MethodCallback) NULL, NULL, 10, inputArguments,  1, outputArguments, NULL);
+       , attr, (UA_MethodCallback) NULL, NULL, 11, inputArguments,  1, outputArguments, NULL);
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7015), UA_NODEID_NUMERIC(nsIdx_0, 46), UA_EXPANDEDNODEID_NUMERIC(nsIdx_5, 6045), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 7015), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
@@ -1336,29 +1396,6 @@ UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6012), UA_NODEID_NUMER
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1004/1:ServiceType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=5;i=6013), 1:Name
-UA_VariableAttributes attr;
-UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "Name");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.accessLevel = 3;
-attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6013);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1004);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "Name");
-UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6013), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6013), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=5;i=1004/1:ServiceType using i=46/HasProperty
 // Node: opcua_node_variable_t(ns=5;i=6014), 1:Revision
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
@@ -1443,10 +1480,10 @@ UA_Server_addObjectTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId,
 
 do {
 // Referencing node found and declared as parent: ns=5;i=1003/1:SubModelType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=5;i=6008), 1:ID
+// Node: opcua_node_variable_t(ns=5;i=6008), 1:ModelID
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "ID");
+attr.displayName = UA_LOCALIZEDTEXT("", "ModelID");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
@@ -1454,7 +1491,7 @@ UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6008);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1003);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "ID");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "ModelID");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
@@ -1462,29 +1499,6 @@ UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXP
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6008), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6008), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=5;i=1003/1:SubModelType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=5;i=6009), 1:Name
-UA_VariableAttributes attr;
-UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "Name");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.accessLevel = 3;
-attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6009);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1003);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "Name");
-UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6009), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6009), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {

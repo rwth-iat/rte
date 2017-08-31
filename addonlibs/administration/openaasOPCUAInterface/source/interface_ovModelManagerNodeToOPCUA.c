@@ -37,7 +37,7 @@ extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
-/*	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
+	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
 	OV_TICKET 				*pTicket = NULL;
@@ -113,6 +113,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerNode
 	// ModelManager-Methods?
 	size_references = size_references + 2;// create/deleteAAS
 
+	size_references = size_references + 2;// create/deleteSubModel
+
 	size_references = size_references + 2;// create/deletePropertyValueStatementList
 
 	size_references = size_references + 2;// create/deletePropertyValueStatement
@@ -123,14 +125,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerNode
 
 	size_references = size_references + 2;// get/setLifceCycleEntry
 
+	size_references = size_references + 2;// get/setLifceCycleEntrySimple
+
 	size_references = size_references + 1;// getLastLCEs
 
 	size_references = size_references + 1;// getAASNodeId
-
-	size_references = size_references + 1;// triggerGetCoreData
-
-	size_references = size_references + 2;// start/stopGetAssetLCEData
-
 
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
@@ -184,156 +183,166 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerNode
 	newNode->references[3].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// createPropertyValueStatementList
+	// createSubModel
 	newNode->references[4].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[4].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "createPVSL");
+	ov_string_append(&tmpString, "createSubModel");
 	newNode->references[4].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// deletePropertyValueStatementList
+	//deleteSubModel
 	newNode->references[5].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[5].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "deletePVSL");
+	ov_string_append(&tmpString, "deleteSubModel");
 	newNode->references[5].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// createPropertyValueStatement
+	// createPropertyValueStatementList
 	newNode->references[6].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[6].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "createPVS");
+	ov_string_append(&tmpString, "createPVSL");
 	newNode->references[6].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// deletePropertyValueStatement
+	// deletePropertyValueStatementList
 	newNode->references[7].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[7].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "deletePVS");
+	ov_string_append(&tmpString, "deletePVSL");
 	newNode->references[7].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// getPropertyValueStatement
+	// createPropertyValueStatement
 	newNode->references[8].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[8].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "getPVS");
+	ov_string_append(&tmpString, "createPVS");
 	newNode->references[8].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// setPropertyValueStatement
+	// deletePropertyValueStatement
 	newNode->references[9].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[9].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "setPVS");
+	ov_string_append(&tmpString, "deletePVS");
 	newNode->references[9].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// createLifeCycleEntry
+	// getPropertyValueStatement
 	newNode->references[10].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[10].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "createLCE");
+	ov_string_append(&tmpString, "getPVS");
 	newNode->references[10].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// deleteLifceCycleEntry
+	// setPropertyValueStatement
 	newNode->references[11].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[11].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "deleteLCE");
+	ov_string_append(&tmpString, "setPVS");
 	newNode->references[11].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// getLifeCycleEntry
+	// createLifeCycleEntry
 	newNode->references[12].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[12].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "getLCE");
+	ov_string_append(&tmpString, "createLCE");
 	newNode->references[12].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// setLifeCycleEntry
+	// deleteLifceCycleEntry
 	newNode->references[13].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[13].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "setLCE");
+	ov_string_append(&tmpString, "deleteLCE");
 	newNode->references[13].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// getAASNodeId
+	// getLifeCycleEntry
 	newNode->references[14].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[14].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "getAASNodeId");
+	ov_string_append(&tmpString, "getLCE");
 	newNode->references[14].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// getLastLCEs
+	// setLifeCycleEntry
 	newNode->references[15].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[15].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "getLastLCEs");
+	ov_string_append(&tmpString, "setLCE");
 	newNode->references[15].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// triggerGetCoreData
+	// getLifeCycleEntrySimple
 	newNode->references[16].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[16].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "triggerGetCoreData");
+	ov_string_append(&tmpString, "getLCESimple");
 	newNode->references[16].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// startGetAssetLCEData
+	// setLifeCycleEntrySimple
 	newNode->references[17].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[17].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "startGetAssetLCEData");
+	ov_string_append(&tmpString, "setLCESimple");
 	newNode->references[17].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// stopGetAssetLCEData
+	// getAASNodeId
 	newNode->references[18].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
 	newNode->references[18].isInverse = UA_FALSE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "stopGetAssetLCEData");
+	ov_string_append(&tmpString, "getAASNodeId");
 	newNode->references[18].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
-*/
+
+	// getLastLCEs
+	newNode->references[19].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[19].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "getLastLCEs");
+	newNode->references[19].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }

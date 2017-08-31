@@ -123,7 +123,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMCreate_set(
 		tmpModelId.IdSpec = pobj->v_SMModelIdString;
 		tmpModelId.IdType = pobj->v_SMModelIdType;
 
-		result = openaas_modelmanager_createSM(tmpAASId, tmpParentId, tmpModelId, pobj->v_SMName, pobj->v_SMRevision, pobj->v_SMVersion);
+		result = openaas_modelmanager_createSubModel(tmpAASId, tmpParentId, tmpModelId, pobj->v_SMName, pobj->v_SMRevision, pobj->v_SMVersion);
 
 	}
 	pobj->v_AASStatus = result;
@@ -145,7 +145,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMDelete_set(
 		IdentificationType tmpSMId;
 		tmpSMId.IdSpec = pobj->v_SMIdString;
 		tmpSMId.IdType = pobj->v_SMIdType;
-		result = openaas_modelmanager_deleteSM(tmpAASId,tmpSMId);
+		result = openaas_modelmanager_deleteSubModel(tmpAASId,tmpSMId);
 	}
 	pobj->v_SMDelete = FALSE;
 	pobj->v_AASStatus = result;
@@ -153,7 +153,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMDelete_set(
 }
 
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSM(IdentificationType aasId, IdentificationType parentID, IdentificationType modelId, OV_STRING smName, OV_UINT revision, OV_UINT version){
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSubModel(IdentificationType aasId, IdentificationType parentID, IdentificationType modelId, OV_STRING smName, OV_UINT revision, OV_UINT version){
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
@@ -207,7 +207,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSM(IdentificationType a
 }
 
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteSM(IdentificationType aasId, IdentificationType smId) {
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteSubModel(IdentificationType aasId, IdentificationType smId) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;

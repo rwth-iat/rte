@@ -254,8 +254,8 @@ LIBRARY openaas
     OPERATIONS
         createAAS  : C_FUNCTION <UA_FNC_CREATEAAS>;
         deleteAAS  : C_FUNCTION <UA_FNC_DELETEAAS>;
-        createSM  : C_FUNCTION <UA_FNC_CREATESM>;
-        deleteSM  : C_FUNCTION <UA_FNC_DELETESM>;
+        createSubModel   : C_FUNCTION <UA_FNC_CREATESUBMODEL>;
+        deleteSubModel   : C_FUNCTION <UA_FNC_DELETESUBMODEL>;
         createPVSL : C_FUNCTION <UA_FNC_CREATEPVSL>;
         deletePVSL : C_FUNCTION <UA_FNC_DELETEPVSL>;
         createPVS  : C_FUNCTION <UA_FNC_CREATEPVS>;

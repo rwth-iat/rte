@@ -182,7 +182,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovPropertyValueSta
 			}
 			((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 			((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
-			UA_String tmpUAString = UA_String_fromChars(*(OV_STRING*)element.pvalue);
+			UA_String tmpUAString = UA_String_fromChars(((OV_ANY*)element.pvalue)->value.valueunion.val_string);
 			UA_String_copy(&tmpUAString, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
 			UA_String_deleteMembers(&tmpUAString);
 			// dataType

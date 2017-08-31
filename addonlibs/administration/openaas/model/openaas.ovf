@@ -21,8 +21,8 @@
 typedef AASStatusCode UA_FNC_CREATEAAS(IdentificationType aasId, OV_STRING aasName, IdentificationType assetId);
 typedef AASStatusCode UA_FNC_DELETEAAS(IdentificationType aasId);
 	
-typedef AASStatusCode UA_FNC_CREATESM(IdentificationType aasId, IdentificationType parentID, IdentificationType modelId, OV_STRING smName, OV_UINT revision, OV_UINT version);
-typedef AASStatusCode UA_FNC_DELETESM(IdentificationType aasId, IdentificationType smId);
+typedef AASStatusCode UA_FNC_CREATESUBMODEL(IdentificationType aasId, IdentificationType parentID, IdentificationType modelId, OV_STRING smName, OV_UINT revision, OV_UINT version);
+typedef AASStatusCode UA_FNC_DELETESUBMODEL(IdentificationType aasId, IdentificationType smId);
 	
 typedef AASStatusCode UA_FNC_CREATEPVSL(IdentificationType aasId, IdentificationType parentID, OV_STRING pvslName, OV_UINT mask, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility);
 typedef AASStatusCode UA_FNC_DELETEPVSL(IdentificationType aasId, IdentificationType pvslId);
