@@ -88,15 +88,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	nodeClass = UA_NODECLASS_METHOD;
 	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_MethodNode));
 
-	OV_ELEMENT tmpElement;
-	tmpElement.elemtype = OV_ET_NONE;
-	tmpElement.pobj = NULL;
-	ov_element_searchpart(&element, &tmpElement, OV_ET_OPERATION, plist2[0]);
-	ov_string_freelist(plist2);
-	if (tmpElement.pobj == NULL){
-		return OV_ERR_BADPATH;
-	}
-
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
@@ -117,7 +108,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 
 	// DisplayName
 	lText.locale = UA_String_fromChars("en");
-	lText.text = UA_String_fromChars(tmpElement.elemunion.pop->v_identifier);
+	lText.text = UA_String_fromChars(plist2[0]);
 	newNode->displayName = lText;
 
 	// NodeId
@@ -141,7 +132,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 
 	((UA_MethodNode*)newNode)->executable = TRUE;
 	((UA_MethodNode*)newNode)->attachedMethod = openaasOPCUAInterface_interface_MethodCallbackModelmanager;
-	((UA_MethodNode*)newNode)->methodHandle = tmpElement.elemunion.pop->v_identifier;
+	((UA_MethodNode*)newNode)->methodHandle = plist2[0];
+	ov_string_freelist(plist2);
 
 	// References
 	size_t size_references = 0;
