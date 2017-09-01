@@ -209,7 +209,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_domain ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr4 = NULL;
 	OV_BOOL listIsInAAS = FALSE;
 
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -220,16 +221,23 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType 
 				return AASSTATUSCODE_BADPARENTID;
 			}
 			ptr2 = ov_path_getobjectpointer(listId.IdSpec, 2);
-			if (ptr2)
+			if (!ptr2)
 				return AASSTATUSCODE_BADPARENTID;
 
-			ptr3 = Ov_GetParent(ov_containment, ptr2);
+			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
+			if (!ptr3){
+				ptr3 = ptr2->v_pouterobject;
+			}
 			do{
 				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
 					listIsInAAS = TRUE;
 					break;
 				}
-				ptr3 = Ov_GetParent(ov_containment, ptr3);
+				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
+				if (!ptr4){
+					ptr4 = ptr3->v_pouterobject;
+				}
+				ptr3 = ptr4;
 			}while (ptr3);
 
 			if (listIsInAAS == FALSE){
@@ -252,7 +260,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType 
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_domain ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr4 = NULL;
 	OV_BOOL pvsIsInAAS = FALSE;
 
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -263,16 +272,23 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType 
 				return AASSTATUSCODE_BADPVSLID;
 			}
 			ptr2 = ov_path_getobjectpointer(pvsId.IdSpec, 2);
-			if (ptr2)
+			if (!ptr2)
 				return AASSTATUSCODE_BADPVSLID;
 
-			ptr3 = Ov_GetParent(ov_containment, ptr2);
+			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
+			if (!ptr3){
+				ptr3 = ptr2->v_pouterobject;
+			}
 			do{
 				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
 					pvsIsInAAS = TRUE;
 					break;
 				}
-				ptr3 = Ov_GetParent(ov_containment, ptr3);
+				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
+				if (!ptr4){
+					ptr4 = ptr3->v_pouterobject;
+				}
+				ptr3 = ptr4;
 			}while (ptr3);
 
 			if (pvsIsInAAS == FALSE){
@@ -296,7 +312,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aas
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_domain ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr4 = NULL;
 	OV_BOOL pvsIsInAAS = FALSE;
 
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -307,16 +324,23 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aas
 				return AASSTATUSCODE_BADPARENTID;
 			}
 			ptr2 = ov_path_getobjectpointer(pvsId.IdSpec, 2);
-			if (ptr2)
+			if (!ptr2)
 				return AASSTATUSCODE_BADPARENTID;
 
-			ptr3 = Ov_GetParent(ov_containment, ptr2);
+			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
+			if (!ptr3){
+				ptr3 = ptr2->v_pouterobject;
+			}
 			do{
 				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
 					pvsIsInAAS = TRUE;
 					break;
 				}
-				ptr3 = Ov_GetParent(ov_containment, ptr3);
+				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
+				if (!ptr4){
+					ptr4 = ptr3->v_pouterobject;
+				}
+				ptr3 = ptr4;
 			}while (ptr3);
 
 			if (pvsIsInAAS == FALSE){
@@ -339,7 +363,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aas
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_domain ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr4 = NULL;
 	OV_BOOL pvsIsInAAS = FALSE;
 
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -350,16 +375,23 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aas
 				return AASSTATUSCODE_BADPARENTID;
 			}
 			ptr2 = ov_path_getobjectpointer(pvsId.IdSpec, 2);
-			if (ptr2)
+			if (!ptr2)
 				return AASSTATUSCODE_BADPARENTID;
 
-			ptr3 = Ov_GetParent(ov_containment, ptr2);
+			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
+			if (!ptr3){
+				ptr3 = ptr2->v_pouterobject;
+			}
 			do{
 				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
 					pvsIsInAAS = TRUE;
 					break;
 				}
-				ptr3 = Ov_GetParent(ov_containment, ptr3);
+				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
+				if (!ptr4){
+					ptr4 = ptr3->v_pouterobject;
+				}
+				ptr3 = ptr4;
 			}while (ptr3);
 
 			if (pvsIsInAAS == FALSE){

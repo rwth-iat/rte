@@ -132,7 +132,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 
 	((UA_MethodNode*)newNode)->executable = TRUE;
 	((UA_MethodNode*)newNode)->attachedMethod = openaasOPCUAInterface_interface_MethodCallbackModelmanager;
-	((UA_MethodNode*)newNode)->methodHandle = plist2[0];
+	ov_string_setvalue((OV_STRING*)(&(((UA_MethodNode*)newNode)->methodHandle)), plist2[0]);
 	ov_string_freelist(plist2);
 
 	// References
@@ -160,7 +160,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	plist = ov_string_split(tmpString, "||", &len);
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, plist[0]);
 	ov_string_setvalue(&tmpString, NULL);
-	ov_string_freelist(plist);
 
 	// Type
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
@@ -252,7 +251,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
 		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
 	}
-
+	ov_string_freelist(plist);
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }

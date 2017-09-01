@@ -19,12 +19,13 @@ UA_INLINE UA_StatusCode nodeset_returnNamespaces(
   UA_String_deleteMembers(&tempNsUri);
   retval |= UA_Server_addNamespace_full(server, &nsArray[0]);
   UA_UInt16 nsIdx_0 = nsArray[0].index;
-  //Adding namespace for old namespace index = 2 with uri: http://acplt.org/propertyValueStatement/
+  //Adding namespace for old namespace index = 3 with uri: http://acplt.org/propertyValueStatement/
   tempNsUri = UA_String_fromChars("http://acplt.org/propertyValueStatement/");
   UA_Namespace_init(&nsArray[1], &tempNsUri);
   UA_String_deleteMembers(&tempNsUri);
   retval |= UA_Server_addNamespace_full(server, &nsArray[1]);
-  UA_UInt16 nsIdx_2 = nsArray[1].index;
+  UA_UInt16 nsIdx_3 = nsArray[1].index;
+
 
   //Writing back desired namespace values')
   if(namespacesSize) {*namespacesSize = 2;};
@@ -37,42 +38,41 @@ UA_INLINE UA_StatusCode nodeset_returnNamespaces(
   }
   if(retval == UA_STATUSCODE_GOOD){retval = UA_STATUSCODE_GOOD;} //ensure that retval is used
   
-
 do {
 // Referencing node found and declared as parent: i=29/Enumeration using i=45/HasSubtype
-// Node: opcua_node_dataType_t(ns=2;i=3002), 1:ExpressionLogicEnum
+// Node: opcua_node_dataType_t(ns=3;i=3002), 1:ExpressionLogicEnum
 UA_DataTypeAttributes attr;
 UA_DataTypeAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "ExpressionLogicEnum");
 attr.description = UA_LOCALIZEDTEXT("", "");
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 3002);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 29);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 45);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "ExpressionLogicEnum");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "ExpressionLogicEnum");
 UA_Server_addDataTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, NULL, NULL);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=3002/1:ExpressionLogicEnum using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6004), EnumStrings
+// Referencing node found and declared as parent: ns=3;i=3002/1:ExpressionLogicEnum using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6004), EnumStrings
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "EnumStrings");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = 1;
-UA_LocalizedText opcua_node_variable_t_ns_2_i_6004_variant_DataContents[6];
-opcua_node_variable_t_ns_2_i_6004_variant_DataContents[0] = UA_LOCALIZEDTEXT_ALLOC("en_US", "GREATER_THAN");
-opcua_node_variable_t_ns_2_i_6004_variant_DataContents[1] = UA_LOCALIZEDTEXT_ALLOC("en_US", "GREATER_EQUAL");
-opcua_node_variable_t_ns_2_i_6004_variant_DataContents[2] = UA_LOCALIZEDTEXT_ALLOC("en_US", "EQUAL");
-opcua_node_variable_t_ns_2_i_6004_variant_DataContents[3] = UA_LOCALIZEDTEXT_ALLOC("en_US", "NOT_EQUAL");
-opcua_node_variable_t_ns_2_i_6004_variant_DataContents[4] = UA_LOCALIZEDTEXT_ALLOC("en_US", "LESS_EQUAL");
-opcua_node_variable_t_ns_2_i_6004_variant_DataContents[5] = UA_LOCALIZEDTEXT_ALLOC("en_US", "LESS_THAN");
-UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6004_variant_DataContents, (UA_Int32) 6, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6004);
+UA_LocalizedText opcua_node_variable_t_ns_3_i_6004_variant_DataContents[6];
+opcua_node_variable_t_ns_3_i_6004_variant_DataContents[0] = UA_LOCALIZEDTEXT_ALLOC("en_US", "GREATER_THAN");
+opcua_node_variable_t_ns_3_i_6004_variant_DataContents[1] = UA_LOCALIZEDTEXT_ALLOC("en_US", "GREATER_EQUAL");
+opcua_node_variable_t_ns_3_i_6004_variant_DataContents[2] = UA_LOCALIZEDTEXT_ALLOC("en_US", "EQUAL");
+opcua_node_variable_t_ns_3_i_6004_variant_DataContents[3] = UA_LOCALIZEDTEXT_ALLOC("en_US", "NOT_EQUAL");
+opcua_node_variable_t_ns_3_i_6004_variant_DataContents[4] = UA_LOCALIZEDTEXT_ALLOC("en_US", "LESS_EQUAL");
+opcua_node_variable_t_ns_3_i_6004_variant_DataContents[5] = UA_LOCALIZEDTEXT_ALLOC("en_US", "LESS_THAN");
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_3_i_6004_variant_DataContents, (UA_Int32) 6, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6004);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 3002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 3002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "EnumStrings");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
@@ -80,43 +80,43 @@ UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, n
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6004), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6004), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6004), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6004), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
 // Referencing node found and declared as parent: i=29/Enumeration using i=45/HasSubtype
-// Node: opcua_node_dataType_t(ns=2;i=3003), 1:ExpressionSemanticEnum
+// Node: opcua_node_dataType_t(ns=3;i=3003), 1:ExpressionSemanticEnum
 UA_DataTypeAttributes attr;
 UA_DataTypeAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "ExpressionSemanticEnum");
 attr.description = UA_LOCALIZEDTEXT("", "");
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 3003);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 3003);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 29);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 45);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "ExpressionSemanticEnum");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "ExpressionSemanticEnum");
 UA_Server_addDataTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, NULL, NULL);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=3003/1:ExpressionSemanticEnum using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6009), EnumStrings
+// Referencing node found and declared as parent: ns=3;i=3003/1:ExpressionSemanticEnum using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6009), EnumStrings
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "EnumStrings");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = 1;
-UA_LocalizedText opcua_node_variable_t_ns_2_i_6009_variant_DataContents[4];
-opcua_node_variable_t_ns_2_i_6009_variant_DataContents[0] = UA_LOCALIZEDTEXT_ALLOC("en_US", "ASSURANCE");
-opcua_node_variable_t_ns_2_i_6009_variant_DataContents[1] = UA_LOCALIZEDTEXT_ALLOC("en_US", "SETTING");
-opcua_node_variable_t_ns_2_i_6009_variant_DataContents[2] = UA_LOCALIZEDTEXT_ALLOC("en_US", "MEASUREMENT");
-opcua_node_variable_t_ns_2_i_6009_variant_DataContents[3] = UA_LOCALIZEDTEXT_ALLOC("en_US", "REQUIREMENT");
-UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6009_variant_DataContents, (UA_Int32) 4, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6009);
+UA_LocalizedText opcua_node_variable_t_ns_3_i_6009_variant_DataContents[4];
+opcua_node_variable_t_ns_3_i_6009_variant_DataContents[0] = UA_LOCALIZEDTEXT_ALLOC("en_US", "ASSURANCE");
+opcua_node_variable_t_ns_3_i_6009_variant_DataContents[1] = UA_LOCALIZEDTEXT_ALLOC("en_US", "SETTING");
+opcua_node_variable_t_ns_3_i_6009_variant_DataContents[2] = UA_LOCALIZEDTEXT_ALLOC("en_US", "MEASUREMENT");
+opcua_node_variable_t_ns_3_i_6009_variant_DataContents[3] = UA_LOCALIZEDTEXT_ALLOC("en_US", "REQUIREMENT");
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_3_i_6009_variant_DataContents, (UA_Int32) 4, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6009);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 3003);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 3003);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "EnumStrings");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
@@ -124,48 +124,48 @@ UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, n
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6009), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6009), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6009), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6009), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
 // Referencing node found and declared as parent: i=29/Enumeration using i=45/HasSubtype
-// Node: opcua_node_dataType_t(ns=2;i=3004), 1:ViewEnum
+// Node: opcua_node_dataType_t(ns=3;i=3004), 1:ViewEnum
 UA_DataTypeAttributes attr;
 UA_DataTypeAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "ViewEnum");
 attr.description = UA_LOCALIZEDTEXT("", "");
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 3004);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 3004);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 29);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 45);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "ViewEnum");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "ViewEnum");
 UA_Server_addDataTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, NULL, NULL);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=3004/1:ViewEnum using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6015), EnumStrings
+// Referencing node found and declared as parent: ns=3;i=3004/1:ViewEnum using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6015), EnumStrings
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "EnumStrings");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = 1;
-UA_LocalizedText opcua_node_variable_t_ns_2_i_6015_variant_DataContents[9];
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[0] = UA_LOCALIZEDTEXT_ALLOC("en_US", "BUSINESS");
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[1] = UA_LOCALIZEDTEXT_ALLOC("en_US", "CONSTRUCTION");
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[2] = UA_LOCALIZEDTEXT_ALLOC("en_US", "POWER");
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[3] = UA_LOCALIZEDTEXT_ALLOC("en_US", "FUNCTIONAL");
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[4] = UA_LOCALIZEDTEXT_ALLOC("en_US", "LOCATION");
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[5] = UA_LOCALIZEDTEXT_ALLOC("en_US", "SECURITY");
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[6] = UA_LOCALIZEDTEXT_ALLOC("en_US", "NETWORK");
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[7] = UA_LOCALIZEDTEXT_ALLOC("en_US", "LIFECYCLE");
-opcua_node_variable_t_ns_2_i_6015_variant_DataContents[8] = UA_LOCALIZEDTEXT_ALLOC("en_US", "HUMAN");
-UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6015_variant_DataContents, (UA_Int32) 9, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6015);
+UA_LocalizedText opcua_node_variable_t_ns_3_i_6015_variant_DataContents[9];
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[0] = UA_LOCALIZEDTEXT_ALLOC("en_US", "BUSINESS");
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[1] = UA_LOCALIZEDTEXT_ALLOC("en_US", "CONSTRUCTION");
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[2] = UA_LOCALIZEDTEXT_ALLOC("en_US", "POWER");
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[3] = UA_LOCALIZEDTEXT_ALLOC("en_US", "FUNCTIONAL");
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[4] = UA_LOCALIZEDTEXT_ALLOC("en_US", "LOCATION");
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[5] = UA_LOCALIZEDTEXT_ALLOC("en_US", "SECURITY");
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[6] = UA_LOCALIZEDTEXT_ALLOC("en_US", "NETWORK");
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[7] = UA_LOCALIZEDTEXT_ALLOC("en_US", "LIFECYCLE");
+opcua_node_variable_t_ns_3_i_6015_variant_DataContents[8] = UA_LOCALIZEDTEXT_ALLOC("en_US", "HUMAN");
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_3_i_6015_variant_DataContents, (UA_Int32) 9, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6015);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 3004);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 3004);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "EnumStrings");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
@@ -173,42 +173,42 @@ UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, n
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6015), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6015), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6015), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6015), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
 // Referencing node found and declared as parent: i=29/Enumeration using i=45/HasSubtype
-// Node: opcua_node_dataType_t(ns=2;i=3005), 1:VisibilityEnum
+// Node: opcua_node_dataType_t(ns=3;i=3005), 1:VisibilityEnum
 UA_DataTypeAttributes attr;
 UA_DataTypeAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "VisibilityEnum");
 attr.description = UA_LOCALIZEDTEXT("", "");
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 3005);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 3005);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 29);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 45);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "VisibilityEnum");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "VisibilityEnum");
 UA_Server_addDataTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, NULL, NULL);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=3005/1:VisibilityEnum using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6016), EnumStrings
+// Referencing node found and declared as parent: ns=3;i=3005/1:VisibilityEnum using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6016), EnumStrings
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "EnumStrings");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = 1;
-UA_LocalizedText opcua_node_variable_t_ns_2_i_6016_variant_DataContents[3];
-opcua_node_variable_t_ns_2_i_6016_variant_DataContents[0] = UA_LOCALIZEDTEXT_ALLOC("en_US", "PRIVAT");
-opcua_node_variable_t_ns_2_i_6016_variant_DataContents[1] = UA_LOCALIZEDTEXT_ALLOC("en_US", "CONTRACT");
-opcua_node_variable_t_ns_2_i_6016_variant_DataContents[2] = UA_LOCALIZEDTEXT_ALLOC("en_US", "PUBLIC");
-UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_2_i_6016_variant_DataContents, (UA_Int32) 3, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6016);
+UA_LocalizedText opcua_node_variable_t_ns_3_i_6016_variant_DataContents[3];
+opcua_node_variable_t_ns_3_i_6016_variant_DataContents[0] = UA_LOCALIZEDTEXT_ALLOC("en_US", "PRIVAT");
+opcua_node_variable_t_ns_3_i_6016_variant_DataContents[1] = UA_LOCALIZEDTEXT_ALLOC("en_US", "CONTRACT");
+opcua_node_variable_t_ns_3_i_6016_variant_DataContents[2] = UA_LOCALIZEDTEXT_ALLOC("en_US", "PUBLIC");
+UA_Variant_setArray( &attr.value, &opcua_node_variable_t_ns_3_i_6016_variant_DataContents, (UA_Int32) 3, &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6016);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 3005);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 3005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "EnumStrings");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
@@ -216,50 +216,52 @@ UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, n
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6016), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6016), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6016), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6016), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
+
 /*
 do {
 // Referencing node found and declared as parent: i=93/OPC Binary using i=47/HasComponent
-// Node: opcua_node_variable_t(ns=2;i=6005), 1:TypeDictionary
+// Node: opcua_node_variable_t(ns=3;i=6005), 1:TypeDictionary
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "TypeDictionary");
 attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://acplt.org/propertyValueStatement/");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_ByteString *opcua_node_variable_t_ns_2_i_6005_variant_DataContents =  UA_ByteString_new();
-*opcua_node_variable_t_ns_2_i_6005_variant_DataContents = UA_STRING_ALLOC("PG9wYzpUeXBlRGljdGlvbmFyeSB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZ        W1hLWluc3RhbmNlIiB4bWxuczp0bnM9Imh0dHA6Ly95b3Vyb3JnYW5pc2F0aW9uLm9yZy9wd        nMvIiBEZWZhdWx0Qnl0ZU9yZGVyPSJMaXR0bGVFbmRpYW4iIHhtbG5zOm9wYz0iaHR0cDovL        29wY2ZvdW5kYXRpb24ub3JnL0JpbmFyeVNjaGVtYS8iIHhtbG5zOnVhPSJodHRwOi8vb3BjZ        m91bmRhdGlvbi5vcmcvVUEvIiBUYXJnZXROYW1lc3BhY2U9Imh0dHA6Ly95b3Vyb3JnYW5pc        2F0aW9uLm9yZy9wdnMvIj4KIDxvcGM6SW1wb3J0IE5hbWVzcGFjZT0iaHR0cDovL29wY2Zvd        W5kYXRpb24ub3JnL1VBLyIvPgogPG9wYzpFbnVtZXJhdGVkVHlwZSBMZW5ndGhJbkJpdHM9I        jMyIiBOYW1lPSJFeHByZXNzaW9uTG9naWNFbnVtIj4KICA8b3BjOkVudW1lcmF0ZWRWYWx1Z        SBOYW1lPSJHUkVBVEVSX1RIQU4iIFZhbHVlPSIwIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsd        WUgTmFtZT0iR1JFQVRFUl9FUVVBTCIgVmFsdWU9IjEiLz4KICA8b3BjOkVudW1lcmF0ZWRWY        Wx1ZSBOYW1lPSJFUVVBTCIgVmFsdWU9IjIiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOY        W1lPSJOT1RfRVFVQUwiIFZhbHVlPSIzIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZ        T0iTEVTU19FUVVBTCIgVmFsdWU9IjQiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lP        SJMRVNTX1RIQU4iIFZhbHVlPSI1Ii8+CiA8L29wYzpFbnVtZXJhdGVkVHlwZT4KIDxvcGM6R        W51bWVyYXRlZFR5cGUgTGVuZ3RoSW5CaXRzPSIzMiIgTmFtZT0iRXhwcmVzc2lvblNlbWFud        GljRW51bSI+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iQVNTVVJBTkNFIiBWYWx1Z        T0iMCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IlNFVFRJTkciIFZhbHVlPSIxI        i8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTUVBU1VSRU1FTlQiIFZhbHVlPSIyI        i8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iUkVRVUlSRU1FTlQiIFZhbHVlPSIzI        i8+CiA8L29wYzpFbnVtZXJhdGVkVHlwZT4KIDxvcGM6RW51bWVyYXRlZFR5cGUgTGVuZ3RoS        W5CaXRzPSIzMiIgTmFtZT0iVmlld0VudW0iPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hb        WU9IkJVU0lORVNTIiBWYWx1ZT0iMCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9I        kNPTlNUUlVDVElPTiIgVmFsdWU9IjEiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lP        SJQT1dFUiIgVmFsdWU9IjIiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJGVU5DV        ElPTkFMIiBWYWx1ZT0iMyIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkxPQ0FUS        U9OIiBWYWx1ZT0iNCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IlNFQ1VSSVRZI        iBWYWx1ZT0iNSIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9Ik5FVFdPUksiIFZhb        HVlPSI2Ii8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTElGRUNZQ0xFIiBWYWx1Z        T0iNyIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkhVTUFOIiBWYWx1ZT0iOCIvP        gogPC9vcGM6RW51bWVyYXRlZFR5cGU+CiA8b3BjOkVudW1lcmF0ZWRUeXBlIExlbmd0aEluQ        ml0cz0iMzIiIE5hbWU9IlZpc2liaWxpdHlFbnVtIj4KICA8b3BjOkVudW1lcmF0ZWRWYWx1Z        SBOYW1lPSJQUklWQVQiIFZhbHVlPSIwIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZ        T0iQ09OVFJBQ1QiIFZhbHVlPSIxIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iU        FVCTElDIiBWYWx1ZT0iMiIvPgogPC9vcGM6RW51bWVyYXRlZFR5cGU+Cjwvb3BjOlR5cGVEa        WN0aW9uYXJ5Pgo=");
-UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_2_i_6005_variant_DataContents, &UA_TYPES[UA_TYPES_BYTESTRING]);
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6005);
+UA_ByteString *opcua_node_variable_t_ns_3_i_6005_variant_DataContents =  UA_ByteString_new();
+*opcua_node_variable_t_ns_3_i_6005_variant_DataContents = UA_STRING_ALLOC("PG9wYzpUeXBlRGljdGlvbmFyeSB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZ        W1hLWluc3RhbmNlIiB4bWxuczp0bnM9Imh0dHA6Ly95b3Vyb3JnYW5pc2F0aW9uLm9yZy9wd        nMvIiBEZWZhdWx0Qnl0ZU9yZGVyPSJMaXR0bGVFbmRpYW4iIHhtbG5zOm9wYz0iaHR0cDovL        29wY2ZvdW5kYXRpb24ub3JnL0JpbmFyeVNjaGVtYS8iIHhtbG5zOnVhPSJodHRwOi8vb3BjZ        m91bmRhdGlvbi5vcmcvVUEvIiBUYXJnZXROYW1lc3BhY2U9Imh0dHA6Ly95b3Vyb3JnYW5pc        2F0aW9uLm9yZy9wdnMvIj4KIDxvcGM6SW1wb3J0IE5hbWVzcGFjZT0iaHR0cDovL29wY2Zvd        W5kYXRpb24ub3JnL1VBLyIvPgogPG9wYzpFbnVtZXJhdGVkVHlwZSBMZW5ndGhJbkJpdHM9I        jMyIiBOYW1lPSJFeHByZXNzaW9uTG9naWNFbnVtIj4KICA8b3BjOkVudW1lcmF0ZWRWYWx1Z        SBOYW1lPSJHUkVBVEVSX1RIQU4iIFZhbHVlPSIwIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsd        WUgTmFtZT0iR1JFQVRFUl9FUVVBTCIgVmFsdWU9IjEiLz4KICA8b3BjOkVudW1lcmF0ZWRWY        Wx1ZSBOYW1lPSJFUVVBTCIgVmFsdWU9IjIiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOY        W1lPSJOT1RfRVFVQUwiIFZhbHVlPSIzIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZ        T0iTEVTU19FUVVBTCIgVmFsdWU9IjQiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lP        SJMRVNTX1RIQU4iIFZhbHVlPSI1Ii8+CiA8L29wYzpFbnVtZXJhdGVkVHlwZT4KIDxvcGM6R        W51bWVyYXRlZFR5cGUgTGVuZ3RoSW5CaXRzPSIzMiIgTmFtZT0iRXhwcmVzc2lvblNlbWFud        GljRW51bSI+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iQVNTVVJBTkNFIiBWYWx1Z        T0iMCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IlNFVFRJTkciIFZhbHVlPSIxI        i8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTUVBU1VSRU1FTlQiIFZhbHVlPSIyI        i8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iUkVRVUlSRU1FTlQiIFZhbHVlPSIzI        i8+CiA8L29wYzpFbnVtZXJhdGVkVHlwZT4KIDxvcGM6RW51bWVyYXRlZFR5cGUgTGVuZ3RoS        W5CaXRzPSIzMiIgTmFtZT0iVmlld0VudW0iPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hb        WU9IkJVU0lORVNTIiBWYWx1ZT0iMCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9I        kNPTlNUUlVDVElPTiIgVmFsdWU9IjEiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lP        SJQT1dFUiIgVmFsdWU9IjIiLz4KICA8b3BjOkVudW1lcmF0ZWRWYWx1ZSBOYW1lPSJGVU5DV        ElPTkFMIiBWYWx1ZT0iMyIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkxPQ0FUS        U9OIiBWYWx1ZT0iNCIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IlNFQ1VSSVRZI        iBWYWx1ZT0iNSIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9Ik5FVFdPUksiIFZhb        HVlPSI2Ii8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iTElGRUNZQ0xFIiBWYWx1Z        T0iNyIvPgogIDxvcGM6RW51bWVyYXRlZFZhbHVlIE5hbWU9IkhVTUFOIiBWYWx1ZT0iOCIvP        gogPC9vcGM6RW51bWVyYXRlZFR5cGU+CiA8b3BjOkVudW1lcmF0ZWRUeXBlIExlbmd0aEluQ        ml0cz0iMzIiIE5hbWU9IlZpc2liaWxpdHlFbnVtIj4KICA8b3BjOkVudW1lcmF0ZWRWYWx1Z        SBOYW1lPSJQUklWQVQiIFZhbHVlPSIwIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZ        T0iQ09OVFJBQ1QiIFZhbHVlPSIxIi8+CiAgPG9wYzpFbnVtZXJhdGVkVmFsdWUgTmFtZT0iU        FVCTElDIiBWYWx1ZT0iMiIvPgogPC9vcGM6RW51bWVyYXRlZFR5cGU+Cjwvb3BjOlR5cGVEa        WN0aW9uYXJ5Pgo=");
+UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_3_i_6005_variant_DataContents, &UA_TYPES[UA_TYPES_BYTESTRING]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6005);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 72);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 93);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "TypeDictionary");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "TypeDictionary");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6005), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 72), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6005), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 72), true);
 } while(0);
 */
+
 do {
-// Referencing node found and declared as parent: ns=2;i=6005/1:TypeDictionary using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6006), NamespaceUri
+// Referencing node found and declared as parent: ns=3;i=6005/1:TypeDictionary using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6006), NamespaceUri
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "NamespaceUri");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_String *opcua_node_variable_t_ns_2_i_6006_variant_DataContents =  UA_String_new();
-*opcua_node_variable_t_ns_2_i_6006_variant_DataContents = UA_STRING_ALLOC("http://acplt.org/propertyValueStatement/");
-UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_2_i_6006_variant_DataContents, &UA_TYPES[UA_TYPES_STRING]);
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6006);
+UA_String *opcua_node_variable_t_ns_3_i_6006_variant_DataContents =  UA_String_new();
+*opcua_node_variable_t_ns_3_i_6006_variant_DataContents = UA_STRING_ALLOC("http://acplt.org/propertyValueStatement/");
+UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_3_i_6006_variant_DataContents, &UA_TYPES[UA_TYPES_STRING]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6006);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 6005);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 6005);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "NamespaceUri");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
@@ -267,49 +269,49 @@ UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, n
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6006), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6006), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
 // Referencing node found and declared as parent: i=92/XML Schema using i=47/HasComponent
-// Node: opcua_node_variable_t(ns=2;i=6007), 1:TypeDictionary
+// Node: opcua_node_variable_t(ns=3;i=6007), 1:TypeDictionary
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "TypeDictionary");
 attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://acplt.org/propertyValueStatement/");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_ByteString *opcua_node_variable_t_ns_2_i_6007_variant_DataContents =  UA_ByteString_new();
-*opcua_node_variable_t_ns_2_i_6007_variant_DataContents = UA_STRING_ALLOC("PHhzOnNjaGVtYSBlbGVtZW50Rm9ybURlZmF1bHQ9InF1YWxpZmllZCIgdGFyZ2V0TmFtZXNwYWNlPSJod        HRwOi8veW91cm9yZ2FuaXNhdGlvbi5vcmcvcHZzL1R5cGVzLnhzZCIgeG1sbnM6dG5zPSJod        HRwOi8veW91cm9yZ2FuaXNhdGlvbi5vcmcvcHZzL1R5cGVzLnhzZCIgeG1sbnM6dWE9Imh0d        HA6Ly9vcGNmb3VuZGF0aW9uLm9yZy9VQS8yMDA4LzAyL1R5cGVzLnhzZCIgeG1sbnM6eHM9I        mh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hIj4KIDx4czppbXBvcnQgbmFtZXNwY        WNlPSJodHRwOi8vb3BjZm91bmRhdGlvbi5vcmcvVUEvMjAwOC8wMi9UeXBlcy54c2QiLz4KI        Dx4czpzaW1wbGVUeXBlIG5hbWU9IkV4cHJlc3Npb25Mb2dpY0VudW0iPgogIDx4czpyZXN0c        mljdGlvbiBiYXNlPSJ4czpzdHJpbmciPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkdSR        UFURVJfVEhBTl8wIi8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iR1JFQVRFUl9FUVVBT        F8xIi8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iRVFVQUxfMiIvPgogICA8eHM6ZW51b        WVyYXRpb24gdmFsdWU9Ik5PVF9FUVVBTF8zIi8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1Z        T0iTEVTU19FUVVBTF80Ii8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iTEVTU19USEFOX        zUiLz4KICA8L3hzOnJlc3RyaWN0aW9uPgogPC94czpzaW1wbGVUeXBlPgogPHhzOmVsZW1lb        nQgdHlwZT0idG5zOkV4cHJlc3Npb25Mb2dpY0VudW0iIG5hbWU9IkV4cHJlc3Npb25Mb2dpY        0VudW0iLz4KIDx4czpjb21wbGV4VHlwZSBuYW1lPSJMaXN0T2ZFeHByZXNzaW9uTG9naWNFb        nVtIj4KICA8eHM6c2VxdWVuY2U+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T        2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9InRuczpFeHByZXNzaW9uTG9naWNFbnVtIiBuYW1lP        SJFeHByZXNzaW9uTG9naWNFbnVtIiBuaWxsYWJsZT0idHJ1ZSIvPgogIDwveHM6c2VxdWVuY        2U+CiA8L3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOkxpc3RPZkV4c        HJlc3Npb25Mb2dpY0VudW0iIG5hbWU9Ikxpc3RPZkV4cHJlc3Npb25Mb2dpY0VudW0iIG5pb        GxhYmxlPSJ0cnVlIi8+CiA8eHM6c2ltcGxlVHlwZSBuYW1lPSJFeHByZXNzaW9uU2VtYW50a        WNFbnVtIj4KICA8eHM6cmVzdHJpY3Rpb24gYmFzZT0ieHM6c3RyaW5nIj4KICAgPHhzOmVud        W1lcmF0aW9uIHZhbHVlPSJBU1NVUkFOQ0VfMCIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsd        WU9IlNFVFRJTkdfMSIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9Ik1FQVNVUkVNRU5UX        zIiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJSRVFVSVJFTUVOVF8zIi8+CiAgPC94c        zpyZXN0cmljdGlvbj4KIDwveHM6c2ltcGxlVHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuc        zpFeHByZXNzaW9uU2VtYW50aWNFbnVtIiBuYW1lPSJFeHByZXNzaW9uU2VtYW50aWNFbnVtI        i8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZT0iTGlzdE9mRXhwcmVzc2lvblNlbWFudGljRW51b        SI+CiAgPHhzOnNlcXVlbmNlPgogICA8eHM6ZWxlbWVudCBtaW5PY2N1cnM9IjAiIG1heE9jY        3Vycz0idW5ib3VuZGVkIiB0eXBlPSJ0bnM6RXhwcmVzc2lvblNlbWFudGljRW51bSIgbmFtZ        T0iRXhwcmVzc2lvblNlbWFudGljRW51bSIgbmlsbGFibGU9InRydWUiLz4KICA8L3hzOnNlc        XVlbmNlPgogPC94czpjb21wbGV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpMaXN0T        2ZFeHByZXNzaW9uU2VtYW50aWNFbnVtIiBuYW1lPSJMaXN0T2ZFeHByZXNzaW9uU2VtYW50a        WNFbnVtIiBuaWxsYWJsZT0idHJ1ZSIvPgogPHhzOnNpbXBsZVR5cGUgbmFtZT0iVmlld0Vud        W0iPgogIDx4czpyZXN0cmljdGlvbiBiYXNlPSJ4czpzdHJpbmciPgogICA8eHM6ZW51bWVyY        XRpb24gdmFsdWU9IkJVU0lORVNTXzAiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJDT        05TVFJVQ1RJT05fMSIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IlBPV0VSXzIiLz4KI        CAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJGVU5DVElPTkFMXzMiLz4KICAgPHhzOmVudW1lc        mF0aW9uIHZhbHVlPSJMT0NBVElPTl80Ii8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iU        0VDVVJJVFlfNSIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9Ik5FVFdPUktfNiIvPgogI        CA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkxJRkVDWUNMRV83Ii8+CiAgIDx4czplbnVtZXJhd        GlvbiB2YWx1ZT0iSFVNQU5fOCIvPgogIDwveHM6cmVzdHJpY3Rpb24+CiA8L3hzOnNpbXBsZ        VR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlPSJ0bnM6Vmlld0VudW0iIG5hbWU9IlZpZXdFbnVtI        i8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZT0iTGlzdE9mVmlld0VudW0iPgogIDx4czpzZXF1Z        W5jZT4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzPSIwIiBtYXhPY2N1cnM9InVuYm91bmRlZ        CIgdHlwZT0idG5zOlZpZXdFbnVtIiBuYW1lPSJWaWV3RW51bSIgbmlsbGFibGU9InRydWUiL        z4KICA8L3hzOnNlcXVlbmNlPgogPC94czpjb21wbGV4VHlwZT4KIDx4czplbGVtZW50IHR5c        GU9InRuczpMaXN0T2ZWaWV3RW51bSIgbmFtZT0iTGlzdE9mVmlld0VudW0iIG5pbGxhYmxlP        SJ0cnVlIi8+CiA8eHM6c2ltcGxlVHlwZSBuYW1lPSJWaXNpYmlsaXR5RW51bSI+CiAgPHhzO        nJlc3RyaWN0aW9uIGJhc2U9InhzOnN0cmluZyI+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1Z        T0iUFJJVkFUXzAiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJDT05UUkFDVF8xIi8+C        iAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iUFVCTElDXzIiLz4KICA8L3hzOnJlc3RyaWN0a        W9uPgogPC94czpzaW1wbGVUeXBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOlZpc2liaWxpd        HlFbnVtIiBuYW1lPSJWaXNpYmlsaXR5RW51bSIvPgogPHhzOmNvbXBsZXhUeXBlIG5hbWU9I        kxpc3RPZlZpc2liaWxpdHlFbnVtIj4KICA8eHM6c2VxdWVuY2U+CiAgIDx4czplbGVtZW50I        G1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9InRuczpWaXNpYmlsa        XR5RW51bSIgbmFtZT0iVmlzaWJpbGl0eUVudW0iIG5pbGxhYmxlPSJ0cnVlIi8+CiAgPC94c        zpzZXF1ZW5jZT4KIDwveHM6Y29tcGxleFR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlPSJ0bnM6T        GlzdE9mVmlzaWJpbGl0eUVudW0iIG5hbWU9Ikxpc3RPZlZpc2liaWxpdHlFbnVtIiBuaWxsY        WJsZT0idHJ1ZSIvPgo8L3hzOnNjaGVtYT4K");
-UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_2_i_6007_variant_DataContents, &UA_TYPES[UA_TYPES_BYTESTRING]);
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6007);
+UA_ByteString *opcua_node_variable_t_ns_3_i_6007_variant_DataContents =  UA_ByteString_new();
+*opcua_node_variable_t_ns_3_i_6007_variant_DataContents = UA_STRING_ALLOC("PHhzOnNjaGVtYSBlbGVtZW50Rm9ybURlZmF1bHQ9InF1YWxpZmllZCIgdGFyZ2V0TmFtZXNwYWNlPSJod        HRwOi8veW91cm9yZ2FuaXNhdGlvbi5vcmcvcHZzL1R5cGVzLnhzZCIgeG1sbnM6dG5zPSJod        HRwOi8veW91cm9yZ2FuaXNhdGlvbi5vcmcvcHZzL1R5cGVzLnhzZCIgeG1sbnM6dWE9Imh0d        HA6Ly9vcGNmb3VuZGF0aW9uLm9yZy9VQS8yMDA4LzAyL1R5cGVzLnhzZCIgeG1sbnM6eHM9I        mh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hIj4KIDx4czppbXBvcnQgbmFtZXNwY        WNlPSJodHRwOi8vb3BjZm91bmRhdGlvbi5vcmcvVUEvMjAwOC8wMi9UeXBlcy54c2QiLz4KI        Dx4czpzaW1wbGVUeXBlIG5hbWU9IkV4cHJlc3Npb25Mb2dpY0VudW0iPgogIDx4czpyZXN0c        mljdGlvbiBiYXNlPSJ4czpzdHJpbmciPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkdSR        UFURVJfVEhBTl8wIi8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iR1JFQVRFUl9FUVVBT        F8xIi8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iRVFVQUxfMiIvPgogICA8eHM6ZW51b        WVyYXRpb24gdmFsdWU9Ik5PVF9FUVVBTF8zIi8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1Z        T0iTEVTU19FUVVBTF80Ii8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iTEVTU19USEFOX        zUiLz4KICA8L3hzOnJlc3RyaWN0aW9uPgogPC94czpzaW1wbGVUeXBlPgogPHhzOmVsZW1lb        nQgdHlwZT0idG5zOkV4cHJlc3Npb25Mb2dpY0VudW0iIG5hbWU9IkV4cHJlc3Npb25Mb2dpY        0VudW0iLz4KIDx4czpjb21wbGV4VHlwZSBuYW1lPSJMaXN0T2ZFeHByZXNzaW9uTG9naWNFb        nVtIj4KICA8eHM6c2VxdWVuY2U+CiAgIDx4czplbGVtZW50IG1pbk9jY3Vycz0iMCIgbWF4T        2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9InRuczpFeHByZXNzaW9uTG9naWNFbnVtIiBuYW1lP        SJFeHByZXNzaW9uTG9naWNFbnVtIiBuaWxsYWJsZT0idHJ1ZSIvPgogIDwveHM6c2VxdWVuY        2U+CiA8L3hzOmNvbXBsZXhUeXBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOkxpc3RPZkV4c        HJlc3Npb25Mb2dpY0VudW0iIG5hbWU9Ikxpc3RPZkV4cHJlc3Npb25Mb2dpY0VudW0iIG5pb        GxhYmxlPSJ0cnVlIi8+CiA8eHM6c2ltcGxlVHlwZSBuYW1lPSJFeHByZXNzaW9uU2VtYW50a        WNFbnVtIj4KICA8eHM6cmVzdHJpY3Rpb24gYmFzZT0ieHM6c3RyaW5nIj4KICAgPHhzOmVud        W1lcmF0aW9uIHZhbHVlPSJBU1NVUkFOQ0VfMCIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsd        WU9IlNFVFRJTkdfMSIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9Ik1FQVNVUkVNRU5UX        zIiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJSRVFVSVJFTUVOVF8zIi8+CiAgPC94c        zpyZXN0cmljdGlvbj4KIDwveHM6c2ltcGxlVHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuc        zpFeHByZXNzaW9uU2VtYW50aWNFbnVtIiBuYW1lPSJFeHByZXNzaW9uU2VtYW50aWNFbnVtI        i8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZT0iTGlzdE9mRXhwcmVzc2lvblNlbWFudGljRW51b        SI+CiAgPHhzOnNlcXVlbmNlPgogICA8eHM6ZWxlbWVudCBtaW5PY2N1cnM9IjAiIG1heE9jY        3Vycz0idW5ib3VuZGVkIiB0eXBlPSJ0bnM6RXhwcmVzc2lvblNlbWFudGljRW51bSIgbmFtZ        T0iRXhwcmVzc2lvblNlbWFudGljRW51bSIgbmlsbGFibGU9InRydWUiLz4KICA8L3hzOnNlc        XVlbmNlPgogPC94czpjb21wbGV4VHlwZT4KIDx4czplbGVtZW50IHR5cGU9InRuczpMaXN0T        2ZFeHByZXNzaW9uU2VtYW50aWNFbnVtIiBuYW1lPSJMaXN0T2ZFeHByZXNzaW9uU2VtYW50a        WNFbnVtIiBuaWxsYWJsZT0idHJ1ZSIvPgogPHhzOnNpbXBsZVR5cGUgbmFtZT0iVmlld0Vud        W0iPgogIDx4czpyZXN0cmljdGlvbiBiYXNlPSJ4czpzdHJpbmciPgogICA8eHM6ZW51bWVyY        XRpb24gdmFsdWU9IkJVU0lORVNTXzAiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJDT        05TVFJVQ1RJT05fMSIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IlBPV0VSXzIiLz4KI        CAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJGVU5DVElPTkFMXzMiLz4KICAgPHhzOmVudW1lc        mF0aW9uIHZhbHVlPSJMT0NBVElPTl80Ii8+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iU        0VDVVJJVFlfNSIvPgogICA8eHM6ZW51bWVyYXRpb24gdmFsdWU9Ik5FVFdPUktfNiIvPgogI        CA8eHM6ZW51bWVyYXRpb24gdmFsdWU9IkxJRkVDWUNMRV83Ii8+CiAgIDx4czplbnVtZXJhd        GlvbiB2YWx1ZT0iSFVNQU5fOCIvPgogIDwveHM6cmVzdHJpY3Rpb24+CiA8L3hzOnNpbXBsZ        VR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlPSJ0bnM6Vmlld0VudW0iIG5hbWU9IlZpZXdFbnVtI        i8+CiA8eHM6Y29tcGxleFR5cGUgbmFtZT0iTGlzdE9mVmlld0VudW0iPgogIDx4czpzZXF1Z        W5jZT4KICAgPHhzOmVsZW1lbnQgbWluT2NjdXJzPSIwIiBtYXhPY2N1cnM9InVuYm91bmRlZ        CIgdHlwZT0idG5zOlZpZXdFbnVtIiBuYW1lPSJWaWV3RW51bSIgbmlsbGFibGU9InRydWUiL        z4KICA8L3hzOnNlcXVlbmNlPgogPC94czpjb21wbGV4VHlwZT4KIDx4czplbGVtZW50IHR5c        GU9InRuczpMaXN0T2ZWaWV3RW51bSIgbmFtZT0iTGlzdE9mVmlld0VudW0iIG5pbGxhYmxlP        SJ0cnVlIi8+CiA8eHM6c2ltcGxlVHlwZSBuYW1lPSJWaXNpYmlsaXR5RW51bSI+CiAgPHhzO        nJlc3RyaWN0aW9uIGJhc2U9InhzOnN0cmluZyI+CiAgIDx4czplbnVtZXJhdGlvbiB2YWx1Z        T0iUFJJVkFUXzAiLz4KICAgPHhzOmVudW1lcmF0aW9uIHZhbHVlPSJDT05UUkFDVF8xIi8+C        iAgIDx4czplbnVtZXJhdGlvbiB2YWx1ZT0iUFVCTElDXzIiLz4KICA8L3hzOnJlc3RyaWN0a        W9uPgogPC94czpzaW1wbGVUeXBlPgogPHhzOmVsZW1lbnQgdHlwZT0idG5zOlZpc2liaWxpd        HlFbnVtIiBuYW1lPSJWaXNpYmlsaXR5RW51bSIvPgogPHhzOmNvbXBsZXhUeXBlIG5hbWU9I        kxpc3RPZlZpc2liaWxpdHlFbnVtIj4KICA8eHM6c2VxdWVuY2U+CiAgIDx4czplbGVtZW50I        G1pbk9jY3Vycz0iMCIgbWF4T2NjdXJzPSJ1bmJvdW5kZWQiIHR5cGU9InRuczpWaXNpYmlsa        XR5RW51bSIgbmFtZT0iVmlzaWJpbGl0eUVudW0iIG5pbGxhYmxlPSJ0cnVlIi8+CiAgPC94c        zpzZXF1ZW5jZT4KIDwveHM6Y29tcGxleFR5cGU+CiA8eHM6ZWxlbWVudCB0eXBlPSJ0bnM6T        GlzdE9mVmlzaWJpbGl0eUVudW0iIG5hbWU9Ikxpc3RPZlZpc2liaWxpdHlFbnVtIiBuaWxsY        WJsZT0idHJ1ZSIvPgo8L3hzOnNjaGVtYT4K");
+UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_3_i_6007_variant_DataContents, &UA_TYPES[UA_TYPES_BYTESTRING]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6007);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 72);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 92);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "TypeDictionary");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "TypeDictionary");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6007), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 72), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6007), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 72), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=6007/1:TypeDictionary using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6008), NamespaceUri
+// Referencing node found and declared as parent: ns=3;i=6007/1:TypeDictionary using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6008), NamespaceUri
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "NamespaceUri");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_String *opcua_node_variable_t_ns_2_i_6008_variant_DataContents =  UA_String_new();
-*opcua_node_variable_t_ns_2_i_6008_variant_DataContents = UA_STRING_ALLOC("http://acplt.org/propertyValueStatement/Types.xsd");
-UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_2_i_6008_variant_DataContents, &UA_TYPES[UA_TYPES_STRING]);
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6008);
+UA_String *opcua_node_variable_t_ns_3_i_6008_variant_DataContents =  UA_String_new();
+*opcua_node_variable_t_ns_3_i_6008_variant_DataContents = UA_STRING_ALLOC("http://acplt.org/propertyValueStatement/Types.xsd");
+UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_3_i_6008_variant_DataContents, &UA_TYPES[UA_TYPES_STRING]);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6008);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 6007);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 6007);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
 UA_QualifiedName nodeName = UA_QUALIFIEDNAME(0, "NamespaceUri");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
@@ -317,362 +319,385 @@ UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, n
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6008), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6008), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
 // Referencing node found and declared as parent: i=63/BaseDataVariableType using i=45/HasSubtype
-// Node: opcua_node_variableType_t(ns=2;i=2002), 1:PropertyValueStatementType
+// Node: opcua_node_variableType_t(ns=3;i=2002), 1:PropertyValueStatementType
 UA_VariableTypeAttributes attr;
 UA_VariableTypeAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "PropertyValueStatementType");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.valueRank = -2;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 2002);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 2002);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(0, UA_NS0ID_BASEDATAVARIABLETYPE);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 63);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 45);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "PropertyValueStatementType");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "PropertyValueStatementType");
 UA_Server_addVariableTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=2002/1:PropertyValueStatementType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6025), 1:CarrierId
+// Referencing node found and declared as parent: ns=3;i=2002/1:PropertyValueStatementType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6025), 1:CarrierId
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "CarrierId");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6025);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6025);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 2002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 2002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "CarrierId");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "CarrierId");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6025), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6025), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6025), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6025), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=2002/1:PropertyValueStatementType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6027), 1:ExpressionLogic
+// Referencing node found and declared as parent: ns=3;i=2002/1:PropertyValueStatementType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6027), 1:ExpressionLogic
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "ExpressionLogic");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6027);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6027);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 2002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 2002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "ExpressionLogic");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "ExpressionLogic");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6027), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6027), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6027), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6027), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=2002/1:PropertyValueStatementType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6028), 1:ExpressionSemantic
+// Referencing node found and declared as parent: ns=3;i=2002/1:PropertyValueStatementType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6028), 1:ExpressionSemantic
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "ExpressionSemantic");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6028);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6028);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 2002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 2002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "ExpressionSemantic");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "ExpressionSemantic");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6028), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6028), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6028), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6028), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=2002/1:PropertyValueStatementType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6026), 1:PropertyId
+// Referencing node found and declared as parent: ns=3;i=2002/1:PropertyValueStatementType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6026), 1:PropertyId
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "PropertyId");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6026);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6026);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 2002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 2002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "PropertyId");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "PropertyId");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6026), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6026), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6026), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=2002/1:PropertyValueStatementType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6012), 1:Value
+// Referencing node found and declared as parent: ns=3;i=2002/1:PropertyValueStatementType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6012), 1:Value
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "Value");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6012);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6012);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 2002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 2002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "Value");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "Value");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6012), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6012), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6012), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6012), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=2002/1:PropertyValueStatementType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6017), 1:View
+// Referencing node found and declared as parent: ns=3;i=2002/1:PropertyValueStatementType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6017), 1:View
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "View");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6017);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6017);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 2002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 2002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "View");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "View");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6017), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6017), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6017), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6017), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=2002/1:PropertyValueStatementType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6018), 1:Visibility
+// Referencing node found and declared as parent: ns=3;i=2002/1:PropertyValueStatementType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6018), 1:Visibility
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "Visibility");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6018);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6018);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 2002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 2002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "Visibility");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "Visibility");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6018), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6018), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6018), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6018), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
 // Referencing node found and declared as parent: i=58/BaseObjectType using i=45/HasSubtype
-// Node: opcua_node_objectType_t(ns=2;i=1002), 1:PropertyValueStatementListType
+// Node: opcua_node_objectType_t(ns=3;i=1002), 1:PropertyValueStatementListType
 UA_ObjectTypeAttributes attr;
 UA_ObjectTypeAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "PropertyValueStatementListType");
 attr.description = UA_LOCALIZEDTEXT("", "");
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 1002);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 1002);
 UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 58);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 45);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "PropertyValueStatementListType");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "PropertyValueStatementListType");
 UA_Server_addObjectTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , attr, NULL, NULL);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=1002/1:PropertyValueStatementListType using i=47/HasComponent
-// Node: opcua_node_variable_t(ns=2;i=6011), 1:<PropertyValueStatements>
+// Referencing node found and declared as parent: ns=3;i=1002/1:PropertyValueStatementListType using i=47/HasComponent
+// Node: opcua_node_variable_t(ns=3;i=6011), 1:<PropertyValueStatements>
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "<PropertyValueStatements>");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6011);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_2, 2002);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1002);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6011);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_3, 2002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 1002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 47);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "<PropertyValueStatements>");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "<PropertyValueStatements>");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6011), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 11510), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6011), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_2, 2002), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6011), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 11510), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6011), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_3, 2002), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=6011/1:<PropertyValueStatements> using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6013), 1:Value
+// Referencing node found and declared as parent: ns=3;i=6011/1:<PropertyValueStatements> using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6013), 1:Value
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "Value");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6013);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6013);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 6011);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 6011);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "Value");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "Value");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6013), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6013), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6013), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6013), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6001), 1:CarrierID
+// Referencing node found and declared as parent: ns=3;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6001), 1:CarrierID
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "CarrierID");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6001);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6001);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 1002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "CarrierID");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "CarrierID");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6001), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6001), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6001), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6001), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6002), 1:ExpressionLogic
+// Referencing node found and declared as parent: ns=3;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6002), 1:ExpressionLogic
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "ExpressionLogic");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6002);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6002);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 1002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "ExpressionLogic");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "ExpressionLogic");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6002), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6002), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6002), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6002), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6003), 1:ExpressionSemantic
+// Referencing node found and declared as parent: ns=3;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6003), 1:ExpressionSemantic
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "ExpressionSemantic");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6003);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6003);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 1002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "ExpressionSemantic");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "ExpressionSemantic");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6003), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6003), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6003), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6003), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6010), 1:PropertyID
+// Referencing node found and declared as parent: ns=3;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6010), 1:PropertyID
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "PropertyID");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6010);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6010);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 1002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "PropertyID");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "PropertyID");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6010), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6010), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6010), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6010), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {
-// Referencing node found and declared as parent: ns=2;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=2;i=6014), 1:View
+// Referencing node found and declared as parent: ns=3;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6014), 1:View
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "View");
 attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_2, 6014);
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6014);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_2, 1002);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 1002);
 UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_2, "View");
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "View");
 UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
        , typeDefinition
        , attr, NULL, NULL);
 UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
 // This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6014), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_2, 6014), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6014), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6014), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
+} while(0);
+
+do {
+// Referencing node found and declared as parent: ns=3;i=1002/1:PropertyValueStatementListType using i=46/HasProperty
+// Node: opcua_node_variable_t(ns=3;i=6019), 1:Visibility
+UA_VariableAttributes attr;
+UA_VariableAttributes_init(&attr);
+attr.displayName = UA_LOCALIZEDTEXT("", "Visibility");
+attr.description = UA_LOCALIZEDTEXT("", "");
+attr.accessLevel = 3;
+attr.valueRank = -1;
+UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_3, 6019);
+UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
+UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_3, 1002);
+UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
+UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_3, "Visibility");
+UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
+       , typeDefinition
+       , attr, NULL, NULL);
+UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
+// This node has the following references that can be created:
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6019), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
+UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_3, 6019), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 return UA_STATUSCODE_GOOD;
 }

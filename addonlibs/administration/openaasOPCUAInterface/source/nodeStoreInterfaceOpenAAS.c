@@ -181,10 +181,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		copyOPCUAStringToOV(tmpUACarrier->idSpec, &(tmpOVCarrier.IdSpec));
 		tmpOVCarrier.IdType = tmpUACarrier->idType;
 
-		OV_UINT tmpOVExpressionLogic;
+		ExpressionLogicEnum tmpOVExpressionLogic;
 		tmpOVExpressionLogic = *tmpUAExpressionLogic;
 
-		OV_UINT tmpOVExpressionSemantic;
+		ExpressionSemanticEnum  tmpOVExpressionSemantic;
 		tmpOVExpressionSemantic = *tmpUAExpressionSemantic;
 
 		IdentificationType tmpOVPropertyId;
@@ -192,10 +192,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		copyOPCUAStringToOV(tmpUAPropertyId->idSpec, &(tmpOVPropertyId.IdSpec));
 		tmpOVPropertyId.IdType = tmpUAPropertyId->idType;
 
-		OV_UINT tmpOVView;
+		ViewEnum  tmpOVView;
 		tmpOVView = *tmpUAView;
 
-		OV_UINT tmpOVVisibility;
+		VisibilityEnum tmpOVVisibility;
 		tmpOVVisibility = *tmpUAVisibility;
 
 		result = openaas_modelmanager_createPVSL(tmpOVAASId, tmpOVParentId, tmpOVPVSLName, tmpOVMask, tmpOVCarrier, tmpOVExpressionLogic, tmpOVExpressionSemantic, tmpOVPropertyId, tmpOVView, tmpOVVisibility);
@@ -612,40 +612,53 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 
 		UA_String tmpUAPVSName;
 		UA_String_init(&tmpUAPVSName);
-		tmpUAPVSName = UA_String_fromChars(tmpOVPVSName);
 
 		UA_Identification tmpUACarrierId;
 		UA_Identification_init(&tmpUACarrierId);
-		tmpUACarrierId.idSpec = UA_String_fromChars(tmpOVCarrierId.IdSpec);
-		tmpUACarrierId.idType = tmpOVCarrierId.IdType;
 
 		UA_ExpressionLogicEnum tmpUAExpressionLogic;
 		UA_ExpressionLogicEnum_init(&tmpUAExpressionLogic);
-		tmpUAExpressionLogic = tmpOVExpressionLogic;
 
 		UA_ExpressionSemanticEnum tmpUAExpressionSemantic;
 		UA_ExpressionSemanticEnum_init(&tmpUAExpressionSemantic);
-		tmpUAExpressionSemantic = tmpOVExpressionSemantic;
 
 		UA_Identification tmpUAPropertyId;
 		UA_Identification_init(&tmpUAPropertyId);
-		tmpUAPropertyId.idSpec = UA_String_fromChars(tmpOVPropertyId.IdSpec);
-		tmpUAPropertyId.idType = tmpOVPropertyId.IdType;
 
 		UA_ViewEnum tmpUAView;
 		UA_ViewEnum_init(&tmpUAView);
-		tmpUAView = tmpOVView;
 
 		UA_VisibilityEnum tmpUAVisibility;
 		UA_VisibilityEnum_init(&tmpUAVisibility);
-		tmpUAVisibility = tmpOVVisibility;
 
 		UA_DataValue tmpUAValue;
 		UA_DataValue_init(&tmpUAValue);
-		ov_AnyToVariant(&tmpOVValue, &tmpUAValue.value);
-		tmpUAValue.hasValue = TRUE;
-		tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(tmpOVValue.time);
-		tmpUAValue.hasSourceTimestamp = TRUE;
+
+		if (result == AASSTATUSCODE_GOOD){
+
+			tmpUAPVSName = UA_String_fromChars(tmpOVPVSName);
+
+			if (tmpOVCarrierId.IdSpec)
+				tmpUACarrierId.idSpec = UA_String_fromChars(tmpOVCarrierId.IdSpec);
+			tmpUACarrierId.idType = tmpOVCarrierId.IdType;
+
+			tmpUAExpressionLogic = tmpOVExpressionLogic;
+
+			tmpUAExpressionSemantic = tmpOVExpressionSemantic;
+
+			if (tmpOVPropertyId.IdSpec)
+				tmpUAPropertyId.idSpec = UA_String_fromChars(tmpOVPropertyId.IdSpec);
+			tmpUAPropertyId.idType = tmpOVPropertyId.IdType;
+
+			tmpUAView = tmpOVView;
+
+			tmpUAVisibility = tmpOVVisibility;
+
+			ov_AnyToVariant(&tmpOVValue, &tmpUAValue.value);
+			tmpUAValue.hasValue = TRUE;
+			tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(tmpOVValue.time);
+			tmpUAValue.hasSourceTimestamp = TRUE;
+		}
 
 		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		UA_Variant_setScalarCopy(&output[1], &tmpUAPVSName, &UA_TYPES[UA_TYPES_STRING]);

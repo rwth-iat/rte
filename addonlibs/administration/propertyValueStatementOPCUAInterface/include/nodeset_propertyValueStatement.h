@@ -35,6 +35,7 @@
 #ifndef UA_free
   #define UA_free(_p_ptr) free(_p_ptr)
 #endif
+
 #define UA_NS2ID_EXPRESSIONLOGICENUM 3002
 #define UA_NS2ID_EXPRESSIONSEMANTICENUM 3003
 #define UA_NS2ID_VIEWENUM 3004

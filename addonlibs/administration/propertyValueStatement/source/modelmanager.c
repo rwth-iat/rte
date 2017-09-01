@@ -476,7 +476,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_createPVS(Iden
 		return PVSSTATUSCODE_BADPVSLID;
 
 	ppvsl = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatementList, ptr);
-	if (ppvsl){
+	if (!ppvsl){
 		return PVSSTATUSCODE_BADPVSLID;
 	}
 
@@ -528,7 +528,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_deletePVS(Iden
 		return PVSSTATUSCODE_BADPVSID;
 
 	ppvs = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, Ov_StaticPtrCast(ov_domain, ptr));
-	if (ppvs){
+	if (!ppvs){
 		return PVSSTATUSCODE_BADPVSID;
 	}
 	result = Ov_DeleteObject(ptr);
@@ -559,7 +559,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_getPVS(Identif
 		return PVSSTATUSCODE_BADPVSID;
 
 	ppvs = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, ptr);
-	if (ppvs){
+	if (!ppvs){
 		return PVSSTATUSCODE_BADPVSID;
 	}
 	pparent = Ov_GetParent(ov_containment, ptr);
@@ -636,7 +636,7 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_setPVS(Identif
 		return PVSSTATUSCODE_BADPVSID;
 
 	ppvs = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, ptr);
-	if (ppvs){
+	if (!ppvs){
 		return PVSSTATUSCODE_BADPVSID;
 	}
 	if (mask & 0x01){
@@ -671,9 +671,10 @@ OV_DLLFNCEXPORT PVSStatusCode propertyValueStatement_modelmanager_setPVS(Identif
 		}else if(Ov_CanCastTo(propertyValueStatement_Visibility, pchild) && mask & 0x40){
 			pVisibility = Ov_StaticPtrCast(propertyValueStatement_Visibility, pchild);
 			pVisibility->v_VisibilityEnum = visibility;
-		}else if(mask & 0x80){
-			ov_variable_setanyvalue(&ppvs->v_Value, &value);
 		}
+	}
+	if(mask & 0x80){
+		ov_variable_setanyvalue(&ppvs->v_Value, &value);
 	}
     return (PVSStatusCode)0;
 }

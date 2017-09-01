@@ -159,7 +159,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSubModel(Identification
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_openaas_SubModel pSubModel = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_domain ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr4 = NULL;
 	OV_BOOL parentIsInAAS = FALSE;
 
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -170,16 +171,26 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSubModel(Identification
 				return AASSTATUSCODE_BADSMID;
 			}
 			ptr2 = ov_path_getobjectpointer(parentID.IdSpec, 2);
-			if (ptr2)
+			if (!ptr2)
 				return AASSTATUSCODE_BADSMID;
 
-			ptr3 = Ov_GetParent(ov_containment, ptr2);
+			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
+			if (!ptr3){
+				ptr3 = ptr2->v_pouterobject;
+			}
+			if (!ptr3){
+				return AASSTATUSCODE_BADSMID;
+			}
 			do{
 				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
 					parentIsInAAS = TRUE;
 					break;
 				}
-				ptr3 = Ov_GetParent(ov_containment, ptr3);
+				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
+				if (!ptr4){
+					ptr4 = ptr3->v_pouterobject;
+				}
+				ptr3 = ptr4;
 			}while (ptr3);
 
 			if (parentIsInAAS == FALSE){
@@ -213,7 +224,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteSubModel(Identification
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_openaas_SubModel pSubModel = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_domain ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr4 = NULL;
 	OV_BOOL SMIsInAAS = FALSE;
 
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -224,16 +236,23 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteSubModel(Identification
 				return AASSTATUSCODE_BADSMID;
 			}
 			ptr2 = ov_path_getobjectpointer(smId.IdSpec, 2);
-			if (ptr2)
+			if (!ptr2)
 				return AASSTATUSCODE_BADSMID;
 
-			ptr3 = Ov_GetParent(ov_containment, ptr2);
+			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
+			if (!ptr3){
+				ptr3 = ptr2->v_pouterobject;
+			}
 			do{
 				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
 					SMIsInAAS = TRUE;
 					break;
 				}
-				ptr3 = Ov_GetParent(ov_containment, ptr3);
+				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
+				if (!ptr4){
+					ptr4 = ptr3->v_pouterobject;
+				}
+				ptr3 = ptr4;
 			}while (ptr3);
 
 			if (SMIsInAAS == FALSE){
