@@ -25,7 +25,11 @@ OV_DLLFNCEXPORT OV_RESULT SSChelper_commandCreator_start_set(
 		OV_INSTPTR_SSChelper_commandCreator pobj, const OV_BOOL value) {
 
 	if (value == TRUE) {
-		ov_string_setvalue(&pobj->v_command, pobj->v_sender);
+		if(!pobj->v_sender || ov_string_getlength(pobj->v_sender) == 0){
+			ov_string_setvalue(&pobj->v_command, Ov_GetParent(ov_containment, pobj)->v_identifier);
+		}else {
+			ov_string_setvalue(&pobj->v_command, pobj->v_sender);
+		}
 		ov_string_append(&pobj->v_command,";");
 		ov_string_append(&pobj->v_command,pobj->v_order);
 		ov_string_append(&pobj->v_command,";");

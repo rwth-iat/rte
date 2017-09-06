@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   getSSCInfo.c
+*   getParentIdentifier.c
 *
 *   History
 *   -------
-*   2017-08-30   File created
+*   2017-09-06   File created
 *
 *******************************************************************************
 *
@@ -25,22 +25,25 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT void SSChelper_getSSCInfo_typemethod(
+OV_DLLFNCEXPORT void SSChelper_getParentIdentifier_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_SSChelper_getSSCInfo pinst = Ov_StaticPtrCast(SSChelper_getSSCInfo, pfb);
+    OV_INSTPTR_SSChelper_getParentIdentifier pinst = Ov_StaticPtrCast(SSChelper_getParentIdentifier, pfb);
 
-    OV_INSTPTR_ov_object parent = Ov_GetParent(ov_containment, pinst);
-    if(Ov_CanCastTo(ssc_SequentialStateChart, parent)){
+    //Level 0 equals its own identifier
+    OV_INSTPTR_ov_object parent = (OV_INSTPTR_ov_object)pinst;
+    for(size_t i = 0; i < pinst->v_level ; i++){
+    	parent = Ov_GetParent(ov_containment, parent);
+    }
+    if(parent != NULL ){
     	ov_string_setvalue(&pinst->v_id, parent->v_identifier);
     }else {
     	ov_string_setvalue(&pinst->v_id, "");
     }
-
     return;
 }
 

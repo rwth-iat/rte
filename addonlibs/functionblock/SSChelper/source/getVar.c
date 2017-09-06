@@ -33,8 +33,9 @@ OV_RESULT SSChelper_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, cons
 	OV_VTBLPTR_ov_object pVtblObj = NULL;
 
 	if(pTargetObj == NULL){
-			return OV_ERR_BADPARAM;
-	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)&& !Ov_CanCastTo(ssc_SequentialStateChart, pTargetObj)&&ov_string_compare(targetVarname,"CMD")!=OV_STRCMP_EQUAL){
+
+		result = OV_ERR_BADPARAM;
+	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)&& !Ov_CanCastTo(ssc_SequentialStateChart, pTargetObj)){
 		//get variable in a functionchart
 		result = fb_functionchart_getport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
 	}else{
@@ -43,15 +44,19 @@ OV_RESULT SSChelper_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, cons
 		element.elemtype = OV_ET_OBJECT;
 		element.pobj = pTargetObj;
 
-		//search the variable for the set operation
+		//search the variable for the get operation
 		ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, targetVarname);
 		if(varElement.elemtype == OV_ET_VARIABLE) {
-			//port found, use the getter to write the value
+			//port found, use the getter to read the value
 			Ov_GetVTablePtr(ov_object, pVtblObj, pTargetObj);
 			result = pVtblObj->m_getvar(varElement.pobj, &varElement, value);
+		}else{
+			result = OV_ERR_BADPARAM;
 		}
 	}
-
+	if(result != OV_ERR_OK){
+		Ov_SetAnyValue(value,NULL);
+	}
 	return result;
 }
 
@@ -68,7 +73,6 @@ OV_DLLFNCEXPORT void SSChelper_getVar_typemethod(
     SSChelper_getObjectAndVarnameFromSetVariable(Ov_PtrUpCast(ov_object,pinst),pinst->v_path,&target,&pinst->v_port);
 
     SSChelper_getNamedVariable(target,pinst->v_port,&pinst->v_var);
-    return;
 
     return;
 }
