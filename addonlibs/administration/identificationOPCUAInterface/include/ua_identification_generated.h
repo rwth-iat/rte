@@ -15,6 +15,7 @@ extern "C" {
 #else
  #include "open62541.h"
 #endif
+
 //
 ///**
 // * Every type is assigned an index in an array containing the type descriptions.

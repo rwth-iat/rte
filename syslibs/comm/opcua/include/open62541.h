@@ -12752,8 +12752,135 @@ extern UA_EXPORT const UA_ClientConfig UA_ClientConfig_standard;
 #endif
 
 
+/***********************************  DIRTY HACK ***********************************/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * Every type is assigned an index in an array containing the type descriptions.
+ * These descriptions are used during type handling (copying, deletion,
+ * binary encoding, ...). */
+#define UA_IDENTIFICATION_COUNT 2
+extern UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT];
+
+/**
+ * IdEnum
+ * ^^^^^^
+ * Determines which kind of Id is specified */
+typedef enum {
+    UA_IDENUM_URI = 0,
+    UA_IDENUM_ISO = 1
+} UA_IdEnum;
+
+#define UA_IDENTIFICATION_IDENUM 0
+
+/**
+ * Identification
+ * ^^^^^^^^^^^^^^
+ * Identification */
+typedef struct {
+    UA_String idSpec;
+    UA_IdEnum idType;
+} UA_Identification;
+
+#define UA_IDENTIFICATION_IDENTIFICATION 1
+
+/* IdEnum */
+inline void
+UA_IdEnum_init(UA_IdEnum *p) {
+    memset(p, 0, sizeof(UA_IdEnum));
+}
+
+inline UA_IdEnum *
+UA_IdEnum_new(void) {
+    return (UA_IdEnum*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
+}
+
+inline UA_StatusCode
+UA_IdEnum_copy(const UA_IdEnum *src, UA_IdEnum *dst) {
+    *dst = *src;
+    return UA_STATUSCODE_GOOD;
+}
+
+inline void
+UA_IdEnum_deleteMembers(UA_IdEnum *p) { }
+
+inline void
+UA_IdEnum_delete(UA_IdEnum *p) {
+    UA_delete(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
+}
+
+/* Identification */
+inline void
+UA_Identification_init(UA_Identification *p) {
+    memset(p, 0, sizeof(UA_Identification));
+}
+
+inline UA_Identification *
+UA_Identification_new(void) {
+    return (UA_Identification*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
+
+inline UA_StatusCode
+UA_Identification_copy(const UA_Identification *src, UA_Identification *dst) {
+    return UA_copy(src, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
+
+inline void
+UA_Identification_deleteMembers(UA_Identification *p) {
+    UA_deleteMembers(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
+
+inline void
+UA_Identification_delete(UA_Identification *p) {
+    UA_delete(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
+
+
+typedef UA_StatusCode (*UA_exchangeEncodeBuffer)(void *handle, UA_ByteString *buf, size_t offset);
+
+UA_StatusCode
+UA_encodeBinary(const void *src, const UA_DataType *type,
+                UA_exchangeEncodeBuffer exchangeCallback, void *exchangeHandle,
+                UA_ByteString *dst, size_t *offset) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
+
+UA_StatusCode
+UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst,
+                const UA_DataType *type,
+                size_t newNamespacesSize, UA_Namespace *newNamespaces) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
+
+/* IdEnum */
+inline UA_StatusCode
+UA_IdEnum_encodeBinary(const UA_IdEnum *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM], NULL, NULL, dst, offset);
+}
+inline UA_StatusCode
+UA_IdEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_IdEnum *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM], 0, NULL);
+}
+
+/* Identification */
+inline UA_StatusCode
+UA_Identification_encodeBinary(const UA_Identification *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION], NULL, NULL, dst, offset);
+}
+inline UA_StatusCode
+UA_Identification_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Identification *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION], 0, NULL);
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+/*********************************** END DIRTY HACK ***********************************/
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+/* DIRTY HACK END */
 
 #endif /* OPEN62541_H_ */
