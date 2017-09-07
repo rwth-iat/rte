@@ -4242,7 +4242,74 @@ void UA_Discovery_cleanupTimedOut(UA_Server *server, UA_DateTime nowMonotonic);
 } // extern "C"
 #endif
 
+/* DIRTY HACK */
+#include "ua_identification_generated.h"
 
+/* IdEnum */
+static UA_DataTypeMember IdEnum_members[1] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "", /* .memberName */
+#endif
+    UA_TYPES_INT32, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},};
+
+/* Identification */
+static UA_DataTypeMember Identification_members[2] = {
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "idSpec", /* .memberName */
+#endif
+    UA_TYPES_STRING, /* .memberTypeIndex */
+    0, /* .padding */
+    true, /* .namespaceZero */
+    false /* .isArray */
+},
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "idType", /* .memberName */
+#endif
+    UA_IDENTIFICATION_IDENUM, /* .memberTypeIndex */
+    offsetof(UA_Identification, idType) - offsetof(UA_Identification, idSpec) - sizeof(UA_String), /* .padding */
+    false, /* .namespaceZero */
+    false /* .isArray */
+},};
+UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT] = {
+
+/* IdEnum */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "IdEnum", /* .typeName */
+#endif
+    {3, UA_NODEIDTYPE_NUMERIC, {6}}, /* .typeId */
+    sizeof(UA_IdEnum), /* .memSize */
+    UA_TYPES_INT32, /* .typeIndex */
+    1, /* .membersSize */
+    true, /* .builtin */
+    true, /* .pointerFree */
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */
+    0, /* .binaryEncodingId */
+    IdEnum_members /* .members */ },
+
+/* Identification */
+{
+#ifdef UA_ENABLE_TYPENAMES
+    "Identification", /* .typeName */
+#endif
+    {3, UA_NODEIDTYPE_NUMERIC, {3002}}, /* .typeId */
+    sizeof(UA_Identification), /* .memSize */
+    UA_IDENTIFICATION_IDENTIFICATION, /* .typeIndex */
+    2, /* .membersSize */
+    false, /* .builtin */
+    false, /* .pointerFree */
+    false, /* .overlayable */
+    5001, /* .binaryEncodingId */
+    Identification_members /* .members */ },
+};
+/* DIRTY HACK END */
 /*********************************** amalgamated original file "/home/julian/playground/open62541/test/src/server/ua_services.h" ***********************************/
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
@@ -5573,6 +5640,12 @@ copy_noInit(const void *src, void *dst, const UA_DataType *type) {
         const UA_DataType *typelists[2] = { UA_TYPES, &type[-type->typeIndex] };
         const UA_DataType *mt = &typelists[!m->namespaceZero][m->memberTypeIndex];
         if(!m->isArray) {
+        	/* DIRTY HACK */
+        	if(strcmp(type->members[i].memberName,"creatingInstance")==0 ||
+			   strcmp(type->members[i].memberName,"writingInstance")==0){
+					mt = &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION];
+			}
+        	/* DIRTY HACK END */
             ptrs += m->padding;
             ptrd += m->padding;
             size_t fi = mt->builtin ? mt->typeIndex : UA_BUILTIN_TYPES_COUNT;
@@ -5650,6 +5723,12 @@ deleteMembers_noInit(void *p, const UA_DataType *type) {
         const UA_DataType *typelists[2] = { UA_TYPES, &type[-type->typeIndex] };
         const UA_DataType *mt = &typelists[!m->namespaceZero][m->memberTypeIndex];
         if(!m->isArray) {
+        	/* DIRTY HACK */
+			if(strcmp(type->members[i].memberName,"creatingInstance")==0 ||
+			   strcmp(type->members[i].memberName,"writingInstance")==0){
+					mt = &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION];
+			}
+			/* DIRTY HACK END */
             ptr += m->padding;
             size_t fi = mt->builtin ? mt->typeIndex : UA_BUILTIN_TYPES_COUNT;
             deleteMembersJumpTable[fi]((void*)ptr, mt);
@@ -7066,6 +7145,12 @@ UA_encodeBinaryInternal(const void *src, const UA_DataType *type) {
         const UA_DataTypeMember *member = &type->members[i];
         const UA_DataType *membertype = &typelists[!member->namespaceZero][member->memberTypeIndex];
         if(!member->isArray) {
+        	/* DIRTY HACK */
+			if(strcmp(type->members[i].memberName,"creatingInstance")==0 ||
+			   strcmp(type->members[i].memberName,"writingInstance")==0){
+					membertype = &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION];
+        	}
+			/* DIRTY HACK END */
             ptr += member->padding;
             size_t encode_index = membertype->builtin ? membertype->typeIndex : UA_BUILTIN_TYPES_COUNT;
             size_t memSize = membertype->memSize;
@@ -7151,6 +7236,12 @@ UA_decodeBinaryInternal(void *dst, const UA_DataType *type) {
         const UA_DataTypeMember *member = &type->members[i];
         const UA_DataType *membertype = &typelists[!member->namespaceZero][member->memberTypeIndex];
         if(!member->isArray) {
+        	/* DIRTY HACK */
+			if(strcmp(type->members[i].memberName,"creatingInstance")==0 ||
+			   strcmp(type->members[i].memberName,"writingInstance")==0){
+				membertype = &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION];
+			}
+			/* DIRTY HACK END */
             ptr += member->padding;
             size_t fi = membertype->builtin ? membertype->typeIndex : UA_BUILTIN_TYPES_COUNT;
             size_t memSize = membertype->memSize;
@@ -7427,6 +7518,12 @@ UA_calcSizeBinary(void *p, const UA_DataType *type) {
         const UA_DataTypeMember *member = &type->members[i];
         const UA_DataType *membertype = &typelists[!member->namespaceZero][member->memberTypeIndex];
         if(!member->isArray) {
+        	/* DIRTY HACK */
+			if(strcmp(type->members[i].memberName,"creatingInstance")==0 ||
+			   strcmp(type->members[i].memberName,"writingInstance")==0){
+				membertype = &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION];
+			}
+			/* DIRTY HACK END */
             ptr += member->padding;
             size_t encode_index = membertype->builtin ? membertype->typeIndex : UA_BUILTIN_TYPES_COUNT;
             s += calcSizeBinaryJumpTable[encode_index]((const void*)ptr, membertype);
@@ -22157,7 +22254,8 @@ convertToMatchingValue(UA_Server *server, const UA_Variant *value,
     if(targetDataType == &UA_TYPES[UA_TYPES_BYTE] &&
        value->type == &UA_TYPES[UA_TYPES_BYTESTRING] &&
        UA_Variant_isScalar(value)) {
-        UA_Variant_copy(value,editableValue);
+    	if (value != editableValue)
+    		UA_Variant_copy(value,editableValue);
         /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
         UA_ByteString *str = (UA_ByteString*)value->data;
         editableValue->storageType = UA_VARIANT_DATA_NODELETE;
@@ -22173,7 +22271,8 @@ convertToMatchingValue(UA_Server *server, const UA_Variant *value,
     enum type_equivalence te1 = typeEquivalence(targetDataType);
     enum type_equivalence te2 = typeEquivalence(value->type);
     if(te1 != TYPE_EQUIVALENCE_NONE && te1 == te2) {
-        UA_Variant_copy(value,editableValue);
+    	if (value != editableValue)
+    		UA_Variant_copy(value,editableValue);
         /* JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
         *editableValue = *value;
         editableValue->storageType = UA_VARIANT_DATA_NODELETE;
@@ -22480,7 +22579,8 @@ readValueAttributeFromNode(UA_Server *server, const UA_VariableNode *vn, UA_Data
     }
     if(rangeptr)
         return UA_Variant_copyRange(&vn->value.data.value.value, &v->value, *rangeptr);
-    UA_DataValue_copy(&vn->value.data.value,v);
+    if (&vn->value.data.value != v)
+    	UA_DataValue_copy(&vn->value.data.value,v);
     /*JGrothof: Value has to be copied, so that node can be released with UA_NodestoreSwitch_releaseNode(...)
     *v = vn->value.data.value;
     v->value.storageType = UA_VARIANT_DATA_NODELETE;

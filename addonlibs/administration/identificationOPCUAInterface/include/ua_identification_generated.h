@@ -15,35 +15,35 @@ extern "C" {
 #else
  #include "open62541.h"
 #endif
-
-/**
- * Every type is assigned an index in an array containing the type descriptions.
- * These descriptions are used during type handling (copying, deletion,
- * binary encoding, ...). */
-#define UA_IDENTIFICATION_COUNT 2
-extern UA_EXPORT UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT];
-
-/**
- * IdEnum
- * ^^^^^^
- * Determines which kind of Id is specified */
-typedef enum {
-    UA_IDENUM_URI = 0,
-    UA_IDENUM_ISO = 1
-} UA_IdEnum;
-
-#define UA_IDENTIFICATION_IDENUM 0
-
-/**
- * Identification
- * ^^^^^^^^^^^^^^
- * Identification */
-typedef struct {
-    UA_String idSpec;
-    UA_IdEnum idType;
-} UA_Identification;
-
-#define UA_IDENTIFICATION_IDENTIFICATION 1
+//
+///**
+// * Every type is assigned an index in an array containing the type descriptions.
+// * These descriptions are used during type handling (copying, deletion,
+// * binary encoding, ...). */
+//#define UA_IDENTIFICATION_COUNT 2
+//extern UA_EXPORT UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT];
+//
+///**
+// * IdEnum
+// * ^^^^^^
+// * Determines which kind of Id is specified */
+//typedef enum {
+//    UA_IDENUM_URI = 0,
+//    UA_IDENUM_ISO = 1
+//} UA_IdEnum;
+//
+//#define UA_IDENTIFICATION_IDENUM 0
+//
+///**
+// * Identification
+// * ^^^^^^^^^^^^^^
+// * Identification */
+//typedef struct {
+//    UA_String idSpec;
+//    UA_IdEnum idType;
+//} UA_Identification;
+//
+//#define UA_IDENTIFICATION_IDENTIFICATION 1
 
 #ifdef __cplusplus
 } // extern "C"
