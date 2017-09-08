@@ -65638,7 +65638,7 @@ const UA_StatusCodeDescription * UA_StatusCode_description(UA_StatusCode code) {
 
 /***********************************  DIRTY HACK ***********************************/
 /* IdEnum */
-static UA_DataTypeMember IdEnum_members[1] = {
+UA_DataTypeMember IdEnum_members[1] = {
 {
 #ifdef UA_ENABLE_TYPENAMES
     "", /* .memberName */
@@ -65650,7 +65650,7 @@ static UA_DataTypeMember IdEnum_members[1] = {
 },};
 
 /* Identification */
-static UA_DataTypeMember Identification_members[2] = {
+UA_DataTypeMember Identification_members[2] = {
 {
 #ifdef UA_ENABLE_TYPENAMES
     "idSpec", /* .memberName */
@@ -65702,4 +65702,77 @@ UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT] = {
     5001, /* .binaryEncodingId */
     Identification_members /* .members */ },
 };
+
+/* IdEnum */
+void
+UA_IdEnum_init(UA_IdEnum *p) {
+    memset(p, 0, sizeof(UA_IdEnum));
+}
+
+UA_IdEnum *
+UA_IdEnum_new(void) {
+    return (UA_IdEnum*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
+}
+
+UA_StatusCode
+UA_IdEnum_copy(const UA_IdEnum *src, UA_IdEnum *dst) {
+    *dst = *src;
+    return UA_STATUSCODE_GOOD;
+}
+
+void
+UA_IdEnum_deleteMembers(UA_IdEnum *p) { }
+
+void
+UA_IdEnum_delete(UA_IdEnum *p) {
+    UA_delete(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
+}
+
+/* Identification */
+void
+UA_Identification_init(UA_Identification *p) {
+    memset(p, 0, sizeof(UA_Identification));
+}
+
+UA_Identification *
+UA_Identification_new(void) {
+    return (UA_Identification*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
+
+UA_StatusCode
+UA_Identification_copy(const UA_Identification *src, UA_Identification *dst) {
+    return UA_copy(src, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
+
+void
+UA_Identification_deleteMembers(UA_Identification *p) {
+    UA_deleteMembers(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
+
+void
+UA_Identification_delete(UA_Identification *p) {
+    UA_delete(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
+
+
+/* IdEnum */
+UA_StatusCode
+UA_IdEnum_encodeBinary(const UA_IdEnum *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM], NULL, NULL, dst, offset);
+}
+UA_StatusCode
+UA_IdEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_IdEnum *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM], 0, NULL);
+}
+
+/* Identification */
+UA_StatusCode
+UA_Identification_encodeBinary(const UA_Identification *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION], NULL, NULL, dst, offset);
+}
+
+UA_StatusCode
+UA_Identification_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Identification *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION], 0, NULL);
+}
 /***********************************  END DIRTY HACK ***********************************/

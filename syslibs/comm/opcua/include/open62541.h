@@ -12762,7 +12762,9 @@ extern "C" {
  * These descriptions are used during type handling (copying, deletion,
  * binary encoding, ...). */
 #define UA_IDENTIFICATION_COUNT 2
-extern UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT];
+extern UA_EXPORT UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT];
+extern UA_EXPORT UA_DataTypeMember IdEnum_members[1];
+extern UA_EXPORT UA_DataTypeMember Identification_members[2];
 
 /**
  * IdEnum
@@ -12787,55 +12789,26 @@ typedef struct {
 #define UA_IDENTIFICATION_IDENTIFICATION 1
 
 /* IdEnum */
-inline void
-UA_IdEnum_init(UA_IdEnum *p) {
-    memset(p, 0, sizeof(UA_IdEnum));
-}
+void UA_EXPORT UA_IdEnum_init(UA_IdEnum *p);
 
-inline UA_IdEnum *
-UA_IdEnum_new(void) {
-    return (UA_IdEnum*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
-}
+UA_IdEnum * UA_EXPORT UA_IdEnum_new(void);
 
-inline UA_StatusCode
-UA_IdEnum_copy(const UA_IdEnum *src, UA_IdEnum *dst) {
-    *dst = *src;
-    return UA_STATUSCODE_GOOD;
-}
+UA_StatusCode UA_EXPORT UA_IdEnum_copy(const UA_IdEnum *src, UA_IdEnum *dst);
 
-inline void
-UA_IdEnum_deleteMembers(UA_IdEnum *p) { }
+void UA_EXPORT UA_IdEnum_deleteMembers(UA_IdEnum *p);
 
-inline void
-UA_IdEnum_delete(UA_IdEnum *p) {
-    UA_delete(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
-}
+void UA_EXPORT UA_IdEnum_delete(UA_IdEnum *p);
 
 /* Identification */
-inline void
-UA_Identification_init(UA_Identification *p) {
-    memset(p, 0, sizeof(UA_Identification));
-}
+void UA_EXPORT UA_Identification_init(UA_Identification *p);
 
-inline UA_Identification *
-UA_Identification_new(void) {
-    return (UA_Identification*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
-}
+UA_Identification * UA_EXPORT UA_Identification_new(void);
 
-inline UA_StatusCode
-UA_Identification_copy(const UA_Identification *src, UA_Identification *dst) {
-    return UA_copy(src, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
-}
+UA_StatusCode UA_EXPORT UA_Identification_copy(const UA_Identification *src, UA_Identification *dst);
 
-inline void
-UA_Identification_deleteMembers(UA_Identification *p) {
-    UA_deleteMembers(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
-}
+void UA_EXPORT UA_Identification_deleteMembers(UA_Identification *p);
 
-inline void
-UA_Identification_delete(UA_Identification *p) {
-    UA_delete(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
-}
+void UA_EXPORT UA_Identification_delete(UA_Identification *p);
 
 
 typedef UA_StatusCode (*UA_exchangeEncodeBuffer)(void *handle, UA_ByteString *buf, size_t offset);
@@ -12851,24 +12824,16 @@ UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst,
                 size_t newNamespacesSize, UA_Namespace *newNamespaces) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
 
 /* IdEnum */
-inline UA_StatusCode
-UA_IdEnum_encodeBinary(const UA_IdEnum *src, UA_ByteString *dst, size_t *offset) {
-    return UA_encodeBinary(src, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM], NULL, NULL, dst, offset);
-}
-inline UA_StatusCode
-UA_IdEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_IdEnum *dst) {
-    return UA_decodeBinary(src, offset, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM], 0, NULL);
-}
+UA_StatusCode UA_EXPORT
+UA_IdEnum_encodeBinary(const UA_IdEnum *src, UA_ByteString *dst, size_t *offset);
+UA_StatusCode UA_EXPORT
+UA_IdEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_IdEnum *dst);
 
 /* Identification */
-inline UA_StatusCode
-UA_Identification_encodeBinary(const UA_Identification *src, UA_ByteString *dst, size_t *offset) {
-    return UA_encodeBinary(src, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION], NULL, NULL, dst, offset);
-}
-inline UA_StatusCode
-UA_Identification_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Identification *dst) {
-    return UA_decodeBinary(src, offset, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION], 0, NULL);
-}
+UA_StatusCode UA_EXPORT
+UA_Identification_encodeBinary(const UA_Identification *src, UA_ByteString *dst, size_t *offset);
+UA_StatusCode UA_EXPORT
+UA_Identification_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Identification *dst);
 
 #ifdef __cplusplus
 }
