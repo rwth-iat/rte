@@ -35,7 +35,7 @@ OV_DLLFNCEXPORT void SSChelper_getParentIdentifier_typemethod(
     OV_INSTPTR_SSChelper_getParentIdentifier pinst = Ov_StaticPtrCast(SSChelper_getParentIdentifier, pfb);
 
     //Level 0 equals its own identifier
-    OV_INSTPTR_ov_object parent = (OV_INSTPTR_ov_object)pinst;
+    OV_INSTPTR_ov_domain parent = Ov_StaticPtrCast(ov_domain,pinst);
     for(size_t i = 0; i < pinst->v_level ; i++){
     	parent = Ov_GetParent(ov_containment, parent);
     }

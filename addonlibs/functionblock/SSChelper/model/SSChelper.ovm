@@ -181,10 +181,11 @@ LIBRARY SSChelper
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS getSSCInfo : CLASS fb/functionblock
+	CLASS getParentIdentifier : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
-			id : STRING  FLAGS = "o" COMMENT = "Identifier of the parent SSC.";
+			level : UINT  FLAGS = "i" COMMENT = "How many levels to move up." INITIALVALUE = 1;
+			id : STRING  FLAGS = "o" COMMENT = "Identifier of the parent.";
 		END_VARIABLES;
 		OPERATIONS
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
