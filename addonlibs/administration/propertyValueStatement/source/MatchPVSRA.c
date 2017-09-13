@@ -373,9 +373,9 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
 			aPropertyIdIdType = pPropertyId->v_IdType;
 			if(pPropertyId->v_IdSpec)
-				ov_string_setvalue(&rPropertyIdIdString, pPropertyId->v_IdSpec);
+				ov_string_setvalue(&aPropertyIdIdString, pPropertyId->v_IdSpec);
 			else
-				ov_string_setvalue(&rPropertyIdIdString, "");
+				ov_string_setvalue(&aPropertyIdIdString, "");
 			pPropertyId = NULL;
 			aPropertyIdFound = TRUE;
 		}else if(Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
@@ -391,9 +391,9 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 				pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
 				aPropertyIdIdType = pPropertyId->v_IdType;
 				if(pPropertyId->v_IdSpec)
-					ov_string_setvalue(&rPropertyIdIdString, pPropertyId->v_IdSpec);
+					ov_string_setvalue(&aPropertyIdIdString, pPropertyId->v_IdSpec);
 				else
-					ov_string_setvalue(&rPropertyIdIdString, "");
+					ov_string_setvalue(&aPropertyIdIdString, "");
 				pPropertyId = NULL;
 			}else if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
 				pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
