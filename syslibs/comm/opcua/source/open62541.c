@@ -65709,7 +65709,7 @@ UA_IdEnum_init(UA_IdEnum *p) {
     memset(p, 0, sizeof(UA_IdEnum));
 }
 
-UA_IdEnum *
+UA_IdEnum*
 UA_IdEnum_new(void) {
     return (UA_IdEnum*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
 }
@@ -65734,7 +65734,7 @@ UA_Identification_init(UA_Identification *p) {
     memset(p, 0, sizeof(UA_Identification));
 }
 
-UA_Identification *
+UA_Identification*
 UA_Identification_new(void) {
     return (UA_Identification*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
 }

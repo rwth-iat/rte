@@ -12791,7 +12791,7 @@ typedef struct {
 /* IdEnum */
 void UA_EXPORT UA_IdEnum_init(UA_IdEnum *p);
 
-UA_IdEnum * UA_EXPORT UA_IdEnum_new(void);
+UA_IdEnum* UA_EXPORT UA_IdEnum_new(void);
 
 UA_StatusCode UA_EXPORT UA_IdEnum_copy(const UA_IdEnum *src, UA_IdEnum *dst);
 
@@ -12802,7 +12802,7 @@ void UA_EXPORT UA_IdEnum_delete(UA_IdEnum *p);
 /* Identification */
 void UA_EXPORT UA_Identification_init(UA_Identification *p);
 
-UA_Identification * UA_EXPORT UA_Identification_new(void);
+UA_Identification* UA_EXPORT UA_Identification_new(void);
 
 UA_StatusCode UA_EXPORT UA_Identification_copy(const UA_Identification *src, UA_Identification *dst);
 
