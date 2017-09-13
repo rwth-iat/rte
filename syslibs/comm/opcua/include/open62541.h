@@ -12788,28 +12788,57 @@ typedef struct {
 
 #define UA_IDENTIFICATION_IDENTIFICATION 1
 
+
 /* IdEnum */
-void UA_EXPORT UA_IdEnum_init(UA_IdEnum *p);
+static UA_INLINE void
+UA_IdEnum_init(UA_IdEnum *p) {
+    memset(p, 0, sizeof(UA_IdEnum));
+}
 
-UA_IdEnum* UA_EXPORT UA_IdEnum_new(void);
+static UA_INLINE UA_IdEnum *
+UA_IdEnum_new(void) {
+    return (UA_IdEnum*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
+}
 
-UA_StatusCode UA_EXPORT UA_IdEnum_copy(const UA_IdEnum *src, UA_IdEnum *dst);
+static UA_INLINE UA_StatusCode
+UA_IdEnum_copy(const UA_IdEnum *src, UA_IdEnum *dst) {
+    *dst = *src;
+    return UA_STATUSCODE_GOOD;
+}
 
-void UA_EXPORT UA_IdEnum_deleteMembers(UA_IdEnum *p);
+static UA_INLINE void
+UA_IdEnum_deleteMembers(UA_IdEnum *p) { }
 
-void UA_EXPORT UA_IdEnum_delete(UA_IdEnum *p);
+static UA_INLINE void
+UA_IdEnum_delete(UA_IdEnum *p) {
+    UA_delete(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM]);
+}
 
 /* Identification */
-void UA_EXPORT UA_Identification_init(UA_Identification *p);
+static UA_INLINE void
+UA_Identification_init(UA_Identification *p) {
+    memset(p, 0, sizeof(UA_Identification));
+}
 
-UA_Identification* UA_EXPORT UA_Identification_new(void);
+static UA_INLINE UA_Identification *
+UA_Identification_new(void) {
+    return (UA_Identification*)UA_new(&UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
 
-UA_StatusCode UA_EXPORT UA_Identification_copy(const UA_Identification *src, UA_Identification *dst);
+static UA_INLINE UA_StatusCode
+UA_Identification_copy(const UA_Identification *src, UA_Identification *dst) {
+    return UA_copy(src, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
 
-void UA_EXPORT UA_Identification_deleteMembers(UA_Identification *p);
+static UA_INLINE void
+UA_Identification_deleteMembers(UA_Identification *p) {
+    UA_deleteMembers(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
 
-void UA_EXPORT UA_Identification_delete(UA_Identification *p);
-
+static UA_INLINE void
+UA_Identification_delete(UA_Identification *p) {
+    UA_delete(p, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+}
 
 typedef UA_StatusCode (*UA_exchangeEncodeBuffer)(void *handle, UA_ByteString *buf, size_t offset);
 
@@ -12823,17 +12852,31 @@ UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst,
                 const UA_DataType *type,
                 size_t newNamespacesSize, UA_Namespace *newNamespaces) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
 
+
 /* IdEnum */
-UA_StatusCode UA_EXPORT
-UA_IdEnum_encodeBinary(const UA_IdEnum *src, UA_ByteString *dst, size_t *offset);
-UA_StatusCode UA_EXPORT
-UA_IdEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_IdEnum *dst);
+static UA_INLINE UA_StatusCode
+UA_IdEnum_encodeBinary(const UA_IdEnum *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM], NULL, NULL, dst, offset);
+}
+static UA_INLINE UA_StatusCode
+UA_IdEnum_decodeBinary(const UA_ByteString *src, size_t *offset, UA_IdEnum *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENUM], 0, NULL);
+}
 
 /* Identification */
-UA_StatusCode UA_EXPORT
-UA_Identification_encodeBinary(const UA_Identification *src, UA_ByteString *dst, size_t *offset);
-UA_StatusCode UA_EXPORT
-UA_Identification_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Identification *dst);
+static UA_INLINE UA_StatusCode
+UA_Identification_encodeBinary(const UA_Identification *src, UA_ByteString *dst, size_t *offset) {
+    return UA_encodeBinary(src, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION], NULL, NULL, dst, offset);
+}
+
+static UA_INLINE UA_StatusCode
+UA_Identification_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Identification *dst) {
+    return UA_decodeBinary(src, offset, dst, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION], 0, NULL);
+}
+/***********************************  END DIRTY HACK ***********************************/
+
+
+
 
 #ifdef __cplusplus
 }
