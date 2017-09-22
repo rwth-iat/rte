@@ -14,11 +14,11 @@
  *
  ******************************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_openaasOPCUAInterface
-#define OV_COMPILE_LIBRARY_openaasOPCUAInterface
+#ifndef OV_COMPILE_LIBRARY_propertyValueStatementOPCUAInterface
+#define OV_COMPILE_LIBRARY_propertyValueStatementOPCUAInterface
 #endif
 
-#include "openaasOPCUAInterface.h"
+#include "propertyValueStatementOPCUAInterface.h"
 #include "libov/ov_macros.h"
 #include "ksbase.h"
 #include "opcua.h"
@@ -32,12 +32,12 @@
 #include "nodeset_propertyValueStatement.h"
 
 
-extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
+extern OV_INSTPTR_propertyValueStatementOPCUAInterface_interface pinterface;
 
 
 
 
-OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovViewNodeToOPCUA(
+OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovViewNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -161,51 +161,17 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovViewNodeToOPCUA(
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
-	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespaceIndexPropertyValueStatement, UA_NS2ID_VIEWENUM);
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_VIEWENUM);
 
 
 	// References
-	OV_INSTPTR_ov_object pchild = NULL;
-	size_t size_references = 0;
-	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
-		size_references++;
-	}
-
-	size_references = size_references + 2;// For Parent&TypeNode
-	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
-	if (!newNode->references){
-		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		UA_free(newNode);
-		return result;
-	}
-	newNode->referencesSize = size_references;
-	// ParentNode
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-	newNode->references[0].isInverse = UA_TRUE;
-	OV_UINT len = 0;
-	OV_STRING *plist = NULL;
-	OV_STRING tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	plist = ov_string_split(tmpString, "/", &len);
-	ov_string_setvalue(&tmpString, NULL);
-	for (OV_UINT i = 0; i < len-1; i++){
-		if (i != 0)
-			ov_string_append(&tmpString, "/");
-		ov_string_append(&tmpString, plist[i]);
-	}
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-	ov_string_freelist(plist);
-	ov_string_setvalue(&tmpString, NULL);
-
-	// TypeNode
-	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
-
-	size_t i = 1;
-
-	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
-		i++;
+	addReference(newNode);
+	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
+	for (size_t i = 0; i < newNode->referencesSize; i++){
+		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
+			break;
+		}
 	}
 
 	*opcuaNode = newNode;

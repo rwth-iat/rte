@@ -10,7 +10,7 @@ UA_INLINE UA_StatusCode nodeset(UA_Server *server){
 UA_INLINE UA_StatusCode nodeset_returnNamespaces(
         UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces) {
   UA_StatusCode retval = UA_STATUSCODE_GOOD;
-  UA_Namespace* nsArray = UA_malloc(2 * sizeof(UA_Namespace));
+  UA_Namespace* nsArray = UA_malloc(5 * sizeof(UA_Namespace));
   UA_String tempNsUri;
 
   //Adding namespace for old namespace index = 0 with uri: http://opcfoundation.org/UA/
@@ -19,47 +19,42 @@ UA_INLINE UA_StatusCode nodeset_returnNamespaces(
   UA_String_deleteMembers(&tempNsUri);
   retval |= UA_Server_addNamespace_full(server, &nsArray[0]);
   UA_UInt16 nsIdx_0 = nsArray[0].index;
-  //Adding namespace for old namespace index = 5 with uri: http://acplt.org/openaas/
-  tempNsUri = UA_String_fromChars("http://acplt.org/openaas/");
+  //Adding namespace for old namespace index = 2 with uri: http://acplt.org/identification/
+  tempNsUri = UA_String_fromChars("http://acplt.org/identification/");
   UA_Namespace_init(&nsArray[1], &tempNsUri);
   UA_String_deleteMembers(&tempNsUri);
   retval |= UA_Server_addNamespace_full(server, &nsArray[1]);
-  UA_UInt16 nsIdx_5 = nsArray[1].index;
-
-  //Adding namespace for old namespace index = 2 with uri: http://acplt.org/identification/
-  UA_Namespace nsArraytmp;
-  tempNsUri = UA_String_fromChars("http://acplt.org/identification/");
-  UA_Namespace_init(&nsArraytmp, &tempNsUri);
-  UA_String_deleteMembers(&tempNsUri);
-  retval |= UA_Server_addNamespace_full(server, &nsArraytmp);
-  UA_UInt16 nsIdx_2 = nsArraytmp.index;
-  UA_Namespace_deleteMembers(&nsArraytmp);
+  UA_UInt16 nsIdx_2 = nsArray[1].index;
   //Adding namespace for old namespace index = 3 with uri: http://acplt.org/lifeCycleEntry/
   tempNsUri = UA_String_fromChars("http://acplt.org/lifeCycleEntry/");
-  UA_Namespace_init(&nsArraytmp, &tempNsUri);
+  UA_Namespace_init(&nsArray[2], &tempNsUri);
   UA_String_deleteMembers(&tempNsUri);
-  retval |= UA_Server_addNamespace_full(server, &nsArraytmp);
-  UA_UInt16 nsIdx_3 = nsArraytmp.index;
-  UA_Namespace_deleteMembers(&nsArraytmp);
+  retval |= UA_Server_addNamespace_full(server, &nsArray[2]);
+  UA_UInt16 nsIdx_3 = nsArray[2].index;
   //Adding namespace for old namespace index = 4 with uri: http://acplt.org/propertyValueStatement/
   tempNsUri = UA_String_fromChars("http://acplt.org/propertyValueStatement/");
-  UA_Namespace_init(&nsArraytmp, &tempNsUri);
+  UA_Namespace_init(&nsArray[3], &tempNsUri);
   UA_String_deleteMembers(&tempNsUri);
-  retval |= UA_Server_addNamespace_full(server, &nsArraytmp);
-  UA_UInt16 nsIdx_4 = nsArraytmp.index;
-  UA_Namespace_deleteMembers(&nsArraytmp);
-  
+  retval |= UA_Server_addNamespace_full(server, &nsArray[3]);
+  UA_UInt16 nsIdx_4 = nsArray[3].index;
+  //Adding namespace for old namespace index = 5 with uri: http://acplt.org/openaas/
+  tempNsUri = UA_String_fromChars("http://acplt.org/openaas/");
+  UA_Namespace_init(&nsArray[4], &tempNsUri);
+  UA_String_deleteMembers(&tempNsUri);
+  retval |= UA_Server_addNamespace_full(server, &nsArray[4]);
+  UA_UInt16 nsIdx_5 = nsArray[4].index;
 
   //Writing back desired namespace values')
-  if(namespacesSize) {*namespacesSize = 2;};
+  if(namespacesSize) {*namespacesSize = 5;};
   if(namespaces) {namespaces = &nsArray;}
   else {
-    for(size_t i = 0 ; i < 2 ; ++i){
+    for(size_t i = 0 ; i < 5 ; ++i){
       UA_Namespace_deleteMembers(&nsArray[i]);
     }
     UA_free(nsArray);
   }
   if(retval == UA_STATUSCODE_GOOD){retval = UA_STATUSCODE_GOOD;} //ensure that retval is used
+  
 
 do {
 // Referencing node found and declared as parent: i=19/StatusCode using i=45/HasSubtype
@@ -82,7 +77,7 @@ do {
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "TypeDictionary");
-attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://yourorganisation.org/openaas/");
+attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://acplt.org/openaas/");
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_ByteString *opcua_node_variable_t_ns_5_i_6002_variant_DataContents =  UA_ByteString_new();
@@ -111,7 +106,7 @@ attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_String *opcua_node_variable_t_ns_5_i_6003_variant_DataContents =  UA_String_new();
-*opcua_node_variable_t_ns_5_i_6003_variant_DataContents = UA_STRING_ALLOC("http://yourorganisation.org/openaas/");
+*opcua_node_variable_t_ns_5_i_6003_variant_DataContents = UA_STRING_ALLOC("http://acplt.org/openaas/");
 UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_5_i_6003_variant_DataContents, &UA_TYPES[UA_TYPES_STRING]);
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6003);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
@@ -132,7 +127,7 @@ do {
 UA_VariableAttributes attr;
 UA_VariableAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "TypeDictionary");
-attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://yourorganisation.org/openaas/");
+attr.description = UA_LOCALIZEDTEXT("", "Collects the data type descriptions of http://acplt.org/openaas/");
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_ByteString *opcua_node_variable_t_ns_5_i_6004_variant_DataContents =  UA_ByteString_new();
@@ -161,7 +156,7 @@ attr.description = UA_LOCALIZEDTEXT("", "");
 attr.accessLevel = 3;
 attr.valueRank = -1;
 UA_String *opcua_node_variable_t_ns_5_i_6005_variant_DataContents =  UA_String_new();
-*opcua_node_variable_t_ns_5_i_6005_variant_DataContents = UA_STRING_ALLOC("http://yourorganisation.org/openaas/Types.xsd");
+*opcua_node_variable_t_ns_5_i_6005_variant_DataContents = UA_STRING_ALLOC("http://acplt.org/openaas/Types.xsd");
 UA_Variant_setScalar( &attr.value, opcua_node_variable_t_ns_5_i_6005_variant_DataContents, &UA_TYPES[UA_TYPES_STRING]);
 UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6005);
 UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
@@ -304,11 +299,11 @@ inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[2].name = UA_STRING("PVSName");
 inputArguments[2].valueRank = -1;
 inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","");
+inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01: CarrierID; 0x02: ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility");
 inputArguments[3].name = UA_STRING("Value");
 inputArguments[3].valueRank = -1;
 inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 23);
-inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility");
+inputArguments[4].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[4].name = UA_STRING("Mask");
 inputArguments[4].valueRank = -1;
 inputArguments[4].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
@@ -384,7 +379,7 @@ inputArguments[2].description = UA_LOCALIZEDTEXT("en_US","");
 inputArguments[2].name = UA_STRING("PVSLName");
 inputArguments[2].valueRank = -1;
 inputArguments[2].dataType = UA_NODEID_NUMERIC(nsIdx_0, 12);
-inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility");
+inputArguments[3].description = UA_LOCALIZEDTEXT("en_US","A bit mask that indicates which fields are present in the stream. The mask has following bits: 0x01:CarrierID; 0x02:ExpressionLogic;0x04:ExpressionSemantic;0x08:PropertyID;0x10:View;0x20:Visibility");
 inputArguments[3].name = UA_STRING("Mask");
 inputArguments[3].valueRank = -1;
 inputArguments[3].dataType = UA_NODEID_NUMERIC(nsIdx_0, 7);
@@ -1354,113 +1349,6 @@ UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXP
 // This node has the following references that can be created:
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 5004), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 61), true);
 UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 5004), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 80), true);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: i=58/BaseObjectType using i=45/HasSubtype
-// Node: opcua_node_objectType_t(ns=5;i=1004), 1:ServiceType
-UA_ObjectTypeAttributes attr;
-UA_ObjectTypeAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "ServiceType");
-attr.description = UA_LOCALIZEDTEXT("", "");
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 1004);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_0, 58);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 45);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "ServiceType");
-UA_Server_addObjectTypeNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , attr, NULL, NULL);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=5;i=1004/1:ServiceType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=5;i=6012), 1:ID
-UA_VariableAttributes attr;
-UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "ID");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.accessLevel = 3;
-attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6012);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1004);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "ID");
-UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6012), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6012), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=5;i=1004/1:ServiceType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=5;i=6014), 1:Revision
-UA_VariableAttributes attr;
-UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "Revision");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.accessLevel = 3;
-attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6014);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1004);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "Revision");
-UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6014), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6014), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=5;i=1004/1:ServiceType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=5;i=6015), 1:Version
-UA_VariableAttributes attr;
-UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "Version");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.accessLevel = 3;
-attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6015);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1004);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "Version");
-UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6015), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6015), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
-} while(0);
-
-do {
-// Referencing node found and declared as parent: ns=5;i=1004/1:ServiceType using i=46/HasProperty
-// Node: opcua_node_variable_t(ns=5;i=6016), 1:WSDLDescription
-UA_VariableAttributes attr;
-UA_VariableAttributes_init(&attr);
-attr.displayName = UA_LOCALIZEDTEXT("", "WSDLDescription");
-attr.description = UA_LOCALIZEDTEXT("", "");
-attr.accessLevel = 3;
-attr.valueRank = -1;
-UA_NodeId nodeId = UA_NODEID_NUMERIC(nsIdx_5, 6016);
-UA_NodeId typeDefinition = UA_NODEID_NUMERIC(nsIdx_0, 68);
-UA_NodeId parentNodeId = UA_NODEID_NUMERIC(nsIdx_5, 1004);
-UA_NodeId parentReferenceNodeId = UA_NODEID_NUMERIC(nsIdx_0, 46);
-UA_QualifiedName nodeName = UA_QUALIFIEDNAME(nsIdx_5, "WSDLDescription");
-UA_Server_addVariableNode(server, nodeId, parentNodeId, parentReferenceNodeId, nodeName
-       , typeDefinition
-       , attr, NULL, NULL);
-UA_Server_deleteReference(server, nodeId, UA_NODEID_NUMERIC(0, 40), true, UA_EXPANDEDNODEID_NUMERIC(0, 62), true); //remove HasTypeDefinition refs generated by addVariableNode
-// This node has the following references that can be created:
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6016), UA_NODEID_NUMERIC(nsIdx_0, 37), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 78), true);
-UA_Server_addReference(server, UA_NODEID_NUMERIC(nsIdx_5, 6016), UA_NODEID_NUMERIC(nsIdx_0, 40), UA_EXPANDEDNODEID_NUMERIC(nsIdx_0, 68), true);
 } while(0);
 
 do {

@@ -604,7 +604,166 @@ UA_Int32 fillReferenceDescriptions_OvReferences2(const UA_BrowseDescription* bro
 }
 
 
+OV_DLLFNCEXPORT UA_StatusCode addReference(UA_Node *node){
+	// references
+	UA_ReferenceDescription *references = NULL;
+	OV_UINT 				refCount = 0;
+	UA_BrowseDescription 	*browseDescriptions = NULL;
+	OV_ELEMENT 				pNode;
+	OV_PATH					nodePath;
+	OV_UINT					refCountBefore	=	0;
+	UA_StatusCode			result = UA_STATUSCODE_GOOD;
 
+	#define UAREFS_LENGTH		12
+	#define OVREFSARRAY_CHUNKSIZE	32
+	signed char				uaReferences [UAREFS_LENGTH];	//array for ua-references: 0: leave out, -1: to do, 1: done; specific for ovReferences: -2 do all
+	#define INDEX_References					0
+	#define INDEX_NonHierarchicalReferences		1
+	#define INDEX_HierarchicalReferences		2
+	#define INDEX_HasChild						3
+	#define INDEX_Organizes						4
+	#define INDEX_HasTypeDefinition				5
+	#define INDEX_Aggregates					6
+	#define INDEX_HasSubtype					7
+	#define INDEX_HasProperty					8
+	#define INDEX_HasComponent					9
+	#define INDEX_OvReference					10
+
+	ov_memstack_lock();
+	if(opcua_nodeStoreFunctions_resolveNodeIdToPath(node->nodeId, &nodePath) != UA_STATUSCODE_GOOD){
+		return UA_STATUSCODE_BADNODEIDUNKNOWN;
+	}
+	pNode = nodePath.elements[nodePath.size - 1];
+	ov_memstack_unlock();
+	for(OV_UINT j=1; j<UAREFS_LENGTH; j++){
+		uaReferences[j] = -1;
+	}
+	uaReferences[INDEX_OvReference] = -2;
+
+	browseDescriptions = UA_BrowseDescription_new();
+	browseDescriptions->includeSubtypes = UA_TRUE;
+	browseDescriptions->browseDirection = UA_BROWSEDIRECTION_BOTH;
+	browseDescriptions->resultMask = (1<<0) | (1<<1) |(1<<2) | (1<<3) | (1<<4) | (1<<5);
+	browseDescriptions->nodeClassMask = (1<<0) | (1<<1) |(1<<2) | (1<<3) | (1<<4) | (1<<5) | (1<<6) | (1<<7);
+/*********************************************************************************************************************************
+* count all reference
+********************************************************************************************************************************/
+	// HasProperty
+	countReferenceDescriptions_HasProperty2(browseDescriptions, &pNode, &refCount);
+	if (refCount == refCountBefore){
+		uaReferences[INDEX_HasProperty] = 1;
+	}
+	refCountBefore = refCount;
+	// HasTypeDefinition
+	countReferenceDescriptions_HasTypeDefinition2(browseDescriptions, &pNode, &refCount);
+	if (refCount == refCountBefore){
+		uaReferences[INDEX_HasTypeDefinition] = 1;
+	}
+	refCountBefore = refCount;
+	// References
+	// Do nothing as this reference type is abstract
+	// NonHierarchical
+	// Do nothing as this reference type is abstract
+	// Hierarchical
+	// Do nothing as this reference type is abstract
+	// HasChild
+	// Do nothing as this reference type is abstract
+	// Aggregates
+	// Do nothing as this reference type is abstract
+	// Organizes
+	countReferenceDescriptions_Organizes2(browseDescriptions, &pNode, &refCount);
+	if (refCount == refCountBefore){
+		uaReferences[INDEX_Organizes] = 1;
+	}
+	refCountBefore = refCount;
+	// HasSubtype
+	countReferenceDescriptions_HasSubtype2(browseDescriptions, &pNode, &refCount);
+	if(refCount == refCountBefore){
+		uaReferences[INDEX_HasSubtype] = 1;
+	}
+	refCountBefore = refCount;
+	// HasComponent
+	countReferenceDescriptions_HasComponent2(browseDescriptions, &pNode, &refCount);
+	if(refCount == refCountBefore){
+		uaReferences[INDEX_HasComponent] = 1;
+	}
+	refCountBefore = refCount;
+	// OvReferences
+	// NOTIMPLEMENTED
+	//  countReferenceDescriptions_OvReferences2(browseDescriptions, pNode, uaReferences[INDEX_OvReference], pAssoc, refCount);
+	//  if(*refCount == refCountBefore){
+	//		uaReferences[INDEX_OvReference] = 1;
+	//	}
+	//	refCountBefore = *refCount;
+
+	references = UA_Array_new(refCount, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
+
+	refCount = 0;
+
+	/*********************************************************************************************************************************
+	 * fill in results for all reference types
+	 ********************************************************************************************************************************/
+	// HasProperty
+	if (uaReferences[INDEX_HasProperty] != 1){
+		fillReferenceDescriptions_HasProperty2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
+				references, &result);
+	}
+	// HasTypeDefinition
+	if (uaReferences[INDEX_HasTypeDefinition] != 1){
+		fillReferenceDescriptions_HasTypeDefinition2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
+				references, &result);
+	}
+	// References
+	// Do nothing as this reference type is abstract
+	// NonHierarchical
+	// Do nothing as this reference type is abstract
+	// Hierarchical
+	// Do nothing as this reference type is abstract
+	// HasChild
+	// Do nothing as this reference type is abstract
+	// Aggregates
+	// Do nothing as this reference type is abstract
+	// Organizes
+	if (uaReferences[INDEX_Organizes] != 1){
+		fillReferenceDescriptions_Organizes2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
+				references, &result);
+	}
+	// HasSubtype
+	if (uaReferences[INDEX_HasSubtype] != 1){
+		fillReferenceDescriptions_HasSubtype2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
+				references, &result);
+	}
+	// HasComponent
+	if (uaReferences[INDEX_HasComponent] != 1){
+		fillReferenceDescriptions_HasComponent2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
+				references, &result);
+	}
+	// OvReferences
+	// NOTIMPLEMENTED
+	//  if (uaReferences[INDEX_OvReference] != 1){
+	//		fillReferenceDescriptions_OvReferences2(browseDescriptions, pNode, refCount, browseDescriptions->resultMask,
+	//  								referencesNew, &result);
+	//  }
+
+	UA_BrowseDescription_delete(browseDescriptions);
+
+	node->references = UA_calloc(refCount, sizeof(UA_ReferenceNode));
+	if(!references && !node->references && refCount>0){
+		UA_Array_delete(references, refCount, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
+		UA_free(node);
+		return UA_STATUSCODE_BADOUTOFMEMORY;
+	}
+	node->referencesSize = refCount;
+
+	for (size_t i = 0; i < node->referencesSize; i++){
+		UA_NodeId_copy(&(references[i].referenceTypeId), &(node->references[i].referenceTypeId));
+		UA_ExpandedNodeId_copy(&(references[i].nodeId), &(node->references[i].targetId));
+		node->references[i].isInverse = !references[i].isForward;
+	}
+
+	UA_Array_delete(references, refCount, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
+	return result;
+}
 
 static void OV_NodeStore2_deleteNodestore(void *handle){
 
@@ -1021,7 +1180,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 				break;
 			}
 			break;
-		default:
+			default:
 			result = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 			break;
 		}
@@ -1070,162 +1229,8 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		break;
 	}
 
-	// references
-	UA_BrowseDescription 	*browseDescriptions = NULL;
-	UA_ReferenceDescription *references = NULL;
-	OV_ELEMENT				pNode;
-	OV_PATH					nodePath;
-	OV_UINT					j;
-	OV_UINT					refCount	=	0;
-	OV_UINT					refCountBefore	=	0;
+	addReference(newNode);
 
-
-	#define UAREFS_LENGTH		12
-	#define OVREFSARRAY_CHUNKSIZE	32
-	signed char				uaReferences [UAREFS_LENGTH];	//array for ua-references: 0: leave out, -1: to do, 1: done; specific for ovReferences: -2 do all
-	#define INDEX_References					0
-	#define INDEX_NonHierarchicalReferences		1
-	#define INDEX_HierarchicalReferences		2
-	#define INDEX_HasChild						3
-	#define INDEX_Organizes						4
-	#define INDEX_HasTypeDefinition				5
-	#define INDEX_Aggregates					6
-	#define INDEX_HasSubtype					7
-	#define INDEX_HasProperty					8
-	#define INDEX_HasComponent					9
-	#define INDEX_OvReference					10
-
-	ov_memstack_lock();
-	if(opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &nodePath) != UA_STATUSCODE_GOOD){
-		result = UA_STATUSCODE_BADNODEIDUNKNOWN;
-		ov_memstack_unlock();
-		return NULL;
-	}
-	pNode = nodePath.elements[nodePath.size - 1];
-	ov_memstack_unlock();
-	for(j=1; j<UAREFS_LENGTH; j++){
-		uaReferences[j] = -1;
-	}
-	uaReferences[INDEX_OvReference] = -2;
-
-	browseDescriptions = UA_BrowseDescription_new();
-	browseDescriptions->includeSubtypes = UA_TRUE;
-	browseDescriptions->browseDirection = UA_BROWSEDIRECTION_BOTH;
-	browseDescriptions->resultMask = (1<<0) | (1<<1) |(1<<2) | (1<<3) | (1<<4) | (1<<5);
-	browseDescriptions->nodeClassMask = (1<<0) | (1<<1) |(1<<2) | (1<<3) | (1<<4) | (1<<5) | (1<<6) | (1<<7);
-/*********************************************************************************************************************************
-* count all reference
-********************************************************************************************************************************/
-	// HasProperty
-	countReferenceDescriptions_HasProperty2(browseDescriptions, &pNode, &refCount);
-	if (refCount == refCountBefore){
-		uaReferences[INDEX_HasProperty] = 1;
-	}
-	refCountBefore = refCount;
-	// HasTypeDefinition
-	countReferenceDescriptions_HasTypeDefinition2(browseDescriptions, &pNode, &refCount);
-	if (refCount == refCountBefore){
-		uaReferences[INDEX_HasTypeDefinition] = 1;
-	}
-	refCountBefore = refCount;
-	// References
-	// Do nothing as this reference type is abstract
-	// NonHierarchical
-	// Do nothing as this reference type is abstract
-	// Hierarchical
-	// Do nothing as this reference type is abstract
-	// HasChild
-	// Do nothing as this reference type is abstract
-	// Aggregates
-	// Do nothing as this reference type is abstract
-	// Organizes
-	countReferenceDescriptions_Organizes2(browseDescriptions, &pNode, &refCount);
-	if (refCount == refCountBefore){
-		uaReferences[INDEX_Organizes] = 1;
-	}
-	refCountBefore = refCount;
-	// HasSubtype
-	countReferenceDescriptions_HasSubtype2(browseDescriptions, &pNode, &refCount);
-	if(refCount == refCountBefore){
-		uaReferences[INDEX_HasSubtype] = 1;
-	}
-	refCountBefore = refCount;
-	// HasComponent
-	countReferenceDescriptions_HasComponent2(browseDescriptions, &pNode, &refCount);
-	if(refCount == refCountBefore){
-		uaReferences[INDEX_HasComponent] = 1;
-	}
-	refCountBefore = refCount;
-	// OvReferences
-	// NOTIMPLEMENTED
-	//  countReferenceDescriptions_OvReferences2(browseDescriptions, pNode, uaReferences[INDEX_OvReference], pAssoc, &refCount);
-	//  if(refCount == refCountBefore){
-	//		uaReferences[INDEX_OvReference] = 1;
-	//	}
-	//	refCountBefore = refCount;
-
-	/*************************************************************************************************************
-	 * create Array
-	 ************************************************************************************************************/
-	references = UA_Array_new(refCount, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
-	newNode->references = UA_calloc(refCount, sizeof(UA_ReferenceNode));
-	if(!references && !newNode->references && refCount>0){
-		result = UA_STATUSCODE_BADOUTOFMEMORY;
-		return NULL;
-	}
-	newNode->referencesSize = refCount;
-	refCount = 0;
-	/*********************************************************************************************************************************
-	 * fill in results for all reference types
-	 ********************************************************************************************************************************/
-	// HasProperty
-	if (uaReferences[INDEX_HasProperty] != 1){
-		fillReferenceDescriptions_HasProperty2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
-												references, &result);
-	}
-	// HasTypeDefinition
-	if (uaReferences[INDEX_HasTypeDefinition] != 1){
-		fillReferenceDescriptions_HasTypeDefinition2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
-												references, &result);
-	}
-	// References
-	// Do nothing as this reference type is abstract
-	// NonHierarchical
-	// Do nothing as this reference type is abstract
-	// Hierarchical
-	// Do nothing as this reference type is abstract
-	// HasChild
-	// Do nothing as this reference type is abstract
-	// Aggregates
-	// Do nothing as this reference type is abstract
-	// Organizes
-	if (uaReferences[INDEX_Organizes] != 1){
-		fillReferenceDescriptions_Organizes2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
-												references, &result);
-	}
-	// HasSubtype
-	if (uaReferences[INDEX_HasSubtype] != 1){
-		fillReferenceDescriptions_HasSubtype2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
-												references, &result);
-	}
-	// HasComponent
-	if (uaReferences[INDEX_HasComponent] != 1){
-		fillReferenceDescriptions_HasComponent2(browseDescriptions, &pNode, &refCount, browseDescriptions->resultMask,
-												references, &result);
-	}
-	// OvReferences
-	// NOTIMPLEMENTED
-	//  if (uaReferences[INDEX_OvReference] != 1){
-	//		fillReferenceDescriptions_OvReferences2(browseDescriptions, pNode, &refCount, browseDescriptions->resultMask,
-	//  								references, &result);
-	//  }
-	for (size_t i = 0; i < newNode->referencesSize; i++){
-		UA_NodeId_copy(&(references[i].referenceTypeId), &(newNode->references[i].referenceTypeId));
-		UA_ExpandedNodeId_copy(&(references[i].nodeId), &(newNode->references[i].targetId));
-		newNode->references[i].isInverse = !references[i].isForward;
-	}
-	UA_BrowseDescription_delete(browseDescriptions);
-	UA_Array_delete(references, newNode->referencesSize, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
 	return newNode;
 }
 static UA_Node * OV_NodeStore2_getCopyNode(void *handle, const UA_NodeId *nodeId){

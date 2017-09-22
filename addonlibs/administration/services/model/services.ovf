@@ -1,0 +1,21 @@
+#ifndef services_OVF_INCLUDED
+#define services_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+
+typedef OV_RESULT   SERVICE_FNC_CALLEDMETHOD(      
+  OV_INSTPTR_services_Service pobj,       
+  OV_UINT numberofInputArgs,       
+  const void **packedInputArgList,       
+  OV_UINT numberofOutputArgs,      
+  void **packedOutputArgList,
+  OV_UINT *typeArray       
+);       
+
+#endif

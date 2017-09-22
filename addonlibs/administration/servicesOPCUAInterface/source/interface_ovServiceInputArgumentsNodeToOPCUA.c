@@ -14,11 +14,11 @@
  *
  ******************************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_openaasOPCUAInterface
-#define OV_COMPILE_LIBRARY_openaasOPCUAInterface
+#ifndef OV_COMPILE_LIBRARY_servicesOPCUAInterface
+#define OV_COMPILE_LIBRARY_servicesOPCUAInterface
 #endif
 
-#include "openaasOPCUAInterface.h"
+#include "servicesOPCUAInterface.h"
 #include "libov/ov_macros.h"
 #include "ksbase.h"
 #include "opcua.h"
@@ -27,14 +27,10 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset_openaas.h"
 
-extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
+extern OV_INSTPTR_servicesOPCUAInterface_interface pinterface;
 
-
-
-
-OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(
+OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -260,12 +256,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceInputArgu
 	// dataType
 	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, 0);
 
-	// References
-	OV_INSTPTR_ov_object pchild = NULL;
+	// References have to do manual because it is an virtual node
 	size_t size_references = 0;
-	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
-		size_references++;
-	}
 
 	size_references = size_references + 2;// For Parent&TypeNode
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
@@ -292,10 +284,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovServiceInputArgu
 	newNode->references[1].isInverse = UA_FALSE;
 	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
 
-	size_t i = 1;
-	Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pobj), pchild) {
-		i++;
-	}
+
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }

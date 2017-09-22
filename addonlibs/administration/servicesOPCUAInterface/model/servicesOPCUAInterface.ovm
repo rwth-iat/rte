@@ -1,8 +1,8 @@
 #include "ov.ovm"
-#include "lifeCycleEntry.ovm"
-#include "identificationOPCUAInterface.ovm"
+#include "opcua.ovm"
+#include "services.ovm"
 
-LIBRARY lifeCycleEntryOPCUAInterface
+LIBRARY servicesOPCUAInterface
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
 	AUTHOR    = "";
 	COPYRIGHT = "";
@@ -14,19 +14,22 @@ LIBRARY lifeCycleEntryOPCUAInterface
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/
 	CLASS interface : CLASS ov/object
-		IS_INSTANTIABLE; 
+		IS_INSTANTIABLE;
         COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
         VARIABLES
             modelnamespace : C_TYPE <UA_Namespace>;
             interfacenamespace : C_TYPE <UA_Namespace>;
         END_VARIABLES;
         OPERATIONS
-            ovNodeStoreInterfaceLifeCycleEntryNew : C_FUNCTION <LCE_FNC_OVNODESTOREINTERFACELIFECYCLEENTRYNEW>;
-            ovNodeStoreInterfaceLifeCycleEntryDelete : C_FUNCTION <LCE_FNC_OVNODESTOREINTERFACELIFECYCLEENTRYDELETE>;
+            ovServiceNodeToOPCUA  : C_FUNCTION <SERVICES_FNC_OVSERVICENODETOOPCUA>;
+            ovServiceInputArgumentsNodeToOPCUA  : C_FUNCTION <SERVICES_FNC_OVSERVICEINPUTARGUMENTSNODETOOPCUA>;
+            ovServiceOutputArgumentsNodeToOPCUA  : C_FUNCTION <SERVICES_FNC_OVSERVICEOUTPUTARGUMENTSNODETOOPCUA>;
+             
+            ovNodeStoreInterfaceServicesNew : C_FUNCTION <SERVICES_FNC_OVNODESTOREINTERFACESERVICESNEW>;
+            ovNodeStoreInterfaceServicesDelete : C_FUNCTION <SERVICES_FNC_OVNODESTOREINTERFACESERVICESDELETE>;
             
-            ovLifeCycleArchiveNodeToOPCUA : C_FUNCTION <LCE_FNC_OVLIFECYCLEARCHIVENODETOOPCUA>;
-            ovLifeCycleEntryNodeToOPCUA : C_FUNCTION <LCE_FNC_OVLIFECYCLEENTRYNODETOOPCUA>;
-           
+            MethodCallback  : C_FUNCTION <SERVICES_FNC_METHODCALLBACKSTANDARD>;
+            
             constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             startup: C_FUNCTION <OV_FNC_STARTUP>;
             destructor: C_FUNCTION <OV_FNC_DESTRUCTOR>;

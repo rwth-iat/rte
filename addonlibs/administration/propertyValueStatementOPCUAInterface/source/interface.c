@@ -93,6 +93,7 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatementOPCUAInterface_interface_constru
 	}
 
 	pinterface = pinst;
+	pinst->v_modelnamespaceIndexIdentification = pIdentificationOPCUAInterface->v_modelnamespace.index;
 
     return OV_ERR_OK;
 }
@@ -118,7 +119,7 @@ OV_DLLFNCEXPORT void propertyValueStatementOPCUAInterface_interface_startup(
 	tmpNamespaceName = UA_String_fromChars("http://acplt.org/propertyValueStatement/Ov");
 	UA_Namespace_init(&pinst->v_interfacenamespace, &tmpNamespaceName);
 	UA_String_deleteMembers(&tmpNamespaceName);
-	pinst->v_interfacenamespace.nodestore = opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
+	pinst->v_interfacenamespace.nodestore = propertyValueStatementOPCUAInterface_interface_ovNodeStoreInterfacePropertyValueStatementNew();
 
 	UA_Namespace** nsArray = UA_malloc(2 * sizeof(UA_Namespace*));
 	nsArray[0] = &pinst->v_modelnamespace;

@@ -1,0 +1,23 @@
+#ifndef servicesOPCUAInterface_OVF_INCLUDED
+#define servicesOPCUAInterface_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+
+typedef UA_StatusCode SERVICES_FNC_OVSERVICENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode SERVICES_FNC_OVSERVICEINPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode SERVICES_FNC_OVSERVICEOUTPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+	
+typedef UA_NodestoreInterface* SERVICES_FNC_OVNODESTOREINTERFACESERVICESNEW(void);
+typedef void SERVICES_FNC_OVNODESTOREINTERFACESERVICESDELETE(UA_NodestoreInterface * nsi);
+typedef UA_StatusCode SERVICES_FNC_METHODCALLBACKSTANDARD(void *methodHandle, const UA_NodeId *objectId,
+                     const UA_NodeId *sessionId, void *sessionHandle,
+                     size_t inputSize, const UA_Variant *input,
+                     size_t outputSize, UA_Variant *output);
+                     
+#endif                    

@@ -14,11 +14,11 @@
  *
  ******************************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_openaasOPCUAInterface
-#define OV_COMPILE_LIBRARY_openaasOPCUAInterface
+#ifndef OV_COMPILE_LIBRARY_propertyValueStatementOPCUAInterface
+#define OV_COMPILE_LIBRARY_propertyValueStatementOPCUAInterface
 #endif
 
-#include "openaasOPCUAInterface.h"
+#include "propertyValueStatementOPCUAInterface.h"
 #include "libov/ov_macros.h"
 #include "ksbase.h"
 #include "opcua.h"
@@ -27,13 +27,14 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset_openaas.h"
+#include "nodeset_propertyValueStatement.h"
 
-extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
+extern OV_INSTPTR_propertyValueStatementOPCUAInterface_interface pinterface;
 
 
 
-OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
+
+OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovPropertyValueStatementListNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -107,11 +108,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 
 	((UA_ObjectNode*)newNode)->eventNotifier = 0;
 
+
+	// References
 	addReference(newNode);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_ASSETADMINITRATIONSHELLTYPE);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_PROPERTYVALUESTATEMENTLISTTYPE);
 			break;
 		}
 	}

@@ -19,11 +19,21 @@ LIBRARY propertyValueStatementOPCUAInterface
         VARIABLES
             modelnamespace : C_TYPE <UA_Namespace>;
             interfacenamespace : C_TYPE <UA_Namespace>;
+            modelnamespaceIndexIdentification : UINT;
         END_VARIABLES;
         OPERATIONS
-            //ovNodeStoreInterfacePropertyValueStatementNew : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTNEW>;
-            //ovNodeStoreInterfacePropertyValueStatementDelete : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTDELETE>;
-
+            ovNodeStoreInterfacePropertyValueStatementNew : C_FUNCTION <PVS_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTNEW>;
+            ovNodeStoreInterfacePropertyValueStatementDelete : C_FUNCTION <PVS_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTDELETE>;
+            
+            ovPropertyValueStatementListNodeToOPCUA : C_FUNCTION <PVS_FNC_OVPROPERTYVALUESTATEMENTLISTNODETOOPCUA>;
+            ovPropertyValueStatementNodeToOPCUA : C_FUNCTION <PVS_FNC_OVPROPERTYVALUESTATEMENTNODETOOPCUA>;
+            ovPropertyValueStatementValueNodeToOPCUA : C_FUNCTION <PVS_FNC_OVPROPERTYVALUESTATEMENTVALUENODETOOPCUA>;
+            ovPropertyIdCarrierIdNodeToOPCUA : C_FUNCTION <PVS_FNC_OVPROPERTYIDCARRIERIDNODETOOPCUA>;
+            ovExpressionLogicNodeToOPCUA : C_FUNCTION <PVS_FNC_OVEXPRESSIONLOGICNODETOOPCUA>;
+            ovExpressionSemanticNodeToOPCUA : C_FUNCTION <PVS_FNC_OVEXPRESSIONSEMANTICNODETOOPCUA>;
+            ovViewNodeToOPCUA : C_FUNCTION <PVS_FNC_OVVIEWNODETOOPCUA>;
+            ovVisibilityNodeToOPCUA : C_FUNCTION <PVS_FNC_OVVISIBILITYNODETOOPCUA>;    
+            
             constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             startup: C_FUNCTION <OV_FNC_STARTUP>;
             destructor: C_FUNCTION <OV_FNC_DESTRUCTOR>;

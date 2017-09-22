@@ -50,4 +50,7 @@ void opcua_ovNetworklayer_addConnToDelete(UA_Connection* connection);
 void opcua_ovNetworklayer_addConnToClose(UA_Connection* connection);
 
 OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst);
+
+UA_StatusCode addReference(UA_Node *node);
+
 #endif /* opcua_HELPERS_H_ */

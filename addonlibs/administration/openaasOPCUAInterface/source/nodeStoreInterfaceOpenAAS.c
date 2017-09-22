@@ -1181,28 +1181,6 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 				return (UA_Node*) opcuaNode;
 			}
 		}
-		if (Ov_CanCastTo(openaas_Service, pobj)){
-			if (ov_string_compare(plist3[1], "InputArguments") == OV_STRCMP_EQUAL){
-				if (openaasOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
-					ov_string_freelist(plist);
-					ov_string_freelist(plist2);
-					ov_string_freelist(plist3);
-					ov_string_freelist(plist4);
-					ov_string_setvalue(&tmpString, NULL);
-					return (UA_Node*) opcuaNode;
-				}
-			}else if (ov_string_compare(plist3[1], "OutputArguments") == OV_STRCMP_EQUAL){
-				if (openaasOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
-					ov_string_freelist(plist);
-					ov_string_freelist(plist2);
-					ov_string_freelist(plist3);
-					ov_string_freelist(plist4);
-					ov_string_setvalue(&tmpString, NULL);
-					return (UA_Node*) opcuaNode;
-				}
-			}
-		}
-
 	}else if (len4 > 1 ){
 		pobj = ov_path_getobjectpointer(plist4[0], 2);
 		if (pobj == NULL){
@@ -1234,47 +1212,11 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	}else if (ov_string_compare(plist2[len2-1], "Body") == OV_STRCMP_EQUAL){
 		if (openaasOPCUAInterface_interface_ovBodyNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if (ov_string_compare(plist4[len4-1], "Carrier") == OV_STRCMP_EQUAL){
-		if (openaasOPCUAInterface_interface_ovCarrierNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(openaas_aas, pobj)){
 		if (openaasOPCUAInterface_interface_ovAASNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(openaas_SubModel, pobj)){
 		if (openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_Service, pobj)){
-		if (openaasOPCUAInterface_interface_ovServiceNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pobj)){
-		if (openaasOPCUAInterface_interface_ovLifeCycleArchiveNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pobj)){
-		if (openaasOPCUAInterface_interface_ovLifeCycleEntryNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pobj)){
-		if (openaasOPCUAInterface_interface_ovPropertyValueStatementListNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (ov_string_compare(plist4[len4-1], "Value") == OV_STRCMP_EQUAL){
-		if (openaasOPCUAInterface_interface_ovPropertyValueStatementValueNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pobj)){
-		if (openaasOPCUAInterface_interface_ovPropertyValueStatementNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pobj) || Ov_CanCastTo(propertyValueStatement_CarrierId, pobj)){
-		if (openaasOPCUAInterface_interface_ovPropertyIdCarrierIdNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pobj)){
-		if (openaasOPCUAInterface_interface_ovExpressionLogicNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pobj)){
-		if (openaasOPCUAInterface_interface_ovExpressionSemanticNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (Ov_CanCastTo(propertyValueStatement_View, pobj)){
-		if (openaasOPCUAInterface_interface_ovViewNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (Ov_CanCastTo(propertyValueStatement_Visibility, pobj)){
-		if (openaasOPCUAInterface_interface_ovVisibilityNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if (Ov_CanCastTo(openaas_modelmanager, pobj)){
 		if (openaasOPCUAInterface_interface_ovModelManagerNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
@@ -1308,107 +1250,7 @@ static UA_StatusCode OV_NodeStore_insertNode(void *handle, UA_Node *node, UA_Nod
 	//return OV_NodeStore_insert(handle, node, parrentNode);
 }
 static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
-	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
-	OV_PATH 				path;
-	OV_PATH 				path2;
-	OV_STRING 				tmpString = NULL;
-	OV_STRING 				tmpString2 = NULL;
-	OV_UINT 				len = 0;
-	OV_STRING 				*plist = NULL;
-	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
-	OV_VTBLPTR_ov_object	pVtblObj = NULL;
-	OV_ACCESS				access;
-
-	copyOPCUAStringToOV(node->nodeId.identifier.string, &tmpString);
-	plist = ov_string_split(tmpString, "|", &len);
-	ov_string_setvalue(&tmpString, NULL);
-
-	if (len > 1){ //Carrier
-		UA_NodeId tmpNodeId;
-		UA_NodeId_init(&tmpNodeId);
-		tmpNodeId.namespaceIndex = node->nodeId.namespaceIndex;
-		tmpNodeId.identifierType = node->nodeId.identifierType;
-		ov_string_setvalue(&tmpString2, plist[0]);
-		ov_string_append(&tmpString2, ".CarrierString");
-		tmpNodeId.identifier.string = UA_String_fromChars(tmpString2);
-
-		ov_memstack_lock();
-		result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
-		UA_NodeId_deleteMembers(&tmpNodeId);
-		if(result != UA_STATUSCODE_GOOD){
-			ov_memstack_unlock();
-			return result;
-		}
-
-		ov_string_setvalue(&tmpString2, plist[0]);
-		ov_string_append(&tmpString2, ".CarrierType");
-		UA_NodeId_init(&tmpNodeId);
-		tmpNodeId.identifier.string = UA_String_fromChars(tmpString2);
-		ov_string_setvalue(&tmpString2, NULL);
-		result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path2);
-		UA_NodeId_deleteMembers(&tmpNodeId);
-		if(result != UA_STATUSCODE_GOOD){
-			ov_memstack_unlock();
-			return result;
-		}
-
-		UA_Identification *tmpIdentification = (UA_Identification *)(((UA_Variant*)&((UA_VariableNode*)node)->value.data.value.value)->data);
-
-		copyOPCUAStringToOV(tmpIdentification->idSpec, ((OV_STRING*)(path.elements[path.size-1].pvalue)));
-		*((UA_IdEnum*)path2.elements[path.size-1].pvalue) = tmpIdentification->idType;
-		ov_memstack_unlock();
-		ov_string_freelist(plist);
-
-	}else { // LCE
-		ov_string_freelist(plist);
-		ov_memstack_lock();
-		result = opcua_nodeStoreFunctions_resolveNodeIdToPath(node->nodeId, &path);
-		if(result != UA_STATUSCODE_GOOD){
-			ov_memstack_unlock();
-			return result;
-		}
-		result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
-		ov_memstack_unlock();
-		if(result != UA_STATUSCODE_GOOD){
-			return result;
-		}
-
-		if (!pobj){
-			if (Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pobj)){ // LCE
-				OV_ELEMENT tmpPart;
-				tmpPart.elemtype = OV_ET_NONE;
-				OV_ELEMENT tmpParrent;
-				tmpParrent.pobj = pobj;
-				tmpParrent.elemtype = OV_ET_OBJECT;
-				UA_LifeCycleEntry *tmpLifeCycleEntry = ((UA_LifeCycleEntry*)(((UA_Variant*)&((UA_VariableNode*)node)->value.data.value.value)->data));
-				do {
-					ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
-					if (tmpPart.elemtype == OV_ET_NONE)
-						break;
-					if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceString") == OV_STRCMP_EQUAL)
-						copyOPCUAStringToOV(tmpLifeCycleEntry->creatingInstance.idSpec, (OV_STRING*)tmpPart.pvalue);
-					if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceType") == OV_STRCMP_EQUAL)
-						*(UA_UInt32*)tmpPart.pvalue = tmpLifeCycleEntry->creatingInstance.idType;
-					if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceString") == OV_STRCMP_EQUAL)
-						copyOPCUAStringToOV(tmpLifeCycleEntry->writingInstance.idSpec, (OV_STRING*)tmpPart.pvalue);
-					if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceType") == OV_STRCMP_EQUAL)
-						*(UA_UInt32*)tmpPart.pvalue = tmpLifeCycleEntry->writingInstance.idType;
-					if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Data") == OV_STRCMP_EQUAL)
-						ov_VariantToAny(&tmpLifeCycleEntry->data.value, (OV_ANY*)tmpPart.pvalue);
-					if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "TimeStamp") == OV_STRCMP_EQUAL)
-						*(UA_DateTime*)tmpPart.pvalue = tmpLifeCycleEntry->data.sourceTimestamp;
-					if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Subject") == OV_STRCMP_EQUAL)
-						copyOPCUAStringToOV(tmpLifeCycleEntry->subject, (OV_STRING*)tmpPart.pvalue);
-					if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "EventClass") == OV_STRCMP_EQUAL)
-						copyOPCUAStringToOV(tmpLifeCycleEntry->eventClass, (OV_STRING*)tmpPart.pvalue);
-				} while(TRUE);
-			}
-		}
-	}
-
-
-	return UA_STATUSCODE_GOOD;
+	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 static void OV_NodeStore_iterate(void *handle, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor){
 

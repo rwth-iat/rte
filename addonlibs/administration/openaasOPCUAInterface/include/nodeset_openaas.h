@@ -35,7 +35,6 @@
 #ifndef UA_free
   #define UA_free(_p_ptr) free(_p_ptr)
 #endif
-
 #define UA_NS2ID_AASSTATUSCODE 3004
 #define UA_NS2ID_AASFACTORYTYPE 1005
 #define UA_NS2ID_CREATEAAS 7001
@@ -93,7 +92,6 @@
 #define UA_NS2ID_SETPVS_INPUTARGUMENTS 1973
 #define UA_NS2ID_SETPVS_OUTPUTARGUMENTS 1974
 #define UA_NS2ID_ASSETADMINITRATIONSHELLTYPE 1002
-#define UA_NS2ID_SERVICETYPE 1004
 #define UA_NS2ID_SUBMODELTYPE 1003
 
   extern UA_StatusCode nodeset(UA_Server *server);
