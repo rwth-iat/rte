@@ -110,12 +110,33 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	// References
 	addReference(newNode);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
+
+	OV_STRING tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	OV_STRING *plist = NULL;
+	OV_UINT len = 0;
+	plist  = ov_string_split(tmpString, "/", &len);
+	ov_string_setvalue(&tmpString, "");
+	for (OV_UINT i = 0; i < len-1; i++){
+		if (i != 0)
+			ov_string_append(&tmpString, "/");
+		ov_string_append(&tmpString, plist[i]);
+	}
+	UA_String tmpString2 = UA_String_fromChars(tmpString);
+	ov_string_freelist(plist);
+	ov_string_setvalue(&tmpString, NULL);
+
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_METHODNODE);
 			break;
 		}
+		if (UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpString2)){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+			break;
+		}
 	}
+	UA_String_deleteMembers(&tmpString2);
 
 	newNode->referencesSize = newNode->referencesSize+2; //For Input-&Outputarguments
 	newNode->references = UA_realloc(newNode->references, newNode->referencesSize*sizeof(UA_ReferenceNode));
@@ -123,7 +144,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	// InputArguments
 	newNode->references[newNode->referencesSize-2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 	newNode->references[newNode->referencesSize-2].isInverse = UA_FALSE;
-	OV_STRING tmpString = NULL;
+	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
 	ov_string_append(&tmpString, "InputArguments");
