@@ -23,7 +23,45 @@
 #include "libov/ov_result.h"
 #include "openaas_helpers.h"
 
+AASStatusCode checkForEmbeddingAAS(IdentificationType aasId, IdentificationType objectId){
+	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_aas paas = NULL;
+	OV_INSTPTR_ov_object ptr2 = NULL;
+	OV_INSTPTR_ov_object ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr4 = NULL;
 
+	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
+	if(!ptr){
+		return AASSTATUSCODE_BADAASID;
+	}
+	paas = Ov_StaticPtrCast(openaas_aas, ptr);
+
+	if (!paas){
+		return AASSTATUSCODE_BADAASID;
+	}
+	if (objectId.IdType != URI){
+		return AASSTATUSCODE_BADPARENTID;
+	}
+	ptr2 = ov_path_getobjectpointer(objectId.IdSpec, 2);
+	if (!ptr2)
+		return AASSTATUSCODE_BADPARENTID;
+
+	ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
+	if (!ptr3){
+		ptr3 = ptr2->v_pouterobject;
+	}
+	do{
+		if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
+			return AASSTATUSCODE_GOOD;
+		}
+		ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
+		if (!ptr4){
+			ptr4 = ptr3->v_pouterobject;
+		}
+		ptr3 = ptr4;
+	}while (ptr3);
+	return AASSTATUSCODE_BADPARENTID;
+}
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSAASIdString_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_STRING  value
@@ -206,206 +244,44 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSDelete_set(
 }
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVS(IdentificationType aasId, IdentificationType listId, OV_STRING pvsName, OV_ANY value, OV_UINT mask, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility) {
-	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_object ptr3 = NULL;
-	OV_INSTPTR_ov_object ptr4 = NULL;
-	OV_BOOL listIsInAAS = FALSE;
+	AASStatusCode status = checkForEmbeddingAAS(aasId,listId);
+    if(status != AASSTATUSCODE_GOOD)
+    	return status;
 
-	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
-	if(ptr){
-		paas = Ov_StaticPtrCast(openaas_aas, ptr);
-		if (paas){
-			if (listId.IdType != URI){
-				return AASSTATUSCODE_BADPARENTID;
-			}
-			ptr2 = ov_path_getobjectpointer(listId.IdSpec, 2);
-			if (!ptr2)
-				return AASSTATUSCODE_BADPARENTID;
-
-			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
-			if (!ptr3){
-				ptr3 = ptr2->v_pouterobject;
-			}
-			do{
-				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
-					listIsInAAS = TRUE;
-					break;
-				}
-				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
-				if (!ptr4){
-					ptr4 = ptr3->v_pouterobject;
-				}
-				ptr3 = ptr4;
-			}while (ptr3);
-
-			if (listIsInAAS == FALSE){
-				return AASSTATUSCODE_BADPARENTID;
-			}
-
-		if (propertyValueStatement_modelmanager_createPVS(listId, pvsName, value, mask, carrierId, expressionLogic, expressionSemantic, propertyId, view, visibility) != PVSSTATUSCODE_GOOD)
-			return AASSTATUSCODE_BADPVSERROR;
-		}else{
-			return AASSTATUSCODE_BADAASID;
-		}
-	}else{
-		return AASSTATUSCODE_BADAASID;
-	}
+	if (propertyValueStatement_modelmanager_createPVS(listId, pvsName, value, mask, carrierId, expressionLogic, expressionSemantic, propertyId, view, visibility) != PVSSTATUSCODE_GOOD)
+		return AASSTATUSCODE_BADPVSERROR;
 
 	return AASSTATUSCODE_GOOD;
 }
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVS(IdentificationType aasId, IdentificationType pvsId) {
-	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_object ptr3 = NULL;
-	OV_INSTPTR_ov_object ptr4 = NULL;
-	OV_BOOL pvsIsInAAS = FALSE;
+	AASStatusCode status = checkForEmbeddingAAS(aasId,pvsId);
+    if(status != AASSTATUSCODE_GOOD)
+    	return status;
 
-	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
-	if(ptr){
-		paas = Ov_StaticPtrCast(openaas_aas, ptr);
-		if (paas){
-			if (pvsId.IdType != URI){
-				return AASSTATUSCODE_BADPVSLID;
-			}
-			ptr2 = ov_path_getobjectpointer(pvsId.IdSpec, 2);
-			if (!ptr2)
-				return AASSTATUSCODE_BADPVSLID;
-
-			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
-			if (!ptr3){
-				ptr3 = ptr2->v_pouterobject;
-			}
-			do{
-				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
-					pvsIsInAAS = TRUE;
-					break;
-				}
-				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
-				if (!ptr4){
-					ptr4 = ptr3->v_pouterobject;
-				}
-				ptr3 = ptr4;
-			}while (ptr3);
-
-			if (pvsIsInAAS == FALSE){
-				return AASSTATUSCODE_BADPVSLID;
-			}
-
-		if (propertyValueStatement_modelmanager_deletePVS(pvsId) != PVSSTATUSCODE_GOOD)
-			return AASSTATUSCODE_BADPVSERROR;
-		}else{
-			return AASSTATUSCODE_BADAASID;
-		}
-	}else{
-		return AASSTATUSCODE_BADAASID;
-	}
-
+	if (propertyValueStatement_modelmanager_deletePVS(pvsId) != PVSSTATUSCODE_GOOD)
+		return AASSTATUSCODE_BADPVSERROR;
 	return AASSTATUSCODE_GOOD;
 }
 
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getPVS(IdentificationType aasId, IdentificationType pvsId, OV_STRING *pvsName, IdentificationType *carrierId, ExpressionLogicEnum *expressionLogic, ExpressionSemanticEnum *expressionSemantic, IdentificationType *propertyId, ViewEnum *view, VisibilityEnum *visibility, OV_ANY *value) {
-	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_object ptr3 = NULL;
-	OV_INSTPTR_ov_object ptr4 = NULL;
-	OV_BOOL pvsIsInAAS = FALSE;
+	AASStatusCode status = checkForEmbeddingAAS(aasId,pvsId);
+    if(status != AASSTATUSCODE_GOOD)
+    	return status;
 
-	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
-	if(ptr){
-		paas = Ov_StaticPtrCast(openaas_aas, ptr);
-		if (paas){
-			if (pvsId.IdType != URI){
-				return AASSTATUSCODE_BADPARENTID;
-			}
-			ptr2 = ov_path_getobjectpointer(pvsId.IdSpec, 2);
-			if (!ptr2)
-				return AASSTATUSCODE_BADPARENTID;
-
-			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
-			if (!ptr3){
-				ptr3 = ptr2->v_pouterobject;
-			}
-			do{
-				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
-					pvsIsInAAS = TRUE;
-					break;
-				}
-				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
-				if (!ptr4){
-					ptr4 = ptr3->v_pouterobject;
-				}
-				ptr3 = ptr4;
-			}while (ptr3);
-
-			if (pvsIsInAAS == FALSE){
-				return AASSTATUSCODE_BADPARENTID;
-			}
-
-		if (propertyValueStatement_modelmanager_getPVS(pvsId, pvsName, carrierId, expressionLogic, expressionSemantic, propertyId, view, visibility, value) != PVSSTATUSCODE_GOOD)
-			return AASSTATUSCODE_BADPVSERROR;
-		}else{
-			return AASSTATUSCODE_BADAASID;
-		}
-	}else{
-		return AASSTATUSCODE_BADAASID;
-	}
+	if (propertyValueStatement_modelmanager_getPVS(pvsId, pvsName, carrierId, expressionLogic, expressionSemantic, propertyId, view, visibility, value) != PVSSTATUSCODE_GOOD)
+		return AASSTATUSCODE_BADPVSERROR;
 
 	return AASSTATUSCODE_GOOD;
 }
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_setPVS(IdentificationType aasId, IdentificationType pvsId, OV_UINT mask, OV_STRING pvsName, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility, OV_ANY value) {
-	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_object ptr3 = NULL;
-	OV_INSTPTR_ov_object ptr4 = NULL;
-	OV_BOOL pvsIsInAAS = FALSE;
+	AASStatusCode status = checkForEmbeddingAAS(aasId,pvsId);
+    if(status != AASSTATUSCODE_GOOD)
+    	return status;
 
-	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
-	if(ptr){
-		paas = Ov_StaticPtrCast(openaas_aas, ptr);
-		if (paas){
-			if (pvsId.IdType != URI){
-				return AASSTATUSCODE_BADPARENTID;
-			}
-			ptr2 = ov_path_getobjectpointer(pvsId.IdSpec, 2);
-			if (!ptr2)
-				return AASSTATUSCODE_BADPARENTID;
-
-			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
-			if (!ptr3){
-				ptr3 = ptr2->v_pouterobject;
-			}
-			do{
-				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
-					pvsIsInAAS = TRUE;
-					break;
-				}
-				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
-				if (!ptr4){
-					ptr4 = ptr3->v_pouterobject;
-				}
-				ptr3 = ptr4;
-			}while (ptr3);
-
-			if (pvsIsInAAS == FALSE){
-				return AASSTATUSCODE_BADPARENTID;
-			}
-
-		if (propertyValueStatement_modelmanager_setPVS(pvsId, mask, pvsName, carrierId, expressionLogic, expressionSemantic, propertyId, view, visibility, value) != PVSSTATUSCODE_GOOD)
-			return AASSTATUSCODE_BADPVSERROR;
-		}else{
-			return AASSTATUSCODE_BADAASID;
-		}
-	}else{
-		return AASSTATUSCODE_BADAASID;
-	}
-
+	if (propertyValueStatement_modelmanager_setPVS(pvsId, mask, pvsName, carrierId, expressionLogic, expressionSemantic, propertyId, view, visibility, value) != PVSSTATUSCODE_GOOD)
+		return AASSTATUSCODE_BADPVSERROR;
 	return AASSTATUSCODE_GOOD;
 }

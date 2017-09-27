@@ -33,7 +33,7 @@ include ../generic.mk
 # ---------
 
 # Swithces for additional libraries needed for dynamic linkage in Linux
-ADD_LIBS_SWITCHES = ksbase$(_DLL) ksapi$(_DLL) identification$(_DLL) propertyValueStatement$(_DLL) lifeCycleEntry$(_DLL) fb$(_DLL)
+ADD_LIBS_SWITCHES = ksbase$(_DLL) ksapi$(_DLL) identification$(_DLL) propertyValueStatement$(_DLL) lifeCycleEntry$(_DLL) MessageSys$(_DLL) fb$(_DLL)
 ADD_LIBS += $(foreach lib, $(EXTRA_LIBS),$(lib))
 
 #	Compiler
@@ -67,7 +67,7 @@ templates:
 	-@rm ../../source/sourcetemplates/*$(_C)
 	acplt_builder -l $(LIBRARY) $(MAKMAKOPTIONS)
 	sed -i -e 's///' $(MODEL_DIR)$(LIBRARY).ovm
-	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(KSBASE_MODEL_DIR) -I $(KSAPI_MODEL_DIR) -I $(IDENTIFICATION_MODEL_DIR) -I $(PROPERTYVALUESTATEMENT_MODEL_DIR) -I $(LIFECYCLEENTRY_MODEL_DIR) -I $(FB_MODEL_DIR) -f $(MODEL_DIR)$(LIBRARY).ovm -l $(LIBRARY)
+	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(KSBASE_MODEL_DIR) -I $(KSAPI_MODEL_DIR) -I $(IDENTIFICATION_MODEL_DIR) -I $(PROPERTYVALUESTATEMENT_MODEL_DIR) -I $(LIFECYCLEENTRY_MODEL_DIR) -I $(MESSAGESYS_MODEL_DIR) -I $(FB_MODEL_DIR) -f $(MODEL_DIR)$(LIBRARY).ovm -l $(LIBRARY)
 
 	-@echo  ==== New templates have been created! ====
 
@@ -89,11 +89,11 @@ endif
 #   -----
 $(LIBRARY).c $(LIBRARY).h: $(wildcard $(MODEL_DIR)$(LIBRARY).ov?) Makefile
 	sed -i -e 's///' $(MODEL_DIR)$(LIBRARY).ovm
-	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(KSBASE_MODEL_DIR) -I $(KSAPI_MODEL_DIR) -I $(IDENTIFICATION_MODEL_DIR) -I $(PROPERTYVALUESTATEMENT_MODEL_DIR) -I $(LIFECYCLEENTRY_MODEL_DIR) -I $(FB_MODEL_DIR) -I $(MODEL_DIR) -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))
+	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(KSBASE_MODEL_DIR) -I $(KSAPI_MODEL_DIR) -I $(IDENTIFICATION_MODEL_DIR) -I $(PROPERTYVALUESTATEMENT_MODEL_DIR) -I $(LIFECYCLEENTRY_MODEL_DIR) -I $(MESSAGESYS_MODEL_DIR) -I $(FB_MODEL_DIR) -I $(MODEL_DIR) -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))
 
 %.c %.h: %.ovm Makefile
 	sed -i -e 's///' $<
-	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(KSBASE_MODEL_DIR) -I $(KSAPI_MODEL_DIR) -I $(IDENTIFICATION_MODEL_DIR) -I $(PROPERTYVALUESTATEMENT_MODEL_DIR) -I $(LIFECYCLEENTRY_MODEL_DIR) -I $(FB_MODEL_DIR) -I $(MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR) -I $(KSBASE_MODEL_DIR) -I $(KSAPI_MODEL_DIR) -I $(IDENTIFICATION_MODEL_DIR) -I $(PROPERTYVALUESTATEMENT_MODEL_DIR) -I $(LIFECYCLEENTRY_MODEL_DIR) -I $(MESSAGESYS_MODEL_DIR) -I $(FB_MODEL_DIR) -I $(MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 
 %.o: %.c
@@ -110,6 +110,7 @@ $(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS)
 	cp $(USERLIB_DIR)/identification$(_DLL) identification$(_DLL)
 	cp $(USERLIB_DIR)/propertyValueStatement$(_DLL) propertyValueStatement$(_DLL)
 	cp $(USERLIB_DIR)/lifeCycleEntry$(_DLL) lifeCycleEntry$(_DLL)
+	cp $(USERLIB_DIR)/MessageSys$(_DLL) MessageSys$(_DLL)
 	cp $(SYSLIB_DIR)/fb$(_DLL) fb$(_DLL)
 	$(LD) -o $@ $^ $(ADD_LIBS_SWITCHES) $(LD_FLAGS)
 
