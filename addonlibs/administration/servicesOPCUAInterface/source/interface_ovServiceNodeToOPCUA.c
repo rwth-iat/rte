@@ -111,7 +111,41 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	addReference(newNode);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 
+	for (size_t i = 0; i < newNode->referencesSize; i++){
+		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_METHODNODE);
+			break;
+		}
+	}
+
+	newNode->referencesSize = newNode->referencesSize+2; //For Input-&Outputarguments
+	newNode->referencesSize = newNode->referencesSize+1; //For Has_Component to parent node
+	newNode->references = UA_realloc(newNode->references, newNode->referencesSize*sizeof(UA_ReferenceNode));
+
+	// InputArguments
+	newNode->references[newNode->referencesSize-3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	newNode->references[newNode->referencesSize-3].isInverse = UA_FALSE;
 	OV_STRING tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "InputArguments");
+	newNode->references[newNode->referencesSize-3].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
+	// OutputArguments
+	newNode->references[newNode->referencesSize-2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	newNode->references[newNode->referencesSize-2].isInverse = UA_FALSE;
+	tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, "||");
+	ov_string_append(&tmpString, "OutputArguments");
+	newNode->references[newNode->referencesSize-2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
+	// HasComponent to parent
+	newNode->references[newNode->referencesSize-1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	newNode->references[newNode->referencesSize-1].isInverse = UA_FALSE;
+	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	OV_STRING *plist = NULL;
 	OV_UINT len = 0;
@@ -122,42 +156,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 			ov_string_append(&tmpString, "/");
 		ov_string_append(&tmpString, plist[i]);
 	}
-	UA_String tmpString2 = UA_String_fromChars(tmpString);
 	ov_string_freelist(plist);
-	ov_string_setvalue(&tmpString, NULL);
-
-	for (size_t i = 0; i < newNode->referencesSize; i++){
-		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_METHODNODE);
-			break;
-		}
-		if (UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpString2)){
-			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
-			break;
-		}
-	}
-	UA_String_deleteMembers(&tmpString2);
-
-	newNode->referencesSize = newNode->referencesSize+2; //For Input-&Outputarguments
-	newNode->references = UA_realloc(newNode->references, newNode->referencesSize*sizeof(UA_ReferenceNode));
-
-	// InputArguments
-	newNode->references[newNode->referencesSize-2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-	newNode->references[newNode->referencesSize-2].isInverse = UA_FALSE;
-	tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "InputArguments");
-	newNode->references[newNode->referencesSize-2].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
-	ov_string_setvalue(&tmpString, NULL);
-
-	// OutputArguments
-	newNode->references[newNode->referencesSize-1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-	newNode->references[newNode->referencesSize-1].isInverse = UA_FALSE;
-	tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "OutputArguments");
 	newNode->references[newNode->referencesSize-1].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
