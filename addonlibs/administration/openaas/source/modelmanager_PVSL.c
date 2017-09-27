@@ -19,7 +19,7 @@
 #endif
 
 #include "openaas.h"
-#include "propertyValueStatement_helpers.h"
+#include "openaas_helpers.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLAASIdString_set(
@@ -198,12 +198,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLDelete_set(
 }
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType aasId, IdentificationType parentID, OV_STRING pvslName, OV_UINT mask, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility){
-    OV_INSTPTR_ov_object ptr = NULL;
-    OV_INSTPTR_openaas_aas paas = NULL;
-    OV_INSTPTR_ov_object ptr2 = NULL;
-    OV_INSTPTR_ov_object ptr3 = NULL;
-    OV_INSTPTR_ov_object ptr4 = NULL;
-    OV_BOOL parentIsInAAS = FALSE;
 
     AASStatusCode status = checkForEmbeddingAAS(aasId,parentID);
     if(status != AASSTATUSCODE_GOOD){
@@ -216,12 +210,6 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType
 }
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVSL(IdentificationType aasId, IdentificationType pvslId){
-    OV_INSTPTR_ov_object ptr = NULL;
-    OV_INSTPTR_openaas_aas paas = NULL;
-    OV_INSTPTR_ov_object ptr2 = NULL;
-    OV_INSTPTR_ov_object ptr3 = NULL;
-    OV_INSTPTR_ov_object ptr4 = NULL;
-    OV_BOOL parentIsInAAS = FALSE;
 
     AASStatusCode status = checkForEmbeddingAAS(aasId, pvslId);
     if(status != AASSTATUSCODE_GOOD){
