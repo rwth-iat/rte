@@ -5,6 +5,7 @@
 #include "identificationOPCUAInterface.ovm"
 #include "propertyValueStatementOPCUAInterface.ovm"
 #include "lifeCycleEntryOPCUAInterface.ovm"
+#include "services.ovm"
 
 LIBRARY openaasOPCUAInterface
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
