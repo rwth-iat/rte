@@ -45,6 +45,8 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 	ov_string_setvalue(&pinst->v_PropertyIdType, "");
 	ov_string_setvalue(&pinst->v_ExpressionLogic, "");
 	ov_string_setvalue(&pinst->v_ExpressionSemantic, "");
+	ov_string_setvalue(&pinst->v_View, "");
+	ov_string_setvalue(&pinst->v_Visibility, "");
 	ov_string_setvalue(&pinst->v_ValueTimeStamp, "");
 	ov_string_setvalue(&pinst->v_Name, "");
 	ov_string_setvalue(&pinst->v_Value, "");
@@ -86,6 +88,8 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 	OV_INSTPTR_propertyValueStatement_PropertyId pPropertyId = NULL;
 	OV_INSTPTR_propertyValueStatement_ExpressionLogic pExpressionLogic = NULL;
 	OV_INSTPTR_propertyValueStatement_ExpressionSemantic pExpressionSemantic = NULL;
+	OV_INSTPTR_propertyValueStatement_View pView = NULL;
+	OV_INSTPTR_propertyValueStatement_Visibility pVisibility = NULL;
 
 	OV_UINT CarrierIdIdType = 0;
 	OV_STRING CarrierIdIdString = NULL;
@@ -93,12 +97,16 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 	OV_STRING PropertyIdIdString = NULL;
 	OV_UINT ExpressionLogic = 0;
 	OV_UINT ExpressionSemantic = 0;
+	OV_UINT View = 0;
+	OV_UINT Visibility = 0;
 
 	OV_INSTPTR_ov_object pchild = NULL;
 	OV_BOOL CarrierIdFound = FALSE;
 	OV_BOOL PropertyIdFound = FALSE;
 	OV_BOOL ExpressionLogicFound = FALSE;
 	OV_BOOL ExpressionSemanticFound = FALSE;
+	OV_BOOL ViewFound = FALSE;
+	OV_BOOL VisibilityFound = FALSE;
 
 	Ov_ForEachChild(ov_containment, pList, pchild){
 		if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
@@ -123,6 +131,16 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 			ExpressionSemantic = pExpressionSemantic->v_ExpressionSemanticEnum;
 			pExpressionSemantic = NULL;
 			ExpressionSemanticFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_View, pchild)){
+			pView = Ov_DynamicPtrCast(propertyValueStatement_View, pchild);
+			View = pView->v_ViewEnum;
+			pView = NULL;
+			ViewFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_Visibility, pchild)){
+			pVisibility = Ov_DynamicPtrCast(propertyValueStatement_Visibility, pchild);
+			Visibility = pVisibility->v_VisibilityEnum;
+			pVisibility = NULL;
+			VisibilityFound = TRUE;
 		}
 	}
 
@@ -136,6 +154,8 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 			ov_string_append(&pinst->v_PropertyIdType, ";");
 			ov_string_append(&pinst->v_ExpressionLogic, ";");
 			ov_string_append(&pinst->v_ExpressionSemantic, ";");
+			ov_string_append(&pinst->v_View, ";");
+			ov_string_append(&pinst->v_Visibility, ";");
 			ov_string_append(&pinst->v_ValueTimeStamp, ";");
 			ov_string_append(&pinst->v_Name, ";");
 			ov_string_append(&pinst->v_Value, ";");
@@ -415,6 +435,244 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 						if (pinst->v_Error == FALSE){
 							pinst->v_Error = TRUE;
 							ov_string_setvalue(&pinst->v_ErrorText, "ExpressionSemantic not supported");
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		// View
+		if (i == 0){
+			if (ViewFound == TRUE){
+				switch(View){
+				case 0:
+					ov_string_setvalue(&pinst->v_View, "B");
+					break;
+				case 1:
+					ov_string_setvalue(&pinst->v_View, "C");
+					break;
+				case 2:
+					ov_string_setvalue(&pinst->v_View, "P");
+					break;
+				case 3:
+					ov_string_setvalue(&pinst->v_View, "F");
+					break;
+				case 4:
+					ov_string_setvalue(&pinst->v_View, "L");
+					break;
+				case 5:
+					ov_string_setvalue(&pinst->v_View, "S");
+					break;
+				case 6:
+					ov_string_setvalue(&pinst->v_View, "N");
+					break;
+				case 7:
+					ov_string_setvalue(&pinst->v_View, "LC");
+					break;
+				case 8:
+					ov_string_setvalue(&pinst->v_View, "H");
+					break;
+				default:
+					if (pinst->v_Error == FALSE){
+						pinst->v_Error = TRUE;
+						ov_string_setvalue(&pinst->v_ErrorText, "View not supported");
+					}
+					break;
+				}
+			}else{
+				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, ppvs), pView, propertyValueStatement_View){
+					switch(pView->v_ViewEnum){
+					case 0:
+						ov_string_setvalue(&pinst->v_View, "B");
+						break;
+					case 1:
+						ov_string_setvalue(&pinst->v_View, "C");
+						break;
+					case 2:
+						ov_string_setvalue(&pinst->v_View, "P");
+						break;
+					case 3:
+						ov_string_setvalue(&pinst->v_View, "F");
+						break;
+					case 4:
+						ov_string_setvalue(&pinst->v_View, "L");
+						break;
+					case 5:
+						ov_string_setvalue(&pinst->v_View, "S");
+						break;
+					case 6:
+						ov_string_setvalue(&pinst->v_View, "N");
+						break;
+					case 7:
+						ov_string_setvalue(&pinst->v_View, "LC");
+						break;
+					case 8:
+						ov_string_setvalue(&pinst->v_View, "H");
+						break;
+					default:
+						if (pinst->v_Error == FALSE){
+							pinst->v_Error = TRUE;
+							ov_string_setvalue(&pinst->v_ErrorText, "View not supported");
+						}
+						break;
+					}
+				}
+			}
+		}else{
+			if (ViewFound == TRUE){
+				switch(View){
+				case 0:
+					ov_string_append(&pinst->v_View, "B");
+					break;
+				case 1:
+					ov_string_append(&pinst->v_View, "C");
+					break;
+				case 2:
+					ov_string_append(&pinst->v_View, "P");
+					break;
+				case 3:
+					ov_string_append(&pinst->v_View, "F");
+					break;
+				case 4:
+					ov_string_append(&pinst->v_View, "L");
+					break;
+				case 5:
+					ov_string_append(&pinst->v_View, "S");
+					break;
+				case 6:
+					ov_string_append(&pinst->v_View, "N");
+					break;
+				case 7:
+					ov_string_append(&pinst->v_View, "LC");
+					break;
+				case 8:
+					ov_string_append(&pinst->v_View, "H");
+					break;
+				default:
+					if (pinst->v_Error == FALSE){
+						pinst->v_Error = TRUE;
+						ov_string_setvalue(&pinst->v_ErrorText, "View not supported");
+					}
+					break;
+				}
+			}else{
+				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, ppvs), pView, propertyValueStatement_View){
+					switch(pView->v_ViewEnum){
+					case 0:
+						ov_string_append(&pinst->v_View, "B");
+						break;
+					case 1:
+						ov_string_append(&pinst->v_View, "C");
+						break;
+					case 2:
+						ov_string_append(&pinst->v_View, "P");
+						break;
+					case 3:
+						ov_string_append(&pinst->v_View, "F");
+						break;
+					case 4:
+						ov_string_append(&pinst->v_View, "L");
+						break;
+					case 5:
+						ov_string_append(&pinst->v_View, "S");
+						break;
+					case 6:
+						ov_string_append(&pinst->v_View, "N");
+						break;
+					case 7:
+						ov_string_append(&pinst->v_View, "LC");
+						break;
+					case 8:
+						ov_string_append(&pinst->v_View, "H");
+						break;
+					default:
+						if (pinst->v_Error == FALSE){
+							pinst->v_Error = TRUE;
+							ov_string_setvalue(&pinst->v_ErrorText, "View not supported");
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		// Visibility
+		if (i == 0){
+			if (VisibilityFound == TRUE){
+				switch(Visibility){
+				case 0:
+					ov_string_setvalue(&pinst->v_Visibility, "-");
+					break;
+				case 1:
+					ov_string_setvalue(&pinst->v_Visibility, "c");
+					break;
+				case 2:
+					ov_string_setvalue(&pinst->v_Visibility, "+");
+					break;
+				default:
+					if (pinst->v_Error == FALSE){
+						pinst->v_Error = TRUE;
+						ov_string_setvalue(&pinst->v_ErrorText, "Visibility not supported");
+					}
+					break;
+				}
+			}else{
+				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, ppvs), pVisibility, propertyValueStatement_Visibility){
+					switch(pVisibility->v_VisibilityEnum){
+					case 0:
+						ov_string_setvalue(&pinst->v_Visibility, "-");
+						break;
+					case 1:
+						ov_string_setvalue(&pinst->v_Visibility, "c");
+						break;
+					case 2:
+						ov_string_setvalue(&pinst->v_Visibility, "+");
+						break;
+					default:
+						if (pinst->v_Error == FALSE){
+							pinst->v_Error = TRUE;
+							ov_string_setvalue(&pinst->v_ErrorText, "Visibility not supported");
+						}
+						break;
+					}
+				}
+			}
+		}else{
+			if (VisibilityFound == TRUE){
+				switch(Visibility){
+				case 0:
+					ov_string_setvalue(&pinst->v_Visibility, "-");
+					break;
+				case 1:
+					ov_string_setvalue(&pinst->v_Visibility, "c");
+					break;
+				case 2:
+					ov_string_setvalue(&pinst->v_Visibility, "+");
+					break;
+				default:
+					if (pinst->v_Error == FALSE){
+						pinst->v_Error = TRUE;
+						ov_string_setvalue(&pinst->v_ErrorText, "Visibility not supported");
+					}
+					break;
+				}
+			}else{
+				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, ppvs), pVisibility, propertyValueStatement_Visibility){
+					switch(pVisibility->v_VisibilityEnum){
+					case 0:
+						ov_string_setvalue(&pinst->v_Visibility, "-");
+						break;
+					case 1:
+						ov_string_setvalue(&pinst->v_Visibility, "c");
+						break;
+					case 2:
+						ov_string_setvalue(&pinst->v_Visibility, "+");
+						break;
+					default:
+						if (pinst->v_Error == FALSE){
+							pinst->v_Error = TRUE;
+							ov_string_setvalue(&pinst->v_ErrorText, "Visibility not supported");
 						}
 						break;
 					}

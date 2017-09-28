@@ -137,6 +137,8 @@ LIBRARY propertyValueStatement
             PropertyIdSpecification     : STRING FLAGS = "o" INITIALVALUE    =   "";
             ExpressionLogic             : STRING FLAGS = "o" INITIALVALUE    =   "";
             ExpressionSemantic          : STRING FLAGS = "o" INITIALVALUE    =   "";
+            View                        : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Visibility                  : STRING FLAGS = "o" INITIALVALUE    =   "";
             Name                        : STRING FLAGS = "o" INITIALVALUE    =   "";
             Value                       : STRING FLAGS = "o" INITIALVALUE    =   "";
             ValueTimeStamp              : STRING FLAGS = "o" INITIALVALUE    =   "";
