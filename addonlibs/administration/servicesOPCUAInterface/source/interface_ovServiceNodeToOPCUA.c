@@ -144,7 +144,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 
 	// HasComponent to parent
 	newNode->references[newNode->referencesSize-1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
-	newNode->references[newNode->referencesSize-1].isInverse = UA_FALSE;
+	newNode->references[newNode->referencesSize-1].isInverse = UA_TRUE;
 	tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	OV_STRING *plist = NULL;
@@ -157,7 +157,34 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 		ov_string_append(&tmpString, plist[i]);
 	}
 	ov_string_freelist(plist);
-	newNode->references[newNode->referencesSize-1].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, tmpString);
+
+	OV_INSTPTR_opcua_uaServer opcua_pUaServer = NULL;
+	Ov_ForEachChildEx(ov_instantiation, pclass_opcua_uaServer, opcua_pUaServer, opcua_uaServer){
+		break;
+	}
+	OV_INSTPTR_ov_object pobject = NULL;
+
+	OV_UINT tmpNamespace = 0;
+	for (OV_UINT i = 0; i < opcua_pUaServer->v_namespaceNames.veclen; i++){
+		pobject = ov_path_getobjectpointer(tmpString, 2);
+		OV_INSTPTR_ov_class pclass = Ov_GetClassPtr(pobject);
+		OV_INSTPTR_ov_domain plibrary = Ov_GetParent(ov_containment, pclass);
+		OV_STRING tmpString2 = NULL;
+		ov_string_setvalue(&tmpString2, "http://acplt.org/");
+		ov_string_append(&tmpString2, plibrary->v_identifier);
+		ov_string_append(&tmpString2, "/Ov");
+		if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString2) == OV_STRCMP_EQUAL){
+			tmpNamespace = i;
+			break;
+		}else{
+			tmpNamespace = opcua_pUaServer->v_namespace.index;
+		}
+		pclass = NULL;
+		plibrary = NULL;
+		ov_string_setvalue(&tmpString2, NULL);
+	}
+
+	newNode->references[newNode->referencesSize-1].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(tmpNamespace, tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 
 	*opcuaNode = newNode;
