@@ -19,7 +19,7 @@
 #endif
 
 #include "openaas.h"
-#include "propertyValueStatement_helpers.h"
+#include "openaas_helpers.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLAASIdString_set(
@@ -148,153 +148,75 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLCreate_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_BOOL  value
 ) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-	pobj->v_PVSLCreate = value;
-	if (pobj->v_PVSLCreate == TRUE){
-		IdentificationType tmpAASId;
-		tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
-		tmpAASId.IdType = pobj->v_PVSLAASIdType;
+    AASStatusCode result = AASSTATUSCODE_GOOD;
+    pobj->v_PVSLCreate = value;
+    if (pobj->v_PVSLCreate == TRUE){
+        IdentificationType tmpAASId;
+        tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
+        tmpAASId.IdType = pobj->v_PVSLAASIdType;
 
-		IdentificationType tmpParentId;
-		tmpParentId.IdSpec = pobj->v_PVSLParentIdString;
-		tmpParentId.IdType = pobj->v_PVSLParentIdType;
+        IdentificationType tmpParentId;
+        tmpParentId.IdSpec = pobj->v_PVSLParentIdString;
+        tmpParentId.IdType = pobj->v_PVSLParentIdType;
 
-		IdentificationType tmpCarrierId;
-		tmpCarrierId.IdSpec = pobj->v_PVSLCarrierIdString;
-		tmpCarrierId.IdType = pobj->v_PVSLCarrierIdType;
+        IdentificationType tmpCarrierId;
+        tmpCarrierId.IdSpec = pobj->v_PVSLCarrierIdString;
+        tmpCarrierId.IdType = pobj->v_PVSLCarrierIdType;
 
-		IdentificationType tmpPropertyId;
-		tmpPropertyId.IdSpec = pobj->v_PVSLPropertyIdString;
-		tmpPropertyId.IdType = pobj->v_PVSLPropertyIdType;
+        IdentificationType tmpPropertyId;
+        tmpPropertyId.IdSpec = pobj->v_PVSLPropertyIdString;
+        tmpPropertyId.IdType = pobj->v_PVSLPropertyIdType;
 
-		result = openaas_modelmanager_createPVSL(tmpAASId, tmpParentId, pobj->v_PVSLName, pobj->v_PVSLMask, tmpCarrierId, pobj->v_PVSLExpressionLogic, pobj->v_PVSLExpressionSemantic, tmpPropertyId, pobj->v_PVSLView, pobj->v_PVSLVisibility);
-	}
-	pobj->v_PVSLCreate = FALSE;
-	pobj->v_PVSLStatus = result;
-	return OV_ERR_OK;
+        result = openaas_modelmanager_createPVSL(tmpAASId, tmpParentId, pobj->v_PVSLName, pobj->v_PVSLMask, tmpCarrierId, pobj->v_PVSLExpressionLogic, pobj->v_PVSLExpressionSemantic, tmpPropertyId, pobj->v_PVSLView, pobj->v_PVSLVisibility);
+    }
+    pobj->v_PVSLCreate = FALSE;
+    pobj->v_PVSLStatus = result;
+    return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_PVSLDelete_set(
     OV_INSTPTR_openaas_modelmanager          pobj,
     const OV_BOOL  value
 ) {
-	AASStatusCode result = AASSTATUSCODE_GOOD;
-	pobj->v_PVSLDelete = value;
-	if (pobj->v_PVSLDelete == TRUE){
+    AASStatusCode result = AASSTATUSCODE_GOOD;
+    pobj->v_PVSLDelete = value;
+    if (pobj->v_PVSLDelete == TRUE){
 
-		IdentificationType tmpAASId;
-		tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
-		tmpAASId.IdType = pobj->v_PVSLAASIdType;
+        IdentificationType tmpAASId;
+        tmpAASId.IdSpec = pobj->v_PVSLAASIdString;
+        tmpAASId.IdType = pobj->v_PVSLAASIdType;
 
-		IdentificationType tmpPVSLId;
-		tmpPVSLId.IdSpec = pobj->v_PVSLIdString;
-		tmpPVSLId.IdType = pobj->v_PVSLIdType;
+        IdentificationType tmpPVSLId;
+        tmpPVSLId.IdSpec = pobj->v_PVSLIdString;
+        tmpPVSLId.IdType = pobj->v_PVSLIdType;
 
-		result = openaas_modelmanager_deletePVSL(tmpAASId, tmpPVSLId);
-	}
-	pobj->v_PVSLDelete = FALSE;
-	pobj->v_PVSLStatus = result;
-	return OV_ERR_OK;
+        result = openaas_modelmanager_deletePVSL(tmpAASId, tmpPVSLId);
+    }
+    pobj->v_PVSLDelete = FALSE;
+    pobj->v_PVSLStatus = result;
+    return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createPVSL(IdentificationType aasId, IdentificationType parentID, OV_STRING pvslName, OV_UINT mask, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility){
-	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_object ptr3 = NULL;
-	OV_INSTPTR_ov_object ptr4 = NULL;
-	OV_BOOL parentIsInAAS = FALSE;
 
-	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
-	if(ptr){
-		paas = Ov_StaticPtrCast(openaas_aas, ptr);
-		if (paas){
-			if (parentID.IdType != URI){
-				return AASSTATUSCODE_BADPARENTID;
-			}
-			ptr2 = ov_path_getobjectpointer(parentID.IdSpec, 2);
-			if (!ptr2)
-				return AASSTATUSCODE_BADPARENTID;
+    AASStatusCode status = checkForEmbeddingAAS(aasId,parentID);
+    if(status != AASSTATUSCODE_GOOD){
+        return status;
+    }
+    if (propertyValueStatement_modelmanager_createPVSL(parentID, pvslName, mask, carrierId, expressionLogic, expressionSemantic, propertyId, view, visibility) != PVSSTATUSCODE_GOOD)
+        return AASSTATUSCODE_BADPVSERROR;
 
-			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
-			if (!ptr3){
-				ptr3 = ptr2->v_pouterobject;
-			}
-			do{
-				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
-					parentIsInAAS = TRUE;
-					break;
-				}
-				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
-				if (!ptr4){
-					ptr4 = ptr3->v_pouterobject;
-				}
-				ptr3 = ptr4;
-			}while (ptr3);
-
-			if (parentIsInAAS == FALSE){
-				return AASSTATUSCODE_BADPARENTID;
-			}
-
-		if (propertyValueStatement_modelmanager_createPVSL(parentID, pvslName, mask, carrierId, expressionLogic, expressionSemantic, propertyId, view, visibility) != PVSSTATUSCODE_GOOD)
-			return AASSTATUSCODE_BADPVSERROR;
-		}else{
-			return AASSTATUSCODE_BADAASID;
-		}
-	}else{
-		return AASSTATUSCODE_BADAASID;
-	}
-
-	return AASSTATUSCODE_GOOD;
+    return AASSTATUSCODE_GOOD;
 }
 
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deletePVSL(IdentificationType aasId, IdentificationType pvslId){
-	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_aas paas = NULL;
-	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_object ptr3 = NULL;
-	OV_INSTPTR_ov_object ptr4 = NULL;
-	OV_BOOL parentIsInAAS = FALSE;
 
-	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
-	if(ptr){
-		paas = Ov_StaticPtrCast(openaas_aas, ptr);
-		if (paas){
-			if (pvslId.IdType != URI){
-				return AASSTATUSCODE_BADPVSLID;
-			}
-			ptr2 = ov_path_getobjectpointer(pvslId.IdSpec, 2);
-			if (!ptr2)
-				return AASSTATUSCODE_BADPVSLID;
+    AASStatusCode status = checkForEmbeddingAAS(aasId, pvslId);
+    if(status != AASSTATUSCODE_GOOD){
+        return status;
+    }
+    if (propertyValueStatement_modelmanager_deletePVSL(pvslId) != PVSSTATUSCODE_GOOD)
+       return AASSTATUSCODE_BADPVSERROR;
 
-			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
-			if (!ptr3){
-				ptr3 = ptr2->v_pouterobject;
-			}
-			do{
-				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
-					parentIsInAAS = TRUE;
-					break;
-				}
-				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
-				if (!ptr4){
-					ptr4 = ptr3->v_pouterobject;
-				}
-				ptr3 = ptr4;
-			}while (ptr3);
-
-			if (parentIsInAAS == FALSE){
-				return AASSTATUSCODE_BADPVSLID;
-			}
-
-		if (propertyValueStatement_modelmanager_deletePVSL(pvslId) != PVSSTATUSCODE_GOOD)
-			return AASSTATUSCODE_BADPVSERROR;
-		}else{
-			return AASSTATUSCODE_BADAASID;
-		}
-	}else{
-		return AASSTATUSCODE_BADAASID;
-	}
-
-	return AASSTATUSCODE_GOOD;
+    return AASSTATUSCODE_GOOD;
 }
