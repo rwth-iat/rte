@@ -34,9 +34,6 @@
 
 extern OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface pinterface;
 
-
-
-
 OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycleEntryNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
@@ -204,9 +201,31 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
-			break;
+		}
+		if (newNode->references[i].isInverse == TRUE){
+			ov_memstack_lock();
+			result = opcua_nodeStoreFunctions_resolveNodeIdToPath(newNode->references[i].targetId.nodeId, &path);
+			if(result != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				return result;
+			}
+			element = path.elements[path.size-1];
+			ov_memstack_unlock();
+			result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+			if(result != UA_STATUSCODE_GOOD){
+				return result;
+			}
+
+			if (Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pobj)){
+				OV_STRING tmpOVString = NULL;
+				copyOPCUAStringToOV(newNode->references[i].targetId.nodeId.identifier.string, &tmpOVString);
+				ov_string_append(&tmpOVString, "|||LifeCyleEntries");
+				UA_String tmpUAString = UA_String_fromChars(tmpOVString);
+				UA_String_copy(&tmpUAString, &(newNode->references[i].targetId.nodeId.identifier.string));
+			}
 		}
 	}
+
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

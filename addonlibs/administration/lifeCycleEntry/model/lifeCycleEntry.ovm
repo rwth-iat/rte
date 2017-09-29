@@ -1,5 +1,6 @@
 #include "ov.ovm"
 #include "identification.ovm"
+#include "services.ovm"
 
 LIBRARY lifeCycleEntry
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -58,5 +59,6 @@ LIBRARY lifeCycleEntry
             setLCE     : C_FUNCTION <LCE_FNC_SETLCE>;
         END_OPERATIONS;
     END_CLASS;
+
 	
 END_LIBRARY;

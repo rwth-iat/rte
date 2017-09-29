@@ -25,7 +25,11 @@ LIBRARY lifeCycleEntryOPCUAInterface
             ovNodeStoreInterfaceLifeCycleEntryDelete : C_FUNCTION <LCE_FNC_OVNODESTOREINTERFACELIFECYCLEENTRYDELETE>;
             
             ovLifeCycleArchiveNodeToOPCUA : C_FUNCTION <LCE_FNC_OVLIFECYCLEARCHIVENODETOOPCUA>;
+            ovLifeCycleArchiveFolderNodeToOPCUA : C_FUNCTION <LCE_FNC_OVLIFECYCLEARCHIVEFOLDERNODETOOPCUA>;
+            ovLifeCycleArchiveMethodNodeToOPCUA : C_FUNCTION <LCE_FNC_OVLIFECYCLEARCHIVEMETHODNODETOOPCUA>;
             ovLifeCycleEntryNodeToOPCUA : C_FUNCTION <LCE_FNC_OVLIFECYCLEENTRYNODETOOPCUA>;
+           
+            MethodCallbackArchiv : C_FUNCTION <LCE_FNC_METHODCALLBACKARCHIV>;
            
             constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             startup: C_FUNCTION <OV_FNC_STARTUP>;

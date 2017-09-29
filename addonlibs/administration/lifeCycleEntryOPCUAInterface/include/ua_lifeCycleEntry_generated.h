@@ -1,5 +1,5 @@
 /* Generated from Opc.Ua.Types.bsd, identification.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/opcuaParser/tools/generate_datatypes.py
- * on host ubuntu-VirtualBox by user ubuntu at 2017-08-01 01:33:33 */
+ * on host ubuntu-VirtualBox by user ubuntu at 2017-09-29 03:11:03 */
 
 #ifndef UA_LIFECYCLEENTRY_GENERATED_H_
 #define UA_LIFECYCLEENTRY_GENERATED_H_
@@ -35,7 +35,7 @@ typedef struct {
     UA_DataValue data;
     UA_String subject;
     UA_String eventClass;
-    UA_Int64 id;
+    UA_UInt64 id;
 } UA_LifeCycleEntry;
 
 #define UA_LIFECYCLEENTRY_LIFECYCLEENTRY 0
