@@ -1,6 +1,5 @@
 #include "ov.ovm"
 #include "identification.ovm"
-#include "services.ovm"
 
 LIBRARY lifeCycleEntry
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
