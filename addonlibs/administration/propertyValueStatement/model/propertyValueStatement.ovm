@@ -131,10 +131,8 @@ LIBRARY propertyValueStatement
         IS_INSTANTIABLE;
         VARIABLES
             Path                        : STRING FLAGS = "i" INITIALVALUE    =   "";      
-            CarrierIdType               : STRING FLAGS = "o" INITIALVALUE    =   "";
-            CarrierIdSpecification      : STRING FLAGS = "o" INITIALVALUE    =   "";
-            PropertyIdType              : STRING FLAGS = "o" INITIALVALUE    =   "";
-            PropertyIdSpecification     : STRING FLAGS = "o" INITIALVALUE    =   "";
+            CarrierId                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            PropertyId                  : STRING FLAGS = "o" INITIALVALUE    =   "";
             ExpressionLogic             : STRING FLAGS = "o" INITIALVALUE    =   "";
             ExpressionSemantic          : STRING FLAGS = "o" INITIALVALUE    =   "";
             View                        : STRING FLAGS = "o" INITIALVALUE    =   "";

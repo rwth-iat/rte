@@ -39,10 +39,8 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pList = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
 
-	ov_string_setvalue(&pinst->v_CarrierIdSpecification, "");
-	ov_string_setvalue(&pinst->v_CarrierIdType, "");
-	ov_string_setvalue(&pinst->v_PropertyIdSpecification, "");
-	ov_string_setvalue(&pinst->v_PropertyIdType, "");
+	ov_string_setvalue(&pinst->v_CarrierId, "");
+	ov_string_setvalue(&pinst->v_PropertyId, "");
 	ov_string_setvalue(&pinst->v_ExpressionLogic, "");
 	ov_string_setvalue(&pinst->v_ExpressionSemantic, "");
 	ov_string_setvalue(&pinst->v_View, "");
@@ -148,10 +146,8 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 	OV_UINT i = 0;
 	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain,pList), ppvs, propertyValueStatement_PropertyValueStatement){
 		if (i != 0){
-			ov_string_append(&pinst->v_CarrierIdSpecification, ";");
-			ov_string_append(&pinst->v_CarrierIdType, ";");
-			ov_string_append(&pinst->v_PropertyIdSpecification, ";");
-			ov_string_append(&pinst->v_PropertyIdType, ";");
+			ov_string_append(&pinst->v_CarrierId, ";");
+			ov_string_append(&pinst->v_PropertyId, ";");
 			ov_string_append(&pinst->v_ExpressionLogic, ";");
 			ov_string_append(&pinst->v_ExpressionSemantic, ";");
 			ov_string_append(&pinst->v_View, ";");
@@ -169,29 +165,33 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 		// CarrierId
 		if (i == 0){
 			if (CarrierIdFound == TRUE){
-				ov_string_setvalue(&pinst->v_CarrierIdSpecification, CarrierIdIdString);
 				ov_string_print(&tmpString, "%i", CarrierIdIdType);
-				ov_string_setvalue(&pinst->v_CarrierIdType, tmpString);
+				ov_string_setvalue(&pinst->v_CarrierId, tmpString);
+				ov_string_append(&pinst->v_CarrierId, ":");
+				ov_string_append(&pinst->v_CarrierId, CarrierIdIdString);
 				ov_string_setvalue(&tmpString, NULL);
 			}else{
 				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, ppvs), pCarrierId, propertyValueStatement_CarrierId){
-					ov_string_setvalue(&pinst->v_CarrierIdSpecification, pCarrierId->v_IdSpec);
 					ov_string_print(&tmpString, "%i", pCarrierId->v_IdType);
-					ov_string_setvalue(&pinst->v_CarrierIdType, tmpString);
+					ov_string_setvalue(&pinst->v_CarrierId, tmpString);
+					ov_string_append(&pinst->v_CarrierId, ":");
+					ov_string_append(&pinst->v_CarrierId, pCarrierId->v_IdSpec);
 					ov_string_setvalue(&tmpString, NULL);
 				}
 			}
 		}else{
 			if (CarrierIdFound == TRUE){
-				ov_string_append(&pinst->v_CarrierIdSpecification, CarrierIdIdString);
 				ov_string_print(&tmpString, "%i", CarrierIdIdType);
-				ov_string_append(&pinst->v_CarrierIdType, tmpString);
+				ov_string_append(&pinst->v_CarrierId, tmpString);
+				ov_string_append(&pinst->v_CarrierId, ":");
+				ov_string_append(&pinst->v_CarrierId, CarrierIdIdString);
 				ov_string_setvalue(&tmpString, NULL);
 			}else{
 				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, ppvs), pCarrierId, propertyValueStatement_CarrierId){
-					ov_string_append(&pinst->v_CarrierIdSpecification, pCarrierId->v_IdSpec);
 					ov_string_print(&tmpString, "%i", pCarrierId->v_IdType);
-					ov_string_append(&pinst->v_CarrierIdType, tmpString);
+					ov_string_append(&pinst->v_CarrierId, tmpString);
+					ov_string_append(&pinst->v_CarrierId, ":");
+					ov_string_append(&pinst->v_CarrierId, pCarrierId->v_IdSpec);
 					ov_string_setvalue(&tmpString, NULL);
 				}
 			}
@@ -200,29 +200,33 @@ OV_DLLFNCEXPORT void propertyValueStatement_HMIHelperPVSL_typemethod(
 		// PropertyId
 		if (i == 0){
 			if (PropertyIdFound == TRUE){
-				ov_string_setvalue(&pinst->v_PropertyIdSpecification, PropertyIdIdString);
 				ov_string_print(&tmpString, "%i", PropertyIdIdType);
-				ov_string_setvalue(&pinst->v_PropertyIdType, tmpString);
+				ov_string_setvalue(&pinst->v_PropertyId, tmpString);
+				ov_string_append(&pinst->v_PropertyId, ":");
+				ov_string_append(&pinst->v_PropertyId, PropertyIdIdString);
 				ov_string_setvalue(&tmpString, NULL);
 			}else{
 				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, ppvs), pPropertyId, propertyValueStatement_PropertyId){
-					ov_string_setvalue(&pinst->v_PropertyIdSpecification, pPropertyId->v_IdSpec);
 					ov_string_print(&tmpString, "%i", pPropertyId->v_IdType);
-					ov_string_setvalue(&pinst->v_PropertyIdType, tmpString);
+					ov_string_setvalue(&pinst->v_PropertyId, tmpString);
+					ov_string_append(&pinst->v_PropertyId, ":");
+					ov_string_append(&pinst->v_PropertyId, pPropertyId->v_IdSpec);
 					ov_string_setvalue(&tmpString, NULL);
 				}
 			}
 		}else{
 			if (PropertyIdFound == TRUE){
-				ov_string_append(&pinst->v_PropertyIdSpecification, PropertyIdIdString);
 				ov_string_print(&tmpString, "%i", PropertyIdIdType);
-				ov_string_append(&pinst->v_PropertyIdType, tmpString);
+				ov_string_append(&pinst->v_PropertyId, tmpString);
+				ov_string_append(&pinst->v_PropertyId, ":");
+				ov_string_append(&pinst->v_PropertyId, PropertyIdIdString);
 				ov_string_setvalue(&tmpString, NULL);
 			}else{
 				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, ppvs), pPropertyId, propertyValueStatement_PropertyId){
-					ov_string_append(&pinst->v_PropertyIdSpecification, pPropertyId->v_IdSpec);
 					ov_string_print(&tmpString, "%i", pPropertyId->v_IdType);
-					ov_string_append(&pinst->v_PropertyIdType, tmpString);
+					ov_string_append(&pinst->v_PropertyId, tmpString);
+					ov_string_append(&pinst->v_PropertyId, ":");
+					ov_string_append(&pinst->v_PropertyId, pPropertyId->v_IdSpec);
 					ov_string_setvalue(&tmpString, NULL);
 				}
 			}
