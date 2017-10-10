@@ -117,6 +117,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 			break;
 		}
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	newNode->referencesSize = newNode->referencesSize+2; //For Input-&Outputarguments
 	newNode->referencesSize = newNode->referencesSize+1; //For Has_Component to parent node

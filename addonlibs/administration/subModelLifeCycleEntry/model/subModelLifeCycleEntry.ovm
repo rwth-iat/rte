@@ -1,0 +1,42 @@
+#include "ov.ovm"
+#include "lifeCycleEntry.ovm"
+#include "services.ovm"
+#include "propertyValueStatement.ovm"
+#include "openaas.ovm"
+
+LIBRARY subModelLifeCycleEntry
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of SubModelLifeCycleEntry.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/	
+	
+	
+	CLASS SubModelLifeCycleEntry : CLASS openaas/SubModel
+		IS_INSTANTIABLE;
+		VARIABLES  
+		      			
+		END_VARIABLES;
+		PARTS
+			LifeCycleArchiv : CLASS lifeCycleEntry/LifeCycleArchive;
+		END_PARTS;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

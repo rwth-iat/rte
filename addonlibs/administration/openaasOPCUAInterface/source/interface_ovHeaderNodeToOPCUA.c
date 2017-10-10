@@ -114,6 +114,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovHeaderNodeToOPCU
 			break;
 		}
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

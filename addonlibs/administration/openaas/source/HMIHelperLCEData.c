@@ -36,6 +36,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
     OV_INSTPTR_openaas_HMIHelperLCEData pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEData, pfb);
     OV_INSTPTR_ov_object pobj = NULL;
 	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pchild = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pArchive = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 
 	pinst->v_OutputType = 0;
@@ -95,7 +96,13 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	// printing x- and y-values
 	OV_TIME xValue;
 	OV_STRING tmpString = NULL;
-	Ov_ForEachChildEx(ov_containment, &paas->p_LifeCycleArchive, pchild, lifeCycleEntry_LifeCycleEntry){
+	// Search for LCE Archiv
+	//TODO:
+
+
+
+
+	Ov_ForEachChildEx(ov_containment, pArchive, pchild, lifeCycleEntry_LifeCycleEntry){
 		if (ov_string_compare(pchild->v_EventClass, pinst->v_EventClass) == OV_STRCMP_EQUAL && ov_string_compare(pchild->v_Subject, pinst->v_Subject) == OV_STRCMP_EQUAL){
 			// find fitting LCE
 			switch(ov_time_compare(&pchild->v_TimeStamp, &time)){
@@ -210,7 +217,7 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	do{
 		if (i == 0){
 			i++;
-			pobj = Ov_GetLastChild(ov_containment, &paas->p_LifeCycleArchive);
+			pobj = Ov_GetLastChild(ov_containment, pArchive);
 			pchild = Ov_DynamicPtrCast(lifeCycleEntry_LifeCycleEntry, pobj);
 			if (!pchild){
 				continue;

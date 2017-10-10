@@ -225,6 +225,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 			}
 		}
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 
 
 	*opcuaNode = newNode;

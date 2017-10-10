@@ -60,7 +60,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 	nodeClass = UA_NODECLASS_OBJECT;
 	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ObjectNode));
 
-
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
@@ -105,7 +104,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 
 	((UA_ObjectNode*)newNode)->eventNotifier = 0;
 
-
 	// References
 	addReference(newNode);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
@@ -115,6 +113,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 			break;
 		}
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

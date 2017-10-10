@@ -228,284 +228,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		IdentificationType_deleteMembers(&tmpOVAASId);
 		IdentificationType_deleteMembers(&tmpOVPVSLId);
 		resultOV = OV_ERR_OK;
-	}else if (ov_string_compare(funcName, "createLCE") == OV_STRCMP_EQUAL){
-		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
-		UA_LifeCycleEntry *tmpUALCE = (UA_LifeCycleEntry*)(input[1].data);
-
-		IdentificationType tmpOVAASId;
-		IdentificationType_init(&tmpOVAASId);
-		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
-		tmpOVAASId.IdType = tmpUAAASId->idType;
-
-		LifeCycleEntry lce;
-		LifeCycleEntry_init(&lce);
-
-		copyOPCUAStringToOV(tmpUALCE->creatingInstance.idSpec, &(lce.creatingInstance.IdSpec));
-		lce.creatingInstance.IdType = tmpUALCE->creatingInstance.idType;
-
-		copyOPCUAStringToOV(tmpUALCE->eventClass, &lce.eventClass);
-
-		copyOPCUAStringToOV(tmpUALCE->subject, &lce.subject);
-
-		copyOPCUAStringToOV(tmpUALCE->writingInstance.idSpec, &(lce.writingInstance.IdSpec));
-		lce.writingInstance.IdType = tmpUALCE->writingInstance.idType;
-
-		ov_VariantToAny(&(tmpUALCE->data.value), &lce.data);
-		lce.data.time = ov_1601nsTimeToOvTime(tmpUALCE->data.sourceTimestamp);
-
-		result = openaas_modelmanager_createLCE(tmpOVAASId, lce);
-
-		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
-		IdentificationType_deleteMembers(&tmpOVAASId);
-		LifeCycleEntry_deleteMembers(&lce);
-		resultOV = OV_ERR_OK;
-	}else if (ov_string_compare(funcName, "deleteLCE") == OV_STRCMP_EQUAL){
-		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
-		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[1].data);
-
-		IdentificationType tmpOVAASId;
-		IdentificationType_init(&tmpOVAASId);
-		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
-		tmpOVAASId.IdType = tmpUAAASId->idType;
-
-		OV_UINT64 tmpOVLCEId;
-		tmpOVLCEId = *tmpUALCEId;
-
-		result = openaas_modelmanager_deleteLCE(tmpOVAASId, tmpOVLCEId);
-
-		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
-		IdentificationType_deleteMembers(&tmpOVAASId);
-		resultOV = OV_ERR_OK;
-	}else if (ov_string_compare(funcName, "getLCE") == OV_STRCMP_EQUAL){
-		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
-		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[1].data);
-
-		IdentificationType tmpOVAASId;
-		IdentificationType_init(&tmpOVAASId);
-		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
-		tmpOVAASId.IdType = tmpUAAASId->idType;
-
-		OV_UINT64 tmpOVLCEId;
-		tmpOVLCEId = *tmpUALCEId;
-
-		LifeCycleEntry lce;
-		LifeCycleEntry_init(&lce);
-
-		result = openaas_modelmanager_getLCE(tmpOVAASId, tmpOVLCEId, &lce);
-		UA_LifeCycleEntry tmpUALCE;
-		UA_LifeCycleEntry_init(&tmpUALCE);
-		if (result == AASSTATUSCODE_GOOD){
-			tmpUALCE.creatingInstance.idSpec = UA_String_fromChars(lce.writingInstance.IdSpec);
-			tmpUALCE.creatingInstance.idType = lce.writingInstance.IdType;
-
-			tmpUALCE.writingInstance.idSpec = UA_String_fromChars(lce.writingInstance.IdSpec);
-			tmpUALCE.writingInstance.idType = lce.writingInstance.IdType;
-
-			tmpUALCE.eventClass = UA_String_fromChars(lce.eventClass);
-
-			tmpUALCE.subject = UA_String_fromChars(lce.subject);
-
-			ov_AnyToVariant(&lce.data, &tmpUALCE.data.value);
-			tmpUALCE.data.hasValue = TRUE;
-			tmpUALCE.data.sourceTimestamp = ov_ovTimeTo1601nsTime(lce.data.time);
-			tmpUALCE.data.hasSourceTimestamp = TRUE;
-		}
-		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
-		UA_Variant_setScalarCopy(&output[1], &tmpUALCE, &UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
-
-		UA_LifeCycleEntry_deleteMembers(&tmpUALCE);
-		IdentificationType_deleteMembers(&tmpOVAASId);
-		LifeCycleEntry_deleteMembers(&lce);
-		resultOV = OV_ERR_OK;
-	}else if (ov_string_compare(funcName, "getLCESimple") == OV_STRCMP_EQUAL){
-		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
-		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[1].data);
-
-		IdentificationType tmpOVAASId;
-		IdentificationType_init(&tmpOVAASId);
-		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
-		tmpOVAASId.IdType = tmpUAAASId->idType;
-
-		OV_UINT64 tmpOVLCEId;
-		tmpOVLCEId = *tmpUALCEId;
-
-		LifeCycleEntry lce;
-		LifeCycleEntry_init(&lce);
-
-		result = openaas_modelmanager_getLCE(tmpOVAASId, tmpOVLCEId, &lce);
-
-		UA_Identification tmpUACreatingInstance;
-		UA_Identification_init(&tmpUACreatingInstance);
-
-		UA_Identification tmpUAWritingInstance;
-		UA_Identification_init(&tmpUAWritingInstance);
-
-		UA_String tmpUAEventClass;
-		UA_String_init(&tmpUAEventClass);
-
-		UA_String tmpUASubject;
-		UA_String_init(&tmpUASubject);
-
-		UA_DataValue tmpUAValue;
-		UA_DataValue_init(&tmpUAValue);
-		if (result == AASSTATUSCODE_GOOD){
-			tmpUACreatingInstance.idSpec = UA_String_fromChars(lce.creatingInstance.IdSpec);
-			tmpUACreatingInstance.idType = lce.creatingInstance.IdType;
-
-			tmpUAWritingInstance.idSpec = UA_String_fromChars(lce.writingInstance.IdSpec);
-			tmpUAWritingInstance.idType = lce.writingInstance.IdType;
-
-			tmpUAEventClass = UA_String_fromChars(lce.eventClass);
-
-			tmpUASubject = UA_String_fromChars(lce.subject);
-
-			ov_AnyToVariant(&lce.data, &tmpUAValue.value);
-			tmpUAValue.hasValue = TRUE;
-			tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(lce.data.time);
-			tmpUAValue.hasSourceTimestamp = TRUE;
-		}
-
-		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
-		UA_Variant_setScalarCopy(&output[1], &tmpUACreatingInstance, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
-		UA_Variant_setScalarCopy(&output[2], &tmpUAWritingInstance, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
-		UA_Variant_setScalarCopy(&output[3], &tmpUAEventClass, &UA_TYPES[UA_TYPES_STRING]);
-		UA_Variant_setScalarCopy(&output[4], &tmpUASubject, &UA_TYPES[UA_TYPES_STRING]);
-		UA_Variant_setScalarCopy(&output[5], &tmpUAValue, &UA_TYPES[UA_TYPES_DATAVALUE]);
-
-		UA_Identification_deleteMembers(&tmpUACreatingInstance);
-		UA_Identification_deleteMembers(&tmpUAWritingInstance);
-		UA_String_deleteMembers(&tmpUAEventClass);
-		UA_String_deleteMembers(&tmpUASubject);
-		UA_DataValue_deleteMembers(&tmpUAValue);
-		IdentificationType_deleteMembers(&tmpOVAASId);
-		LifeCycleEntry_deleteMembers(&lce);
-		resultOV = OV_ERR_OK;
-	}else if (ov_string_compare(funcName, "getLastLCEs") == OV_STRCMP_EQUAL){
-		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
-		UA_UInt32 *tmpUACount = (UA_UInt32*)(input[1].data);
-
-		IdentificationType tmpOVAASId;
-		IdentificationType_init(&tmpOVAASId);
-		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
-		tmpOVAASId.IdType = tmpUAAASId->idType;
-
-		OV_UINT tmpOVCount;
-		tmpOVCount = *tmpUACount;
-
-		LifeCycleEntry *lce = NULL;
-
-		OV_UINT arrayDimension = 0;
-
-		result = openaas_modelmanager_getLastLCEs(tmpOVAASId, tmpOVCount, &lce, &arrayDimension);
-
-		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
-
-		if (result == AASSTATUSCODE_GOOD){
-			UA_LifeCycleEntry *tmpUALifeCycleEntry = UA_Array_new(arrayDimension,&UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
-
-			for (OV_UINT i = 0; i < arrayDimension; i++){
-				UA_LifeCycleEntry_init(&tmpUALifeCycleEntry[i]);
-				tmpUALifeCycleEntry[i].creatingInstance.idSpec = UA_String_fromChars(lce[i].creatingInstance.IdSpec);
-				tmpUALifeCycleEntry[i].creatingInstance.idType = lce[i].creatingInstance.IdType;
-				tmpUALifeCycleEntry[i].writingInstance.idSpec = UA_String_fromChars(lce[i].writingInstance.IdSpec);
-				tmpUALifeCycleEntry[i].writingInstance.idType = lce[i].writingInstance.IdType;
-				tmpUALifeCycleEntry[i].eventClass = UA_String_fromChars(lce[i].eventClass);
-				tmpUALifeCycleEntry[i].subject = UA_String_fromChars(lce[i].subject);
-				ov_AnyToVariant(&lce[i].data, &tmpUALifeCycleEntry[i].data.value);
-				tmpUALifeCycleEntry[i].data.hasValue = TRUE;
-				tmpUALifeCycleEntry[i].data.sourceTimestamp = ov_ovTimeTo1601nsTime(lce[i].data.time);
-				tmpUALifeCycleEntry[i].data.hasSourceTimestamp = TRUE;
-				tmpUALifeCycleEntry[i].id = lce[i].lceId;
-				}
-			UA_Variant_setArrayCopy(&output[1], tmpUALifeCycleEntry, arrayDimension, &UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
-			UA_Variant_setScalarCopy(&output[2], &arrayDimension, &UA_TYPES[UA_TYPES_UINT32]);
-			for (OV_UINT i = 0; i < arrayDimension; i++){
-				ov_database_free(lce[i].creatingInstance.IdSpec);
-				ov_database_free(lce[i].eventClass);
-				ov_database_free(lce[i].subject);
-				ov_database_free(lce[i].writingInstance.IdSpec);
-			}
-			UA_Array_delete(tmpUALifeCycleEntry,arrayDimension,&UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
-		}else{
-			UA_LifeCycleEntry *tmpUALifeCycleEntry = UA_Array_new(0,&UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
-			UA_Variant_setArrayCopy(&output[1], tmpUALifeCycleEntry, 0, &UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
-			UA_Variant_setScalarCopy(&output[2], 0, &UA_TYPES[UA_TYPES_UINT32]);
-			UA_Array_delete(tmpUALifeCycleEntry,0,&UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
-		}
-		IdentificationType_deleteMembers(&tmpOVAASId);
-		resultOV = OV_ERR_OK;
-	}else if (ov_string_compare(funcName, "setLCE") == OV_STRCMP_EQUAL){
-		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
-		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[1].data);
-		UA_LifeCycleEntry *tmpUALCEData = (UA_LifeCycleEntry*)(input[2].data);
-
-		IdentificationType tmpOVAASId;
-		IdentificationType_init(&tmpOVAASId);
-		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
-		tmpOVAASId.IdType = tmpUAAASId->idType;
-
-		LifeCycleEntry lce;
-		LifeCycleEntry_init(&lce);
-
-		copyOPCUAStringToOV(tmpUALCEData->creatingInstance.idSpec, &(lce.creatingInstance.IdSpec));
-		lce.creatingInstance.IdType = tmpUALCEData->creatingInstance.idType;
-
-		copyOPCUAStringToOV(tmpUALCEData->eventClass, &lce.eventClass);
-
-		copyOPCUAStringToOV(tmpUALCEData->subject, &lce.subject);
-
-		copyOPCUAStringToOV(tmpUALCEData->writingInstance.idSpec, &(lce.writingInstance.IdSpec));
-		lce.writingInstance.IdType = tmpUALCEData->writingInstance.idType;
-
-		ov_VariantToAny(&(tmpUALCEData->data.value), &lce.data);
-		lce.data.time = ov_1601nsTimeToOvTime(tmpUALCEData->data.sourceTimestamp);
-
-		lce.lceId = *tmpUALCEId;
-
-		result = openaas_modelmanager_setLCE(tmpOVAASId, lce);
-
-		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
-		IdentificationType_deleteMembers(&tmpOVAASId);
-		LifeCycleEntry_deleteMembers(&lce);
-		resultOV = OV_ERR_OK;
-	}else if (ov_string_compare(funcName, "setLCESimple") == OV_STRCMP_EQUAL){
-		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
-		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[1].data);
-		UA_Identification *tmpUACreatingInstance = (UA_Identification*)(input[2].data);
-		UA_Identification *tmpUAWritingInstance = (UA_Identification*)(input[3].data);
-		UA_String *tmpUAEventClass = (UA_String*)(input[4].data);
-		UA_String *tmpUASubject = (UA_String*)(input[5].data);
-		UA_DataValue *tmpUAValue = (UA_DataValue*)(input[6].data);
-
-		IdentificationType tmpOVAASId;
-		IdentificationType_init(&tmpOVAASId);
-		copyOPCUAStringToOV(tmpUAAASId->idSpec, &(tmpOVAASId.IdSpec));
-		tmpOVAASId.IdType = tmpUAAASId->idType;
-
-		LifeCycleEntry lce;
-		LifeCycleEntry_init(&lce);
-
-		lce.lceId = *tmpUALCEId;
-
-		copyOPCUAStringToOV(tmpUACreatingInstance->idSpec, &(lce.creatingInstance.IdSpec));
-		lce.creatingInstance.IdType = tmpUACreatingInstance->idType;
-
-		copyOPCUAStringToOV(*tmpUAEventClass, &lce.eventClass);
-
-		copyOPCUAStringToOV(*tmpUASubject, &lce.subject);
-
-		copyOPCUAStringToOV(tmpUAWritingInstance->idSpec, &(lce.writingInstance.IdSpec));
-		lce.writingInstance.IdType = tmpUAWritingInstance->idType;
-
-		ov_VariantToAny(&(tmpUAValue->value), &lce.data);
-		lce.data.time = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
-
-		result = openaas_modelmanager_setLCE(tmpOVAASId, lce);
-
-		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
-		IdentificationType_deleteMembers(&tmpOVAASId);
-		LifeCycleEntry_deleteMembers(&lce);
-		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createPVS") == OV_STRCMP_EQUAL){
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUAListId = (UA_Identification*)(input[1].data);
@@ -874,6 +596,7 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	plist3 = ov_string_split(tmpString, "||", &len3);
 	plist4 = ov_string_split(tmpString, "|", &len4);
 
+
 	if (len3 > 1){
 		pobj = ov_path_getobjectpointer(plist3[0], 2);
 		if (pobj == NULL){
@@ -904,6 +627,29 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
+	}else if (len2 > 1){
+		if (ov_string_compare(plist2[len2-1], "Views") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovViewsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "Header") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovHeaderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "Body") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovBodyNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "ModelIdString") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "ModelIdType") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "Revision") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "Version") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}
 	}else{
 		pobj = ov_path_getobjectpointer(tmpString, 2);
 		if (pobj == NULL){
@@ -916,16 +662,7 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 		}
 	}
 
-	if (ov_string_compare(plist2[len2-1], "Views") == OV_STRCMP_EQUAL){
-		if (openaasOPCUAInterface_interface_ovViewsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (ov_string_compare(plist2[len2-1], "Header") == OV_STRCMP_EQUAL){
-		if (openaasOPCUAInterface_interface_ovHeaderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (ov_string_compare(plist2[len2-1], "Body") == OV_STRCMP_EQUAL){
-		if (openaasOPCUAInterface_interface_ovBodyNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_aas, pobj)){
+	if(Ov_CanCastTo(openaas_aas, pobj)){
 		if (openaasOPCUAInterface_interface_ovAASNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(openaas_SubModel, pobj)){

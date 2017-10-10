@@ -182,7 +182,9 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 		IdentificationType_init(&aasId);
 		ov_string_setvalue(&aasId.IdSpec, pinst->v_AASIdString);
 		aasId.IdType = pinst->v_AASIdType;
-		pinst->v_Status = openaas_modelmanager_createLCE(aasId, lce);
+
+		// TODO: Find CreateLCE function
+		//pinst->v_Status = openaas_modelmanager_createLCE(aasId, lce);
 
 		LifeCycleEntry_deleteMembers(&lce);
 		IdentificationType_deleteMembers(&aasId);

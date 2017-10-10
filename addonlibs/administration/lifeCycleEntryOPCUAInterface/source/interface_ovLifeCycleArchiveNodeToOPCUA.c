@@ -139,6 +139,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 			lceCount = lceCount + 1;
 		}
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	newNode->referencesSize = tmpNode.referencesSize - lceCount; //For LCEs
 	newNode->referencesSize = newNode->referencesSize + 2; //For create/deleteLifeCycleEntry
@@ -172,6 +173,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 			newReferenceCount = newReferenceCount + 1;
 		}
 	}
+	UA_Array_delete(tmpNode.references, tmpNode.referencesSize, &UA_TYPES[UA_TYPES_REFERENCENODE]);
 
 	// createLifeCycleEntry
 	newNode->references[newReferenceCount].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);

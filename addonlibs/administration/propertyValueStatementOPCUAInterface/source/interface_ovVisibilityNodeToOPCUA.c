@@ -173,6 +173,7 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovV
 			break;
 		}
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

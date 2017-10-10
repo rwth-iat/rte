@@ -184,7 +184,7 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_aasDI_typemethod(
 				ov_VariantToAny(&tmpUALifeCycleEntry.data.value, &lce.data);
 				lce.data.time = ov_1601nsTimeToOvTime(tmpUALifeCycleEntry.data.sourceTimestamp);
 
-				openaas_modelmanager_createLCE(aasId, lce);
+				//openaas_modelmanager_createLCE(aasId, lce);
 
 				size_t argInSize2 = 2;
 				size_t argOutSize2 = 0;

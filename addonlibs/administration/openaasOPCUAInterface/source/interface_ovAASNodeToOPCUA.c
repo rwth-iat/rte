@@ -109,12 +109,24 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 
 	addReference(newNode);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
+	OV_STRING tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".Body");
+	UA_String tmpStringBody = UA_String_fromChars(tmpString);
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".Views");
+	UA_String tmpStringView = UA_String_fromChars(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_ASSETADMINITRATIONSHELLTYPE);
-			break;
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_interfacenamespace.index, UA_NS2ID_ASSETADMINITRATIONSHELLTYPE);
+			continue;
+		}else if(UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringBody) || UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringView)){
+			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;
+			continue;
 		}
 	}
+	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

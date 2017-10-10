@@ -139,13 +139,8 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 
 
 	addReference(&tmpNode);
-	UA_NodeId_deleteMembers(&tmpNodeId);
-	tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	OV_UINT inverseCount = 0;
 	for (size_t i = 0; i < tmpNode.referencesSize; i++){
-		if (UA_NodeId_equal(&tmpNode.references[i].referenceTypeId, &tmpNodeId)){
-			tmpNode.references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE);
-		}
 		if (tmpNode.references[i].isInverse == TRUE){
 			inverseCount = inverseCount + 1;
 		}
@@ -163,6 +158,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 			newReferenceCount = newReferenceCount + 1;
 		}
 	}
+	UA_Array_delete(tmpNode.references, tmpNode.referencesSize, &UA_TYPES[UA_TYPES_REFERENCENODE]);
 
 	// ParentNode
 	newNode->references[newReferenceCount].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
@@ -175,6 +171,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	newNode->references[newReferenceCount].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, plist[0]);
 	ov_string_freelist(plist);
 	ov_string_setvalue(&tmpString, NULL);
+
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

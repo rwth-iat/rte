@@ -316,8 +316,9 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 		IdentificationType tmpSubModelId;
 		IdentificationType_init(&tmpSubModelId);
 
-		pinst->v_Status = openaas_modelmanager_createLCE(aasId1, lce1);
-		pinst->v_Status |= openaas_modelmanager_createLCE(aasId2, lce2);
+		// TODO: Find LCE createLCE function
+		//pinst->v_Status = openaas_modelmanager_createLCE(aasId1, lce1);
+		//pinst->v_Status |= openaas_modelmanager_createLCE(aasId2, lce2);
 		//pinst->v_Status |= openaas_modelmanager_getPVS(aasId1, tmpSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
 		if ((pvs1.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 			pvs1.value.value.valueunion.val_bool = pinst->v_Plugged;

@@ -79,7 +79,6 @@ LIBRARY openaas
 		PARTS 
 			Header           : CLASS openaas/Header;
 			Body             : CLASS ov/domain;
-			LifeCycleArchive : CLASS lifeCycleEntry/LifeCycleArchive;
 			Views            : CLASS ov/domain;		
 			ComponentManager : CLASS openaas/AASComponentManager;
 		END_PARTS;
@@ -183,22 +182,7 @@ LIBRARY openaas
         PVSStatus                       : UINT;  
         PVSCreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVS";
         PVSDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVS";      
-	    
-	    LCEAASIdString                  : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCEAASIdType                    : UINT HAS_SET_ACCESSOR;
-        LCEId                           : UINT HAS_SET_ACCESSOR;
-	    LCECreatingInstanceIdString     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCECreatingInstanceIdType       : UINT HAS_SET_ACCESSOR;
-        LCEWritingInstanceIdString      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCEWritingInstanceIdType        : UINT HAS_SET_ACCESSOR;
-        LCEEventClass                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCESubject                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCEValue                        : ANY HAS_SET_ACCESSOR;
-        LCETimeStamp                    : TIME HAS_SET_ACCESSOR;
-        LCEStatus                       : UINT;
-        LCECreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a LCE";
-        LCEDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a LCE";
-               
+	                   
 	    Status                          : UINT; 
 	    ListSize                        : UINT;
 	    ListCount                       : UINT;           
@@ -214,11 +198,6 @@ LIBRARY openaas
         deletePVS  : C_FUNCTION <UA_FNC_DELETEPVS>;
         getPVS     : C_FUNCTION <UA_FNC_GETPVS>;
         setPVS     : C_FUNCTION <UA_FNC_SETPVS>;
-        createLCE  : C_FUNCTION <UA_FNC_CREATELCE>;
-        deleteLCE  : C_FUNCTION <UA_FNC_DELETELCE>;
-        getLCE     : C_FUNCTION <UA_FNC_GETLCE>;
-        getLastLCEs: C_FUNCTION <UA_FNC_GETLASTLCES>;
-        setLCE     : C_FUNCTION <UA_FNC_SETLCE>;
         //getCoreData : C_FUNCTION <UA_FNC_GETCOREDATA>;
         //triggerGetCoreData : C_FUNCTION <UA_FNC_TRIGGERGETCOREDATA>;        
         ovresultToAASStatusCode : C_FUNCTION <UA_FNC_OVRESULTTOAASSTATUSCODE>;
