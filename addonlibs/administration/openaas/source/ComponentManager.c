@@ -161,13 +161,15 @@ static void cleanupMessageBox(OV_INSTPTR_openaas_AASComponentManager this) {
 // 1:UnregisterAAS
 // 2:GetAAS
 static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponentManager this, OV_UINT requestType, IdentificationType requestedAASId) {
-	//OV_INSTPTR_openaas_aas paas;
+	OV_INSTPTR_openaas_aas paas;
 	OV_STRING tempString = NULL;
 	OV_RESULT resultOV = OV_ERR_OK;
 	OV_INSTPTR_MessageSys_Message pRequestMessage = NULL;
 	OV_INSTPTR_MessageSys_MsgDelivery pmsgDelivery = NULL;
-	//paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
+	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
+	OV_INSTPTR_ov_object pchild = NULL;
 	// Create MessageObject in Outbox
+	paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
 	ov_string_setvalue(&tempString, NULL);
 	ov_string_setvalue(&tempString, "Request");
 	resultOV = Ov_CreateObject(MessageSys_Message, pRequestMessage, &this->p_OUTBOX, tempString);
@@ -213,10 +215,16 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	switch(requestType){
 	case 0:
 		ov_string_append(&answerBody, "RegisterAASReq:");
-		//ov_string_append(&answerBody, paas->p_Header.p_Config.v_CarrierIdString);
-		ov_string_append(&answerBody, ",");
-		//ov_string_print(&tempString, "%i", paas->p_Header.p_Config.v_CarrierIdType);
-		ov_string_append(&answerBody, tempString);
+		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				ov_string_append(&answerBody, pCarrierId->v_IdSpec);
+				ov_string_append(&answerBody, ",");
+				ov_string_print(&tempString, "%i", pCarrierId->v_IdType);
+				ov_string_append(&answerBody, tempString);
+				break;
+			}
+		}
 		ov_string_setvalue(&tempString, NULL);
 		ov_string_append(&answerBody, ",");
 		ov_string_append(&answerBody, pRequestMessage->v_senderAddress);
@@ -227,10 +235,16 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		break;
 	case 1:
 		ov_string_append(&answerBody, "UnregisterAASReq:");
-		//ov_string_append(&answerBody, paas->p_Header.p_Config.v_CarrierIdString);
-		ov_string_append(&answerBody, ",");
-		//ov_string_print(&tempString, "%i", paas->p_Header.p_Config.v_CarrierIdType);
-		ov_string_append(&answerBody, tempString);
+		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				ov_string_append(&answerBody, pCarrierId->v_IdSpec);
+				ov_string_append(&answerBody, ",");
+				ov_string_print(&tempString, "%i", pCarrierId->v_IdType);
+				ov_string_append(&answerBody, tempString);
+				break;
+			}
+		}
 		ov_string_setvalue(&tempString, NULL);
 		break;
 	case 2:
@@ -303,24 +317,31 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 	OV_STRING *plistReq = NULL;
 	OV_INSTPTR_fb_task pTaskParent = NULL;
 	OV_TIME_SPAN tmpTimeSpan;
-	OV_INSTPTR_ov_object child = NULL;
+	OV_INSTPTR_ov_object pchild = NULL;
+	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
 
 	// First clean message box, so only up-to-date messages are handled.
 	cleanupMessageBox(pinst);
 
 	// StateMaschine
 	switch(pinst->v_state){
-	case 0: //Waiting for AASID
+	case 0: //Waiting for the setting of AASID
 		pinst->v_messageCount = 0;
 		pinst->v_registered = FALSE;
 		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
-		//if (ov_string_compare(paas->p_Header.p_Config.v_CarrierIdString, "") != OV_STRCMP_EQUAL){ // Send Register-Request
-			IdentificationType tmpAASId;
-			sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
-			pinst->v_state = 1;
-		//}else{
-			// Wait for the setting of AASId
-		//}
+		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				if (ov_string_compare(pCarrierId->v_IdSpec, "") != OV_STRCMP_EQUAL){ // Send Register-Request
+					IdentificationType tmpAASId;
+					ov_string_setvalue(&tmpAASId.IdSpec, pCarrierId->v_IdSpec);
+					tmpAASId.IdType = pCarrierId->v_IdType;
+					sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
+					pinst->v_state = 1;
+					break;
+				}
+			}
+		}
 		break;
 	case 1: //Sending Register-Request and wait for answer
 		// Get the next message, if any.
@@ -445,8 +466,14 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
 		IdentificationType aasId;
 		IdentificationType_init(&aasId);
-		//ov_string_setvalue(&aasId.IdSpec, paas->p_Header.p_Config.v_CarrierIdString);
-		//aasId.IdType = paas->p_Header.p_Config.v_CarrierIdType;
+		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				ov_string_setvalue(&aasId.IdSpec, pCarrierId->v_IdSpec);
+				aasId.IdType = pCarrierId->v_IdType;
+				break;
+			}
+		}
 
 		OV_BOOL sendAnswer = FALSE;
 
@@ -1088,17 +1115,17 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			}
 		}
 		// Find Message with GetAAS-Response
-		child = NULL;
-		child = Ov_GetLastChild(ov_containment, &pinst->p_INBOX);
+		pchild = NULL;
+		pchild = Ov_GetLastChild(ov_containment, &pinst->p_INBOX);
 		while (true){
-			while (child && !Ov_CanCastTo(MessageSys_Message , child)) {
-				child = Ov_GetPreviousChild(ov_containment, child);
+			while (pchild && !Ov_CanCastTo(MessageSys_Message , pchild)) {
+				pchild = Ov_GetPreviousChild(ov_containment, pchild);
 			}
-			if (child == NULL){
+			if (pchild == NULL){
 				break;
 			}
 
-			message = Ov_StaticPtrCast(MessageSys_Message, child);
+			message = Ov_StaticPtrCast(MessageSys_Message, pchild);
 
 			if (ov_string_compare(message->v_refMsgID, pinst->v_MsgIdForGetAASIdRequest) == OV_STRCMP_EQUAL){
 				// Decoding the Message
@@ -1127,20 +1154,20 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					if (ov_string_compare(plistParameter[0], "OK") == OV_STRCMP_EQUAL){ // get was successfully
 						// TODO: Check ParameterType
 						if (len2 == 4){
-							child = Ov_GetLastChild(ov_containment, &pinst->p_OUTBOX);
+							pchild = Ov_GetLastChild(ov_containment, &pinst->p_OUTBOX);
 							while (true){
-								while (child && !Ov_CanCastTo(MessageSys_Message , child)) {
-									child = Ov_GetPreviousChild(ov_containment, child);
+								while (pchild && !Ov_CanCastTo(MessageSys_Message , pchild)) {
+									pchild = Ov_GetPreviousChild(ov_containment, pchild);
 								}
-								if (child == NULL){
+								if (pchild == NULL){
 									pinst->v_state = 6;
 									break;
 								}
-								answerMessage = Ov_StaticPtrCast(MessageSys_Message, child);
+								answerMessage = Ov_StaticPtrCast(MessageSys_Message, pchild);
 								if (ov_string_compare(answerMessage->v_msgID, pinst->v_MsgIdForMessageForwarded) == OV_STRCMP_EQUAL){
 									break;
 								}
-								child = Ov_GetPreviousChild(ov_containment, child);
+								pchild = Ov_GetPreviousChild(ov_containment, pchild);
 							}
 							MessageSys_Message_senderAddress_set(answerMessage, plistParameter[1]);
 							MessageSys_Message_senderName_set(answerMessage, plistParameter[2]);
@@ -1175,7 +1202,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				ov_string_freelist(plistReq);
 				break;
 			}
-			child = Ov_GetPreviousChild(ov_containment, child);
+			pchild = Ov_GetPreviousChild(ov_containment, pchild);
 		}
 		break;
 	case 4: // Forward Message Getting the receiver
@@ -1202,17 +1229,17 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			}
 		}
 		// Find Message with GetAAS-Response
-		child = NULL;
-		child = Ov_GetLastChild(ov_containment, &pinst->p_INBOX);
+		pchild = NULL;
+		pchild = Ov_GetLastChild(ov_containment, &pinst->p_INBOX);
 		while (true){
-			while (child && !Ov_CanCastTo(MessageSys_Message , child)) {
-				child = Ov_GetPreviousChild(ov_containment, child);
+			while (pchild && !Ov_CanCastTo(MessageSys_Message , pchild)) {
+				pchild = Ov_GetPreviousChild(ov_containment, pchild);
 			}
-			if (child == NULL){
+			if (pchild == NULL){
 				break;
 			}
 
-			message = Ov_StaticPtrCast(MessageSys_Message, child);
+			message = Ov_StaticPtrCast(MessageSys_Message, pchild);
 
 			if (ov_string_compare(message->v_refMsgID, pinst->v_MsgIdForGetAASIdRequest) == OV_STRCMP_EQUAL){
 				// Decoding the Message
@@ -1241,20 +1268,20 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					if (ov_string_compare(plistParameter[0], "OK") == OV_STRCMP_EQUAL){ // get was successfully
 						// TODO: Check ParameterType
 						if (len2 == 4){
-							child = Ov_GetLastChild(ov_containment, &pinst->p_OUTBOX);
+							pchild = Ov_GetLastChild(ov_containment, &pinst->p_OUTBOX);
 							while (true){
-								while (child && !Ov_CanCastTo(MessageSys_Message , child)) {
-									child = Ov_GetPreviousChild(ov_containment, child);
+								while (pchild && !Ov_CanCastTo(MessageSys_Message , pchild)) {
+									pchild = Ov_GetPreviousChild(ov_containment, pchild);
 								}
-								if (child == NULL){
+								if (pchild == NULL){
 									pinst->v_state = 7;
 									break;
 								}
-								answerMessage = Ov_StaticPtrCast(MessageSys_Message, child);
+								answerMessage = Ov_StaticPtrCast(MessageSys_Message, pchild);
 								if (ov_string_compare(answerMessage->v_msgID, pinst->v_MsgIdForMessageForwarded) == OV_STRCMP_EQUAL){
 									break;
 								}
-								child = Ov_GetPreviousChild(ov_containment, child);
+								pchild = Ov_GetPreviousChild(ov_containment, pchild);
 							}
 							MessageSys_Message_senderAddress_set(answerMessage, plistParameter[1]);
 							MessageSys_Message_senderName_set(answerMessage, plistParameter[2]);
@@ -1306,7 +1333,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				ov_string_freelist(plistReq);
 				break;
 			}
-			child = Ov_GetPreviousChild(ov_containment, child);
+			pchild = Ov_GetPreviousChild(ov_containment, pchild);
 		}
 		break;
 	case 5: //Sending Unregister-Request and wait for answer
