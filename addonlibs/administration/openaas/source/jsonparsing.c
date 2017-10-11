@@ -1419,7 +1419,7 @@ JSON_RC jsonparseSetPVSReq(setPVSReq_t* sPvsReq, const jsmntok_t* t, const SRV_S
 			if(rc)
 				return rc;
 			// check if all necessary sub fields are set
-			if(sPvsReq->pvs.hasName && sPvsReq->pvs.hasUnit && sPvsReq->pvs.hasValTime &&
+			if(sPvsReq->pvs.hasName && sPvsReq->pvs.hasValTime &&
 					sPvsReq->pvs.expressionSemantic!=SRV_ES_undefined &&
 					sPvsReq->pvs.expressionLogic!=SRV_EL_undefined &&
 					sPvsReq->pvs.visibility!=SRV_VIS_undefined &&
