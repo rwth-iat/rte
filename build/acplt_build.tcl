@@ -888,16 +888,16 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/identification
 				addonlibs/administration/lifeCycleEntry
 				addonlibs/administration/propertyValueStatement
-				addonlibs/administration/openaas
 				addonlibs/administration/services
+				addonlibs/administration/openaas				
 				addonlibs/administration/openAASDiscoveryServer
 				addonlibs/administration/subModelLifeCycleEntry
 				addonlibs/administration/subModelAdministration
 				addonlibs/administration/identificationOPCUAInterface
 				addonlibs/administration/lifeCycleEntryOPCUAInterface
 				addonlibs/administration/propertyValueStatementOPCUAInterface
-				addonlibs/administration/openaasOPCUAInterface
 				addonlibs/administration/servicesOPCUAInterface
+				addonlibs/administration/openaasOPCUAInterface				
 				addonlibs/administration/subModelLifeCycleEntryOPCUAInterface
 				addonlibs/administration/subModelAdministrationOPCUAInterface}
 				
