@@ -371,7 +371,7 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			return NULL;
 		}
 		if (Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pobj)){
-			if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+			if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleEntriesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
 				ov_string_freelist(plist);
 				ov_string_setvalue(&tmpString, NULL);
 				return (UA_Node*) opcuaNode;

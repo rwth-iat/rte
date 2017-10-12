@@ -16,8 +16,8 @@ LIBRARY services
 		VARIABLES
 			IdString       : STRING INITIALVALUE    =   "";
             IdType         : UINT; 
-            Version        : INT COMMENT = "Version of the service";
-            Revision       : INT COMMENT ="Revision number of the service";
+            Version        : UINT COMMENT = "Version of the service";
+            Revision       : UINT COMMENT ="Revision number of the service";
             WSDL           : STRING COMMENT ="WSDL Description of the service" INITIALVALUE = "";
             execute        : BOOL HAS_SET_ACCESSOR COMMENT = "Execute service";
 		END_VARIABLES;
@@ -42,6 +42,7 @@ LIBRARY services
             Input10[]  : SINGLE FLAGS="i";
             Input11[]  : DOUBLE FLAGS="i";
             Input12[]  : STRING FLAGS="i";
+            Input13    : ANY FLAGS="i";
             Output1    : BOOL   FLAGS="o";
             Output2    : INT    FLAGS="o";
             Output3    : UINT   FLAGS="o";
@@ -54,6 +55,7 @@ LIBRARY services
             Output10[] : SINGLE FLAGS="o";
             Output11[] : DOUBLE FLAGS="o";
             Output12[] : STRING FLAGS="o";
+            Output13   : ANY FLAGS="o";
         END_VARIABLES;
         OPERATIONS
             CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;

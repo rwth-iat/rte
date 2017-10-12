@@ -10,6 +10,7 @@
 */
 
 typedef UA_StatusCode SERVICES_FNC_OVSERVICENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode SERVICES_FNC_OVSERVICEVARIABLESNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode SERVICES_FNC_OVSERVICEINPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode SERVICES_FNC_OVSERVICEOUTPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 	

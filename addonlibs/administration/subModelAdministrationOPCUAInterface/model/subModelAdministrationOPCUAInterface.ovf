@@ -1,0 +1,15 @@
+#ifndef subModelAdministrationOPCUAInterface_OVF_INCLUDED
+#define subModelAdministrationOPCUAInterface_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+typedef UA_NodestoreInterface* SERVICES_FNC_OVNODESTOREINTERFACESUBMODELADMINISTRATIONNEW(void);
+typedef void SERVICES_FNC_OVNODESTOREINTERFACESUBMODELADMINISTRATIONDELETE(UA_NodestoreInterface * nsi);
+
+               
+#endif                    

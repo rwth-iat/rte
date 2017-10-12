@@ -1,0 +1,57 @@
+#include "ov.ovm"
+#include "openaas.ovm"
+#include "services.ovm" 
+
+LIBRARY subModelAdministration
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of SubModelAdministration.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/	
+	
+	CLASS CreateSubModelService : CLASS services/Service
+		IS_INSTANTIABLE;
+        VARIABLES  
+            SMParentIdString  : STRING FLAGS="i" INITIALVALUE    =   "";
+            SMParentIdType    : UINT   FLAGS="i";
+            SMModelIdString   : STRING FLAGS="i" INITIALVALUE    =   "";
+            SMModelIdType     : UINT   FLAGS="i";
+            SMName            : STRING FLAGS="i" INITIALVALUE    =   "" ;
+            SMRevision        : UINT   FLAGS="i";
+            SMVersion         : UINT   FLAGS="i";
+            SMStatus          : UINT   FLAGS="o";   
+        END_VARIABLES;
+        OPERATIONS
+        	CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+	END_CLASS;
+	
+	
+	
+	CLASS SubModelAdministration : CLASS openaas/SubModel
+		IS_INSTANTIABLE;
+		VARIABLES  
+		      			
+		END_VARIABLES;
+		PARTS
+			createSubModel : CLASS subModelAdministration/CreateSubModelService; 
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

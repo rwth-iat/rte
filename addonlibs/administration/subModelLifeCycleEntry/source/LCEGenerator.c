@@ -16,101 +16,100 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_openaas
-#define OV_COMPILE_LIBRARY_openaas
+#ifndef OV_COMPILE_LIBRARY_subModelLifeCycleEntry
+#define OV_COMPILE_LIBRARY_subModelLifeCycleEntry
 #endif
 
 
-#include "openaas.h"
+#include "subModelLifeCycleEntry.h"
 #include "libov/ov_macros.h"
-#include "openaas_helpers.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_AASIdString_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_AASIdString_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_AASIdString,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_AASIdType_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_AASIdType_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_UINT  value
 ) {
     pobj->v_AASIdType = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCECreatingInstanceIdString_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCECreatingInstanceIdString_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCECreatingInstanceIdString,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCECreatingInstanceIdType_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCECreatingInstanceIdType_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_UINT  value
 ) {
     pobj->v_LCECreatingInstanceIdType = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCEWritingInstanceIdString_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCEWritingInstanceIdString_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCEWritingInstanceIdString,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCEWritingInstanceIdType_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCEWritingInstanceIdType_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_UINT  value
 ) {
     pobj->v_LCEWritingInstanceIdType = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCEEventClass_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCEEventClass_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCEEventClass,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCESubject_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCESubject_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCESubject,value);
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCETimeStamp_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCETimeStamp_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_TIME*  value
 ) {
     pobj->v_LCETimeStamp = *value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCETimeStampExtern_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCETimeStampExtern_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_BOOL  value
 ) {
     pobj->v_LCETimeStampExtern = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_LCEValue_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCEValue_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_ANY*  value
 ) {
     return ov_variable_setanyvalue(&pobj->v_LCEValue, value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_StartLCEGenerator_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_StartLCEGenerator_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_BOOL  value
 ) {
     pobj->v_StartLCEGenerator = value;
@@ -119,8 +118,8 @@ OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_StartLCEGenerator_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_StopLCEGenerator_set(
-    OV_INSTPTR_openaas_LCEGenerator          pobj,
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_StopLCEGenerator_set(
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_BOOL  value
 ) {
     pobj->v_StopLCEGenerator = value;
@@ -129,7 +128,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_StopLCEGenerator_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS openaas_LCEGenerator_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS subModelLifeCycleEntry_LCEGenerator_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -141,14 +140,14 @@ OV_DLLFNCEXPORT OV_ACCESS openaas_LCEGenerator_getaccess(
     return (OV_ACCESS)(OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE);
 }
 
-OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
+OV_DLLFNCEXPORT void subModelLifeCycleEntry_LCEGenerator_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_openaas_LCEGenerator pinst = Ov_StaticPtrCast(openaas_LCEGenerator, pfb);
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator pinst = Ov_StaticPtrCast(subModelLifeCycleEntry_LCEGenerator, pfb);
 
 
 	switch(pinst->v_State){
@@ -200,13 +199,13 @@ OV_DLLFNCEXPORT void openaas_LCEGenerator_typemethod(
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT openaas_LCEGenerator_constructor(
+OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_openaas_LCEGenerator pinst = Ov_StaticPtrCast(openaas_LCEGenerator, pobj);
+    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator pinst = Ov_StaticPtrCast(subModelLifeCycleEntry_LCEGenerator, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */

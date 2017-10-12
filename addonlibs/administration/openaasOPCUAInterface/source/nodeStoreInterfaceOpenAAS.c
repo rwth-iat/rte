@@ -24,6 +24,7 @@
 #include "ua_propertyValueStatement_generated.h"
 #include "ua_propertyValueStatement_generated_handling.h"
 #include "openaas_helpers.h"
+#include "servicesOPCUAInterface.h"
 
 
 OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackModelmanager(void *methodHandle, const UA_NodeId *objectId,
@@ -660,17 +661,19 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
-	}
 
-	if(Ov_CanCastTo(openaas_aas, pobj)){
-		if (openaasOPCUAInterface_interface_ovAASNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(openaas_SubModel, pobj)){
-		if (openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (Ov_CanCastTo(openaas_modelmanager, pobj)){
-		if (openaasOPCUAInterface_interface_ovModelManagerNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
+		if(Ov_CanCastTo(openaas_aas, pobj)){
+			if (openaasOPCUAInterface_interface_ovAASNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if(Ov_CanCastTo(openaas_SubModel, pobj)){
+			if (openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (Ov_CanCastTo(openaas_modelmanager, pobj)){
+			if (openaasOPCUAInterface_interface_ovModelManagerNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else {
+
+		}
 	}
 
 	ov_string_freelist(plist);

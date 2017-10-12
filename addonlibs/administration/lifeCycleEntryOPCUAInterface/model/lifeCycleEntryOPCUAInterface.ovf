@@ -10,7 +10,7 @@
 */
 
 typedef UA_StatusCode LCE_FNC_OVLIFECYCLEARCHIVENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode LCE_FNC_OVLIFECYCLEARCHIVEFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode LCE_FNC_OVLIFECYCLEENTRIESNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode LCE_FNC_OVLIFECYCLEARCHIVEMETHODNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode LCE_FNC_OVLIFECYCLEENTRYNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 

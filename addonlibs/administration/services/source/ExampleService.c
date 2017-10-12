@@ -118,6 +118,10 @@ OV_DLLFNCEXPORT OV_RESULT services_ExampleService_CallMethod(
 	(*(OV_STRING_VEC*)packedOutputArgList[11]).veclen = (*(OV_STRING_VEC*)packedInputArgList[11]).veclen;
 	typeArray[11] = OV_VT_STRING_VEC;
 
+
+	packedOutputArgList[12] = ov_database_malloc(sizeof(OV_ANY));
+	Ov_SetAnyValue((OV_ANY*)packedOutputArgList[12], (OV_ANY*)packedInputArgList[12]);
+	typeArray[12] = OV_VT_ANY;
     return OV_ERR_OK;
 }
 

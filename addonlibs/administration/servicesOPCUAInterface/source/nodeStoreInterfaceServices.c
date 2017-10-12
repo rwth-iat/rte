@@ -42,9 +42,18 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 				case UA_TYPES_UINT32:
 				case UA_TYPES_FLOAT:
 				case UA_TYPES_DOUBLE:
+				case UA_TYPES_VARIANT:
+					if (input[i].data == NULL || input[i].data == 0x1){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					inputs[i] = input[i].data;
 					break;
 				case UA_TYPES_STRING:
+					if (input[i].data == NULL || input[i].data == 0x1){
+						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+						goto cleanup;
+					}
 					if ((*((UA_String*)(input[i].data))).length == 0){
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
@@ -159,6 +168,11 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 			if (outputs[i])
 				ov_database_free(outputs[i]);
 			break;
+		case OV_VT_ANY:
+			UA_Variant_setScalarCopy(&output[i], outputs[i], &UA_TYPES[UA_TYPES_VARIANT]);
+			if (outputs[i])
+				ov_database_free(outputs[i]);
+			break;
 		case OV_VT_STRING:
 			tmpString = UA_String_fromChars(*(OV_STRING*)outputs[i]);
 			UA_Variant_setScalarCopy(&output[i], &tmpString, &UA_TYPES[UA_TYPES_STRING]);
@@ -236,6 +250,10 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 					case UA_TYPES_UINT32:
 					case UA_TYPES_FLOAT:
 					case UA_TYPES_DOUBLE:
+						inputs[i] = NULL;
+						break;
+					case UA_TYPES_VARIANT:
+						Ov_SetAnyValue((OV_ANY*)inputs[i], NULL);
 						inputs[i] = NULL;
 						break;
 					case UA_TYPES_STRING:
@@ -337,13 +355,30 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	UA_Node * tmpNode = NULL;
 	UA_Node* opcuaNode = NULL;
 	OV_STRING *plist = NULL;
+	OV_STRING *plist2 = NULL;
+	OV_STRING *plist3 = NULL;
 	OV_STRING tmpString = NULL;
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_UINT len = 0;
+	OV_UINT len2 = 0;
+	OV_UINT len3 = 0;
 	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
 		return NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
+	plist2 = ov_string_split(tmpString, "/", &len2);
+	plist3 = ov_string_split(plist2[len2-1], ".", &len3);
+
+	if (len3 > 1){
+		if (ov_string_compare(plist3[len3-1], "IdString") == OV_STRCMP_EQUAL ||
+			ov_string_compare(plist3[len3-1], "IdType") == OV_STRCMP_EQUAL ||
+			ov_string_compare(plist3[len3-1], "Revision") == OV_STRCMP_EQUAL ||
+			ov_string_compare(plist3[len3-1], "Version") == OV_STRCMP_EQUAL ||
+			ov_string_compare(plist3[len3-1], "WSDL") == OV_STRCMP_EQUAL){
+			if (servicesOPCUAInterface_interface_ovServiceVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}
+	}
 
 	if (len > 1){
 		pobj = ov_path_getobjectpointer(plist[0], 2);

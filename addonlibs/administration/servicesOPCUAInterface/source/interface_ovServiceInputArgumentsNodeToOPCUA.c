@@ -199,6 +199,10 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceInputArg
 					((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_DOUBLE].typeId;
 					((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;
 					break;
+				case OV_VT_ANY:
+					((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_VARIANT].typeId;
+					((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = 1;
+					break;
 				case OV_VT_STRING:
 					((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].dataType = UA_TYPES[UA_TYPES_STRING].typeId;
 					((UA_Argument*)((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data)[count].valueRank = -1;

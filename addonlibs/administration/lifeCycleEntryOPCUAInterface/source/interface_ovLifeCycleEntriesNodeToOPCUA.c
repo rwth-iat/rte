@@ -34,7 +34,7 @@ extern OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface pinterface;
 
 
 
-OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveFolderNodeToOPCUA(
+OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycleEntriesNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -139,8 +139,13 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 
 
 	addReference(&tmpNode);
+	UA_NodeId_deleteMembers(&tmpNodeId);
+	tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	OV_UINT inverseCount = 0;
 	for (size_t i = 0; i < tmpNode.referencesSize; i++){
+		if (UA_NodeId_equal(&tmpNode.references[i].referenceTypeId, &tmpNodeId)){
+			tmpNode.references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE);
+		}
 		if (tmpNode.references[i].isInverse == TRUE){
 			inverseCount = inverseCount + 1;
 		}

@@ -110,13 +110,37 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	// References
 	addReference(newNode);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
+	OV_STRING tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".IdString");
+	UA_String IdString = UA_String_fromChars(tmpString);
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".IdType");
+	UA_String IdType = UA_String_fromChars(tmpString);
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".Revision");
+	UA_String Revision = UA_String_fromChars(tmpString);
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".Version");
+	UA_String Version = UA_String_fromChars(tmpString);
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".WSDL");
+	UA_String WSDL = UA_String_fromChars(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_METHODNODE);
-			break;
+		}
+		if (UA_String_equal(&IdString, &newNode->references[i].targetId.nodeId.identifier.string) ||
+			UA_String_equal(&IdType, &newNode->references[i].targetId.nodeId.identifier.string) ||
+			UA_String_equal(&Revision, &newNode->references[i].targetId.nodeId.identifier.string) ||
+			UA_String_equal(&Version, &newNode->references[i].targetId.nodeId.identifier.string) ||
+			UA_String_equal(&WSDL, &newNode->references[i].targetId.nodeId.identifier.string)){
+			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;
 		}
 	}
+
 	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	newNode->referencesSize = newNode->referencesSize+2; //For Input-&Outputarguments
@@ -126,7 +150,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	// InputArguments
 	newNode->references[newNode->referencesSize-3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 	newNode->references[newNode->referencesSize-3].isInverse = UA_FALSE;
-	OV_STRING tmpString = NULL;
+    tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, "||");
 	ov_string_append(&tmpString, "InputArguments");

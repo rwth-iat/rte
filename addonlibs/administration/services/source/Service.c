@@ -99,6 +99,14 @@ OV_DLLFNCEXPORT OV_RESULT services_Service_execute_set(
 							return OV_ERR_BADPARAM;
 						}
 						break;
+					case OV_VT_ANY:
+						if (((OV_ANY*)tmpPart.pvalue)->value.vartype == OV_VT_STRING){
+							if (ov_string_compare(((OV_ANY*)tmpPart.pvalue)->value.valueunion.val_string, "") == OV_STRCMP_EQUAL){
+								free(inputs);
+								return OV_ERR_BADPARAM;
+							}
+						}
+						break;
 					case OV_VT_BOOL_VEC:
 					case OV_VT_INT_VEC:
 					case OV_VT_UINT_VEC:
@@ -184,6 +192,11 @@ OV_DLLFNCEXPORT OV_RESULT services_Service_execute_set(
 						if (outputs[countOutputs])
 							ov_database_free(outputs[countOutputs]);
 
+						break;
+					case OV_VT_ANY:
+						ov_variable_setanyvalue(&tmpAny, (OV_ANY*)(outputs[countOutputs]));
+						if (outputs[countOutputs])
+							ov_database_free(outputs[countOutputs]);
 						break;
 					case OV_VT_BOOL_VEC:
 						tmpAny.value.valueunion.val_bool_vec.value = NULL;
@@ -283,6 +296,10 @@ OV_DLLFNCEXPORT OV_RESULT services_Service_execute_set(
 						break;
 					case OV_VT_STRING:
 						ov_string_setvalue(&tmpAny.value.valueunion.val_string, NULL);
+						break;
+					case OV_VT_ANY:
+						if (tmpAny.value.vartype == OV_VT_STRING)
+							ov_string_setvalue(&tmpAny.value.valueunion.val_string, NULL);
 						break;
 					case OV_VT_BOOL_VEC:
 						Ov_SetDynamicVectorLength(&tmpAny.value.valueunion.val_bool_vec, 0 , BOOL);

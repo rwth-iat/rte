@@ -5,7 +5,7 @@
 #include "identificationOPCUAInterface.ovm"
 #include "propertyValueStatementOPCUAInterface.ovm"
 #include "lifeCycleEntryOPCUAInterface.ovm"
-#include "services.ovm"
+#include "servicesOPCUAInterface.ovm"
 
 LIBRARY openaasOPCUAInterface
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -24,9 +24,6 @@ LIBRARY openaasOPCUAInterface
 		VARIABLES
 			modelnamespace : C_TYPE <UA_Namespace>;
             interfacenamespace : C_TYPE <UA_Namespace>;
-            modelnamespaceIndexIdentification : UINT;
-            modelnamespaceIndexlifeCycleEntry : UINT;
-            modelnamespaceIndexPropertyValueStatement : UINT;
 		END_VARIABLES;
 		OPERATIONS
 			ovModelManagerNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERNODETOOPCUA>;

@@ -334,9 +334,11 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
 				if (ov_string_compare(pCarrierId->v_IdSpec, "") != OV_STRCMP_EQUAL){ // Send Register-Request
 					IdentificationType tmpAASId;
+					IdentificationType_init(&tmpAASId);
 					ov_string_setvalue(&tmpAASId.IdSpec, pCarrierId->v_IdSpec);
 					tmpAASId.IdType = pCarrierId->v_IdType;
 					sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
+					IdentificationType_deleteMembers(&tmpAASId);
 					pinst->v_state = 1;
 					break;
 				}
@@ -357,7 +359,9 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		if (tmpTimeSpan.secs > pinst->v_messageTimeOut.secs || (tmpTimeSpan.secs == pinst->v_messageTimeOut.secs && tmpTimeSpan.usecs > pinst->v_messageTimeOut.usecs)){
 			pinst->v_messageCount = 0;
 			IdentificationType tmpAASId;
+			IdentificationType_init(&tmpAASId);
 			sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
+			IdentificationType_deleteMembers(&tmpAASId);
 		}
 		message = getNextMessage(pinst);
 		if (message == NULL) {

@@ -16,16 +16,15 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_openaas
-#define OV_COMPILE_LIBRARY_openaas
+#ifndef OV_COMPILE_LIBRARY_subModelLifeCycleEntry
+#define OV_COMPILE_LIBRARY_subModelLifeCycleEntry
 #endif
 
 
-#include "openaas.h"
 #include "libov/ov_macros.h"
+#include "subModelLifeCycleEntry.h"
 
-
-OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
+OV_DLLFNCEXPORT void subModelLifeCycleEntry_HMIHelperLCEData_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
@@ -33,10 +32,11 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
     *   local variables
     */
 	OV_RESULT result = 0;
-    OV_INSTPTR_openaas_HMIHelperLCEData pinst = Ov_StaticPtrCast(openaas_HMIHelperLCEData, pfb);
+    OV_INSTPTR_subModelLifeCycleEntry_HMIHelperLCEData pinst = Ov_StaticPtrCast(subModelLifeCycleEntry_HMIHelperLCEData, pfb);
     OV_INSTPTR_ov_object pobj = NULL;
 	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry pchild = NULL;
 	OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pArchive = NULL;
+	OV_INSTPTR_subModelLifeCycleEntry_SubModelLifeCycleEntry pSubModel = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 
 	pinst->v_OutputType = 0;
@@ -97,9 +97,15 @@ OV_DLLFNCEXPORT void openaas_HMIHelperLCEData_typemethod(
 	OV_TIME xValue;
 	OV_STRING tmpString = NULL;
 	// Search for LCE Archiv
-	//TODO:
+	Ov_ForEachChildEx(ov_containment, &paas->p_Body, pSubModel, subModelLifeCycleEntry_SubModelLifeCycleEntry){
+		pArchive = Ov_DynamicPtrCast(lifeCycleEntry_LifeCycleArchive, &pSubModel->p_LifeCycleArchiv);
+	}
 
-
+	if (!pArchive){
+		pinst->v_Error = TRUE;
+		ov_string_setvalue(&pinst->v_ErrorText, "Could not find the LCE Archive in the AAS");
+		return;
+	}
 
 
 	Ov_ForEachChildEx(ov_containment, pArchive, pchild, lifeCycleEntry_LifeCycleEntry){

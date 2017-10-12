@@ -39,6 +39,7 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
     OV_INSTPTR_identificationOPCUAInterface_interface pidentificationOPCUAInterface = NULL;
     OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface plifeCycleEntryOPCUAInterface = NULL;
     OV_INSTPTR_propertyValueStatementOPCUAInterface_interface ppropertyValueStatementOPCUAInterface = NULL;
+    OV_INSTPTR_servicesOPCUAInterface_interface pservicesOPCUAInterface = NULL;
     OV_INSTPTR_ov_domain pcommunication = NULL;
 	OV_INSTPTR_ov_domain pDomOPCUA = NULL;
 
@@ -112,10 +113,17 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
 			return result;
 		}
 	}
-
-	pinst->v_modelnamespaceIndexIdentification = pidentificationOPCUAInterface->v_modelnamespace.index;
-	pinst->v_modelnamespaceIndexPropertyValueStatement = ppropertyValueStatementOPCUAInterface->v_modelnamespace.index;
-	pinst->v_modelnamespaceIndexlifeCycleEntry = plifeCycleEntryOPCUAInterface->v_modelnamespace.index;
+	// create servicesOPCUAInterface
+	Ov_ForEachChildEx(ov_instantiation, pclass_servicesOPCUAInterface_interface, pservicesOPCUAInterface, servicesOPCUAInterface_interface){
+		break;
+	}
+	if(!pservicesOPCUAInterface){
+		result = Ov_CreateObject(servicesOPCUAInterface_interface, pservicesOPCUAInterface, pDomOPCUA, "ServicesOPCUAInterface");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create SerivesOPCUAInterface");
+			return result;
+		}
+	}
 
 	pinterface = pinst;
 
