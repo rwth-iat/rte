@@ -480,3 +480,4 @@ void getCoreDataReq_t_delete(getCoreDataReq_t* this);
 void getCoreDataRsp_t_delete(getCoreDataRsp_t* this);
 
 #endif /* SERVICESTRUCTS_H_ */
+
