@@ -26,6 +26,7 @@ typedef struct {
 	char* data;
 } SRV_String;
 
+
 typedef enum {
 	SRV_JSON,
 	SRV_OPCB,
@@ -134,12 +135,17 @@ typedef struct {
 	SRV_viewEnum_t view;
 	SRV_visibilityEnum_t visibility;
 	SRV_ident_t ID;
+	SRV_ident_t objectID;
+	//SRV_ident_t carrierID;
 	SRV_DateTime valTime;
 	SRV_valType_t valType;
+
+	int mask;
 	void* value;
 	bool hasName;
 	bool hasUnit;
 	bool hasValTime;
+	bool hasObjectId;
 } PVS_t;
 
 typedef struct {
@@ -276,7 +282,8 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	SRV_ident_t subModelId;
+	//SRV_ident_t subModelId;
+	SRV_ident_t pvsId;
 	SRV_String pvslName;
 	//SRV_String pvsName;
 	PVS_t pvs;

@@ -737,16 +737,18 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			case SRV_setPVSReq:{
 				setPVSReq_t *setPVSReq = (setPVSReq_t*)srvStructReceive;
 
-				IdentificationType tmpOVSubModelId;
-				IdentificationType_init(&tmpOVSubModelId);
-				ov_string_setvalue(&tmpOVSubModelId.IdSpec, setPVSReq->subModelId.idSpec.data);
-				tmpOVSubModelId.IdType = setPVSReq->subModelId.idType;
+				//IdentificationType tmpOVSubModelId;
+				//IdentificationType_init(&tmpOVSubModelId);
+				//ov_string_setvalue(&tmpOVSubModelId.IdSpec, setPVSReq->subModelId.idSpec.data);
+				//tmpOVSubModelId.IdType = setPVSReq->subModelId.idType;
 
 				OV_STRING tmpOVPVSLName = NULL;
 				ov_string_setvalue(&tmpOVPVSLName, setPVSReq->pvslName.data);
 
+
 				PropertyValueStatement pvs;
 				PropertyValueStatement_init(&pvs);
+
 
 				ov_string_setvalue(&pvs.pvsName, setPVSReq->pvs.name.data);
 
@@ -759,12 +761,36 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				ov_string_setvalue(&pvs.unit, setPVSReq->pvs.unit.data);
 
 				ov_string_setvalue(&pvs.ID.IdSpec, setPVSReq->pvs.ID.idSpec.data);
+
 				pvs.ID.IdType = setPVSReq->pvs.ID.idType;
 
 				pvs.view = setPVSReq->pvs.view;
 
 				pvs.Visibility = setPVSReq->pvs.visibility;
 
+				IdentificationType carrierId;
+				IdentificationType_init(&carrierId);
+				int len = 0;
+				ov_string_setvalue(&pvs.objectID.IdSpec, setPVSReq->pvs.objectID.idSpec.data);
+				//remove "http://acplt.org"-prefix from id, to use the string as path
+				OV_STRING *idStr = ov_string_split(pvs.objectID.IdSpec,"http://acplt.org",&len);
+				if(!idStr || len<2 || !idStr[1])
+					goto clean_SRV_setPVSReq;
+
+				ov_string_setvalue(&pvs.objectID.IdSpec,idStr[1]);
+
+
+				pvs.objectID.IdType = setPVSReq->pvs.objectID.idType;
+				openaas_modelmanager_setPVS(aasId,
+						pvs.objectID,
+						setPVSReq->pvs.mask,
+						pvs.pvsName,
+						carrierId,
+						setPVSReq->pvs.expressionLogic,setPVSReq->pvs.expressionSemantic,
+						pvs.ID,
+						setPVSReq->pvs.view,
+						setPVSReq->pvs.visibility,pvs.value);
+				//openaas_modelmanager_setPVS(aasId,pvs.pvsName)
 				//result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
 
 				setPVSRsp_t setPVSRsp;
@@ -776,10 +802,10 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				srvTypeSend = SRV_setPVSRsp;
 
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
-				setPVSRsp_t_deleteMembers(&setPVSRsp);
-				ov_database_free(tmpOVPVSLName);
-				PropertyValueStatement_deleteMembers(&pvs);
+				//setPVSRsp_t_deleteMembers(&setPVSRsp);
+				clean_SRV_setPVSReq:
+					ov_database_free(tmpOVPVSLName);
+					PropertyValueStatement_deleteMembers(&pvs);
 				sendAnswer = TRUE;
 			}break;
 			case SRV_setPVSRsp:{
