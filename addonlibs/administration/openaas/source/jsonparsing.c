@@ -28,7 +28,7 @@ const SRV_String JSON_EL_STR [JSON_EL_MAX+1] = {
 		{.data = ""  , .length = 0}
 };
 const SRV_String JSON_ES_STR [JSON_ES_MAX+1] = {
-		{.data = "Confirmation",	.length = 12},
+		{.data = "Assurance",	.length = 9},
 		{.data = "Setting",			.length =  7},
 		{.data = "Measurement", 	.length = 11},
 		{.data = "Requirement", 	.length = 11},
@@ -602,14 +602,28 @@ JSON_RC jsonparsePVS(const jsmntok_t* t, const SRV_String* str, int start, int n
 
 	int j = start+1;
 
+
 	while(j < n && t[j].start<=t[start].end){
-		if(jsoneq(str->data, &t[j], "Name")==0){
+		if(jsoneq(str->data, &t[j], "ObjectID")==0){
+			j++;
+			rc = jsonparseId(t, str, j, n, &pvs->objectID, &j);
+			if(rc)
+				return rc;
+			pvs->hasObjectId = true;
+	    } else if(jsoneq(str->data, &t[j], "ID")==0){
+			j++;
+			rc = jsonparseId(t, str, j, n, &pvs->ID, &j);
+			if(rc)
+		        return rc;
+		}
+		if(jsoneq(str->data, &t[j], "PVSName")==0){
 			j++;
 			rc = tok2SrvStr(str->data, &t[j], &pvs->name);
 			if(rc)
 				return rc;
 			pvs->hasName = true;
-		} else if(jsoneq(str->data, &t[j], "ExpressionSemantic")==0){
+		}
+		else if(jsoneq(str->data, &t[j], "ExpressionSemantic")==0){
 			j++;
 			SRV_String tmpStr;
 			rc = tok2SrvStr(str->data, &t[j], &tmpStr);
@@ -653,13 +667,7 @@ JSON_RC jsonparsePVS(const jsmntok_t* t, const SRV_String* str, int start, int n
 			SRV_String_deleteMembers(&tmpStr);
 			if(pvs->view==SRV_VIEW_undefined)
 				return JSON_RC_WRONG_VALUE;
-		} else if(jsoneq(str->data, &t[j], "Unit")==0){
-			j++;
-			rc = tok2SrvStr(str->data, &t[j], &pvs->unit);
-			if(rc)
-				return rc;
-			pvs->hasUnit = true;
-		} else if(jsoneq(str->data, &t[j], "ID")==0){
+		} else if(jsoneq(str->data, &t[j], "propertyID")==0){
 			j++;
 			rc = jsonparseId(t, str, j, n, &pvs->ID, &j);
 			if(rc)
@@ -1407,37 +1415,58 @@ JSON_RC jsonparseSetPVSReq(setPVSReq_t* sPvsReq, const jsmntok_t* t, const SRV_S
 	int fields = 0;
 
 	while(i < n && t[i].end<=t[start].end){
-		if(jsoneq(js->data, &t[i], "PVSLName")==0){
+		/*if(jsoneq(js->data, &t[i], "PVSID")==0){
 			i++;
-			rc = tok2SrvStr(js->data, &t[i], &sPvsReq->pvslName);
+			rc = jsonparseId(t,js,i,n,&sPvsReq->pvs.objectID,&i);
+			//rc = tok2SrvStr(js->data, &t[i], &sPvsReq->pvslName);
 			if(rc)
 				return rc;
 			fields |= 1;
-		} else if(jsoneq(js->data, &t[i], "PVS")==0){
+		} else*/
+		if(jsoneq(js->data, &t[i], "PVS")==0){
 			i++;
 			rc = jsonparsePVS(t, js, i, n, &sPvsReq->pvs, &i);
 			if(rc)
 				return rc;
 			// check if all necessary sub fields are set
-			if(sPvsReq->pvs.hasName && sPvsReq->pvs.hasValTime &&
-					sPvsReq->pvs.expressionSemantic!=SRV_ES_undefined &&
-					sPvsReq->pvs.expressionLogic!=SRV_EL_undefined &&
-					sPvsReq->pvs.visibility!=SRV_VIS_undefined &&
-					sPvsReq->pvs.ID.idType!=SRV_IDT_undefined &&
-					sPvsReq->pvs.valType!=SRV_VT_undefined &&
-					sPvsReq->pvs.view!=SRV_VIEW_undefined)
+			if(sPvsReq->pvs.objectID.idType!=SRV_IDT_undefined){
 				fields |= 2;
-		} else if(jsoneq(js->data, &t[i], "SubModelId")==0){
+				sPvsReq->pvs.mask = 0;
+				if(sPvsReq->pvs.hasName){
+					sPvsReq->pvs.mask |= 0x01;
+				}
+				if(sPvsReq->pvs.expressionLogic!=SRV_EL_undefined ){
+					sPvsReq->pvs.mask |= 0x04;
+				}
+				if(sPvsReq->pvs.expressionSemantic!=SRV_ES_undefined){
+					sPvsReq->pvs.mask |= 0x08;
+				}
+				if(sPvsReq->pvs.ID.idType!=SRV_IDT_undefined){
+					sPvsReq->pvs.mask |=0x10;
+				}
+				if(sPvsReq->pvs.view!=SRV_VIEW_undefined){
+					sPvsReq->pvs.mask |= 0x20;
+				}
+				if(sPvsReq->pvs.visibility!=SRV_VIS_undefined){
+					sPvsReq->pvs.mask |=0x40;
+			    }
+				if(sPvsReq->pvs.hasValTime && sPvsReq->pvs.valType!=SRV_VT_undefined)
+				{
+					sPvsReq->pvs.mask |= 0x80;
+				}
+			}
+		}/* else if(jsoneq(js->data, &t[i], "SubModelId")==0){
 			i++;
 			rc = jsonparseId(t, js, i, n, &sPvsReq->subModelId, &i);
 			if(rc)
 				return rc;
 			fields |= 4;
 		}
+		*/
 		i++;
 	}
 
-	if(fields!=7)
+	if(fields!=2)
 		return JSON_RC_MISSING_FIELD;
 
 	return JSON_RC_OK;
@@ -2219,13 +2248,13 @@ JSON_RC jsonGenSetPVSReq(SRV_String* json, int* length, const setPVSReq_t* sPvsR
 	pos = json_append(json, pos, "\"serviceName\":\"setPVSReq\",\"serviceParameter\":{",-1 ,*length);
 
 	// add serviceParameter
-	pos = json_appendKey(json, pos, "SubModelId", 10, *length, &first);
-	rc = jsonGenId(json, length, &pos, &sPvsReq->subModelId);
-	if(rc)
-		return rc;
+	//pos = json_appendKey(json, pos, "SubModelId", 10, *length, &first);
+	//rc = jsonGenId(json, length, &pos, &sPvsReq->subModelId);
+	//if(rc)
+	//	return rc;
 
-	pos = json_appendKey(json, pos, "PVSLName", 8, *length, &first);
-	pos = json_appendSrvStr(json, pos, &sPvsReq->pvslName, *length);
+	//pos = json_appendKey(json, pos, "PVSLName", 8, *length, &first);
+	//pos = json_appendSrvStr(json, pos, &sPvsReq->pvslName, *length);
 
 	pos = json_appendKey(json, pos, "PVS", 3, *length, &first);
 	rc = jsonGenPVS(json, length, &pos, &sPvsReq->pvs);
