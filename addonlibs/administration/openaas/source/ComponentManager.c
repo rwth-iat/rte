@@ -774,6 +774,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 				ov_string_setvalue(&pvs.objectID.IdSpec,idStr[1]);
 
+				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				pvs.objectID.IdType = setPVSReq->pvs.objectID.idType;
 				openaas_modelmanager_setPVS(aasId,
@@ -801,7 +802,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				clean_SRV_setPVSReq:
 					ov_database_free(tmpOVPVSLName);
 					PropertyValueStatement_deleteMembers(&pvs);
-				sendAnswer = TRUE;
+				sendAnswer = FALSE;
 			}break;
 			case SRV_setPVSRsp:{
 				// TODO: Check the answer
