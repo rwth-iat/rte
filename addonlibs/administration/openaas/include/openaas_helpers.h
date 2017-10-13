@@ -18,4 +18,5 @@ OV_RESULT encodeMSG(SRV_String** str, const SRV_msgHeader *header, const void* s
 OV_RESULT serviceValueToOVDataValue(OV_ANY* value, SRV_valType_t valueType, void* serviceValue, SRV_DateTime dateTime);
 OV_RESULT OVDataValueToserviceValue(OV_ANY value, SRV_valType_t* valueType, void** serviceValue, SRV_DateTime* dateTime);
 AASStatusCode checkForEmbeddingAAS(IdentificationType aasId, IdentificationType objectId);
+OV_BOOL getAASIdbyObjectPointer(OV_INSTPTR_openaas_aas pAAS, IdentificationType* pAASId);
 #endif /* OPENAAS_HELPERS_H_ */
