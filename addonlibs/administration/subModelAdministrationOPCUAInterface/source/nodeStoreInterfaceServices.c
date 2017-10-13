@@ -66,7 +66,12 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	if(Ov_CanCastTo(subModelAdministration_SubModelAdministration, pobj)){
 		if (openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(subModelAdministration_CreateSubModelService, pobj)){
+	}else if(Ov_CanCastTo(subModelAdministration_CreateSubModelService, pobj) 					||
+			 Ov_CanCastTo(subModelAdministration_DeleteSubModelService, pobj) 					||
+			 Ov_CanCastTo(subModelAdministration_CreatePropertyValueStatementListService, pobj) ||
+			 Ov_CanCastTo(subModelAdministration_DeletePropertyValueStatementListService, pobj)	||
+			 Ov_CanCastTo(subModelAdministration_CreatePropertyValueStatementService, pobj) 	||
+			 Ov_CanCastTo(subModelAdministration_DeletePropertyValueStatementService, pobj)		){
 		if (servicesOPCUAInterface_interface_ovServiceNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}

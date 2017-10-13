@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   CreateSubModelService.c
+*   DeletePropertyValueStatementListService.c
 *
 *   History
 *   -------
-*   2017-10-10   File created
+*   2017-10-13   File created
 *
 *******************************************************************************
 *
@@ -25,8 +25,7 @@
 #include "libov/ov_macros.h"
 #include "helper.h"
 
-
-OV_DLLFNCEXPORT OV_RESULT subModelAdministration_CreateSubModelService_CallMethod(      
+OV_DLLFNCEXPORT OV_RESULT subModelAdministration_DeletePropertyValueStatementListService_CallMethod(      
   OV_INSTPTR_services_Service pobj,       
   OV_UINT numberofInputArgs,       
   const void **packedInputArgList,       
@@ -37,15 +36,16 @@ OV_DLLFNCEXPORT OV_RESULT subModelAdministration_CreateSubModelService_CallMetho
     /*    
     *   local variables
     */
-	OV_UINT result = 0;
+
 	OV_INSTPTR_ov_object pParent = NULL;
-	OV_INSTPTR_openaas_SubModel pSubModel = NULL;
+	IdentificationType pvslId;
+	IdentificationType_init(&pvslId);
 	OV_STRING status = NULL;
+	OV_UINT result = 0;
 
 	packedOutputArgList[0] = ov_database_malloc(sizeof(OV_STRING));
 	*(OV_STRING*)packedOutputArgList[0] = NULL;
 	typeArray[0] = OV_VT_STRING;
-
 
 	if (*(OV_UINT*)packedInputArgList[1] != 0){
 		ov_string_setvalue(&status, "Only Uri as identifier are implemented");
@@ -54,34 +54,28 @@ OV_DLLFNCEXPORT OV_RESULT subModelAdministration_CreateSubModelService_CallMetho
 
 	pParent = ov_path_getobjectpointer(*(OV_STRING*)(packedInputArgList[0]), 2);
 	if (pParent == NULL){
-		ov_string_setvalue(&status, "Find no Object for parrentId");
+		ov_string_setvalue(&status, "Find no Object for PVSLId");
 		goto FINALIZE;
 	}
 
 	result = (OV_UINT)checkForSameAAS(Ov_PtrUpCast(ov_object, pobj), pParent);
 	if (result != OV_ERR_OK){
-		ov_string_setvalue(&status, "Parent is not in the same AAS as the method");
+		ov_string_setvalue(&status, "PVSL is not in the same AAS as the method");
 		goto FINALIZE;
 	}
 
-	result = Ov_CreateObject(openaas_SubModel, pSubModel, Ov_StaticPtrCast(ov_domain, pParent), *(OV_STRING*)(packedInputArgList[4]));
-	if(Ov_Fail(result)){
-		ov_logfile_error("Fatal: could not create SubModel object - reason: %s", ov_result_getresulttext(result));
-		ov_string_setvalue(&status, ov_result_getresulttext(result));
-		goto FINALIZE;
-	}
+	ov_string_setvalue(&pvslId.IdSpec, *(OV_STRING*)(packedInputArgList[0]));
+	pvslId.IdType = *(OV_UINT*)(packedInputArgList[1]);
 
-	ov_string_setvalue(&pSubModel->v_ModelIdString, *(OV_STRING*)(packedInputArgList[2]));
-	pSubModel->v_ModelIdType = *(OV_UINT*)packedInputArgList[3];
-	pSubModel->v_Revision = *(OV_UINT*)packedInputArgList[5];
-	pSubModel->v_Version = *(OV_UINT*)packedInputArgList[6];
-
+	result = propertyValueStatement_modelmanager_deletePVSL(pvslId);
 	ov_string_setvalue(&status, ov_result_getresulttext(result));
+
 	FINALIZE:
 
 	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
 	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
+	IdentificationType_deleteMembers(&pvslId);
 
-    return OV_ERR_OK;
+	return OV_ERR_OK;
 }
 
