@@ -56,8 +56,8 @@ typedef struct PropertyValueStatement{
     IdentificationType ID;
     IdentificationType objectID;
     ViewEnum view;
-    OV_INT Visibility;
-    int mask;
+    OV_UINT Visibility;
+    OV_UINT mask;
 }PropertyValueStatement;
 
 

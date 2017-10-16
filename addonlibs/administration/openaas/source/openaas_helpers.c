@@ -160,4 +160,5 @@ OV_BOOL getAASIdbyObjectPointer(OV_INSTPTR_openaas_aas pAAS, IdentificationType*
 		pAASId->IdType = pCarrierId->v_IdType;
 		return true;
 	}
+	return false;
 }

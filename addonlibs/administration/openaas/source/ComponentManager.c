@@ -765,7 +765,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 				IdentificationType carrierId;
 				IdentificationType_init(&carrierId);
-				int len = 0;
+				OV_UINT len = 0;
 				ov_string_setvalue(&pvs.objectID.IdSpec, setPVSReq->pvs.objectID.idSpec.data);
 				//remove "http://acplt.org"-prefix from id, to use the string as path
 				OV_STRING *idStr = ov_string_split(pvs.objectID.IdSpec,"http://acplt.org",&len);
@@ -773,8 +773,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					goto clean_SRV_setPVSReq;
 
 				ov_string_setvalue(&pvs.objectID.IdSpec,idStr[1]);
-
-				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				pvs.objectID.IdType = setPVSReq->pvs.objectID.idType;
 				openaas_modelmanager_setPVS(aasId,
