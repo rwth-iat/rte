@@ -25,89 +25,6 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_AASIdString_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_AASIdString,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_AASIdType_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_UINT  value
-) {
-    pobj->v_AASIdType = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCECreatingInstanceIdString_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_LCECreatingInstanceIdString,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCECreatingInstanceIdType_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_UINT  value
-) {
-    pobj->v_LCECreatingInstanceIdType = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCEWritingInstanceIdString_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_LCEWritingInstanceIdString,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCEWritingInstanceIdType_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_UINT  value
-) {
-    pobj->v_LCEWritingInstanceIdType = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCEEventClass_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_LCEEventClass,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCESubject_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_LCESubject,value);
-}
-
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCETimeStamp_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_TIME*  value
-) {
-    pobj->v_LCETimeStamp = *value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCETimeStampExtern_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_BOOL  value
-) {
-    pobj->v_LCETimeStampExtern = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_LCEValue_set(
-    OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
-    const OV_ANY*  value
-) {
-    return ov_variable_setanyvalue(&pobj->v_LCEValue, value);
-}
-
 OV_DLLFNCEXPORT OV_RESULT subModelLifeCycleEntry_LCEGenerator_StartLCEGenerator_set(
     OV_INSTPTR_subModelLifeCycleEntry_LCEGenerator          pobj,
     const OV_BOOL  value
@@ -177,16 +94,23 @@ OV_DLLFNCEXPORT void subModelLifeCycleEntry_LCEGenerator_typemethod(
 		else
 			lce.data.time = pinst->v_LCETimeStamp;
 
-		IdentificationType aasId;
-		IdentificationType_init(&aasId);
-		ov_string_setvalue(&aasId.IdSpec, pinst->v_AASIdString);
-		aasId.IdType = pinst->v_AASIdType;
+		OV_INSTPTR_ov_object pModel = NULL;
+		pModel = ov_path_getobjectpointer(pinst->v_LCESubModelPath, 2);
+		if (pModel == NULL){
+			pinst->v_Status = OV_ERR_BADPATH;
+			pinst->v_State = 2;
+			break;
+		}
 
-		// TODO: Find CreateLCE function
-		//pinst->v_Status = openaas_modelmanager_createLCE(aasId, lce);
+		OV_INSTPTR_subModelLifeCycleEntry_SubModelLifeCycleEntry pSM = NULL;
+		pSM = Ov_DynamicPtrCast(subModelLifeCycleEntry_SubModelLifeCycleEntry, pModel);
+		if (pSM == NULL){
+			pinst->v_Status = OV_ERR_BADTYPE;
+			pinst->v_State = 2;
+		}
 
+		lifeCycleEntry_LifeCycleArchive_createLCE(&pSM->p_LifeCycleArchiv, lce);
 		LifeCycleEntry_deleteMembers(&lce);
-		IdentificationType_deleteMembers(&aasId);
 	}
 		pinst->v_State = 2;
 		break;

@@ -32,17 +32,16 @@ LIBRARY subModelLifeCycleEntry
 	CLASS LCEGenerator    :    CLASS fb/functionblock 
         IS_INSTANTIABLE;
     VARIABLES
-        AASIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        AASIdType                       : UINT HAS_SET_ACCESSOR;
-        LCECreatingInstanceIdString     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCECreatingInstanceIdType       : UINT HAS_SET_ACCESSOR;
-        LCEWritingInstanceIdString      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCEWritingInstanceIdType        : UINT HAS_SET_ACCESSOR;
-        LCEEventClass                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCESubject                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCETimeStamp                    : TIME HAS_SET_ACCESSOR;
-        LCETimeStampExtern              : BOOL HAS_SET_ACCESSOR INITIALVALUE = FALSE;
-        LCEValue                        : ANY HAS_SET_ACCESSOR;
+        LCESubModelPath                 : STRING  INITIALVALUE    =   "";
+        LCECreatingInstanceIdString     : STRING  INITIALVALUE    =   "";
+        LCECreatingInstanceIdType       : UINT;
+        LCEWritingInstanceIdString      : STRING  INITIALVALUE    =   "";
+        LCEWritingInstanceIdType        : UINT;
+        LCEEventClass                   : STRING  INITIALVALUE    =   "";
+        LCESubject                      : STRING  INITIALVALUE    =   "";
+        LCETimeStamp                    : TIME;
+        LCETimeStampExtern              : BOOL    INITIALVALUE = FALSE;
+        LCEValue                        : ANY;
         StartLCEGenerator               : BOOL HAS_SET_ACCESSOR;
         StopLCEGenerator                : BOOL HAS_SET_ACCESSOR;
         State                           : UINT; 
