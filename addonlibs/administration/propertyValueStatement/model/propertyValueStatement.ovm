@@ -126,6 +126,38 @@ LIBRARY propertyValueStatement
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS;
+    
+     CLASS PVSGenerator : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            ListIdString                 : STRING INITIALVALUE = "";
+		    ListIdType                   : UINT;        
+		    Name                         : STRING INITIALVALUE = "";
+		    NameIntern                   : BOOL   INITIALVALUE = FALSE; 
+		    NameCount                    : UINT   FLAGS = "o";
+		    Value                        : ANY;
+            TimeStamp                    : TIME;
+            TimeStampExtern              : BOOL   INITIALVALUE = FALSE;
+		    Mask                         : UINT   COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility";
+		    CarrierIdString              : STRING INITIALVALUE    =   "";
+		    CarrierIdType                : UINT;
+		    ExpressionLogic              : UINT   COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+		    ExpressionSemantic           : UINT   COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+		    PropertyIdString             : STRING INITIALVALUE    =   "";
+		    PropertyIdType               : UINT;
+		    View                         : UINT   COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+		    Visibility                   : UINT   COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+		    StartPVSGenerator            : BOOL   HAS_SET_ACCESSOR;
+	        StopPVSGenerator             : BOOL   HAS_SET_ACCESSOR;
+	        ResetNameCount               : BOOL   HAS_SET_ACCESSOR;
+	        Status                       : UINT   FLAGS = "o";
+        END_VARIABLES;
+        OPERATIONS 
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+            typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>; 
+        END_OPERATIONS;
+    END_CLASS;
 
     CLASS HMIHelperPVSL    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
