@@ -115,7 +115,10 @@ OV_DLLFNCEXPORT void propertyValueStatement_PVSGenerator_typemethod(
 	}
 
 	pinst->v_Status = propertyValueStatement_modelmanager_createPVS(listId, name, pinst->v_Value, pinst->v_Mask, carrierId, pinst->v_ExpressionLogic, pinst->v_ExpressionSemantic, propertyId, pinst->v_View, pinst->v_Visibility);
-
+	ov_string_setvalue(&name,NULL);
+	IdentificationType_deleteMembers(&listId);
+	IdentificationType_deleteMembers(&carrierId);
+	IdentificationType_deleteMembers(&propertyId);
 	return;
 }
 
