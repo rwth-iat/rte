@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT OV_RESULT subModelAdministration_CreateSubModelService_CallMetho
 		goto FINALIZE;
 	}
 
-	ov_string_setvalue(&pSubModel->v_ModelIdString, *(OV_STRING*)(packedInputArgList[2]));
+	ov_string_setvalue(&pSubModel->v_ModelIdSpec, *(OV_STRING*)(packedInputArgList[2]));
 	pSubModel->v_ModelIdType = *(OV_UINT*)packedInputArgList[3];
 	pSubModel->v_Revision = *(OV_UINT*)packedInputArgList[5];
 	pSubModel->v_Version = *(OV_UINT*)packedInputArgList[6];
