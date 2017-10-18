@@ -122,16 +122,17 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	tmpParrent.elemtype = OV_ET_OBJECT;
 	UA_Variant tmpValue;
 	UA_Variant_init(&tmpValue);
+	OV_ANY tmpValue2;
 	do {
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
 		if (tmpPart.elemtype == OV_ET_NONE)
 			break;
 		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Value") == OV_STRCMP_EQUAL){
 			ov_AnyToVariant((OV_ANY*)tmpPart.pvalue, &tmpValue);
+			Ov_SetAnyValue(&tmpValue2, (OV_ANY*)tmpPart.pvalue);
 			break;
 		}
 	} while(TRUE);
-
 
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_VARIANT];
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_Variant_new();
@@ -141,7 +142,49 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	}
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
+
 	UA_Variant_copy(&tmpValue, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
+	// dataType
+	switch(tmpValue2.value.vartype & OV_VT_KSMASK){
+		case OV_VT_BOOL:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_BOOLEAN);
+			break;
+		case OV_VT_INT:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_INT32);
+			break;
+		case OV_VT_UINT:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_UINT32);
+			break;
+		case OV_VT_SINGLE:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_FLOAT);
+			break;
+		case OV_VT_DOUBLE:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_DOUBLE);
+			break;
+		case OV_VT_STRING:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_STRING);
+			break;
+		case OV_VT_BOOL_VEC:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_BOOLEAN);
+			break;
+		case OV_VT_INT_VEC:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_INT32);
+			break;
+		case OV_VT_UINT_VEC:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_UINT32);
+			break;
+		case OV_VT_SINGLE_VEC:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_FLOAT);
+			break;
+		case OV_VT_DOUBLE_VEC:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_DOUBLE);
+			break;
+		case OV_VT_STRING_VEC:
+			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_STRING);
+			break;
+		default:
+			break;
+	}
 	UA_Variant_deleteMembers(&tmpValue);
 
 
@@ -158,8 +201,7 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	((UA_VariableNode*)newNode)->minimumSamplingInterval = -1;
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
-	// dataType
-	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_PROPERTYVALUESTATEMENTTYPE);
+
 
 	// References
 	addReference(newNode);

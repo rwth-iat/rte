@@ -46,19 +46,11 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	OV_ELEMENT				element;
 
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	plist = ov_string_split(tmpString, "|", &len);
+	plist = ov_string_split(tmpString, ".", &len);
 
-	UA_NodeId tmpNodeId;
-	UA_NodeId_init(&tmpNodeId);
-	tmpNodeId.namespaceIndex = nodeId->namespaceIndex;
-	tmpNodeId.identifierType = nodeId->identifierType;
-	ov_string_setvalue(&tmpString, plist[0]);
-	ov_string_append(&tmpString, ".Value");
-	tmpNodeId.identifier.string = UA_String_fromChars(tmpString);
 	ov_memstack_lock();
 
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
-	UA_NodeId_deleteMembers(&tmpNodeId);
+	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &path);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
@@ -72,7 +64,7 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
-	qName.name = UA_String_fromChars(plist[1]);
+	qName.name = UA_String_fromChars(plist[len-1]);
 	qName.namespaceIndex = pinterface->v_interfacenamespace.index;
 	newNode->browseName = qName;
 
@@ -84,7 +76,7 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 
 	// DisplayName
 	lText.locale = UA_String_fromChars("en");
-	lText.text = UA_String_fromChars(plist[1]);
+	lText.text = UA_String_fromChars(plist[len-1]);
 	newNode->displayName = lText;
 
 	// NodeId
@@ -300,7 +292,7 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 
 	// References
 	addReference(newNode);
-	tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
+	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);

@@ -48,27 +48,39 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	UA_Node * tmpNode = NULL;
 	UA_Node* opcuaNode = NULL;
 	OV_STRING *plist = NULL;
+	OV_STRING *plist2 = NULL;
 	OV_STRING tmpString = NULL;
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_UINT len = 0;
+	OV_UINT len2 = 0;
 
 	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
 		return NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "|", &len);
+	plist2 = ov_string_split(tmpString, ".", &len2);
 
 
-	if (len > 1 ){
+	if (len > 1){
 		pobj = ov_path_getobjectpointer(plist[0], 2);
 		if (pobj == NULL){
 			ov_string_freelist(plist);
+			ov_string_freelist(plist2);
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
+	}else if (len2 > 1 && (ov_string_compare(plist2[len2-1], "Value") == OV_STRCMP_EQUAL)){
+		if (propertyValueStatementOPCUAInterface_interface_ovPropertyValueStatementValueNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			tmpNode = opcuaNode;
+		ov_string_freelist(plist);
+		ov_string_freelist(plist2);
+		ov_string_setvalue(&tmpString, NULL);
+		return tmpNode;
 	}else{
 		pobj = ov_path_getobjectpointer(tmpString, 2);
 		if (pobj == NULL){
 			ov_string_freelist(plist);
+			ov_string_freelist(plist2);
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
@@ -76,9 +88,6 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 
 	if(Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pobj)){
 		if (propertyValueStatementOPCUAInterface_interface_ovPropertyValueStatementListNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-			tmpNode = opcuaNode;
-	}else if (ov_string_compare(plist[len-1], "Value") == OV_STRCMP_EQUAL){
-		if (propertyValueStatementOPCUAInterface_interface_ovPropertyValueStatementValueNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pobj)){
 		if (propertyValueStatementOPCUAInterface_interface_ovPropertyValueStatementNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
@@ -101,6 +110,7 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	}
 
 	ov_string_freelist(plist);
+	ov_string_freelist(plist2);
 	ov_string_setvalue(&tmpString, NULL);
 	return tmpNode;
 }
