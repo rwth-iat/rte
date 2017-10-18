@@ -72,7 +72,6 @@
 		}
 	 }
 
-
 	 OV_INSTPTR_ov_library pLibMESSAGESYS = NULL;
 	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibMESSAGESYS, ov_library){
 		if(ov_string_compare(pLibMESSAGESYS->v_identifier, "MessageSys") == OV_STRCMP_EQUAL){

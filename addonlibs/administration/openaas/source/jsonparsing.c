@@ -2734,7 +2734,7 @@ JSON_RC parseJson (const SRV_String* str, SRV_msgHeader** header, void** srvStru
 		if(!*srvStruct)
 			return JSON_RC_MALLOC_FAIL;
 		rc = jsonparseGetPVSRsp(*srvStruct, token, str, n, startParam);
-	} else if(strncmp(serviceName.data, "setPVSReq", serviceName.length)==0){
+	} else if(strncmp(serviceName.data, "setPVS", serviceName.length)==0){
 		*srvType = SRV_setPVSReq;
 		*srvStruct = malloc(sizeof(setPVSReq_t));
 		if(!*srvStruct)

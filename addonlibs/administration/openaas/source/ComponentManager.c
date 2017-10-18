@@ -23,6 +23,7 @@
 
 #include "openaas.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_object.h"
 #include "openaas_helpers.h"
 #include "jsonparsing.h"
 #include "fb_database.h"
@@ -773,6 +774,8 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					goto clean_SRV_setPVSReq;
 
 				ov_string_setvalue(&pvs.objectID.IdSpec,idStr[1]);
+
+				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				pvs.objectID.IdType = setPVSReq->pvs.objectID.idType;
 				openaas_modelmanager_setPVS(aasId,
