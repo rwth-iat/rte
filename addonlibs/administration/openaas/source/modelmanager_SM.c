@@ -203,7 +203,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSubModel(Identification
 				return openaas_modelmanager_ovresultToAASStatusCode(result);
 			}
 
-			ov_string_setvalue(&pSubModel->v_ModelIdString, modelId.IdSpec);
+			ov_string_setvalue(&pSubModel->v_ModelIdSpec, modelId.IdSpec);
 			pSubModel->v_ModelIdType = modelId.IdType;
 			pSubModel->v_Revision = revision;
 			pSubModel->v_Version = version;
