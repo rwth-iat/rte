@@ -32,7 +32,7 @@ LIBRARY openaas
 	CLASS SubModel : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES
-            ModelIdString       : STRING INITIALVALUE    =   "";
+            ModelIdSpec         : STRING INITIALVALUE    =   "";
             ModelIdType         : UINT;
             Revision            : UINT;
             Version             : UINT;
@@ -324,17 +324,6 @@ LIBRARY openaas
         END_VARIABLES;
         OPERATIONS
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-        END_OPERATIONS;
-    END_CLASS;
-    
-    CLASS simpleMessageCreator : CLASS fb/functionblock
-    	IS_INSTANTIABLE;
-    	VARIABLES
-    		message : STRING FLAGS="i" INITIALVALUE ="";
-    		targetPath : STRING FLAGS="i" INITIALVALUE ="/TechUnits/openAAS/Motor_M23.Body/ComponentManager.INBOX";
-    	END_VARIABLES;
-        OPERATIONS
-        	typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS;
  
