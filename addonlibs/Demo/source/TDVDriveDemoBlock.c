@@ -55,12 +55,11 @@ OV_DLLFNCEXPORT void Demo_TDVDriveDemoBlock_typemethod(
 	ov_string_setvalue(&pvsId.IdSpec, pinst->v_PVSStatePath);
 	pvsId.IdType = 0;
 	OV_ANY tmpAny;
-	tmpAny.value.vartype = OV_VT_STRING;
-	tmpAny.value.valueunion.val_string = NULL;
+	tmpAny.value.vartype = OV_VT_BOOL;
     if (pinst->v_ActualMotorValue > 0){
-    	ov_string_setvalue(&tmpAny.value.valueunion.val_string, "Motor Running");
+    	tmpAny.value.valueunion.val_bool = true;
     }else{
-    	ov_string_setvalue(&tmpAny.value.valueunion.val_string, "Motor Stopped");
+    	tmpAny.value.valueunion.val_bool = false;
     }
     propertyValueStatement_modelmanager_setPVS(pvsId, 0x80, NULL, empty, 0, 0, empty, 0, 0, tmpAny);
     Ov_SetAnyValue(&tmpAny, NULL);
