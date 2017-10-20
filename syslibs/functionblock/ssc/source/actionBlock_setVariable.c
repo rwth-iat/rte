@@ -127,54 +127,37 @@ static OV_RESULT ssc_getObjectAndVarnameFromSetVariable(
 	return OV_ERR_OK;
 }
 
-static OV_RESULT ssc_evalObjectAndVarnameFromSetVariable(
-		const OV_INSTPTR_ssc_setVariable pinst,
-		const OV_STRING nameToCheck,
-		OV_INSTPTR_ov_object *pTargetObj,
-		OV_STRING *ptargetVarname
-) {
-	OV_INSTPTR_fb_stringport strPort=NULL;
-	OV_STRING targetPathname = NULL;
-	OV_STRING pathRelativeobject = NULL;
-	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_SequentialStateChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pStep));
-	OV_INSTPTR_ov_domain containerDomain = NULL;
+static OV_RESULT ssc_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value){
+	OV_RESULT result = OV_ERR_OK;
+	OV_ELEMENT element;
+	OV_ELEMENT varElement;
+	OV_VTBLPTR_ov_object pVtblObj = NULL;
 
-	*pTargetObj = NULL;
-	//split the input at dot
-	extractBehindSeperator(nameToCheck, &targetPathname, ptargetVarname, '.');
-
-	if(targetPathname == NULL){
-		return OV_ERR_BADPARAM;
-	}else if(targetPathname[0] == '/'){
-		//we have a full path
-		*pTargetObj = ov_path_getobjectpointer(targetPathname, 2);
+	if(pTargetObj == NULL){
+		result = OV_ERR_BADPARAM;
+	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)){
+		//get variable in a functionchart
+		result = fb_functionchart_getport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
 	}else{
-		//we have a relative path
-		ov_memstack_lock();
-		//all path are relative to the activeHeader
-		containerDomain = Ov_PtrUpCast(ov_domain, activeHeader);
-		ov_string_setvalue(&pathRelativeobject, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, containerDomain), 2));
-		*pTargetObj = getrelativeobjectpointer(pathRelativeobject, targetPathname);
-		if(*pTargetObj == NULL){
-			//perhaps the target is in the actions PART of the header
-			containerDomain = Ov_GetPartPtr(actions, activeHeader);
-			ov_string_setvalue(&pathRelativeobject, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, containerDomain), 2));
-			*pTargetObj = getrelativeobjectpointer(pathRelativeobject, targetPathname);
-		}
-		ov_memstack_unlock();
-	}
-	if(Ov_CanCastTo(fb_port, *pTargetObj)){
-		//we have a fc port, so adjust everything
-		strPort =Ov_DynamicPtrCast(fb_stringport, *pTargetObj);
-		//strPort =(OV_INSTPTR_fb_stringport)pTargetObj;
-		ov_string_setvalue(ptargetVarname, strPort->v_value);
-		//*pTargetObj = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, *pTargetObj));
+		//get variable in a object
+		varElement.elemtype = OV_ET_NONE;
+		element.elemtype = OV_ET_OBJECT;
+		element.pobj = pTargetObj;
 
+		//search the variable for the get operation
+		ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, targetVarname);
+		if(varElement.elemtype == OV_ET_VARIABLE) {
+			//port found, use the getter to read the value
+			Ov_GetVTablePtr(ov_object, pVtblObj, pTargetObj);
+			result = pVtblObj->m_getvar(varElement.pobj, &varElement, value);
+		}else{
+			result = OV_ERR_BADPARAM;
+		}
 	}
-	ov_string_setvalue(&targetPathname, NULL);
-	ov_string_setvalue(&pathRelativeobject,NULL);
-	return OV_ERR_OK;
+	if(result != OV_ERR_OK){
+		Ov_SetAnyValue(value,NULL);
+	}
+	return result;
 }
 
 /**
@@ -249,43 +232,31 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 	OV_INSTPTR_ssc_setVariable pinst = Ov_StaticPtrCast(ssc_setVariable, pfb);
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ov_object pTargetObj = NULL;
-	OV_INSTPTR_ov_object pTargetObjValu = NULL;
+	OV_INSTPTR_ov_object pParameterObj = NULL;
 	OV_STRING targetVarname = NULL;
-	OV_STRING RetrievedString = NULL;
-	OV_STRING portDestination = "../";
-	OV_STRING portDestinationadd = NULL;
-	OV_STRING targetPathname = NULL;
-	OV_ANY temp=
-	{.value = {.vartype = OV_VT_VOID, .valueunion.val_string = NULL}};
+	OV_STRING parameterVarname = NULL;
 
 	// check config
 	if (ssc_setVariable_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst)) == FALSE){
 		return;
 	}
-	if(pinst->v_parameter!=NULL)//here Check if there is a slash
-	{
-		extractBehindSeperator(pinst->v_parameter, &targetPathname,&portDestinationadd, '.');
-		ov_string_append(&portDestination,portDestinationadd);
-		ssc_evalObjectAndVarnameFromSetVariable(pinst, portDestination, &pTargetObjValu, &RetrievedString);
-		temp.value.vartype=OV_VT_STRING;
-		ov_string_setvalue(&temp.value.valueunion.val_string,RetrievedString);
-		//temp.value.valueunion.val_string=targetVarname;
-		//result = ssc_setNamedVariable(pTargetObj, targetVarname, &temp);
-		ssc_getObjectAndVarnameFromSetVariable(pinst, pinst->v_variable, &pTargetObj, &targetVarname);
-		ssc_setNamedVariable(pTargetObj, targetVarname, &temp);
-		ov_string_setvalue(&targetPathname,NULL);
-		ov_string_setvalue(&portDestinationadd,NULL);
-	}else{
-	ssc_getObjectAndVarnameFromSetVariable(pinst, pinst->v_variable, &pTargetObj, &targetVarname);
-	result = ssc_setNamedVariable(pTargetObj, targetVarname, &(pinst->v_value));
+	if(pinst->v_parameter!=NULL && ov_string_compare(pinst->v_parameter, " ") != OV_STRCMP_EQUAL) {
+		ssc_getObjectAndVarnameFromSetVariable(pinst,pinst->v_parameter, &pParameterObj, &parameterVarname);
+		result = ssc_getNamedVariable(pParameterObj, parameterVarname, &(pinst->v_value));
+		ov_string_setvalue(&parameterVarname, NULL);
 	}
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
-		ov_string_print(&pinst->v_errorDetail, "Target found, but setting value to variable failed: %s",  ov_result_getresulttext(result));
+		ov_string_print(&pinst->v_errorDetail, "Parameter target not found: %s",  ov_result_getresulttext(result));
+	}else{
+		ssc_getObjectAndVarnameFromSetVariable(pinst, pinst->v_variable, &pTargetObj, &targetVarname);
+		result = ssc_setNamedVariable(pTargetObj, targetVarname, &(pinst->v_value));
+		if(Ov_Fail(result)){
+			pinst->v_error=TRUE;
+			ov_string_print(&pinst->v_errorDetail, "Target found, but setting value to variable failed: %s",  ov_result_getresulttext(result));
+		}
+		ov_string_setvalue(&targetVarname, NULL);
 	}
-
-	ov_string_setvalue(&targetVarname, NULL);
-	ov_string_setvalue(&portDestination,NULL);
 	return;
 }
 
