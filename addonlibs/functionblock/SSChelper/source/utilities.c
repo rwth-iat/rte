@@ -25,11 +25,12 @@ static void extractBehindSeperator(const OV_STRING inputstring, OV_STRING *pathn
 		return;
 	}
 	ov_string_setvalue(pathname, inputstring);
-	len = ov_string_getlength(inputstring);	//todo iterate backwards, for speed :-)
-	for(i = 0 ; i<len-1 ; i++){
-		if(inputstring[len-i] == seperator){
-			ov_string_setvalue(varname, &inputstring[len-i+1]);
-			(*pathname)[len-i] = '\0';
+	len = ov_string_getlength(inputstring);	//iterate backwards, for speed :-)
+	for(i = len-1 ; i > 1; i--){
+		if(inputstring[i] == seperator){
+			ov_string_setvalue(varname, &inputstring[i+1]);
+			(*pathname)[i] = '\0';
+			ov_string_setvalue(pathname,*pathname);
 			break;
 		}
 	}
@@ -75,8 +76,6 @@ OV_RESULT SSChelper_getObjectAndVarnameFromSetVariable(
 ) {
 	OV_STRING targetPathname = NULL;
 	OV_STRING pathRelativeobject = NULL;
-	OV_INSTPTR_ov_object pStep = Ov_DynamicPtrCast(ov_object, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ov_object activeHeader = Ov_DynamicPtrCast(ov_object, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_domain containerDomain = NULL;
 
 	*pTargetObj = NULL;
@@ -92,15 +91,9 @@ OV_RESULT SSChelper_getObjectAndVarnameFromSetVariable(
 		//we have a relative path
 		ov_memstack_lock();
 		//all path are relative to the activeHeader
-		containerDomain =Ov_DynamicPtrCast(ov_domain, activeHeader);
+		containerDomain =Ov_GetParent(ov_containment, pinst);
 		ov_string_setvalue(&pathRelativeobject, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, containerDomain), 2));
 		*pTargetObj = getrelativeobjectpointer(pathRelativeobject, targetPathname);
-//		if(*pTargetObj == NULL){
-//			//perhaps the target is in the actions PART of the header
-//			containerDomain = Ov_GetPartPtr(actions, activeHeader);
-//			ov_string_setvalue(&pathRelativeobject, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, containerDomain), 2));
-//			*pTargetObj = getrelativeobjectpointer(pathRelativeobject, targetPathname);
-//		}
 		ov_memstack_unlock();
 	}
 	if(Ov_CanCastTo(fb_port, *pTargetObj)){
@@ -112,4 +105,67 @@ OV_RESULT SSChelper_getObjectAndVarnameFromSetVariable(
 	ov_string_setvalue(&pathRelativeobject,NULL);
 
 	return OV_ERR_OK;
+}
+
+OV_RESULT SSChelper_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value){
+	OV_RESULT result = OV_ERR_OK;
+	OV_ELEMENT element;
+	OV_ELEMENT varElement;
+	OV_VTBLPTR_ov_object pVtblObj = NULL;
+
+	if(pTargetObj == NULL){
+			return OV_ERR_BADPARAM;
+	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)){
+		//set variable in a functionchart
+		result = fb_functionchart_setport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
+	}else{
+		//set variable in a object
+		varElement.elemtype = OV_ET_NONE;
+		element.elemtype = OV_ET_OBJECT;
+		element.pobj = pTargetObj;
+
+		//search the variable for the set operation
+		ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, targetVarname);
+		if(varElement.elemtype == OV_ET_VARIABLE) {
+			//port found, use the setter to write the value
+			Ov_GetVTablePtr(ov_object, pVtblObj, pTargetObj);
+			result = pVtblObj->m_setvar(varElement.pobj, &varElement, value);
+		}
+	}
+
+	return result;
+}
+
+OV_RESULT SSChelper_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value){
+	OV_RESULT result = OV_ERR_OK;
+	OV_ELEMENT element;
+	OV_ELEMENT varElement;
+	OV_VTBLPTR_ov_object pVtblObj = NULL;
+
+	if(pTargetObj == NULL){
+
+		result = OV_ERR_BADPARAM;
+	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)){
+		//get variable in a functionchart
+		result = fb_functionchart_getport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
+	}else{
+		//get variable in a object
+		varElement.elemtype = OV_ET_NONE;
+		element.elemtype = OV_ET_OBJECT;
+		element.pobj = pTargetObj;
+
+		//search the variable for the get operation
+		ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, targetVarname);
+		if(varElement.elemtype == OV_ET_VARIABLE) {
+			//port found, use the getter to read the value
+			Ov_GetVTablePtr(ov_object, pVtblObj, pTargetObj);
+			result = pVtblObj->m_getvar(varElement.pobj, &varElement, value);
+		}else{
+			result = OV_ERR_BADPARAM;
+		}
+	}
+	if(result != OV_ERR_OK){
+		Ov_SetAnyValue(value,NULL);
+	}
+	return result;
 }

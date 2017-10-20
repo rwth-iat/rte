@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   getVar.c
+*   StringSelect.c
 *
 *   History
 *   -------
-*   2017-08-30   File created
+*   2017-09-26   File created
 *
 *******************************************************************************
 *
@@ -22,24 +22,24 @@
 
 
 #include "SSChelper.h"
-#include "utilities.h"
-
 #include "libov/ov_macros.h"
 
-OV_DLLFNCEXPORT void SSChelper_getVar_typemethod(
+
+OV_DLLFNCEXPORT void SSChelper_StringSelect_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_SSChelper_getVar pinst = Ov_StaticPtrCast(SSChelper_getVar, pfb);
-    OV_INSTPTR_ov_object target=NULL;
+    OV_INSTPTR_SSChelper_StringSelect pinst = Ov_StaticPtrCast(SSChelper_StringSelect, pfb);
 
-    SSChelper_getObjectAndVarnameFromSetVariable(Ov_PtrUpCast(ov_object,pinst),pinst->v_path,&target,&pinst->v_port);
-
-    SSChelper_getNamedVariable(target,pinst->v_port,&pinst->v_var);
-
+    if(pinst->v_Q == FALSE){
+    	ov_string_setvalue(&pinst->v_OUT, pinst->v_IN1);
+    }
+    else {
+    	ov_string_setvalue(&pinst->v_OUT, pinst->v_IN2);
+    }
     return;
 }
 

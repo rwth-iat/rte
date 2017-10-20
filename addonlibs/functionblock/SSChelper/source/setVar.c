@@ -24,48 +24,7 @@
 #include "SSChelper.h"
 #include "libov/ov_macros.h"
 
-#include "libov/ov_path.h"
-#include "libov/ov_memstack.h"
-#include "libov/ov_result.h"
-#include "libov/ov_logfile.h"
-
-#include "fb_namedef.h"
-
-#include "ov_call_macros_10.h"
-
 #include "utilities.h"
-
-
-OV_RESULT SSChelper_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value){
-	OV_RESULT result = OV_ERR_OK;
-	OV_ELEMENT element;
-	OV_ELEMENT varElement;
-	OV_VTBLPTR_ov_object pVtblObj = NULL;
-
-	if(pTargetObj == NULL){
-			return OV_ERR_BADPARAM;
-	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)&& !Ov_CanCastTo(ssc_SequentialStateChart, pTargetObj)&&ov_string_compare(targetVarname,"CMD")!=OV_STRCMP_EQUAL){
-		//set variable in a functionchart
-		result = fb_functionchart_setport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
-	}else{
-		//set variable in a object
-		varElement.elemtype = OV_ET_NONE;
-		element.elemtype = OV_ET_OBJECT;
-		element.pobj = pTargetObj;
-
-		//search the variable for the set operation
-		ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, targetVarname);
-		if(varElement.elemtype == OV_ET_VARIABLE) {
-			//port found, use the setter to write the value
-			Ov_GetVTablePtr(ov_object, pVtblObj, pTargetObj);
-			result = pVtblObj->m_setvar(varElement.pobj, &varElement, value);
-		}
-	}
-
-	return result;
-}
-
-
 
 OV_DLLFNCEXPORT void SSChelper_setVar_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
@@ -77,9 +36,8 @@ OV_DLLFNCEXPORT void SSChelper_setVar_typemethod(
     OV_INSTPTR_SSChelper_setVar pinst = Ov_StaticPtrCast(SSChelper_setVar, pfb);
     OV_INSTPTR_ov_object target=NULL;
 
-    SSChelper_getObjectAndVarnameFromSetVariable(Ov_PtrUpCast(ov_object,pinst),pinst->v_path,&target,&pinst->v_port);
-
-    SSChelper_setNamedVariable(target,pinst->v_port,&pinst->v_var);
+	SSChelper_getObjectAndVarnameFromSetVariable(Ov_PtrUpCast(ov_object,pinst),pinst->v_path,&target,&pinst->v_port);
+	SSChelper_setNamedVariable(target,pinst->v_port,&pinst->v_var);
     return;
 }
 

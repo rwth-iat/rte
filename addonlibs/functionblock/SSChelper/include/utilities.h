@@ -15,4 +15,8 @@ OV_RESULT SSChelper_getObjectAndVarnameFromSetVariable(
 		OV_STRING *ptargetVarname
 );
 
+OV_RESULT SSChelper_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value);
+
+OV_RESULT SSChelper_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value);
+
 #endif /* UTILITIES_H_ */

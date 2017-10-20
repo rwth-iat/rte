@@ -75,7 +75,8 @@ LIBRARY SSChelper
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
-		CLASS usercheck : CLASS fb/functionblock
+	
+	CLASS usercheck : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
 			order : STRING  FLAGS = "i" COMMENT = "order to be processed";
@@ -149,9 +150,9 @@ LIBRARY SSChelper
 	CLASS setVar : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
-			path : STRING  FLAGS = "i" COMMENT = "Path to target";
-			var : ANY  FLAGS = "i" COMMENT = "var";
-			port : STRING  FLAGS = "i" COMMENT = "Name of the port";
+			path : STRING FLAGS = "i" COMMENT = "Path to target";
+			var  : ANY    FLAGS = "i" COMMENT = "var";
+			port : STRING FLAGS = "i" COMMENT = "Name of the port";
 		
 			
 			// Add variables here. The syntax is:
@@ -165,6 +166,25 @@ LIBRARY SSChelper
 			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
 			// if MY_FUNC is declared in SSChelper.ovf. Implement the functions in decoder.c.
 			// fb/functionblock based classes have to implement typemethod
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS setVarOnce : CLASS SSChelper/setVar
+		IS_INSTANTIABLE;
+		VARIABLES
+			//Inputs
+			pathTrig : STRING FLAGS = "i" COMMENT = "Path to external trigger, which triggers the set process, if its value is uneuqal to NULL or . Trigger port value will be reset to NULL after set process." INITIALVALUE = "";
+			portTrig : STRING FLAGS = "i" COMMENT = "Port to external trigger, which triggers the set process, if its value is uneuqal to NULL or . Trigger port value will be reset to NULL after set process." INITIALVALUE = "";
+			trig : BOOL   FLAGS = "i" COMMENT = "Direkt trigger for the set process.";
+			
+			// Outputs
+			varOut : ANY  FLAGS = "o" COMMENT = "Value for last set attempt.";
+			error :  BOOL FLAGS = "o" COMMENT = "Indicates that an error occured during last set attempt. ";
+			trigOut: BOOL FLAGS = "o" COMMENT = "Is true for exactly one cycle after set attempt.";
+			
+		END_VARIABLES;
+		OPERATIONS
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -195,22 +215,26 @@ LIBRARY SSChelper
 	CLASS getSCUinfo : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
-			Path : STRING FLAGS = "i" COMMENT = "Path to SCU";
+			path : STRING FLAGS = "i" COMMENT = "Path to SCU";
 			workingState : STRING FLAGS = "o" COMMENT = "workingState of PCU";
-			Error : BOOL FLAGS = "o" COMMENT = "TRUE if SCU is inside Errorstate";
-			allocatedBy : STRING FLAGS = "o" COMMENT = "id of occupying user ";
-			SetPoint : SINGLE FLAGS = "o" COMMENT = "Setpoint of SCU";
-			// Add variables here. The syntax is:
-			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
-			// Example:
-			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
-			// Example for a fb/functionblock based class
-			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+		    //error : BOOL FLAGS = "o" COMMENT = "TRUE if SCU is inside Errorstate";
+			occupiedBy : STRING FLAGS = "o" COMMENT = "id of occupying user ";
+			//SetPoint : SINGLE FLAGS = "o" COMMENT = "Setpoint of SCU";
 		END_VARIABLES;
 		OPERATIONS
-			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
-			// if MY_FUNC is declared in SSChelper.ovf. Implement the functions in decoder.c.
-			// fb/functionblock based classes have to implement typemethod
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+    CLASS StringSelect : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			Q	: BOOL   FLAGS = "i" COMMENT = "Switch for IN1 or IN0." INITIALVALUE=FALSE;
+			IN1 : STRING FLAGS = "i" COMMENT = "String, that is switched through on FALSE." INITIALVALUE="";
+			IN2 : STRING FLAGS = "i" COMMENT = "String, that is switched through on TRUE."  INITIALVALUE="";
+		    OUT : STRING FLAGS = "o" COMMENT = "String from IN0 or IN1." INITIALVALUE="";
+		END_VARIABLES;
+		OPERATIONS
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
