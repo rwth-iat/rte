@@ -1,0 +1,114 @@
+#include "ov.ovm"
+#include "lifeCycleEntry.ovm"
+#include "services.ovm"
+#include "propertyValueStatement.ovm"
+#include "openaas.ovm"
+
+LIBRARY subModelLifeCycleEntry
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of SubModelLifeCycleEntry.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/	
+	
+	
+	CLASS SubModelLifeCycleEntry : CLASS openaas/SubModel
+		IS_INSTANTIABLE;
+		VARIABLES  
+		      			
+		END_VARIABLES;
+		PARTS
+			LifeCycleArchiv : CLASS lifeCycleEntry/LifeCycleArchive;
+		END_PARTS;
+		OPERATIONS 
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS LCEGenerator    :    CLASS fb/functionblock 
+        IS_INSTANTIABLE;
+    VARIABLES
+        LCESubModelPath                 : STRING  INITIALVALUE    =   "";
+        LCECreatingInstanceIdString     : STRING  INITIALVALUE    =   "";
+        LCECreatingInstanceIdType       : UINT;
+        LCEWritingInstanceIdString      : STRING  INITIALVALUE    =   "";
+        LCEWritingInstanceIdType        : UINT;
+        LCEEventClass                   : STRING  INITIALVALUE    =   "";
+        LCESubject                      : STRING  INITIALVALUE    =   "";
+        LCETimeStamp                    : TIME;
+        LCETimeStampExtern              : BOOL    INITIALVALUE = FALSE;
+        LCEValue                        : ANY;
+        StartLCEGenerator               : BOOL HAS_SET_ACCESSOR;
+        StopLCEGenerator                : BOOL HAS_SET_ACCESSOR;
+        State                           : UINT; 
+        Generate                        : BOOL;                              
+        Status                          : UINT;
+    END_VARIABLES;
+    OPERATIONS
+        getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
+        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+    END_OPERATIONS;    
+    END_CLASS;
+    
+    CLASS HMIHelperLCEList    :    CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASPath                     : STRING FLAGS = "i" COMMENT = "Format: //IP:PORT/SERVERNAME/..." INITIALVALUE    =   "";      
+            CreatingInstanceId          : STRING FLAGS = "o" INITIALVALUE    =   "";            
+            WritingInstanceId           : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Data                        : STRING FLAGS = "o" INITIALVALUE    =   "";
+            TimeStamp                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Subject                     : STRING FLAGS = "o" INITIALVALUE    =   "";
+            EventClass                  : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Id                          : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Error                       : BOOL   FLAGS = "o";
+            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS HMIHelperLCEData    :    CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASPath                     : STRING FLAGS = "i" COMMENT = "Format: //IP:PORT/SERVERNAME/..." INITIALVALUE    =   ""; 
+            Subject                     : STRING FLAGS = "i" INITIALVALUE    =   "";
+            EventClass                  : STRING FLAGS = "i" INITIALVALUE    =   "";
+            TimeStamp                   : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
+            TimeSpanBetweenValues       : TIME_SPAN FLAGS = "i";
+            xValueStatic[]              : TIME FLAGS = "o";            
+            yValueStatic[]              : DOUBLE FLAGS = "o";
+            yUnitStatic                 : STRING FLAGS = "o" INITIALVALUE    =   "";
+            xValueDynamic               : TIME FLAGS = "o";
+            yValueDynamic               : DOUBLE FLAGS = "o";
+            yUnitDynamic                : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Error                       : BOOL FLAGS = "o";
+            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ErrorStatic                 : BOOL FLAGS = "o";
+            ErrorTextStatic             : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ErrorDynamic                : BOOL FLAGS = "o";
+            ErrorTextDynamic            : STRING FLAGS = "o" INITIALVALUE    =   "";
+            OutputType                  : UINT FLAGS = "o" COMMENT = "0:Error; 1: STATIC; 2:DYNAMIC";
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+	
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

@@ -55,9 +55,29 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement requirement = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement assurance = NULL;
 	OV_UINT assuranceSize = 0;
-	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
-		if (assurance->v_ExpressionSemantic == ASSURANCE){
-			assuranceSize++;
+	OV_BOOL afoundExpressionSemanticInList = FALSE;
+	OV_BOOL rfoundExpressionSemanticInList = FALSE;
+	OV_INSTPTR_propertyValueStatement_ExpressionSemantic paExpressionSemantic = NULL;
+	OV_INSTPTR_propertyValueStatement_ExpressionSemantic prExpressionSemantic = NULL;
+
+	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), paExpressionSemantic, propertyValueStatement_ExpressionSemantic){
+		afoundExpressionSemanticInList = TRUE;
+	}
+
+	if (afoundExpressionSemanticInList == TRUE){
+		if (paExpressionSemantic->v_ExpressionSemanticEnum == ASSURANCE){
+			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
+				assuranceSize++;
+			}
+		}
+	}else{
+		Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
+			paExpressionSemantic = NULL;
+			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assurance), paExpressionSemantic, propertyValueStatement_ExpressionSemantic){
+				if (paExpressionSemantic->v_ExpressionSemanticEnum == ASSURANCE){
+					assuranceSize++;
+				}
+			}
 		}
 	}
 
@@ -67,56 +87,129 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 	OV_STRING tmpMatchText = NULL;
 	OV_STRING requirementPath = NULL;
 	OV_STRING assurancePath = NULL;
-	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirementList), requirement, propertyValueStatement_PropertyValueStatement){
-		if (requirement->v_ExpressionSemantic == REQUIREMENT){
-			if (assuranceSize == 0){
-				ov_string_print(matchText, "requirement %s do not match with the assurances", requirement->v_identifier);
-				*match = FALSE;
-				ov_database_free(requirementPath);
-				ov_database_free(assurancePath);
-				ov_database_free(tmpErrorText);
-				ov_database_free(tmpMatchText);
-				return 0;
+
+
+	Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirementList), prExpressionSemantic, propertyValueStatement_ExpressionSemantic){
+		rfoundExpressionSemanticInList = TRUE;
+	}
+
+	if (rfoundExpressionSemanticInList == TRUE){
+		if (prExpressionSemantic->v_ExpressionSemanticEnum == REQUIREMENT){
+			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirementList), requirement, propertyValueStatement_PropertyValueStatement){
+				if (assuranceSize == 0){
+					ov_string_print(matchText, "requirement %s do not match with the assurances", requirement->v_identifier);
+					*match = FALSE;
+					ov_string_setvalue(&tmpErrorText, NULL);
+					ov_string_setvalue(&tmpMatchText, NULL);
+					ov_string_setvalue(&requirementPath, NULL);
+					ov_string_setvalue(&assurancePath, NULL);
+					return 0;
+				}
+				assuranceCounter = 0;
+				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
+					paExpressionSemantic = NULL;
+					Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assurance), paExpressionSemantic, propertyValueStatement_ExpressionSemantic){
+						if (paExpressionSemantic->v_ExpressionSemanticEnum == ASSURANCE){
+							assuranceCounter++;
+							ov_string_setvalue(&requirementPath, requirementListPath);
+							ov_string_append(&requirementPath, "/");
+							ov_string_append(&requirementPath, requirement->v_identifier);
+							ov_string_setvalue(&assurancePath, assuranceListPath);
+							ov_string_append(&assurancePath, "/");
+							ov_string_append(&assurancePath, assurance->v_identifier);
+							if (propertyValueStatement_MatchPVSRA_matchPVSRA(requirementPath, assurancePath, &tmpMatch, &tmpMatchText, &tmpErrorText) != 0){
+								ov_string_setvalue(errorText, tmpErrorText);
+								ov_string_setvalue(&tmpErrorText, NULL);
+								ov_string_setvalue(&tmpMatchText, NULL);
+								ov_string_setvalue(&requirementPath, NULL);
+								ov_string_setvalue(&assurancePath, NULL);
+								return 1;
+							}
+							if (tmpMatch == TRUE){
+								ov_string_setvalue(&tmpErrorText, NULL);
+								ov_string_setvalue(&tmpMatchText, NULL);
+								ov_string_setvalue(&requirementPath, NULL);
+								ov_string_setvalue(&assurancePath, NULL);
+								break;
+							}
+							if (tmpMatch == FALSE && assuranceCounter >= assuranceSize){
+								*match = FALSE;
+								ov_string_print(matchText, "requirement %s do not match with the assurances, ", requirement->v_identifier);
+								ov_string_append(matchText, tmpMatchText);
+								ov_string_setvalue(&tmpErrorText, NULL);
+								ov_string_setvalue(&tmpMatchText, NULL);
+								ov_string_setvalue(&requirementPath, NULL);
+								ov_string_setvalue(&assurancePath, NULL);
+								return 0;
+							}
+						}
+					}
+				}
 			}
-			assuranceCounter = 0;
-			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
-				if (assurance->v_ExpressionSemantic == ASSURANCE){
-					assuranceCounter++;
-					ov_string_setvalue(&requirementPath, requirementListPath);
-					ov_string_append(&requirementPath, "/");
-					ov_string_append(&requirementPath, requirement->v_identifier);
-					ov_string_setvalue(&assurancePath, assuranceListPath);
-					ov_string_append(&assurancePath, "/");
-					ov_string_append(&assurancePath, assurance->v_identifier);
-					if (propertyValueStatement_MatchPVSRA_matchPVSRA(requirementPath, assurancePath, &tmpMatch, &tmpMatchText, &tmpErrorText) != 0){
-						ov_string_setvalue(errorText, tmpErrorText);
-						ov_database_free(tmpMatchText);
-						ov_database_free(tmpErrorText);
-						ov_database_free(requirementPath);
-						ov_database_free(assurancePath);
-						return 1;
-					}
-					if (tmpMatch == TRUE){
-						ov_database_free(tmpMatchText);
-						ov_database_free(tmpErrorText);
-						ov_database_free(requirementPath);
-						ov_database_free(assurancePath);
-						break;
-					}
-					if (tmpMatch == FALSE && assuranceCounter >= assuranceSize){
+		}
+	}else{
+		Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirementList), requirement, propertyValueStatement_PropertyValueStatement){
+			prExpressionSemantic = NULL;
+			Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, requirement), prExpressionSemantic, propertyValueStatement_ExpressionSemantic){
+				if (prExpressionSemantic->v_ExpressionSemanticEnum == REQUIREMENT){
+					if (assuranceSize == 0){
+						ov_string_print(matchText, "requirement %s do not match with the assurances", requirement->v_identifier);
 						*match = FALSE;
-						ov_string_print(matchText, "requirement %s do not match with the assurances, ", requirement->v_identifier);
-						ov_string_append(matchText, tmpMatchText);
-						ov_database_free(tmpMatchText);
-						ov_database_free(tmpErrorText);
-						ov_database_free(requirementPath);
-						ov_database_free(assurancePath);
+						ov_string_setvalue(&requirementPath, NULL);
+						ov_string_setvalue(&assurancePath, NULL);
+						ov_string_setvalue(&tmpErrorText, NULL);
+						ov_string_setvalue(&tmpMatchText, NULL);
 						return 0;
+					}
+					assuranceCounter = 0;
+					Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
+						paExpressionSemantic = NULL;
+						Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assurance), paExpressionSemantic, propertyValueStatement_ExpressionSemantic){
+							if (paExpressionSemantic->v_ExpressionSemanticEnum == ASSURANCE){
+								assuranceCounter++;
+								ov_string_setvalue(&requirementPath, requirementListPath);
+								ov_string_append(&requirementPath, "/");
+								ov_string_append(&requirementPath, requirement->v_identifier);
+								ov_string_setvalue(&assurancePath, assuranceListPath);
+								ov_string_append(&assurancePath, "/");
+								ov_string_append(&assurancePath, assurance->v_identifier);
+								if (propertyValueStatement_MatchPVSRA_matchPVSRA(requirementPath, assurancePath, &tmpMatch, &tmpMatchText, &tmpErrorText) != 0){
+									ov_string_setvalue(errorText, tmpErrorText);
+									ov_string_setvalue(&tmpErrorText, NULL);
+									ov_string_setvalue(&tmpMatchText, NULL);
+									ov_string_setvalue(&requirementPath, NULL);
+									ov_string_setvalue(&assurancePath, NULL);
+									return 1;
+								}
+								if (tmpMatch == TRUE){
+									ov_string_setvalue(&tmpErrorText, NULL);
+									ov_string_setvalue(&tmpMatchText, NULL);
+									ov_string_setvalue(&requirementPath, NULL);
+									ov_string_setvalue(&assurancePath, NULL);
+									break;
+								}
+								if (tmpMatch == FALSE && assuranceCounter >= assuranceSize){
+									*match = FALSE;
+									ov_string_print(matchText, "requirement %s do not match with the assurances, ", requirement->v_identifier);
+									ov_string_append(matchText, tmpMatchText);
+									ov_string_setvalue(&tmpErrorText, NULL);
+									ov_string_setvalue(&tmpMatchText, NULL);
+									ov_string_setvalue(&requirementPath, NULL);
+									ov_string_setvalue(&assurancePath, NULL);
+									return 0;
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 	}
+
+
+
+
+
 	*match = TRUE;
     return 0;
 }
@@ -128,6 +221,7 @@ OV_DLLFNCEXPORT void propertyValueStatement_MatchPVSLRA_typemethod(
     /*    
     *   local variables
     */
+
     OV_INSTPTR_propertyValueStatement_MatchPVSLRA pinst = Ov_StaticPtrCast(propertyValueStatement_MatchPVSLRA, pfb);
     pinst->v_error = 0;
 	ov_string_setvalue(&pinst->v_errortext, "");
@@ -135,8 +229,17 @@ OV_DLLFNCEXPORT void propertyValueStatement_MatchPVSLRA_typemethod(
 	pinst->v_match = FALSE;
 
     pinst->v_error = propertyValueStatement_MatchPVSLRA_matchPVSLRA(pinst->v_List1Path, pinst->v_List2Path, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
-    if (pinst->v_error != 0 || pinst->v_match == FALSE)
+    if (pinst->v_error != 0 || pinst->v_match == FALSE){
+    	if (ov_string_compare(pinst->v_errortext, "requirementListPath is not valid") == OV_STRCMP_EQUAL)
+    		ov_string_setvalue(&pinst->v_errortext, "List1Path in not valid");
+    	else if (ov_string_compare(pinst->v_errortext, "requirementListPath is not a path to an PropertyValueStatement") == OV_STRCMP_EQUAL)
+			ov_string_setvalue(&pinst->v_errortext, "List1Path is not a path to an PropertyValueStatement");
+    	else if (ov_string_compare(pinst->v_errortext, "assuranceListPath is not valid") == OV_STRCMP_EQUAL)
+			ov_string_setvalue(&pinst->v_errortext, "List2Path in not valid");
+    	else if (ov_string_compare(pinst->v_errortext, "assuranceListPath is not a path to an PropertyValueStatement") == OV_STRCMP_EQUAL)
+			ov_string_setvalue(&pinst->v_errortext, "List2Path is not a path to an PropertyValueStatement");
     	return;
+    }
     pinst->v_error = propertyValueStatement_MatchPVSLRA_matchPVSLRA(pinst->v_List2Path, pinst->v_List1Path, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
     return;
 }

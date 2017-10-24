@@ -139,9 +139,6 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
          return result;
 
     /* do what */
-    pinst->v_LCEValue.value.valueunion.val_int = 0;
-	pinst->v_LCEValue.value.vartype = OV_VT_INT;
-
     Ov_ForEachChild(ov_instantiation, pclass_openaas_modelmanager, pOtherObject){
 		if(pOtherObject != pobj){
 			ov_logfile_error("%s: cannot instantiate - modelmanager instance already exists", pinst->v_identifier);
@@ -245,12 +242,13 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_constructor(
 		ov_string_setvalue(&assetId.IdSpec, "http://acplt.org/Manager");
 		assetId.IdType = 0;
 
-		if (AASSTATUSCODE_FAIL(openaas_modelmanager_createAAS(aasId, "ComCo", assetId))){
+		/*if (AASSTATUSCODE_FAIL(openaas_modelmanager_createAAS(aasId, "ComCo", assetId))){
 			ov_string_setvalue(&aasId.IdSpec, NULL);
 			ov_string_setvalue(&assetId.IdSpec, NULL);
 			ov_logfile_error("Fatal: Could not create Object 'ComCo'");
 			return OV_ERR_GENERIC;
 		}
+		*/
 		ov_string_setvalue(&aasId.IdSpec, NULL);
 		ov_string_setvalue(&assetId.IdSpec, NULL);
 	}

@@ -30,224 +30,254 @@
 
 // if any1 > any2
 OV_BOOL GreaterThan (const OV_ANY any1, const OV_ANY any2){
-	if(!(any1.value.vartype & OV_VT_ISVECTOR)){
-		switch(any1.value.vartype & OV_VT_KSMASK){
-			STDFB_GT(BOOL, bool);
-			STDFB_GT(BYTE, byte);
-			STDFB_GT(UINT, uint);
-			STDFB_GT(INT, int);
-			STDFB_GT(SINGLE, single);
-			STDFB_GT(DOUBLE, double);
+	if (any1.value.vartype == any2.value.vartype){
+		if(!(any1.value.vartype & OV_VT_ISVECTOR)){
+			switch(any1.value.vartype & OV_VT_KSMASK){
+				STDFB_GT(BOOL, bool);
+				STDFB_GT(BYTE, byte);
+				STDFB_GT(UINT, uint);
+				STDFB_GT(INT, int);
+				STDFB_GT(SINGLE, single);
+				STDFB_GT(DOUBLE, double);
 
-			case OV_VT_TIME:
-				if(STDFB_GT_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
-					return TRUE;
-				else
+				case OV_VT_TIME:
+					if(STDFB_GT_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				case OV_VT_TIME_SPAN:
+					if(STDFB_GT_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				default:
+					ov_logfile_error("%s: comparison of given datatype not implementes");
 					return FALSE;
-			break;
-
-			case OV_VT_TIME_SPAN:
-				if(STDFB_GT_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
-			default:
-				ov_logfile_error("%s: comparison of given datatype not implementes");
-				return FALSE;
+			}
+		}else{
+			ov_logfile_error("%s: comparison of given datatype not implementes");
+			return FALSE;
 		}
 	}else{
-		ov_logfile_error("%s: comparison of given datatype not implementes");
+		ov_logfile_error("%s: the datatypes are not the same");
 		return FALSE;
 	}
 }
 
 // if any1 >= any2
 OV_BOOL GreaterEqual (const OV_ANY any1, const OV_ANY any2){
-	if(!(any1.value.vartype & OV_VT_ISVECTOR)){
-		switch(any1.value.vartype & OV_VT_KSMASK){
-			STDFB_GE(BOOL, bool);
-			STDFB_GE(BYTE, byte);
-			STDFB_GE(UINT, uint);
-			STDFB_GE(INT, int);
-			STDFB_GE(SINGLE, single);
-			STDFB_GE(DOUBLE, double);
+	if (any1.value.vartype == any2.value.vartype){
+		if(!(any1.value.vartype & OV_VT_ISVECTOR)){
+			switch(any1.value.vartype & OV_VT_KSMASK){
+				STDFB_GE(BOOL, bool);
+				STDFB_GE(BYTE, byte);
+				STDFB_GE(UINT, uint);
+				STDFB_GE(INT, int);
+				STDFB_GE(SINGLE, single);
+				STDFB_GE(DOUBLE, double);
 
-			case OV_VT_TIME:
-				if(STDFB_GE_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
-					return TRUE;
-				else
+				case OV_VT_TIME:
+					if(STDFB_GE_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				case OV_VT_TIME_SPAN:
+					if(STDFB_GE_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				default:
+					ov_logfile_error("comparison of given datatype not implementes");
 					return FALSE;
-			break;
-
-			case OV_VT_TIME_SPAN:
-				if(STDFB_GE_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
-			default:
-				ov_logfile_error("%s: comparison of given datatype not implementes");
-				return FALSE;
+			}
+		}else{
+			ov_logfile_error("comparison of given datatype not implementes");
+			return FALSE;
 		}
 	}else{
-		ov_logfile_error("%s: comparison of given datatype not implementes");
+		ov_logfile_error("%s: the datatypes are not the same");
 		return FALSE;
 	}
 }
 
 // if any1 == any2
 OV_BOOL Equal (const OV_ANY any1, const OV_ANY any2){
-	if(!(any1.value.vartype & OV_VT_ISVECTOR)){
-		switch(any1.value.vartype & OV_VT_KSMASK){
-			STDFB_EQ(BOOL, bool);
-			STDFB_EQ(BYTE, byte);
-			STDFB_EQ(UINT, uint);
-			STDFB_EQ(INT, int);
-			STDFB_EQ(SINGLE, single);
-			STDFB_EQ(DOUBLE, double);
+	if (any1.value.vartype == any2.value.vartype){
+		if(!(any1.value.vartype & OV_VT_ISVECTOR)){
+			switch(any1.value.vartype & OV_VT_KSMASK){
+				STDFB_EQ(BOOL, bool);
+				STDFB_EQ(BYTE, byte);
+				STDFB_EQ(UINT, uint);
+				STDFB_EQ(INT, int);
+				STDFB_EQ(SINGLE, single);
+				STDFB_EQ(DOUBLE, double);
 
-			case OV_VT_STRING:
-				if(ov_string_compare(any1.value.valueunion.val_string, any2.value.valueunion.val_string) == 0)
-					return TRUE;
-				else
+				case OV_VT_STRING:
+					if(ov_string_compare(any1.value.valueunion.val_string, any2.value.valueunion.val_string) == 0)
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				case OV_VT_TIME:
+					if(STDFB_EQ_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				case OV_VT_TIME_SPAN:
+					if(STDFB_EQ_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				default:
+					ov_logfile_error("%s: comparison of given datatype not implementes");
 					return FALSE;
-			break;
-
-			case OV_VT_TIME:
-				if(STDFB_EQ_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
-			case OV_VT_TIME_SPAN:
-				if(STDFB_EQ_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
-			default:
-				ov_logfile_error("%s: comparison of given datatype not implementes");
-				return FALSE;
+			}
+		}else{
+			ov_logfile_error("%s: comparison of given datatype not implementes");
+			return FALSE;
 		}
 	}else{
-		ov_logfile_error("%s: comparison of given datatype not implementes");
+		ov_logfile_error("%s: the datatypes are not the same");
 		return FALSE;
 	}
 }
 
 // if any1 != any2
 OV_BOOL NotEqual (const OV_ANY any1, const OV_ANY any2){
-	if(!(any1.value.vartype & OV_VT_ISVECTOR)){
-		switch(any1.value.vartype & OV_VT_KSMASK){
-			STDFB_NE(BOOL, bool);
-			STDFB_NE(BYTE, byte);
-			STDFB_NE(UINT, uint);
-			STDFB_NE(INT, int);
-			STDFB_NE(SINGLE, single);
-			STDFB_NE(DOUBLE, double);
+	if (any1.value.vartype == any2.value.vartype){
+		if(!(any1.value.vartype & OV_VT_ISVECTOR)){
+			switch(any1.value.vartype & OV_VT_KSMASK){
+				STDFB_NE(BOOL, bool);
+				STDFB_NE(BYTE, byte);
+				STDFB_NE(UINT, uint);
+				STDFB_NE(INT, int);
+				STDFB_NE(SINGLE, single);
+				STDFB_NE(DOUBLE, double);
 
-			case OV_VT_STRING:
-				if(ov_string_compare(any1.value.valueunion.val_string, any2.value.valueunion.val_string) != 0)
-					return TRUE;
-				else
+				case OV_VT_STRING:
+					if(ov_string_compare(any1.value.valueunion.val_string, any2.value.valueunion.val_string) != 0)
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				case OV_VT_TIME:
+					if(STDFB_NE_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				case OV_VT_TIME_SPAN:
+					if(STDFB_NE_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				default:
+					ov_logfile_error("%s: comparison of given datatype not implementes");
 					return FALSE;
-			break;
-
-			case OV_VT_TIME:
-				if(STDFB_NE_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
-			case OV_VT_TIME_SPAN:
-				if(STDFB_NE_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
-			default:
-				ov_logfile_error("%s: comparison of given datatype not implementes");
-				return FALSE;
+			}
+		}else{
+			ov_logfile_error("%s: comparison of given datatype not implementes");
+			return FALSE;
 		}
 	}else{
-		ov_logfile_error("%s: comparison of given datatype not implementes");
+		ov_logfile_error("%s: the datatypes are not the same");
 		return FALSE;
 	}
 }
 
 // if any1 <= any2
 OV_BOOL LessEqual (const OV_ANY any1, const OV_ANY any2){
-	if(!(any1.value.vartype & OV_VT_ISVECTOR)){
-		switch(any1.value.vartype & OV_VT_KSMASK){
-			STDFB_LE(BOOL, bool);
-			STDFB_LE(BYTE, byte);
-			STDFB_LE(UINT, uint);
-			STDFB_LE(INT, int);
-			STDFB_LE(SINGLE, single);
-			STDFB_LE(DOUBLE, double);
+	if (any1.value.vartype == any2.value.vartype){
+		if(!(any1.value.vartype & OV_VT_ISVECTOR)){
+			switch(any1.value.vartype & OV_VT_KSMASK){
+				STDFB_LE(BOOL, bool);
+				STDFB_LE(BYTE, byte);
+				STDFB_LE(UINT, uint);
+				STDFB_LE(INT, int);
+				STDFB_LE(SINGLE, single);
+				STDFB_LE(DOUBLE, double);
 
-			case OV_VT_TIME:
-				if(STDFB_LE_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
-					return TRUE;
-				else
+				case OV_VT_TIME:
+					if(STDFB_LE_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				case OV_VT_TIME_SPAN:
+					if(STDFB_LE_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				default:
+					ov_logfile_error("%s: comparison of given datatype not implementes");
 					return FALSE;
-			break;
-
-			case OV_VT_TIME_SPAN:
-				if(STDFB_LE_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
-			default:
-				ov_logfile_error("%s: comparison of given datatype not implementes");
-				return FALSE;
+			}
+		}else{
+			ov_logfile_error("%s: comparison of given datatype not implementes");
+			return FALSE;
 		}
 	}else{
-		ov_logfile_error("%s: comparison of given datatype not implementes");
+		ov_logfile_error("%s: the datatypes are not the same");
 		return FALSE;
 	}
 }
 
 // if any1 < any2
 OV_BOOL LessThan (const OV_ANY any1, const OV_ANY any2){
-	if(!(any1.value.vartype & OV_VT_ISVECTOR)){
-		switch(any1.value.vartype & OV_VT_KSMASK){
-			STDFB_LT(BOOL, bool);
-			STDFB_LT(BYTE, byte);
-			STDFB_LT(UINT, uint);
-			STDFB_LT(INT, int);
-			STDFB_LT(SINGLE, single);
-			STDFB_LT(DOUBLE, double);
+	if (any1.value.vartype == any2.value.vartype){
+		if(!(any1.value.vartype & OV_VT_ISVECTOR)){
+			switch(any1.value.vartype & OV_VT_KSMASK){
+				STDFB_LT(BOOL, bool);
+				STDFB_LT(BYTE, byte);
+				STDFB_LT(UINT, uint);
+				STDFB_LT(INT, int);
+				STDFB_LT(SINGLE, single);
+				STDFB_LT(DOUBLE, double);
 
-			case OV_VT_TIME:
-				if(STDFB_LT_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
-					return TRUE;
-				else
+				case OV_VT_TIME:
+					if(STDFB_LT_TIME(any1.value.valueunion.val_time, any2.value.valueunion.val_time))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				case OV_VT_TIME_SPAN:
+					if(STDFB_LT_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
+						return TRUE;
+					else
+						return FALSE;
+				break;
+
+				default:
+					ov_logfile_error("%s: comparison of given datatype not implementes");
 					return FALSE;
-			break;
-
-			case OV_VT_TIME_SPAN:
-				if(STDFB_LT_TIME(any1.value.valueunion.val_time_span, any2.value.valueunion.val_time_span))
-					return TRUE;
-				else
-					return FALSE;
-			break;
-
-			default:
-				ov_logfile_error("%s: comparison of given datatype not implementes");
-				return FALSE;
+			}
+		}else{
+			ov_logfile_error("%s: comparison of given datatype not implementes");
+			return FALSE;
 		}
 	}else{
-		ov_logfile_error("%s: comparison of given datatype not implementes");
+		ov_logfile_error("%s: the datatypes are not the same");
 		return FALSE;
 	}
 }
@@ -283,31 +313,115 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 	assurance = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pobj2);
 
 	// check
-	if (requirement->v_IDIdType != assurance->v_IDIdType){
-		ov_string_print(matchText, "requirement %s and assurance %s IDTypes are not the same", requirement->v_identifier, assurance->v_identifier);
+	OV_INSTPTR_propertyValueStatement_PropertyId pPropertyId = NULL;
+	OV_INSTPTR_propertyValueStatement_ExpressionLogic pExpressionLogic = NULL;
+
+	OV_UINT rPropertyIdIdType = 0;
+	OV_STRING rPropertyIdIdString = NULL;
+	OV_UINT rExpressionLogic = 0;
+
+	OV_INSTPTR_ov_object pchild = NULL;
+	OV_BOOL rPropertyIdFound = FALSE;
+	OV_BOOL rExpressionLogicFound = FALSE;
+	OV_INSTPTR_ov_domain prparent = NULL;
+	prparent = Ov_GetParent(ov_containment, requirement);
+	Ov_ForEachChild(ov_containment, prparent, pchild){
+		if(Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+			pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
+			rPropertyIdIdType = pPropertyId->v_IdType;
+			if(pPropertyId->v_IdSpec)
+				ov_string_setvalue(&rPropertyIdIdString, pPropertyId->v_IdSpec);
+			else
+				ov_string_setvalue(&rPropertyIdIdString, "");
+			pPropertyId = NULL;
+			rPropertyIdFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+			pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+			rExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+			pExpressionLogic = NULL;
+			rExpressionLogicFound = TRUE;
+		}
+	}
+	if (rPropertyIdFound == FALSE || rExpressionLogicFound == FALSE){
+		Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain, requirement), pchild){
+			if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+				pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
+				rPropertyIdIdType = pPropertyId->v_IdType;
+				if(pPropertyId->v_IdSpec)
+					ov_string_setvalue(&rPropertyIdIdString, pPropertyId->v_IdSpec);
+				else
+					ov_string_setvalue(&rPropertyIdIdString, "");
+				pPropertyId = NULL;
+			}else if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+				pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+				rExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+				pExpressionLogic = NULL;
+			}
+		}
+	}
+
+
+	OV_UINT aPropertyIdIdType = 0;
+	OV_STRING aPropertyIdIdString = NULL;
+	OV_UINT aExpressionLogic = 0;
+	OV_BOOL aPropertyIdFound = FALSE;
+	OV_BOOL aExpressionLogicFound = FALSE;
+	OV_INSTPTR_ov_domain paparent = NULL;
+	paparent = Ov_GetParent(ov_containment, assurance);
+	Ov_ForEachChild(ov_containment, paparent, pchild){
+		if(Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+			pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
+			aPropertyIdIdType = pPropertyId->v_IdType;
+			if(pPropertyId->v_IdSpec)
+				ov_string_setvalue(&aPropertyIdIdString, pPropertyId->v_IdSpec);
+			else
+				ov_string_setvalue(&aPropertyIdIdString, "");
+			pPropertyId = NULL;
+			aPropertyIdFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+			pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+			aExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+			pExpressionLogic = NULL;
+			aExpressionLogicFound = TRUE;
+		}
+	}
+	if (aPropertyIdFound == FALSE || aExpressionLogicFound == FALSE){
+		Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain, assurance), pchild){
+			if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+				pPropertyId = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pchild);
+				aPropertyIdIdType = pPropertyId->v_IdType;
+				if(pPropertyId->v_IdSpec)
+					ov_string_setvalue(&aPropertyIdIdString, pPropertyId->v_IdSpec);
+				else
+					ov_string_setvalue(&aPropertyIdIdString, "");
+				pPropertyId = NULL;
+			}else if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+				pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+				aExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+				pExpressionLogic = NULL;
+			}
+		}
+	}
+
+	if (rPropertyIdIdType != aPropertyIdIdType){
+		ov_string_print(matchText, "requirement %s and assurance %s PropertyIdTypes are not the same", requirement->v_identifier, assurance->v_identifier);
+		*match = 0;
 		return 0;
 	}
-	if (ov_string_compare(requirement->v_IDIdString, assurance->v_IDIdString) != OV_STRCMP_EQUAL){
-		ov_string_print(matchText, "requirement %s and assurance %s IDs are not the same", requirement->v_identifier, assurance->v_identifier);
-		return 0;
-	}
-	if(ov_string_compare(requirement->v_Unit, assurance->v_Unit) != OV_STRCMP_EQUAL){
-		ov_string_print(matchText, "requirement %s and assurance %s Units are not the same", requirement->v_identifier, assurance->v_identifier);
-		return 0;
-	}
-	if (requirement->v_Value.value.vartype != assurance->v_Value.value.vartype){
-		ov_string_print(matchText, "requirement %s and assurance %s have not the same datatype", requirement->v_identifier, assurance->v_identifier);
+	if (ov_string_compare(rPropertyIdIdString, aPropertyIdIdString) != OV_STRCMP_EQUAL){
+		ov_string_print(matchText, "requirement %s and assurance %s PropertyIds are not the same", requirement->v_identifier, assurance->v_identifier);
+		*match = 0;
 		return 0;
 	}
 
-	switch(requirement->v_ExpressionLogic){
+	switch(rExpressionLogic){
 	case GREATER_THAN:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
-				*match = GreaterThan(assurance->v_Value, requirement->v_Value);
+				*match = LessEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			case GREATER_EQUAL:
-				*match = GreaterThan(assurance->v_Value, requirement->v_Value);
+				*match = LessEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			case EQUAL:
 				*match = GreaterThan(assurance->v_Value, requirement->v_Value);
@@ -328,12 +442,12 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case GREATER_EQUAL:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
-				*match = GreaterEqual(assurance->v_Value, requirement->v_Value);
+				*match = LessThan(assurance->v_Value, requirement->v_Value);
 				break;
 			case GREATER_EQUAL:
-				*match = GreaterEqual(assurance->v_Value, requirement->v_Value);
+				*match = LessEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			case EQUAL:
 				*match = GreaterEqual(assurance->v_Value, requirement->v_Value);
@@ -354,7 +468,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case EQUAL:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = 0;
 				break;
@@ -380,9 +494,9 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case NOT_EQUAL:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
-				*match = GreaterThan(assurance->v_Value, requirement->v_Value);
+				*match = GreaterEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			case GREATER_EQUAL:
 				*match = GreaterThan(assurance->v_Value, requirement->v_Value);
@@ -397,7 +511,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 				*match = LessThan(assurance->v_Value, requirement->v_Value);
 				break;
 			case LESS_THAN:
-				*match = LessThan(assurance->v_Value, requirement->v_Value);
+				*match = LessEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			default:
 				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
@@ -406,7 +520,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case LESS_EQUAL:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = 0;
 				break;
@@ -420,10 +534,10 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 				*match = 0;
 				break;
 			case LESS_EQUAL:
-				*match = LessEqual(assurance->v_Value, requirement->v_Value);
+				*match = GreaterEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			case LESS_THAN:
-				*match = LessEqual(assurance->v_Value, requirement->v_Value);
+				*match = GreaterThan(assurance->v_Value, requirement->v_Value);
 				break;
 			default:
 				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
@@ -432,7 +546,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 			}
 		break;
 	case LESS_THAN:
-		switch(assurance->v_ExpressionLogic){
+		switch(aExpressionLogic){
 			case GREATER_THAN:
 				*match = 0;
 				break;
@@ -446,10 +560,10 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSRA_matchPVSRA(OV_STRING r
 				*match = 0;
 				break;
 			case LESS_EQUAL:
-				*match = LessThan(assurance->v_Value, requirement->v_Value);
+				*match = GreaterEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			case LESS_THAN:
-				*match = LessThan(assurance->v_Value, requirement->v_Value);
+				*match = GreaterEqual(assurance->v_Value, requirement->v_Value);
 				break;
 			default:
 				ov_string_print(errorText, "unknown expression logic from assurance %s", assurance->v_identifier);
@@ -473,14 +587,17 @@ OV_DLLFNCEXPORT void propertyValueStatement_MatchPVSRA_typemethod(
     /*
     *   local variables
     */
+
     OV_INSTPTR_propertyValueStatement_MatchPVSRA pinst = Ov_StaticPtrCast(propertyValueStatement_MatchPVSRA, pfb);
     pinst->v_error = 0;
     ov_string_setvalue(&pinst->v_errortext, "");
 	pinst->v_match = FALSE;
+	ov_string_setvalue(&pinst->v_matchText, "");
 
 	// Get Object pointer
 	pinst->v_error = propertyValueStatement_MatchPVSRA_matchPVSRA(pinst->v_requirementPath, pinst->v_assurancePath, &pinst->v_match, &pinst->v_matchText, &pinst->v_errortext);
 
     return;
 }
+
 

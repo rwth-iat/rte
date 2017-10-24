@@ -1,0 +1,7 @@
+#ifndef subModelLifeCycleEntryOPCUAInterface_OVT_INCLUDED
+#define subModelLifeCycleEntryOPCUAInterface_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+#endif

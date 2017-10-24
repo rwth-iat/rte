@@ -1,0 +1,41 @@
+#include "ov.ovm"
+#include "opcua.ovm"
+#include "subModelLifeCycleEntry.ovm"
+#include "openaasOPCUAInterface.ovm"
+
+LIBRARY subModelLifeCycleEntryOPCUAInterface
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = ""; 
+	 
+	/**
+		Documentation of interface.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS interface : CLASS ov/object  
+		IS_INSTANTIABLE;
+        COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
+        VARIABLES
+            modelnamespace : C_TYPE <UA_Namespace>;
+            interfacenamespace : C_TYPE <UA_Namespace>;
+        END_VARIABLES;
+        OPERATIONS         
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            startup: C_FUNCTION <OV_FNC_STARTUP>;
+            destructor: C_FUNCTION <OV_FNC_DESTRUCTOR>;
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

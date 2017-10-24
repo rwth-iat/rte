@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2017-05-23   File created
+*   2017-08-01   File created
 *
 *******************************************************************************
 *
@@ -33,7 +33,6 @@ OV_DLLFNCEXPORT OV_ACCESS openaas_SubModel_getaccess(
     /*    
     *   local variables
     */
-
-    return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
+	return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
 }
 

@@ -23,7 +23,125 @@
 
 #include "lifeCycleEntry.h"
 #include "libov/ov_macros.h"
+#include "identification_helpers.h"
+#include "libov/ov_logfile.h"
+#include "libov/ov_result.h"
 
+OV_DLLFNCEXPORT LCEStatusCode lce_LifeCycleArchive_ovresultToPVSStatusCode(OV_RESULT result) {
+	switch(result){
+	case OV_ERR_OK:
+		return LCESTATUSCODE_GOOD;
+	default:
+		return LCESTATUSCODE_BADUNEXPECTEDERROR;
+	}
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCEId_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_LCEId = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCECreatingInstanceIdString_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_LCECreatingInstanceIdString,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCECreatingInstanceIdType_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_LCECreatingInstanceIdType = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCEWritingInstanceIdString_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_LCEWritingInstanceIdString,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCEWritingInstanceIdType_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_LCEWritingInstanceIdType = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCEEventClass_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_LCEEventClass,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCESubject_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_LCESubject,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCEValue_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_ANY*  value
+) {
+    return ov_variable_setanyvalue(&pobj->v_LCEValue, value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCETimeStamp_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_TIME*  value
+) {
+    pobj->v_LCETimeStamp = *value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCECreate_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_BOOL  value
+) {
+	LCEStatusCode result = LCESTATUSCODE_GOOD;
+	pobj->v_LCECreate = value;
+	if (pobj->v_LCECreate == TRUE){
+		LifeCycleEntry lce;
+		LifeCycleEntry_init(&lce);
+		lce.creatingInstance.IdSpec = pobj->v_LCECreatingInstanceIdString;
+		lce.creatingInstance.IdType = pobj->v_LCECreatingInstanceIdType;
+		lce.writingInstance.IdSpec = pobj->v_LCEWritingInstanceIdString;
+		lce.writingInstance.IdType = pobj->v_LCEWritingInstanceIdType;
+		lce.data = pobj->v_LCEValue;
+		lce.data.time = pobj->v_LCETimeStamp;
+		lce.eventClass = pobj->v_LCEEventClass;
+		lce.lceId = pobj->v_LCEId;
+		lce.subject = pobj->v_LCESubject;
+
+		result = lifeCycleEntry_LifeCycleArchive_createLCE(pobj, lce);
+	}
+	pobj->v_LCECreate = FALSE;
+	pobj->v_LCEStatus = result;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT lifeCycleEntry_LifeCycleArchive_LCEDelete_set(
+    OV_INSTPTR_lifeCycleEntry_LifeCycleArchive          pobj,
+    const OV_BOOL  value
+) {
+	LCEStatusCode result = LCESTATUSCODE_GOOD;
+	pobj->v_LCEDelete = value;
+	if (pobj->v_LCEDelete == TRUE){
+		result = lifeCycleEntry_LifeCycleArchive_deleteLCE(pobj, pobj->v_LCEId);
+	}
+	pobj->v_LCEDelete = FALSE;
+	pobj->v_LCEStatus = result;
+	return OV_ERR_OK;
+}
 
 OV_DLLFNCEXPORT OV_ACCESS lifeCycleEntry_LifeCycleArchive_getaccess(
 	OV_INSTPTR_ov_object	pobj,
@@ -34,4 +152,185 @@ OV_DLLFNCEXPORT OV_ACCESS lifeCycleEntry_LifeCycleArchive_getaccess(
     *   local variables
     */
 	return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
+}
+
+OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_createLCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, LifeCycleEntry lce) {
+	LCEStatusCode result = LCESTATUSCODE_GOOD;
+	OV_RESULT ovResult = OV_ERR_OK;
+	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
+	if (pobj){
+		if (pobj->v_LifeCycleEntrySize > pobj->v_LifeCycleEntrySizeMax-1){
+			ptr = Ov_GetFirstChild(ov_containment, pobj);
+			if (ptr){
+				plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry,ptr);
+				if(!plce){
+					do{
+						ptr = Ov_GetNextChild(ov_containment, pobj);
+						if (ptr){
+							plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry,ptr);
+						}else{
+							break;
+						}
+					}while(!plce);
+				}
+				if (plce){
+					ovResult = Ov_DeleteObject(plce);
+					if(Ov_Fail(ovResult)){
+						ov_logfile_error("Fatal: could not delete LCE object - reason: %s", ov_result_getresulttext(ovResult));
+						return lce_LifeCycleArchive_ovresultToPVSStatusCode(result);
+					}
+					pobj->v_LifeCycleEntrySize -= 1;
+				}
+			}
+		}
+		OV_STRING tmpString = NULL;
+		OV_UINT count = pobj->v_LifeCycleEntryNameCount+1;
+		ov_string_print(&tmpString, "%u", count);
+		plce = NULL;
+		ovResult = Ov_CreateObject(lifeCycleEntry_LifeCycleEntry, plce, pobj, tmpString);
+		ov_database_free(tmpString);
+		if(Ov_Fail(ovResult)){
+			ov_logfile_error("Fatal: could not create LCE object - reason: %s", ov_result_getresulttext(ovResult));
+			return lce_LifeCycleArchive_ovresultToPVSStatusCode(ovResult);
+		}
+		pobj->v_LifeCycleEntrySize += 1;
+		pobj->v_LifeCycleEntryNameCount += 1;
+		ov_string_setvalue(&(plce->v_CreatingInstanceIdString), lce.creatingInstance.IdSpec);
+		plce->v_CreatingInstanceIdType = lce.creatingInstance.IdType;
+		ov_string_setvalue(&(plce->v_WritingInstanceIdString), lce.writingInstance.IdSpec);
+		plce->v_WritingInstanceIdType = lce.writingInstance.IdType;
+		ov_string_setvalue(&(plce->v_EventClass), lce.eventClass);
+		ov_string_setvalue(&(plce->v_Subject), lce.subject);
+		ov_variable_setanyvalue(&(plce->v_Data), &lce.data);
+		plce->v_TimeStamp = lce.data.time;
+	}else{
+		result = LCESTATUSCODE_BADUNEXPECTEDERROR;
+	}
+    return result;
+}
+
+OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_deleteLCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, OV_UINT64 lceId) {
+	LCEStatusCode result = LCESTATUSCODE_GOOD;
+	OV_RESULT ovResult = OV_ERR_OK;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry lce = NULL;
+	if (pobj){
+		OV_STRING tmpString = NULL;
+		ov_string_print(&tmpString, "%lu", lceId);
+		lce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, Ov_SearchChild(ov_containment, pobj, tmpString));
+		ov_database_free(tmpString);
+		if(lce){
+			ovResult = Ov_DeleteObject(lce);
+			if(Ov_Fail(ovResult)){
+				ov_logfile_error("Fatal: could not delete LCE object - reason: %s", ov_result_getresulttext(ovResult));
+				return lce_LifeCycleArchive_ovresultToPVSStatusCode(result);
+			}
+			pobj->v_LifeCycleEntrySize -=1;
+		}else{
+			result = LCESTATUSCODE_BADLCEID;
+		}
+	}else{
+		result = LCESTATUSCODE_BADUNEXPECTEDERROR;
+	}
+	return result;
+}
+
+OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_getLCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, OV_UINT64 lceId, LifeCycleEntry *lce) {
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
+	OV_STRING lceName = NULL;
+	if (pobj){
+		lceName = NULL;
+		ov_string_print(&lceName, "%lu", lceId);
+		plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pobj), lceName));
+		if (plce){
+			ov_string_setvalue(&lce->creatingInstance.IdSpec, plce->v_CreatingInstanceIdString);
+			lce->creatingInstance.IdType = plce->v_CreatingInstanceIdType;
+			ov_string_setvalue(&lce->writingInstance.IdSpec, plce->v_WritingInstanceIdString);
+			lce->writingInstance.IdType = plce->v_WritingInstanceIdType;
+			ov_string_setvalue(&lce->eventClass, plce->v_EventClass);
+			ov_string_setvalue(&lce->subject, plce->v_Subject);
+			ov_variable_setanyvalue(&lce->data, &(plce->v_Data));
+			lce->data.time = plce->v_TimeStamp;
+			lce->lceId = atoi(plce->v_identifier);
+		}else{
+			return LCESTATUSCODE_BADLCEID;
+		}
+	}else{
+		return LCESTATUSCODE_BADUNEXPECTEDERROR;
+	}
+	return LCESTATUSCODE_GOOD;
+}
+
+OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_getLastLCEs(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, OV_UINT count, LifeCycleEntry **lce, OV_UINT *arrayDimension) {
+	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
+	OV_UINT lceSize = 0;
+	if (pobj){
+		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, pobj), plce, lifeCycleEntry_LifeCycleEntry){
+			lceSize++;
+		}
+		if (lceSize > count){
+			*lce = ov_database_malloc(sizeof(LifeCycleEntry)*count);
+			*arrayDimension = count;
+		}
+		else{
+			*lce = ov_database_malloc(sizeof(LifeCycleEntry)*lceSize);
+			*arrayDimension = lceSize;
+		}
+
+		OV_UINT i = 0;
+		OV_UINT j = 0;
+		do{
+			j++;
+			if (j == 1){
+				ptr= Ov_GetLastChild(ov_containment, Ov_StaticPtrCast(ov_domain, pobj));
+			}else{
+				ptr = Ov_GetPreviousChild(ov_containment, Ov_StaticPtrCast(ov_domain, ptr));
+			}
+			if (!Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, ptr))
+				continue;
+
+			plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, ptr);
+
+			LifeCycleEntry_init(&((*lce)[i]));
+			ov_string_setvalue(&((*lce)[i].creatingInstance.IdSpec), plce->v_CreatingInstanceIdString);
+			(*lce)[i].creatingInstance.IdType = plce->v_CreatingInstanceIdType;
+			ov_string_setvalue(&((*lce)[i].writingInstance.IdSpec), plce->v_WritingInstanceIdString);
+			(*lce)[i].writingInstance.IdType = plce->v_WritingInstanceIdType;
+			ov_string_setvalue(&((*lce)[i].eventClass), plce->v_EventClass);
+			ov_string_setvalue(&((*lce)[i].subject), plce->v_Subject);
+			ov_variable_setanyvalue(&((*lce)[i].data), &(plce->v_Data));
+			(*lce)[i].data.time = plce->v_TimeStamp;
+			(*lce)[i].lceId = atoi(plce->v_identifier);
+			i++;
+		}while(i < *arrayDimension);
+	}else{
+		return LCESTATUSCODE_BADUNEXPECTEDERROR;
+	}
+	return LCESTATUSCODE_GOOD;
+}
+
+OV_DLLFNCEXPORT LCEStatusCode lifeCycleEntry_LifeCycleArchive_setLCE(OV_INSTPTR_lifeCycleEntry_LifeCycleArchive pobj, LifeCycleEntry lce) {
+	OV_INSTPTR_lifeCycleEntry_LifeCycleEntry plce = NULL;
+	OV_STRING lceName = NULL;
+	if (pobj){
+		lceName = NULL;
+		ov_string_print(&lceName, "%lu", lce.lceId);
+		plce = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleEntry, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pobj), lceName));
+		if (plce){
+			ov_string_setvalue(&(plce->v_CreatingInstanceIdString), lce.creatingInstance.IdSpec);
+			plce->v_CreatingInstanceIdType = lce.creatingInstance.IdType;
+			ov_string_setvalue(&(plce->v_WritingInstanceIdString), lce.writingInstance.IdSpec);
+			plce->v_WritingInstanceIdType = lce.writingInstance.IdType;
+			ov_string_setvalue(&(plce->v_EventClass), lce.eventClass);
+			ov_string_setvalue(&(plce->v_Subject), lce.subject);
+			ov_variable_setanyvalue(&(plce->v_Data), &lce.data);
+			plce->v_TimeStamp = lce.data.time;
+		}else{
+			return LCESTATUSCODE_BADLCEID;
+		}
+	}else{
+		return LCESTATUSCODE_BADUNEXPECTEDERROR;
+	}
+	return LCESTATUSCODE_GOOD;
 }

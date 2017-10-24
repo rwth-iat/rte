@@ -104,6 +104,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 	OV_INSTPTR_ov_domain ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement pPropertyValueStatement = NULL;
+	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
 	OV_INSTPTR_ov_object ptr2 = NULL;
 	ptr2 = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
 	if (ptr2)
@@ -122,21 +123,51 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 		}
 		if (ov_string_compare(aasName, "ComCo") != OV_STRCMP_EQUAL)
 			openaas_modelmanager_AASConvertListAdd(aasId, aasName);
-		paas->p_Header.p_Config.v_CarrierIdString = NULL;
-		ov_string_setvalue(&paas->p_Header.p_Config.v_CarrierIdString, aasId.IdSpec);
-		paas->p_Header.p_Config.v_CarrierIdType = aasId.IdType;
-		ov_string_setvalue(&paas->p_Header.p_Config.v_CreatingInstanceIdString, aasId.IdSpec);
-		paas->p_Header.p_Config.v_CreatingInstanceIdType = aasId.IdType;
-		ov_time_gettime(&paas->p_Header.p_Config.v_CreationTime);
+
+		result = Ov_CreateObject(propertyValueStatement_CarrierId, pCarrierId, Ov_StaticPtrCast(ov_domain, &paas->p_Header.p_Config), "CarrierID");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create Carrier object - reason: %s", ov_result_getresulttext(result));
+			return openaas_modelmanager_ovresultToAASStatusCode(result);
+		}
+		pCarrierId->v_IdSpec = NULL;
+		ov_string_setvalue(&pCarrierId->v_IdSpec, aasId.IdSpec);
+		pCarrierId->v_IdType = aasId.IdType;
 
 		result = Ov_CreateObject(propertyValueStatement_PropertyValueStatement, pPropertyValueStatement, Ov_StaticPtrCast(ov_domain, &paas->p_Header.p_Config), "Asset");
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create AssetPVS object - reason: %s", ov_result_getresulttext(result));
 			return openaas_modelmanager_ovresultToAASStatusCode(result);
 		}
-		pPropertyValueStatement->v_ExpressionSemantic = SETTING;
-		pPropertyValueStatement->v_ExpressionLogic = EQUAL;
-		pPropertyValueStatement->v_Unit = "";
+		OV_INSTPTR_ov_object pchild = NULL;
+		Ov_ForEachChild(ov_containment, Ov_DynamicPtrCast(ov_domain,pPropertyValueStatement), pchild) {
+			if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+				OV_INSTPTR_propertyValueStatement_ExpressionLogic pref =
+										Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic,pchild);
+				pref->v_ExpressionLogicEnum = EQUAL;
+			}else if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
+				OV_INSTPTR_propertyValueStatement_ExpressionSemantic pref =
+										Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic,pchild);
+				pref->v_ExpressionSemanticEnum = SETTING;
+			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+				OV_INSTPTR_propertyValueStatement_PropertyId pref =
+										Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);
+				pref->v_IdSpec = "http://openaas.org/properties/assetId";
+				pref->v_IdType = URI;
+			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+				OV_INSTPTR_propertyValueStatement_PropertyId pref =
+										Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);
+				pref->v_IdSpec = "http://openaas.org/properties/assetId";
+				pref->v_IdType = URI;
+			}else if (Ov_CanCastTo(propertyValueStatement_View, pchild)){
+				OV_INSTPTR_propertyValueStatement_View pref =
+										Ov_DynamicPtrCast(propertyValueStatement_View,pchild);
+				pref->v_ViewEnum = FUNCTIONAL;
+			}else if (Ov_CanCastTo(propertyValueStatement_Visibility, pchild)){
+				OV_INSTPTR_propertyValueStatement_Visibility pref =
+										Ov_DynamicPtrCast(propertyValueStatement_Visibility,pchild);
+				pref->v_VisibilityEnum = PUBLIC;
+			}
+		}
 		OV_STRING tmpString = NULL;
 		if (assetId.IdType == URI)
 			ov_string_setvalue(&tmpString, "URI:");
@@ -150,10 +181,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 		tmpAny.value.vartype = OV_VT_STRING;
 		Ov_SetAnyValue(&pPropertyValueStatement->v_Value, &tmpAny);
 		ov_string_setvalue(&tmpAny.value.valueunion.val_string, NULL);
-		pPropertyValueStatement->v_IDIdString = "http://openaas.org/properties/assetId";
-		pPropertyValueStatement->v_IDIdType = URI;
-		pPropertyValueStatement->v_View = FUNCTIONAL;
-		ov_time_gettime(&pPropertyValueStatement->v_TimeStamp);
+		ov_time_gettime(&pPropertyValueStatement->v_Value.time);
 	}else{
 		return AASSTATUSCODE_BADUNEXPECTEDERROR;
 	}
@@ -186,7 +214,3 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_deleteAAS(IdentificationType 
 
 	return AASSTATUSCODE_GOOD;
 }
-
-
-
-

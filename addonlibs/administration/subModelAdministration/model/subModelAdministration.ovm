@@ -1,0 +1,142 @@
+#include "ov.ovm"
+#include "openaas.ovm"
+#include "services.ovm" 
+
+LIBRARY subModelAdministration
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of SubModelAdministration.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/	
+	
+	CLASS CreateSubModelService : CLASS services/Service
+		IS_INSTANTIABLE;
+        VARIABLES  
+            ParentIdString  : STRING FLAGS="i" INITIALVALUE    =   "";
+            ParentIdType    : UINT   FLAGS="i";
+            ModelIdString   : STRING FLAGS="i" INITIALVALUE    =   "";
+            ModelIdType     : UINT   FLAGS="i";
+            Name            : STRING FLAGS="i" INITIALVALUE    =   "";
+            Revision        : UINT   FLAGS="i";
+            Version         : UINT   FLAGS="i";
+            Status          : STRING FLAGS="o" INITIALVALUE    =   "";   
+        END_VARIABLES;
+        OPERATIONS
+        	CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS DeleteSubModelService : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES  
+            IdString   : STRING FLAGS="i" INITIALVALUE    =   "";
+            IdType     : UINT   FLAGS="i";
+            Status     : STRING FLAGS="o" INITIALVALUE    =   "";   
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS CreatePropertyValueStatementListService : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES  
+            ParentIdString              : STRING FLAGS="i" INITIALVALUE    =   "";
+		    ParentIdType                : UINT   FLAGS="i";  
+		    Name                        : STRING FLAGS="i"  INITIALVALUE    =   "";
+		    Mask                        : UINT   FLAGS="i"  COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has following bits: 0x01:CarrierID;0x02:ExpressionLogic;0x04:ExpressionSemantic;0x08:PropertyID;0x10:View;0x20:Visibility";
+		    CarrierIdString             : STRING FLAGS="i"  INITIALVALUE    =   "";
+		    CarrierIdType               : UINT   FLAGS="i";
+		    ExpressionLogic             : UINT   FLAGS="i"  COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+		    ExpressionSemantic          : UINT   FLAGS="i"  COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+		    PropertyIdString            : STRING FLAGS="i"  INITIALVALUE    =   "";
+		    PropertyIdType              : UINT   FLAGS="i";
+		    View                        : UINT   FLAGS="i"  COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+		    Visibility                  : UINT   FLAGS="i"  COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+		    Status                      : STRING FLAGS="o" INITIALVALUE    =   ""; 
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+  
+    CLASS DeletePropertyValueStatementListService : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES  
+            IdString                    : STRING FLAGS="i"  INITIALVALUE    =   "";
+	        IdType                      : UINT   FLAGS="i";
+	        Status                      : STRING FLAGS="o" INITIALVALUE    =   ""; 
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS CreatePropertyValueStatementService : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES  
+            ListIdString                 : STRING FLAGS="i" INITIALVALUE    =   "";
+		    ListIdType                   : UINT   FLAGS="i";        
+		    Name                         : STRING FLAGS="i" INITIALVALUE    =   "";
+		    Value                        : ANY    FLAGS="i";
+		    Mask                         : UINT   FLAGS="i" COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility";
+		    CarrierIdString              : STRING FLAGS="i" INITIALVALUE    =   "";
+		    CarrierIdType                : UINT   FLAGS="i";
+		    ExpressionLogic              : INT    FLAGS="i" COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+		    ExpressionSemantic           : INT    FLAGS="i" COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+		    PropertyIdString             : STRING FLAGS="i" INITIALVALUE    =   "";
+		    PropertyIdType               : UINT   FLAGS="i";
+		    View                         : INT    FLAGS="i" COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+		    Visibility                   : INT    FLAGS="i" COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+		    Status                       : UINT   FLAGS="o";  
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+  
+    CLASS DeletePropertyValueStatementService : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES  
+            IdString                    : STRING FLAGS="i"  INITIALVALUE    =   "";
+            IdType                      : UINT   FLAGS="i";
+            Status                      : STRING FLAGS="o" INITIALVALUE    =   ""; 
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+		
+	
+	CLASS SubModelAdministration : CLASS openaas/SubModel
+		IS_INSTANTIABLE;
+		VARIABLES  
+		      			
+		END_VARIABLES;
+		PARTS
+			createSubModel : CLASS subModelAdministration/CreateSubModelService;
+			deleteSubModel : CLASS subModelAdministration/DeleteSubModelService; 
+			createPropertyValueStatementList : CLASS subModelAdministration/CreatePropertyValueStatementListService;
+            deletePropertyValueStatementList : CLASS subModelAdministration/DeletePropertyValueStatementListService;
+        	createPropertyValueStatement : CLASS subModelAdministration/CreatePropertyValueStatementService;
+            deletePropertyValueStatement : CLASS subModelAdministration/DeletePropertyValueStatementService;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

@@ -27,7 +27,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
-#include "nodeset.h"
+#include "nodeset_openaas.h"
 #include "libov/ov_element.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
@@ -64,14 +64,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	tmpNodeId.namespaceIndex = nodeId->namespaceIndex;
 	tmpNodeId.identifierType = nodeId->identifierType;
 
-	if (ov_string_compare(plist2[0], "startGetAssetLCEData") == OV_STRCMP_EQUAL || ov_string_compare(plist2[0], "stopGetAssetLCEData") == OV_STRCMP_EQUAL){
-		ov_memstack_lock();
-		OV_STRING tmpString2 = ov_path_getcanonicalpath(Ov_DynamicPtrCast(ov_object, pinterface), 2);
-		tmpNodeId.identifier.string = UA_String_fromChars(tmpString2);
-		ov_memstack_unlock();
-	}else{
-		tmpNodeId.identifier.string = UA_String_fromChars(plist[0]);
-	}
+    tmpNodeId.identifier.string = UA_String_fromChars(plist[0]);
+
 	ov_string_freelist(plist);
 	ov_memstack_lock();
 	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
@@ -94,15 +88,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	nodeClass = UA_NODECLASS_METHOD;
 	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_MethodNode));
 
-	OV_ELEMENT tmpElement;
-	tmpElement.elemtype = OV_ET_NONE;
-	tmpElement.pobj = NULL;
-	ov_element_searchpart(&element, &tmpElement, OV_ET_OPERATION, plist2[0]);
-	ov_string_freelist(plist2);
-	if (tmpElement.pobj == NULL){
-		return OV_ERR_BADPATH;
-	}
-
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
@@ -123,7 +108,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 
 	// DisplayName
 	lText.locale = UA_String_fromChars("en");
-	lText.text = UA_String_fromChars(tmpElement.elemunion.pop->v_identifier);
+	lText.text = UA_String_fromChars(plist2[0]);
 	newNode->displayName = lText;
 
 	// NodeId
@@ -147,7 +132,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 
 	((UA_MethodNode*)newNode)->executable = TRUE;
 	((UA_MethodNode*)newNode)->attachedMethod = openaasOPCUAInterface_interface_MethodCallbackModelmanager;
-	((UA_MethodNode*)newNode)->methodHandle = tmpElement.elemunion.pop->v_identifier;
+	ov_string_setvalue((OV_STRING*)(&(((UA_MethodNode*)newNode)->methodHandle)), plist2[0]);
+	ov_string_freelist(plist2);
 
 	// References
 	size_t size_references = 0;
@@ -174,7 +160,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	plist = ov_string_split(tmpString, "||", &len);
 	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, plist[0]);
 	ov_string_setvalue(&tmpString, NULL);
-	ov_string_freelist(plist);
 
 	// Type
 	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
@@ -197,6 +182,14 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETEAAS);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETEAAS_INPUTARGUMENTS);
 		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETEAAS_OUTPUTARGUMENTS);
+	}else if (ov_string_compare(plist[1], "createSubModel") == OV_STRCMP_EQUAL){
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATESUBMODEL);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATESUBMODEL_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATESUBMODEL_OUTPUTARGUMENTS);
+	}else if (ov_string_compare(plist[1], "deleteSubModel") == OV_STRCMP_EQUAL){
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETESUBMODEL);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETESUBMODEL_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETESUBMODEL_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "createLCE") == OV_STRCMP_EQUAL){
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATELCE);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATELCE_INPUTARGUMENTS);
@@ -213,6 +206,14 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCE);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCE_INPUTARGUMENTS);
 		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCE_OUTPUTARGUMENTS);
+	}else if (ov_string_compare(plist[1], "getLCESimple") == OV_STRCMP_EQUAL){
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCESIMPLE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCESIMPLE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCESIMPLE_OUTPUTARGUMENTS);
+	}else if (ov_string_compare(plist[1], "setLCESimple") == OV_STRCMP_EQUAL){
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCESIMPLE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCESIMPLE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCESIMPLE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "createPVSL") == OV_STRCMP_EQUAL){
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATEPVSL);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATEPVSL_INPUTARGUMENTS);
@@ -245,25 +246,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLASTLCES);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLASTLCES_INPUTARGUMENTS);
 		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLASTLCES_OUTPUTARGUMENTS);
-	}else if (ov_string_compare(plist[1], "triggerGetCoreData") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_TRIGGERGETCOREDATA);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_TRIGGERGETCOREDATA_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_TRIGGERGETCOREDATA_OUTPUTARGUMENTS);
-	}else if (ov_string_compare(plist[1], "startGetAssetLCEData") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_STARTGETASSETLCEDATA);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_STARTGETASSETLCEDATA_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_STARTGETASSETLCEDATA_OUTPUTARGUMENTS);
-	}else if (ov_string_compare(plist[1], "stopGetAssetLCEData") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_STOPGETASSETLCEDATA);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_STOPGETASSETLCEDATA_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_STOPGETASSETLCEDATA_OUTPUTARGUMENTS);
 	}else{
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
 		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
 	}
-
+	ov_string_freelist(plist);
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }
-

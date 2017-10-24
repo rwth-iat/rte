@@ -196,6 +196,15 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 
 	pinst->v_serverData = UA_Server_new(pinst->v_serverConfig);
 
+	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 2, STRING);
+	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[0], "http://opcfoundation.org/UA/");
+
+	OV_STRING tmpName = NULL;
+	copyOPCUAStringToOV(pinst->v_serverConfig.applicationDescription.applicationUri, &tmpName);
+	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[1], tmpName);
+	ov_string_setvalue(&tmpName, NULL);
+
+
 	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
 	UA_Namespace_init(&pinst->v_namespace, &tmpNamespaceName);
 	UA_String_deleteMembers(&tmpNamespaceName);
@@ -205,8 +214,8 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	if(UA_Server_addNamespace_full(pinst->v_serverData, &(pinst->v_namespace)) != UA_STATUSCODE_GOOD){
 		ov_logfile_error("%s - init: could not add ov-namespace to ua server", pinst->v_identifier);
 	}
-	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 1, STRING);
-	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[0], OV_UA_NAMESPACEURI);
+	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 3, STRING);
+	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[2], OV_UA_NAMESPACEURI);
 
 
 	/*	add reference to ov root	*/

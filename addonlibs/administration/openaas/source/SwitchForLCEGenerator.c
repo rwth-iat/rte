@@ -117,13 +117,13 @@ OV_DLLFNCEXPORT void openaas_SwitchForLCEGenerator_typemethod(
 
 	OV_BOOL aasID1Plugged = FALSE;
 	OV_BOOL aasID2Plugged = FALSE;
-	pinst->v_Error |= openaas_modelmanager_getPVS(aasId1, tmpSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
+	//pinst->v_Error |= openaas_modelmanager_getPVS(aasId1, tmpSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
 	if ((pvs1.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 		if (pvs1.value.value.valueunion.val_bool == TRUE){
 			aasID1Plugged = TRUE;
 		}
 	}
-	pinst->v_Error |= openaas_modelmanager_getPVS(aasId2, tmpSubModelId, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
+	//pinst->v_Error |= openaas_modelmanager_getPVS(aasId2, tmpSubModelId, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
 	if ((pvs2.value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 		if (pvs2.value.value.valueunion.val_bool == TRUE){
 			aasID2Plugged = TRUE;

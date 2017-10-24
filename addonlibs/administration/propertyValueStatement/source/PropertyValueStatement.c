@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2016-12-16   File created
+*   2017-06-22   File created
 *
 *******************************************************************************
 *
@@ -34,14 +34,12 @@ OV_DLLFNCEXPORT OV_ACCESS propertyValueStatement_PropertyValueStatement_getacces
     *   local variables
     */
 	return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
-
 }
-
 
 OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_PropertyValueStatement_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*
+    /*    
     *   local variables
     */
     OV_INSTPTR_propertyValueStatement_PropertyValueStatement pinst = Ov_StaticPtrCast(propertyValueStatement_PropertyValueStatement, pobj);
@@ -53,9 +51,78 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_PropertyValueStatement_construc
          return result;
 
     /* do what */
-    pinst->v_Value.value.valueunion.val_int = 0;
-    pinst->v_Value.value.vartype = OV_VT_INT;
+    OV_INSTPTR_ov_domain pparent = NULL;
+	pparent = Ov_GetParent(ov_containment, pobj);
+	if (!Ov_CanCastTo(propertyValueStatement_PropertyValueStatementList, pparent)){
+		ov_logfile_error("%s: cannot instantiate - Parent have to be from class propertyValueStatementList", pinst->v_identifier);
+		return OV_ERR_ALREADYEXISTS;
+	}
 
+	OV_BOOL CarrierIdFound = FALSE;
+	OV_BOOL PropertyIdFound = FALSE;
+	OV_BOOL ExpressionLogicFound = FALSE;
+	OV_BOOL ExpressionSemanticFound = FALSE;
+	OV_BOOL ViewFound = FALSE;
+	OV_BOOL VisibilityFound = FALSE;
+	OV_INSTPTR_ov_object pchild = NULL;
+	Ov_ForEachChild(ov_containment, pparent, pchild){
+		if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+			CarrierIdFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+			PropertyIdFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+			ExpressionLogicFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
+			ExpressionSemanticFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_View, pchild)){
+			ViewFound = TRUE;
+		}else if(Ov_CanCastTo(propertyValueStatement_Visibility, pchild)){
+			VisibilityFound = TRUE;
+		}
+	}
+
+	if (CarrierIdFound == FALSE){
+		result = Ov_CreateObject(propertyValueStatement_CarrierId, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "CarrierId");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create CarrierId");
+			return result;
+		}
+	}
+	if (PropertyIdFound == FALSE){
+		result = Ov_CreateObject(propertyValueStatement_PropertyId, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "PropertyId");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create PropertyId");
+			return result;
+		}
+	}
+	if (ExpressionLogicFound == FALSE){
+		result = Ov_CreateObject(propertyValueStatement_ExpressionLogic, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "ExpressionLogic");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create ExpressionLogic");
+			return result;
+		}
+	}
+	if (ExpressionSemanticFound == FALSE){
+		result = Ov_CreateObject(propertyValueStatement_ExpressionSemantic, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "ExpressionSemantic");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create ExpressionSemantic");
+			return result;
+		}
+	}
+	if (ViewFound == FALSE){
+		result = Ov_CreateObject(propertyValueStatement_View, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "View");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create View");
+			return result;
+		}
+	}
+	if (VisibilityFound == FALSE){
+		result = Ov_CreateObject(propertyValueStatement_Visibility, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "Visibility");
+		if(Ov_Fail(result)){
+			ov_logfile_error("Fatal: could not create Visibility");
+			return result;
+		}
+	}
     return OV_ERR_OK;
 }
 

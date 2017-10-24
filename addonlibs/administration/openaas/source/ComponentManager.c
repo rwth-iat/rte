@@ -23,6 +23,7 @@
 
 #include "openaas.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_object.h"
 #include "openaas_helpers.h"
 #include "jsonparsing.h"
 #include "fb_database.h"
@@ -166,8 +167,10 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	OV_RESULT resultOV = OV_ERR_OK;
 	OV_INSTPTR_MessageSys_Message pRequestMessage = NULL;
 	OV_INSTPTR_MessageSys_MsgDelivery pmsgDelivery = NULL;
-	paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
+	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
+	OV_INSTPTR_ov_object pchild = NULL;
 	// Create MessageObject in Outbox
+	paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
 	ov_string_setvalue(&tempString, NULL);
 	ov_string_setvalue(&tempString, "Request");
 	resultOV = Ov_CreateObject(MessageSys_Message, pRequestMessage, &this->p_OUTBOX, tempString);
@@ -213,10 +216,16 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	switch(requestType){
 	case 0:
 		ov_string_append(&answerBody, "RegisterAASReq:");
-		ov_string_append(&answerBody, paas->p_Header.p_Config.v_CarrierIdString);
-		ov_string_append(&answerBody, ",");
-		ov_string_print(&tempString, "%i", paas->p_Header.p_Config.v_CarrierIdType);
-		ov_string_append(&answerBody, tempString);
+		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				ov_string_append(&answerBody, pCarrierId->v_IdSpec);
+				ov_string_append(&answerBody, ",");
+				ov_string_print(&tempString, "%i", pCarrierId->v_IdType);
+				ov_string_append(&answerBody, tempString);
+				break;
+			}
+		}
 		ov_string_setvalue(&tempString, NULL);
 		ov_string_append(&answerBody, ",");
 		ov_string_append(&answerBody, pRequestMessage->v_senderAddress);
@@ -227,10 +236,16 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		break;
 	case 1:
 		ov_string_append(&answerBody, "UnregisterAASReq:");
-		ov_string_append(&answerBody, paas->p_Header.p_Config.v_CarrierIdString);
-		ov_string_append(&answerBody, ",");
-		ov_string_print(&tempString, "%i", paas->p_Header.p_Config.v_CarrierIdType);
-		ov_string_append(&answerBody, tempString);
+		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				ov_string_append(&answerBody, pCarrierId->v_IdSpec);
+				ov_string_append(&answerBody, ",");
+				ov_string_print(&tempString, "%i", pCarrierId->v_IdType);
+				ov_string_append(&answerBody, tempString);
+				break;
+			}
+		}
 		ov_string_setvalue(&tempString, NULL);
 		break;
 	case 2:
@@ -303,24 +318,36 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 	OV_STRING *plistReq = NULL;
 	OV_INSTPTR_fb_task pTaskParent = NULL;
 	OV_TIME_SPAN tmpTimeSpan;
-	OV_INSTPTR_ov_object child = NULL;
+	OV_INSTPTR_ov_object pchild = NULL;
+	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
 
 	// First clean message box, so only up-to-date messages are handled.
 	cleanupMessageBox(pinst);
 
 	// StateMaschine
 	switch(pinst->v_state){
-	case 0: //Waiting for AASID
+	case 0: //Waiting for the setting of AASID
 		pinst->v_messageCount = 0;
 		pinst->v_registered = FALSE;
+		IdentificationType tmpAASId;
+		IdentificationType_init(&tmpAASId);
+
 		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
-		if (ov_string_compare(paas->p_Header.p_Config.v_CarrierIdString, "") != OV_STRCMP_EQUAL){ // Send Register-Request
-			IdentificationType tmpAASId;
-			sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
-			pinst->v_state = 1;
-		}else{
-			// Wait for the setting of AASId
+		if(!getAASIdbyObjectPointer(paas,&tmpAASId)){
+			goto clean_state_0;
 		}
+		if(ov_string_compare(tmpAASId.IdSpec,"")==OV_STRCMP_EQUAL){
+			goto clean_state_0;
+		}
+		//register AAS
+		sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
+		IdentificationType_deleteMembers(&tmpAASId);
+		pinst->v_state = 1;
+
+
+		clean_state_0:
+		IdentificationType_deleteMembers(&tmpAASId);
+
 		break;
 	case 1: //Sending Register-Request and wait for answer
 		// Get the next message, if any.
@@ -336,7 +363,9 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		if (tmpTimeSpan.secs > pinst->v_messageTimeOut.secs || (tmpTimeSpan.secs == pinst->v_messageTimeOut.secs && tmpTimeSpan.usecs > pinst->v_messageTimeOut.usecs)){
 			pinst->v_messageCount = 0;
 			IdentificationType tmpAASId;
+			IdentificationType_init(&tmpAASId);
 			sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
+			IdentificationType_deleteMembers(&tmpAASId);
 		}
 		message = getNextMessage(pinst);
 		if (message == NULL) {
@@ -429,28 +458,26 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		void *srvStructSend = NULL;
 		SRV_service_t srvTypeSend;
 
-
-		// Process the Message
-		IdentificationType sender;
-		IdentificationType_init(&sender);
-		ov_string_setvalue(&sender.IdSpec, headerReceive->sender.idSpec.data);
-		sender.IdType = headerReceive->sender.idType;
+		//Check if the parent is an AAS
+		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
+		IdentificationType aasId;
+		IdentificationType_init(&aasId);
+		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
+			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
+				ov_string_setvalue(&aasId.IdSpec, pCarrierId->v_IdSpec);
+				aasId.IdType = pCarrierId->v_IdType;
+				break;
+			}
+		}
 
 		IdentificationType receiver;
 		IdentificationType_init(&receiver);
 		ov_string_setvalue(&receiver.IdSpec, headerReceive->receiver.idSpec.data);
 		receiver.IdType = headerReceive->receiver.idType;
-
-		//Check if the parent is an AAS
-		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
-		IdentificationType aasId;
-		IdentificationType_init(&aasId);
-		ov_string_setvalue(&aasId.IdSpec, paas->p_Header.p_Config.v_CarrierIdString);
-		aasId.IdType = paas->p_Header.p_Config.v_CarrierIdType;
-
 		OV_BOOL sendAnswer = FALSE;
 
-		if (IdentificationTypeEqual(&receiver, &aasId)){ // MSG is for this AAS
+		if (getAASIdbyObjectPointer(paas,&aasId) && IdentificationTypeEqual(&receiver, &aasId)){ // MSG is for this AAS
 			headerSend = SRV_msgHeader_t_reverseCopy(headerReceive);
 			switch (srvTypeReceive){
 			case SRV_createAASReq:{
@@ -470,7 +497,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					ov_string_setvalue(&tmpOVAssetId.IdSpec, createAASReq->assetId.idSpec.data);
 					tmpOVAssetId.IdType = createAASReq->assetId.idType;
 
-					result = openaas_modelmanager_createAAS(tmpOVAASId, tmpOVName, tmpOVAssetId);
+					//result = openaas_modelmanager_createAAS(tmpOVAASId, tmpOVName, tmpOVAssetId);
 
 					createAASRsp_t createAASRsp;
 					createAASRsp_t_init(&createAASRsp);
@@ -514,7 +541,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					tmpOVAASId.IdType = deleteAASReq->aasId.idType;
 
 
-					result = openaas_modelmanager_deleteAAS(tmpOVAASId);
+					//result = openaas_modelmanager_deleteAAS(tmpOVAASId);
 
 					deleteAASRsp_t deleteAASRsp;
 					deleteAASRsp_t_init(&deleteAASRsp);
@@ -567,7 +594,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, createPVSLReq->carrier.idSpec.data);
 				tmpOVCreatingInstance.IdType = createPVSLReq->carrier.idType;
 
-				result = openaas_modelmanager_createPVSL(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance);
+				//result = openaas_modelmanager_createPVSL(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance);
 
 				createPVSLRsp_t createPVSLRsp;
 				createPVSLRsp_t_init(&createPVSLRsp);
@@ -599,7 +626,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				OV_STRING tmpOVPVSLName = NULL;
 				ov_string_setvalue(&tmpOVPVSLName, deletePVSLReq->pvslName.data);
 
-				result = openaas_modelmanager_deletePVSL(aasId, tmpOVSubModelId, tmpOVPVSLName);
+				//result = openaas_modelmanager_deletePVSL(aasId, tmpOVSubModelId, tmpOVPVSLName);
 
 				deletePVSLRsp_t deletePVSLRsp;
 				deletePVSLRsp_t_init(&deletePVSLRsp);
@@ -616,148 +643,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				sendAnswer = TRUE;
 			}break;
 			case SRV_deletePVSLRsp:{
-				// TODO: Check the answer
-			}break;
-			case SRV_createLCEReq:{
-				createLCEReq_t *createLCEReq = (createLCEReq_t*)srvStructReceive;
-
-				LifeCycleEntry lce;
-				LifeCycleEntry_init(&lce);
-
-				ov_string_setvalue(&lce.creatingInstance.IdSpec, createLCEReq->lce.creatingInstance.idSpec.data);
-				lce.creatingInstance.IdType = createLCEReq->lce.creatingInstance.idType;
-
-				ov_string_setvalue(&lce.writingInstance.IdSpec, createLCEReq->lce.writingInstance.idSpec.data);
-				lce.writingInstance.IdType = createLCEReq->lce.writingInstance.idType;
-
-				ov_string_setvalue(&lce.eventClass, createLCEReq->lce.eventClass.data);
-
-				ov_string_setvalue(&lce.subject, createLCEReq->lce.subject.data);
-
-				serviceValueToOVDataValue(&lce.data, createLCEReq->lce.dataType, createLCEReq->lce.data, createLCEReq->lce.dataTime);
-
-				result = openaas_modelmanager_createLCE(aasId, lce);
-
-				createLCERsp_t createLCERsp;
-				createLCERsp_t_init(&createLCERsp);
-
-				createLCERsp.status = result;
-
-				srvStructSend = &createLCERsp;
-				srvTypeSend = SRV_createLCERsp;
-
-				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
-				createLCERsp_t_deleteMembers(&createLCERsp);
-				LifeCycleEntry_deleteMembers(&lce);
-				sendAnswer = TRUE;
-			}break;
-			case SRV_createLCERsp:{
-				// TODO: Check the answer
-			}break;
-			case SRV_deleteLCEReq:{
-				deleteLCEReq_t *deleteLCEReq = (deleteLCEReq_t*)srvStructReceive;
-
-				OV_UINT64 tmpOVLCEId;
-				tmpOVLCEId = deleteLCEReq->lceId;
-
-				result = openaas_modelmanager_deleteLCE(aasId, tmpOVLCEId);
-
-				deleteLCERsp_t deleteLCERsp;
-				deleteLCERsp_t_init(&deleteLCERsp);
-
-				deleteLCERsp.status = result;
-
-				srvStructSend = &deleteLCERsp;
-				srvTypeSend = SRV_deleteLCERsp;
-
-				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
-				deleteLCERsp_t_deleteMembers(&deleteLCERsp);
-				sendAnswer = TRUE;
-			}break;
-			case SRV_deleteLCERsp:{
-				// TODO: Check the answer
-			}break;
-			case SRV_setLCEReq:{
-				setLCEReq_t *setLCEReq = (setLCEReq_t*)srvStructReceive;
-
-				LifeCycleEntry lce;
-				LifeCycleEntry_init(&lce);
-
-				lce.lceId = setLCEReq->lce.lceId;
-
-				ov_string_setvalue(&lce.creatingInstance.IdSpec, setLCEReq->lce.creatingInstance.idSpec.data);
-				lce.creatingInstance.IdType = setLCEReq->lce.creatingInstance.idType;
-
-				ov_string_setvalue(&lce.writingInstance.IdSpec, setLCEReq->lce.writingInstance.idSpec.data);
-				lce.writingInstance.IdType = setLCEReq->lce.writingInstance.idType;
-
-				ov_string_setvalue(&lce.eventClass, setLCEReq->lce.eventClass.data);
-
-				ov_string_setvalue(&lce.subject, setLCEReq->lce.subject.data);
-
-				serviceValueToOVDataValue(&lce.data, setLCEReq->lce.dataType, setLCEReq->lce.data, setLCEReq->lce.dataTime);
-				result = openaas_modelmanager_setLCE(aasId, lce);
-
-				setLCERsp_t setLCERsp;
-				setLCERsp_t_init(&setLCERsp);
-
-				setLCERsp.status = result;
-
-				srvStructSend = &setLCERsp;
-				srvTypeSend = SRV_setLCERsp;
-
-				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
-				setLCERsp_t_deleteMembers(&setLCERsp);
-				LifeCycleEntry_deleteMembers(&lce);
-				sendAnswer = TRUE;
-			}break;
-			case SRV_setLCERsp:{
-				// TODO: Check the answer
-			}break;
-			case SRV_getLCEReq:{
-				getLCEReq_t *getLCEReq = (getLCEReq_t*)srvStructReceive;
-
-				OV_UINT64 tmpOVLCEId;
-				tmpOVLCEId = getLCEReq->lceId;
-
-				LifeCycleEntry lce;
-				LifeCycleEntry_init(&lce);
-
-				result = openaas_modelmanager_getLCE(aasId, tmpOVLCEId, &lce);
-
-				getLCERsp_t getLCERsp;
-				getLCERsp_t_init(&getLCERsp);
-
-				ov_string_setvalue(&getLCERsp.lce.creatingInstance.idSpec.data, lce.creatingInstance.IdSpec);
-				getLCERsp.lce.creatingInstance.idType = lce.creatingInstance.IdType;
-
-				ov_string_setvalue(&getLCERsp.lce.writingInstance.idSpec.data, lce.writingInstance.IdSpec);
-				getLCERsp.lce.writingInstance.idType = lce.writingInstance.IdType;
-
-				ov_string_setvalue(&getLCERsp.lce.eventClass.data, lce.eventClass);
-				getLCERsp.lce.hasEventClass = TRUE;
-
-				ov_string_setvalue(&getLCERsp.lce.subject.data, lce.subject);
-				getLCERsp.lce.hasSubject = TRUE;
-
-				OVDataValueToserviceValue(lce.data, &getLCERsp.lce.dataType, &getLCERsp.lce.data, &getLCERsp.lce.dataTime);
-				getLCERsp.lce.hastDataTime = TRUE;
-
-				getLCERsp.status = result;
-
-				srvStructSend = &getLCERsp;
-				srvTypeSend = SRV_getLCERsp;
-
-				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
-				getLCERsp_t_deleteMembers(&getLCERsp);
-				LifeCycleEntry_deleteMembers(&lce);
-				sendAnswer = TRUE;
-			}break;
-			case SRV_getLCERsp:{
 				// TODO: Check the answer
 			}break;
 			case SRV_createPVSReq:{
@@ -791,7 +676,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 				pvs.Visibility = createPVSReq->pvs.visibility;
 
-				result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
+				//result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
 
 				createPVSRsp_t createPVSRsp;
 				createPVSRsp_t_init(&createPVSRsp);
@@ -825,7 +710,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				OV_STRING tmpOVPVSName = NULL;
 				ov_string_setvalue(&tmpOVPVSName, deletePVSReq->pvsName.data);
 
-				result = openaas_modelmanager_deletePVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName);
+				//result = openaas_modelmanager_deletePVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName);
 
 				deletePVSRsp_t deletePVSRsp;
 				deletePVSRsp_t_init(&deletePVSRsp);
@@ -848,16 +733,18 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			case SRV_setPVSReq:{
 				setPVSReq_t *setPVSReq = (setPVSReq_t*)srvStructReceive;
 
-				IdentificationType tmpOVSubModelId;
-				IdentificationType_init(&tmpOVSubModelId);
-				ov_string_setvalue(&tmpOVSubModelId.IdSpec, setPVSReq->subModelId.idSpec.data);
-				tmpOVSubModelId.IdType = setPVSReq->subModelId.idType;
+				//IdentificationType tmpOVSubModelId;
+				//IdentificationType_init(&tmpOVSubModelId);
+				//ov_string_setvalue(&tmpOVSubModelId.IdSpec, setPVSReq->subModelId.idSpec.data);
+				//tmpOVSubModelId.IdType = setPVSReq->subModelId.idType;
 
 				OV_STRING tmpOVPVSLName = NULL;
 				ov_string_setvalue(&tmpOVPVSLName, setPVSReq->pvslName.data);
 
+
 				PropertyValueStatement pvs;
 				PropertyValueStatement_init(&pvs);
+
 
 				ov_string_setvalue(&pvs.pvsName, setPVSReq->pvs.name.data);
 
@@ -870,13 +757,38 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				ov_string_setvalue(&pvs.unit, setPVSReq->pvs.unit.data);
 
 				ov_string_setvalue(&pvs.ID.IdSpec, setPVSReq->pvs.ID.idSpec.data);
+
 				pvs.ID.IdType = setPVSReq->pvs.ID.idType;
 
 				pvs.view = setPVSReq->pvs.view;
 
 				pvs.Visibility = setPVSReq->pvs.visibility;
 
-				result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
+				IdentificationType carrierId;
+				IdentificationType_init(&carrierId);
+				OV_UINT len = 0;
+				ov_string_setvalue(&pvs.objectID.IdSpec, setPVSReq->pvs.objectID.idSpec.data);
+				//remove "http://acplt.org"-prefix from id, to use the string as path
+				OV_STRING *idStr = ov_string_split(pvs.objectID.IdSpec,"http://acplt.org",&len);
+				if(!idStr || len<2 || !idStr[1])
+					goto clean_SRV_setPVSReq;
+
+				ov_string_setvalue(&pvs.objectID.IdSpec,idStr[1]);
+
+				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
+
+				pvs.objectID.IdType = setPVSReq->pvs.objectID.idType;
+				openaas_modelmanager_setPVS(aasId,
+						pvs.objectID,
+						setPVSReq->pvs.mask,
+						pvs.pvsName,
+						carrierId,
+						setPVSReq->pvs.expressionLogic,setPVSReq->pvs.expressionSemantic,
+						pvs.ID,
+						setPVSReq->pvs.view,
+						setPVSReq->pvs.visibility,pvs.value);
+				//openaas_modelmanager_setPVS(aasId,pvs.pvsName)
+				//result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
 
 				setPVSRsp_t setPVSRsp;
 				setPVSRsp_t_init(&setPVSRsp);
@@ -887,11 +799,11 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				srvTypeSend = SRV_setPVSRsp;
 
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
-				setPVSRsp_t_deleteMembers(&setPVSRsp);
-				ov_database_free(tmpOVPVSLName);
-				PropertyValueStatement_deleteMembers(&pvs);
-				sendAnswer = TRUE;
+				//setPVSRsp_t_deleteMembers(&setPVSRsp);
+				clean_SRV_setPVSReq:
+					ov_database_free(tmpOVPVSLName);
+					PropertyValueStatement_deleteMembers(&pvs);
+				sendAnswer = FALSE;
 			}break;
 			case SRV_setPVSRsp:{
 				// TODO: Check the answer
@@ -913,7 +825,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				PropertyValueStatement pvs;
 				PropertyValueStatement_init(&pvs);
 
-				result = openaas_modelmanager_getPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName, &pvs);
+				//result = openaas_modelmanager_getPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName, &pvs);
 
 				getPVSRsp_t getPVSRsp;
 				getPVSRsp_t_init(&getPVSRsp);
@@ -955,7 +867,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 				PropertyValueStatementList *ppvs = NULL;
 
-				result = openaas_modelmanager_getCoreData(aasId, &tmpNumber, &ppvs);
+				//result = openaas_modelmanager_getCoreData(aasId, &tmpNumber, &ppvs);
 				ov_logfile_debug("Anzahl: %i", tmpNumber);
 				free(messageContent);
 				getCoreDataRsp_t getCoreDataRsp;
@@ -1021,12 +933,12 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 						ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, getCoreDataRsp->pvsl[i].creatingInstance.idSpec.data);
 						tmpOVCreatingInstance.IdType = getCoreDataRsp->pvsl[i].creatingInstance.idType;
 
-						OV_TIME tmpOVCreatingTime  = ov_1601nsTimeToOvTime(getCoreDataRsp->pvsl[i].creationTime);
+						//OV_TIME tmpOVCreatingTime  = ov_1601nsTimeToOvTime(getCoreDataRsp->pvsl[i].creationTime);
 
 						IdentificationType tmpSubModelId;
 						IdentificationType_init(&tmpSubModelId);
 
-						result = openaas_modelmanager_createPVSLTime(aasId, tmpSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance, tmpOVCreatingTime);
+						//result = openaas_modelmanager_createPVSLTime(aasId, tmpSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance, tmpOVCreatingTime);
 						for (OV_UINT j = 0; j < getCoreDataRsp->pvsl[i].numPvs; j++){
 							OV_STRING tmpOVPVSLName = NULL;
 							ov_string_setvalue(&tmpOVPVSLName, getCoreDataRsp->pvsl[i].name.data);
@@ -1051,7 +963,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 							pvs.Visibility = getCoreDataRsp->pvsl[i].pvs[j].visibility;
 
-							result = openaas_modelmanager_createPVSTime(aasId, tmpSubModelId, tmpOVPVSLName, pvs);
+							//result = openaas_modelmanager_createPVSTime(aasId, tmpSubModelId, tmpOVPVSLName, pvs);
 							PropertyValueStatement_deleteMembers(&pvs);
 							ov_database_free(tmpOVPVSLName);
 						}
@@ -1075,7 +987,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				SRV_String_delete(srvStringReceive);
 				SRV_String_delete(srvStringSend);
 				IdentificationType_deleteMembers(&aasId);
-				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 				ov_logfile_error("Could not copy message in outbox. Reason: %s", ov_result_getresulttext(resultOV));
@@ -1099,11 +1010,18 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 			ov_string_setvalue(&pinst->v_receiverForMessageForwardedIdString, receiver.IdSpec);
 			pinst->v_receiverForMessageForwardedIdType = receiver.IdType;
+
+			// Process the Message
+			IdentificationType sender;
+			IdentificationType_init(&sender);
+			ov_string_setvalue(&sender.IdSpec, headerReceive->sender.idSpec.data);
+			sender.IdType = headerReceive->sender.idType;
 			ov_string_setvalue(&pinst->v_senderForMessageForwardedIdString, sender.IdSpec);
 			pinst->v_senderForMessageForwardedIdType = sender.IdType;
 
 			OV_STRING requestId = NULL;
 			requestId = sendingRequestToDiscoveryServer(pinst, 2, sender);
+			IdentificationType_deleteMembers(&sender);
 			if (requestId){
 				ov_string_setvalue(&pinst->v_MsgIdForGetAASIdRequest, requestId);
 			}
@@ -1125,7 +1043,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				SRV_String_delete(srvStringReceive);
 				SRV_String_delete(srvStringSend);
 				IdentificationType_deleteMembers(&aasId);
-				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 				ov_logfile_error("Could not create an answerMessage. Reason: %s", ov_result_getresulttext(resultOV));
@@ -1170,7 +1087,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				SRV_String_delete(srvStringReceive);
 				SRV_String_delete(srvStringSend);
 				IdentificationType_deleteMembers(&aasId);
-				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 				Ov_DeleteObject((OV_INSTPTR_ov_object) answerMessage);
@@ -1186,7 +1102,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				SRV_String_delete(srvStringReceive);
 				SRV_String_delete(srvStringSend);
 				IdentificationType_deleteMembers(&aasId);
-				IdentificationType_deleteMembers(&sender);
 				IdentificationType_deleteMembers(&receiver);
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 				Ov_DeleteObject((OV_INSTPTR_ov_object) answerMessage);
@@ -1202,7 +1117,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		SRV_String_delete(srvStringReceive);
 		SRV_String_delete(srvStringSend);
 		IdentificationType_deleteMembers(&aasId);
-		IdentificationType_deleteMembers(&sender);
 		IdentificationType_deleteMembers(&receiver);
 		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 		break;
@@ -1230,17 +1144,17 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			}
 		}
 		// Find Message with GetAAS-Response
-		child = NULL;
-		child = Ov_GetLastChild(ov_containment, &pinst->p_INBOX);
+		pchild = NULL;
+		pchild = Ov_GetLastChild(ov_containment, &pinst->p_INBOX);
 		while (true){
-			while (child && !Ov_CanCastTo(MessageSys_Message , child)) {
-				child = Ov_GetPreviousChild(ov_containment, child);
+			while (pchild && !Ov_CanCastTo(MessageSys_Message , pchild)) {
+				pchild = Ov_GetPreviousChild(ov_containment, pchild);
 			}
-			if (child == NULL){
+			if (pchild == NULL){
 				break;
 			}
 
-			message = Ov_StaticPtrCast(MessageSys_Message, child);
+			message = Ov_StaticPtrCast(MessageSys_Message, pchild);
 
 			if (ov_string_compare(message->v_refMsgID, pinst->v_MsgIdForGetAASIdRequest) == OV_STRCMP_EQUAL){
 				// Decoding the Message
@@ -1269,20 +1183,20 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					if (ov_string_compare(plistParameter[0], "OK") == OV_STRCMP_EQUAL){ // get was successfully
 						// TODO: Check ParameterType
 						if (len2 == 4){
-							child = Ov_GetLastChild(ov_containment, &pinst->p_OUTBOX);
+							pchild = Ov_GetLastChild(ov_containment, &pinst->p_OUTBOX);
 							while (true){
-								while (child && !Ov_CanCastTo(MessageSys_Message , child)) {
-									child = Ov_GetPreviousChild(ov_containment, child);
+								while (pchild && !Ov_CanCastTo(MessageSys_Message , pchild)) {
+									pchild = Ov_GetPreviousChild(ov_containment, pchild);
 								}
-								if (child == NULL){
+								if (pchild == NULL){
 									pinst->v_state = 6;
 									break;
 								}
-								answerMessage = Ov_StaticPtrCast(MessageSys_Message, child);
+								answerMessage = Ov_StaticPtrCast(MessageSys_Message, pchild);
 								if (ov_string_compare(answerMessage->v_msgID, pinst->v_MsgIdForMessageForwarded) == OV_STRCMP_EQUAL){
 									break;
 								}
-								child = Ov_GetPreviousChild(ov_containment, child);
+								pchild = Ov_GetPreviousChild(ov_containment, pchild);
 							}
 							MessageSys_Message_senderAddress_set(answerMessage, plistParameter[1]);
 							MessageSys_Message_senderName_set(answerMessage, plistParameter[2]);
@@ -1317,7 +1231,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				ov_string_freelist(plistReq);
 				break;
 			}
-			child = Ov_GetPreviousChild(ov_containment, child);
+			pchild = Ov_GetPreviousChild(ov_containment, pchild);
 		}
 		break;
 	case 4: // Forward Message Getting the receiver
@@ -1344,17 +1258,17 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			}
 		}
 		// Find Message with GetAAS-Response
-		child = NULL;
-		child = Ov_GetLastChild(ov_containment, &pinst->p_INBOX);
+		pchild = NULL;
+		pchild = Ov_GetLastChild(ov_containment, &pinst->p_INBOX);
 		while (true){
-			while (child && !Ov_CanCastTo(MessageSys_Message , child)) {
-				child = Ov_GetPreviousChild(ov_containment, child);
+			while (pchild && !Ov_CanCastTo(MessageSys_Message , pchild)) {
+				pchild = Ov_GetPreviousChild(ov_containment, pchild);
 			}
-			if (child == NULL){
+			if (pchild == NULL){
 				break;
 			}
 
-			message = Ov_StaticPtrCast(MessageSys_Message, child);
+			message = Ov_StaticPtrCast(MessageSys_Message, pchild);
 
 			if (ov_string_compare(message->v_refMsgID, pinst->v_MsgIdForGetAASIdRequest) == OV_STRCMP_EQUAL){
 				// Decoding the Message
@@ -1383,20 +1297,20 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					if (ov_string_compare(plistParameter[0], "OK") == OV_STRCMP_EQUAL){ // get was successfully
 						// TODO: Check ParameterType
 						if (len2 == 4){
-							child = Ov_GetLastChild(ov_containment, &pinst->p_OUTBOX);
+							pchild = Ov_GetLastChild(ov_containment, &pinst->p_OUTBOX);
 							while (true){
-								while (child && !Ov_CanCastTo(MessageSys_Message , child)) {
-									child = Ov_GetPreviousChild(ov_containment, child);
+								while (pchild && !Ov_CanCastTo(MessageSys_Message , pchild)) {
+									pchild = Ov_GetPreviousChild(ov_containment, pchild);
 								}
-								if (child == NULL){
+								if (pchild == NULL){
 									pinst->v_state = 7;
 									break;
 								}
-								answerMessage = Ov_StaticPtrCast(MessageSys_Message, child);
+								answerMessage = Ov_StaticPtrCast(MessageSys_Message, pchild);
 								if (ov_string_compare(answerMessage->v_msgID, pinst->v_MsgIdForMessageForwarded) == OV_STRCMP_EQUAL){
 									break;
 								}
-								child = Ov_GetPreviousChild(ov_containment, child);
+								pchild = Ov_GetPreviousChild(ov_containment, pchild);
 							}
 							MessageSys_Message_senderAddress_set(answerMessage, plistParameter[1]);
 							MessageSys_Message_senderName_set(answerMessage, plistParameter[2]);
@@ -1448,7 +1362,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				ov_string_freelist(plistReq);
 				break;
 			}
-			child = Ov_GetPreviousChild(ov_containment, child);
+			pchild = Ov_GetPreviousChild(ov_containment, pchild);
 		}
 		break;
 	case 5: //Sending Unregister-Request and wait for answer

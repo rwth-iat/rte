@@ -1,0 +1,52 @@
+#include "ov.ovm"
+#include "fb.ovm"
+#include "lifeCycleEntry.ovm"
+#include "subModelLifeCycleEntry.ovm"
+#include "propertyValueStatement.ovm"
+
+LIBRARY Demo
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of demo.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS TDVDriveDemoBlock : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            ButtonPressed                   : BOOL INITIALVALUE = FALSE;
+            LCESubModelPath                 : STRING INITIALVALUE = "";
+            LCECreatingInstanceIdString     : STRING INITIALVALUE    =   "";
+            LCECreatingInstanceIdType       : UINT;
+            LCEWritingInstanceIdString      : STRING INITIALVALUE    =   "";
+            LCEWritingInstanceIdType        : UINT;
+            LCEEventClass                   : STRING INITIALVALUE    =   "";
+            LCESubject                      : STRING INITIALVALUE    =   "";         
+            ActualMotorValue                : SINGLE;
+            Reset                           : BOOL INITIALVALUE = FALSE;
+            PVSStatePath                    : STRING INITIALVALUE = "";
+            PVSActualValuePath              : STRING INITIALVALUE = "";       
+            ValueForMotorRamp               : INT FLAGS ="o" INITIALVALUE = 0;
+            State                           : UINT FLAGS ="o" INITIALVALUE = 0;      
+        END_VARIABLES;
+        OPERATIONS 
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+            typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>; 
+        END_OPERATIONS;
+    END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

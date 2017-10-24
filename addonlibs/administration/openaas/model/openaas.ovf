@@ -20,38 +20,25 @@
 // modelmanager functions
 typedef AASStatusCode UA_FNC_CREATEAAS(IdentificationType aasId, OV_STRING aasName, IdentificationType assetId);
 typedef AASStatusCode UA_FNC_DELETEAAS(IdentificationType aasId);
-typedef AASStatusCode UA_FNC_CREATEPVSL(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, IdentificationType carrier, IdentificationType creatingInstance);
-typedef AASStatusCode UA_FNC_CREATEPVSLTIME(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, IdentificationType carrier, IdentificationType creatingInstance, OV_TIME creatingTime);
-typedef AASStatusCode UA_FNC_DELETEPVSL(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName);
-typedef AASStatusCode UA_FNC_CREATEPVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, PropertyValueStatement pvs);
-typedef AASStatusCode UA_FNC_CREATEPVSTIME(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, PropertyValueStatement pvs);
-typedef AASStatusCode UA_FNC_DELETEPVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, OV_STRING pvsName);
-typedef AASStatusCode UA_FNC_SETPVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, PropertyValueStatement pvs);
-typedef AASStatusCode UA_FNC_GETPVS(IdentificationType aasId, IdentificationType subModelId, OV_STRING pvslName, OV_STRING pvsName, PropertyValueStatement *pvs);
-typedef AASStatusCode UA_FNC_CREATELCE(IdentificationType aasId, LifeCycleEntry lce);
-typedef AASStatusCode UA_FNC_DELETELCE(IdentificationType aasId, OV_UINT64 lceId);
-typedef AASStatusCode UA_FNC_SETLCE(IdentificationType aasId, LifeCycleEntry lce);
-typedef AASStatusCode UA_FNC_GETLCE(IdentificationType aasId, OV_UINT64 lceId, LifeCycleEntry *lce);
-typedef AASStatusCode UA_FNC_GETLASTLCES(IdentificationType aasId, OV_UINT count, LifeCycleEntry **lce, OV_UINT *arrayDimension);
-typedef AASStatusCode UA_FNC_GETCOREDATA(IdentificationType aasId, OV_UINT *number, PropertyValueStatementList **pvsl);
-typedef AASStatusCode UA_FNC_TRIGGERGETCOREDATA(IdentificationType sourceAASId, IdentificationType targetAASId);
-
+	
+typedef AASStatusCode UA_FNC_CREATESUBMODEL(IdentificationType aasId, IdentificationType parentID, IdentificationType modelId, OV_STRING smName, OV_UINT revision, OV_UINT version);
+typedef AASStatusCode UA_FNC_DELETESUBMODEL(IdentificationType aasId, IdentificationType smId);
+	
+typedef AASStatusCode UA_FNC_CREATEPVSL(IdentificationType aasId, IdentificationType parentID, OV_STRING pvslName, OV_UINT mask, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility);
+typedef AASStatusCode UA_FNC_DELETEPVSL(IdentificationType aasId, IdentificationType pvslId);
+	
+typedef AASStatusCode UA_FNC_CREATEPVS(IdentificationType aasId, IdentificationType listId, OV_STRING pvsName, OV_ANY value, OV_UINT mask, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility);
+typedef AASStatusCode UA_FNC_DELETEPVS(IdentificationType aasId, IdentificationType pvsId);
+typedef AASStatusCode UA_FNC_SETPVS(IdentificationType aasId, IdentificationType pvsId, OV_UINT mask, OV_STRING pvsName, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility, OV_ANY value);
+typedef AASStatusCode UA_FNC_GETPVS(IdentificationType aasId, IdentificationType pvsId, OV_STRING *pvsName, IdentificationType *carrierId, ExpressionLogicEnum *expressionLogic, ExpressionSemanticEnum *expressionSemantic, IdentificationType *propertyId, ViewEnum *view, VisibilityEnum *visibility, OV_ANY *value);
+	
 // HMI Helper
 typedef AASStatusCode UA_FNC_SENDAASMESSAGEINSYSTEM(OV_INSTPTR_openaas_AASComponentManager this, IdentificationType senderAASId, IdentificationType receiverAASId, OV_UINT msgNo, SRV_service_t serviceType, void* srvStruct);
 
 typedef AASStatusCode UA_FNC_OVRESULTTOAASSTATUSCODE(OV_RESULT result);
 typedef void OPENAAS_FNC_AASCONVERTLISTADD(IdentificationType aasId, OV_STRING aasName);
 typedef void OPENAAS_FNC_AASCONVERTLISTDELETE(IdentificationType aasId);
-typedef OV_STRING OPENAAS_FNC_AASCONVERTLISTGET(IdentificationType aasId);
-     
-typedef OV_RESULT   UA_FNC_CALLEDMETHOD(      
-  OV_INSTPTR_openaas_Service pobj,       
-  OV_UINT numberofInputArgs,       
-  const void **packedInputArgList,       
-  OV_UINT numberofOutputArgs,      
-  void **packedOutputArgList,
-  OV_UINT *typeArray       
-);        
+typedef OV_STRING OPENAAS_FNC_AASCONVERTLISTGET(IdentificationType aasId);    
 
 
 #endif

@@ -9,41 +9,91 @@ LIBRARY propertyValueStatement
 	COMMENT   = "";
 	
  
-	CLASS PropertyValueStatement : CLASS ov/object
+	CLASS PropertyValueStatement : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES
-            ExpressionSemantic : INT 
-               COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
-            ExpressionLogic : INT 
-               COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
-            Unit                   : STRING INITIALVALUE    =   "";
             Value                  : ANY;
-            TimeStamp              : TIME;
-            IDIdString               : STRING INITIALVALUE    =   "";
-            IDIdType                 : UINT;
-            View                   : INT
-                COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURITY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
-            Visibility             : INT COMMENT = "0:PRIVAT,1:CONTRACT,2:PUBLIC";
         END_VARIABLES;
         OPERATIONS
             getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
             constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
         END_OPERATIONS;
     END_CLASS;  
+    
+    CLASS CarrierId : CLASS identification/Identification
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS PropertyId : CLASS identification/Identification
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS ExpressionLogic : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+        	ExpressionLogicEnum : UINT COMMENT = "0:GREATER_THAN, 1:GREATER_EQUAL, 2:EQUAL, 3:NOT_EQUAL, 4:LESS_EQUAL, 5:LESS_THAN";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS ExpressionSemantic : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+        	ExpressionSemanticEnum : UINT COMMENT = "0:ASSURANCE, 1:SETTING, 2:MEASUREMENT, 3:REQUIREMENT";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS View : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+            ViewEnum : UINT COMMENT = "0:BUSINESS, 1:CONSTRUCTION, 2:POWER, 3:FUNCTIONAL, 4:LOCATION, 5:SECURITY, 6:NETWORK, 7:LIFECYCLE, 8:HUMAN";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS Visibility : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+            VisibilityEnum : UINT COMMENT = "0:PRIVAT, 1:CONTRACT, 2:PUBLIC";
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS; 
 
 	CLASS PropertyValueStatementList : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES
-            CarrierIdString  : STRING INITIALVALUE    =   "";
-            CarrierIdType    : UINT;
-            CreatingInstanceIdString : STRING INITIALVALUE    =   "";
-            CreatingInstanceIdType : UINT;
-            CreationTime : TIME;
         END_VARIABLES;
         OPERATIONS
             getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
         END_OPERATIONS;
     END_CLASS; 
+    
     
     CLASS MatchPVSRA : CLASS fb/functionblock
         IS_INSTANTIABLE;
@@ -76,5 +126,112 @@ LIBRARY propertyValueStatement
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS;
-	
+    
+     CLASS PVSGenerator : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            ListIdString                 : STRING INITIALVALUE = "";
+		    ListIdType                   : UINT;        
+		    Name                         : STRING INITIALVALUE = "";
+		    NameIntern                   : BOOL   INITIALVALUE = FALSE; 
+		    NameCount                    : UINT   FLAGS = "o";
+		    Value                        : ANY;
+            TimeStamp                    : TIME;
+            TimeStampExtern              : BOOL   INITIALVALUE = FALSE;
+		    Mask                         : UINT   COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility";
+		    CarrierIdString              : STRING INITIALVALUE    =   "";
+		    CarrierIdType                : UINT;
+		    ExpressionLogic              : UINT   COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+		    ExpressionSemantic           : UINT   COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+		    PropertyIdString             : STRING INITIALVALUE    =   "";
+		    PropertyIdType               : UINT;
+		    View                         : UINT   COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+		    Visibility                   : UINT   COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+		    StartPVSGenerator            : BOOL   HAS_SET_ACCESSOR;
+	        StopPVSGenerator             : BOOL   HAS_SET_ACCESSOR;
+	        ResetNameCount               : BOOL   HAS_SET_ACCESSOR;
+	        Status                       : UINT   FLAGS = "o";
+        END_VARIABLES;
+        OPERATIONS 
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+            typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>; 
+        END_OPERATIONS;
+    END_CLASS;
+
+    CLASS HMIHelperPVSL    :    CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            Path                        : STRING FLAGS = "i" INITIALVALUE    =   "";      
+            CarrierId                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+            PropertyId                  : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ExpressionLogic             : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ExpressionSemantic          : STRING FLAGS = "o" INITIALVALUE    =   "";
+            View                        : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Visibility                  : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Name                        : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Value                       : STRING FLAGS = "o" INITIALVALUE    =   "";
+            ValueTimeStamp              : STRING FLAGS = "o" INITIALVALUE    =   "";
+            Error                       : BOOL   FLAGS = "o";
+            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS modelmanager    :    CLASS ov/domain
+        IS_INSTANTIABLE;
+        COMMENT    =    "Implementations of model functions to act like a factory";
+    VARIABLES 
+        PVSLParentIdString              : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLParentIdType                : UINT HAS_SET_ACCESSOR;        
+        PVSLName                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLMask                        : UINT HAS_SET_ACCESSOR     COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has following bits: 0x01:CarrierID;0x02:ExpressionLogic;0x04:ExpressionSemantic;0x08:PropertyID;0x10:View;0x20:Visibility";
+        PVSLCarrierIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLCarrierIdType               : UINT HAS_SET_ACCESSOR;
+        PVSLExpressionLogic             : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+        PVSLExpressionSemantic          : INT HAS_SET_ACCESSOR     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+        PVSLPropertyIdString            : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLPropertyIdType              : UINT HAS_SET_ACCESSOR;
+        PVSLView                        : INT HAS_SET_ACCESSOR     COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+        PVSLVisibility                  : INT HAS_SET_ACCESSOR     COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+        PVSLIdString                    : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLIdType                      : UINT HAS_SET_ACCESSOR;
+        PVSLStatus                      : UINT; 
+        PVSLCreate                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVSL";
+        PVSLDelete                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVSL"; 
+        
+        PVSListIdString                 : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSListIdType                   : UINT HAS_SET_ACCESSOR;        
+        PVSName                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSValue                        : ANY HAS_SET_ACCESSOR;
+        PVSMask                         : UINT HAS_SET_ACCESSOR     COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility";
+        PVSCarrierIdString              : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSCarrierIdType                : UINT HAS_SET_ACCESSOR;
+        PVSExpressionLogic              : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+        PVSExpressionSemantic           : INT HAS_SET_ACCESSOR     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+        PVSPropertyIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSPropertyIdType               : UINT HAS_SET_ACCESSOR;
+        PVSView                         : INT HAS_SET_ACCESSOR     COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+        PVSVisibility                   : INT HAS_SET_ACCESSOR     COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+        PVSIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSIdType                       : UINT HAS_SET_ACCESSOR;
+        PVSStatus                       : UINT;  
+        PVSCreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVS";
+        PVSDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVS";      
+    END_VARIABLES;
+    OPERATIONS
+        createPVSL : C_FUNCTION <PVS_FNC_CREATEPVSL>;
+        deletePVSL : C_FUNCTION <PVS_FNC_DELETEPVSL>;
+        createPVS  : C_FUNCTION <PVS_FNC_CREATEPVS>;
+        deletePVS  : C_FUNCTION <PVS_FNC_DELETEPVS>;
+        getPVS     : C_FUNCTION <PVS_FNC_GETPVS>;
+        setPVS     : C_FUNCTION <PVS_FNC_SETPVS>;
+        
+        getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+    END_OPERATIONS;    
+    END_CLASS;
+
 END_LIBRARY;

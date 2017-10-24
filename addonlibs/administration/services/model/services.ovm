@@ -1,0 +1,72 @@
+#include "ov.ovm"
+
+LIBRARY services
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of Service.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/ 
+	CLASS Service : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			ServiceVersion        : UINT COMMENT = "Version of the service";
+            ServiceRevision       : UINT COMMENT ="Revision number of the service";
+            WSDL                  : STRING COMMENT ="WSDL Description of the service" INITIALVALUE = "";
+            execute               : BOOL HAS_SET_ACCESSOR COMMENT = "Execute service";
+		END_VARIABLES;
+		OPERATIONS
+			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS ExampleService : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES 
+            Input1     : BOOL   FLAGS="i" ;
+            Input2     : INT    FLAGS="i";
+            Input3     : UINT   FLAGS="i";
+            Input4     : SINGLE FLAGS="i";
+            Input5     : DOUBLE FLAGS="i";
+            Input6     : STRING FLAGS="i" INITIALVALUE = "";
+            Input7[]   : BOOL   FLAGS="i";
+            Input8[]   : INT    FLAGS="i";
+            Input9[]   : UINT   FLAGS="i";
+            Input10[]  : SINGLE FLAGS="i";
+            Input11[]  : DOUBLE FLAGS="i";
+            Input12[]  : STRING FLAGS="i";
+            Input13    : ANY FLAGS="i";
+            Output1    : BOOL   FLAGS="o";
+            Output2    : INT    FLAGS="o";
+            Output3    : UINT   FLAGS="o";
+            Output4    : SINGLE FLAGS="o";
+            Output5    : DOUBLE FLAGS="o";
+            Output6    : STRING FLAGS="o" INITIALVALUE = "";
+            Output7[]  : BOOL   FLAGS="o";
+            Output8[]  : INT    FLAGS="o";
+            Output9[]  : UINT   FLAGS="o";
+            Output10[] : SINGLE FLAGS="o";
+            Output11[] : DOUBLE FLAGS="o";
+            Output12[] : STRING FLAGS="o";
+            Output13   : ANY FLAGS="o";
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

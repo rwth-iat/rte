@@ -1,0 +1,7 @@
+#ifndef services_OVT_INCLUDED
+#define services_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+#endif

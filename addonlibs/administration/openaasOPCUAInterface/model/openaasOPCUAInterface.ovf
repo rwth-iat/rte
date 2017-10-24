@@ -15,22 +15,14 @@
 
 typedef UA_StatusCode UA_FNC_OVMODELMANAGERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVOPENAASNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVOPENAASFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVAASFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVAASNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVSUBMODELNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVSERVICENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVSERVICEINPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVSERVICEOUTPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVLIFECYCLEARCHIVENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVLIFECYCLEENTRYNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVPROPERTYVALUESTATEMENTLISTNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVPROPERTYVALUESTATEMENTNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVVIEWSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+typedef UA_StatusCode UA_FNC_OVSUBMODELVARIABLESNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVHEADERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVBODYNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVCARRIERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-	
+typedef UA_StatusCode UA_FNC_OVVIEWSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+
+
 	
 
 /* nodestore interfacing functions */

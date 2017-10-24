@@ -5,7 +5,7 @@
 #include "propertyValueStatement.ovm"
 #include "lifeCycleEntry.ovm"
 #include "MessageSys.ovm"
-
+   
 LIBRARY openaas
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
     AUTHOR    = "Torben Deppe";
@@ -29,59 +29,13 @@ LIBRARY openaas
         END_OPERATIONS;
     END_CLASS;
 	
-	CLASS Service : CLASS ov/domain
-        VARIABLES
-            IdString       : STRING INITIALVALUE    =   "";
-            IdType         : UINT;
-            Version        : INT COMMENT = "Version of the service";
-            Revision       : INT COMMENT ="Revision number of the service";
-            WSDL           : STRING COMMENT ="WSDL Description of the service" INITIALVALUE = "";
-            execute        : BOOL HAS_SET_ACCESSOR COMMENT = "Execute service";
-        END_VARIABLES; 
-        OPERATIONS
-        	getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
-            CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;            
-        END_OPERATIONS;
-    END_CLASS;
-    
-    CLASS ExampleService : CLASS openaas/Service
-    	IS_INSTANTIABLE;
-	    VARIABLES 
-	    	Input1     : BOOL   FLAGS="i" ;
-	    	Input2     : INT    FLAGS="i";
-	    	Input3     : UINT   FLAGS="i";
-	    	Input4     : SINGLE FLAGS="i";
-	    	Input5     : DOUBLE FLAGS="i";
-	    	Input6     : STRING FLAGS="i" INITIALVALUE = "";
-	    	Input7[]   : BOOL   FLAGS="i";
-            Input8[]   : INT    FLAGS="i";
-            Input9[]   : UINT   FLAGS="i";
-            Input10[]  : SINGLE FLAGS="i";
-            Input11[]  : DOUBLE FLAGS="i";
-            Input12[]  : STRING FLAGS="i";
-	    	Output1    : BOOL   FLAGS="o";
-	    	Output2    : INT    FLAGS="o";
-	    	Output3    : UINT   FLAGS="o";
-	    	Output4    : SINGLE FLAGS="o";
-	    	Output5    : DOUBLE FLAGS="o";
-	    	Output6    : STRING FLAGS="o" INITIALVALUE = "";
-	    	Output7[]  : BOOL   FLAGS="o";
-            Output8[]  : INT    FLAGS="o";
-            Output9[]  : UINT   FLAGS="o";
-            Output10[] : SINGLE FLAGS="o";
-            Output11[] : DOUBLE FLAGS="o";
-            Output12[] : STRING FLAGS="o";
-	    END_VARIABLES;
-	    OPERATIONS
-	        CallMethod        :    C_FUNCTION    <UA_FNC_CALLEDMETHOD>;
-	    END_OPERATIONS;
-	END_CLASS;
-	
 	CLASS SubModel : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES
-            IdString       : STRING INITIALVALUE    =   "";
-            IdType         : UINT;
+            ModelIdSpec         : STRING INITIALVALUE    =   "";
+            ModelIdType         : UINT;
+            Revision            : UINT;
+            Version             : UINT;
         END_VARIABLES;
         OPERATIONS
             getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
@@ -125,7 +79,6 @@ LIBRARY openaas
 		PARTS 
 			Header           : CLASS openaas/Header;
 			Body             : CLASS ov/domain;
-			LifeCycleArchive : CLASS lifeCycleEntry/LifeCycleArchive;
 			Views            : CLASS ov/domain;		
 			ComponentManager : CLASS openaas/AASComponentManager;
 		END_PARTS;
@@ -173,55 +126,63 @@ LIBRARY openaas
         AASStatus                       : UINT; 
     	AASCreate                       : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create an AAS";
     	AASDelete                       : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete an AAS";   
+    	
+    	SMAASIdString                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        SMAASIdType                     : UINT HAS_SET_ACCESSOR;
+    	SMParentIdString                : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        SMParentIdType                  : UINT HAS_SET_ACCESSOR;
+    	SMModelIdString                 : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        SMModelIdType                   : UINT HAS_SET_ACCESSOR;
+        SMName                          : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        SMRevision                      : UINT HAS_SET_ACCESSOR;
+        SMVersion                       : UINT HAS_SET_ACCESSOR;
+        SMIdString                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        SMIdType                        : UINT HAS_SET_ACCESSOR;
+        SMStatus                        : UINT; 
+        SMCreate                        : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create an SubModel";
+        SMDelete                        : BOOL      HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete an SubModel";   
          
-    	PVSLAASIdString                 : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLAASIdString                 : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
         PVSLAASIdType                   : UINT HAS_SET_ACCESSOR;
-        PVSLSubModelIdString            : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        PVSLSubModelIdType              : UINT HAS_SET_ACCESSOR;        
-    	PVSLName                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-    	PVSLCarrierIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-    	PVSLCarrierIdType               : UINT HAS_SET_ACCESSOR;
-    	PVSLCreatingInstanceIdString    : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        PVSLCreatingInstanceIdType      : UINT HAS_SET_ACCESSOR;   
-        PVSLCreationTime                : TIME HAS_SET_ACCESSOR;      
-    	PVSLStatus                      : UINT; 
-    	PVSLCreate                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVSL";
-	    PVSLDelete                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVSL"; 
-	    
-	    PVSAASIdString                  : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLParentIdString              : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLParentIdType                : UINT HAS_SET_ACCESSOR;        
+        PVSLName                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLMask                        : UINT HAS_SET_ACCESSOR     COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has following bits: 0x01:CarrierID;0x02:ExpressionLogic;0x04:ExpressionSemantic;0x08:PropertyID;0x10:View;0x20:Visibility";
+        PVSLCarrierIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLCarrierIdType               : UINT HAS_SET_ACCESSOR;
+        PVSLExpressionLogic             : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+        PVSLExpressionSemantic          : INT HAS_SET_ACCESSOR     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+        PVSLPropertyIdString            : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLPropertyIdType              : UINT HAS_SET_ACCESSOR;
+        PVSLView                        : INT HAS_SET_ACCESSOR     COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+        PVSLVisibility                  : INT HAS_SET_ACCESSOR     COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+        PVSLIdString                    : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSLIdType                      : UINT HAS_SET_ACCESSOR;
+        PVSLStatus                      : UINT; 
+        PVSLCreate                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVSL";
+        PVSLDelete                      : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVSL"; 
+        
+        PVSAASIdString                  : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
         PVSAASIdType                    : UINT HAS_SET_ACCESSOR;
-        PVSSubModelIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        PVSSubModelIdType               : UINT HAS_SET_ACCESSOR;
-        PVSPVSLName                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-	    PVSName                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-	    PVSExpressionLogic              : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
-	    PVSExpressionSemantic           : INT HAS_SET_ACCESSOR     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
-	    PVSValue                        : ANY HAS_SET_ACCESSOR;
-	    PVSTimeStamp                    : TIME HAS_SET_ACCESSOR;
-	    PVSUnit                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        PVSIDIdString                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        PVSIDIdType                     : UINT HAS_SET_ACCESSOR;
-        PVSView                         : INT HAS_SET_ACCESSOR;     
-        PVSVisibility                   : INT HAS_SET_ACCESSOR;
+        PVSListIdString                 : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSListIdType                   : UINT HAS_SET_ACCESSOR;        
+        PVSName                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSValue                        : ANY HAS_SET_ACCESSOR;
+        PVSMask                         : UINT HAS_SET_ACCESSOR     COMMENT = "A bit mask that indicates which fields are present in the stream. The mask has the following bits: 0x01:CarrierID; 0x02:ExpressionLogic; 0x04:ExpressionSemantic; 0x08:PropertyID; 0x10:View; 0x20:Visibility";
+        PVSCarrierIdString              : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSCarrierIdType                : UINT HAS_SET_ACCESSOR;
+        PVSExpressionLogic              : INT HAS_SET_ACCESSOR     COMMENT = "0:GREATER_THAN,1:GREATER_EQUAL,2:EQUAL,3:NOT_EQUAL,4:LESS_EQUAL,5:LESS_THAN";
+        PVSExpressionSemantic           : INT HAS_SET_ACCESSOR     COMMENT = "0:ASSURANCE,1:SETTING,2:MEASUREMENT,,3:REQUIREMENT";
+        PVSPropertyIdString             : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSPropertyIdType               : UINT HAS_SET_ACCESSOR;
+        PVSView                         : INT HAS_SET_ACCESSOR     COMMENT = "0:BUSINESS,1:CONSTRUCTION,2:POWER,3:FUNCTIONAL,4:LOCATION,5:SECURTIY,6:NETWORK,7:LIFECYCLE,8:HUMAN";
+        PVSVisibility                   : INT HAS_SET_ACCESSOR     COMMENT = "0:PRIVATE,1:CONTRACT,2:PUBLIC";
+        PVSIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+        PVSIdType                       : UINT HAS_SET_ACCESSOR;
         PVSStatus                       : UINT;  
-	    PVSCreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVS";
-        PVSDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVS";
-	    
-	    LCEAASIdString                  : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCEAASIdType                    : UINT HAS_SET_ACCESSOR;
-        LCEId                           : UINT HAS_SET_ACCESSOR;
-	    LCECreatingInstanceIdString     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCECreatingInstanceIdType       : UINT HAS_SET_ACCESSOR;
-        LCEWritingInstanceIdString      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCEWritingInstanceIdType        : UINT HAS_SET_ACCESSOR;
-        LCEEventClass                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCESubject                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCEValue                        : ANY HAS_SET_ACCESSOR;
-        LCETimeStamp                    : TIME HAS_SET_ACCESSOR;
-        LCEStatus                       : UINT;
-        LCECreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a LCE";
-        LCEDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a LCE";
-               
+        PVSCreate                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Create a PVS";
+        PVSDelete                       : BOOL     HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Delete a PVS";      
+	                   
 	    Status                          : UINT; 
 	    ListSize                        : UINT;
 	    ListCount                       : UINT;           
@@ -229,21 +190,16 @@ LIBRARY openaas
     OPERATIONS
         createAAS  : C_FUNCTION <UA_FNC_CREATEAAS>;
         deleteAAS  : C_FUNCTION <UA_FNC_DELETEAAS>;
+        createSubModel   : C_FUNCTION <UA_FNC_CREATESUBMODEL>;
+        deleteSubModel   : C_FUNCTION <UA_FNC_DELETESUBMODEL>;
         createPVSL : C_FUNCTION <UA_FNC_CREATEPVSL>;
-        createPVSLTime : C_FUNCTION <UA_FNC_CREATEPVSLTIME>; 
         deletePVSL : C_FUNCTION <UA_FNC_DELETEPVSL>;
         createPVS  : C_FUNCTION <UA_FNC_CREATEPVS>;
-        createPVSTime  : C_FUNCTION <UA_FNC_CREATEPVSTIME>;  
         deletePVS  : C_FUNCTION <UA_FNC_DELETEPVS>;
         getPVS     : C_FUNCTION <UA_FNC_GETPVS>;
         setPVS     : C_FUNCTION <UA_FNC_SETPVS>;
-        createLCE  : C_FUNCTION <UA_FNC_CREATELCE>;
-        deleteLCE  : C_FUNCTION <UA_FNC_DELETELCE>;
-        getLCE     : C_FUNCTION <UA_FNC_GETLCE>;
-        getLastLCEs: C_FUNCTION <UA_FNC_GETLASTLCES>;
-        setLCE     : C_FUNCTION <UA_FNC_SETLCE>;
-        getCoreData : C_FUNCTION <UA_FNC_GETCOREDATA>;
-        triggerGetCoreData : C_FUNCTION <UA_FNC_TRIGGERGETCOREDATA>;        
+        //getCoreData : C_FUNCTION <UA_FNC_GETCOREDATA>;
+        //triggerGetCoreData : C_FUNCTION <UA_FNC_TRIGGERGETCOREDATA>;        
         ovresultToAASStatusCode : C_FUNCTION <UA_FNC_OVRESULTTOAASSTATUSCODE>;
         AASConvertListGet : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTGET>;
         AASConvertListAdd : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTADD>;
@@ -254,32 +210,7 @@ LIBRARY openaas
     END_OPERATIONS;    
     END_CLASS;
     
-    CLASS LCEGenerator    :    CLASS fb/functionblock 
-        IS_INSTANTIABLE;
-    VARIABLES
-        AASIdString                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        AASIdType                       : UINT HAS_SET_ACCESSOR;
-        LCECreatingInstanceIdString     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCECreatingInstanceIdType       : UINT HAS_SET_ACCESSOR;
-        LCEWritingInstanceIdString      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCEWritingInstanceIdType        : UINT HAS_SET_ACCESSOR;
-        LCEEventClass                   : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCESubject                      : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-        LCETimeStamp                    : TIME HAS_SET_ACCESSOR;
-        LCETimeStampExtern              : BOOL HAS_SET_ACCESSOR INITIALVALUE = FALSE;
-        LCEValue                        : ANY HAS_SET_ACCESSOR;
-        StartLCEGenerator               : BOOL HAS_SET_ACCESSOR;
-        StopLCEGenerator                : BOOL HAS_SET_ACCESSOR;
-        State                           : UINT; 
-        Generate                        : BOOL;                              
-        Status                          : UINT;
-    END_VARIABLES;
-    OPERATIONS
-        getaccess  : C_FUNCTION <OV_FNC_GETACCESS>;
-        typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-        constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
-    END_OPERATIONS;    
-    END_CLASS;
+    
      	    
     CLASS FindAAS : CLASS fb/functionblock
         IS_INSTANTIABLE;
@@ -313,76 +244,9 @@ LIBRARY openaas
         OPERATIONS 
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
-    END_CLASS;
-    
-    CLASS HMIHelperPVSL    :    CLASS fb/functionblock
-        IS_INSTANTIABLE;
-        VARIABLES
-            Path                 : STRING FLAGS = "i" INITIALVALUE    =   "";      
-            ExpressionLogic      : STRING FLAGS = "o" INITIALVALUE    =   "";
-            ExpressionSemantic   : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Name                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Unit                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Value                : STRING FLAGS = "o" INITIALVALUE    =   "";
-            TimeStamp            : STRING FLAGS = "o" INITIALVALUE    =   "";
-            View                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Visibility           : STRING FLAGS = "o" INITIALVALUE    =   "";
-            IDType               : STRING FLAGS = "o" INITIALVALUE    =   "";
-            IDSpecification      : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Error                : BOOL   FLAGS = "o";
-            ErrorText            : STRING FLAGS = "o" INITIALVALUE    =   "";
-        END_VARIABLES;
-        OPERATIONS
-            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-        END_OPERATIONS;
     END_CLASS; 
     
     
-    CLASS HMIHelperLCEList    :    CLASS fb/functionblock
-        IS_INSTANTIABLE;
-        VARIABLES
-            AASPath                     : STRING FLAGS = "i" COMMENT = "Format: //IP:PORT/SERVERNAME/..." INITIALVALUE    =   "";      
-            CreatingInstanceId          : STRING FLAGS = "o" INITIALVALUE    =   "";            
-            WritingInstanceId           : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Data                        : STRING FLAGS = "o" INITIALVALUE    =   "";
-            TimeStamp                   : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Subject                     : STRING FLAGS = "o" INITIALVALUE    =   "";
-            EventClass                  : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Id                          : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Error                       : BOOL   FLAGS = "o";
-            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
-        END_VARIABLES;
-        OPERATIONS
-            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-        END_OPERATIONS;
-    END_CLASS; 
-    
-    CLASS HMIHelperLCEData    :    CLASS fb/functionblock
-        IS_INSTANTIABLE;
-        VARIABLES
-            AASPath                     : STRING FLAGS = "i" COMMENT = "Format: //IP:PORT/SERVERNAME/..." INITIALVALUE    =   ""; 
-            Subject                     : STRING FLAGS = "i" INITIALVALUE    =   "";
-            EventClass                  : STRING FLAGS = "i" INITIALVALUE    =   "";
-            TimeStamp                   : STRING FLAGS = "i" COMMENT = "Format: YYYY/MM/DD HH:MM:SS.uuuuuu" INITIALVALUE    =   "";
-            TimeSpanBetweenValues       : TIME_SPAN FLAGS = "i";
-            xValueStatic[]              : TIME FLAGS = "o";            
-            yValueStatic[]              : DOUBLE FLAGS = "o";
-            yUnitStatic                 : STRING FLAGS = "o" INITIALVALUE    =   "";
-            xValueDynamic               : TIME FLAGS = "o";
-            yValueDynamic               : DOUBLE FLAGS = "o";
-            yUnitDynamic                : STRING FLAGS = "o" INITIALVALUE    =   "";
-            Error                       : BOOL FLAGS = "o";
-            ErrorText                   : STRING FLAGS = "o" INITIALVALUE    =   "";
-            ErrorStatic                 : BOOL FLAGS = "o";
-            ErrorTextStatic             : STRING FLAGS = "o" INITIALVALUE    =   "";
-            ErrorDynamic                : BOOL FLAGS = "o";
-            ErrorTextDynamic            : STRING FLAGS = "o" INITIALVALUE    =   "";
-            OutputType                  : UINT FLAGS = "o" COMMENT = "0:Error; 1: STATIC; 2:DYNAMIC";
-        END_VARIABLES;
-        OPERATIONS
-            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-        END_OPERATIONS;
-    END_CLASS;
     
     
     CLASS PluggingTwoComponents    :    CLASS fb/functionblock
@@ -446,14 +310,14 @@ LIBRARY openaas
     CLASS SwitchForLCEGenerator    :    CLASS fb/functionblock
           IS_INSTANTIABLE;
         VARIABLES
-            AASIdString1                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            AASIdString1                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   " ";
             AASIdType1                       : UINT HAS_SET_ACCESSOR;
-            PVSLName1                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            PVSName1                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            AASIdString2                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            PVSLName1                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   " ";
+            PVSName1                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   " ";
+            AASIdString2                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   " ";
             AASIdType2                       : UINT HAS_SET_ACCESSOR;
-            PVSLName2                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            PVSName2                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            PVSLName2                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   " ";
+            PVSName2                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   " ";
             AASIDStringOut                   : STRING FLAGS = "o" INITIALVALUE = "";
             AASIDTypeOut                     : UINT FLAGS = "o";
             Error                            : UINT;
@@ -461,6 +325,17 @@ LIBRARY openaas
         OPERATIONS
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
+    END_CLASS;
+ 
+    CLASS simpleMessageCreator : CLASS fb/functionblock        
+        IS_INSTANTIABLE;        
+        VARIABLES       
+            message : STRING FLAGS="i" INITIALVALUE ="";        
+            targetPath : STRING FLAGS="i" INITIALVALUE ="/TechUnits/openAAS/Motor_M23.Body/ComponentManager.INBOX";     
+        END_VARIABLES;      
+          OPERATIONS        
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;        
+          END_OPERATIONS;       
     END_CLASS;
  
 END_LIBRARY;

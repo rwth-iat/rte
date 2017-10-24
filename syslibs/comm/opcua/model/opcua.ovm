@@ -31,7 +31,7 @@ LIBRARY opcua
                 HAS_GET_ACCESSOR;
             ApplicationURI    :    STRING
                 HAS_ACCESSORS
-                INITIALVALUE    =    "urn:acplt:open62541:acplt-iec2541Server";
+                INITIALVALUE    =    "urn:acplt:open62541:acplt-iec62541Server";
             ApplicationName    :    STRING
                 HAS_ACCESSORS
                 INITIALVALUE    =    "acplt-opcua";

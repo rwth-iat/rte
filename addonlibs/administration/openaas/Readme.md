@@ -11,4 +11,5 @@ Objects
 
 -LCEGenerator: With this Object you can generate Lifecycle-Entries in an AAS of your choice.
 
--Service:To develop a new service create a new object of CLASS openaas/Service in ".ovm"-File and define your own inputs and outpus (Inputs must have the FLAGS="i" and outputs the FLAGS="o"). At least you have to overwrite the CallMethod with your own code. To execute the service just set the execute-input to TRUE.
+
+
