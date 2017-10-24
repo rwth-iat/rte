@@ -42,18 +42,16 @@ OV_DLLFNCEXPORT void SSChelper_getSCUinfo_typemethod(
     	if(Ov_CanCastTo(fb_functionchart,temp)){
     		pCSU=Ov_DynamicPtrCast(fb_functionchart,temp);
     		temp=NULL;
-    		fb_functionchart_getport(pCSU,"workingState",&tempvar);
-    		if(tempvar.value.valueunion.val_string){
-    		ov_string_setvalue(&(pinst->v_workingState),tempvar.value.valueunion.val_string);}
-    		fb_functionchart_getport(pCSU,"allocatedBy",&tempvar);
-    		if(tempvar.value.valueunion.val_string){
-    		ov_string_setvalue(&(pinst->v_allocatedBy),tempvar.value.valueunion.val_string);}
-    		fb_functionchart_getport(pCSU,"setPoint",&tempvar);
-    		if(tempvar.value.valueunion.val_single){
-    		pinst->v_SetPoint=tempvar.value.valueunion.val_single;}
-    		fb_functionchart_getport(pCSU,"error",&tempvar);
-    		if(tempvar.value.valueunion.val_bool){
-    		pinst->v_SetPoint=tempvar.value.valueunion.val_bool;}
+    		fb_functionchart_getport(pCSU,"workState",&tempvar);
+    		ov_string_setvalue(&(pinst->v_workingState),tempvar.value.valueunion.val_string);
+    		fb_functionchart_getport(pCSU,"occupiedBy",&tempvar);
+    		ov_string_setvalue(&(pinst->v_allocatedBy),tempvar.value.valueunion.val_string);
+    		//fb_functionchart_getport(pCSU,"setPoint",&tempvar);
+    		//if(tempvar.value.valueunion.val_single){
+    		//pinst->v_SetPoint=tempvar.value.valueunion.val_single;}
+    		//fb_functionchart_getport(pCSU,"error",&tempvar);
+    		//if(tempvar.value.valueunion.val_bool){
+    		//pinst->v_SetPoint=tempvar.value.valueunion.val_bool;}
 
 
     	}

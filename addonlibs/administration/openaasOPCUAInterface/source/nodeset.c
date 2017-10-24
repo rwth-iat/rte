@@ -214,6 +214,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createAAS");
@@ -258,6 +259,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createLCE");
@@ -338,6 +340,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createPVS");
@@ -414,6 +417,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createPVSL");
@@ -474,6 +478,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("AASStatusCode");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "createSubModel");
@@ -514,6 +519,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deleteAAS");
@@ -558,6 +564,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deleteLCE");
@@ -602,6 +609,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deletePVS");
@@ -646,6 +654,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deletePVSL");
@@ -690,6 +699,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "deleteSubModel");
@@ -775,6 +785,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<3; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[1].name = UA_STRING("LastLCEs");
 outputArguments[1].valueRank = 1;
@@ -827,6 +838,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<2; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[1].name = UA_STRING("LCEData");
 outputArguments[1].valueRank = -1;
@@ -875,6 +887,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<6; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[1].name = UA_STRING("CreatingInstance");
 outputArguments[1].valueRank = -1;
@@ -939,6 +952,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<9; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 outputArguments[1].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[1].name = UA_STRING("PVSName");
 outputArguments[1].valueRank = -1;
@@ -1019,6 +1033,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "setLCE");
@@ -1083,6 +1098,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "setLCESimple");
@@ -1163,6 +1179,7 @@ for (outputArgumentCnt=0; outputArgumentCnt<1; ++outputArgumentCnt) UA_Argument_
 outputArguments[0].description = UA_LOCALIZEDTEXT("en_US","");
 outputArguments[0].name = UA_STRING("Status");
 outputArguments[0].valueRank = -1;
+outputArguments[0].dataType = UA_NODEID_NUMERIC(nsIdx_5, 3004);
 UA_MethodAttributes attr;
 UA_MethodAttributes_init(&attr);
 attr.displayName = UA_LOCALIZEDTEXT("", "setPVS");

@@ -1180,7 +1180,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 				break;
 			}
 			break;
-			default:
+		default:
 			result = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 			break;
 		}

@@ -482,6 +482,12 @@ return xmlDoc;
 					for (var i = 0; i < splitallData.length; i++) {
 						var tempvalue= splitallData[i];
 						if (tempvalue!=null) {
+							if(tempvalue=='TRUE') {
+								tempvalue=1.0;
+							}
+							if(tempvalue=='FALSE') {
+							tempvalue=0.0;
+							}
 							window['yVal' + (i)]=parseFloat(tempvalue);
 							window['datum' + (i) ]= [datefrmt, window['yVal' + (i)]];
 							data[i].data.push(window['datum' + (i) ]);
@@ -2653,6 +2659,12 @@ return xmlDoc;
 					for (var i = 0; i < splitallData.length; i++) {
 						var tempvalue= splitallData[i];
 						if (tempvalue!=null) {
+							if(tempvalue=='TRUE') {
+								tempvalue=1.0;
+							}
+							if(tempvalue=='FALSE') {
+								tempvalue=0.0;
+							}
 							window['yVal' + (i)]=parseFloat(tempvalue);
 							window['datum' + (i) ]= [datefrmt, window['yVal' + (i)]];
 							data[i].data.push(window['datum' + (i) ]);
@@ -4820,6 +4832,12 @@ return xmlDoc;
 		for (var i = 1; i < splitallData.length; i++) {
 			var tempvalue= splitallData[i];
 			if (tempvalue!=null) {
+				if(tempvalue=='TRUE') {
+					tempvalue=1.0;
+				}
+				if(tempvalue=='FALSE') {
+					tempvalue=0.0;
+				}
 				window['yVal' + (i)]=parseFloat(tempvalue);
 				window['datum' + (i) ]= [xtimestamp, window['yVal' + (i)]];
 				data[i-1].data.push(window['datum' + (i) ]);
@@ -6912,6 +6930,12 @@ $(document).ready(function () {
 		for (var i = 1; i < splitallData.length; i++) {
 			var tempvalue= splitallData[i];
 			if (tempvalue!=null) {
+				if(tempvalue=='TRUE') {
+					tempvalue=1.0;
+				}
+				if(tempvalue=='FALSE') {
+					tempvalue=0.0;
+				}
 				window['yVal' + (i)]=parseFloat(tempvalue);
 				window['datum' + (i) ]= [xtimestamp, window['yVal' + (i)]];
 				data[i-1].data.push(window['datum' + (i) ]);
