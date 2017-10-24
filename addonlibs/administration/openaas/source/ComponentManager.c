@@ -775,8 +775,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 				ov_string_setvalue(&pvs.objectID.IdSpec,idStr[1]);
 
-				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
 				pvs.objectID.IdType = setPVSReq->pvs.objectID.idType;
 				openaas_modelmanager_setPVS(aasId,
 						pvs.objectID,

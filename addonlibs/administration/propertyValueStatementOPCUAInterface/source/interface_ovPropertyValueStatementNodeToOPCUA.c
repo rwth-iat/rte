@@ -134,57 +134,11 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 		}
 	} while(TRUE);
 
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_VARIANT];
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_Variant_new();
-	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
-		result = UA_STATUSCODE_BADOUTOFMEMORY;
-		return result;
-	}
+	result = ov_AnyToVariant(&tmpValue2, &(((UA_VariableNode*)newNode)->value.data.value.value));
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
-
-	UA_Variant_copy(&tmpValue, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
-	// dataType
-	switch(tmpValue2.value.vartype & OV_VT_KSMASK){
-		case OV_VT_BOOL:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_BOOLEAN);
-			break;
-		case OV_VT_INT:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_INT32);
-			break;
-		case OV_VT_UINT:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_UINT32);
-			break;
-		case OV_VT_SINGLE:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_FLOAT);
-			break;
-		case OV_VT_DOUBLE:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_DOUBLE);
-			break;
-		case OV_VT_STRING:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_STRING);
-			break;
-		case OV_VT_BOOL_VEC:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_BOOLEAN);
-			break;
-		case OV_VT_INT_VEC:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_INT32);
-			break;
-		case OV_VT_UINT_VEC:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_UINT32);
-			break;
-		case OV_VT_SINGLE_VEC:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_FLOAT);
-			break;
-		case OV_VT_DOUBLE_VEC:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_DOUBLE);
-			break;
-		case OV_VT_STRING_VEC:
-			((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_STRING);
-			break;
-		default:
-			break;
-	}
+	((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(tmpValue2.value.vartype);
+	Ov_SetAnyValue(&tmpValue2, NULL);
 	UA_Variant_deleteMembers(&tmpValue);
 
 
