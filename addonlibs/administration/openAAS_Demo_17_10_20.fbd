@@ -1,0 +1,3311 @@
+/************************************************************
+* Sicherung der Datenbasis
+* Erstellt: 2017-10-25 12:36:55
+* 
+* HOST   : 134.130.125.80:7509
+* SERVER : MANAGER
+************************************************************/
+
+ LIBRARY
+    /acplt/MessageSys
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/TCPbind
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/identification
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/identificationOPCUAInterface
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/iec61131stdfb
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/ksapi
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/ksbase
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/kshttp
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/ksxdr
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/lifeCycleEntry
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/lifeCycleEntryOPCUAInterface
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/opcua
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/openAASDiscoveryServer
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/openaas
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/openaasOPCUAInterface
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/propertyValueStatement
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/propertyValueStatementOPCUAInterface
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/services
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/servicesOPCUAInterface
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/subModelAdministration
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/subModelAdministrationOPCUAInterface
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/subModelLifeCycleEntry
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/subModelLifeCycleEntryOPCUAInterface
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/vdivde3696
+ END_LIBRARY;
+
+ INSTANCE  /data :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /data/kshttp :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /data/kshttp/sse%2Ehtml :
+    CLASS /acplt/kshttp/staticfile;
+    VARIABLE_VALUES
+      content : INPUT STRING = "<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<meta charset=\"windows-1252\">
+
+	<title>Stats of database_free</title>
+
+	<script type=\"text/javascript\" src=\"//cdnjs.cloudflare.com/ajax/libs/smoothie/1.27.0/smoothie.min.js\"></script>
+
+</head>
+
+<body>
+
+	<h1>Stats of database_free</h1>
+
+	
+
+	<canvas id=\"mycanvas\" width=\"400\" height=\"100\"></canvas>
+
+	
+
+	<script type=\"text/javascript\">
+
+	//an ajax request first
+
+	var ajaxRequest;	
+
+	try{
+
+		// Opera 8.0+, Firefox, Safari
+
+		ajaxRequest = new XMLHttpRequest();
+
+	} catch (e){
+
+		// Internet Explorer Browsers
+
+		try{
+
+			ajaxRequest = new ActiveXObject(\"Msxml2.XMLHTTP\");
+
+		} catch (e2) {
+
+			try{
+
+				ajaxRequest = new ActiveXObject(\"Microsoft.XMLHTTP\");
+
+			} catch (e3){
+
+				// Something went wrong
+
+				document.getElementsByTagName(\"h1\")[0].innerHTML = \"Your browser is too old, sorry!\";
+
+			}
+
+		}
+
+	}
+
+	// got the database size - init everything else
+
+	ajaxRequest.onreadystatechange = function(){
+
+		\"use strict\";
+
+		if(ajaxRequest.readyState === 4){
+
+			setInterval(function() {
+
+				var time = new Date().getTime();
+
+				if(line1 && time-lastUpdate > 990){
+
+					line1.append(time, lastData);
+
+				}
+
+			}, 1000);
+
+			if(EventSource !== undefined){
+
+				var source = new EventSource('/getVar?path=/vendor/database_free&stream=1&format=plain');
+
+				source.onmessage = function(e) {
+
+					lastUpdate = new Date().getTime();
+
+					lastData = parseInt(e.data, 10);
+
+					line1.append(lastUpdate, lastData);
+
+					if(smoothie){
+
+						smoothie.start();
+
+					}
+
+				};
+
+				source.onerror  = function(e) {
+
+					source.close();
+
+					if(smoothie){
+
+						smoothie.stop();
+
+					}
+
+				};
+
+			}else{
+
+				document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Your browser does not support EventSource\";
+
+			}
+
+			if(typeof SmoothieChart === \"function\"){
+
+				var smoothie = new SmoothieChart({ 
+
+					grid: { 
+
+						sharpLines:true,
+
+						strokeStyle: 'rgb(125, 0, 0)',
+
+						fillStyle: 'rgb(60, 0, 0)',
+
+						lineWidth: 1,
+
+						millisPerLine: 30000,
+
+						verticalSections: 2
+
+					}, 
+
+					interpolation:'step',
+
+					timestampFormatter:SmoothieChart.timeFormatter,
+
+					millisPerPixel:500, 
+
+					maxValue:parseInt(ajaxRequest.responseText, 10), 
+
+					minValue:0
+
+				});
+
+				smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });
+
+				smoothie.streamTo(document.getElementById('mycanvas'), 200);
+
+			}
+
+		}
+
+	};
+
+	ajaxRequest.open('GET', '/getVar?path=/vendor/database_size&format=plain', true);
+
+	try{
+
+		ajaxRequest.send(null);
+
+	} catch(err){
+
+		document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Perhaps this file was not served from an OV webserver.\";
+
+	}
+
+	if(typeof TimeSeries !== \"function\"){
+
+		document.getElementsByTagName(\"h1\")[0].innerHTML = \"Smoothie not loaded...\";
+
+	}else{
+
+		var line1 = new TimeSeries();
+
+	}
+
+	var lastUpdate = 0;
+
+	var lastData = 0;
+
+	</script>
+
+</body>
+
+</html>
+
+";
+      mimetype : INPUT STRING = "text/html";
+      encoding : INPUT STRING = "windows-1252";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 449;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /data/kshttp/index%2Ehtml :
+    CLASS /acplt/kshttp/staticfile;
+    VARIABLE_VALUES
+      content : INPUT STRING = "<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset=\"windows-1252\">
+
+		<meta name=\"viewport\" content=\"width=device-width\"><!-- no desktop view for mobile browsers -->
+
+		<title>OV-http Server</title>
+
+		<style type=\"text/css\">
+
+			code{
+
+				background-color: #DDDDFF;
+
+				border: 1px solid #8080FF;
+
+				color: #000080;
+
+			}
+
+			#idPlaygroundOutput, #idUrldisplay{
+
+				background-color: lightgrey;
+
+				border: 1px solid #8080FF;
+
+				color: #000080;
+
+				width:500px;
+
+			}
+
+			#idPlaygroundOutput{
+
+				display:block;
+
+			}
+
+			input{
+
+				transition: background-color 0.5s;
+
+			}
+
+			#idOutputformatSelect{
+
+				width:90px;
+
+			}
+
+		</style>
+
+	</head>
+
+	<body>
+
+		<h1>The Webserver is running!</h1>
+
+		<p>Powered by ACPLT/OV. This server has some static files as a <a href=\"sse.html\">demo</a> and supports KS commands. This page is only a quick reference.<br>
+
+		A modern OV-Server (like this) can be explored by the Tool <a href=\"http://rawgithub.com/acplt/henson/master/index.html\" target=\"_blank\">Henson</a> (requires internet connection).</p>
+
+		<span id=\"idHmi\"></span>
+
+		<span id=\"idServices\"></span>
+
+		<h2>Supported KS commands</h2>
+
+		<form action=\"#\">
+
+			<fieldset id=\"idCommandPlayground\" style=\"display:none;\">
+
+				<legend>Command playground</legend>
+
+				<div>
+
+					<label id=\"idSpanOutputformat\">output format:
+
+						<select id=\"idOutputformatSelect\">
+
+							<option value=\"ksx\">KSX 2.1r</option>
+
+							<option value=\"tcl\">KSTCL (human readable errors)</option>
+
+							<option value=\"plain\">text plain (no structure)</option>
+
+						</select>
+
+					</label>
+
+					<select id=\"idServicelist\">
+
+						<option value=\"none\">select type of request</option>
+
+						<option value=\"getEP\">getEP</option>
+
+						<option value=\"getVar\">getVar</option>
+
+						<option value=\"setVar\">setVar</option>
+
+						<option value=\"createObject\">createObject</option>
+
+						<option value=\"deleteObject\">deleteObject</option>
+
+						<option value=\"renameObject\">renameObject</option>
+
+						<option value=\"link\">link</option>
+
+						<option value=\"unlink\">unlink</option>
+
+						<option value=\"getLogfile\">getLogfile</option>
+
+					</select>
+
+					<label id=\"idPathLabel\">path:
+
+						<input id=\"idPathInput\" list=\"idPathlist\" value=\"\" placeholder=\"full path to the object/variable\" style=\"width:200px;\">
+
+						<datalist id=\"idPathlist\">
+
+							<optgroup label=\"dynamic entries\" id=\"idPathdirentries\"></optgroup>
+
+							<optgroup label=\"dynamic entries\" id=\"idPathvarentries\"></optgroup>
+
+							<optgroup label=\"default entries\" id=\"idPathdefaultentries\">
+
+								<option label=\"root\" value=\"/\"></option>
+
+								<option label=\"main engineering\" value=\"/TechUnits\"></option>
+
+							</optgroup>
+
+						</datalist>
+
+					</label>
+
+					<label id=\"idSecondtextLabel\" style=\"display:none;\">new value:
+
+						<input id=\"idSecondtextInput\" placeholder=\"new value to set\" style=\"width:200px;\">
+
+					</label>
+
+					<label id=\"idSpanGetepRequestType\" style=\"display:none;\">request type:
+
+						<select id=\"idGetepRequestTypeSelect\">
+
+							<option value=\"OT_DOMAIN\">children (OT_DOMAIN)</option>
+
+							<option value=\"OT_VARIABLE\">variables (OT_VARIABLE)</option>
+
+							<option value=\"OT_LINK\">associations (OT_LINK)</option>
+
+							<option value=\"OT_ANY\">all (OT_ANY)</option>
+
+						</select>
+
+					</label>
+
+				</div>
+
+				<input id=\"idUrldisplay\" value=\"\" placeholder=\"enter a request right here or use the boxes above\">
+
+				<input type=\"submit\" id=\"idSubmitbutton\" value=\"send request\">
+
+				<textarea readonly id=\"idPlaygroundOutput\">Reply will be displayed here</textarea>
+
+			</fieldset>
+
+		</form>
+
+		<p>This server can generate answers in a TCL or KSX syntax. The TCL syntax is default. It is possible to select KSX with the 
+
+		<a href=\"http://tools.ietf.org/html/rfc7231#section-5.3.2\">HTTP accept header</a>
+
+		<code>Accept: text/ksx</code> or as a parameter in the GET request argument <code>&amp;format=ksx</code>.</p>
+
+		
+
+		<h3>GetVar</h3>
+
+		<p>Gets one or multiple Variables.</p>
+
+		example: <code>/getVar?format=ksx&amp;path=/vendor/database_free</code><br>
+
+		example: <code>/getVar?format=ksx&amp;path[0]=/vendor/database_free&amp;path[1]=/vendor/database_size</code>
+
+		
+
+		<h3>SetVar</h3>
+
+		<p>Sets one or multiple Variables. Note: The indexes of the parts are not relevant, only the order matters (second newvalue will be written into the second path). If fewer <code>vartype</code>s are given the last one will be used for the rest.</p>
+
+		example: <code>/setVar?format=ksx&amp;path=/TechUnits/add1.IN1&amp;newvalue=4.5</code><br>
+
+		example: <code>/setVar?format=ksx&amp;path=/TechUnits/add1.IN1&amp;newvalue=42&amp;vartype=KS_VT_UINT</code><br>
+
+		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;path[1]=/TechUnits/add2.IN1&amp;path[2]=.IN2&amp;newvalue[0]=3.2&amp;newvalue[1]=2&amp;newvalue[2]=1</code><br>
+
+		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;newvalue[0]=3.2&amp;path[1]=/TechUnits/add2.IN1&amp;newvalue[1]=2&amp;path[2]=.IN2&amp;newvalue[2]=1</code><br>
+
+		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;path[1]=/TechUnits/add2.IN1&amp;newvalue[0]=3.2&amp;newvalue[1]=2&amp;vartype[0]=KS_VT_SINGLE</code><br>
+
+		example: <code>/setVar?format=ksx&amp;path=/TechUnits/bla.VecIntVariable&amp;newvalue={1}%20{10}</code><br>
+
+		
+
+		<h3>GetEP</h3>
+
+		<p>Gets the engineering properties of an object. It has a few optional parameters:</p>
+
+		<ul>
+
+			<li><code>requestType</code> filters some type of result: childrens (default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</li>
+
+			<li><code>nameMask</code> filters for names (<code>?</code> is an arbitrary character, <code>*</code> is an arbitrary amount of any characters). Default is <code>*</code></li>
+
+			<li><code>scopeFlags</code> filters for the scope (<code>children</code> are normal children, <code>parts</code> are some hard wired objects). Default is no restriction</li>
+
+			<li><code>requestOutput</code> a list of answser columns: <code>OP_NAME</code>, <code></code>, <code>OP_TYPE</code>, <code>OP_COMMENT</code>, <code>OP_ACCESS</code>, <code>OP_SEMANTIC</code>, <code>OP_CREATIONTIME</code>, <code>OP_CLASS</code>, <code>OP_TECHUNIT</code>, <code>OP_ASSOCIDENT</code>, <code>OP_ROLEIDENT</code>. Default is all of them in this order.</li>
+
+		</ul>
+
+		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1</code><br>
+
+		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1&amp;requestType=OT_ANY</code>
+
+		
+
+		<h3>createObject</h3>
+
+		<p>Instantiates new objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:</p>
+
+		<ul>
+
+			<li><code>placementHint</code> defines the placement of the new object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+
+			<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+
+		</ul>
+
+		example: <code>/createObject?format=ksx&amp;path=/TechUnits/add1&amp;factory=/acplt/iec61131stdfb/add</code><br>
+
+		example: <code>/createObject?format=ksx&amp;Path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2&amp;factory=/acplt/iec61131stdfb/add</code><br>
+
+		
+
+		<h3>deleteObject</h3>
+
+		<p>Deletes objects.</p>
+
+		example: <code>/deleteObject?format=ksx&amp;path=/TechUnits/add1</code><br>
+
+		example: <code>/deleteObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2</code><br>
+
+		
+
+		<h3>renameObject</h3>
+
+		<p>Renames objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:</p>
+
+		<ul>
+
+			<li><code>placementHint</code> defines the placement of the object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+
+			<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+
+		</ul>
+
+		example: <code>/renameObject?format=ksx&amp;path=/TechUnits/add1&amp;newname=/TechUnits/add2</code><br>
+
+		example: <code>/renameObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
+
+		
+
+		<h3>linkObject</h3>
+
+		<p>Links two pairs of objects with an OV association. It has optional parameters:</p>
+
+		<ul>
+
+			<li><code>placementHint</code> defines the placement of the object in the association: <code>PMH_DEFAULT</code>=<code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+
+			<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+
+		</ul>
+
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask</code><br>
+
+		equivalent: <code>/link?format=ksx&amp;path=/Tasks/UrTask.taskchild&amp;element=/TechUnits/add1</code><br>
+
+		example: <code>/link?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/Tasks/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/Tasks/UrTask</code><br>
+
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEGIN</code><br>
+
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEFORE&amp;placePath=/TechUnits/sub1</code><br>
+
+		
+
+		<h3>unlinkObject</h3>
+
+		<p>Unlinks two pairs of objects with an OV association.</p>
+
+		example: <code>/unlink?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
+
+		example: <code>/unlink?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
+
+		
+
+		<h3>getLogfile</h3>
+
+		<p>Outputs logfile outputs of the server.</p>
+
+		example: <code>/getLogfile?format=ksx</code><br>
+
+		example: <code>/getLogfile?format=ksx&amp;from=2013-12-24T13:15:00.000000&amp;to=2016-12-31T22:45:00.000000&amp;maxentries=30</code><br>
+
+		
+
+		<h3>getServer</h3>
+
+		<p>Gives TCP Port of a Server (if this server is the KS-MANAGER).</p>
+
+		example: <code>/getServer?format=ksx&amp;servername=MANAGER</code><br>
+
+		example: <code>/getServer?format=ksx&amp;servername=MANAGER&amp;serverversion=2</code><br>
+
+		
+
+		<script type=\"text/javascript\">
+
+		var CommandPlayground = document.getElementById(\"idCommandPlayground\");
+
+		var OutputformatSelect = document.getElementById(\"idOutputformatSelect\");
+
+		var Servicelist = document.getElementById(\"idServicelist\");
+
+		var Submitbutton = document.getElementById(\"idSubmitbutton\");
+
+		var PathtextLabel = document.getElementById(\"idPathLabel\");
+
+		var PathInput = document.getElementById(\"idPathInput\");
+
+		var SecondtextLabel = document.getElementById(\"idSecondtextLabel\");
+
+		var SecondtextInput = document.getElementById(\"idSecondtextInput\");
+
+		var SpanGetepRequestType = document.getElementById(\"idSpanGetepRequestType\");
+
+		var GetepRequestTypeSelect = document.getElementById(\"idGetepRequestTypeSelect\");
+
+		var Urldisplay = document.getElementById(\"idUrldisplay\");
+
+		var PlaygroundOutput = document.getElementById(\"idPlaygroundOutput\");
+
+		
+
+		var prepareWebpage = function(){
+
+			\"use strict\";
+
+			//show playground
+
+			if (true || -1 !== window.location.protocol.indexOf('http') && window.XMLHttpRequest){
+
+				//show playground
+
+				if(CommandPlayground){
+
+					CommandPlayground.style.display = \"block\";
+
+				}
+
+				
+
+				//test HMI and other services if transfered via http
+
+				if(!!window.XMLHttpRequest){
+
+					var HmiNode = document.getElementById(\"idHmi\");
+
+					var request = new XMLHttpRequest();
+
+					request.open(\"GET\", \"/getEP?requestType=OT_DOMAIN&path=/data/kshttp\", true);
+
+					request.setRequestHeader(\"Accept\", \"text/ksx\");
+
+					request.onreadystatechange = function(evt){
+
+						var req = null;
+
+						if (!evt){
+
+							req = this;
+
+						}else{
+
+							req = evt.target;
+
+						}
+
+						if( req.readyState === 4 && req.status === 200){
+
+							var listDomainEngProps = req.responseXML.getElementsByTagName(\"DomainEngProps\");
+
+							var listServices = [];
+
+							var i = 0;
+
+							var DomainEngPropsClass = \"\";
+
+							var DomainEngPropsId = \"\";
+
+							for(i = 0; i < listDomainEngProps.length;i++){
+
+								DomainEngPropsClass = listDomainEngProps[i].getElementsByTagName(\"classIdentifier\");
+
+								if(DomainEngPropsClass && DomainEngPropsClass.length === 1 && DomainEngPropsClass[0].textContent == '/acplt/ov/domain'){
+
+									DomainEngPropsId = listDomainEngProps[i].getElementsByTagName(\"identifier\");
+
+									if(DomainEngPropsId && DomainEngPropsId.length === 1){
+
+										if(DomainEngPropsId[0].textContent === 'hmi'){
+
+											HmiNode.innerHTML = \"<h1>Human-Machine Interface</h1><p>A <a href='/hmi/'>HMI service</a> is available on this server.</p>\";
+
+										}else{
+
+											listServices.push(DomainEngPropsId[0].textContent);
+
+										}
+
+									}
+
+								} 
+
+							}
+
+							if(listServices.length > 0){
+
+								var ServicesNode = document.getElementById(\"idServices\");
+
+								var ServicesHtml = \"<h1>Services</h1><p>There are the following non HMI services available on this server:</p><ul>\";
+
+								for (i = 0; i < listServices.length; i++){
+
+									ServicesHtml += \"<li><a href='/\"+listServices[i]+\"/'>\"+listServices[i]+\"</a></li>\";
+
+								}
+
+								ServicesHtml += \"</ul></p>\";
+
+								ServicesNode.innerHTML = ServicesHtml;
+
+							}
+
+						}
+
+					};
+
+					request.timeout = 1000;
+
+					request.send();
+
+				}
+
+			}
+
+		};
+
+		window.onload = prepareWebpage;
+
+		Servicelist.onchange = function(evt){
+
+			\"use strict\";
+
+			PathtextLabel.firstChild.nodeValue = \"Path:\";
+
+			PathtextLabel.style.display = \"inline\";
+
+			if(Servicelist.options[Servicelist.options.selectedIndex].value === \"none\"){
+
+				SecondtextLabel.style.display = \"none\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"getEP\"){
+
+				if(PathInput.value === \"\"){
+
+					PathInput.value = \"/TechUnits\";
+
+				}
+
+				SecondtextLabel.style.display = \"none\";
+
+				SpanGetepRequestType.style.display = \"inline\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"setVar\"){
+
+				if(PathInput.value === \"\"){
+
+					PathInput.value = \"/TechUnits/add1.IN1\";
+
+				}
+
+				SecondtextInput.value = \"42\";
+
+				SecondtextLabel.firstChild.nodeValue = \"new value: \";
+
+				SecondtextLabel.style.display = \"inline\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"getVar\"){
+
+				if(PathInput.value === \"\"){
+
+					PathInput.value = \"/TechUnits/add1.IN1\";
+
+				}
+
+				SecondtextLabel.style.display = \"none\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"createObject\"){
+
+				PathInput.value = \"/TechUnits/add1\";
+
+				SecondtextInput.value = \"/Libraries/iec61131stdfb/add\";
+
+				SecondtextLabel.firstChild.nodeValue = \"factory/class: \";
+
+				SecondtextLabel.style.display = \"inline\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"deleteObject\"){
+
+				PathInput.value = \"/TechUnits/add1\";
+
+				SecondtextLabel.style.display = \"none\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"renameObject\"){
+
+				PathInput.value = \"/TechUnits/add1\";
+
+				SecondtextInput.value = \"/TechUnits/add2\";
+
+				SecondtextLabel.firstChild.nodeValue = \"new name: \";
+
+				SecondtextLabel.style.display = \"inline\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"link\"){
+
+				PathInput.value = \"/TechUnits/add1.taskparent\";
+
+				SecondtextInput.value = \"/Tasks/UrTask\";
+
+				SecondtextLabel.firstChild.nodeValue = \"link partner: \";
+
+				SecondtextLabel.style.display = \"inline\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"unlink\"){
+
+				PathInput.value = \"/TechUnits/add1.taskparent\";
+
+				SecondtextInput.value = \"/Tasks/UrTask\";
+
+				SecondtextLabel.firstChild.nodeValue = \"link partner: \";
+
+				SecondtextLabel.style.display = \"inline\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"getLogfile\"){
+
+				PathtextLabel.style.display = \"none\";
+
+				SecondtextLabel.style.display = \"inline\";
+
+				SecondtextLabel.firstChild.nodeValue = \"maximal entries: \";
+
+				SecondtextInput.value = \"10\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}else{
+
+				SecondtextLabel.style.display = \"none\";
+
+				SpanGetepRequestType.style.display = \"none\";
+
+			}
+
+			calculateUrl();
+
+		};
+
+		Submitbutton.onclick = document.getElementsByTagName(\"form\")[0].onsubmit = function(evt){
+
+			\"use strict\";
+
+			var req = new XMLHttpRequest();
+
+			req.open(\"GET\", Urldisplay.value, true);
+
+			req.timeout = 10000;
+
+			req.onreadystatechange = RequestStatehandler;
+
+			try{
+
+				req.send();
+
+			}catch(err){
+
+				PlaygroundOutput.innerHTML = \"transmit error: \"+err;
+
+				PlaygroundOutput.style.borderColor = \"red\";
+
+			}
+
+			return false;
+
+		};
+
+		var calculateUrl = function(){
+
+			\"use strict\";
+
+			var urlstring = \"/\"+Servicelist.options[Servicelist.options.selectedIndex].value+\"?format=\"+OutputformatSelect.options[OutputformatSelect.options.selectedIndex].value;
+
+			if(Servicelist.options[Servicelist.options.selectedIndex].value == \"none\"){
+
+				//nothing selected
+
+				return;
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"getEP\"){
+
+				urlstring += \"&requestType=\"+GetepRequestTypeSelect.options[GetepRequestTypeSelect.options.selectedIndex].value;
+
+				urlstring += \"&path=\"+PathInput.value;
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"getVar\"){
+
+				urlstring += \"&path=\"+PathInput.value;
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"setVar\"){
+
+				urlstring += \"&path=\"+PathInput.value;
+
+				if(typeof escape === \"function\"){
+
+					//escape is evil, but we need latin1 support
+
+					urlstring += \"&newvalue=\"+escape(SecondtextInput.value);
+
+				}else{
+
+					urlstring += \"&newvalue=\"+encodeURIComponent(SecondtextInput.value);
+
+				}
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"createObject\"){
+
+				urlstring += \"&factory=\"+SecondtextInput.value;
+
+				urlstring += \"&path=\"+PathInput.value;
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"deleteObject\"){
+
+				urlstring += \"&path=\"+PathInput.value;
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"renameObject\"){
+
+				urlstring += \"&path=\"+PathInput.value;
+
+				urlstring += \"&newname=\"+SecondtextInput.value;
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"link\"){
+
+				urlstring += \"&path=\"+PathInput.value;
+
+				urlstring += \"&element=\"+SecondtextInput.value;
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"unlink\"){
+
+				urlstring += \"&path=\"+PathInput.value;
+
+				urlstring += \"&element=\"+SecondtextInput.value;
+
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == \"getLogfile\"){
+
+				urlstring += \"&maxentries=\"+SecondtextInput.value;
+
+			}else{
+
+				return;
+
+			}
+
+			Urldisplay.value = urlstring;
+
+			return urlstring;
+
+		};
+
+		OutputformatSelect.onchange = calculateUrl;
+
+		PathInput.onkeyup = PathInput.onchange = calculateUrl;
+
+		SecondtextInput.onkeyup = SecondtextInput.onchange = calculateUrl;
+
+		GetepRequestTypeSelect.onchange = calculateUrl;
+
+		var RequestStatehandler = function(evt){
+
+			\"use strict\";
+
+			var req = null;
+
+			if (!evt){
+
+				req = this;
+
+			}else{
+
+				req = evt.target;
+
+			}
+
+			if( req.readyState === 4 ){
+
+				if(req.status === 0){
+
+					PlaygroundOutput.innerHTML = \"The request failed. Timeout?\";
+
+				}else{
+
+					PlaygroundOutput.innerHTML = req.responseText;
+
+				}
+
+				//adjust height to the line count
+
+				var ResponseArray = req.responseText.split(String.fromCharCode(10));
+
+				var maxlength = 0;
+
+				var i = 0;
+
+				for(i = 0;i<ResponseArray.length;i++){
+
+					if(ResponseArray[i].length > maxlength){
+
+						maxlength = ResponseArray[i].length;
+
+					}
+
+				}
+
+				if(maxlength > 30){
+
+					PlaygroundOutput.cols = maxlength;
+
+					PlaygroundOutput.style.width = \"99%\";
+
+				}
+
+				if(ResponseArray.length > 3){
+
+					PlaygroundOutput.rows = ResponseArray.length;
+
+				}
+
+				if(req.status == 200){
+
+					PlaygroundOutput.style.borderColor = \"#8080FF\";
+
+					Submitbutton.style.backgroundColor = \"limegreen\";
+
+					Submitbutton.value = \"response received\";
+
+				}else{
+
+					PlaygroundOutput.style.borderColor = \"red\";
+
+					Submitbutton.style.backgroundColor = \"red\";
+
+					Submitbutton.value = \"error received\";
+
+				}
+
+				timeoutID = window.setTimeout(function(){
+
+					Submitbutton.value = \"send request\";
+
+					Submitbutton.style.backgroundColor = \"\";
+
+				},1500);
+
+			}
+
+		};
+
+		//init url
+
+		calculateUrl();
+
+		
+
+		//##################### Autofill for the path
+
+		var timeoutID = null;
+
+		var autofillmagicXHR = new XMLHttpRequest();
+
+		var pathdirentries = document.getElementById(\"idPathdirentries\");
+
+		var pathvarentries = document.getElementById(\"idPathvarentries\");
+
+		
+
+		var requestBasePath = \"\";
+
+		var activeRequestPath = \"\";
+
+		
+
+		PathInput.onkeydown = PathInput.onmousedown = function(evt){
+
+			\"use strict\";
+
+			//no change, so we need no request
+
+			if (activeRequestPath === PathInput.value) return;
+
+			window.clearTimeout(timeoutID);
+
+			autofillmagicXHR.abort();
+
+		};
+
+		
+
+		PathInput.onkeyup = PathInput.onmouseup = function(evt){
+
+			\"use strict\";
+
+			//no change, so we need no request
+
+			if (activeRequestPath === PathInput.value) return;
+
+			
+
+			//################## insert information
+
+			var insertautofillinformation = function(evt){
+
+				var req = null;
+
+				if (!evt){
+
+					req = this;
+
+				}else{
+
+					req = evt.target;
+
+				}
+
+				if( req.readyState === 4 && req.status === 200){
+
+					//############### Children
+
+					var resultlist = req.responseXML.getElementsByTagName(\"DomainEngProps\");
+
+					if(resultlist.length !== 0){
+
+						while (pathdirentries.firstChild) {
+
+							pathdirentries.removeChild(pathdirentries.firstChild);
+
+						}
+
+					}
+
+					var i = 0;
+
+					var access = null;
+
+					var newPath = null;
+
+					var labelname = \"\";
+
+					var newOption = null;
+
+					for (i = 0;i < resultlist.length;i++){
+
+						access = resultlist[i].getElementsByTagName(\"access\")[0].textContent;
+
+						newPath = requestBasePath;
+
+						if(requestBasePath === \"/\"){
+
+							//no need to append a slash or dot at the root domain
+
+							labelname = \"child\";
+
+						}else if(access.indexOf(\"part\") !== -1){
+
+							//we have a part here, so delimiter is a point
+
+							newPath += \".\";
+
+							labelname = \"part\";
+
+						}else{
+
+							newPath += \"/\";
+
+							labelname = \"child\";
+
+						}
+
+						newPath = newPath + resultlist[i].getElementsByTagName(\"identifier\")[0].textContent.trim();
+
+						newOption = new Option(newPath);
+
+						newOption.label = labelname;
+
+						pathdirentries.appendChild(newOption);
+
+					}
+
+					//############### Parts and Variables
+
+					resultlist = req.responseXML.getElementsByTagName(\"VariableEngProps\");
+
+					if(resultlist.length !== 0){
+
+						while (pathvarentries.firstChild) {
+
+							pathvarentries.removeChild(pathvarentries.firstChild);
+
+						}
+
+					}
+
+					for (i = 0;i < resultlist.length;i++){
+
+						access = resultlist[i].getElementsByTagName(\"access\")[0].textContent;
+
+						newPath = requestBasePath;
+
+						if(access.indexOf(\"part\") !== -1){
+
+							//we have a part here, so delimiter is a point
+
+							newPath += \".\";
+
+						}else if(requestBasePath !== \"/\"){
+
+							newPath += \"/\";
+
+						}
+
+						labelname = \"variable\";
+
+						newPath = newPath + resultlist[i].getElementsByTagName(\"identifier\")[0].textContent.trim();
+
+						newOption = new Option(newPath);
+
+						newOption.label = labelname;
+
+						pathvarentries.appendChild(newOption);
+
+					}
+
+				}
+
+			};
+
+			
+
+			//################## request information
+
+			var requestautofillinformation = function(evt){
+
+				var lastSlash = PathInput.value.lastIndexOf(\"/\");
+
+				var lastDot = PathInput.value.lastIndexOf(\".\");
+
+				var requestMask = \"\";
+
+				if(lastSlash > lastDot){
+
+					//our basepath is something like /TechUnits/add1
+
+					requestBasePath = PathInput.value.substring(0, lastSlash);
+
+					requestMask = PathInput.value.substring(lastSlash+1)+\"*\";
+
+				}else if(lastSlash < lastDot){
+
+					//our basepath is a part like /TechUnits/setvar.value
+
+					requestBasePath = PathInput.value.substring(0, lastDot);
+
+					requestMask = PathInput.value.substring(lastDot+1)+\"*\";
+
+				}
+
+				
+
+				if(requestBasePath === \"\"){
+
+					//the root domain, needs to end with a slash
+
+					requestBasePath = \"/\";
+
+				}
+
+				//disable old request
+
+				autofillmagicXHR.abort();
+
+				autofillmagicXHR = new XMLHttpRequest();
+
+				
+
+				autofillmagicXHR.open(\"GET\", \"/getEP?requestType=OT_ANY&path=\"+requestBasePath+\"&nameMask=\"+requestMask, true);
+
+				
+
+				autofillmagicXHR.setRequestHeader(\"Accept\", \"text/ksx\");
+
+				autofillmagicXHR.timeout = 1000;
+
+				autofillmagicXHR.onreadystatechange = insertautofillinformation;
+
+				autofillmagicXHR.send();
+
+				activeRequestPath = PathInput.value;
+
+			};
+
+			
+
+			//################## trigger check in a few ms
+
+			window.clearTimeout(timeoutID);
+
+			autofillmagicXHR.abort();
+
+			timeoutID = window.setTimeout(requestautofillinformation , 300);
+
+		};
+
+		</script>
+
+	</body>
+
+</html>
+
+";
+      mimetype : INPUT STRING = "text/html";
+      encoding : INPUT STRING = "windows-1252";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 450;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /data/openAAS :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /data/openAAS/InterfaceDiscoveryServer :
+    CLASS /acplt/openaas/InterfaceDiscoveryServer;
+    VARIABLE_VALUES
+      IPAddressServer : INPUT STRING = "127.0.0.1";
+      IPAddressAASDiscoveryServer : INPUT STRING = "127.0.0.1";
+      ManagerNameAASDiscoveryServer : INPUT STRING = "MANAGER";
+      PathToAASDiscoveryServer : INPUT STRING = "/TechUnits/discoveryServer";
+      identifier : INPUT STRING = "InterfaceDiscoveryServer";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2899;
+      creationtime : INPUT TIME = 2017-09-22 09:43:50.329112;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /Tasks :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /Tasks/UrTask :
+    CLASS /acplt/fb/task;
+    VARIABLE_VALUES
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2017-10-25 12:36:56.242849;
+      cyctime : INPUT TIME_SPAN = 0.100000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000198;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 577;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /Tasks/genTask :
+    CLASS /acplt/fb/task;
+    VARIABLE_VALUES
+      actimode : INPUT INT = 0;
+      proctime : INPUT TIME = 2017-10-18 14:40:12.509437;
+      cyctime : INPUT TIME_SPAN = 5.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2477;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/lceUA :
+    CLASS /acplt/lifeCycleEntryOPCUAInterface/interface;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "lceUA";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2478;
+      creationtime : INPUT TIME = 2017-08-31 12:58:01.652428;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/pvsUA :
+    CLASS /acplt/propertyValueStatementOPCUAInterface/interface;
+    VARIABLE_VALUES
+      modelnamespaceIndexIdentification : INPUT UINT = 3;
+      identifier : INPUT STRING = "pvsUA";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2485;
+      creationtime : INPUT TIME = 2017-08-31 12:58:11.196182;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23 :
+    CLASS /acplt/openaas/aas;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "Motor_M23";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2900;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.177896;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header :
+    CLASS /acplt/openaas/Header;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2901;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatementList;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "Config";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2902;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.177896;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/CarrierID :
+    CLASS /acplt/propertyValueStatement/CarrierId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "http://acplt.org/AAS/Motor_M23";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "CarrierID";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2908;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.178080;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/Asset :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT STRING = "URI:http://acplt.org/Assets/Motor_M23";
+      identifier : INPUT STRING = "Asset";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2909;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.178097;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/Asset/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "http://openaas.org/properties/assetId";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2910;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.178112;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/Asset/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2911;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.178126;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/Asset/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 1;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2912;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.178140;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/Asset/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 3;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2913;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.178153;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/Asset/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2914;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.178167;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/isInstance :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT BOOL = TRUE;
+      identifier : INPUT STRING = "isInstance";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2915;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.832353;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/isInstance/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "https://openaas.org/properties/isInstance";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2916;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.832399;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/isInstance/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2917;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.832418;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/isInstance/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2918;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.832489;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/isInstance/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 3;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2919;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.832503;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/isInstance/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2920;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.832517;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/TypeAASID :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT STRING = "URI:http://acplt.org/AAS/MotorType";
+      identifier : INPUT STRING = "TypeAASID";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2921;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.877032;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/TypeAASID/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "https://openaas.org/properties/Height";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2922;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.877051;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/TypeAASID/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2923;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.877066;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/TypeAASID/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2924;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.877097;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/TypeAASID/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 3;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2925;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.877111;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Header.Config/TypeAASID/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2926;
+      creationtime : INPUT TIME = 2017-10-17 18:09:16.877125;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime :
+    CLASS /acplt/openaas/SubModel;
+    VARIABLE_VALUES
+      ModelIdSpec : INPUT STRING = "http://acplt.org/models/MotorRuntimeModel";
+      ModelIdType : INPUT UINT = 0;
+      Revision : INPUT UINT = 1;
+      Version : INPUT UINT = 1;
+      identifier : INPUT STRING = "Runtime";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2927;
+      creationtime : INPUT TIME = 2017-10-09 09:34:27.758818;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces/RotationalSpeed :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatementList;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "RotationalSpeed";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2930;
+      creationtime : INPUT TIME = 2017-10-17 19:40:09.534312;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces/RotationalSpeed/CarrierId :
+    CLASS /acplt/propertyValueStatement/CarrierId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "http://acplt.org/Assets/Motor_M23";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "CarrierId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2933;
+      creationtime : INPUT TIME = 2017-10-17 19:40:09.534347;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces/RotationalSpeed/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2935;
+      creationtime : INPUT TIME = 2017-10-18 08:57:36.643129;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces/RotationalSpeed/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2936;
+      creationtime : INPUT TIME = 2017-10-18 08:57:57.763467;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces/RotationalSpeed/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "http://acplt.org/properties/currentRotationalSpeed";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2937;
+      creationtime : INPUT TIME = 2017-10-18 08:58:40.432660;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces/RotationalSpeed/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2939;
+      creationtime : INPUT TIME = 2017-10-18 08:58:58.068351;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces/RotationalSpeed/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2940;
+      creationtime : INPUT TIME = 2017-10-18 08:59:08.538399;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatementList;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "CurrentStates";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2941;
+      creationtime : INPUT TIME = 2017-10-17 20:45:28.125380;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/RotationalSpeed :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT SINGLE = 0.000000;
+      identifier : INPUT STRING = "RotationalSpeed";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2942;
+      creationtime : INPUT TIME = 2017-10-17 20:45:40.689956;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/RotationalSpeed/CarrierId :
+    CLASS /acplt/propertyValueStatement/CarrierId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "CarrierId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2943;
+      creationtime : INPUT TIME = 2017-10-18 08:44:49.719280;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/RotationalSpeed/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2944;
+      creationtime : INPUT TIME = 2017-10-18 08:44:49.719295;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/RotationalSpeed/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2945;
+      creationtime : INPUT TIME = 2017-10-17 20:45:40.690014;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/RotationalSpeed/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2946;
+      creationtime : INPUT TIME = 2017-10-17 20:45:40.690028;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/RotationalSpeed/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2947;
+      creationtime : INPUT TIME = 2017-10-17 20:45:40.690042;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/RotationalSpeed/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2948;
+      creationtime : INPUT TIME = 2017-10-17 20:45:40.690055;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/Running :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "Running";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2950;
+      creationtime : INPUT TIME = 2017-10-18 13:27:16.103780;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/Running/CarrierId :
+    CLASS /acplt/propertyValueStatement/CarrierId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "CarrierId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2951;
+      creationtime : INPUT TIME = 2017-10-18 13:27:16.103809;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/Running/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2952;
+      creationtime : INPUT TIME = 2017-10-18 13:27:16.103821;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/Running/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2953;
+      creationtime : INPUT TIME = 2017-10-18 13:27:16.103830;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/Running/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2954;
+      creationtime : INPUT TIME = 2017-10-18 13:27:16.103840;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/Running/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2955;
+      creationtime : INPUT TIME = 2017-10-18 13:27:16.103850;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/Running/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2956;
+      creationtime : INPUT TIME = 2017-10-18 13:27:16.103860;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/LifeCycle :
+    CLASS /acplt/subModelLifeCycleEntry/SubModelLifeCycleEntry;
+    VARIABLE_VALUES
+      ModelIdSpec : INPUT STRING = "http://acplt.org/models/GenericLifeCycleModel";
+      ModelIdType : INPUT UINT = 0;
+      Revision : INPUT UINT = 0;
+      Version : INPUT UINT = 0;
+      identifier : INPUT STRING = "LifeCycle";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2959;
+      creationtime : INPUT TIME = 2017-10-17 20:28:59.162196;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/LifeCycle.LifeCycleArchiv :
+    CLASS /acplt/lifeCycleEntry/LifeCycleArchive;
+    VARIABLE_VALUES
+      LifeCycleEntrySize : INPUT UINT = 0;
+      LifeCycleEntrySizeMax : INPUT UINT = 1000;
+      LifeCycleEntryNameCount : INPUT UINT = 0;
+      LCEId : INPUT UINT = 0;
+      LCECreatingInstanceIdString : INPUT STRING = "";
+      LCECreatingInstanceIdType : INPUT UINT = 0;
+      LCEWritingInstanceIdString : INPUT STRING = "";
+      LCEWritingInstanceIdType : INPUT UINT = 0;
+      LCEEventClass : INPUT STRING = "";
+      LCESubject : INPUT STRING = "";
+      LCEValue : INPUT VOID = ;
+      LCETimeStamp : INPUT TIME = 1970-01-01 01:00:00.000000;
+      LCEStatus : INPUT UINT = 0;
+      LCECreate : INPUT BOOL = FALSE;
+      LCEDelete : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "LifeCycleArchiv";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2960;
+      creationtime : INPUT TIME = 2017-10-17 20:28:59.162196;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration :
+    CLASS /acplt/openaas/SubModel;
+    VARIABLE_VALUES
+      ModelIdSpec : INPUT STRING = "http://acplt.org/models/MotorConfigurationModel";
+      ModelIdType : INPUT UINT = 0;
+      Revision : INPUT UINT = 0;
+      Version : INPUT UINT = 0;
+      identifier : INPUT STRING = "Configuration";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2961;
+      creationtime : INPUT TIME = 2017-10-17 20:33:29.080208;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration/ConfigurationParameters :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatementList;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "ConfigurationParameters";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2962;
+      creationtime : INPUT TIME = 2017-10-17 20:34:26.398759;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration/ConfigurationParameters/CarrierId :
+    CLASS /acplt/propertyValueStatement/CarrierId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "CarrierId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2963;
+      creationtime : INPUT TIME = 2017-10-18 08:46:45.716925;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration/ConfigurationParameters/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2964;
+      creationtime : INPUT TIME = 2017-10-18 08:48:00.109632;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration/ConfigurationParameters/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2965;
+      creationtime : INPUT TIME = 2017-10-18 08:48:15.604742;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration/ConfigurationParameters/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2966;
+      creationtime : INPUT TIME = 2017-10-18 08:48:25.732386;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration/ConfigurationParameters/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2967;
+      creationtime : INPUT TIME = 2017-10-18 08:48:54.496164;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration/ConfigurationParameters/MinRotationSpeed :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT INT = 21;
+      identifier : INPUT STRING = "MinRotationSpeed";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2968;
+      creationtime : INPUT TIME = 2017-10-18 08:49:19.550343;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Body/Configuration/ConfigurationParameters/MinRotationSpeed/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2969;
+      creationtime : INPUT TIME = 2017-10-18 08:49:19.550387;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.Views :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager :
+    CLASS /acplt/openaas/AASComponentManager;
+    VARIABLE_VALUES
+      messageBoxSize : INPUT UINT = 10;
+      messageBoxIsFiFo : INPUT BOOL = TRUE;
+      state : OUTPUT UINT = 2;
+      registered : OUTPUT BOOL = TRUE;
+      messageTimeOut : INPUT TIME_SPAN = 5.000000;
+      messageCount : INPUT UINT = 0;
+      errorText : OUTPUT STRING = "";
+      reset : INPUT BOOL = TRUE;
+      receiverForMessageForwardedIdString : INPUT STRING = "http://acplt.org/myName/myAAS";
+      receiverForMessageForwardedIdType : INPUT UINT = 0;
+      senderForMessageForwardedIdString : INPUT STRING = "http://myCompany.com/myIdentity";
+      senderForMessageForwardedIdType : INPUT UINT = 0;
+      MsgIdForMessageForwarded : INPUT STRING = "43885401";
+      MsgIdForGetAASIdRequest : INPUT STRING = "1094752868";
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 1711;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2017-10-09 09:34:12.178042;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000005;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      identifier : INPUT STRING = "ComponentManager";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2905;
+      creationtime : INPUT TIME = 2017-10-09 09:34:12.177896;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager.INBOX :
+    CLASS /acplt/MessageSys/inbox;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2906;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager.OUTBOX :
+    CLASS /acplt/MessageSys/inbox;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2907;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType :
+    CLASS /acplt/openaas/aas;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "MotorType";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2970;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.075855;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header :
+    CLASS /acplt/openaas/Header;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2971;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatementList;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "Config";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2972;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.075855;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/CarrierID :
+    CLASS /acplt/propertyValueStatement/CarrierId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "http://acplt.org/AAS/MotorType";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "CarrierID";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2981;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.076064;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/Asset :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT STRING = "URI:http://acplt.org/Types/MotorTypeDCMotor";
+      identifier : INPUT STRING = "Asset";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2982;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.076085;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/Asset/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "http://openaas.org/properties/assetId";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2983;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.076102;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/Asset/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2984;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.076119;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/Asset/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 1;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2985;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.076137;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/Asset/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 3;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2986;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.076154;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/Asset/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2987;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.076170;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/isInstance :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "isInstance";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2991;
+      creationtime : INPUT TIME = 2017-10-19 16:34:41.568034;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/isInstance/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "https://openaas.org/properties/isInstance";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2992;
+      creationtime : INPUT TIME = 2017-10-19 16:34:41.568137;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/isInstance/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2993;
+      creationtime : INPUT TIME = 2017-10-19 16:34:41.568220;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/isInstance/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 1;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2994;
+      creationtime : INPUT TIME = 2017-10-19 16:34:41.568302;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/isInstance/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 3;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2995;
+      creationtime : INPUT TIME = 2017-10-19 16:34:41.568386;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header.Config/isInstance/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2996;
+      creationtime : INPUT TIME = 2017-10-19 16:34:41.568462;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header/Administration :
+    CLASS /acplt/subModelAdministration/SubModelAdministration;
+    VARIABLE_VALUES
+      ModelIdSpec : INPUT STRING = "";
+      ModelIdType : INPUT UINT = 0;
+      Revision : INPUT UINT = 0;
+      Version : INPUT UINT = 0;
+      identifier : INPUT STRING = "Administration";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3000;
+      creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header/Administration.createSubModel :
+    CLASS /acplt/subModelAdministration/CreateSubModelService;
+    VARIABLE_VALUES
+      ParentIdString : INPUT STRING = "";
+      ParentIdType : INPUT UINT = 0;
+      ModelIdString : INPUT STRING = "";
+      ModelIdType : INPUT UINT = 0;
+      Name : INPUT STRING = "";
+      Revision : INPUT UINT = 0;
+      Version : INPUT UINT = 0;
+      Status : OUTPUT STRING = "";
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "createSubModel";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3001;
+      creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header/Administration.deleteSubModel :
+    CLASS /acplt/subModelAdministration/DeleteSubModelService;
+    VARIABLE_VALUES
+      IdString : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      Status : OUTPUT STRING = "";
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "deleteSubModel";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3002;
+      creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header/Administration.createPropertyValueStatementList :
+    CLASS /acplt/subModelAdministration/CreatePropertyValueStatementListService;
+    VARIABLE_VALUES
+      ParentIdString : INPUT STRING = "";
+      ParentIdType : INPUT UINT = 0;
+      Name : INPUT STRING = "";
+      Mask : INPUT UINT = 0;
+      CarrierIdString : INPUT STRING = "";
+      CarrierIdType : INPUT UINT = 0;
+      ExpressionLogic : INPUT UINT = 0;
+      ExpressionSemantic : INPUT UINT = 0;
+      PropertyIdString : INPUT STRING = "";
+      PropertyIdType : INPUT UINT = 0;
+      View : INPUT UINT = 0;
+      Visibility : INPUT UINT = 0;
+      Status : OUTPUT STRING = "";
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "createPropertyValueStatementList";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3003;
+      creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header/Administration.deletePropertyValueStatementList :
+    CLASS /acplt/subModelAdministration/DeletePropertyValueStatementListService;
+    VARIABLE_VALUES
+      IdString : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      Status : OUTPUT STRING = "";
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "deletePropertyValueStatementList";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3004;
+      creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header/Administration.createPropertyValueStatement :
+    CLASS /acplt/subModelAdministration/CreatePropertyValueStatementService;
+    VARIABLE_VALUES
+      ListIdString : INPUT STRING = "";
+      ListIdType : INPUT UINT = 0;
+      Name : INPUT STRING = "";
+      Value : INPUT VOID = ;
+      Mask : INPUT UINT = 0;
+      CarrierIdString : INPUT STRING = "";
+      CarrierIdType : INPUT UINT = 0;
+      ExpressionLogic : INPUT INT = 0;
+      ExpressionSemantic : INPUT INT = 0;
+      PropertyIdString : INPUT STRING = "";
+      PropertyIdType : INPUT UINT = 0;
+      View : INPUT INT = 0;
+      Visibility : INPUT INT = 0;
+      Status : OUTPUT UINT = 0;
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "createPropertyValueStatement";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3005;
+      creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Header/Administration.deletePropertyValueStatement :
+    CLASS /acplt/subModelAdministration/DeletePropertyValueStatementService;
+    VARIABLE_VALUES
+      IdString : INPUT STRING = "";
+      IdType : INPUT UINT = 0;
+      Status : OUTPUT STRING = "";
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      identifier : INPUT STRING = "deletePropertyValueStatement";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3006;
+      creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel :
+    CLASS /acplt/openaas/SubModel;
+    VARIABLE_VALUES
+      ModelIdSpec : INPUT STRING = "http://acplt.org/models/standardMotor";
+      ModelIdType : INPUT UINT = 0;
+      Revision : INPUT UINT = 1;
+      Version : INPUT UINT = 1;
+      identifier : INPUT STRING = "MotorModel";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3007;
+      creationtime : INPUT TIME = 2017-10-17 18:41:21.485596;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatementList;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "TypeDescription";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3008;
+      creationtime : INPUT TIME = 2017-10-17 18:43:48.636044;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/CarrierId :
+    CLASS /acplt/propertyValueStatement/CarrierId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "http://acplt.org/Types/MotorTypeDCMotor";
+      IdType : INPUT UINT = 0;
+      identifier : INPUT STRING = "CarrierId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3009;
+      creationtime : INPUT TIME = 2017-10-17 18:43:48.636123;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/NominalSpeed :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT SINGLE = 50.000000;
+      identifier : INPUT STRING = "NominalSpeed";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3010;
+      creationtime : INPUT TIME = 2017-10-19 12:50:30.343336;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/NominalSpeed/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "0173-1#02-BAA580#005";
+      IdType : INPUT UINT = 1;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3011;
+      creationtime : INPUT TIME = 2017-10-19 12:50:30.343429;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/NominalSpeed/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3012;
+      creationtime : INPUT TIME = 2017-10-19 12:50:30.343581;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/NominalSpeed/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3013;
+      creationtime : INPUT TIME = 2017-10-19 12:50:30.343727;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/NominalSpeed/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 3;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3014;
+      creationtime : INPUT TIME = 2017-10-19 12:50:30.343873;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/NominalSpeed/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3015;
+      creationtime : INPUT TIME = 2017-10-19 12:50:30.344020;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/RatedPerformance :
+    CLASS /acplt/propertyValueStatement/PropertyValueStatement;
+    VARIABLE_VALUES
+      Value : INPUT SINGLE = 2.500000;
+      identifier : INPUT STRING = "RatedPerformance";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3016;
+      creationtime : INPUT TIME = 2017-10-19 13:15:09.385110;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/RatedPerformance/PropertyId :
+    CLASS /acplt/propertyValueStatement/PropertyId;
+    VARIABLE_VALUES
+      IdSpec : INPUT STRING = "0173-1#07-BAB705#001";
+      IdType : INPUT UINT = 1;
+      identifier : INPUT STRING = "PropertyId";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3017;
+      creationtime : INPUT TIME = 2017-10-19 13:15:09.385162;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/RatedPerformance/ExpressionLogic :
+    CLASS /acplt/propertyValueStatement/ExpressionLogic;
+    VARIABLE_VALUES
+      ExpressionLogicEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionLogic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3018;
+      creationtime : INPUT TIME = 2017-10-19 13:15:09.385290;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/RatedPerformance/ExpressionSemantic :
+    CLASS /acplt/propertyValueStatement/ExpressionSemantic;
+    VARIABLE_VALUES
+      ExpressionSemanticEnum : INPUT UINT = 0;
+      identifier : INPUT STRING = "ExpressionSemantic";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3019;
+      creationtime : INPUT TIME = 2017-10-19 13:15:09.385425;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/RatedPerformance/View :
+    CLASS /acplt/propertyValueStatement/View;
+    VARIABLE_VALUES
+      ViewEnum : INPUT UINT = 3;
+      identifier : INPUT STRING = "View";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3020;
+      creationtime : INPUT TIME = 2017-10-19 13:15:09.385501;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Body/MotorModel/TypeDescription/RatedPerformance/Visibility :
+    CLASS /acplt/propertyValueStatement/Visibility;
+    VARIABLE_VALUES
+      VisibilityEnum : INPUT UINT = 2;
+      identifier : INPUT STRING = "Visibility";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3021;
+      creationtime : INPUT TIME = 2017-10-19 13:15:09.385578;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.Views :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.ComponentManager :
+    CLASS /acplt/openaas/AASComponentManager;
+    VARIABLE_VALUES
+      messageBoxSize : INPUT UINT = 10;
+      messageBoxIsFiFo : INPUT BOOL = TRUE;
+      state : OUTPUT UINT = 2;
+      registered : OUTPUT BOOL = TRUE;
+      messageTimeOut : INPUT TIME_SPAN = 5.000000;
+      messageCount : INPUT UINT = 0;
+      errorText : OUTPUT STRING = "";
+      reset : INPUT BOOL = FALSE;
+      receiverForMessageForwardedIdString : INPUT STRING = "";
+      receiverForMessageForwardedIdType : INPUT UINT = 0;
+      senderForMessageForwardedIdString : INPUT STRING = "";
+      senderForMessageForwardedIdType : INPUT UINT = 0;
+      MsgIdForMessageForwarded : INPUT STRING = "";
+      MsgIdForGetAASIdRequest : INPUT STRING = "";
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 1758;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2017-10-17 18:11:58.076013;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000003;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      identifier : INPUT STRING = "ComponentManager";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2975;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.075855;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.ComponentManager.INBOX :
+    CLASS /acplt/MessageSys/inbox;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2976;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/AASFolder/MotorType.ComponentManager.OUTBOX :
+    CLASS /acplt/MessageSys/inbox;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2977;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/ModelmanagerOpenAAS :
+    CLASS /acplt/openaas/modelmanager;
+    VARIABLE_VALUES
+      AASIdString : INPUT STRING = "";
+      AASIdType : INPUT UINT = 0;
+      AASName : INPUT STRING = "";
+      AASAssetIdString : INPUT STRING = "";
+      AASAssetIdType : INPUT UINT = 0;
+      AASStatus : INPUT UINT = 0;
+      AASCreate : INPUT BOOL = FALSE;
+      AASDelete : INPUT BOOL = FALSE;
+      SMAASIdString : INPUT STRING = "";
+      SMAASIdType : INPUT UINT = 0;
+      SMParentIdString : INPUT STRING = "";
+      SMParentIdType : INPUT UINT = 0;
+      SMModelIdString : INPUT STRING = "";
+      SMModelIdType : INPUT UINT = 0;
+      SMName : INPUT STRING = "";
+      SMRevision : INPUT UINT = 0;
+      SMVersion : INPUT UINT = 0;
+      SMIdString : INPUT STRING = "";
+      SMIdType : INPUT UINT = 0;
+      SMStatus : INPUT UINT = 0;
+      SMCreate : INPUT BOOL = FALSE;
+      SMDelete : INPUT BOOL = FALSE;
+      PVSLAASIdString : INPUT STRING = "";
+      PVSLAASIdType : INPUT UINT = 0;
+      PVSLParentIdString : INPUT STRING = "";
+      PVSLParentIdType : INPUT UINT = 0;
+      PVSLName : INPUT STRING = "";
+      PVSLMask : INPUT UINT = 0;
+      PVSLCarrierIdString : INPUT STRING = "";
+      PVSLCarrierIdType : INPUT UINT = 0;
+      PVSLExpressionLogic : INPUT INT = 0;
+      PVSLExpressionSemantic : INPUT INT = 0;
+      PVSLPropertyIdString : INPUT STRING = "";
+      PVSLPropertyIdType : INPUT UINT = 0;
+      PVSLView : INPUT INT = 0;
+      PVSLVisibility : INPUT INT = 0;
+      PVSLIdString : INPUT STRING = "";
+      PVSLIdType : INPUT UINT = 0;
+      PVSLStatus : INPUT UINT = 0;
+      PVSLCreate : INPUT BOOL = FALSE;
+      PVSLDelete : INPUT BOOL = FALSE;
+      PVSAASIdString : INPUT STRING = "";
+      PVSAASIdType : INPUT UINT = 0;
+      PVSListIdString : INPUT STRING = "";
+      PVSListIdType : INPUT UINT = 0;
+      PVSName : INPUT STRING = "";
+      PVSValue : INPUT VOID = ;
+      PVSMask : INPUT UINT = 0;
+      PVSCarrierIdString : INPUT STRING = "";
+      PVSCarrierIdType : INPUT UINT = 0;
+      PVSExpressionLogic : INPUT INT = 0;
+      PVSExpressionSemantic : INPUT INT = 0;
+      PVSPropertyIdString : INPUT STRING = "";
+      PVSPropertyIdType : INPUT UINT = 0;
+      PVSView : INPUT INT = 0;
+      PVSVisibility : INPUT INT = 0;
+      PVSIdString : INPUT STRING = "";
+      PVSIdType : INPUT UINT = 0;
+      PVSStatus : INPUT UINT = 0;
+      PVSCreate : INPUT BOOL = FALSE;
+      PVSDelete : INPUT BOOL = FALSE;
+      Status : INPUT UINT = 0;
+      ListSize : INPUT UINT = 2;
+      ListCount : INPUT UINT = 2;
+      identifier : INPUT STRING = "ModelmanagerOpenAAS";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3027;
+      creationtime : INPUT TIME = 2017-10-17 12:43:02.518607;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/ModelmanagerOpenAAS/1 :
+    CLASS /acplt/openaas/AASConvertListType;
+    VARIABLE_VALUES
+      AASIdString : INPUT STRING = "http://acplt.org/AAS/Motor_M23";
+      AASIdType : INPUT UINT = 0;
+      AASPath : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23";
+      identifier : INPUT STRING = "1";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3028;
+      creationtime : INPUT TIME = 2017-10-10 11:00:45.956341;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openAAS/ModelmanagerOpenAAS/2 :
+    CLASS /acplt/openaas/AASConvertListType;
+    VARIABLE_VALUES
+      AASIdString : INPUT STRING = "http://acplt.org/AAS/MotorType";
+      AASIdType : INPUT UINT = 0;
+      AASPath : INPUT STRING = "/TechUnits/openAAS/AASFolder/MotorType";
+      identifier : INPUT STRING = "2";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3029;
+      creationtime : INPUT TIME = 2017-10-17 18:11:58.076031;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/discoveryServer :
+    CLASS /acplt/openAASDiscoveryServer/DiscoveryServer;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "discoveryServer";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2488;
+      creationtime : INPUT TIME = 2017-10-11 10:28:43.512184;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/discoveryServer.ComponentManager :
+    CLASS /acplt/openAASDiscoveryServer/ComponentManager;
+    VARIABLE_VALUES
+      messageBoxSize : INPUT UINT = 10;
+      messageBoxIsFiFo : INPUT BOOL = TRUE;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 1770;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2017-10-11 10:28:43.512284;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000006;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      identifier : INPUT STRING = "ComponentManager";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2489;
+      creationtime : INPUT TIME = 2017-10-11 10:28:43.512184;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/discoveryServer.ComponentManager.INBOX :
+    CLASS /acplt/MessageSys/inbox;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2490;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/discoveryServer.ComponentManager.OUTBOX :
+    CLASS /acplt/MessageSys/inbox;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2491;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/discoveryServer/30687474703a2f2f6163706c742e6f72672f4141532f4d6f746f725f4d3233 :
+    CLASS /acplt/openAASDiscoveryServer/OVDataForAAS;
+    VARIABLE_VALUES
+      ServerHost : INPUT STRING = "127.0.0.1";
+      ServerName : INPUT STRING = "MANAGER";
+      Path : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager";
+      identifier : INPUT STRING = "30687474703a2f2f6163706c742e6f72672f4141532f4d6f746f725f4d3233";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2978;
+      creationtime : INPUT TIME = 2017-10-25 12:34:11.744362;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/discoveryServer/30687474703a2f2f6163706c742e6f72672f4141532f4d6f746f7254797065 :
+    CLASS /acplt/openAASDiscoveryServer/OVDataForAAS;
+    VARIABLE_VALUES
+      ServerHost : INPUT STRING = "127.0.0.1";
+      ServerName : INPUT STRING = "MANAGER";
+      Path : INPUT STRING = "/TechUnits/openAAS/AASFolder/MotorType.ComponentManager";
+      identifier : INPUT STRING = "30687474703a2f2f6163706c742e6f72672f4141532f4d6f746f7254797065";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3052;
+      creationtime : INPUT TIME = 2017-10-25 12:34:11.946278;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/pvsGen :
+    CLASS /acplt/propertyValueStatement/PVSGenerator;
+    VARIABLE_VALUES
+      ListIdString : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/Traces/RotationalSpeed";
+      ListIdType : INPUT UINT = 0;
+      Name : INPUT STRING = "statement";
+      NameIntern : INPUT BOOL = TRUE;
+      NameCount : OUTPUT UINT = 0;
+      Value : INPUT SINGLE = 0.000000;
+      TimeStamp : INPUT TIME = 1970-01-01 01:00:00.000000;
+      TimeStampExtern : INPUT BOOL = FALSE;
+      Mask : INPUT UINT = 0;
+      CarrierIdString : INPUT STRING = "";
+      CarrierIdType : INPUT UINT = 0;
+      ExpressionLogic : INPUT UINT = 0;
+      ExpressionSemantic : INPUT UINT = 0;
+      PropertyIdString : INPUT STRING = "";
+      PropertyIdType : INPUT UINT = 0;
+      View : INPUT UINT = 0;
+      Visibility : INPUT UINT = 0;
+      StartPVSGenerator : INPUT BOOL = TRUE;
+      StopPVSGenerator : INPUT BOOL = FALSE;
+      ResetNameCount : INPUT BOOL = FALSE;
+      Status : OUTPUT UINT = 0;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = TRUE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 0;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2017-10-25 12:34:10.993101;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      identifier : INPUT STRING = "pvsGen";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2492;
+      creationtime : INPUT TIME = 2017-10-17 16:55:32.556216;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/openaasUA :
+    CLASS /acplt/openaasOPCUAInterface/interface;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "openaasUA";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2493;
+      creationtime : INPUT TIME = 2017-10-17 17:25:53.744566;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/Motor :
+    CLASS /acplt/vdivde3696/integr;
+    VARIABLE_VALUES
+      u : INPUT SINGLE = 0.000000;
+      thron : INPUT BOOL = FALSE;
+      thr : INPUT SINGLE = 0.000000;
+      v0 : INPUT SINGLE = 0.000000;
+      ll : INPUT SINGLE = 0.000000;
+      hl : INPUT SINGLE = 50.000000;
+      lls : INPUT SINGLE = 0.000000;
+      hhs : INPUT SINGLE = 50.000000;
+      deltals : INPUT SINGLE = 0.000000;
+      deltahs : INPUT SINGLE = 0.000000;
+      ki : INPUT SINGLE = 2.103507;
+      digits : INPUT INT = 6;
+      reset : INPUT BOOL = FALSE;
+      hold : INPUT BOOL = FALSE;
+      track : INPUT BOOL = FALSE;
+      en : INPUT BOOL = TRUE;
+      v : OUTPUT SINGLE = 0.000000;
+      qv0 : OUTPUT BOOL = TRUE;
+      qll : OUTPUT BOOL = TRUE;
+      qhl : OUTPUT BOOL = FALSE;
+      qlls : OUTPUT BOOL = FALSE;
+      qls : OUTPUT BOOL = FALSE;
+      qhs : OUTPUT BOOL = FALSE;
+      qhhs : OUTPUT BOOL = FALSE;
+      eno : OUTPUT BOOL = TRUE;
+      vold : OUTPUT SINGLE = 0.000000;
+      counter : OUTPUT INT = 1772;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 1772;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2017-10-25 12:34:11.406228;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000006;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2495;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/lceSMUA :
+    CLASS /acplt/subModelLifeCycleEntryOPCUAInterface/interface;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "lceSMUA";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2496;
+      creationtime : INPUT TIME = 2017-10-19 11:20:56.719855;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/adminsmUA :
+    CLASS /acplt/subModelAdministrationOPCUAInterface/interface;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "adminsmUA";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2497;
+      creationtime : INPUT TIME = 2017-10-19 15:43:03.870146;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/INBOX :
+    CLASS /acplt/openaas/simpleMessageCreator;
+    VARIABLE_VALUES
+      message : INPUT STRING = "";
+      targetPath : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager.INBOX";
+      iexreq : INPUT BOOL = FALSE;
+      eexreq : OUTPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 1;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2017-10-25 12:34:11.879629;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000003;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3035;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /Cons :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /Libraries :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/discoveryServer.ComponentManager , /Tasks/genTask , /TechUnits/Motor , /TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager , /TechUnits/openAAS/AASFolder/MotorType.ComponentManager , /TechUnits/INBOX};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/genTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/pvsGen};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/Tasks/genTask};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/openAAS/AASFolder/MotorType.ComponentManager};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/discoveryServer.ComponentManager};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/genTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/pvsGen};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/Motor};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/INBOX};
+ END_LINK;
+
+ INSTANCE  /Cons/c_pvsGen_Value :
+    CLASS /acplt/fb/connection;
+    VARIABLE_VALUES
+      on : INPUT BOOL = TRUE;
+      sourceport : INPUT STRING = "v";
+      targetport : INPUT STRING = "Value";
+      sourcetrig : INPUT BOOL = FALSE;
+      visuallayout : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3060;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION inputconnections;
+     PARENT targetfb : CLASS unknown
+           = /TechUnits/pvsGen;
+     CHILDREN inputcon : CLASS connection
+           = {/Cons/c_pvsGen_Value};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION outputconnections;
+     PARENT sourcefb : CLASS unknown
+           = /TechUnits/Motor;
+     CHILDREN outputcon : CLASS connection
+           = {/Cons/c_pvsGen_Value};
+ END_LINK;
+
+ INSTANCE  /vendor :
+    CLASS /acplt/ov/domain;
+    VARIABLE_VALUES
+      libraries[26] : OUTPUT STRING = {"/acplt/ov" , "/acplt/ksbase" , "/acplt/TCPbind" , "/acplt/ksxdr" , "/acplt/kshttp" , "/acplt/fb" , "/acplt/MessageSys" , "/acplt/ksapi" , "/acplt/identification" , "/acplt/identificationOPCUAInterface" , "/acplt/opcua" , "/acplt/iec61131stdfb" , "/acplt/lifeCycleEntry" , "/acplt/lifeCycleEntryOPCUAInterface" , "/acplt/openAASDiscoveryServer" , "/acplt/openaasOPCUAInterface" , "/acplt/propertyValueStatementOPCUAInterface" , "/acplt/propertyValueStatement" , "/acplt/services" , "/acplt/servicesOPCUAInterface" , "/acplt/subModelAdministrationOPCUAInterface" , "/acplt/subModelLifeCycleEntryOPCUAInterface" , "/acplt/vdivde3696" , "/acplt/openaas" , "/acplt/subModelAdministration" , "/acplt/subModelLifeCycleEntry"};
+      classes[239] : OUTPUT STRING = {"/acplt/ov/domain" , "/acplt/ov/library" , "/acplt/ksbase/RootComTask" , "/acplt/ksbase/ServerRep" , "/acplt/ksbase/Manager" , "/acplt/ksbase/NoneTicketAuthenticator" , "/acplt/ksbase/NoneTicketGenerator" , "/acplt/TCPbind/TCPChannel" , "/acplt/TCPbind/aresWorker" , "/acplt/TCPbind/TCPListener" , "/acplt/ksxdr/xdrIdentificator" , "/acplt/ksxdr/xdrClientHandler" , "/acplt/ksxdr/xdrSimpleTicketAuthenticator" , "/acplt/ksxdr/xdrManagerCom" , "/acplt/ksxdr/xdrClient" , "/acplt/ksxdr/PMAskList" , "/acplt/kshttp/httpIdentificator" , "/acplt/kshttp/httpclienthandler" , "/acplt/kshttp/getvarpushhandler" , "/acplt/kshttp/httpSimpleTicketAuthenticator" , "/acplt/kshttp/httpManagerCom" , "/acplt/kshttp/httpClient" , "/acplt/kshttp/genericHttpClient" , "/acplt/kshttp/authenticatedsession" , "/acplt/kshttp/staticfile" , "/acplt/fb/dbinfoclass" , "/acplt/fb/task" , "/acplt/fb/connection" , "/acplt/fb/functionchart" , "/acplt/fb/boolport" , "/acplt/fb/intport" , "/acplt/fb/uintport" , "/acplt/fb/singleport" , "/acplt/fb/doubleport" , "/acplt/fb/timeport" , "/acplt/fb/timespanport" , "/acplt/fb/stringport" , "/acplt/fb/anyport" , "/acplt/fb/boolvecport" , "/acplt/fb/intvecport" , "/acplt/fb/uintvecport" , "/acplt/fb/singlevecport" , "/acplt/fb/doublevecport" , "/acplt/fb/timevecport" , "/acplt/fb/timespanvecport" , "/acplt/fb/stringvecport" , "/acplt/fb/controlchart" , "/acplt/MessageSys/MsgDelivery" , "/acplt/MessageSys/Message" , "/acplt/MessageSys/inbox" , "/acplt/MessageSys/msgIdentificator" , "/acplt/MessageSys/msgHandler" , "/acplt/ksapi/createObject" , "/acplt/ksapi/deleteObject" , "/acplt/ksapi/getVar" , "/acplt/ksapi/setVar" , "/acplt/ksapi/getEPidentifiers" , "/acplt/ksapi/getEP" , "/acplt/ksapi/Variable" , "/acplt/ksapi/renameObject" , "/acplt/ksapi/linkObject" , "/acplt/ksapi/unlinkObject" , "/acplt/identification/Identification" , "/acplt/identificationOPCUAInterface/interface" , "/acplt/opcua/uaServer" , "/acplt/opcua/uaIdentificator" , "/acplt/opcua/uaConnection" , "/acplt/opcua/ovNetworkLayer" , "/acplt/opcua/uaSimpleTicketAuthenticator" , "/acplt/iec61131stdfb/ANYtoANY" , "/acplt/iec61131stdfb/ABS" , "/acplt/iec61131stdfb/SQRT" , "/acplt/iec61131stdfb/LN" , "/acplt/iec61131stdfb/LOG" , "/acplt/iec61131stdfb/EXP" , "/acplt/iec61131stdfb/SIN" , "/acplt/iec61131stdfb/COS" , "/acplt/iec61131stdfb/TAN" , "/acplt/iec61131stdfb/ASIN" , "/acplt/iec61131stdfb/ACOS" , "/acplt/iec61131stdfb/ATAN" , "/acplt/iec61131stdfb/ATAN2" , "/acplt/iec61131stdfb/ADD" , "/acplt/iec61131stdfb/MUL" , "/acplt/iec61131stdfb/SUB" , "/acplt/iec61131stdfb/DIV" , "/acplt/iec61131stdfb/MOD" , "/acplt/iec61131stdfb/EXPT" , "/acplt/iec61131stdfb/MOVE" , "/acplt/iec61131stdfb/SHL" , "/acplt/iec61131stdfb/SHR" , "/acplt/iec61131stdfb/ROL" , "/acplt/iec61131stdfb/ROR" , "/acplt/iec61131stdfb/AND" , "/acplt/iec61131stdfb/OR" , "/acplt/iec61131stdfb/XOR" , "/acplt/iec61131stdfb/NOT" , "/acplt/iec61131stdfb/SEL" , "/acplt/iec61131stdfb/MAX" , "/acplt/iec61131stdfb/MIN" , "/acplt/iec61131stdfb/LIMIT" , "/acplt/iec61131stdfb/MUX" , "/acplt/iec61131stdfb/GT" , "/acplt/iec61131stdfb/GE" , "/acplt/iec61131stdfb/EQ" , "/acplt/iec61131stdfb/LE" , "/acplt/iec61131stdfb/LT" , "/acplt/iec61131stdfb/NE" , "/acplt/iec61131stdfb/LEN" , "/acplt/iec61131stdfb/LEFT" , "/acplt/iec61131stdfb/RIGHT" , "/acplt/iec61131stdfb/MID" , "/acplt/iec61131stdfb/CONCAT" , "/acplt/iec61131stdfb/INSERT" , "/acplt/iec61131stdfb/DELETE" , "/acplt/iec61131stdfb/REPLACE" , "/acplt/iec61131stdfb/FIND" , "/acplt/iec61131stdfb/SR" , "/acplt/iec61131stdfb/RS" , "/acplt/iec61131stdfb/RTRIG" , "/acplt/iec61131stdfb/FTRIG" , "/acplt/iec61131stdfb/CTU" , "/acplt/iec61131stdfb/CTD" , "/acplt/iec61131stdfb/CTUD" , "/acplt/iec61131stdfb/TP" , "/acplt/iec61131stdfb/TON" , "/acplt/iec61131stdfb/TOFF" , "/acplt/iec61131stdfb/StateWatch" , "/acplt/iec61131stdfb/CONCATVEC" , "/acplt/lifeCycleEntry/LifeCycleEntry" , "/acplt/lifeCycleEntry/LifeCycleArchive" , "/acplt/lifeCycleEntryOPCUAInterface/interface" , "/acplt/openAASDiscoveryServer/OVDataForAAS" , "/acplt/openAASDiscoveryServer/ComponentManager" , "/acplt/openAASDiscoveryServer/DiscoveryServer" , "/acplt/openaasOPCUAInterface/interface" , "/acplt/openaasOPCUAInterface/aasDI" , "/acplt/propertyValueStatementOPCUAInterface/interface" , "/acplt/propertyValueStatement/PropertyValueStatement" , "/acplt/propertyValueStatement/CarrierId" , "/acplt/propertyValueStatement/PropertyId" , "/acplt/propertyValueStatement/ExpressionLogic" , "/acplt/propertyValueStatement/ExpressionSemantic" , "/acplt/propertyValueStatement/View" , "/acplt/propertyValueStatement/Visibility" , "/acplt/propertyValueStatement/PropertyValueStatementList" , "/acplt/propertyValueStatement/MatchPVSRA" , "/acplt/propertyValueStatement/MatchPVSLRA" , "/acplt/propertyValueStatement/PVSGenerator" , "/acplt/propertyValueStatement/HMIHelperPVSL" , "/acplt/propertyValueStatement/modelmanager" , "/acplt/services/Service" , "/acplt/services/ExampleService" , "/acplt/servicesOPCUAInterface/interface" , "/acplt/subModelAdministrationOPCUAInterface/interface" , "/acplt/subModelLifeCycleEntryOPCUAInterface/interface" , "/acplt/vdivde3696/c" , "/acplt/vdivde3696/abs" , "/acplt/vdivde3696/acos" , "/acplt/vdivde3696/add" , "/acplt/vdivde3696/am" , "/acplt/vdivde3696/and" , "/acplt/vdivde3696/asin" , "/acplt/vdivde3696/atan" , "/acplt/vdivde3696/aver" , "/acplt/vdivde3696/bitn" , "/acplt/vdivde3696/cos" , "/acplt/vdivde3696/cs" , "/acplt/vdivde3696/ct" , "/acplt/vdivde3696/deadt" , "/acplt/vdivde3696/demuxb" , "/acplt/vdivde3696/demuxn" , "/acplt/vdivde3696/dif" , "/acplt/vdivde3696/div" , "/acplt/vdivde3696/eq" , "/acplt/vdivde3696/exp" , "/acplt/vdivde3696/expt" , "/acplt/vdivde3696/fio" , "/acplt/vdivde3696/ftrig" , "/acplt/vdivde3696/ge" , "/acplt/vdivde3696/gt" , "/acplt/vdivde3696/hb" , "/acplt/vdivde3696/hn" , "/acplt/vdivde3696/integr" , "/acplt/vdivde3696/le" , "/acplt/vdivde3696/limit" , "/acplt/vdivde3696/ln" , "/acplt/vdivde3696/log" , "/acplt/vdivde3696/lt" , "/acplt/vdivde3696/max" , "/acplt/vdivde3696/min" , "/acplt/vdivde3696/mod" , "/acplt/vdivde3696/mul" , "/acplt/vdivde3696/muxb" , "/acplt/vdivde3696/muxn" , "/acplt/vdivde3696/ne" , "/acplt/vdivde3696/nonlin" , "/acplt/vdivde3696/not" , "/acplt/vdivde3696/or" , "/acplt/vdivde3696/rsff" , "/acplt/vdivde3696/rtrig" , "/acplt/vdivde3696/sam" , "/acplt/vdivde3696/scal" , "/acplt/vdivde3696/selb" , "/acplt/vdivde3696/seln" , "/acplt/vdivde3696/seo" , "/acplt/vdivde3696/sin" , "/acplt/vdivde3696/sqrt" , "/acplt/vdivde3696/srff" , "/acplt/vdivde3696/sub" , "/acplt/vdivde3696/tan" , "/acplt/vdivde3696/tof1" , "/acplt/vdivde3696/ton1" , "/acplt/vdivde3696/tp1" , "/acplt/vdivde3696/xor" , "/acplt/openaas/Header" , "/acplt/openaas/SubModel" , "/acplt/openaas/AASComponentManager" , "/acplt/openaas/aas" , "/acplt/openaas/InterfaceDiscoveryServer" , "/acplt/openaas/AASConvertListType" , "/acplt/openaas/modelmanager" , "/acplt/openaas/FindAAS" , "/acplt/openaas/FindPVSL" , "/acplt/openaas/PluggingTwoComponents" , "/acplt/openaas/CheckPluggedStatus" , "/acplt/openaas/SwitchForLCEGenerator" , "/acplt/openaas/simpleMessageCreator" , "/acplt/subModelAdministration/CreateSubModelService" , "/acplt/subModelAdministration/DeleteSubModelService" , "/acplt/subModelAdministration/CreatePropertyValueStatementListService" , "/acplt/subModelAdministration/DeletePropertyValueStatementListService" , "/acplt/subModelAdministration/CreatePropertyValueStatementService" , "/acplt/subModelAdministration/DeletePropertyValueStatementService" , "/acplt/subModelAdministration/SubModelAdministration" , "/acplt/subModelLifeCycleEntry/SubModelLifeCycleEntry" , "/acplt/subModelLifeCycleEntry/LCEGenerator" , "/acplt/subModelLifeCycleEntry/HMIHelperLCEList" , "/acplt/subModelLifeCycleEntry/HMIHelperLCEData"};
+      associations[23] : OUTPUT STRING = {"/acplt/ov/containment" , "/acplt/ov/instantiation" , "/acplt/ov/inheritance" , "/acplt/ov/parentrelationship" , "/acplt/ov/childrelationship" , "/acplt/ov/construction" , "/acplt/ov/embedment" , "/acplt/ksbase/AssocComTaskList" , "/acplt/ksbase/AssocChannelClientHandler" , "/acplt/ksbase/AssocChannelDataHandler" , "/acplt/ksbase/AssocCurrentChannel" , "/acplt/ksbase/AssocClientToTicketGenerator" , "/acplt/TCPbind/AssocSpecificClientHandler" , "/acplt/fb/variables" , "/acplt/fb/tasklist" , "/acplt/fb/inputconnections" , "/acplt/fb/outputconnections" , "/acplt/MessageSys/MsgDelivery2CurrentMessage" , "/acplt/MessageSys/MsgDelivery2Message" , "/acplt/MessageSys/Message2Channel" , "/acplt/MessageSys/SendExtension2Message" , "/acplt/ksapi/operationToVariable" , "/acplt/opcua/networkLayerToConnection"};
+      instanceCount : OUTPUT UINT = 2870;
+      database_fragmentation : OUTPUT UINT = 0;
+      database_free : OUTPUT UINT = 9227440;
+      database_name : OUTPUT STRING = "/home/opcua/Downloads/rte/build/acplt/servers/MANAGER/db.ovd";
+      database_size : OUTPUT UINT = 10002432;
+      database_started : OUTPUT BOOL = TRUE;
+      database_used : OUTPUT UINT = 774992;
+      name : OUTPUT STRING = "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+      ks_version : OUTPUT STRING = "";
+      libov_version : OUTPUT STRING = "2.0.0";
+      semantic_flags[32] : OUTPUT STRING = {"" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , ""};
+      server_description : OUTPUT STRING = "generic ACPLT/OV server";
+      server_name : OUTPUT STRING = "MANAGER";
+      server_time : OUTPUT TIME = 2017-10-25 12:37:09.639875;
+      server_version : OUTPUT STRING = "1.3.2";
+      server_run : INPUT BOOL = TRUE;
+      serverPID : OUTPUT UINT = 4003;
+      startup_time : OUTPUT TIME = 2017-10-25 12:33:38.892187;
+      running_db_backup : OUTPUT BOOL = FALSE;
+      write_db_backup : OUTPUT BOOL = FALSE;
+      ov_time_offset : INPUT TIME_SPAN = 0.000000;
+      ks_maxitemsperrequest : INPUT UINT = 0;
+      maxstringlength : INPUT UINT = 0;
+      maxvectorlength : INPUT UINT = 0;
+      maxnamelength : INPUT UINT = 255;
+      maxhierarchydepth : INPUT UINT = 64;
+      ov_scheduler_allowedjitter : INPUT UINT = 0;
+      ov_scheduler_numexceeds : OUTPUT UINT = 0;
+      cmdline_options : OUTPUT STRING = "CONFDIR=/home/opcua/Downloads/rte/build/acplt/servers/MANAGER/";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
