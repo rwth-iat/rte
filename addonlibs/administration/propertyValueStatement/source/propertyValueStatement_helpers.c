@@ -27,9 +27,9 @@ OV_DLLFNCEXPORT void PropertyValueStatementList_init(PropertyValueStatementList 
 	IdentificationType_init(&this->ID);
 	IdentificationType_init(&this->PropertyId);
 	this->Visibility = 0;
-	this->view = 0;
-	this->mask = 0;
-	this->pvslName = NULL;
+	this->View = 0;
+	this->Mask = 0;
+	this->PvslName = NULL;
 	this->pvs = NULL;
 	this->pvsNumber = 0;
 }
@@ -41,7 +41,7 @@ OV_DLLFNCEXPORT void PropertyValueStatementList_deleteMembers(PropertyValueState
 		PropertyValueStatement_deleteMembers(&(this->pvs)[i]);
 	}
 	ov_database_free(this->pvs);
-	ov_string_setvalue(&this->pvslName, NULL);
+	ov_string_setvalue(&this->PvslName, NULL);
 	PropertyValueStatementList_init(this);
 }
 OV_DLLFNCEXPORT void PropertyValueStatementList_delete(PropertyValueStatementList *this){
@@ -61,43 +61,43 @@ OV_DLLFNCEXPORT void PropertyValueStatement_init(PropertyValueStatement *this){
 	IdentificationType_init(&this->ID);
 	IdentificationType_init(&this->PropertyId);
 	this->Visibility = 0;
-	this->view = 0;
-	this->mask = 0;
-	this->pvsName = NULL;
-	ov_time_gettime(&this->value.time);
-	this->value.value.vartype = OV_VT_VOID;
-	this->value.value.valueunion.val_string = NULL;
-	this->value.value.valueunion.val_bool_vec.value = NULL;
-	this->value.value.valueunion.val_bool_vec.veclen = 0;
-	this->value.value.valueunion.val_byte_vec.value = NULL;
-	this->value.value.valueunion.val_byte_vec.veclen = 0;
-	this->value.value.valueunion.val_double_vec.value = NULL;
-	this->value.value.valueunion.val_double_vec.veclen = 0;
-	this->value.value.valueunion.val_generic_vec.value = NULL;
-	this->value.value.valueunion.val_generic_vec.veclen = 0;
-	this->value.value.valueunion.val_int_vec.value = NULL;
-	this->value.value.valueunion.val_int_vec.veclen = 0;
-	this->value.value.valueunion.val_single_vec.value = NULL;
-	this->value.value.valueunion.val_single_vec.veclen = 0;
-	this->value.value.valueunion.val_state_vec.value = NULL;
-	this->value.value.valueunion.val_state_vec.veclen = 0;
-	this->value.value.valueunion.val_string_vec.value = NULL;
-	this->value.value.valueunion.val_string_vec.veclen = 0;
-	this->value.value.valueunion.val_struct_vec.value = NULL;
-	this->value.value.valueunion.val_struct_vec.veclen = 0;
-	this->value.value.valueunion.val_time_span_vec.value = NULL;
-	this->value.value.valueunion.val_time_span_vec.veclen = 0;
-	this->value.value.valueunion.val_time_vec.value = NULL;
-	this->value.value.valueunion.val_time_vec.veclen = 0;
-	this->value.value.valueunion.val_uint_vec.value = NULL;
-	this->value.value.valueunion.val_uint_vec.veclen = 0;
+	this->View = 0;
+	this->Mask = 0;
+	this->PvsName = NULL;
+	ov_time_gettime(&this->Value.time);
+	this->Value.value.vartype = OV_VT_VOID;
+	this->Value.value.valueunion.val_string = NULL;
+	this->Value.value.valueunion.val_bool_vec.value = NULL;
+	this->Value.value.valueunion.val_bool_vec.veclen = 0;
+	this->Value.value.valueunion.val_byte_vec.value = NULL;
+	this->Value.value.valueunion.val_byte_vec.veclen = 0;
+	this->Value.value.valueunion.val_double_vec.value = NULL;
+	this->Value.value.valueunion.val_double_vec.veclen = 0;
+	this->Value.value.valueunion.val_generic_vec.value = NULL;
+	this->Value.value.valueunion.val_generic_vec.veclen = 0;
+	this->Value.value.valueunion.val_int_vec.value = NULL;
+	this->Value.value.valueunion.val_int_vec.veclen = 0;
+	this->Value.value.valueunion.val_single_vec.value = NULL;
+	this->Value.value.valueunion.val_single_vec.veclen = 0;
+	this->Value.value.valueunion.val_state_vec.value = NULL;
+	this->Value.value.valueunion.val_state_vec.veclen = 0;
+	this->Value.value.valueunion.val_string_vec.value = NULL;
+	this->Value.value.valueunion.val_string_vec.veclen = 0;
+	this->Value.value.valueunion.val_struct_vec.value = NULL;
+	this->Value.value.valueunion.val_struct_vec.veclen = 0;
+	this->Value.value.valueunion.val_time_span_vec.value = NULL;
+	this->Value.value.valueunion.val_time_span_vec.veclen = 0;
+	this->Value.value.valueunion.val_time_vec.value = NULL;
+	this->Value.value.valueunion.val_time_vec.veclen = 0;
+	this->Value.value.valueunion.val_uint_vec.value = NULL;
+	this->Value.value.valueunion.val_uint_vec.veclen = 0;
 }
 OV_DLLFNCEXPORT void PropertyValueStatement_deleteMembers(PropertyValueStatement *this){
 	IdentificationType_deleteMembers(&this->CarrierId);
 	IdentificationType_deleteMembers(&this->ID);
 	IdentificationType_deleteMembers(&this->PropertyId);
-	ov_string_setvalue(&this->pvsName, NULL);
-	Ov_SetAnyValue(&this->value, NULL);
+	ov_string_setvalue(&this->PvsName, NULL);
+	Ov_SetAnyValue(&this->Value, NULL);
 	PropertyValueStatement_init(this);
 }
 OV_DLLFNCEXPORT void PropertyValueStatement_delete(PropertyValueStatement *this){
