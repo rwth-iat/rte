@@ -48,24 +48,29 @@ typedef enum VisibilityEnum{
 }VisibilityEnum;
 
 typedef struct PropertyValueStatement{
-    OV_STRING pvsName;
+	IdentificationType ID;
+	OV_STRING PvsName;
+    IdentificationType CarrierId;
     ExpressionLogicEnum ExpressionLogic;
     ExpressionSemanticEnum ExpressionSemantic;
-    OV_ANY value;
-    OV_STRING unit;
-    IdentificationType ID;
-    IdentificationType objectID;
-    ViewEnum view;
+    IdentificationType PropertyId;
+    OV_ANY Value;
+    ViewEnum View;
     OV_UINT Visibility;
-    OV_UINT mask;
+    OV_UINT Mask;
 }PropertyValueStatement;
 
 
 typedef struct PropertyValueStatementList{
-    IdentificationType Carrier;
-    IdentificationType CreatingInstance;
-    OV_TIME CreationTime;
-    OV_STRING pvslName;
+	IdentificationType ID;
+	OV_STRING PvslName;
+	IdentificationType CarrierId;
+	ExpressionLogicEnum ExpressionLogic;
+	ExpressionSemanticEnum ExpressionSemantic;
+	IdentificationType PropertyId;
+	ViewEnum View;
+	OV_UINT Visibility;
+	OV_UINT Mask;
     PropertyValueStatement *pvs;
     OV_UINT pvsNumber;
 }PropertyValueStatementList;

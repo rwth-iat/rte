@@ -21,21 +21,27 @@ OV_DLLFNCEXPORT PropertyValueStatementList* PropertyValueStatementList_new(){
 	return this;
 }
 OV_DLLFNCEXPORT void PropertyValueStatementList_init(PropertyValueStatementList *this){
-	IdentificationType_init(&this->Carrier);
-	IdentificationType_init(&this->CreatingInstance);
-	ov_time_gettime(&this->CreationTime);
-	this->pvs = NULL;
+	IdentificationType_init(&this->CarrierId);
+	this->ExpressionLogic = 0;
+	this->ExpressionSemantic = 0;
+	IdentificationType_init(&this->ID);
+	IdentificationType_init(&this->PropertyId);
+	this->Visibility = 0;
+	this->view = 0;
+	this->mask = 0;
 	this->pvslName = NULL;
+	this->pvs = NULL;
 	this->pvsNumber = 0;
 }
 OV_DLLFNCEXPORT void PropertyValueStatementList_deleteMembers(PropertyValueStatementList *this){
-	IdentificationType_deleteMembers(&this->Carrier);
-	IdentificationType_deleteMembers(&this->CreatingInstance);
+	IdentificationType_deleteMembers(&this->CarrierId);
+	IdentificationType_deleteMembers(&this->ID);
+	IdentificationType_deleteMembers(&this->PropertyId);
 	for (OV_UINT i = 0; i < this->pvsNumber; i++){
 		PropertyValueStatement_deleteMembers(&(this->pvs)[i]);
 	}
 	ov_database_free(this->pvs);
-	ov_database_free(this->pvslName);
+	ov_string_setvalue(&this->pvslName, NULL);
 	PropertyValueStatementList_init(this);
 }
 OV_DLLFNCEXPORT void PropertyValueStatementList_delete(PropertyValueStatementList *this){
@@ -49,13 +55,15 @@ OV_DLLFNCEXPORT PropertyValueStatement* PropertyValueStatement_new(){
 	return this;
 }
 OV_DLLFNCEXPORT void PropertyValueStatement_init(PropertyValueStatement *this){
-	this->ExpressionSemantic = 0;
-	this->Visibility = 0;
-	IdentificationType_init(&this->ID);
-	this->pvsName = NULL;
+	IdentificationType_init(&this->CarrierId);
 	this->ExpressionLogic = 0;
-	this->unit = NULL;
+	this->ExpressionSemantic = 0;
+	IdentificationType_init(&this->ID);
+	IdentificationType_init(&this->PropertyId);
+	this->Visibility = 0;
 	this->view = 0;
+	this->mask = 0;
+	this->pvsName = NULL;
 	ov_time_gettime(&this->value.time);
 	this->value.value.vartype = OV_VT_VOID;
 	this->value.value.valueunion.val_string = NULL;
@@ -85,9 +93,10 @@ OV_DLLFNCEXPORT void PropertyValueStatement_init(PropertyValueStatement *this){
 	this->value.value.valueunion.val_uint_vec.veclen = 0;
 }
 OV_DLLFNCEXPORT void PropertyValueStatement_deleteMembers(PropertyValueStatement *this){
+	IdentificationType_deleteMembers(&this->CarrierId);
 	IdentificationType_deleteMembers(&this->ID);
-	ov_database_free(this->pvsName);
-	ov_database_free(this->unit);
+	IdentificationType_deleteMembers(&this->PropertyId);
+	ov_string_setvalue(&this->pvsName, NULL);
 	Ov_SetAnyValue(&this->value, NULL);
 	PropertyValueStatement_init(this);
 }
