@@ -46,7 +46,7 @@ OV_DLLFNCEXPORT void openaas_simpleMessageCreator_typemethod(
     }
 
 
-    OV_INSTPTR_ov_object pobj = NULL;
+    OV_INSTPTR_MessageSys_Message pobj = NULL;
     OV_RESULT result = Ov_CreateObject(
     		MessageSys_Message,
     		pobj, ptargetPathObj, "message");
