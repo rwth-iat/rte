@@ -25,13 +25,21 @@
 #include "libov/ov_result.h"
 #include "openaas_helpers.h"
 
-/*
 
-OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationType aasId, OV_UINT *number, PropertyValueStatementList **pvsl) {
+
+OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationType aasId, OV_UINT *number, PropertyValueStatementList **pvsl, OV_UINT visibility) {
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
+	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
+	OV_INSTPTR_propertyValueStatement_ExpressionLogic pExpressionLogic = NULL;
+	OV_INSTPTR_propertyValueStatement_ExpressionSemantic pExpressionSemantic = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyId pPropertyId = NULL;
+	OV_INSTPTR_propertyValueStatement_View pView = NULL;
+	OV_INSTPTR_propertyValueStatement_Visibility pVisibility = NULL;
+	OV_INSTPTR_ov_object pchild = NULL;
+
 	OV_UINT pvslSize = 0;
 	OV_UINT pvsSize = 0;
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
@@ -42,48 +50,126 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ppvsl, propertyValueStatement_PropertyValueStatementList){
 			pvslSize++;
 		}
+		if (pvslSize == 0)
+			return AASSTATUSCODE_GOOD;
 		PropertyValueStatementList *pvsltmp = ov_database_malloc(sizeof(PropertyValueStatementList)*pvslSize);
 		*number = pvslSize;
 		pvslSize = 0;
+		OV_UINT VisibilityOfPVSL = 0; // 0: not in PVSL, 1: in PVSL, but not the same as wanted, 2: in PVSL and same as wanted
 		Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, &paas->p_Body), ppvsl, propertyValueStatement_PropertyValueStatementList){
 			PropertyValueStatementList_init(&pvsltmp[pvslSize]);
-			ov_string_setvalue(&pvsltmp[pvslSize].Carrier.IdSpec, ppvsl->v_CarrierIdString);
-			pvsltmp[pvslSize].Carrier.IdType = ppvsl->v_CarrierIdType;
-			ov_string_setvalue(&pvsltmp[pvslSize].CreatingInstance.IdSpec, ppvsl->v_CreatingInstanceIdString);
-			pvsltmp[pvslSize].CreatingInstance.IdType = ppvsl->v_CreatingInstanceIdType;
-			pvsltmp[pvslSize].CreationTime = ppvsl->v_CreationTime;
-			ov_string_setvalue(&pvsltmp[pvslSize].pvslName, ppvsl->v_identifier);
+			VisibilityOfPVSL = 0;
+			ov_string_setvalue(&pvsltmp[pvslSize].PvslName, ppvsl->v_identifier);
+			Ov_ForEachChild(ov_containment, ppvsl, pchild){
+				if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+					pCarrierId = Ov_StaticPtrCast(propertyValueStatement_CarrierId, pchild);
+					ov_string_setvalue(&pvsltmp[pvslSize].CarrierId.IdSpec, pCarrierId->v_IdSpec);
+					pvsltmp[pvslSize].CarrierId.IdType = pCarrierId->v_IdType;
+					pvsltmp[pvslSize].Mask |= 0x01;
+				}else if(Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+					pExpressionLogic = Ov_StaticPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+					pvsltmp[pvslSize].ExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+					pvsltmp[pvslSize].Mask |= 0x02;
+				}else if(Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
+					pExpressionSemantic = Ov_StaticPtrCast(propertyValueStatement_ExpressionSemantic, pchild);
+					pvsltmp[pvslSize].ExpressionSemantic = pExpressionSemantic->v_ExpressionSemanticEnum;
+					pvsltmp[pvslSize].Mask |= 0x04;
+				}else if(Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+					pPropertyId = Ov_StaticPtrCast(propertyValueStatement_PropertyId, pchild);
+					ov_string_setvalue(&pvsltmp[pvslSize].PropertyId.IdSpec, pPropertyId->v_IdSpec);
+					pvsltmp[pvslSize].PropertyId.IdType = pPropertyId->v_IdType;
+					pvsltmp[pvslSize].Mask |= 0x08;
+				}else if(Ov_CanCastTo(propertyValueStatement_View, pchild)){
+					pView = Ov_StaticPtrCast(propertyValueStatement_View, pchild);
+					pvsltmp[pvslSize].View = pView->v_ViewEnum;
+					pvsltmp[pvslSize].Mask |= 0x10;
+				}else if(Ov_CanCastTo(propertyValueStatement_Visibility, pchild)){
+					pVisibility = Ov_StaticPtrCast(propertyValueStatement_Visibility, pchild);
+					pvsltmp[pvslSize].Visibility = pVisibility->v_VisibilityEnum;
+					pvsltmp[pvslSize].Mask |= 0x20;
+					if (pVisibility->v_VisibilityEnum == visibility)
+						VisibilityOfPVSL = 2;
+					else
+						VisibilityOfPVSL = 1;
+				}
+			}
 
 			pvsSize = 0;
-			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, propertyValueStatement_PropertyValueStatement){
-				if (ppvs->v_Visibility == 2)
+			// count PVS
+			if (VisibilityOfPVSL == 1){ // Visibility in PVSL but not as required
+				pvslSize++;
+				continue;
+			}else if (VisibilityOfPVSL == 2){ // Visibility in PVSL and same as required
+				Ov_ForEachChildEx(ov_containment, ppvsl, ppvs, propertyValueStatement_PropertyValueStatement){
 					pvsSize++;
+				}
+			}else{ // Visibility not in PVSL decide for each PVS individual
+				Ov_ForEachChildEx(ov_containment, ppvsl, ppvs, propertyValueStatement_PropertyValueStatement){
+					Ov_ForEachChildEx(ov_containment, ppvs, pVisibility, propertyValueStatement_Visibility){
+						if (pVisibility->v_VisibilityEnum == visibility)
+							pvsSize++;
+					}
+				}
 			}
+
 			pvsltmp[pvslSize].pvs = ov_database_malloc(sizeof(PropertyValueStatement)*pvsSize);
 			pvsltmp[pvslSize].pvsNumber = pvsSize;
 			pvsSize = 0;
-			Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(ov_domain, ppvsl), ppvs, propertyValueStatement_PropertyValueStatement){
-				if (ppvs->v_Visibility == 2){
-					PropertyValueStatement_init(&(pvsltmp[pvslSize].pvs[pvsSize]));
-					pvsltmp[pvslSize].pvs[pvsSize].ExpressionLogic = ppvs->v_ExpressionLogic;
-					pvsltmp[pvslSize].pvs[pvsSize].ExpressionSemantic = ppvs->v_ExpressionSemantic;
-					ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].ID.IdSpec, ppvs->v_IDIdString);
-					pvsltmp[pvslSize].pvs[pvsSize].ID.IdType = ppvs->v_IDIdType;
-					pvsltmp[pvslSize].pvs[pvsSize].Visibility = ppvs->v_Visibility;
-					ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].pvsName, ppvs->v_identifier);
-					ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].unit, ppvs->v_Unit);
-					Ov_SetAnyValue(&pvsltmp[pvslSize].pvs[pvsSize].value, &ppvs->v_Value);
-					pvsltmp[pvslSize].pvs[pvsSize].value.time = ppvs->v_TimeStamp;
-					pvsltmp[pvslSize].pvs[pvsSize].view = ppvs->v_View;
-					pvsSize++;
+
+			OV_BOOL addPVS = FALSE;
+			Ov_ForEachChildEx(ov_containment, ppvsl, ppvs, propertyValueStatement_PropertyValueStatement){
+				if (VisibilityOfPVSL == 2){
+					addPVS = TRUE;
+				}else{
+					Ov_ForEachChildEx(ov_containment, ppvs, pVisibility, propertyValueStatement_Visibility){
+						if (pVisibility->v_VisibilityEnum == visibility)
+							addPVS = TRUE;
+					}
 				}
+
+				if (addPVS == FALSE)
+					continue;
+
+				PropertyValueStatement_init(&(pvsltmp[pvslSize].pvs[pvsSize]));
+				ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].PvsName, ppvs->v_identifier);
+				Ov_ForEachChild(ov_containment, ppvs, pchild){
+					if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
+						pCarrierId = Ov_StaticPtrCast(propertyValueStatement_CarrierId, pchild);
+						ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].CarrierId.IdSpec, pCarrierId->v_IdSpec);
+						pvsltmp[pvslSize].pvs[pvsSize].CarrierId.IdType = pCarrierId->v_IdType;
+						pvsltmp[pvslSize].pvs[pvsSize].Mask |= 0x01;
+					}else if(Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pchild)){
+						pExpressionLogic = Ov_StaticPtrCast(propertyValueStatement_ExpressionLogic, pchild);
+						pvsltmp[pvslSize].pvs[pvsSize].ExpressionLogic = pExpressionLogic->v_ExpressionLogicEnum;
+						pvsltmp[pvslSize].pvs[pvsSize].Mask |= 0x02;
+					}else if(Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pchild)){
+						pExpressionSemantic = Ov_StaticPtrCast(propertyValueStatement_ExpressionSemantic, pchild);
+						pvsltmp[pvslSize].pvs[pvsSize].ExpressionSemantic = pExpressionSemantic->v_ExpressionSemanticEnum;
+						pvsltmp[pvslSize].pvs[pvsSize].Mask |= 0x04;
+					}else if(Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
+						pPropertyId = Ov_StaticPtrCast(propertyValueStatement_PropertyId, pchild);
+						ov_string_setvalue(&pvsltmp[pvslSize].pvs[pvsSize].PropertyId.IdSpec, pPropertyId->v_IdSpec);
+						pvsltmp[pvslSize].pvs[pvsSize].PropertyId.IdType = pPropertyId->v_IdType;
+						pvsltmp[pvslSize].pvs[pvsSize].Mask |= 0x08;
+					}else if(Ov_CanCastTo(propertyValueStatement_View, pchild)){
+						pView = Ov_StaticPtrCast(propertyValueStatement_View, pchild);
+						pvsltmp[pvslSize].pvs[pvsSize].View = pView->v_ViewEnum;
+						pvsltmp[pvslSize].pvs[pvsSize].Mask |= 0x10;
+					}else if(Ov_CanCastTo(propertyValueStatement_Visibility, pchild)){
+						pVisibility = Ov_StaticPtrCast(propertyValueStatement_Visibility, pchild);
+						pvsltmp[pvslSize].pvs[pvsSize].Visibility = pVisibility->v_VisibilityEnum;
+						pvsltmp[pvslSize].pvs[pvsSize].Mask |= 0x20;
+					}
+				}
+				Ov_SetAnyValue(&pvsltmp[pvslSize].pvs[pvsSize].Value, &ppvs->v_Value);
+				pvsSize++;
 			}
 			pvslSize++;
 		}
 		*pvsl = pvsltmp;
 	}
 
-    return (AASStatusCode)0;
+    return AASSTATUSCODE_GOOD;
 }
 
 
@@ -100,4 +186,3 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_triggerGetCoreData(Identifica
 
     return result;
 }
-*/

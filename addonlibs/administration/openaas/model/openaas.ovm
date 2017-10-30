@@ -198,7 +198,7 @@ LIBRARY openaas
         deletePVS  : C_FUNCTION <UA_FNC_DELETEPVS>;
         getPVS     : C_FUNCTION <UA_FNC_GETPVS>;
         setPVS     : C_FUNCTION <UA_FNC_SETPVS>;
-        //getCoreData : C_FUNCTION <UA_FNC_GETCOREDATA>;
+        getCoreData : C_FUNCTION <UA_FNC_GETCOREDATA>;
         //triggerGetCoreData : C_FUNCTION <UA_FNC_TRIGGERGETCOREDATA>;        
         ovresultToAASStatusCode : C_FUNCTION <UA_FNC_OVRESULTTOAASSTATUSCODE>;
         AASConvertListGet : C_FUNCTION <OPENAAS_FNC_AASCONVERTLISTGET>;

@@ -19,13 +19,11 @@
 
 typedef int status_t;
 typedef uint64_t SRV_DateTime;
-extern const size_t SRV_VALUEMEMSIZE;
 
 typedef struct {
 	size_t length;
 	char* data;
 } SRV_String;
-
 
 typedef enum {
 	SRV_JSON,
@@ -54,6 +52,10 @@ typedef enum {
 	SRV_createAASRsp,
 	SRV_deleteAASReq,
 	SRV_deleteAASRsp,
+	SRV_createSubModelReq,
+	SRV_createSubModelRsp,
+	SRV_deleteSubModelReq,
+	SRV_deleteSubModelRsp,
 	SRV_createPVSLReq,
 	SRV_createPVSLRsp,
 	SRV_deletePVSLReq,
@@ -97,23 +99,23 @@ typedef enum {
 } SRV_exprLogEnum_t;
 
 typedef enum {
-	SRV_VIEW_BUSINESS,
-	SRV_VIEW_CONSTRUCTION,
-	SRV_VIEW_POWER,
-	SRV_VIEW_FUNCTIONAL,
-	SRV_VIEW_LOCATION,
-	SRV_VIEW_SECURITY,
-	SRV_VIEW_NETWORK,
-	SRV_VIEW_LIFECYCLE,
-	SRV_VIEW_HUMAN,
-	SRV_VIEW_undefined
+	SRV_VIEW_BUSINESS		= 0,
+	SRV_VIEW_CONSTRUCTION	= 1,
+	SRV_VIEW_POWER			= 2,
+	SRV_VIEW_FUNCTIONAL		= 3,
+	SRV_VIEW_LOCATION		= 4,
+	SRV_VIEW_SECURITY		= 5,
+	SRV_VIEW_NETWORK		= 6,
+	SRV_VIEW_LIFECYCLE		= 7,
+	SRV_VIEW_HUMAN			= 8,
+	SRV_VIEW_undefined		= 9
 } SRV_viewEnum_t;
 
 typedef enum {
-	SRV_VIS_PRIVATE,
-	SRV_VIS_CONTRACT,
-	SRV_VIS_PUBLIC,
-	SRV_VIS_undefined
+	SRV_VIS_PRIVATE		= 0,
+	SRV_VIS_CONTRACT	= 1,
+	SRV_VIS_PUBLIC 		= 2,
+	SRV_VIS_undefined	= 3
 } SRV_visibilityEnum_t;
 
 typedef enum {
@@ -122,56 +124,64 @@ typedef enum {
 	SRV_IDT_undefined 	= 2
 } SRV_idEnum_t;
 
+typedef union {
+	bool			vt_bool;
+	float			vt_single;
+	double			vt_double;
+	int32_t			vt_int32;
+	int64_t			vt_int64;
+	uint32_t		vt_uint32;
+	uint64_t		vt_uint64;
+	SRV_String		vt_string;
+	SRV_DateTime	vt_datetime;
+} SRV_Any_t;
+
+typedef struct {
+	SRV_Any_t value;
+	SRV_valType_t type;
+	SRV_DateTime time;
+	bool hasTime;
+} SRV_extAny_t;
+
 typedef struct {
 	SRV_idEnum_t idType;
 	SRV_String idSpec;
 } SRV_ident_t;
 
 typedef struct {
-	SRV_exprSemEnum_t expressionSemantic;
+	SRV_String preferredName;
+	SRV_ident_t propertyId;
 	SRV_exprLogEnum_t expressionLogic;
-	SRV_String name;
-	SRV_String unit;
+	SRV_exprSemEnum_t expressionSemantic;
 	SRV_viewEnum_t view;
+	SRV_ident_t carrierId;
 	SRV_visibilityEnum_t visibility;
-	SRV_ident_t ID;
-	SRV_ident_t objectID;
-	//SRV_ident_t carrierID;
-	SRV_DateTime valTime;
-	SRV_valType_t valType;
-
-	int mask;
-	void* value;
+	SRV_extAny_t value;
 	bool hasName;
-	bool hasUnit;
-	bool hasValTime;
-	bool hasObjectId;
 } PVS_t;
 
 typedef struct {
-	SRV_String name;
-	SRV_ident_t carrier;
-	SRV_ident_t creatingInstance;
-	SRV_DateTime creationTime;
+	SRV_String preferredName;
+	SRV_ident_t propertyId;
+	SRV_exprLogEnum_t expressionLogic;
+	SRV_exprSemEnum_t expressionSemantic;
+	SRV_ident_t carrierId;
+	SRV_viewEnum_t view;
+	SRV_visibilityEnum_t visibility;
 	bool hasName;
-	bool hasCreationTime;
 	PVS_t* pvs;
 	uint32_t numPvs;
 } PVSL_t;
 
 typedef struct {
-	uint64_t lceId;
+	SRV_ident_t id;
 	SRV_ident_t creatingInstance;
 	SRV_ident_t writingInstance;
-	SRV_String eventClass;
+	SRV_extAny_t value;
 	SRV_String subject;
-	SRV_DateTime dataTime;
-	SRV_valType_t dataType;
-	void* data;
-	bool hasLceId;
-	bool hasEventClass;
+	SRV_String eventClass;
 	bool hasSubject;
-	bool hastDataTime;
+	bool hasEventClass;
 } LCE_t;
 
 // structs for requests and responses
@@ -201,12 +211,43 @@ typedef struct {
 	status_t status;
 } deleteAASRsp_t;
 
+typedef struct {
+	//SRV_ident_t aasId;
+	SRV_ident_t parentId;
+	SRV_ident_t modelId;
+	SRV_String name;
+	uint32_t revision;
+	uint32_t version;
+	bool hasName;
+	bool hasRevision;
+	bool hasVersion;
+} createSubModelReq_t;
+
+typedef struct {
+	status_t status;
+} createSubModelRsp_t;
 
 typedef struct {
 	//SRV_ident_t aasId;
-	SRV_ident_t subModelId;
-	SRV_String pvslName;
-	SRV_ident_t carrier;
+	SRV_ident_t modelId;
+} deleteSubModelReq_t;
+
+typedef struct {
+	status_t status;
+} deleteSubModelRsp_t;
+
+typedef struct {
+	//SRV_ident_t aasId;
+	SRV_ident_t parentId;
+	PVSL_t pvsl;
+//	SRV_String pvslName;
+//	// optional
+//	SRV_ident_t carrierId;
+//	SRV_exprLogEnum_t expressionLogic;
+//	SRV_exprSemEnum_t expressionSemantic;
+//	SRV_ident_t propertyId;
+//	SRV_viewEnum_t view;
+//	SRV_visibilityEnum_t visibility;
 } createPVSLReq_t;
 
 typedef struct {
@@ -216,8 +257,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	SRV_ident_t subModelId;
-	SRV_String pvslName;
+	SRV_ident_t id;
 } deletePVSLReq_t;
 
 typedef struct {
@@ -227,8 +267,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	SRV_ident_t subModelId;
-	SRV_String pvslName;
+	SRV_ident_t listId;
 	PVS_t pvs;
 } createPVSReq_t;
 
@@ -239,9 +278,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	SRV_ident_t subModelId;
-	SRV_String pvslName;
-	SRV_String pvsName;
+	SRV_ident_t id;
 } deletePVSReq_t;
 
 typedef struct {
@@ -260,7 +297,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	uint64_t lceId;
+	SRV_ident_t id;
 } deleteLCEReq_t;
 
 typedef struct {
@@ -270,9 +307,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	SRV_ident_t subModelId;
-	SRV_String pvslName;
-	SRV_String pvsName;
+	SRV_ident_t id;
 } getPVSReq_t;
 
 typedef struct {
@@ -282,10 +317,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	//SRV_ident_t subModelId;
-	SRV_ident_t pvsId;
-	SRV_String pvslName;
-	//SRV_String pvsName;
+	SRV_ident_t id;
 	PVS_t pvs;
 } setPVSReq_t;
 
@@ -296,7 +328,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	uint64_t lceId;
+	SRV_ident_t id;
 } getLCEReq_t;
 
 typedef struct {
@@ -306,7 +338,7 @@ typedef struct {
 
 typedef struct {
 	//SRV_ident_t aasId;
-	//uint64_t lceId;
+	SRV_ident_t id;
 	LCE_t lce;
 } setLCEReq_t;
 
@@ -315,7 +347,7 @@ typedef struct {
 } setLCERsp_t;
 
 typedef struct {
-	uint8_t dummy;
+	SRV_visibilityEnum_t visibility;
 } getCoreDataReq_t;
 
 typedef struct {
@@ -332,6 +364,7 @@ int SRV_String_setCopy(SRV_String* srvstr, const char* str, int len);
 void SRV_String_deleteMembers(SRV_String* this);
 void SRV_String_delete(SRV_String* this);
 
+SRV_extAny_t* SRV_extAny_t_new();
 SRV_ident_t* SRV_ident_t_new();
 PVSL_t* PVSL_t_new();
 PVS_t* PVS_t_new();
@@ -348,6 +381,10 @@ createAASReq_t* createAASReq_t_new();
 createAASRsp_t* createAASRsp_t_new();
 deleteAASReq_t* deleteAASReq_t_new();
 deleteAASRsp_t* deleteAASRsp_t_new();
+createSubModelReq_t* createSubModelReq_t_new();
+createSubModelRsp_t* createSubModelRsp_t_new();
+deleteSubModelReq_t* deleteSubModelReq_t_new();
+deleteSubModelRsp_t* deleteSubModelRsp_t_new();
 createPVSLReq_t* createPVSLReq_t_new();
 createPVSLRsp_t* createPVSLRsp_t_new();
 deletePVSLReq_t* deletePVSLReq_t_new();
@@ -371,6 +408,7 @@ setLCERsp_t* setLCERsp_t_new();
 getCoreDataReq_t* getCoreDataReq_t_new();
 getCoreDataRsp_t* getCoreDataRsp_t_new();
 
+void SRV_extAny_t_init(SRV_extAny_t* this);
 void SRV_ident_t_init (SRV_ident_t* this);
 void PVSL_t_init (PVSL_t* this);
 void PVS_t_init (PVS_t* this);
@@ -384,6 +422,10 @@ void createAASReq_t_init (createAASReq_t* this);
 void createAASRsp_t_init (createAASRsp_t* this);
 void deleteAASReq_t_init (deleteAASReq_t* this);
 void deleteAASRsp_t_init (deleteAASRsp_t* this);
+void createSubModelReq_t_init(createSubModelReq_t* this);
+void createSubModelRsp_t_init(createSubModelRsp_t* this);
+void deleteSubModelReq_t_init(deleteSubModelReq_t* this);
+void deleteSubModelRsp_t_init(deleteSubModelRsp_t* this);
 void createPVSLReq_t_init (createPVSLReq_t* this);
 void createPVSLRsp_t_init (createPVSLRsp_t* this);
 void deletePVSLReq_t_init (deletePVSLReq_t* this);
@@ -407,6 +449,7 @@ void setLCERsp_t_init (setLCERsp_t* this);
 void getCoreDataReq_t_init(getCoreDataReq_t* this);
 void getCoreDataRsp_t_init(getCoreDataRsp_t* this);
 
+void SRV_extAny_t_deleteMembers (SRV_extAny_t* this);
 void SRV_ident_t_deleteMembers (SRV_ident_t* this);
 void PVSL_t_deleteMembers (PVSL_t* this);
 void PVS_t_deleteMembers (PVS_t* this);
@@ -420,6 +463,10 @@ void createAASReq_t_deleteMembers (createAASReq_t* this);
 void createAASRsp_t_deleteMembers (createAASRsp_t* this);
 void deleteAASReq_t_deleteMembers (deleteAASReq_t* this);
 void deleteAASRsp_t_deleteMembers (deleteAASRsp_t* this);
+void createSubModelReq_t_deleteMembers(createSubModelReq_t* this);
+void createSubModelRsp_t_deleteMembers(createSubModelRsp_t* this);
+void deleteSubModelReq_t_deleteMembers(deleteSubModelReq_t* this);
+void deleteSubModelRsp_t_deleteMembers(deleteSubModelRsp_t* this);
 void createPVSLReq_t_deleteMembers (createPVSLReq_t* this);
 void createPVSLRsp_t_deleteMembers (createPVSLRsp_t* this);
 void deletePVSLReq_t_deleteMembers (deletePVSLReq_t* this);
@@ -443,6 +490,7 @@ void setLCERsp_t_deleteMembers (setLCERsp_t* this);
 void getCoreDataReq_t_deleteMembers(getCoreDataReq_t* this);
 void getCoreDataRsp_t_deleteMembers(getCoreDataRsp_t* this);
 
+void SRV_extAny_t_delete (SRV_extAny_t* this);
 void SRV_ident_t_delete (SRV_ident_t* this);
 void PVSL_t_delete (PVSL_t* this);
 void PVS_t_delete (PVS_t* this);
@@ -456,6 +504,10 @@ void createAASReq_t_delete (createAASReq_t* this);
 void createAASRsp_t_delete (createAASRsp_t* this);
 void deleteAASReq_t_delete (deleteAASReq_t* this);
 void deleteAASRsp_t_delete (deleteAASRsp_t* this);
+void createSubModelReq_t_delete(createSubModelReq_t* this);
+void createSubModelRsp_t_delete(createSubModelRsp_t* this);
+void deleteSubModelReq_t_delete(deleteSubModelReq_t* this);
+void deleteSubModelRsp_t_delete(deleteSubModelRsp_t* this);
 void createPVSLReq_t_delete (createPVSLReq_t* this);
 void createPVSLRsp_t_delete (createPVSLRsp_t* this);
 void deletePVSLReq_t_delete (deletePVSLReq_t* this);
@@ -480,4 +532,3 @@ void getCoreDataReq_t_delete(getCoreDataReq_t* this);
 void getCoreDataRsp_t_delete(getCoreDataRsp_t* this);
 
 #endif /* SERVICESTRUCTS_H_ */
-

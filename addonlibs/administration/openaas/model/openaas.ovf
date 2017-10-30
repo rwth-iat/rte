@@ -32,6 +32,7 @@ typedef AASStatusCode UA_FNC_DELETEPVS(IdentificationType aasId, IdentificationT
 typedef AASStatusCode UA_FNC_SETPVS(IdentificationType aasId, IdentificationType pvsId, OV_UINT mask, OV_STRING pvsName, IdentificationType carrierId, ExpressionLogicEnum expressionLogic, ExpressionSemanticEnum expressionSemantic, IdentificationType propertyId, ViewEnum view, VisibilityEnum visibility, OV_ANY value);
 typedef AASStatusCode UA_FNC_GETPVS(IdentificationType aasId, IdentificationType pvsId, OV_STRING *pvsName, IdentificationType *carrierId, ExpressionLogicEnum *expressionLogic, ExpressionSemanticEnum *expressionSemantic, IdentificationType *propertyId, ViewEnum *view, VisibilityEnum *visibility, OV_ANY *value);
 	
+typedef AASStatusCode UA_FNC_GETCOREDATA(IdentificationType aasId, OV_UINT *number, PropertyValueStatementList **pvsl, OV_UINT visibility);
 // HMI Helper
 typedef AASStatusCode UA_FNC_SENDAASMESSAGEINSYSTEM(OV_INSTPTR_openaas_AASComponentManager this, IdentificationType senderAASId, IdentificationType receiverAASId, OV_UINT msgNo, SRV_service_t serviceType, void* srvStruct);
 

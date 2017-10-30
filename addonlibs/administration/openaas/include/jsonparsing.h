@@ -18,6 +18,9 @@
 #include "servicestructs.h"
 //#include "ua_constants.h"
 
+#define JSON_MEMBER_STRICT 1
+
+
 #define JSON_SEC_TO_DATETIME 10000000LL
 #define JSON_DATETIME_UNIXEPOCH (11644473600LL * JSON_SEC_TO_DATETIME)
 

@@ -442,6 +442,8 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		void *srvStructReceive = NULL;
 		SRV_service_t srvTypeReceive;
 		SRV_encoding_t encoding;
+		ov_logfile_info("AASComponentManager: Message received with content: %s", srvStringReceive->data);
+		ov_logfile_info("AASComponentManager: Message received with content: %s", srvStringReceive->data+500);
 		resultOV = decodeMSG(srvStringReceive, &headerReceive, &srvStructReceive, &srvTypeReceive, &encoding);
 		if (resultOV){
 			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
@@ -497,7 +499,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					ov_string_setvalue(&tmpOVAssetId.IdSpec, createAASReq->assetId.idSpec.data);
 					tmpOVAssetId.IdType = createAASReq->assetId.idType;
 
-					//result = openaas_modelmanager_createAAS(tmpOVAASId, tmpOVName, tmpOVAssetId);
+					result = openaas_modelmanager_createAAS(tmpOVAASId, tmpOVName, tmpOVAssetId);
 
 					createAASRsp_t createAASRsp;
 					createAASRsp_t_init(&createAASRsp);
@@ -541,7 +543,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					tmpOVAASId.IdType = deleteAASReq->aasId.idType;
 
 
-					//result = openaas_modelmanager_deleteAAS(tmpOVAASId);
+					result = openaas_modelmanager_deleteAAS(tmpOVAASId);
 
 					deleteAASRsp_t deleteAASRsp;
 					deleteAASRsp_t_init(&deleteAASRsp);
@@ -573,28 +575,125 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			case SRV_deleteAASRsp:{
 				// TODO: Check the answer
 			}break;
+			case SRV_createSubModelReq:{
+				createSubModelReq_t *createSubModelReq = (createSubModelReq_t*)srvStructReceive;
+
+				IdentificationType tmpOVparentID;
+				IdentificationType_init(&tmpOVparentID);
+				ov_string_setvalue(&tmpOVparentID.IdSpec, createSubModelReq->parentId.idSpec.data);
+				tmpOVparentID.IdType = createSubModelReq->parentId.idType;
+
+				IdentificationType tmpOVmodelId;
+				IdentificationType_init(&tmpOVmodelId);
+				ov_string_setvalue(&tmpOVmodelId.IdSpec, createSubModelReq->modelId.idSpec.data);
+				tmpOVmodelId.IdType = createSubModelReq->modelId.idType;
+
+				OV_STRING tmpOVsmName = NULL;
+				ov_string_setvalue(&tmpOVsmName, createSubModelReq->name.data);
+
+				OV_UINT tmpOVrevision = createSubModelReq->revision;
+
+				OV_UINT tmpOVversion = createSubModelReq->version;
+
+
+				result = openaas_modelmanager_createSubModel(aasId, tmpOVparentID, tmpOVmodelId, tmpOVsmName, tmpOVrevision, tmpOVversion);
+
+				createSubModelRsp_t createSubModelRsp;
+				createSubModelRsp_t_init(&createSubModelRsp);
+
+				createSubModelRsp.status = result;
+
+				srvStructSend = &createSubModelRsp;
+				srvTypeSend = SRV_createSubModelRsp;
+
+				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
+
+				createSubModelRsp_t_deleteMembers(&createSubModelRsp);
+				IdentificationType_deleteMembers(&tmpOVparentID);
+				IdentificationType_deleteMembers(&tmpOVmodelId);
+				ov_string_setvalue(&tmpOVsmName, NULL);
+				sendAnswer = TRUE;
+			}break;
+			case SRV_createSubModelRsp:{
+				// TODO: Check the answer
+			}break;
+			case SRV_deleteSubModelReq:{
+				deleteSubModelReq_t *deleteSubModelReq = (deleteSubModelReq_t*)srvStructReceive;
+
+				IdentificationType tmpOVmodelId;
+				IdentificationType_init(&tmpOVmodelId);
+				ov_string_setvalue(&tmpOVmodelId.IdSpec, deleteSubModelReq->modelId.idSpec.data);
+				tmpOVmodelId.IdType = deleteSubModelReq->modelId.idType;
+
+				result = openaas_modelmanager_deleteSubModel(aasId, tmpOVmodelId);
+
+				deleteSubModelRsp_t deleteSubModelRsp;
+				deleteSubModelRsp_t_init(&deleteSubModelRsp);
+
+				deleteSubModelRsp.status = result;
+
+				srvStructSend = &deleteSubModelRsp;
+				srvTypeSend = SRV_deleteSubModelRsp;
+
+				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
+
+				deleteSubModelRsp_t_deleteMembers(&deleteSubModelRsp);
+				IdentificationType_deleteMembers(&tmpOVmodelId);
+				sendAnswer = TRUE;
+			}break;
+			case SRV_deleteSubModelRsp:{
+				// TODO: Check the answer
+			}break;
 			case SRV_createPVSLReq:{
 				createPVSLReq_t *createPVSLReq = (createPVSLReq_t*)srvStructReceive;
 
-				IdentificationType tmpOVSubModelId;
-				IdentificationType_init(&tmpOVSubModelId);
-				ov_string_setvalue(&tmpOVSubModelId.IdSpec, createPVSLReq->subModelId.idSpec.data);
-				tmpOVSubModelId.IdType = createPVSLReq->subModelId.idType;
+				IdentificationType tmpOVParentId;
+				IdentificationType_init(&tmpOVParentId);
+				ov_string_setvalue(&tmpOVParentId.IdSpec, createPVSLReq->parentId.idSpec.data);
+				tmpOVParentId.IdType = createPVSLReq->parentId.idType;
 
-				OV_STRING tmpOVPVSLName = NULL;
-				ov_string_setvalue(&tmpOVPVSLName, createPVSLReq->pvslName.data);
+				OV_STRING tmpOVPvslName = NULL;
+				ov_string_setvalue(&tmpOVPvslName, createPVSLReq->pvsl.preferredName.data);
 
-				IdentificationType tmpOVCarrier;
-				IdentificationType_init(&tmpOVCarrier);
-				ov_string_setvalue(&tmpOVCarrier.IdSpec, createPVSLReq->carrier.idSpec.data);
-				tmpOVCarrier.IdType = createPVSLReq->carrier.idType;
+				OV_UINT tmpOVMask = 0;
 
-				IdentificationType tmpOVCreatingInstance;
-				IdentificationType_init(&tmpOVCreatingInstance);
-				ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, createPVSLReq->carrier.idSpec.data);
-				tmpOVCreatingInstance.IdType = createPVSLReq->carrier.idType;
+				IdentificationType tmpOVCarrierId;
+				IdentificationType_init(&tmpOVCarrierId);
+				if (createPVSLReq->pvsl.carrierId.idType != SRV_IDT_undefined){
+					ov_string_setvalue(&tmpOVCarrierId.IdSpec, createPVSLReq->pvsl.carrierId.idSpec.data);
+					tmpOVCarrierId.IdType = createPVSLReq->pvsl.carrierId.idType;
+					tmpOVMask |= 0x01;
+				}
 
-				//result = openaas_modelmanager_createPVSL(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance);
+				ExpressionLogicEnum tmpOVExpressionLogic = createPVSLReq->pvsl.expressionLogic;
+				if (createPVSLReq->pvsl.expressionLogic != SRV_EL_undefined){
+					tmpOVMask |= 0x02;
+				}
+
+				ExpressionSemanticEnum tmpOVExpressionSemantic = createPVSLReq->pvsl.expressionSemantic;
+				if (createPVSLReq->pvsl.expressionSemantic != SRV_ES_undefined){
+					tmpOVMask |= 0x04;
+				}
+
+				IdentificationType tmpOVPropertyId;
+				IdentificationType_init(&tmpOVPropertyId);
+				if (createPVSLReq->pvsl.carrierId.idType != SRV_IDT_undefined){
+					ov_string_setvalue(&tmpOVPropertyId.IdSpec, createPVSLReq->pvsl.propertyId.idSpec.data);
+					tmpOVPropertyId.IdType = createPVSLReq->pvsl.propertyId.idType;
+					tmpOVMask |= 0x08;
+				}
+
+				ViewEnum tmpOVView = createPVSLReq->pvsl.view;
+				if (createPVSLReq->pvsl.view != SRV_VIEW_undefined){
+					tmpOVMask |= 0x10;
+				}
+
+				VisibilityEnum tmpOVVisibility = createPVSLReq->pvsl.visibility;
+				if (createPVSLReq->pvsl.visibility != SRV_VIS_undefined){
+					tmpOVMask |= 0x20;
+				}
+
+				result = openaas_modelmanager_createPVSL(aasId, tmpOVParentId, tmpOVPvslName, tmpOVMask, tmpOVCarrierId,tmpOVExpressionLogic, tmpOVExpressionSemantic, tmpOVPropertyId, tmpOVView, tmpOVVisibility);
 
 				createPVSLRsp_t createPVSLRsp;
 				createPVSLRsp_t_init(&createPVSLRsp);
@@ -607,9 +706,10 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				createPVSLRsp_t_deleteMembers(&createPVSLRsp);
-				IdentificationType_deleteMembers(&tmpOVCarrier);
-				IdentificationType_deleteMembers(&tmpOVCreatingInstance);
-				ov_database_free(tmpOVPVSLName);
+				IdentificationType_deleteMembers(&tmpOVParentId);
+				ov_string_setvalue(&tmpOVPvslName, NULL);
+				IdentificationType_deleteMembers(&tmpOVCarrierId);
+				IdentificationType_deleteMembers(&tmpOVPropertyId);
 				sendAnswer = TRUE;
 			}break;
 			case SRV_createPVSLRsp:{
@@ -618,15 +718,12 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			case SRV_deletePVSLReq:{
 				deletePVSLReq_t *deletePVSLReq = (deletePVSLReq_t*)srvStructReceive;
 
-				IdentificationType tmpOVSubModelId;
-				IdentificationType_init(&tmpOVSubModelId);
-				ov_string_setvalue(&tmpOVSubModelId.IdSpec, deletePVSLReq->subModelId.idSpec.data);
-				tmpOVSubModelId.IdType = deletePVSLReq->subModelId.idType;
+				IdentificationType tmpOVPVSList;
+				IdentificationType_init(&tmpOVPVSList);
+				ov_string_setvalue(&tmpOVPVSList.IdSpec, deletePVSLReq->id.idSpec.data);
+				tmpOVPVSList.IdType = deletePVSLReq->id.idType;
 
-				OV_STRING tmpOVPVSLName = NULL;
-				ov_string_setvalue(&tmpOVPVSLName, deletePVSLReq->pvslName.data);
-
-				//result = openaas_modelmanager_deletePVSL(aasId, tmpOVSubModelId, tmpOVPVSLName);
+				result = openaas_modelmanager_deletePVSL(aasId, tmpOVPVSList);
 
 				deletePVSLRsp_t deletePVSLRsp;
 				deletePVSLRsp_t_init(&deletePVSLRsp);
@@ -639,7 +736,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				deletePVSLRsp_t_deleteMembers(&deletePVSLRsp);
-				ov_database_free(tmpOVPVSLName);
+				IdentificationType_deleteMembers(&tmpOVPVSList);
 				sendAnswer = TRUE;
 			}break;
 			case SRV_deletePVSLRsp:{
@@ -648,35 +745,57 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			case SRV_createPVSReq:{
 				createPVSReq_t *createPVSReq = (createPVSReq_t*)srvStructReceive;
 
-				IdentificationType tmpOVSubModelId;
-				IdentificationType_init(&tmpOVSubModelId);
-				ov_string_setvalue(&tmpOVSubModelId.IdSpec, createPVSReq->subModelId.idSpec.data);
-				tmpOVSubModelId.IdType = createPVSReq->subModelId.idType;
+				IdentificationType tmpOVPVSListId;
+				IdentificationType_init(&tmpOVPVSListId);
+				ov_string_setvalue(&tmpOVPVSListId.IdSpec, createPVSReq->listId.idSpec.data);
+				tmpOVPVSListId.IdType = createPVSReq->listId.idType;
 
-				OV_STRING tmpOVPVSLName = NULL;
-				ov_string_setvalue(&tmpOVPVSLName, createPVSReq->pvslName.data);
+				OV_STRING tmpOVPvsName = NULL;
+				ov_string_setvalue(&tmpOVPvsName, createPVSReq->pvs.preferredName.data);
 
-				PropertyValueStatement pvs;
-				PropertyValueStatement_init(&pvs);
+				OV_UINT tmpOVMask = 0;
 
-				ov_string_setvalue(&pvs.pvsName, createPVSReq->pvs.name.data);
+				IdentificationType tmpOVCarrierId;
+				IdentificationType_init(&tmpOVCarrierId);
+				if (createPVSReq->pvs.carrierId.idType != SRV_IDT_undefined){
+					ov_string_setvalue(&tmpOVCarrierId.IdSpec, createPVSReq->pvs.carrierId.idSpec.data);
+					tmpOVCarrierId.IdType = createPVSReq->pvs.carrierId.idType;
+					tmpOVMask |= 0x01;
+				}
 
-				pvs.ExpressionLogic = createPVSReq->pvs.expressionSemantic;
+				ExpressionLogicEnum tmpOVExpressionLogic = createPVSReq->pvs.expressionLogic;
+				if (createPVSReq->pvs.expressionLogic != SRV_EL_undefined){
+					tmpOVMask |= 0x02;
+				}
 
-				pvs.ExpressionSemantic = createPVSReq->pvs.expressionSemantic;
+				ExpressionSemanticEnum tmpOVExpressionSemantic = createPVSReq->pvs.expressionSemantic;
+				if (createPVSReq->pvs.expressionSemantic != SRV_ES_undefined){
+					tmpOVMask |= 0x04;
+				}
 
-				serviceValueToOVDataValue(&pvs.value, createPVSReq->pvs.valType, createPVSReq->pvs.value, 0);
+				IdentificationType tmpOVPropertyId;
+				IdentificationType_init(&tmpOVPropertyId);
+				if (createPVSReq->pvs.carrierId.idType != SRV_IDT_undefined){
+					ov_string_setvalue(&tmpOVPropertyId.IdSpec, createPVSReq->pvs.propertyId.idSpec.data);
+					tmpOVPropertyId.IdType = createPVSReq->pvs.propertyId.idType;
+					tmpOVMask |= 0x08;
+				}
 
-				ov_string_setvalue(&pvs.unit, createPVSReq->pvs.unit.data);
+				ViewEnum tmpOVView = createPVSReq->pvs.view;
+				if (createPVSReq->pvs.view != SRV_VIEW_undefined){
+					tmpOVMask |= 0x10;
+				}
 
-				ov_string_setvalue(&pvs.ID.IdSpec, createPVSReq->pvs.ID.idSpec.data);
-				pvs.ID.IdType = createPVSReq->pvs.ID.idType;
+				VisibilityEnum tmpOVVisibility = createPVSReq->pvs.visibility;
+				if (createPVSReq->pvs.visibility != SRV_VIS_undefined){
+					tmpOVMask |= 0x20;
+				}
 
-				pvs.view = createPVSReq->pvs.view;
+				OV_ANY tmpOVValue;
+				tmpOVValue.value.vartype = OV_VT_VOID;
+				serviceValueToOVDataValue(&tmpOVValue, &createPVSReq->pvs.value);
 
-				pvs.Visibility = createPVSReq->pvs.visibility;
-
-				//result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
+				result = openaas_modelmanager_createPVS(aasId, tmpOVPVSListId, tmpOVPvsName, tmpOVValue, tmpOVMask, tmpOVCarrierId,tmpOVExpressionLogic, tmpOVExpressionSemantic, tmpOVPropertyId, tmpOVView, tmpOVVisibility);
 
 				createPVSRsp_t createPVSRsp;
 				createPVSRsp_t_init(&createPVSRsp);
@@ -689,8 +808,11 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				createPVSRsp_t_deleteMembers(&createPVSRsp);
-				ov_database_free(tmpOVPVSLName);
-				PropertyValueStatement_deleteMembers(&pvs);
+				IdentificationType_deleteMembers(&tmpOVPVSListId);
+				ov_string_setvalue(&tmpOVPvsName, NULL);
+				IdentificationType_deleteMembers(&tmpOVCarrierId);
+				IdentificationType_deleteMembers(&tmpOVPropertyId);
+				Ov_SetAnyValue(&tmpOVValue, NULL);
 				sendAnswer = TRUE;
 			}break;
 			case SRV_createPVSRsp:{
@@ -699,18 +821,12 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			case SRV_deletePVSReq:{
 				deletePVSReq_t *deletePVSReq = (deletePVSReq_t*)srvStructReceive;
 
-				IdentificationType tmpOVSubModelId;
-				IdentificationType_init(&tmpOVSubModelId);
-				ov_string_setvalue(&tmpOVSubModelId.IdSpec, deletePVSReq->subModelId.idSpec.data);
-				tmpOVSubModelId.IdType = deletePVSReq->subModelId.idType;
+				IdentificationType tmpOVPVSList;
+				IdentificationType_init(&tmpOVPVSList);
+				ov_string_setvalue(&tmpOVPVSList.IdSpec, deletePVSReq->id.idSpec.data);
+				tmpOVPVSList.IdType = deletePVSReq->id.idType;
 
-				OV_STRING tmpOVPVSLName = NULL;
-				ov_string_setvalue(&tmpOVPVSLName, deletePVSReq->pvslName.data);
-
-				OV_STRING tmpOVPVSName = NULL;
-				ov_string_setvalue(&tmpOVPVSName, deletePVSReq->pvsName.data);
-
-				//result = openaas_modelmanager_deletePVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName);
+				result = openaas_modelmanager_deletePVSL(aasId, tmpOVPVSList);
 
 				deletePVSRsp_t deletePVSRsp;
 				deletePVSRsp_t_init(&deletePVSRsp);
@@ -723,8 +839,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				deletePVSRsp_t_deleteMembers(&deletePVSRsp);
-				ov_database_free(tmpOVPVSLName);
-				ov_database_free(tmpOVPVSName);
+				IdentificationType_deleteMembers(&tmpOVPVSList);
 				sendAnswer = TRUE;
 			}break;
 			case SRV_deletePVSRsp:{
@@ -733,62 +848,63 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			case SRV_setPVSReq:{
 				setPVSReq_t *setPVSReq = (setPVSReq_t*)srvStructReceive;
 
-				//IdentificationType tmpOVSubModelId;
-				//IdentificationType_init(&tmpOVSubModelId);
-				//ov_string_setvalue(&tmpOVSubModelId.IdSpec, setPVSReq->subModelId.idSpec.data);
-				//tmpOVSubModelId.IdType = setPVSReq->subModelId.idType;
+				IdentificationType tmpOVPVSId;
+				IdentificationType_init(&tmpOVPVSId);
+				ov_string_setvalue(&tmpOVPVSId.IdSpec, setPVSReq->id.idSpec.data);
+				tmpOVPVSId.IdType = setPVSReq->id.idType;
 
-				OV_STRING tmpOVPVSLName = NULL;
-				ov_string_setvalue(&tmpOVPVSLName, setPVSReq->pvslName.data);
+				OV_UINT tmpOVMask = 0;
 
+				OV_STRING tmpOVPvsName = NULL;
+				if (setPVSReq->pvs.hasName == TRUE){
+					ov_string_setvalue(&tmpOVPvsName, setPVSReq->pvs.preferredName.data);
+					tmpOVMask |= 0x01;
+				}
 
-				PropertyValueStatement pvs;
-				PropertyValueStatement_init(&pvs);
+				IdentificationType tmpOVCarrierId;
+				IdentificationType_init(&tmpOVCarrierId);
+				if (setPVSReq->pvs.carrierId.idType != SRV_IDT_undefined){
+					ov_string_setvalue(&tmpOVCarrierId.IdSpec, setPVSReq->pvs.carrierId.idSpec.data);
+					tmpOVCarrierId.IdType = setPVSReq->pvs.carrierId.idType;
+					tmpOVMask |= 0x02;
+				}
 
+				ExpressionLogicEnum tmpOVExpressionLogic = setPVSReq->pvs.expressionLogic;
+				if (setPVSReq->pvs.expressionLogic != SRV_EL_undefined){
+					tmpOVMask |= 0x04;
+				}
 
-				ov_string_setvalue(&pvs.pvsName, setPVSReq->pvs.name.data);
+				ExpressionSemanticEnum tmpOVExpressionSemantic = setPVSReq->pvs.expressionSemantic;
+				if (setPVSReq->pvs.expressionSemantic != SRV_ES_undefined){
+					tmpOVMask |= 0x08;
+				}
 
-				pvs.ExpressionLogic = setPVSReq->pvs.expressionLogic;
+				IdentificationType tmpOVPropertyId;
+				IdentificationType_init(&tmpOVPropertyId);
+				if (setPVSReq->pvs.carrierId.idType != SRV_IDT_undefined){
+					ov_string_setvalue(&tmpOVPropertyId.IdSpec, setPVSReq->pvs.propertyId.idSpec.data);
+					tmpOVPropertyId.IdType = setPVSReq->pvs.propertyId.idType;
+					tmpOVMask |= 0x10;
+				}
 
-				pvs.ExpressionSemantic = setPVSReq->pvs.expressionSemantic;
+				ViewEnum tmpOVView = setPVSReq->pvs.view;
+				if (setPVSReq->pvs.view != SRV_VIEW_undefined){
+					tmpOVMask |= 0x20;
+				}
 
-				serviceValueToOVDataValue(&pvs.value, setPVSReq->pvs.valType, setPVSReq->pvs.value, 0);
+				VisibilityEnum tmpOVVisibility = setPVSReq->pvs.visibility;
+				if (setPVSReq->pvs.visibility != SRV_VIS_undefined){
+					tmpOVMask |= 0x40;
+				}
 
-				ov_string_setvalue(&pvs.unit, setPVSReq->pvs.unit.data);
+				OV_ANY tmpOVValue;
+				tmpOVValue.value.vartype = OV_VT_VOID;
+				if (setPVSReq->pvs.value.type != SRV_VT_undefined){
+					serviceValueToOVDataValue(&tmpOVValue, &setPVSReq->pvs.value);
+					tmpOVMask |= 0x80;
+				}
 
-				ov_string_setvalue(&pvs.ID.IdSpec, setPVSReq->pvs.ID.idSpec.data);
-
-				pvs.ID.IdType = setPVSReq->pvs.ID.idType;
-
-				pvs.view = setPVSReq->pvs.view;
-
-				pvs.Visibility = setPVSReq->pvs.visibility;
-
-				IdentificationType carrierId;
-				IdentificationType_init(&carrierId);
-				OV_UINT len = 0;
-				ov_string_setvalue(&pvs.objectID.IdSpec, setPVSReq->pvs.objectID.idSpec.data);
-				//remove "http://acplt.org"-prefix from id, to use the string as path
-				OV_STRING *idStr = ov_string_split(pvs.objectID.IdSpec,"http://acplt.org",&len);
-				if(!idStr || len<2 || !idStr[1])
-					goto clean_SRV_setPVSReq;
-
-				ov_string_setvalue(&pvs.objectID.IdSpec,idStr[1]);
-
-				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-
-				pvs.objectID.IdType = setPVSReq->pvs.objectID.idType;
-				openaas_modelmanager_setPVS(aasId,
-						pvs.objectID,
-						setPVSReq->pvs.mask,
-						pvs.pvsName,
-						carrierId,
-						setPVSReq->pvs.expressionLogic,setPVSReq->pvs.expressionSemantic,
-						pvs.ID,
-						setPVSReq->pvs.view,
-						setPVSReq->pvs.visibility,pvs.value);
-				//openaas_modelmanager_setPVS(aasId,pvs.pvsName)
-				//result = openaas_modelmanager_createPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, pvs);
+				result = openaas_modelmanager_setPVS(aasId, tmpOVPVSId, tmpOVMask, tmpOVPvsName, tmpOVCarrierId,tmpOVExpressionLogic, tmpOVExpressionSemantic, tmpOVPropertyId, tmpOVView, tmpOVVisibility, tmpOVValue);
 
 				setPVSRsp_t setPVSRsp;
 				setPVSRsp_t_init(&setPVSRsp);
@@ -799,11 +915,14 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				srvTypeSend = SRV_setPVSRsp;
 
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
-				//setPVSRsp_t_deleteMembers(&setPVSRsp);
-				clean_SRV_setPVSReq:
-					ov_database_free(tmpOVPVSLName);
-					PropertyValueStatement_deleteMembers(&pvs);
-				sendAnswer = FALSE;
+
+				setPVSRsp_t_deleteMembers(&setPVSRsp);
+				IdentificationType_deleteMembers(&tmpOVPVSId);
+				ov_string_setvalue(&tmpOVPvsName, NULL);
+				IdentificationType_deleteMembers(&tmpOVCarrierId);
+				IdentificationType_deleteMembers(&tmpOVPropertyId);
+				Ov_SetAnyValue(&tmpOVValue, NULL);
+				sendAnswer = TRUE;
 			}break;
 			case SRV_setPVSRsp:{
 				// TODO: Check the answer
@@ -811,40 +930,54 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			case SRV_getPVSReq:{
 				getPVSReq_t *getPVSReq = (getPVSReq_t*)srvStructReceive;
 
-				IdentificationType tmpOVSubModelId;
-				IdentificationType_init(&tmpOVSubModelId);
-				ov_string_setvalue(&tmpOVSubModelId.IdSpec, getPVSReq->subModelId.idSpec.data);
-				tmpOVSubModelId.IdType = getPVSReq->subModelId.idType;
+				IdentificationType tmpOVPVSId;
+				IdentificationType_init(&tmpOVPVSId);
+				ov_string_setvalue(&tmpOVPVSId.IdSpec, getPVSReq->id.idSpec.data);
+				tmpOVPVSId.IdType = getPVSReq->id.idType;
 
-				OV_STRING tmpOVPVSLName = NULL;
-				ov_string_setvalue(&tmpOVPVSLName, getPVSReq->pvslName.data);
+				OV_STRING tmpOVPvsName = NULL;
 
-				OV_STRING tmpOVPVSName = NULL;
-				ov_string_setvalue(&tmpOVPVSName, getPVSReq->pvsName.data);
+				IdentificationType tmpOVCarrierId;
+				IdentificationType_init(&tmpOVCarrierId);
 
-				PropertyValueStatement pvs;
-				PropertyValueStatement_init(&pvs);
+				ExpressionLogicEnum tmpOVExpressionLogic;
 
-				//result = openaas_modelmanager_getPVS(aasId, tmpOVSubModelId, tmpOVPVSLName, tmpOVPVSName, &pvs);
+				ExpressionSemanticEnum tmpOVExpressionSemantic;
+
+				IdentificationType tmpOVPropertyId;
+				IdentificationType_init(&tmpOVPropertyId);
+
+				ViewEnum tmpOVView;
+
+				VisibilityEnum tmpOVVisibility;
+
+				OV_ANY tmpOVValue;
+				tmpOVValue.value.vartype = OV_VT_VOID;
+
+
+				result = openaas_modelmanager_getPVS(aasId, tmpOVPVSId, &tmpOVPvsName, &tmpOVCarrierId, &tmpOVExpressionLogic, &tmpOVExpressionSemantic, &tmpOVPropertyId, &tmpOVView, &tmpOVVisibility, &tmpOVValue);
 
 				getPVSRsp_t getPVSRsp;
 				getPVSRsp_t_init(&getPVSRsp);
 
-				getPVSRsp.pvs.expressionLogic = pvs.ExpressionLogic;
+				SRV_String_setCopy(&getPVSRsp.pvs.preferredName, tmpOVPvsName, ov_string_getlength(tmpOVPvsName));
+				getPVSRsp.pvs.hasName = true;
 
-				getPVSRsp.pvs.expressionSemantic = pvs.ExpressionSemantic;
+				SRV_String_setCopy(&getPVSRsp.pvs.carrierId.idSpec, tmpOVCarrierId.IdSpec, ov_string_getlength(tmpOVCarrierId.IdSpec));
+				getPVSRsp.pvs.carrierId.idType = tmpOVCarrierId.IdType;
 
-				OVDataValueToserviceValue(pvs.value, &getPVSRsp.pvs.valType, &getPVSRsp.pvs.value, &getPVSRsp.pvs.valTime);
+				getPVSRsp.pvs.expressionLogic = tmpOVExpressionLogic;
 
-				ov_string_setvalue(&getPVSRsp.pvs.unit.data, pvs.unit);
-				getPVSRsp.pvs.hasUnit = TRUE;
+				getPVSRsp.pvs.expressionSemantic = tmpOVExpressionSemantic;
 
-				ov_string_setvalue(&getPVSRsp.pvs.ID.idSpec.data, pvs.ID.IdSpec);
-				getPVSRsp.pvs.ID.idType = pvs.ID.IdType;
+				SRV_String_setCopy(&getPVSRsp.pvs.propertyId.idSpec, tmpOVPropertyId.IdSpec, ov_string_getlength(tmpOVPropertyId.IdSpec));
+				getPVSRsp.pvs.propertyId.idType = tmpOVPropertyId.IdType;
 
-				getPVSRsp.pvs.view = pvs.view;
+				getPVSRsp.pvs.view = tmpOVView;
 
-				getPVSRsp.pvs.visibility = pvs.Visibility;
+				getPVSRsp.pvs.visibility = tmpOVVisibility;
+
+				OVDataValueToserviceValue(tmpOVValue, &getPVSRsp.pvs.value);
 
 				getPVSRsp.status = result;
 
@@ -854,22 +987,24 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
 
 				getPVSRsp_t_deleteMembers(&getPVSRsp);
-				ov_database_free(tmpOVPVSLName);
-				ov_database_free(tmpOVPVSName);
-				PropertyValueStatement_deleteMembers(&pvs);
+				IdentificationType_deleteMembers(&tmpOVPVSId);
+				ov_string_setvalue(&tmpOVPvsName, NULL);
+				IdentificationType_deleteMembers(&tmpOVCarrierId);
+				IdentificationType_deleteMembers(&tmpOVPropertyId);
+				Ov_SetAnyValue(&tmpOVValue, NULL);
 				sendAnswer = TRUE;
 			}break;
 			case SRV_getPVSRsp:{
 				// TODO: Check the answer
 			}break;
 			case SRV_getCoreDataReq:{
+				getCoreDataReq_t *getCoreDataReq = (getCoreDataReq_t*)srvStructReceive;
 				OV_UINT tmpNumber = 0;
 
-				PropertyValueStatementList *ppvs = NULL;
+				PropertyValueStatementList *ppvsl = NULL;
 
-				//result = openaas_modelmanager_getCoreData(aasId, &tmpNumber, &ppvs);
-				ov_logfile_debug("Anzahl: %i", tmpNumber);
-				free(messageContent);
+				result = openaas_modelmanager_getCoreData(aasId, &tmpNumber, &ppvsl, getCoreDataReq->visibility);
+
 				getCoreDataRsp_t getCoreDataRsp;
 				getCoreDataRsp_t_init(&getCoreDataRsp);
 
@@ -878,39 +1013,72 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 					getCoreDataRsp.numPvsl = tmpNumber;
 					getCoreDataRsp.pvsl = malloc(sizeof(PVSL_t)*tmpNumber);
 					for (OV_UINT i = 0; i < tmpNumber; i++){
-						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].carrier.idSpec, ppvs[i].Carrier.IdSpec, ov_string_getlength(ppvs[i].Carrier.IdSpec));
-						getCoreDataRsp.pvsl[i].carrier.idType = ppvs[i].Carrier.IdType;
-						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].creatingInstance.idSpec, ppvs[i].CreatingInstance.IdSpec, ov_string_getlength(ppvs[i].CreatingInstance.IdSpec));
-						getCoreDataRsp.pvsl[i].creatingInstance.idType = ppvs[i].CreatingInstance.IdType;
-						getCoreDataRsp.pvsl[i].creationTime = ov_ovTimeTo1601nsTime(ppvs[i].CreationTime);
-						getCoreDataRsp.pvsl[i].hasCreationTime = TRUE;
-						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].name, ppvs[i].pvslName, ov_string_getlength(ppvs[i].pvslName));
-						getCoreDataRsp.pvsl[i].hasName = TRUE;
-						getCoreDataRsp.pvsl[i].numPvs = ppvs[i].pvsNumber;
-						getCoreDataRsp.pvsl[i].pvs = malloc(sizeof(PVS_t)*ppvs[i].pvsNumber);
-						for (OV_UINT j = 0; j < ppvs[i].pvsNumber; j++){
-							getCoreDataRsp.pvsl[i].pvs[j].expressionLogic = ppvs[i].pvs[j].ExpressionLogic;
-							getCoreDataRsp.pvsl[i].pvs[j].expressionSemantic = ppvs[i].pvs[j].ExpressionSemantic;
-							SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].ID.idSpec, ppvs[i].pvs[j].ID.IdSpec, ov_string_getlength(ppvs[i].pvs[j].ID.IdSpec));
-							getCoreDataRsp.pvsl[i].pvs[j].ID.idType = ppvs[i].pvs[j].ID.IdType;
-							SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].name, ppvs[i].pvs[j].pvsName, ov_string_getlength(ppvs[i].pvs[j].pvsName));
-							getCoreDataRsp.pvsl[i].pvs[j].hasName = TRUE;
-							SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].unit, ppvs[i].pvs[j].unit, ov_string_getlength(ppvs[i].pvs[j].unit));
-							getCoreDataRsp.pvsl[i].pvs[j].hasUnit = TRUE;
-							OVDataValueToserviceValue(ppvs[i].pvs[j].value, &getCoreDataRsp.pvsl[i].pvs[j].valType, &getCoreDataRsp.pvsl[i].pvs[j].value, &getCoreDataRsp.pvsl[i].pvs[j].valTime);
-							getCoreDataRsp.pvsl[i].pvs[j].hasValTime = TRUE;
-							getCoreDataRsp.pvsl[i].pvs[j].view = ppvs[i].pvs[j].view;
-							getCoreDataRsp.pvsl[i].pvs[j].visibility = ppvs[i].pvs[j].Visibility;
+						PVSL_t_init(&getCoreDataRsp.pvsl[i]);
+						SRV_String_setCopy(&getCoreDataRsp.pvsl[i].preferredName, ppvsl[i].PvslName, ov_string_getlength(ppvsl[i].PvslName));
+						getCoreDataRsp.pvsl[i].hasName = true;
+						if (ppvsl[i].Mask & 0x01){ //CarrierID
+							SRV_String_setCopy(&getCoreDataRsp.pvsl[i].carrierId.idSpec, ppvsl[i].CarrierId.IdSpec, ov_string_getlength(ppvsl[i].CarrierId.IdSpec));
+							getCoreDataRsp.pvsl[i].carrierId.idType = ppvsl[i].CarrierId.IdType;
 						}
-						//PropertyValueStatementList_deleteMembers(&ppvs[i]);
+						if (ppvsl[i].Mask & 0x02){ //ExpressionLogic
+							getCoreDataRsp.pvsl[i].expressionLogic = ppvsl[i].ExpressionLogic;
+						}
+						if (ppvsl[i].Mask & 0x04){ //ExpressionSemantic
+							getCoreDataRsp.pvsl[i].expressionSemantic = ppvsl[i].ExpressionSemantic;
+						}
+						if (ppvsl[i].Mask & 0x08){ //PropertyID
+							SRV_String_setCopy(&getCoreDataRsp.pvsl[i].propertyId.idSpec, ppvsl[i].PropertyId.IdSpec, ov_string_getlength(ppvsl[i].PropertyId.IdSpec));
+							getCoreDataRsp.pvsl[i].propertyId.idType = ppvsl[i].PropertyId.IdType;
+						}
+						if (ppvsl[i].Mask & 0x10){ //View
+							getCoreDataRsp.pvsl[i].view = ppvsl[i].View;
+						}
+						if (ppvsl[i].Mask & 0x20){ //Visibility
+							getCoreDataRsp.pvsl[i].visibility = ppvsl[i].Visibility;
+						}
+
+						getCoreDataRsp.pvsl[i].numPvs = ppvsl[i].pvsNumber;
+						if (getCoreDataRsp.pvsl[i].numPvs == 0)
+							continue;
+						getCoreDataRsp.pvsl[i].pvs = malloc(sizeof(PVS_t)*ppvsl[i].pvsNumber);
+						for (OV_UINT j = 0; j < ppvsl[i].pvsNumber; j++){
+							PVS_t_init(&getCoreDataRsp.pvsl[i].pvs[j]);
+							SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].preferredName, ppvsl[i].pvs[j].PvsName, ov_string_getlength(ppvsl[i].pvs[j].PvsName));
+							getCoreDataRsp.pvsl[i].pvs[j].hasName = true;
+							if (ppvsl[i].pvs[j].Mask & 0x01){ //CarrierID
+								SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].carrierId.idSpec, ppvsl[i].pvs[j].CarrierId.IdSpec, ov_string_getlength(ppvsl[i].pvs[j].CarrierId.IdSpec));
+								getCoreDataRsp.pvsl[i].pvs[j].carrierId.idType = ppvsl[i].pvs[j].CarrierId.IdType;
+							}
+							if (ppvsl[i].pvs[j].Mask & 0x02){ //ExpressionLogic
+								getCoreDataRsp.pvsl[i].pvs[j].expressionLogic = ppvsl[i].pvs[j].ExpressionLogic;
+							}
+							if (ppvsl[i].pvs[j].Mask & 0x04){ //ExpressionSemantic
+								getCoreDataRsp.pvsl[i].pvs[j].expressionSemantic = ppvsl[i].pvs[j].ExpressionSemantic;
+							}
+							if (ppvsl[i].pvs[j].Mask & 0x08){ //PropertyID
+								SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].propertyId.idSpec, ppvsl[i].pvs[j].PropertyId.IdSpec, ov_string_getlength(ppvsl[i].pvs[j].PropertyId.IdSpec));
+								getCoreDataRsp.pvsl[i].pvs[j].propertyId.idType = ppvsl[i].PropertyId.IdType;
+							}
+							if (ppvsl[i].pvs[j].Mask & 0x10){ //View
+								getCoreDataRsp.pvsl[i].pvs[j].view = ppvsl[i].pvs[j].View;
+							}
+							if (ppvsl[i].pvs[j].Mask & 0x20){ //Visibility
+								getCoreDataRsp.pvsl[i].pvs[j].visibility = ppvsl[i].pvs[j].Visibility;
+							}
+							OVDataValueToserviceValue(ppvsl[i].pvs[j].Value, &getCoreDataRsp.pvsl[i].pvs[j].value);
+						}
 					}
-					//ov_database_free(ppvs);
 				}
+				for (OV_UINT i = 0; i < tmpNumber; i++){
+					PropertyValueStatementList_deleteMembers(&ppvsl[i]);
+				}
+				ppvsl = NULL;
 
 				srvStructSend = &getCoreDataRsp;
 				srvTypeSend = SRV_getCoreDataRsp;
 
 				resultOV = encodeMSG(&srvStringSend, headerSend, srvStructSend, srvTypeSend, encoding);
+
 
 				getCoreDataRsp_t_deleteMembers(&getCoreDataRsp);
 				sendAnswer = TRUE;
@@ -921,56 +1089,125 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 				if (!getCoreDataRsp->status){
 					for (OV_UINT i = 0; i < getCoreDataRsp->numPvsl; i++){
 						OV_STRING tmpOVPVSLName = NULL;
-						ov_string_setvalue(&tmpOVPVSLName, getCoreDataRsp->pvsl[i].name.data);
+						ov_string_setvalue(&tmpOVPVSLName, getCoreDataRsp->pvsl[i].preferredName.data);
 
-						IdentificationType tmpOVCarrier;
-						IdentificationType_init(&tmpOVCarrier);
-						ov_string_setvalue(&tmpOVCarrier.IdSpec, getCoreDataRsp->pvsl[i].carrier.idSpec.data);
-						tmpOVCarrier.IdType = getCoreDataRsp->pvsl[i].carrier.idType;
+						IdentificationType tmpOVParentId;
+						IdentificationType_init(&tmpOVParentId);
+						ov_memstack_lock();
+						ov_string_setvalue(&tmpOVParentId.IdSpec, ov_path_getcanonicalpath(Ov_DynamicPtrCast(ov_object,&paas->p_Body), 2));
+						ov_memstack_unlock();
+						tmpOVParentId.IdType = URI;
 
-						IdentificationType tmpOVCreatingInstance;
-						IdentificationType_init(&tmpOVCreatingInstance);
-						ov_string_setvalue(&tmpOVCreatingInstance.IdSpec, getCoreDataRsp->pvsl[i].creatingInstance.idSpec.data);
-						tmpOVCreatingInstance.IdType = getCoreDataRsp->pvsl[i].creatingInstance.idType;
+						OV_STRING tmpOVPvslName = NULL;
+						ov_string_setvalue(&tmpOVPvslName, getCoreDataRsp->pvsl[i].preferredName.data);
 
-						//OV_TIME tmpOVCreatingTime  = ov_1601nsTimeToOvTime(getCoreDataRsp->pvsl[i].creationTime);
+						OV_UINT tmpOVMask = 0;
 
-						IdentificationType tmpSubModelId;
-						IdentificationType_init(&tmpSubModelId);
-
-						//result = openaas_modelmanager_createPVSLTime(aasId, tmpSubModelId, tmpOVPVSLName, tmpOVCarrier, tmpOVCreatingInstance, tmpOVCreatingTime);
-						for (OV_UINT j = 0; j < getCoreDataRsp->pvsl[i].numPvs; j++){
-							OV_STRING tmpOVPVSLName = NULL;
-							ov_string_setvalue(&tmpOVPVSLName, getCoreDataRsp->pvsl[i].name.data);
-
-							PropertyValueStatement pvs;
-							PropertyValueStatement_init(&pvs);
-
-							ov_string_setvalue(&pvs.pvsName, getCoreDataRsp->pvsl[i].pvs[j].name.data);
-
-							pvs.ExpressionLogic = getCoreDataRsp->pvsl[i].pvs[j].expressionSemantic;
-
-							pvs.ExpressionSemantic = getCoreDataRsp->pvsl[i].pvs[j].expressionSemantic;
-
-							serviceValueToOVDataValue(&pvs.value, getCoreDataRsp->pvsl[i].pvs[j].valType, getCoreDataRsp->pvsl[i].pvs[j].value, getCoreDataRsp->pvsl[i].pvs[j].valTime);
-
-							ov_string_setvalue(&pvs.unit, getCoreDataRsp->pvsl[i].pvs[j].unit.data);
-
-							ov_string_setvalue(&pvs.ID.IdSpec, getCoreDataRsp->pvsl[i].pvs[j].ID.idSpec.data);
-							pvs.ID.IdType = getCoreDataRsp->pvsl[i].pvs[j].ID.idType;
-
-							pvs.view = getCoreDataRsp->pvsl[i].pvs[j].view;
-
-							pvs.Visibility = getCoreDataRsp->pvsl[i].pvs[j].visibility;
-
-							//result = openaas_modelmanager_createPVSTime(aasId, tmpSubModelId, tmpOVPVSLName, pvs);
-							PropertyValueStatement_deleteMembers(&pvs);
-							ov_database_free(tmpOVPVSLName);
+						IdentificationType tmpOVCarrierId;
+						IdentificationType_init(&tmpOVCarrierId);
+						if (getCoreDataRsp->pvsl[i].carrierId.idType != SRV_IDT_undefined){
+							ov_string_setvalue(&tmpOVCarrierId.IdSpec, getCoreDataRsp->pvsl[i].carrierId.idSpec.data);
+							tmpOVCarrierId.IdType = getCoreDataRsp->pvsl[i].carrierId.idType;
+							tmpOVMask |= 0x01;
 						}
-						ov_database_free(tmpOVPVSLName);
-						IdentificationType_deleteMembers(&tmpOVCarrier);
-						IdentificationType_deleteMembers(&tmpOVCreatingInstance);
-						IdentificationType_deleteMembers(&tmpSubModelId);
+
+						ExpressionLogicEnum tmpOVExpressionLogic = getCoreDataRsp->pvsl[i].expressionLogic;
+						if (getCoreDataRsp->pvsl[i].expressionLogic != SRV_EL_undefined){
+							tmpOVMask |= 0x02;
+						}
+
+						ExpressionSemanticEnum tmpOVExpressionSemantic = getCoreDataRsp->pvsl[i].expressionSemantic;
+						if (getCoreDataRsp->pvsl[i].expressionSemantic != SRV_ES_undefined){
+							tmpOVMask |= 0x04;
+						}
+
+						IdentificationType tmpOVPropertyId;
+						IdentificationType_init(&tmpOVPropertyId);
+						if (getCoreDataRsp->pvsl[i].propertyId.idType != SRV_IDT_undefined){
+							ov_string_setvalue(&tmpOVPropertyId.IdSpec, getCoreDataRsp->pvsl[i].propertyId.idSpec.data);
+							tmpOVPropertyId.IdType = getCoreDataRsp->pvsl[i].propertyId.idType;
+							tmpOVMask |= 0x08;
+						}
+
+						ViewEnum tmpOVView = getCoreDataRsp->pvsl[i].view;
+						if (getCoreDataRsp->pvsl[i].view != SRV_VIEW_undefined){
+							tmpOVMask |= 0x10;
+						}
+
+						VisibilityEnum tmpOVVisibility = getCoreDataRsp->pvsl[i].visibility;
+						if (getCoreDataRsp->pvsl[i].visibility != SRV_VIS_undefined){
+							tmpOVMask |= 0x20;
+						}
+
+						result = openaas_modelmanager_createPVSL(aasId, tmpOVParentId, tmpOVPvslName, tmpOVMask, tmpOVCarrierId,tmpOVExpressionLogic, tmpOVExpressionSemantic, tmpOVPropertyId, tmpOVView, tmpOVVisibility);
+
+						for (OV_UINT j = 0; j < getCoreDataRsp->pvsl[i].numPvs; j++){
+							IdentificationType tmpOVPVSListId;
+							IdentificationType_init(&tmpOVPVSListId);
+							ov_memstack_lock();
+							ov_string_setvalue(&tmpOVPVSListId.IdSpec, ov_path_getcanonicalpath(Ov_DynamicPtrCast(ov_object,&paas->p_Body), 2));
+							ov_memstack_unlock();
+							ov_string_append(&tmpOVPVSListId.IdSpec, "/");
+							ov_string_append(&tmpOVPVSListId.IdSpec, getCoreDataRsp->pvsl[i].preferredName.data);
+							tmpOVPVSListId.IdType = URI;
+
+							OV_STRING tmpOVPvsName = NULL;
+							ov_string_setvalue(&tmpOVPvsName, getCoreDataRsp->pvsl[i].pvs[j].preferredName.data);
+
+							OV_UINT tmpOVMask = 0;
+
+							IdentificationType tmpOVCarrierId;
+							IdentificationType_init(&tmpOVCarrierId);
+							if (getCoreDataRsp->pvsl[i].pvs[j].carrierId.idType != SRV_IDT_undefined){
+								ov_string_setvalue(&tmpOVCarrierId.IdSpec, getCoreDataRsp->pvsl[i].pvs[j].carrierId.idSpec.data);
+								tmpOVCarrierId.IdType = getCoreDataRsp->pvsl[i].pvs[j].carrierId.idType;
+								tmpOVMask |= 0x01;
+							}
+
+							ExpressionLogicEnum tmpOVExpressionLogic = getCoreDataRsp->pvsl[i].pvs[j].expressionLogic;
+							if (getCoreDataRsp->pvsl[i].pvs[j].expressionLogic != SRV_EL_undefined){
+								tmpOVMask |= 0x02;
+							}
+
+							ExpressionSemanticEnum tmpOVExpressionSemantic = getCoreDataRsp->pvsl[i].pvs[j].expressionSemantic;
+							if (getCoreDataRsp->pvsl[i].pvs[j].expressionSemantic != SRV_ES_undefined){
+								tmpOVMask |= 0x04;
+							}
+
+							IdentificationType tmpOVPropertyId;
+							IdentificationType_init(&tmpOVPropertyId);
+							if (getCoreDataRsp->pvsl[i].pvs[j].propertyId.idType != SRV_IDT_undefined){
+								ov_string_setvalue(&tmpOVPropertyId.IdSpec, getCoreDataRsp->pvsl[i].pvs[j].propertyId.idSpec.data);
+								tmpOVPropertyId.IdType = getCoreDataRsp->pvsl[i].pvs[j].propertyId.idType;
+								tmpOVMask |= 0x08;
+							}
+
+							ViewEnum tmpOVView = getCoreDataRsp->pvsl[i].pvs[j].view;
+							if (getCoreDataRsp->pvsl[i].pvs[j].view != SRV_VIEW_undefined){
+								tmpOVMask |= 0x10;
+							}
+
+							VisibilityEnum tmpOVVisibility = getCoreDataRsp->pvsl[i].pvs[j].visibility;
+							if (getCoreDataRsp->pvsl[i].pvs[j].visibility != SRV_VIS_undefined){
+								tmpOVMask |= 0x20;
+							}
+
+							OV_ANY tmpOVValue;
+							tmpOVValue.value.vartype = OV_VT_VOID;
+							serviceValueToOVDataValue(&tmpOVValue, &getCoreDataRsp->pvsl[i].pvs[j].value);
+
+							result = openaas_modelmanager_createPVS(aasId, tmpOVPVSListId, tmpOVPvsName, tmpOVValue, tmpOVMask, tmpOVCarrierId,tmpOVExpressionLogic, tmpOVExpressionSemantic, tmpOVPropertyId, tmpOVView, tmpOVVisibility);
+
+							IdentificationType_deleteMembers(&tmpOVPVSListId);
+							ov_string_setvalue(&tmpOVPvsName, NULL);
+							IdentificationType_deleteMembers(&tmpOVCarrierId);
+							IdentificationType_deleteMembers(&tmpOVPropertyId);
+							Ov_SetAnyValue(&tmpOVValue, NULL);
+						}
+						IdentificationType_deleteMembers(&tmpOVParentId);
+						ov_string_setvalue(&tmpOVPvslName, NULL);
+						IdentificationType_deleteMembers(&tmpOVCarrierId);
+						IdentificationType_deleteMembers(&tmpOVPropertyId);
 					}
 				}
 			}break;

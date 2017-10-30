@@ -65,23 +65,23 @@ OV_RESULT encodeMSG(SRV_String** str, const SRV_msgHeader *header, const void* s
 	return OV_ERR_OK;
 }
 
-OV_RESULT serviceValueToOVDataValue(OV_ANY* value, SRV_valType_t valueType, void* serviceValue, SRV_DateTime dateTime){
-	switch(valueType){
+OV_RESULT serviceValueToOVDataValue(OV_ANY* value, const SRV_extAny_t* serviceValue){
+	switch(serviceValue->type){
 	case SRV_VT_BOOL:
 		value->value.vartype = OV_VT_BOOL;
-		value->value.valueunion.val_bool = *(bool*)serviceValue;
+		value->value.valueunion.val_bool = serviceValue->value.vt_bool;
 		break;
 	case SRV_VT_DOUBLE:
 		value->value.vartype = OV_VT_DOUBLE;
-		value->value.valueunion.val_double = *(double*)serviceValue;
+		value->value.valueunion.val_double = serviceValue->value.vt_double;
 		break;
 	case SRV_VT_INT32:
 		value->value.vartype = OV_VT_INT;
-		value->value.valueunion.val_int = *(int*)serviceValue;
+		value->value.valueunion.val_int = serviceValue->value.vt_int32;
 		break;
 	case SRV_VT_UINT32:
 		value->value.vartype = OV_VT_UINT;
-		value->value.valueunion.val_uint = *(int*)serviceValue;
+		value->value.valueunion.val_uint = serviceValue->value.vt_uint32;
 		break;
 	case SRV_VT_INT64:
 	case SRV_VT_UINT64:
@@ -90,58 +90,57 @@ OV_RESULT serviceValueToOVDataValue(OV_ANY* value, SRV_valType_t valueType, void
 	case SRV_VT_STRING:
 		value->value.vartype = OV_VT_STRING;
 		value->value.valueunion.val_string = NULL;
-		ov_string_setvalue(&value->value.valueunion.val_string, (char*)serviceValue);
+		ov_string_setvalue(&value->value.valueunion.val_string, serviceValue->value.vt_string.data);
 		break;
 	case SRV_VT_DATETIME:
 		value->value.vartype = OV_VT_TIME;
-		value->value.valueunion.val_time = ov_1601nsTimeToOvTime(*(SRV_DateTime*)serviceValue);
+		value->value.valueunion.val_time = ov_1601nsTimeToOvTime(serviceValue->value.vt_datetime);
+		break;
 	default:
 		return OV_ERR_VARDEFMISMATCH;
 		break;
 	}
-	value->time = ov_1601nsTimeToOvTime(dateTime);
+	if(serviceValue->hasTime)
+		value->time = ov_1601nsTimeToOvTime(serviceValue->time);
+
 	return OV_ERR_OK;
 }
 
-OV_RESULT OVDataValueToserviceValue(OV_ANY value, SRV_valType_t* valueType, void** serviceValue, SRV_DateTime* dateTime){
+OV_RESULT OVDataValueToserviceValue(OV_ANY value, SRV_extAny_t* serviceValue){
 
-	switch(value.value.vartype){
+	switch(value.value.vartype & OV_VT_KSMASK){
 	case OV_VT_BOOL:
-		*valueType = SRV_VT_BOOL;
-		*serviceValue = malloc(sizeof(bool));
-		*(bool*)*serviceValue = value.value.valueunion.val_bool;
+		serviceValue->type = SRV_VT_BOOL;
+		serviceValue->value.vt_bool = value.value.valueunion.val_bool;
 		break;
 	case OV_VT_DOUBLE:
-		*valueType = SRV_VT_DOUBLE;
-		*serviceValue = malloc(sizeof(double));
-		*(double*)*serviceValue = value.value.valueunion.val_double;
+		serviceValue->type = SRV_VT_DOUBLE;
+		serviceValue->value.vt_double = value.value.valueunion.val_double;
 		break;
 	case OV_VT_INT:
-		*valueType = SRV_VT_INT32;
-		*serviceValue = malloc(sizeof(int));
-		*(int*)*serviceValue = value.value.valueunion.val_int;
+		serviceValue->type = SRV_VT_INT32;
+		serviceValue->value.vt_int32 = value.value.valueunion.val_int;
 		break;
 	case OV_VT_UINT:
-		*valueType = SRV_VT_UINT32;
-		*serviceValue = malloc(sizeof(unsigned int));
-		*(unsigned int*)*serviceValue = value.value.valueunion.val_uint;
+		serviceValue->type = SRV_VT_UINT32;
+		serviceValue->value.vt_uint32 = value.value.valueunion.val_uint;
+		break;
 	case OV_VT_STRING:
-		*valueType = SRV_VT_STRING;
-		*serviceValue = SRV_String_new();
-		SRV_String_setCopy((SRV_String*)serviceValue, value.value.valueunion.val_string, ov_string_getlength(value.value.valueunion.val_string));
+		serviceValue->type = SRV_VT_STRING;
+		SRV_String_setCopy(&serviceValue->value.vt_string, value.value.valueunion.val_string, ov_string_getlength(value.value.valueunion.val_string));
 		break;
 	case OV_VT_TIME:
-		*valueType = SRV_VT_DATETIME;
-		*serviceValue = malloc(sizeof(SRV_DateTime));
-		*(SRV_DateTime*)*serviceValue = ov_ovTimeTo1601nsTime(value.value.valueunion.val_time);
+		serviceValue->type = SRV_VT_DATETIME;
+		serviceValue->value.vt_datetime = ov_ovTimeTo1601nsTime(value.value.valueunion.val_time);
+		break;
 	default:
 		return OV_ERR_VARDEFMISMATCH;
 		break;
 	}
-	*dateTime = ov_ovTimeTo1601nsTime(value.time);
+	serviceValue->time = ov_ovTimeTo1601nsTime(value.time);
+	serviceValue->hasTime = true;
 	return OV_ERR_OK;
 }
-
 
 OV_BOOL getAASIdbyObjectPointer(OV_INSTPTR_openaas_aas pAAS, IdentificationType* pAASId){
 	OV_INSTPTR_ov_object pchild = NULL;
