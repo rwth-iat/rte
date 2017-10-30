@@ -1,14 +1,10 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2017-10-19 16:39:02
+* Erstellt: 2017-10-25 12:36:55
 * 
-* HOST   : 192.168.3.8:7509
+* HOST   : 134.130.125.80:7509
 * SERVER : MANAGER
 ************************************************************/
-
- LIBRARY
-    /acplt/Demo
- END_LIBRARY;
 
  LIBRARY
     /acplt/MessageSys
@@ -79,10 +75,6 @@
  END_LIBRARY;
 
  LIBRARY
-    /acplt/raspi
- END_LIBRARY;
-
- LIBRARY
     /acplt/services
  END_LIBRARY;
 
@@ -116,6 +108,211 @@
 
  INSTANCE  /data/kshttp :
     CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /data/kshttp/sse%2Ehtml :
+    CLASS /acplt/kshttp/staticfile;
+    VARIABLE_VALUES
+      content : INPUT STRING = "<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<meta charset=\"windows-1252\">
+
+	<title>Stats of database_free</title>
+
+	<script type=\"text/javascript\" src=\"//cdnjs.cloudflare.com/ajax/libs/smoothie/1.27.0/smoothie.min.js\"></script>
+
+</head>
+
+<body>
+
+	<h1>Stats of database_free</h1>
+
+	
+
+	<canvas id=\"mycanvas\" width=\"400\" height=\"100\"></canvas>
+
+	
+
+	<script type=\"text/javascript\">
+
+	//an ajax request first
+
+	var ajaxRequest;	
+
+	try{
+
+		// Opera 8.0+, Firefox, Safari
+
+		ajaxRequest = new XMLHttpRequest();
+
+	} catch (e){
+
+		// Internet Explorer Browsers
+
+		try{
+
+			ajaxRequest = new ActiveXObject(\"Msxml2.XMLHTTP\");
+
+		} catch (e2) {
+
+			try{
+
+				ajaxRequest = new ActiveXObject(\"Microsoft.XMLHTTP\");
+
+			} catch (e3){
+
+				// Something went wrong
+
+				document.getElementsByTagName(\"h1\")[0].innerHTML = \"Your browser is too old, sorry!\";
+
+			}
+
+		}
+
+	}
+
+	// got the database size - init everything else
+
+	ajaxRequest.onreadystatechange = function(){
+
+		\"use strict\";
+
+		if(ajaxRequest.readyState === 4){
+
+			setInterval(function() {
+
+				var time = new Date().getTime();
+
+				if(line1 && time-lastUpdate > 990){
+
+					line1.append(time, lastData);
+
+				}
+
+			}, 1000);
+
+			if(EventSource !== undefined){
+
+				var source = new EventSource('/getVar?path=/vendor/database_free&stream=1&format=plain');
+
+				source.onmessage = function(e) {
+
+					lastUpdate = new Date().getTime();
+
+					lastData = parseInt(e.data, 10);
+
+					line1.append(lastUpdate, lastData);
+
+					if(smoothie){
+
+						smoothie.start();
+
+					}
+
+				};
+
+				source.onerror  = function(e) {
+
+					source.close();
+
+					if(smoothie){
+
+						smoothie.stop();
+
+					}
+
+				};
+
+			}else{
+
+				document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Your browser does not support EventSource\";
+
+			}
+
+			if(typeof SmoothieChart === \"function\"){
+
+				var smoothie = new SmoothieChart({ 
+
+					grid: { 
+
+						sharpLines:true,
+
+						strokeStyle: 'rgb(125, 0, 0)',
+
+						fillStyle: 'rgb(60, 0, 0)',
+
+						lineWidth: 1,
+
+						millisPerLine: 30000,
+
+						verticalSections: 2
+
+					}, 
+
+					interpolation:'step',
+
+					timestampFormatter:SmoothieChart.timeFormatter,
+
+					millisPerPixel:500, 
+
+					maxValue:parseInt(ajaxRequest.responseText, 10), 
+
+					minValue:0
+
+				});
+
+				smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });
+
+				smoothie.streamTo(document.getElementById('mycanvas'), 200);
+
+			}
+
+		}
+
+	};
+
+	ajaxRequest.open('GET', '/getVar?path=/vendor/database_size&format=plain', true);
+
+	try{
+
+		ajaxRequest.send(null);
+
+	} catch(err){
+
+		document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Perhaps this file was not served from an OV webserver.\";
+
+	}
+
+	if(typeof TimeSeries !== \"function\"){
+
+		document.getElementsByTagName(\"h1\")[0].innerHTML = \"Smoothie not loaded...\";
+
+	}else{
+
+		var line1 = new TimeSeries();
+
+	}
+
+	var lastUpdate = 0;
+
+	var lastData = 0;
+
+	</script>
+
+</body>
+
+</html>
+
+";
+      mimetype : INPUT STRING = "text/html";
+      encoding : INPUT STRING = "windows-1252";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 449;
+    END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /data/kshttp/index%2Ehtml :
@@ -1203,211 +1400,6 @@
       mimetype : INPUT STRING = "text/html";
       encoding : INPUT STRING = "windows-1252";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 449;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /data/kshttp/sse%2Ehtml :
-    CLASS /acplt/kshttp/staticfile;
-    VARIABLE_VALUES
-      content : INPUT STRING = "<!DOCTYPE html>
-
-<html>
-
-<head>
-
-	<meta charset=\"windows-1252\">
-
-	<title>Stats of database_free</title>
-
-	<script type=\"text/javascript\" src=\"//cdnjs.cloudflare.com/ajax/libs/smoothie/1.27.0/smoothie.min.js\"></script>
-
-</head>
-
-<body>
-
-	<h1>Stats of database_free</h1>
-
-	
-
-	<canvas id=\"mycanvas\" width=\"400\" height=\"100\"></canvas>
-
-	
-
-	<script type=\"text/javascript\">
-
-	//an ajax request first
-
-	var ajaxRequest;	
-
-	try{
-
-		// Opera 8.0+, Firefox, Safari
-
-		ajaxRequest = new XMLHttpRequest();
-
-	} catch (e){
-
-		// Internet Explorer Browsers
-
-		try{
-
-			ajaxRequest = new ActiveXObject(\"Msxml2.XMLHTTP\");
-
-		} catch (e2) {
-
-			try{
-
-				ajaxRequest = new ActiveXObject(\"Microsoft.XMLHTTP\");
-
-			} catch (e3){
-
-				// Something went wrong
-
-				document.getElementsByTagName(\"h1\")[0].innerHTML = \"Your browser is too old, sorry!\";
-
-			}
-
-		}
-
-	}
-
-	// got the database size - init everything else
-
-	ajaxRequest.onreadystatechange = function(){
-
-		\"use strict\";
-
-		if(ajaxRequest.readyState === 4){
-
-			setInterval(function() {
-
-				var time = new Date().getTime();
-
-				if(line1 && time-lastUpdate > 990){
-
-					line1.append(time, lastData);
-
-				}
-
-			}, 1000);
-
-			if(EventSource !== undefined){
-
-				var source = new EventSource('/getVar?path=/vendor/database_free&stream=1&format=plain');
-
-				source.onmessage = function(e) {
-
-					lastUpdate = new Date().getTime();
-
-					lastData = parseInt(e.data, 10);
-
-					line1.append(lastUpdate, lastData);
-
-					if(smoothie){
-
-						smoothie.start();
-
-					}
-
-				};
-
-				source.onerror  = function(e) {
-
-					source.close();
-
-					if(smoothie){
-
-						smoothie.stop();
-
-					}
-
-				};
-
-			}else{
-
-				document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Your browser does not support EventSource\";
-
-			}
-
-			if(typeof SmoothieChart === \"function\"){
-
-				var smoothie = new SmoothieChart({ 
-
-					grid: { 
-
-						sharpLines:true,
-
-						strokeStyle: 'rgb(125, 0, 0)',
-
-						fillStyle: 'rgb(60, 0, 0)',
-
-						lineWidth: 1,
-
-						millisPerLine: 30000,
-
-						verticalSections: 2
-
-					}, 
-
-					interpolation:'step',
-
-					timestampFormatter:SmoothieChart.timeFormatter,
-
-					millisPerPixel:500, 
-
-					maxValue:parseInt(ajaxRequest.responseText, 10), 
-
-					minValue:0
-
-				});
-
-				smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });
-
-				smoothie.streamTo(document.getElementById('mycanvas'), 200);
-
-			}
-
-		}
-
-	};
-
-	ajaxRequest.open('GET', '/getVar?path=/vendor/database_size&format=plain', true);
-
-	try{
-
-		ajaxRequest.send(null);
-
-	} catch(err){
-
-		document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Perhaps this file was not served from an OV webserver.\";
-
-	}
-
-	if(typeof TimeSeries !== \"function\"){
-
-		document.getElementsByTagName(\"h1\")[0].innerHTML = \"Smoothie not loaded...\";
-
-	}else{
-
-		var line1 = new TimeSeries();
-
-	}
-
-	var lastUpdate = 0;
-
-	var lastData = 0;
-
-	</script>
-
-</body>
-
-</html>
-
-";
-      mimetype : INPUT STRING = "text/html";
-      encoding : INPUT STRING = "windows-1252";
-      idH : INPUT UINT = 0;
       idL : INPUT UINT = 450;
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1425,7 +1417,7 @@
       PathToAASDiscoveryServer : INPUT STRING = "/TechUnits/discoveryServer";
       identifier : INPUT STRING = "InterfaceDiscoveryServer";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2779;
+      idL : INPUT UINT = 2899;
       creationtime : INPUT TIME = 2017-09-22 09:43:50.329112;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1439,10 +1431,10 @@
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2017-10-19 16:39:03.042849;
+      proctime : INPUT TIME = 2017-10-25 12:36:56.242849;
       cyctime : INPUT TIME_SPAN = 0.100000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000156;
+      calctime : OUTPUT TIME_SPAN = 0.000198;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
@@ -1461,7 +1453,7 @@
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2780;
+      idL : INPUT UINT = 2477;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1474,7 +1466,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "lceUA";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2781;
+      idL : INPUT UINT = 2478;
       creationtime : INPUT TIME = 2017-08-31 12:58:01.652428;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1486,7 +1478,7 @@
       modelnamespaceIndexIdentification : INPUT UINT = 3;
       identifier : INPUT STRING = "pvsUA";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2788;
+      idL : INPUT UINT = 2485;
       creationtime : INPUT TIME = 2017-08-31 12:58:11.196182;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1505,7 +1497,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "Motor_M23";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2791;
+      idL : INPUT UINT = 2900;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.177896;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1515,7 +1507,7 @@
     CLASS /acplt/openaas/Header;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2792;
+      idL : INPUT UINT = 2901;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1524,7 +1516,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "Config";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2793;
+      idL : INPUT UINT = 2902;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.177896;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1537,7 +1529,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "CarrierID";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2799;
+      idL : INPUT UINT = 2908;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.178080;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1549,7 +1541,7 @@
       Value : INPUT STRING = "URI:http://acplt.org/Assets/Motor_M23";
       identifier : INPUT STRING = "Asset";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2800;
+      idL : INPUT UINT = 2909;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.178097;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1562,7 +1554,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2801;
+      idL : INPUT UINT = 2910;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.178112;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1574,7 +1566,7 @@
       ExpressionLogicEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2802;
+      idL : INPUT UINT = 2911;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.178126;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1586,7 +1578,7 @@
       ExpressionSemanticEnum : INPUT UINT = 1;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2803;
+      idL : INPUT UINT = 2912;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.178140;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1598,7 +1590,7 @@
       ViewEnum : INPUT UINT = 3;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2804;
+      idL : INPUT UINT = 2913;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.178153;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1610,7 +1602,7 @@
       VisibilityEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2805;
+      idL : INPUT UINT = 2914;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.178167;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1622,7 +1614,7 @@
       Value : INPUT BOOL = TRUE;
       identifier : INPUT STRING = "isInstance";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2806;
+      idL : INPUT UINT = 2915;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.832353;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1635,7 +1627,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2807;
+      idL : INPUT UINT = 2916;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.832399;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1647,7 +1639,7 @@
       ExpressionLogicEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2808;
+      idL : INPUT UINT = 2917;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.832418;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1659,7 +1651,7 @@
       ExpressionSemanticEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2809;
+      idL : INPUT UINT = 2918;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.832489;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1671,7 +1663,7 @@
       ViewEnum : INPUT UINT = 3;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2810;
+      idL : INPUT UINT = 2919;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.832503;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1683,7 +1675,7 @@
       VisibilityEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2811;
+      idL : INPUT UINT = 2920;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.832517;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1695,7 +1687,7 @@
       Value : INPUT STRING = "URI:http://acplt.org/AAS/MotorType";
       identifier : INPUT STRING = "TypeAASID";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2812;
+      idL : INPUT UINT = 2921;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.877032;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1708,7 +1700,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2813;
+      idL : INPUT UINT = 2922;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.877051;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1720,7 +1712,7 @@
       ExpressionLogicEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2814;
+      idL : INPUT UINT = 2923;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.877066;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1732,7 +1724,7 @@
       ExpressionSemanticEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2815;
+      idL : INPUT UINT = 2924;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.877097;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1744,7 +1736,7 @@
       ViewEnum : INPUT UINT = 3;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2816;
+      idL : INPUT UINT = 2925;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.877111;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1756,7 +1748,7 @@
       VisibilityEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2817;
+      idL : INPUT UINT = 2926;
       creationtime : INPUT TIME = 2017-10-17 18:09:16.877125;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1775,7 +1767,7 @@
       Version : INPUT UINT = 1;
       identifier : INPUT STRING = "Runtime";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2824;
+      idL : INPUT UINT = 2927;
       creationtime : INPUT TIME = 2017-10-09 09:34:27.758818;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1790,7 +1782,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "RotationalSpeed";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2826;
+      idL : INPUT UINT = 2930;
       creationtime : INPUT TIME = 2017-10-17 19:40:09.534312;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1803,7 +1795,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "CarrierId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2827;
+      idL : INPUT UINT = 2933;
       creationtime : INPUT TIME = 2017-10-17 19:40:09.534347;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1815,7 +1807,7 @@
       ExpressionSemanticEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2828;
+      idL : INPUT UINT = 2935;
       creationtime : INPUT TIME = 2017-10-18 08:57:36.643129;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1827,7 +1819,7 @@
       ExpressionLogicEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2829;
+      idL : INPUT UINT = 2936;
       creationtime : INPUT TIME = 2017-10-18 08:57:57.763467;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1840,7 +1832,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2830;
+      idL : INPUT UINT = 2937;
       creationtime : INPUT TIME = 2017-10-18 08:58:40.432660;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1852,7 +1844,7 @@
       ViewEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2831;
+      idL : INPUT UINT = 2939;
       creationtime : INPUT TIME = 2017-10-18 08:58:58.068351;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1864,7 +1856,7 @@
       VisibilityEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2832;
+      idL : INPUT UINT = 2940;
       creationtime : INPUT TIME = 2017-10-18 08:59:08.538399;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1875,7 +1867,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "CurrentStates";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2833;
+      idL : INPUT UINT = 2941;
       creationtime : INPUT TIME = 2017-10-17 20:45:28.125380;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1887,7 +1879,7 @@
       Value : INPUT SINGLE = 0.000000;
       identifier : INPUT STRING = "RotationalSpeed";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2834;
+      idL : INPUT UINT = 2942;
       creationtime : INPUT TIME = 2017-10-17 20:45:40.689956;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1900,7 +1892,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "CarrierId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2835;
+      idL : INPUT UINT = 2943;
       creationtime : INPUT TIME = 2017-10-18 08:44:49.719280;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1913,7 +1905,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2836;
+      idL : INPUT UINT = 2944;
       creationtime : INPUT TIME = 2017-10-18 08:44:49.719295;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1925,7 +1917,7 @@
       ExpressionLogicEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2837;
+      idL : INPUT UINT = 2945;
       creationtime : INPUT TIME = 2017-10-17 20:45:40.690014;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1937,7 +1929,7 @@
       ExpressionSemanticEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2838;
+      idL : INPUT UINT = 2946;
       creationtime : INPUT TIME = 2017-10-17 20:45:40.690028;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1949,7 +1941,7 @@
       ViewEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2839;
+      idL : INPUT UINT = 2947;
       creationtime : INPUT TIME = 2017-10-17 20:45:40.690042;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1961,7 +1953,7 @@
       VisibilityEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2840;
+      idL : INPUT UINT = 2948;
       creationtime : INPUT TIME = 2017-10-17 20:45:40.690055;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1973,7 +1965,7 @@
       Value : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "Running";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2841;
+      idL : INPUT UINT = 2950;
       creationtime : INPUT TIME = 2017-10-18 13:27:16.103780;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1986,7 +1978,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "CarrierId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2842;
+      idL : INPUT UINT = 2951;
       creationtime : INPUT TIME = 2017-10-18 13:27:16.103809;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -1999,7 +1991,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2843;
+      idL : INPUT UINT = 2952;
       creationtime : INPUT TIME = 2017-10-18 13:27:16.103821;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2011,7 +2003,7 @@
       ExpressionLogicEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2844;
+      idL : INPUT UINT = 2953;
       creationtime : INPUT TIME = 2017-10-18 13:27:16.103830;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2023,7 +2015,7 @@
       ExpressionSemanticEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2845;
+      idL : INPUT UINT = 2954;
       creationtime : INPUT TIME = 2017-10-18 13:27:16.103840;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2035,7 +2027,7 @@
       ViewEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2846;
+      idL : INPUT UINT = 2955;
       creationtime : INPUT TIME = 2017-10-18 13:27:16.103850;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2047,7 +2039,7 @@
       VisibilityEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2847;
+      idL : INPUT UINT = 2956;
       creationtime : INPUT TIME = 2017-10-18 13:27:16.103860;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2062,7 +2054,7 @@
       Version : INPUT UINT = 0;
       identifier : INPUT STRING = "LifeCycle";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2848;
+      idL : INPUT UINT = 2959;
       creationtime : INPUT TIME = 2017-10-17 20:28:59.162196;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2088,7 +2080,7 @@
       LCEDelete : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "LifeCycleArchiv";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2849;
+      idL : INPUT UINT = 2960;
       creationtime : INPUT TIME = 2017-10-17 20:28:59.162196;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2103,7 +2095,7 @@
       Version : INPUT UINT = 0;
       identifier : INPUT STRING = "Configuration";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2850;
+      idL : INPUT UINT = 2961;
       creationtime : INPUT TIME = 2017-10-17 20:33:29.080208;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2114,7 +2106,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "ConfigurationParameters";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2851;
+      idL : INPUT UINT = 2962;
       creationtime : INPUT TIME = 2017-10-17 20:34:26.398759;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2127,7 +2119,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "CarrierId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2852;
+      idL : INPUT UINT = 2963;
       creationtime : INPUT TIME = 2017-10-18 08:46:45.716925;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2140,7 +2132,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2853;
+      idL : INPUT UINT = 2964;
       creationtime : INPUT TIME = 2017-10-18 08:48:00.109632;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2152,7 +2144,7 @@
       VisibilityEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2854;
+      idL : INPUT UINT = 2965;
       creationtime : INPUT TIME = 2017-10-18 08:48:15.604742;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2164,7 +2156,7 @@
       ViewEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2855;
+      idL : INPUT UINT = 2966;
       creationtime : INPUT TIME = 2017-10-18 08:48:25.732386;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2176,7 +2168,7 @@
       ExpressionSemanticEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2856;
+      idL : INPUT UINT = 2967;
       creationtime : INPUT TIME = 2017-10-18 08:48:54.496164;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2188,7 +2180,7 @@
       Value : INPUT INT = 21;
       identifier : INPUT STRING = "MinRotationSpeed";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2857;
+      idL : INPUT UINT = 2968;
       creationtime : INPUT TIME = 2017-10-18 08:49:19.550343;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2200,7 +2192,7 @@
       ExpressionLogicEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2858;
+      idL : INPUT UINT = 2969;
       creationtime : INPUT TIME = 2017-10-18 08:49:19.550387;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2230,17 +2222,17 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 18713;
+      methcount : OUTPUT UINT = 1711;
       actimode : INPUT INT = 1;
       proctime : INPUT TIME = 2017-10-09 09:34:12.178042;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000006;
+      calctime : OUTPUT TIME_SPAN = 0.000005;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       identifier : INPUT STRING = "ComponentManager";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2796;
+      idL : INPUT UINT = 2905;
       creationtime : INPUT TIME = 2017-10-09 09:34:12.177896;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2250,7 +2242,7 @@
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2797;
+      idL : INPUT UINT = 2906;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2258,7 +2250,7 @@
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2798;
+      idL : INPUT UINT = 2907;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2267,7 +2259,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "MotorType";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2859;
+      idL : INPUT UINT = 2970;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.075855;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2277,7 +2269,7 @@
     CLASS /acplt/openaas/Header;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2860;
+      idL : INPUT UINT = 2971;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2286,7 +2278,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "Config";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2861;
+      idL : INPUT UINT = 2972;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.075855;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2299,7 +2291,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "CarrierID";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2869;
+      idL : INPUT UINT = 2981;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.076064;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2311,7 +2303,7 @@
       Value : INPUT STRING = "URI:http://acplt.org/Types/MotorTypeDCMotor";
       identifier : INPUT STRING = "Asset";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2870;
+      idL : INPUT UINT = 2982;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.076085;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2324,7 +2316,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2871;
+      idL : INPUT UINT = 2983;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.076102;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2336,7 +2328,7 @@
       ExpressionLogicEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2872;
+      idL : INPUT UINT = 2984;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.076119;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2348,7 +2340,7 @@
       ExpressionSemanticEnum : INPUT UINT = 1;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2873;
+      idL : INPUT UINT = 2985;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.076137;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2360,7 +2352,7 @@
       ViewEnum : INPUT UINT = 3;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2874;
+      idL : INPUT UINT = 2986;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.076154;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2372,7 +2364,7 @@
       VisibilityEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2875;
+      idL : INPUT UINT = 2987;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.076170;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2384,7 +2376,7 @@
       Value : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "isInstance";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 10058;
+      idL : INPUT UINT = 2991;
       creationtime : INPUT TIME = 2017-10-19 16:34:41.568034;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2397,7 +2389,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 10059;
+      idL : INPUT UINT = 2992;
       creationtime : INPUT TIME = 2017-10-19 16:34:41.568137;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2409,7 +2401,7 @@
       ExpressionLogicEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 10060;
+      idL : INPUT UINT = 2993;
       creationtime : INPUT TIME = 2017-10-19 16:34:41.568220;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2421,7 +2413,7 @@
       ExpressionSemanticEnum : INPUT UINT = 1;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 10061;
+      idL : INPUT UINT = 2994;
       creationtime : INPUT TIME = 2017-10-19 16:34:41.568302;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2433,7 +2425,7 @@
       ViewEnum : INPUT UINT = 3;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 10062;
+      idL : INPUT UINT = 2995;
       creationtime : INPUT TIME = 2017-10-19 16:34:41.568386;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2445,7 +2437,7 @@
       VisibilityEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 10063;
+      idL : INPUT UINT = 2996;
       creationtime : INPUT TIME = 2017-10-19 16:34:41.568462;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2460,7 +2452,7 @@
       Version : INPUT UINT = 0;
       identifier : INPUT STRING = "Administration";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2876;
+      idL : INPUT UINT = 3000;
       creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2483,7 +2475,7 @@
       execute : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "createSubModel";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2877;
+      idL : INPUT UINT = 3001;
       creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2501,7 +2493,7 @@
       execute : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "deleteSubModel";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2878;
+      idL : INPUT UINT = 3002;
       creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2529,7 +2521,7 @@
       execute : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "createPropertyValueStatementList";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2879;
+      idL : INPUT UINT = 3003;
       creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2547,7 +2539,7 @@
       execute : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "deletePropertyValueStatementList";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2880;
+      idL : INPUT UINT = 3004;
       creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2576,7 +2568,7 @@
       execute : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "createPropertyValueStatement";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2881;
+      idL : INPUT UINT = 3005;
       creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2594,7 +2586,7 @@
       execute : INPUT BOOL = FALSE;
       identifier : INPUT STRING = "deletePropertyValueStatement";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2882;
+      idL : INPUT UINT = 3006;
       creationtime : INPUT TIME = 2017-10-19 15:42:42.597188;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2613,7 +2605,7 @@
       Version : INPUT UINT = 1;
       identifier : INPUT STRING = "MotorModel";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2883;
+      idL : INPUT UINT = 3007;
       creationtime : INPUT TIME = 2017-10-17 18:41:21.485596;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2624,7 +2616,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "TypeDescription";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2884;
+      idL : INPUT UINT = 3008;
       creationtime : INPUT TIME = 2017-10-17 18:43:48.636044;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2637,7 +2629,7 @@
       IdType : INPUT UINT = 0;
       identifier : INPUT STRING = "CarrierId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2885;
+      idL : INPUT UINT = 3009;
       creationtime : INPUT TIME = 2017-10-17 18:43:48.636123;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2649,7 +2641,7 @@
       Value : INPUT SINGLE = 50.000000;
       identifier : INPUT STRING = "NominalSpeed";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2886;
+      idL : INPUT UINT = 3010;
       creationtime : INPUT TIME = 2017-10-19 12:50:30.343336;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2662,7 +2654,7 @@
       IdType : INPUT UINT = 1;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2887;
+      idL : INPUT UINT = 3011;
       creationtime : INPUT TIME = 2017-10-19 12:50:30.343429;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2674,7 +2666,7 @@
       ExpressionLogicEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2888;
+      idL : INPUT UINT = 3012;
       creationtime : INPUT TIME = 2017-10-19 12:50:30.343581;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2686,7 +2678,7 @@
       ExpressionSemanticEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2889;
+      idL : INPUT UINT = 3013;
       creationtime : INPUT TIME = 2017-10-19 12:50:30.343727;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2698,7 +2690,7 @@
       ViewEnum : INPUT UINT = 3;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2890;
+      idL : INPUT UINT = 3014;
       creationtime : INPUT TIME = 2017-10-19 12:50:30.343873;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2710,7 +2702,7 @@
       VisibilityEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2891;
+      idL : INPUT UINT = 3015;
       creationtime : INPUT TIME = 2017-10-19 12:50:30.344020;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2722,7 +2714,7 @@
       Value : INPUT SINGLE = 2.500000;
       identifier : INPUT STRING = "RatedPerformance";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2892;
+      idL : INPUT UINT = 3016;
       creationtime : INPUT TIME = 2017-10-19 13:15:09.385110;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2735,7 +2727,7 @@
       IdType : INPUT UINT = 1;
       identifier : INPUT STRING = "PropertyId";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2893;
+      idL : INPUT UINT = 3017;
       creationtime : INPUT TIME = 2017-10-19 13:15:09.385162;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2747,7 +2739,7 @@
       ExpressionLogicEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionLogic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2894;
+      idL : INPUT UINT = 3018;
       creationtime : INPUT TIME = 2017-10-19 13:15:09.385290;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2759,7 +2751,7 @@
       ExpressionSemanticEnum : INPUT UINT = 0;
       identifier : INPUT STRING = "ExpressionSemantic";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2895;
+      idL : INPUT UINT = 3019;
       creationtime : INPUT TIME = 2017-10-19 13:15:09.385425;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2771,7 +2763,7 @@
       ViewEnum : INPUT UINT = 3;
       identifier : INPUT STRING = "View";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2896;
+      idL : INPUT UINT = 3020;
       creationtime : INPUT TIME = 2017-10-19 13:15:09.385501;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2783,7 +2775,7 @@
       VisibilityEnum : INPUT UINT = 2;
       identifier : INPUT STRING = "Visibility";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2897;
+      idL : INPUT UINT = 3021;
       creationtime : INPUT TIME = 2017-10-19 13:15:09.385578;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2813,17 +2805,17 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 18760;
+      methcount : OUTPUT UINT = 1758;
       actimode : INPUT INT = 1;
       proctime : INPUT TIME = 2017-10-17 18:11:58.076013;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000002;
+      calctime : OUTPUT TIME_SPAN = 0.000003;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       identifier : INPUT STRING = "ComponentManager";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2864;
+      idL : INPUT UINT = 2975;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.075855;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2833,7 +2825,7 @@
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2865;
+      idL : INPUT UINT = 2976;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2841,7 +2833,7 @@
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2866;
+      idL : INPUT UINT = 2977;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2914,7 +2906,7 @@
       ListCount : INPUT UINT = 2;
       identifier : INPUT STRING = "ModelmanagerOpenAAS";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2898;
+      idL : INPUT UINT = 3027;
       creationtime : INPUT TIME = 2017-10-17 12:43:02.518607;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2928,7 +2920,7 @@
       AASPath : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23";
       identifier : INPUT STRING = "1";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2899;
+      idL : INPUT UINT = 3028;
       creationtime : INPUT TIME = 2017-10-10 11:00:45.956341;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2942,7 +2934,7 @@
       AASPath : INPUT STRING = "/TechUnits/openAAS/AASFolder/MotorType";
       identifier : INPUT STRING = "2";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2900;
+      idL : INPUT UINT = 3029;
       creationtime : INPUT TIME = 2017-10-17 18:11:58.076031;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2953,7 +2945,7 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "discoveryServer";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2901;
+      idL : INPUT UINT = 2488;
       creationtime : INPUT TIME = 2017-10-11 10:28:43.512184;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2967,17 +2959,17 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 18767;
+      methcount : OUTPUT UINT = 1770;
       actimode : INPUT INT = 1;
       proctime : INPUT TIME = 2017-10-11 10:28:43.512284;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000004;
+      calctime : OUTPUT TIME_SPAN = 0.000006;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       identifier : INPUT STRING = "ComponentManager";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2902;
+      idL : INPUT UINT = 2489;
       creationtime : INPUT TIME = 2017-10-11 10:28:43.512184;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -2987,7 +2979,7 @@
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2903;
+      idL : INPUT UINT = 2490;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2995,7 +2987,35 @@
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2904;
+      idL : INPUT UINT = 2491;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/discoveryServer/30687474703a2f2f6163706c742e6f72672f4141532f4d6f746f725f4d3233 :
+    CLASS /acplt/openAASDiscoveryServer/OVDataForAAS;
+    VARIABLE_VALUES
+      ServerHost : INPUT STRING = "127.0.0.1";
+      ServerName : INPUT STRING = "MANAGER";
+      Path : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager";
+      identifier : INPUT STRING = "30687474703a2f2f6163706c742e6f72672f4141532f4d6f746f725f4d3233";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2978;
+      creationtime : INPUT TIME = 2017-10-25 12:34:11.744362;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/discoveryServer/30687474703a2f2f6163706c742e6f72672f4141532f4d6f746f7254797065 :
+    CLASS /acplt/openAASDiscoveryServer/OVDataForAAS;
+    VARIABLE_VALUES
+      ServerHost : INPUT STRING = "127.0.0.1";
+      ServerName : INPUT STRING = "MANAGER";
+      Path : INPUT STRING = "/TechUnits/openAAS/AASFolder/MotorType.ComponentManager";
+      identifier : INPUT STRING = "30687474703a2f2f6163706c742e6f72672f4141532f4d6f746f7254797065";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 3052;
+      creationtime : INPUT TIME = 2017-10-25 12:34:11.946278;
+      objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3028,7 +3048,7 @@
       maxcalctime : INPUT TIME_SPAN = 0.000000;
       methcount : OUTPUT UINT = 0;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2017-10-19 15:19:27.980053;
+      proctime : INPUT TIME = 2017-10-25 12:34:10.993101;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -3036,7 +3056,7 @@
       Ypos : INPUT INT = 0;
       identifier : INPUT STRING = "pvsGen";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2907;
+      idL : INPUT UINT = 2492;
       creationtime : INPUT TIME = 2017-10-17 16:55:32.556216;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
@@ -3047,44 +3067,8 @@
     VARIABLE_VALUES
       identifier : INPUT STRING = "openaasUA";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2908;
+      idL : INPUT UINT = 2493;
       creationtime : INPUT TIME = 2017-10-17 17:25:53.744566;
-      objectstate : INPUT INT = 3;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/MotorControl :
-    CLASS /acplt/Demo/TDVDriveDemoBlock;
-    VARIABLE_VALUES
-      ButtonPressed : INPUT BOOL = FALSE;
-      LCESubModelPath : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23.Body/LifeCycle";
-      LCECreatingInstanceIdString : INPUT STRING = "URI:http://acplt.org/AAS/Motor_M23";
-      LCECreatingInstanceIdType : INPUT UINT = 0;
-      LCEWritingInstanceIdString : INPUT STRING = "URI:http://acplt.org/AAS/Motor_M23";
-      LCEWritingInstanceIdType : INPUT UINT = 0;
-      LCEEventClass : INPUT STRING = "Equipment Report";
-      LCESubject : INPUT STRING = "Motor State Changed";
-      ActualMotorValue : INPUT SINGLE = 0.000000;
-      Reset : INPUT BOOL = FALSE;
-      PVSStatePath : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/Running";
-      PVSActualValuePath : INPUT STRING = "/TechUnits/openAAS/AASFolder/Motor_M23.Body/Runtime/CurrentStates/RotationalSpeed";
-      ValueForMotorRamp : OUTPUT INT = 0;
-      State : OUTPUT UINT = 0;
-      iexreq : INPUT BOOL = TRUE;
-      eexreq : OUTPUT BOOL = FALSE;
-      maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 18802;
-      actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2017-10-19 15:19:28.229024;
-      cyctime : INPUT TIME_SPAN = 0.000000;
-      ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000124;
-      Xpos : INPUT INT = 0;
-      Ypos : INPUT INT = 0;
-      identifier : INPUT STRING = "MotorControl";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2910;
-      creationtime : INPUT TIME = 2017-10-18 13:29:53.970510;
       objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -3118,45 +3102,42 @@
       qhhs : OUTPUT BOOL = FALSE;
       eno : OUTPUT BOOL = TRUE;
       vold : OUTPUT SINGLE = 0.000000;
-      counter : OUTPUT INT = 8805;
+      counter : OUTPUT INT = 1772;
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 18805;
+      methcount : OUTPUT UINT = 1772;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2017-10-19 15:19:28.240658;
+      proctime : INPUT TIME = 2017-10-25 12:34:11.406228;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000004;
+      calctime : OUTPUT TIME_SPAN = 0.000006;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2911;
+      idL : INPUT UINT = 2495;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/RaspiInput :
-    CLASS /acplt/raspi/gpioIn;
+ INSTANCE  /TechUnits/lceSMUA :
+    CLASS /acplt/subModelLifeCycleEntryOPCUAInterface/interface;
     VARIABLE_VALUES
-      pin : INPUT INT = 0;
-      pullUpDown : INPUT INT = 2;
-      output : OUTPUT BOOL = FALSE;
-      error : OUTPUT BOOL = FALSE;
-      errorMsg : OUTPUT STRING = "";
-      initialized : OUTPUT BOOL = TRUE;
-      iexreq : INPUT BOOL = TRUE;
-      eexreq : OUTPUT BOOL = FALSE;
-      maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 19214;
-      actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2017-10-19 15:19:28.249493;
-      cyctime : INPUT TIME_SPAN = 0.000000;
-      ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000002;
-      Xpos : INPUT INT = 0;
-      Ypos : INPUT INT = 0;
+      identifier : INPUT STRING = "lceSMUA";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2912;
+      idL : INPUT UINT = 2496;
+      creationtime : INPUT TIME = 2017-10-19 11:20:56.719855;
+      objectstate : INPUT INT = 3;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/adminsmUA :
+    CLASS /acplt/subModelAdministrationOPCUAInterface/interface;
+    VARIABLE_VALUES
+      identifier : INPUT STRING = "adminsmUA";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 2497;
+      creationtime : INPUT TIME = 2017-10-19 15:43:03.870146;
+      objectstate : INPUT INT = 3;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3170,36 +3151,14 @@
       maxcalctime : INPUT TIME_SPAN = 0.000000;
       methcount : OUTPUT UINT = 1;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2017-10-19 15:19:28.257672;
+      proctime : INPUT TIME = 2017-10-25 12:34:11.879629;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000001;
+      calctime : OUTPUT TIME_SPAN = 0.000003;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2913;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/lceSMUA :
-    CLASS /acplt/subModelLifeCycleEntryOPCUAInterface/interface;
-    VARIABLE_VALUES
-      identifier : INPUT STRING = "lceSMUA";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2914;
-      creationtime : INPUT TIME = 2017-10-19 11:20:56.719855;
-      objectstate : INPUT INT = 3;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/adminsmUA :
-    CLASS /acplt/subModelAdministrationOPCUAInterface/interface;
-    VARIABLE_VALUES
-      identifier : INPUT STRING = "adminsmUA";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2915;
-      creationtime : INPUT TIME = 2017-10-19 15:43:03.870146;
-      objectstate : INPUT INT = 3;
+      idL : INPUT UINT = 3035;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3216,7 +3175,7 @@
      PARENT taskparent : CLASS unknown
            = /Tasks/UrTask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager , /TechUnits/openAAS/AASFolder/MotorType.ComponentManager , /TechUnits/discoveryServer.ComponentManager , /TechUnits/INBOX , /Tasks/genTask , /TechUnits/MotorControl , /TechUnits/Motor , /TechUnits/RaspiInput};
+           = {/TechUnits/discoveryServer.ComponentManager , /Tasks/genTask , /TechUnits/Motor , /TechUnits/openAAS/AASFolder/Motor_M23.ComponentManager , /TechUnits/openAAS/AASFolder/MotorType.ComponentManager , /TechUnits/INBOX};
  END_LINK;
 
  LINK
@@ -3272,14 +3231,6 @@
      PARENT taskparent : CLASS unknown
            = /Tasks/UrTask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/MotorControl};
- END_LINK;
-
- LINK
-     OF_ASSOCIATION tasklist;
-     PARENT taskparent : CLASS unknown
-           = /Tasks/UrTask;
-     CHILDREN taskchild : CLASS unknown
            = {/TechUnits/Motor};
  END_LINK;
 
@@ -3288,102 +3239,7 @@
      PARENT taskparent : CLASS unknown
            = /Tasks/UrTask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/RaspiInput};
- END_LINK;
-
- LINK
-     OF_ASSOCIATION tasklist;
-     PARENT taskparent : CLASS unknown
-           = /Tasks/UrTask;
-     CHILDREN taskchild : CLASS unknown
            = {/TechUnits/INBOX};
- END_LINK;
-
- INSTANCE  /Cons/c_RaspiInput_output :
-    CLASS /acplt/fb/connection;
-    VARIABLE_VALUES
-      on : INPUT BOOL = TRUE;
-      sourceport : INPUT STRING = "output";
-      targetport : INPUT STRING = "ButtonPressed";
-      sourcetrig : INPUT BOOL = FALSE;
-      visuallayout : INPUT STRING = "";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2916;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- LINK
-     OF_ASSOCIATION inputconnections;
-     PARENT targetfb : CLASS unknown
-           = /TechUnits/MotorControl;
-     CHILDREN inputcon : CLASS connection
-           = {/Cons/c_RaspiInput_output};
- END_LINK;
-
- LINK
-     OF_ASSOCIATION outputconnections;
-     PARENT sourcefb : CLASS unknown
-           = /TechUnits/RaspiInput;
-     CHILDREN outputcon : CLASS connection
-           = {/Cons/c_RaspiInput_output};
- END_LINK;
-
- INSTANCE  /Cons/c_MotorControl_ActualMotorValue :
-    CLASS /acplt/fb/connection;
-    VARIABLE_VALUES
-      on : INPUT BOOL = TRUE;
-      sourceport : INPUT STRING = "v";
-      targetport : INPUT STRING = "ActualMotorValue";
-      sourcetrig : INPUT BOOL = FALSE;
-      visuallayout : INPUT STRING = "";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2917;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- LINK
-     OF_ASSOCIATION inputconnections;
-     PARENT targetfb : CLASS unknown
-           = /TechUnits/MotorControl;
-     CHILDREN inputcon : CLASS connection
-           = {/Cons/c_MotorControl_ActualMotorValue};
- END_LINK;
-
- LINK
-     OF_ASSOCIATION outputconnections;
-     PARENT sourcefb : CLASS unknown
-           = /TechUnits/Motor;
-     CHILDREN outputcon : CLASS connection
-           = {/Cons/c_MotorControl_ActualMotorValue};
- END_LINK;
-
- INSTANCE  /Cons/c_MotorControl_ValueForMotorRamp :
-    CLASS /acplt/fb/connection;
-    VARIABLE_VALUES
-      on : INPUT BOOL = TRUE;
-      sourceport : INPUT STRING = "ValueForMotorRamp";
-      targetport : INPUT STRING = "u";
-      sourcetrig : INPUT BOOL = FALSE;
-      visuallayout : INPUT STRING = "";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2918;
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- LINK
-     OF_ASSOCIATION inputconnections;
-     PARENT targetfb : CLASS unknown
-           = /TechUnits/Motor;
-     CHILDREN inputcon : CLASS connection
-           = {/Cons/c_MotorControl_ValueForMotorRamp};
- END_LINK;
-
- LINK
-     OF_ASSOCIATION outputconnections;
-     PARENT sourcefb : CLASS unknown
-           = /TechUnits/MotorControl;
-     CHILDREN outputcon : CLASS connection
-           = {/Cons/c_MotorControl_ValueForMotorRamp};
  END_LINK;
 
  INSTANCE  /Cons/c_pvsGen_Value :
@@ -3395,7 +3251,7 @@
       sourcetrig : INPUT BOOL = FALSE;
       visuallayout : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2919;
+      idL : INPUT UINT = 3060;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3418,27 +3274,27 @@
  INSTANCE  /vendor :
     CLASS /acplt/ov/domain;
     VARIABLE_VALUES
-      libraries[28] : OUTPUT STRING = {"/acplt/ov" , "/acplt/ksbase" , "/acplt/TCPbind" , "/acplt/ksxdr" , "/acplt/kshttp" , "/acplt/fb" , "/acplt/identification" , "/acplt/propertyValueStatement" , "/acplt/lifeCycleEntry" , "/acplt/MessageSys" , "/acplt/ksapi" , "/acplt/services" , "/acplt/openaas" , "/acplt/subModelAdministration" , "/acplt/subModelLifeCycleEntry" , "/acplt/opcua" , "/acplt/openAASDiscoveryServer" , "/acplt/identificationOPCUAInterface" , "/acplt/propertyValueStatementOPCUAInterface" , "/acplt/lifeCycleEntryOPCUAInterface" , "/acplt/servicesOPCUAInterface" , "/acplt/openaasOPCUAInterface" , "/acplt/subModelAdministrationOPCUAInterface" , "/acplt/subModelLifeCycleEntryOPCUAInterface" , "/acplt/Demo" , "/acplt/raspi" , "/acplt/iec61131stdfb" , "/acplt/vdivde3696"};
-      classes[242] : OUTPUT STRING = {"/acplt/ov/domain" , "/acplt/ov/library" , "/acplt/ksbase/RootComTask" , "/acplt/ksbase/ServerRep" , "/acplt/ksbase/Manager" , "/acplt/ksbase/NoneTicketAuthenticator" , "/acplt/ksbase/NoneTicketGenerator" , "/acplt/TCPbind/TCPChannel" , "/acplt/TCPbind/aresWorker" , "/acplt/TCPbind/TCPListener" , "/acplt/ksxdr/xdrIdentificator" , "/acplt/ksxdr/xdrClientHandler" , "/acplt/ksxdr/xdrSimpleTicketAuthenticator" , "/acplt/ksxdr/xdrManagerCom" , "/acplt/ksxdr/xdrClient" , "/acplt/ksxdr/PMAskList" , "/acplt/kshttp/httpIdentificator" , "/acplt/kshttp/httpclienthandler" , "/acplt/kshttp/getvarpushhandler" , "/acplt/kshttp/httpSimpleTicketAuthenticator" , "/acplt/kshttp/httpManagerCom" , "/acplt/kshttp/httpClient" , "/acplt/kshttp/genericHttpClient" , "/acplt/kshttp/authenticatedsession" , "/acplt/kshttp/staticfile" , "/acplt/fb/dbinfoclass" , "/acplt/fb/task" , "/acplt/fb/connection" , "/acplt/fb/functionchart" , "/acplt/fb/boolport" , "/acplt/fb/intport" , "/acplt/fb/uintport" , "/acplt/fb/singleport" , "/acplt/fb/doubleport" , "/acplt/fb/timeport" , "/acplt/fb/timespanport" , "/acplt/fb/stringport" , "/acplt/fb/anyport" , "/acplt/fb/boolvecport" , "/acplt/fb/intvecport" , "/acplt/fb/uintvecport" , "/acplt/fb/singlevecport" , "/acplt/fb/doublevecport" , "/acplt/fb/timevecport" , "/acplt/fb/timespanvecport" , "/acplt/fb/stringvecport" , "/acplt/fb/controlchart" , "/acplt/identification/Identification" , "/acplt/propertyValueStatement/PropertyValueStatement" , "/acplt/propertyValueStatement/CarrierId" , "/acplt/propertyValueStatement/PropertyId" , "/acplt/propertyValueStatement/ExpressionLogic" , "/acplt/propertyValueStatement/ExpressionSemantic" , "/acplt/propertyValueStatement/View" , "/acplt/propertyValueStatement/Visibility" , "/acplt/propertyValueStatement/PropertyValueStatementList" , "/acplt/propertyValueStatement/MatchPVSRA" , "/acplt/propertyValueStatement/MatchPVSLRA" , "/acplt/propertyValueStatement/PVSGenerator" , "/acplt/propertyValueStatement/HMIHelperPVSL" , "/acplt/propertyValueStatement/modelmanager" , "/acplt/lifeCycleEntry/LifeCycleEntry" , "/acplt/lifeCycleEntry/LifeCycleArchive" , "/acplt/MessageSys/MsgDelivery" , "/acplt/MessageSys/Message" , "/acplt/MessageSys/inbox" , "/acplt/MessageSys/msgIdentificator" , "/acplt/MessageSys/msgHandler" , "/acplt/ksapi/createObject" , "/acplt/ksapi/deleteObject" , "/acplt/ksapi/getVar" , "/acplt/ksapi/setVar" , "/acplt/ksapi/getEPidentifiers" , "/acplt/ksapi/getEP" , "/acplt/ksapi/Variable" , "/acplt/ksapi/renameObject" , "/acplt/ksapi/linkObject" , "/acplt/ksapi/unlinkObject" , "/acplt/services/Service" , "/acplt/services/ExampleService" , "/acplt/openaas/Header" , "/acplt/openaas/SubModel" , "/acplt/openaas/AASComponentManager" , "/acplt/openaas/aas" , "/acplt/openaas/InterfaceDiscoveryServer" , "/acplt/openaas/AASConvertListType" , "/acplt/openaas/modelmanager" , "/acplt/openaas/FindAAS" , "/acplt/openaas/FindPVSL" , "/acplt/openaas/PluggingTwoComponents" , "/acplt/openaas/CheckPluggedStatus" , "/acplt/openaas/SwitchForLCEGenerator" , "/acplt/openaas/simpleMessageCreator" , "/acplt/subModelAdministration/CreateSubModelService" , "/acplt/subModelAdministration/DeleteSubModelService" , "/acplt/subModelAdministration/CreatePropertyValueStatementListService" , "/acplt/subModelAdministration/DeletePropertyValueStatementListService" , "/acplt/subModelAdministration/CreatePropertyValueStatementService" , "/acplt/subModelAdministration/DeletePropertyValueStatementService" , "/acplt/subModelAdministration/SubModelAdministration" , "/acplt/subModelLifeCycleEntry/SubModelLifeCycleEntry" , "/acplt/subModelLifeCycleEntry/LCEGenerator" , "/acplt/subModelLifeCycleEntry/HMIHelperLCEList" , "/acplt/subModelLifeCycleEntry/HMIHelperLCEData" , "/acplt/opcua/uaServer" , "/acplt/opcua/uaIdentificator" , "/acplt/opcua/uaConnection" , "/acplt/opcua/ovNetworkLayer" , "/acplt/opcua/uaSimpleTicketAuthenticator" , "/acplt/openAASDiscoveryServer/OVDataForAAS" , "/acplt/openAASDiscoveryServer/ComponentManager" , "/acplt/openAASDiscoveryServer/DiscoveryServer" , "/acplt/identificationOPCUAInterface/interface" , "/acplt/propertyValueStatementOPCUAInterface/interface" , "/acplt/lifeCycleEntryOPCUAInterface/interface" , "/acplt/servicesOPCUAInterface/interface" , "/acplt/openaasOPCUAInterface/interface" , "/acplt/openaasOPCUAInterface/aasDI" , "/acplt/subModelAdministrationOPCUAInterface/interface" , "/acplt/subModelLifeCycleEntryOPCUAInterface/interface" , "/acplt/Demo/TDVDriveDemoBlock" , "/acplt/raspi/gpioIn" , "/acplt/raspi/gpioOut" , "/acplt/iec61131stdfb/ANYtoANY" , "/acplt/iec61131stdfb/ABS" , "/acplt/iec61131stdfb/SQRT" , "/acplt/iec61131stdfb/LN" , "/acplt/iec61131stdfb/LOG" , "/acplt/iec61131stdfb/EXP" , "/acplt/iec61131stdfb/SIN" , "/acplt/iec61131stdfb/COS" , "/acplt/iec61131stdfb/TAN" , "/acplt/iec61131stdfb/ASIN" , "/acplt/iec61131stdfb/ACOS" , "/acplt/iec61131stdfb/ATAN" , "/acplt/iec61131stdfb/ATAN2" , "/acplt/iec61131stdfb/ADD" , "/acplt/iec61131stdfb/MUL" , "/acplt/iec61131stdfb/SUB" , "/acplt/iec61131stdfb/DIV" , "/acplt/iec61131stdfb/MOD" , "/acplt/iec61131stdfb/EXPT" , "/acplt/iec61131stdfb/MOVE" , "/acplt/iec61131stdfb/SHL" , "/acplt/iec61131stdfb/SHR" , "/acplt/iec61131stdfb/ROL" , "/acplt/iec61131stdfb/ROR" , "/acplt/iec61131stdfb/AND" , "/acplt/iec61131stdfb/OR" , "/acplt/iec61131stdfb/XOR" , "/acplt/iec61131stdfb/NOT" , "/acplt/iec61131stdfb/SEL" , "/acplt/iec61131stdfb/MAX" , "/acplt/iec61131stdfb/MIN" , "/acplt/iec61131stdfb/LIMIT" , "/acplt/iec61131stdfb/MUX" , "/acplt/iec61131stdfb/GT" , "/acplt/iec61131stdfb/GE" , "/acplt/iec61131stdfb/EQ" , "/acplt/iec61131stdfb/LE" , "/acplt/iec61131stdfb/LT" , "/acplt/iec61131stdfb/NE" , "/acplt/iec61131stdfb/LEN" , "/acplt/iec61131stdfb/LEFT" , "/acplt/iec61131stdfb/RIGHT" , "/acplt/iec61131stdfb/MID" , "/acplt/iec61131stdfb/CONCAT" , "/acplt/iec61131stdfb/INSERT" , "/acplt/iec61131stdfb/DELETE" , "/acplt/iec61131stdfb/REPLACE" , "/acplt/iec61131stdfb/FIND" , "/acplt/iec61131stdfb/SR" , "/acplt/iec61131stdfb/RS" , "/acplt/iec61131stdfb/RTRIG" , "/acplt/iec61131stdfb/FTRIG" , "/acplt/iec61131stdfb/CTU" , "/acplt/iec61131stdfb/CTD" , "/acplt/iec61131stdfb/CTUD" , "/acplt/iec61131stdfb/TP" , "/acplt/iec61131stdfb/TON" , "/acplt/iec61131stdfb/TOFF" , "/acplt/iec61131stdfb/StateWatch" , "/acplt/iec61131stdfb/CONCATVEC" , "/acplt/vdivde3696/c" , "/acplt/vdivde3696/abs" , "/acplt/vdivde3696/acos" , "/acplt/vdivde3696/add" , "/acplt/vdivde3696/am" , "/acplt/vdivde3696/and" , "/acplt/vdivde3696/asin" , "/acplt/vdivde3696/atan" , "/acplt/vdivde3696/aver" , "/acplt/vdivde3696/bitn" , "/acplt/vdivde3696/cos" , "/acplt/vdivde3696/cs" , "/acplt/vdivde3696/ct" , "/acplt/vdivde3696/deadt" , "/acplt/vdivde3696/demuxb" , "/acplt/vdivde3696/demuxn" , "/acplt/vdivde3696/dif" , "/acplt/vdivde3696/div" , "/acplt/vdivde3696/eq" , "/acplt/vdivde3696/exp" , "/acplt/vdivde3696/expt" , "/acplt/vdivde3696/fio" , "/acplt/vdivde3696/ftrig" , "/acplt/vdivde3696/ge" , "/acplt/vdivde3696/gt" , "/acplt/vdivde3696/hb" , "/acplt/vdivde3696/hn" , "/acplt/vdivde3696/integr" , "/acplt/vdivde3696/le" , "/acplt/vdivde3696/limit" , "/acplt/vdivde3696/ln" , "/acplt/vdivde3696/log" , "/acplt/vdivde3696/lt" , "/acplt/vdivde3696/max" , "/acplt/vdivde3696/min" , "/acplt/vdivde3696/mod" , "/acplt/vdivde3696/mul" , "/acplt/vdivde3696/muxb" , "/acplt/vdivde3696/muxn" , "/acplt/vdivde3696/ne" , "/acplt/vdivde3696/nonlin" , "/acplt/vdivde3696/not" , "/acplt/vdivde3696/or" , "/acplt/vdivde3696/rsff" , "/acplt/vdivde3696/rtrig" , "/acplt/vdivde3696/sam" , "/acplt/vdivde3696/scal" , "/acplt/vdivde3696/selb" , "/acplt/vdivde3696/seln" , "/acplt/vdivde3696/seo" , "/acplt/vdivde3696/sin" , "/acplt/vdivde3696/sqrt" , "/acplt/vdivde3696/srff" , "/acplt/vdivde3696/sub" , "/acplt/vdivde3696/tan" , "/acplt/vdivde3696/tof1" , "/acplt/vdivde3696/ton1" , "/acplt/vdivde3696/tp1" , "/acplt/vdivde3696/xor"};
+      libraries[26] : OUTPUT STRING = {"/acplt/ov" , "/acplt/ksbase" , "/acplt/TCPbind" , "/acplt/ksxdr" , "/acplt/kshttp" , "/acplt/fb" , "/acplt/MessageSys" , "/acplt/ksapi" , "/acplt/identification" , "/acplt/identificationOPCUAInterface" , "/acplt/opcua" , "/acplt/iec61131stdfb" , "/acplt/lifeCycleEntry" , "/acplt/lifeCycleEntryOPCUAInterface" , "/acplt/openAASDiscoveryServer" , "/acplt/openaasOPCUAInterface" , "/acplt/propertyValueStatementOPCUAInterface" , "/acplt/propertyValueStatement" , "/acplt/services" , "/acplt/servicesOPCUAInterface" , "/acplt/subModelAdministrationOPCUAInterface" , "/acplt/subModelLifeCycleEntryOPCUAInterface" , "/acplt/vdivde3696" , "/acplt/openaas" , "/acplt/subModelAdministration" , "/acplt/subModelLifeCycleEntry"};
+      classes[239] : OUTPUT STRING = {"/acplt/ov/domain" , "/acplt/ov/library" , "/acplt/ksbase/RootComTask" , "/acplt/ksbase/ServerRep" , "/acplt/ksbase/Manager" , "/acplt/ksbase/NoneTicketAuthenticator" , "/acplt/ksbase/NoneTicketGenerator" , "/acplt/TCPbind/TCPChannel" , "/acplt/TCPbind/aresWorker" , "/acplt/TCPbind/TCPListener" , "/acplt/ksxdr/xdrIdentificator" , "/acplt/ksxdr/xdrClientHandler" , "/acplt/ksxdr/xdrSimpleTicketAuthenticator" , "/acplt/ksxdr/xdrManagerCom" , "/acplt/ksxdr/xdrClient" , "/acplt/ksxdr/PMAskList" , "/acplt/kshttp/httpIdentificator" , "/acplt/kshttp/httpclienthandler" , "/acplt/kshttp/getvarpushhandler" , "/acplt/kshttp/httpSimpleTicketAuthenticator" , "/acplt/kshttp/httpManagerCom" , "/acplt/kshttp/httpClient" , "/acplt/kshttp/genericHttpClient" , "/acplt/kshttp/authenticatedsession" , "/acplt/kshttp/staticfile" , "/acplt/fb/dbinfoclass" , "/acplt/fb/task" , "/acplt/fb/connection" , "/acplt/fb/functionchart" , "/acplt/fb/boolport" , "/acplt/fb/intport" , "/acplt/fb/uintport" , "/acplt/fb/singleport" , "/acplt/fb/doubleport" , "/acplt/fb/timeport" , "/acplt/fb/timespanport" , "/acplt/fb/stringport" , "/acplt/fb/anyport" , "/acplt/fb/boolvecport" , "/acplt/fb/intvecport" , "/acplt/fb/uintvecport" , "/acplt/fb/singlevecport" , "/acplt/fb/doublevecport" , "/acplt/fb/timevecport" , "/acplt/fb/timespanvecport" , "/acplt/fb/stringvecport" , "/acplt/fb/controlchart" , "/acplt/MessageSys/MsgDelivery" , "/acplt/MessageSys/Message" , "/acplt/MessageSys/inbox" , "/acplt/MessageSys/msgIdentificator" , "/acplt/MessageSys/msgHandler" , "/acplt/ksapi/createObject" , "/acplt/ksapi/deleteObject" , "/acplt/ksapi/getVar" , "/acplt/ksapi/setVar" , "/acplt/ksapi/getEPidentifiers" , "/acplt/ksapi/getEP" , "/acplt/ksapi/Variable" , "/acplt/ksapi/renameObject" , "/acplt/ksapi/linkObject" , "/acplt/ksapi/unlinkObject" , "/acplt/identification/Identification" , "/acplt/identificationOPCUAInterface/interface" , "/acplt/opcua/uaServer" , "/acplt/opcua/uaIdentificator" , "/acplt/opcua/uaConnection" , "/acplt/opcua/ovNetworkLayer" , "/acplt/opcua/uaSimpleTicketAuthenticator" , "/acplt/iec61131stdfb/ANYtoANY" , "/acplt/iec61131stdfb/ABS" , "/acplt/iec61131stdfb/SQRT" , "/acplt/iec61131stdfb/LN" , "/acplt/iec61131stdfb/LOG" , "/acplt/iec61131stdfb/EXP" , "/acplt/iec61131stdfb/SIN" , "/acplt/iec61131stdfb/COS" , "/acplt/iec61131stdfb/TAN" , "/acplt/iec61131stdfb/ASIN" , "/acplt/iec61131stdfb/ACOS" , "/acplt/iec61131stdfb/ATAN" , "/acplt/iec61131stdfb/ATAN2" , "/acplt/iec61131stdfb/ADD" , "/acplt/iec61131stdfb/MUL" , "/acplt/iec61131stdfb/SUB" , "/acplt/iec61131stdfb/DIV" , "/acplt/iec61131stdfb/MOD" , "/acplt/iec61131stdfb/EXPT" , "/acplt/iec61131stdfb/MOVE" , "/acplt/iec61131stdfb/SHL" , "/acplt/iec61131stdfb/SHR" , "/acplt/iec61131stdfb/ROL" , "/acplt/iec61131stdfb/ROR" , "/acplt/iec61131stdfb/AND" , "/acplt/iec61131stdfb/OR" , "/acplt/iec61131stdfb/XOR" , "/acplt/iec61131stdfb/NOT" , "/acplt/iec61131stdfb/SEL" , "/acplt/iec61131stdfb/MAX" , "/acplt/iec61131stdfb/MIN" , "/acplt/iec61131stdfb/LIMIT" , "/acplt/iec61131stdfb/MUX" , "/acplt/iec61131stdfb/GT" , "/acplt/iec61131stdfb/GE" , "/acplt/iec61131stdfb/EQ" , "/acplt/iec61131stdfb/LE" , "/acplt/iec61131stdfb/LT" , "/acplt/iec61131stdfb/NE" , "/acplt/iec61131stdfb/LEN" , "/acplt/iec61131stdfb/LEFT" , "/acplt/iec61131stdfb/RIGHT" , "/acplt/iec61131stdfb/MID" , "/acplt/iec61131stdfb/CONCAT" , "/acplt/iec61131stdfb/INSERT" , "/acplt/iec61131stdfb/DELETE" , "/acplt/iec61131stdfb/REPLACE" , "/acplt/iec61131stdfb/FIND" , "/acplt/iec61131stdfb/SR" , "/acplt/iec61131stdfb/RS" , "/acplt/iec61131stdfb/RTRIG" , "/acplt/iec61131stdfb/FTRIG" , "/acplt/iec61131stdfb/CTU" , "/acplt/iec61131stdfb/CTD" , "/acplt/iec61131stdfb/CTUD" , "/acplt/iec61131stdfb/TP" , "/acplt/iec61131stdfb/TON" , "/acplt/iec61131stdfb/TOFF" , "/acplt/iec61131stdfb/StateWatch" , "/acplt/iec61131stdfb/CONCATVEC" , "/acplt/lifeCycleEntry/LifeCycleEntry" , "/acplt/lifeCycleEntry/LifeCycleArchive" , "/acplt/lifeCycleEntryOPCUAInterface/interface" , "/acplt/openAASDiscoveryServer/OVDataForAAS" , "/acplt/openAASDiscoveryServer/ComponentManager" , "/acplt/openAASDiscoveryServer/DiscoveryServer" , "/acplt/openaasOPCUAInterface/interface" , "/acplt/openaasOPCUAInterface/aasDI" , "/acplt/propertyValueStatementOPCUAInterface/interface" , "/acplt/propertyValueStatement/PropertyValueStatement" , "/acplt/propertyValueStatement/CarrierId" , "/acplt/propertyValueStatement/PropertyId" , "/acplt/propertyValueStatement/ExpressionLogic" , "/acplt/propertyValueStatement/ExpressionSemantic" , "/acplt/propertyValueStatement/View" , "/acplt/propertyValueStatement/Visibility" , "/acplt/propertyValueStatement/PropertyValueStatementList" , "/acplt/propertyValueStatement/MatchPVSRA" , "/acplt/propertyValueStatement/MatchPVSLRA" , "/acplt/propertyValueStatement/PVSGenerator" , "/acplt/propertyValueStatement/HMIHelperPVSL" , "/acplt/propertyValueStatement/modelmanager" , "/acplt/services/Service" , "/acplt/services/ExampleService" , "/acplt/servicesOPCUAInterface/interface" , "/acplt/subModelAdministrationOPCUAInterface/interface" , "/acplt/subModelLifeCycleEntryOPCUAInterface/interface" , "/acplt/vdivde3696/c" , "/acplt/vdivde3696/abs" , "/acplt/vdivde3696/acos" , "/acplt/vdivde3696/add" , "/acplt/vdivde3696/am" , "/acplt/vdivde3696/and" , "/acplt/vdivde3696/asin" , "/acplt/vdivde3696/atan" , "/acplt/vdivde3696/aver" , "/acplt/vdivde3696/bitn" , "/acplt/vdivde3696/cos" , "/acplt/vdivde3696/cs" , "/acplt/vdivde3696/ct" , "/acplt/vdivde3696/deadt" , "/acplt/vdivde3696/demuxb" , "/acplt/vdivde3696/demuxn" , "/acplt/vdivde3696/dif" , "/acplt/vdivde3696/div" , "/acplt/vdivde3696/eq" , "/acplt/vdivde3696/exp" , "/acplt/vdivde3696/expt" , "/acplt/vdivde3696/fio" , "/acplt/vdivde3696/ftrig" , "/acplt/vdivde3696/ge" , "/acplt/vdivde3696/gt" , "/acplt/vdivde3696/hb" , "/acplt/vdivde3696/hn" , "/acplt/vdivde3696/integr" , "/acplt/vdivde3696/le" , "/acplt/vdivde3696/limit" , "/acplt/vdivde3696/ln" , "/acplt/vdivde3696/log" , "/acplt/vdivde3696/lt" , "/acplt/vdivde3696/max" , "/acplt/vdivde3696/min" , "/acplt/vdivde3696/mod" , "/acplt/vdivde3696/mul" , "/acplt/vdivde3696/muxb" , "/acplt/vdivde3696/muxn" , "/acplt/vdivde3696/ne" , "/acplt/vdivde3696/nonlin" , "/acplt/vdivde3696/not" , "/acplt/vdivde3696/or" , "/acplt/vdivde3696/rsff" , "/acplt/vdivde3696/rtrig" , "/acplt/vdivde3696/sam" , "/acplt/vdivde3696/scal" , "/acplt/vdivde3696/selb" , "/acplt/vdivde3696/seln" , "/acplt/vdivde3696/seo" , "/acplt/vdivde3696/sin" , "/acplt/vdivde3696/sqrt" , "/acplt/vdivde3696/srff" , "/acplt/vdivde3696/sub" , "/acplt/vdivde3696/tan" , "/acplt/vdivde3696/tof1" , "/acplt/vdivde3696/ton1" , "/acplt/vdivde3696/tp1" , "/acplt/vdivde3696/xor" , "/acplt/openaas/Header" , "/acplt/openaas/SubModel" , "/acplt/openaas/AASComponentManager" , "/acplt/openaas/aas" , "/acplt/openaas/InterfaceDiscoveryServer" , "/acplt/openaas/AASConvertListType" , "/acplt/openaas/modelmanager" , "/acplt/openaas/FindAAS" , "/acplt/openaas/FindPVSL" , "/acplt/openaas/PluggingTwoComponents" , "/acplt/openaas/CheckPluggedStatus" , "/acplt/openaas/SwitchForLCEGenerator" , "/acplt/openaas/simpleMessageCreator" , "/acplt/subModelAdministration/CreateSubModelService" , "/acplt/subModelAdministration/DeleteSubModelService" , "/acplt/subModelAdministration/CreatePropertyValueStatementListService" , "/acplt/subModelAdministration/DeletePropertyValueStatementListService" , "/acplt/subModelAdministration/CreatePropertyValueStatementService" , "/acplt/subModelAdministration/DeletePropertyValueStatementService" , "/acplt/subModelAdministration/SubModelAdministration" , "/acplt/subModelLifeCycleEntry/SubModelLifeCycleEntry" , "/acplt/subModelLifeCycleEntry/LCEGenerator" , "/acplt/subModelLifeCycleEntry/HMIHelperLCEList" , "/acplt/subModelLifeCycleEntry/HMIHelperLCEData"};
       associations[23] : OUTPUT STRING = {"/acplt/ov/containment" , "/acplt/ov/instantiation" , "/acplt/ov/inheritance" , "/acplt/ov/parentrelationship" , "/acplt/ov/childrelationship" , "/acplt/ov/construction" , "/acplt/ov/embedment" , "/acplt/ksbase/AssocComTaskList" , "/acplt/ksbase/AssocChannelClientHandler" , "/acplt/ksbase/AssocChannelDataHandler" , "/acplt/ksbase/AssocCurrentChannel" , "/acplt/ksbase/AssocClientToTicketGenerator" , "/acplt/TCPbind/AssocSpecificClientHandler" , "/acplt/fb/variables" , "/acplt/fb/tasklist" , "/acplt/fb/inputconnections" , "/acplt/fb/outputconnections" , "/acplt/MessageSys/MsgDelivery2CurrentMessage" , "/acplt/MessageSys/MsgDelivery2Message" , "/acplt/MessageSys/Message2Channel" , "/acplt/MessageSys/SendExtension2Message" , "/acplt/ksapi/operationToVariable" , "/acplt/opcua/networkLayerToConnection"};
-      instanceCount : OUTPUT UINT = 2910;
+      instanceCount : OUTPUT UINT = 2870;
       database_fragmentation : OUTPUT UINT = 0;
-      database_free : OUTPUT UINT = 499216928;
-      database_name : OUTPUT STRING = "/home/pi/rte/build/acplt/servers/MANAGER/db.ovd";
-      database_size : OUTPUT UINT = 500002816;
+      database_free : OUTPUT UINT = 9227440;
+      database_name : OUTPUT STRING = "/home/opcua/Downloads/rte/build/acplt/servers/MANAGER/db.ovd";
+      database_size : OUTPUT UINT = 10002432;
       database_started : OUTPUT BOOL = TRUE;
-      database_used : OUTPUT UINT = 785888;
+      database_used : OUTPUT UINT = 774992;
       name : OUTPUT STRING = "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
       ks_version : OUTPUT STRING = "";
       libov_version : OUTPUT STRING = "2.0.0";
       semantic_flags[32] : OUTPUT STRING = {"" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , ""};
       server_description : OUTPUT STRING = "generic ACPLT/OV server";
       server_name : OUTPUT STRING = "MANAGER";
-      server_time : OUTPUT TIME = 2017-10-19 16:40:03.403692;
+      server_time : OUTPUT TIME = 2017-10-25 12:37:09.639875;
       server_version : OUTPUT STRING = "1.3.2";
       server_run : INPUT BOOL = TRUE;
-      serverPID : OUTPUT UINT = 811;
-      startup_time : OUTPUT TIME = 2017-10-19 15:18:10.832144;
+      serverPID : OUTPUT UINT = 4003;
+      startup_time : OUTPUT TIME = 2017-10-25 12:33:38.892187;
       running_db_backup : OUTPUT BOOL = FALSE;
       write_db_backup : OUTPUT BOOL = FALSE;
       ov_time_offset : INPUT TIME_SPAN = 0.000000;
@@ -3449,7 +3305,7 @@
       maxhierarchydepth : INPUT UINT = 64;
       ov_scheduler_allowedjitter : INPUT UINT = 0;
       ov_scheduler_numexceeds : OUTPUT UINT = 0;
-      cmdline_options : OUTPUT STRING = "CONFDIR=/home/pi/rte/build/acplt/servers/MANAGER/";
+      cmdline_options : OUTPUT STRING = "CONFDIR=/home/opcua/Downloads/rte/build/acplt/servers/MANAGER/";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
