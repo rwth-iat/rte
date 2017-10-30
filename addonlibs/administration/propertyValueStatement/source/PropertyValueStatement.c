@@ -81,42 +81,54 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatement_PropertyValueStatement_construc
 	}
 
 	if (CarrierIdFound == FALSE){
-		result = Ov_CreateObject(propertyValueStatement_CarrierId, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "CarrierId");
+		//result = Ov_CreateObject(propertyValueStatement_CarrierId, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "CarrierId");
+		result = ov_class_createobject(pclass_propertyValueStatement_CarrierId, Ov_DynamicPtrCast(ov_domain, pobj),
+				"CarrierId", OV_PMH_DEFAULT,  NULL, NULL, NULL, &pchild);
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create CarrierId");
 			return result;
 		}
 	}
 	if (PropertyIdFound == FALSE){
-		result = Ov_CreateObject(propertyValueStatement_PropertyId, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "PropertyId");
+		//result = Ov_CreateObject(propertyValueStatement_PropertyId, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "PropertyId");
+		result = ov_class_createobject(pclass_propertyValueStatement_PropertyId, Ov_DynamicPtrCast(ov_domain, pobj),
+				"PropertyId", OV_PMH_DEFAULT,  NULL, NULL, NULL, &pchild);
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create PropertyId");
 			return result;
 		}
 	}
 	if (ExpressionLogicFound == FALSE){
-		result = Ov_CreateObject(propertyValueStatement_ExpressionLogic, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "ExpressionLogic");
+		//result = Ov_CreateObject(propertyValueStatement_ExpressionLogic, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "ExpressionLogic");#
+		result = ov_class_createobject(pclass_propertyValueStatement_ExpressionLogic, Ov_DynamicPtrCast(ov_domain, pobj),
+				"ExpressionLogic", OV_PMH_DEFAULT,  NULL, NULL, NULL, &pchild);
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create ExpressionLogic");
 			return result;
 		}
 	}
 	if (ExpressionSemanticFound == FALSE){
-		result = Ov_CreateObject(propertyValueStatement_ExpressionSemantic, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "ExpressionSemantic");
+		//result = Ov_CreateObject(propertyValueStatement_ExpressionSemantic, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "ExpressionSemantic");
+		result = ov_class_createobject(pclass_propertyValueStatement_ExpressionSemantic, Ov_DynamicPtrCast(ov_domain, pobj),
+				"ExpressionSemantic", OV_PMH_DEFAULT,  NULL, NULL, NULL, &pchild);
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create ExpressionSemantic");
 			return result;
 		}
 	}
 	if (ViewFound == FALSE){
-		result = Ov_CreateObject(propertyValueStatement_View, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "View");
+		//result = Ov_CreateObject(propertyValueStatement_View, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "View");
+		result = ov_class_createobject(pclass_propertyValueStatement_View, Ov_DynamicPtrCast(ov_domain, pobj),
+				"View", OV_PMH_DEFAULT,  NULL, NULL, NULL, &pchild);
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create View");
 			return result;
 		}
 	}
 	if (VisibilityFound == FALSE){
-		result = Ov_CreateObject(propertyValueStatement_Visibility, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "Visibility");
+		//result = Ov_CreateObject(propertyValueStatement_Visibility, pchild, Ov_DynamicPtrCast(ov_domain, pobj), "Visibility");
+		result = ov_class_createobject(pclass_propertyValueStatement_Visibility, Ov_DynamicPtrCast(ov_domain, pobj),
+				"Visibility", OV_PMH_DEFAULT,  NULL, NULL, NULL, &pchild);
 		if(Ov_Fail(result)){
 			ov_logfile_error("Fatal: could not create Visibility");
 			return result;
