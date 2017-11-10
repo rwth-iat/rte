@@ -16,89 +16,89 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_openaas
-#define OV_COMPILE_LIBRARY_openaas
+#ifndef OV_COMPILE_LIBRARY_Demo
+#define OV_COMPILE_LIBRARY_Demo
 #endif
 
 
-#include "openaas.h"
+#include "Demo.h"
 #include "libov/ov_macros.h"
 #include "openaas_helpers.h"
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_AASIdString1_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_AASIdString1_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_AASIdString1,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_AASIdType1_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_AASIdType1_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_UINT  value
 ) {
     pobj->v_AASIdType1 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_PVSLName1_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSLName1_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_PVSLName1,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_PVSName1_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSName1_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_PVSName1,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_AASIdString2_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_AASIdString2_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_AASIdString2,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_AASIdType2_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_AASIdType2_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_UINT  value
 ) {
     pobj->v_AASIdType2 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_PVSLName2_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSLName2_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_PVSLName2,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_PVSName2_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSName2_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_PVSName2,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_CheckPluggedStatus_Plugged_set(
-    OV_INSTPTR_openaas_CheckPluggedStatus          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_Plugged_set(
+    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_BOOL  value
 ) {
     pobj->v_Plugged = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void openaas_CheckPluggedStatus_typemethod(
+OV_DLLFNCEXPORT void Demo_CheckPluggedStatus_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_openaas_CheckPluggedStatus pinst = Ov_StaticPtrCast(openaas_CheckPluggedStatus, pfb);
+    OV_INSTPTR_Demo_CheckPluggedStatus pinst = Ov_StaticPtrCast(Demo_CheckPluggedStatus, pfb);
 
     pinst->v_Error = 0;
     ov_string_setvalue(&pinst->v_Status, "");
@@ -121,7 +121,7 @@ OV_DLLFNCEXPORT void openaas_CheckPluggedStatus_typemethod(
 	IdentificationType tmpOVSubModelId;
 	IdentificationType_init(&tmpOVSubModelId);
 
-	//pinst->v_Error |= openaas_modelmanager_getPVS(aasId1, tmpOVSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
+	//pinst->v_Error |= Demo_modelmanager_getPVS(aasId1, tmpOVSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
 	if ((pvs1.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 		if (pvs1.Value.value.valueunion.val_bool == pinst->v_Plugged){
 			if (pinst->v_Plugged == TRUE)
@@ -130,7 +130,7 @@ OV_DLLFNCEXPORT void openaas_CheckPluggedStatus_typemethod(
 				ov_string_setvalue(&pinst->v_Status, "AAS1 allready deplugged");
 		}
 	}
-	//pinst->v_Error |= openaas_modelmanager_getPVS(aasId2, tmpOVSubModelId, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
+	//pinst->v_Error |= Demo_modelmanager_getPVS(aasId2, tmpOVSubModelId, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
 	if ((pvs2.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 		if (pvs2.Value.value.valueunion.val_bool == pinst->v_Plugged){
 			if (pinst->v_Plugged == TRUE)

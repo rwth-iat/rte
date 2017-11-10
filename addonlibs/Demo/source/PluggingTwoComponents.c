@@ -16,218 +16,204 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_openaas
-#define OV_COMPILE_LIBRARY_openaas
+#ifndef OV_COMPILE_LIBRARY_Demo
+#define OV_COMPILE_LIBRARY_Demo
 #endif
 
 
-#include "openaas.h"
+#include "Demo.h"
 #include "libov/ov_macros.h"
 #include "openaas_helpers.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_AASIdString1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_AASIdString1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_AASIdString1,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_AASIdType1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_AASIdType1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_UINT  value
 ) {
     pobj->v_AASIdType1 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCECreatingInstanceIdString1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCECreatingInstanceIdString1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCECreatingInstanceIdString1,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCECreatingInstanceIdType1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCECreatingInstanceIdType1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_UINT  value
 ) {
     pobj->v_LCECreatingInstanceIdType1 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCEWritingInstanceIdString1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCEWritingInstanceIdString1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCEWritingInstanceIdString1,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCEWritingInstanceIdType1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCEWritingInstanceIdType1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_UINT  value
 ) {
     pobj->v_LCEWritingInstanceIdType1 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCEEventClass1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCEEventClass1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCEEventClass1,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCESubject1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCESubject1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCESubject1,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCETimeStamp1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCETimeStamp1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_TIME*  value
 ) {
     pobj->v_LCETimeStamp1 = *value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCETimeStampExtern1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCETimeStampExtern1_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_BOOL  value
 ) {
     pobj->v_LCETimeStampExtern1 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_PVSLName1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_PVSID_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_PVSLName1,value);
+    return ov_string_setvalue(&pobj->v_PVSID,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_PVSName1_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_PVSName1,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_AASIdString2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_AASIdString2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_AASIdString2,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_AASIdType2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_AASIdType2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_UINT  value
 ) {
     pobj->v_AASIdType2 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCECreatingInstanceIdString2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCECreatingInstanceIdString2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCECreatingInstanceIdString2,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCECreatingInstanceIdType2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCECreatingInstanceIdType2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_UINT  value
 ) {
     pobj->v_LCECreatingInstanceIdType2 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCEWritingInstanceIdString2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCEWritingInstanceIdString2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCEWritingInstanceIdString2,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCEWritingInstanceIdType2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCEWritingInstanceIdType2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_UINT  value
 ) {
     pobj->v_LCEWritingInstanceIdType2 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCEEventClass2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCEEventClass2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCEEventClass2,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCESubject2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCESubject2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_LCESubject2,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCETimeStamp2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCETimeStamp2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_TIME*  value
 ) {
     pobj->v_LCETimeStamp2 = *value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_LCETimeStampExtern2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_LCETimeStampExtern2_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_BOOL  value
 ) {
     pobj->v_LCETimeStampExtern2 = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_PVSLName2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_PVS2ID_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_PVSLName2,value);
+    return ov_string_setvalue(&pobj->v_PVS2ID,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_PVSName2_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_PVSName2,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_Plugged_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_Plugged_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_BOOL  value
 ) {
     pobj->v_Plugged = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openaas_PluggingTwoComponents_Generate_set(
-    OV_INSTPTR_openaas_PluggingTwoComponents          pobj,
+OV_DLLFNCEXPORT OV_RESULT Demo_PluggingTwoComponents_Generate_set(
+    OV_INSTPTR_Demo_PluggingTwoComponents          pobj,
     const OV_BOOL  value
 ) {
     pobj->v_Generate = value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
+OV_DLLFNCEXPORT void Demo_PluggingTwoComponents_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_openaas_PluggingTwoComponents pinst = Ov_StaticPtrCast(openaas_PluggingTwoComponents, pfb);
+    OV_INSTPTR_Demo_PluggingTwoComponents pinst = Ov_StaticPtrCast(Demo_PluggingTwoComponents, pfb);
 
     pinst->v_Status = 0;
 
@@ -313,36 +299,57 @@ OV_DLLFNCEXPORT void openaas_PluggingTwoComponents_typemethod(
 		Ov_SetAnyValue(&lce1.data, &tmpany);
 		Ov_SetAnyValue(&lce2.data, &tmpany);
 
-		IdentificationType tmpSubModelId;
-		IdentificationType_init(&tmpSubModelId);
+		OV_INSTPTR_ov_object ptr = NULL;
+		OV_INSTPTR_openaas_aas paas = NULL;
+		OV_INSTPTR_subModelLifeCycleEntry_SubModelLifeCycleEntry pSM = NULL;
+		ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId1), 2);
+		if(ptr){
+			paas = Ov_StaticPtrCast(openaas_aas, ptr);
+			if (paas){
+				Ov_ForEachChildEx(ov_containment, &paas->p_Body, pSM, subModelLifeCycleEntry_SubModelLifeCycleEntry) {
+					lifeCycleEntry_LifeCycleArchive_createLCE(&pSM->p_LifeCycleArchiv, lce1);
+				}
+			}
+		}
+		ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId2), 2);
+		if(ptr){
+			paas = Ov_StaticPtrCast(openaas_aas, ptr);
+			if (paas){
+				Ov_ForEachChildEx(ov_containment, &paas->p_Body, pSM, subModelLifeCycleEntry_SubModelLifeCycleEntry) {
+					lifeCycleEntry_LifeCycleArchive_createLCE(&pSM->p_LifeCycleArchiv, lce2);
+				}
+			}
+		}
 
-		// TODO: Find LCE createLCE function
-		//pinst->v_Status = openaas_modelmanager_createLCE(aasId1, lce1);
-		//pinst->v_Status |= openaas_modelmanager_createLCE(aasId2, lce2);
-		//pinst->v_Status |= openaas_modelmanager_getPVS(aasId1, tmpSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
+		ov_string_setvalue(&pvs1.ID.IdSpec, pinst->v_PVSID);
+		pvs1.ID.IdType = URI;
+		pinst->v_Status |= openaas_modelmanager_getPVS(aasId1, pvs1.ID, &pvs1.PvsName, &pvs1.CarrierId, &pvs1.ExpressionLogic, &pvs1.ExpressionSemantic, &pvs1.PropertyId, &pvs1.View, &pvs1.Visibility, &pvs1.Value);
 		if ((pvs1.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 			pvs1.Value.value.valueunion.val_bool = pinst->v_Plugged;
-			//pinst->v_Status |= openaas_modelmanager_setPVS(aasId1, tmpSubModelId, pinst->v_PVSLName1, pvs1);
-		}
-		//pinst->v_Status |= openaas_modelmanager_getPVS(aasId2, tmpSubModelId, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
-		if ((pvs2.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
-			pvs2.Value.value.valueunion.val_bool = pinst->v_Plugged;
-			//pinst->v_Status |= openaas_modelmanager_setPVS(aasId2, tmpSubModelId, pinst->v_PVSLName2, pvs2);
+			pinst->v_Status |= openaas_modelmanager_setPVS(aasId1, pvs1.ID, 0x08, pvs1.PvsName, pvs1.CarrierId, pvs1.ExpressionLogic, pvs1.ExpressionSemantic, pvs1.PropertyId, pvs1.View, pvs1.Visibility, pvs1.Value);
 		}
 
-		IdentificationType_deleteMembers(&tmpSubModelId);
-		ov_database_free(tmpany.value.valueunion.val_string);
-		PropertyValueStatement_deleteMembers(&pvs1);
-		PropertyValueStatement_deleteMembers(&pvs2);
+		ov_string_setvalue(&pvs2.ID.IdSpec, pinst->v_PVS2ID);
+		pvs2.ID.IdType = URI;
+		pinst->v_Status |= openaas_modelmanager_getPVS(aasId2, pvs2.ID, &pvs2.PvsName, &pvs2.CarrierId, &pvs2.ExpressionLogic, &pvs2.ExpressionSemantic, &pvs2.PropertyId, &pvs2.View, &pvs2.Visibility, &pvs2.Value);
+		if ((pvs2.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
+			pvs2.Value.value.valueunion.val_bool = pinst->v_Plugged;
+			pinst->v_Status |= openaas_modelmanager_setPVS(aasId2, pvs2.ID, 0x08, pvs2.PvsName, pvs2.CarrierId, pvs2.ExpressionLogic, pvs2.ExpressionSemantic, pvs2.PropertyId, pvs2.View, pvs2.Visibility, pvs2.Value);
+		}
+
+		Ov_SetAnyValue(&tmpany, NULL);
 		LifeCycleEntry_deleteMembers(&lce1);
 		LifeCycleEntry_deleteMembers(&lce2);
 		IdentificationType_deleteMembers(&aasId1);
 		IdentificationType_deleteMembers(&aasId2);
+		PropertyValueStatement_deleteMembers(&pvs1);
+		PropertyValueStatement_deleteMembers(&pvs2);
 		ov_database_free(tmpString1);
 		ov_database_free(tmpString2);
-	}
+
 		pinst->v_State = 2;
 		break;
+	}
 	case 2:
 		if(pinst->v_Generate == FALSE)
 			pinst->v_State = 0;

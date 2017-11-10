@@ -16,24 +16,24 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_openaas
-#define OV_COMPILE_LIBRARY_openaas
+#ifndef OV_COMPILE_LIBRARY_Demo
+#define OV_COMPILE_LIBRARY_Demo
 #endif
 
 
-#include "openaas.h"
+#include "Demo.h"
 #include "openaas_helpers.h"
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT void openaas_FindPVSL_typemethod(
+OV_DLLFNCEXPORT void Demo_FindPVSL_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_openaas_FindPVSL pinst = Ov_StaticPtrCast(openaas_FindPVSL, pfb);
+    OV_INSTPTR_Demo_FindPVSL pinst = Ov_StaticPtrCast(Demo_FindPVSL, pfb);
 
     IdentificationType aasId1;
 	IdentificationType_init(&aasId1);
