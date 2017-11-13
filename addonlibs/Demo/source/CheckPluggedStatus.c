@@ -104,9 +104,6 @@ OV_DLLFNCEXPORT void Demo_CheckPluggedStatus_typemethod(
 	PropertyValueStatement pvs2;
 	PropertyValueStatement_init(&pvs2);
 
-	IdentificationType tmpOVSubModelId;
-	IdentificationType_init(&tmpOVSubModelId);
-
 	ov_string_setvalue(&pvs1.ID.IdSpec, pinst->v_PVSID);
 	pvs1.ID.IdType = URI;
 	if (openaas_modelmanager_getPVS(aasId1, pvs1.ID, &pvs1.PvsName, &pvs1.CarrierId, &pvs1.ExpressionLogic, &pvs1.ExpressionSemantic, &pvs1.PropertyId, &pvs1.View, &pvs1.Visibility, &pvs1.Value) == 0){
@@ -140,7 +137,6 @@ OV_DLLFNCEXPORT void Demo_CheckPluggedStatus_typemethod(
 	PropertyValueStatement_deleteMembers(&pvs2);
 	IdentificationType_deleteMembers(&aasId1);
 	IdentificationType_deleteMembers(&aasId2);
-	IdentificationType_deleteMembers(&tmpOVSubModelId);
 
     return;
 }
