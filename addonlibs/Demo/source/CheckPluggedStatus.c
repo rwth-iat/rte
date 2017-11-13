@@ -40,18 +40,11 @@ OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_AASIdType1_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSLName1_set(
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSID_set(
     OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_PVSLName1,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSName1_set(
-    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_PVSName1,value);
+    return ov_string_setvalue(&pobj->v_PVSID,value);
 }
 
 OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_AASIdString2_set(
@@ -69,18 +62,11 @@ OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_AASIdType2_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSLName2_set(
+OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVS2ID_set(
     OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_PVSLName2,value);
-}
-
-OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_PVSName2_set(
-    OV_INSTPTR_Demo_CheckPluggedStatus          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_PVSName2,value);
+    return ov_string_setvalue(&pobj->v_PVS2ID,value);
 }
 
 OV_DLLFNCEXPORT OV_RESULT Demo_CheckPluggedStatus_Plugged_set(
@@ -121,25 +107,34 @@ OV_DLLFNCEXPORT void Demo_CheckPluggedStatus_typemethod(
 	IdentificationType tmpOVSubModelId;
 	IdentificationType_init(&tmpOVSubModelId);
 
-	//pinst->v_Error |= Demo_modelmanager_getPVS(aasId1, tmpOVSubModelId, pinst->v_PVSLName1, pinst->v_PVSName1, &pvs1);
-	if ((pvs1.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
-		if (pvs1.Value.value.valueunion.val_bool == pinst->v_Plugged){
-			if (pinst->v_Plugged == TRUE)
-				ov_string_setvalue(&pinst->v_Status, "AAS1 allready plugged");
-			else
-				ov_string_setvalue(&pinst->v_Status, "AAS1 allready deplugged");
+	ov_string_setvalue(&pvs1.ID.IdSpec, pinst->v_PVSID);
+	pvs1.ID.IdType = URI;
+	if (openaas_modelmanager_getPVS(aasId1, pvs1.ID, &pvs1.PvsName, &pvs1.CarrierId, &pvs1.ExpressionLogic, &pvs1.ExpressionSemantic, &pvs1.PropertyId, &pvs1.View, &pvs1.Visibility, &pvs1.Value) == 0){
+		if ((pvs1.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
+			if (pvs1.Value.value.valueunion.val_bool == pinst->v_Plugged){
+				if (pinst->v_Plugged == TRUE)
+					ov_string_setvalue(&pinst->v_Status, "AAS1 allready plugged");
+				else
+					ov_string_setvalue(&pinst->v_Status, "AAS1 allready deplugged");
+			}
 		}
+	}else{
+		ov_string_setvalue(&pinst->v_Status, "Problem while getting PVS Data");
 	}
-	//pinst->v_Error |= Demo_modelmanager_getPVS(aasId2, tmpOVSubModelId, pinst->v_PVSLName2, pinst->v_PVSName2, &pvs2);
-	if ((pvs2.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
-		if (pvs2.Value.value.valueunion.val_bool == pinst->v_Plugged){
-			if (pinst->v_Plugged == TRUE)
-				ov_string_setvalue(&pinst->v_Status, "AAS2 allready plugged");
-			else
-				ov_string_setvalue(&pinst->v_Status, "AAS2 allready deplugged");
+	ov_string_setvalue(&pvs2.ID.IdSpec, pinst->v_PVS2ID);
+	pvs2.ID.IdType = URI;
+	if (openaas_modelmanager_getPVS(aasId2, pvs2.ID, &pvs2.PvsName, &pvs2.CarrierId, &pvs2.ExpressionLogic, &pvs2.ExpressionSemantic, &pvs2.PropertyId, &pvs2.View, &pvs2.Visibility, &pvs2.Value) == 0){
+		if ((pvs2.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
+			if (pvs2.Value.value.valueunion.val_bool == pinst->v_Plugged){
+				if (pinst->v_Plugged == TRUE)
+					ov_string_setvalue(&pinst->v_Status, "AAS2 allready plugged");
+				else
+					ov_string_setvalue(&pinst->v_Status, "AAS2 allready deplugged");
+			}
 		}
+	}else{
+		ov_string_setvalue(&pinst->v_Status, "Problem while getting PVS Data");
 	}
-
 
 	PropertyValueStatement_deleteMembers(&pvs1);
 	PropertyValueStatement_deleteMembers(&pvs2);

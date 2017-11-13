@@ -65,19 +65,18 @@ LIBRARY Demo
             AASID1STRING      : STRING FLAGS = "i" INITIALVALUE    =   "";
             AASID1TYPE        : UINT FLAGS = "i";
             AASID2STRING      : STRING FLAGS = "i" INITIALVALUE    =   "";
-            AASID2TYPE        : UINT FLAGS = "i";
-            PVSL1Name         : STRING FLAGS = "i" INITIALVALUE    =   "";
-            PVSL2Name         : STRING FLAGS = "i" INITIALVALUE    =   "";
-            PVSL1             : STRING FLAGS = "o" INITIALVALUE    =   "";
-            PVSL2             : STRING FLAGS = "o" INITIALVALUE    =   "";
+            AASID2TYPE        : UINT FLAGS = "i";        
+            SubModelName1     : STRING FLAGS = "i" INITIALVALUE    =   "";
+            SubModelName2     : STRING FLAGS = "i" INITIALVALUE    =   "";
+            PVSLName1         : STRING FLAGS = "i" INITIALVALUE    =   "";
+            PVSLName2         : STRING FLAGS = "i" INITIALVALUE    =   "";
+            PVSL1           : STRING FLAGS = "o" INITIALVALUE    =   "";
+            PVSL2           : STRING FLAGS = "o" INITIALVALUE    =   "";
         END_VARIABLES; 
         OPERATIONS 
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS; 
-    
-    
-    
     
     CLASS PluggingTwoComponents    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
@@ -120,12 +119,10 @@ LIBRARY Demo
         VARIABLES
             AASIdString1                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
             AASIdType1                       : UINT HAS_SET_ACCESSOR;
-            PVSLName1                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            PVSName1                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            PVSID                            : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
             AASIdString2                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
             AASIdType2                       : UINT HAS_SET_ACCESSOR;
-            PVSLName2                        : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            PVSName2                         : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
+            PVS2ID                           : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
             Plugged                          : BOOL HAS_SET_ACCESSOR;
             Status                           : STRING FLAGS = "o" INITIALVALUE = "";
             Error                            : UINT;

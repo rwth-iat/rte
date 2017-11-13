@@ -49,32 +49,41 @@ OV_DLLFNCEXPORT void Demo_FindPVSL_typemethod(
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList ppvsl = NULL;
+
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId1), 2);
 	if(ptr){
 		paas = Ov_StaticPtrCast(openaas_aas, ptr);
 		if (paas){
-			Ov_ForEachChildEx(ov_containment, &paas->p_Body, ppvsl, propertyValueStatement_PropertyValueStatementList) {
-				if (ov_string_compare(ppvsl->v_identifier, pinst->v_PVSL1Name) == OV_STRCMP_EQUAL){
-					ov_memstack_lock();
-					ov_string_setvalue(&pinst->v_PVSL1, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, ppvsl), 2));
-					ov_memstack_unlock();
+			ptr = Ov_SearchChild(ov_containment, &paas->p_Body, pinst->v_SubModelName1);
+			if (ptr){
+				Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(openaas_SubModel, ptr), ppvsl, propertyValueStatement_PropertyValueStatementList) {
+					if (ov_string_compare(ppvsl->v_identifier, pinst->v_PVSLName1) == OV_STRCMP_EQUAL){
+						ov_memstack_lock();
+						ov_string_setvalue(&pinst->v_PVSL1, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, ppvsl), 2));
+						ov_memstack_unlock();
+					}
 				}
 			}
 		}
 	}
+
 	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId2), 2);
 	if(ptr){
 		paas = Ov_StaticPtrCast(openaas_aas, ptr);
 		if (paas){
-			Ov_ForEachChildEx(ov_containment, &paas->p_Body, ppvsl, propertyValueStatement_PropertyValueStatementList) {
-				if (ov_string_compare(ppvsl->v_identifier, pinst->v_PVSL2Name) == OV_STRCMP_EQUAL){
-					ov_memstack_lock();
-					ov_string_setvalue(&pinst->v_PVSL2, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, ppvsl), 2));
-					ov_memstack_unlock();
+			ptr = Ov_SearchChild(ov_containment, &paas->p_Body, pinst->v_SubModelName2);
+			if (ptr){
+				Ov_ForEachChildEx(ov_containment, Ov_StaticPtrCast(openaas_SubModel, ptr), ppvsl, propertyValueStatement_PropertyValueStatementList) {
+					if (ov_string_compare(ppvsl->v_identifier, pinst->v_PVSLName2) == OV_STRCMP_EQUAL){
+						ov_memstack_lock();
+						ov_string_setvalue(&pinst->v_PVSL2, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, ppvsl), 2));
+						ov_memstack_unlock();
+					}
 				}
 			}
 		}
 	}
+
 	IdentificationType_deleteMembers(&aasId1);
 	IdentificationType_deleteMembers(&aasId2);
 	return;
