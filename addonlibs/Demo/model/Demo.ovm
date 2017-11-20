@@ -78,6 +78,27 @@ LIBRARY Demo
         END_OPERATIONS;
     END_CLASS; 
     
+    CLASS FindPVS : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASID1STRING      : STRING FLAGS = "i" INITIALVALUE    =   "";
+            AASID1TYPE        : UINT FLAGS = "i";
+            AASID2STRING      : STRING FLAGS = "i" INITIALVALUE    =   "";
+            AASID2TYPE        : UINT FLAGS = "i";        
+            SubModelName1     : STRING FLAGS = "i" INITIALVALUE    =   "";
+            SubModelName2     : STRING FLAGS = "i" INITIALVALUE    =   "";
+            PVSLName1         : STRING FLAGS = "i" INITIALVALUE    =   "";
+            PVSLName2         : STRING FLAGS = "i" INITIALVALUE    =   "";
+            PVSName1         : STRING FLAGS = "i" INITIALVALUE    =   "";
+            PVSName2         : STRING FLAGS = "i" INITIALVALUE    =   "";
+            PVS1           : STRING FLAGS = "o" INITIALVALUE    =   "";
+            PVS2           : STRING FLAGS = "o" INITIALVALUE    =   "";
+        END_VARIABLES; 
+        OPERATIONS 
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
     CLASS PluggingTwoComponents    :    CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
