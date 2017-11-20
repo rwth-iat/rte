@@ -138,13 +138,13 @@ LIBRARY Demo
      CLASS CheckPluggedStatus    :    CLASS fb/functionblock
           IS_INSTANTIABLE;
         VARIABLES
-            AASIdString1                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            AASIdType1                       : UINT HAS_SET_ACCESSOR;
-            PVSID                            : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            AASIdString2                     : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            AASIdType2                       : UINT HAS_SET_ACCESSOR;
-            PVS2ID                           : STRING HAS_SET_ACCESSOR INITIALVALUE    =   "";
-            Plugged                          : BOOL HAS_SET_ACCESSOR;
+            AASIdString1                     : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE    =   "";
+            AASIdType1                       : UINT HAS_SET_ACCESSOR FLAGS = "i";
+            PVSID                            : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE    =   "";
+            AASIdString2                     : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE    =   "";
+            AASIdType2                       : UINT HAS_SET_ACCESSOR FLAGS = "i";
+            PVS2ID                           : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE    =   "";
+            Plugged                          : BOOL HAS_SET_ACCESSOR FLAGS = "i";
             Status                           : STRING FLAGS = "o" INITIALVALUE = "";
             Error                            : UINT;
         END_VARIABLES;
@@ -156,15 +156,15 @@ LIBRARY Demo
     CLASS SwitchForLCEGenerator    :    CLASS fb/functionblock
           IS_INSTANTIABLE;
         VARIABLES
-            AASIdString1                     : STRING INITIALVALUE    =   " ";
-            AASIdType1                       : UINT;
-            PVSID1                           : STRING  INITIALVALUE    =   " ";
-            AASIdString2                     : STRING  INITIALVALUE    =   " ";
-            AASIdType2                       : UINT;
-            PVSID2                           : STRING  INITIALVALUE    =   " ";
+            AASIdString1                     : STRING FLAGS = "i" INITIALVALUE    =   " ";
+            AASIdType1                       : UINT FLAGS = "i";
+            PVSID1                           : STRING  FLAGS = "i" INITIALVALUE    =   " ";
+            AASIdString2                     : STRING  FLAGS = "i" INITIALVALUE    =   " ";
+            AASIdType2                       : UINT FLAGS = "i";
+            PVSID2                           : STRING  FLAGS = "i" INITIALVALUE    =   " ";
             AASIDStringOut                   : STRING FLAGS = "o" INITIALVALUE = "";
             AASIDTypeOut                     : UINT FLAGS = "o";
-            Error                            : UINT;
+            Error                            : UINT FLAGS = "o";
         END_VARIABLES;
         OPERATIONS
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
