@@ -170,6 +170,33 @@ LIBRARY Demo
             typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS;
+    
+    CLASS CallApp : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES  
+            START : BOOL HAS_SET_ACCESSOR FLAGS = "i"  INITIALVALUE = FALSE;
+            RESET : BOOL HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE = FALSE;
+            APPACTIVE : BOOL FLAGS = "o"; 
+        END_VARIABLES;
+        OPERATIONS
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS PlugDevices : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES  
+            Status          : STRING FLAGS="o" INITIALVALUE    =   "";   
+        END_VARIABLES;
+        PARTS
+        	CallApp : CLASS Demo/CallApp;
+        END_PARTS;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    
 	/**
 		Add associations and their documentation here.
 		Association syntax is:
