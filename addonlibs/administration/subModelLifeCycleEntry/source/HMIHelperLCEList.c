@@ -95,7 +95,9 @@ OV_DLLFNCEXPORT void subModelLifeCycleEntry_HMIHelperLCEList_typemethod(
 		return;
 	}
 
+	OV_BOOL findLCE = FALSE;
 	Ov_ForEachChildEx(ov_containment, pArchive, pchild, lifeCycleEntry_LifeCycleEntry){
+		findLCE = TRUE;
 		if (i != 0){
 			ov_string_append(&pinst->v_CreatingInstanceId, ";");
 			ov_string_append(&pinst->v_Data, ";");
@@ -222,6 +224,10 @@ OV_DLLFNCEXPORT void subModelLifeCycleEntry_HMIHelperLCEList_typemethod(
 		}
 
 	i++;
+	}
+	if (findLCE == FALSE){
+		pinst->v_Error = TRUE;
+		ov_string_setvalue(&pinst->v_ErrorText, "No LCE found");
 	}
 
 	ov_string_setvalue(&tmpString, NULL);
