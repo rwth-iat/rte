@@ -95,12 +95,12 @@ OV_RESULT ssc_getObjectFromSendCommand(
 		element.pobj = *pTargetObj;
 
 		//search the variable
-		ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, "sender");
+		/*ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, "sender");
 		if(!( varElement.elemtype == OV_ET_VARIABLE && (varElement.elemunion.pvar->v_vartype == OV_VT_ANY || varElement.elemunion.pvar->v_vartype == OV_VT_STRING))) {
 			//port not found or of wrong type
 			*pTargetObj = NULL;
 			return OV_ERR_BADPARAM;
-		}
+		}*/
 		ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, "order");
 		if(!( varElement.elemtype == OV_ET_VARIABLE && (varElement.elemunion.pvar->v_vartype == OV_VT_ANY || varElement.elemunion.pvar->v_vartype == OV_VT_STRING))) {
 			//port not found or of wrong type
@@ -147,10 +147,10 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	 */
 	OV_INSTPTR_ssc_sendCommand pinst = Ov_StaticPtrCast(ssc_sendCommand, pfb);
 
-	OV_INSTPTR_ssc_step  		pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_SequentialStateChart  	pOwnSSC = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pStep));
+	//OV_INSTPTR_ssc_step  		pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+	//OV_INSTPTR_ssc_SequentialStateChart  	pOwnSSC = Ov_DynamicPtrCast(ssc_SequentialStateChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_object pTargetObj = NULL;
-	OV_INSTPTR_ov_object pESE = NULL;
+	//OV_INSTPTR_ov_object pESE = NULL;
 	OV_RESULT    			 result;
 	OV_ANY ovvariable;
 	ovvariable.value.vartype = OV_VT_STRING;
@@ -167,7 +167,7 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	}
 
 	//setting sender
-	pESE=(OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,(OV_INSTPTR_ov_object)pOwnSSC);
+	/*pESE=(OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,(OV_INSTPTR_ov_object)pOwnSSC);
 	if(Ov_CanCastTo(fb_controlchart,pESE)==TRUE){
 		ov_string_setvalue(&ovvariable.value.valueunion.val_string, pESE->v_identifier);
 	}else{
@@ -179,23 +179,28 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 		pinst->v_error=TRUE;
 		ov_string_setvalue(&pinst->v_errorDetail, "Target found, but setting sender failed.");
 		return;
-	}
+	}*/
+
 	//setting command
-	ov_string_setvalue(&ovvariable.value.valueunion.val_string, pinst->v_command);
-	result = ssc_setNamedVariable(pTargetObj, "order", &ovvariable);
-	if(Ov_Fail(result)){
-		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "Target found, but setting command failed.");
-		return;
+	if(pinst->v_command && ov_string_compare(pinst->v_command,"") != OV_STRCMP_EQUAL && ov_string_compare(pinst->v_command," ") != OV_STRCMP_EQUAL){
+		ov_string_setvalue(&ovvariable.value.valueunion.val_string, pinst->v_command);
+		result = ssc_setNamedVariable(pTargetObj, "order", &ovvariable);
+		if(Ov_Fail(result)){
+			pinst->v_error=TRUE;
+			ov_string_setvalue(&pinst->v_errorDetail, "Target found, but setting command failed.");
+			return;
+		}
 	}
-	//setting command
-	ov_string_setvalue(&ovvariable.value.valueunion.val_string, pinst->v_parameter);
-	result = ssc_setNamedVariable(pTargetObj, "param", &ovvariable);
-	if(Ov_Fail(result)){
-		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "Target found, but setting command failed.");
-		return;
+	//setting parameter
+	if(pinst->v_command && ov_string_compare(pinst->v_parameter,"") != OV_STRCMP_EQUAL && ov_string_compare(pinst->v_parameter," ") != OV_STRCMP_EQUAL){		ov_string_setvalue(&ovvariable.value.valueunion.val_string, pinst->v_parameter);
+		result = ssc_setNamedVariable(pTargetObj, "param", &ovvariable);
+		if(Ov_Fail(result)){
+			pinst->v_error=TRUE;
+			ov_string_setvalue(&pinst->v_errorDetail, "Target found, but setting parameter failed.");
+			return;
+		}
 	}
+
 	//freeing string variable
 	ov_string_setvalue(&ovvariable.value.valueunion.val_string, NULL);
 	ovvariable.value.vartype = OV_VT_BOOL;
