@@ -122,15 +122,16 @@ LIBRARY SSChelper
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
-	CLASS commandCreator : CLASS fb/functionblock
+	CLASS createCMD : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
-			order : STRING  FLAGS = "i" COMMENT = "order to be processed";
-			param : STRING  FLAGS = "i" COMMENT = "parameter";
-			sender : STRING  FLAGS = "i" COMMENT = "sender";
-			start : BOOL HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "startsignal" ;
+			order : STRING  FLAGS = "i" COMMENT = "Order to be processed. E.g.: 'OCCUPY'. May be automatically set by SSC action sendCommand.";
+			param : STRING  FLAGS = "i" COMMENT = "Parameter in one String combined and comma separated e.g.: 'v=1,T=TRUE:May be automatically set by SSC action sendCommand.";
+			sender : STRING  FLAGS = "i" COMMENT = "Sender ID. (In general identifier of outmost parent chart.)";
+			start : BOOL FLAGS = "i" COMMENT = "Startsignal. On positiv value the order, param and sender are combined and trigger out is set to true for 1 cycle. Is automatically reset in next cycle." INITIALVALUE = FALSE;
 			
-			command : STRING FLAGS = "o" COMMENT = "command";
+			CMD : STRING FLAGS = "o" COMMENT = "Last processed command.";
+			trigger: BOOL FLAGS = "o" COMMENT = "Trigger for other fbs." INITIALVALUE = FALSE;
 			
 			// Add variables here. The syntax is:
 			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
@@ -220,6 +221,35 @@ LIBRARY SSChelper
 		    //error : BOOL FLAGS = "o" COMMENT = "TRUE if SCU is inside Errorstate";
 			occupiedBy : STRING FLAGS = "o" COMMENT = "id of occupying user ";
 			//SetPoint : SINGLE FLAGS = "o" COMMENT = "Setpoint of SCU";
+		END_VARIABLES;
+		OPERATIONS
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS getESEStatus : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			path : STRING FLAGS = "i" COMMENT = "Path to ESE.";
+			OCCUPIED : STRING FLAGS = "o" COMMENT = "Who occupies the ESE?";
+			OCCST 	 : STRING FLAGS = "o" COMMENT = "Is the ESE free or occupied by auto/hand: FREE, AUTO, HAND";
+			EXST 	 : STRING FLAGS = "o" COMMENT = "In what execution stat is the ESE. (PackML States)";
+			EXMODE 	 : STRING FLAGS = "o" COMMENT = "How will the ESE execute steps? (AUTO, MANUAL)";
+			OPMODE 	 : STRING FLAGS = "o" COMMENT = "What is the current function mode?";
+			WORKST 	 : STRING FLAGS = "o" COMMENT = "What step is executet at the moment?";
+		END_VARIABLES;
+		OPERATIONS
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS cmdParser : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			id : STRING FLAGS = "i" COMMENT = "SenderID.";
+			order : STRING FLAGS = "i" COMMENT = "Order. For Example 'OCCUPY'";
+			params[] : STRING FLAGS ="i" COMMENT = "Parameter. For Example 'V=5'. Can be a String vector: 'V=5','T=20' ...";
+			cmd : STRING FLAGS = "o" COMMENT = "Command as a whole string";
 		END_VARIABLES;
 		OPERATIONS
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
