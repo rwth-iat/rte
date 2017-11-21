@@ -326,7 +326,7 @@ OV_DLLFNCEXPORT void Demo_PluggingTwoComponents_typemethod(
 		pinst->v_Status |= openaas_modelmanager_getPVS(aasId1, pvs1.ID, &pvs1.PvsName, &pvs1.CarrierId, &pvs1.ExpressionLogic, &pvs1.ExpressionSemantic, &pvs1.PropertyId, &pvs1.View, &pvs1.Visibility, &pvs1.Value);
 		if ((pvs1.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 			pvs1.Value.value.valueunion.val_bool = pinst->v_Plugged;
-			pinst->v_Status |= openaas_modelmanager_setPVS(aasId1, pvs1.ID, 0x08, pvs1.PvsName, pvs1.CarrierId, pvs1.ExpressionLogic, pvs1.ExpressionSemantic, pvs1.PropertyId, pvs1.View, pvs1.Visibility, pvs1.Value);
+			pinst->v_Status |= openaas_modelmanager_setPVS(aasId1, pvs1.ID, 0x80, pvs1.PvsName, pvs1.CarrierId, pvs1.ExpressionLogic, pvs1.ExpressionSemantic, pvs1.PropertyId, pvs1.View, pvs1.Visibility, pvs1.Value);
 		}
 
 		ov_string_setvalue(&pvs2.ID.IdSpec, pinst->v_PVS2ID);
@@ -334,7 +334,7 @@ OV_DLLFNCEXPORT void Demo_PluggingTwoComponents_typemethod(
 		pinst->v_Status |= openaas_modelmanager_getPVS(aasId2, pvs2.ID, &pvs2.PvsName, &pvs2.CarrierId, &pvs2.ExpressionLogic, &pvs2.ExpressionSemantic, &pvs2.PropertyId, &pvs2.View, &pvs2.Visibility, &pvs2.Value);
 		if ((pvs2.Value.value.vartype & OV_VT_KSMASK) == OV_VT_BOOL){
 			pvs2.Value.value.valueunion.val_bool = pinst->v_Plugged;
-			pinst->v_Status |= openaas_modelmanager_setPVS(aasId2, pvs2.ID, 0x08, pvs2.PvsName, pvs2.CarrierId, pvs2.ExpressionLogic, pvs2.ExpressionSemantic, pvs2.PropertyId, pvs2.View, pvs2.Visibility, pvs2.Value);
+			pinst->v_Status |= openaas_modelmanager_setPVS(aasId2, pvs2.ID, 0x80, pvs2.PvsName, pvs2.CarrierId, pvs2.ExpressionLogic, pvs2.ExpressionSemantic, pvs2.PropertyId, pvs2.View, pvs2.Visibility, pvs2.Value);
 		}
 
 		Ov_SetAnyValue(&tmpany, NULL);
