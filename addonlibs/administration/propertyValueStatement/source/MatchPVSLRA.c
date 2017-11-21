@@ -106,6 +106,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 					return 0;
 				}
 				assuranceCounter = 0;
+				OV_UINT matchSuccessfull = 0;
 				Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
 					paExpressionSemantic = NULL;
 					Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assurance), paExpressionSemantic, propertyValueStatement_ExpressionSemantic){
@@ -130,6 +131,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 								ov_string_setvalue(&tmpMatchText, NULL);
 								ov_string_setvalue(&requirementPath, NULL);
 								ov_string_setvalue(&assurancePath, NULL);
+								matchSuccessfull = 1;
 								break;
 							}
 							if (tmpMatch == FALSE && assuranceCounter >= assuranceSize){
@@ -144,6 +146,8 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 							}
 						}
 					}
+					if (matchSuccessfull == 1)
+						break;
 				}
 			}
 		}
@@ -164,6 +168,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 					assuranceCounter = 0;
 					Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assuranceList), assurance, propertyValueStatement_PropertyValueStatement){
 						paExpressionSemantic = NULL;
+						OV_UINT matchSuccessfull = 0;
 						Ov_ForEachChildEx(ov_containment, Ov_DynamicPtrCast(ov_domain, assurance), paExpressionSemantic, propertyValueStatement_ExpressionSemantic){
 							if (paExpressionSemantic->v_ExpressionSemanticEnum == ASSURANCE){
 								assuranceCounter++;
@@ -186,6 +191,7 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 									ov_string_setvalue(&tmpMatchText, NULL);
 									ov_string_setvalue(&requirementPath, NULL);
 									ov_string_setvalue(&assurancePath, NULL);
+									matchSuccessfull = 1;
 									break;
 								}
 								if (tmpMatch == FALSE && assuranceCounter >= assuranceSize){
@@ -200,6 +206,8 @@ OV_DLLFNCEXPORT OV_UINT propertyValueStatement_MatchPVSLRA_matchPVSLRA(OV_STRING
 								}
 							}
 						}
+						if (matchSuccessfull == 1)
+							break;
 					}
 				}
 			}
