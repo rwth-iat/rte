@@ -23,6 +23,7 @@
 
 #include "Demo.h"
 #include "libov/ov_macros.h"
+#include "ks_logfile.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT Demo_CallApp_START_set(
@@ -59,5 +60,32 @@ OV_DLLFNCEXPORT void Demo_CallApp_typemethod(
 
 
     return;
+}
+
+
+OV_DLLFNCEXPORT OV_RESULT Demo_CallApp_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+	OV_INSTPTR_Demo_CallApp pinst = Ov_StaticPtrCast(Demo_CallApp, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = fb_functionblock_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    OV_INSTPTR_ov_object pOtherObject = NULL;
+    Ov_ForEachChild(ov_instantiation, pclass_Demo_CallApp, pOtherObject){
+		if(pOtherObject != pobj){
+			KS_logfile_error(("%s: cannot instantiate - CallApp instance already exists", pinst->v_identifier));
+			return OV_ERR_ALREADYEXISTS;
+		}
+	}
+
+    return OV_ERR_OK;
 }
 

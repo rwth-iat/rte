@@ -1,5 +1,6 @@
 #include "ov.ovm"
 #include "fb.ovm"
+#include "ksbase.ovm"
 #include "lifeCycleEntry.ovm"
 #include "subModelLifeCycleEntry.ovm"
 #include "propertyValueStatement.ovm"
@@ -179,7 +180,8 @@ LIBRARY Demo
             APPACTIVE : BOOL FLAGS = "o"; 
         END_VARIABLES;
         OPERATIONS
-            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;                
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;          
         END_OPERATIONS;
     END_CLASS;
     
@@ -188,10 +190,7 @@ LIBRARY Demo
         VARIABLES  
             Status          : STRING FLAGS="o" INITIALVALUE    =   "";   
         END_VARIABLES;
-        PARTS
-        	CallApp : CLASS Demo/CallApp;
-        END_PARTS;
-        OPERATIONS
+        OPERATIONS          
             CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
         END_OPERATIONS;
     END_CLASS;

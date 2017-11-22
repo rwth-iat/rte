@@ -37,9 +37,21 @@ OV_DLLFNCEXPORT OV_RESULT Demo_PlugDevices_CallMethod(
     /*    
     *   local variables
     */
-	OV_INSTPTR_Demo_PlugDevices pPlugDevices = Ov_DynamicPtrCast(Demo_PlugDevices, pobj);
-	OV_INSTPTR_Demo_CallApp pCallApp = Ov_DynamicPtrCast(Demo_CallApp, &pPlugDevices->p_CallApp);
+	packedOutputArgList[0] = ov_database_malloc(sizeof(OV_STRING));
+	*(OV_STRING*)packedOutputArgList[0] = NULL;
+	typeArray[0] = OV_VT_STRING;
+	OV_INSTPTR_Demo_CallApp pCallApp = NULL;
+	Ov_ForEachChildEx(ov_instantiation, pclass_Demo_CallApp, pCallApp, Demo_CallApp){
+		break;
+	}
+	if (!pCallApp){
+		ov_string_setvalue((OV_STRING*)packedOutputArgList[0], "CallApp-Component not found");
+		return OV_ERR_OK;
+	}
 	Demo_CallApp_START_set(pCallApp, TRUE);
+
+	ov_string_setvalue((OV_STRING*)packedOutputArgList[0], "Service was successfull");
     return OV_ERR_OK;
 }
+
 
