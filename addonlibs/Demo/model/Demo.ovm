@@ -60,6 +60,19 @@ LIBRARY Demo
         END_OPERATIONS;
     END_CLASS;
     
+    CLASS FindSM : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASID1STRING      : STRING FLAGS = "i" INITIALVALUE    =   "";
+            AASID1TYPE        : UINT FLAGS = "i";
+            SMName            : STRING FLAGS = "i" INITIALVALUE = "";
+            SMPath            : STRING FLAGS = "o" INITIALVALUE = "";
+        END_VARIABLES;
+        OPERATIONS 
+            typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
      CLASS FindPVSL : CLASS fb/functionblock
         IS_INSTANTIABLE;
         VARIABLES
