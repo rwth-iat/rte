@@ -72,7 +72,7 @@ typedef struct PropertyValueStatementList{
 	OV_UINT Visibility;
 	OV_UINT Mask;
     PropertyValueStatement *pvs;
-    OV_UINT pvsNumber;
+    OV_UINT pvsSize;
 }PropertyValueStatementList;
 
 

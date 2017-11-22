@@ -1037,11 +1037,11 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 							getCoreDataRsp.pvsl[i].visibility = ppvsl[i].Visibility;
 						}
 
-						getCoreDataRsp.pvsl[i].numPvs = ppvsl[i].pvsNumber;
+						getCoreDataRsp.pvsl[i].numPvs = ppvsl[i].pvsSize;
 						if (getCoreDataRsp.pvsl[i].numPvs == 0)
 							continue;
-						getCoreDataRsp.pvsl[i].pvs = malloc(sizeof(PVS_t)*ppvsl[i].pvsNumber);
-						for (OV_UINT j = 0; j < ppvsl[i].pvsNumber; j++){
+						getCoreDataRsp.pvsl[i].pvs = malloc(sizeof(PVS_t)*ppvsl[i].pvsSize);
+						for (OV_UINT j = 0; j < ppvsl[i].pvsSize; j++){
 							PVS_t_init(&getCoreDataRsp.pvsl[i].pvs[j]);
 							SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].preferredName, ppvsl[i].pvs[j].PvsName, ov_string_getlength(ppvsl[i].pvs[j].PvsName));
 							getCoreDataRsp.pvsl[i].pvs[j].hasName = true;

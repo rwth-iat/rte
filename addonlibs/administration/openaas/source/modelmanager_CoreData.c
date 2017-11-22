@@ -113,7 +113,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_getCoreData(IdentificationTyp
 			}
 
 			pvsltmp[pvslSize].pvs = ov_database_malloc(sizeof(PropertyValueStatement)*pvsSize);
-			pvsltmp[pvslSize].pvsNumber = pvsSize;
+			pvsltmp[pvslSize].pvsSize = pvsSize;
 			pvsSize = 0;
 
 			OV_BOOL addPVS = FALSE;

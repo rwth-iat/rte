@@ -31,13 +31,13 @@ OV_DLLFNCEXPORT void PropertyValueStatementList_init(PropertyValueStatementList 
 	this->Mask = 0;
 	this->PvslName = NULL;
 	this->pvs = NULL;
-	this->pvsNumber = 0;
+	this->pvsSize = 0;
 }
 OV_DLLFNCEXPORT void PropertyValueStatementList_deleteMembers(PropertyValueStatementList *this){
 	IdentificationType_deleteMembers(&this->CarrierId);
 	IdentificationType_deleteMembers(&this->ID);
 	IdentificationType_deleteMembers(&this->PropertyId);
-	for (OV_UINT i = 0; i < this->pvsNumber; i++){
+	for (OV_UINT i = 0; i < this->pvsSize; i++){
 		PropertyValueStatement_deleteMembers(&(this->pvs)[i]);
 	}
 	ov_database_free(this->pvs);
