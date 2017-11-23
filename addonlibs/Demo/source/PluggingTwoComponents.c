@@ -238,11 +238,6 @@ OV_DLLFNCEXPORT void Demo_PluggingTwoComponents_typemethod(
 
 		ov_string_setvalue(&lce1.subject,  pinst->v_LCESubject1);
 
-		if (pinst->v_LCETimeStampExtern1 == FALSE)
-			ov_time_gettime(&lce1.data.time);
-		else
-			lce1.data.time = pinst->v_LCETimeStamp2;
-
 		IdentificationType aasId1;
 		IdentificationType_init(&aasId1);
 		ov_string_setvalue(&aasId1.IdSpec, pinst->v_AASIdString1);
@@ -264,10 +259,6 @@ OV_DLLFNCEXPORT void Demo_PluggingTwoComponents_typemethod(
 
 		ov_string_setvalue(&lce2.subject,  pinst->v_LCESubject2);
 
-		if (pinst->v_LCETimeStampExtern1 == FALSE)
-			ov_time_gettime(&lce2.data.time);
-		else
-			lce2.data.time = pinst->v_LCETimeStamp2;
 
 		IdentificationType aasId2;
 		IdentificationType_init(&aasId2);
@@ -298,6 +289,16 @@ OV_DLLFNCEXPORT void Demo_PluggingTwoComponents_typemethod(
 
 		Ov_SetAnyValue(&lce1.data, &tmpany);
 		Ov_SetAnyValue(&lce2.data, &tmpany);
+
+		if (pinst->v_LCETimeStampExtern1 == FALSE)
+			ov_time_gettime(&lce1.data.time);
+		else
+			lce1.data.time = pinst->v_LCETimeStamp1;
+
+		if (pinst->v_LCETimeStampExtern2 == FALSE)
+			ov_time_gettime(&lce2.data.time);
+		else
+			lce2.data.time = pinst->v_LCETimeStamp2;
 
 		OV_INSTPTR_ov_object ptr = NULL;
 		OV_INSTPTR_openaas_aas paas = NULL;
