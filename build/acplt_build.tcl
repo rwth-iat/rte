@@ -884,7 +884,7 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/processcontrol/cmdlib 
 				addonlibs/processcontrol/PCMsgParser 
 				addonlibs/processcontrol/PCMsgCreator 
-				addonlibs/functionblock/SSChelper
+				addonlibs/functionblock/SSChelper}
 	#			addonlibs/administration/identification
 	#			addonlibs/administration/lifeCycleEntry
 	#			addonlibs/administration/propertyValueStatement
