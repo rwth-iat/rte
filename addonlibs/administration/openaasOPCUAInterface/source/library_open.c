@@ -87,6 +87,21 @@
 		}
 	 }
 
+	 OV_INSTPTR_ov_library pservicesOPCUAInterface = NULL;
+	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pservicesOPCUAInterface, ov_library){
+		if(ov_string_compare(pservicesOPCUAInterface->v_identifier, "servicesOPCUAInterface") == OV_STRCMP_EQUAL){
+			break;
+		}
+	 }
+	 if(!pservicesOPCUAInterface){
+		result = Ov_CreateObject(ov_library, pservicesOPCUAInterface, &(pdb->acplt), "servicesOPCUAInterface");
+		if(Ov_Fail(result)){
+			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library servicesOPCUAInterface Reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+	 }
+
+
 	return result;
 	}
 
