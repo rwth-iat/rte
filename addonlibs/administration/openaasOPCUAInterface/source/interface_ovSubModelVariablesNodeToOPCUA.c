@@ -135,7 +135,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelVariable
 		tmpValue2 = value.value.valueunion.val_uint;
 	}
 
-	if (ov_string_compare("ModelIdString", pobj->v_identifier) == OV_STRCMP_EQUAL){
+	if (ov_string_compare("ModelIdSpec", pobj->v_identifier) == OV_STRCMP_EQUAL){
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_STRING];
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_String_new();
 		if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
