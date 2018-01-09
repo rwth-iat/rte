@@ -161,3 +161,43 @@ OV_BOOL getAASIdbyObjectPointer(OV_INSTPTR_openaas_aas pAAS, IdentificationType*
 	}
 	return false;
 }
+
+AASStatusCode checkForEmbeddingAAS(IdentificationType aasId, IdentificationType objectId){
+	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_aas paas = NULL;
+	OV_INSTPTR_ov_object ptr2 = NULL;
+	OV_INSTPTR_ov_object ptr3 = NULL;
+	OV_INSTPTR_ov_object ptr4 = NULL;
+
+	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
+	if(!ptr){
+		return AASSTATUSCODE_BADAASID;
+	}
+	paas = Ov_StaticPtrCast(openaas_aas, ptr);
+
+	if (!paas){
+		return AASSTATUSCODE_BADAASID;
+	}
+	if (objectId.IdType != URI){
+		return AASSTATUSCODE_BADPARENTID;
+	}
+	ptr2 = ov_path_getobjectpointer(objectId.IdSpec, 2);
+	if (!ptr2)
+		return AASSTATUSCODE_BADPARENTID;
+
+	ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
+	if (!ptr3){
+		ptr3 = ptr2->v_pouterobject;
+	}
+	do{
+		if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
+			return AASSTATUSCODE_GOOD;
+		}
+		ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
+		if (!ptr4){
+			ptr4 = ptr3->v_pouterobject;
+		}
+		ptr3 = ptr4;
+	}while (ptr3);
+	return AASSTATUSCODE_BADPARENTID;
+}

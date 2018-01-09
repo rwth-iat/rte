@@ -167,7 +167,7 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
-	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespaceIndexIdentification, UA_NS2ID_IDENTIFICATION);
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespaceIndexIdentification, UA_NSIDENTIFICATIONID_IDENTIFICATION);
 
 
 	// References

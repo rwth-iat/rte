@@ -91,6 +91,8 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
   			return result;
   		}
   	}
+	pinst->v_modelnamespaceIndexIdentification = pidentificationOPCUAInterface->v_modelnamespace.index;
+
   	// create lifeCycleEntryOPCUAInterface
 	Ov_ForEachChildEx(ov_instantiation, pclass_lifeCycleEntryOPCUAInterface_interface, plifeCycleEntryOPCUAInterface, lifeCycleEntryOPCUAInterface_interface){
 		break;

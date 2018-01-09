@@ -174,37 +174,37 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 
 
 	if (ov_string_compare(plist[1], "createLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATELCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATELCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATELCE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "deleteLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETELCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETELCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_DELETELCE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_DELETELCE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_DELETELCE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_DELETELCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "createLCESimple") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATELCESIMPLE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATELCESIMPLE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_CREATELCESIMPLE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "setLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "setLCESimple") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCESIMPLE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCESIMPLE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_SETLCESIMPLE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getLCESimple") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCESIMPLE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCESIMPLE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLCESIMPLE_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getLastLCEs") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLASTLCES);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLASTLCES_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_GETLASTLCES_OUTPUTARGUMENTS);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLASTLCES);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_INPUTARGUMENTS);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_OUTPUTARGUMENTS);
 	}else{
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);

@@ -16,17 +16,10 @@ LIBRARY identification
 		VARIABLES
 			IdSpec : STRING INITIALVALUE = "";
 			IdType : UINT COMMENT = "0:URI, 1:ISO";
-			// Add variables here. The syntax is:
-			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
-			// Example:
-			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
-			// Example for a fb/functionblock based class
-			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
 		END_VARIABLES;
 		OPERATIONS
-			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
-			// if MY_FUNC is declared in identification.ovf. Implement the functions in Identification.c.
-			// fb/functionblock based classes have to implement typemethod
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor      :    C_FUNCTION    <OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
 	

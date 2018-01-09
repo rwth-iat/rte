@@ -638,13 +638,10 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 		}else if (ov_string_compare(plist2[len2-1], "Body") == OV_STRCMP_EQUAL){
 			if (openaasOPCUAInterface_interface_ovBodyNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
-		}else if (ov_string_compare(plist2[len2-1], "ModelIdSpec") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-				tmpNode = opcuaNode;
-		}else if (ov_string_compare(plist2[len2-1], "ModelIdType") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-				tmpNode = opcuaNode;
 		}else if (ov_string_compare(plist2[len2-1], "Revision") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "ModelId") == OV_STRCMP_EQUAL){
 			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
 		}else if (ov_string_compare(plist2[len2-1], "Version") == OV_STRCMP_EQUAL){

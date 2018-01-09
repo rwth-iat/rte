@@ -2,8 +2,8 @@
  * Any manual changes will be overwritten.
 
  */
-#ifndef NODESET_H_
-#define NODESET_H_
+#ifndef NODESET_H_IDENTIFICATION
+#define NODESET_H_IDENTIFICATION
 #ifdef UA_NO_AMALGAMATION
 #include "server/ua_server_internal.h"
   #include "ua_util.h"
@@ -35,8 +35,8 @@
 #ifndef UA_free
   #define UA_free(_p_ptr) free(_p_ptr)
 #endif
-#define UA_NS2ID_IDENUM 3003
-#define UA_NS2ID_IDENTIFICATION 3002
+#define UA_NSIDENTIFICATIONID_IDENUM 3003
+#define UA_NSIDENTIFICATIONID_IDENTIFICATION 3002
 
   extern UA_StatusCode nodeset(UA_Server *server);
   extern UA_StatusCode nodeset_returnNamespaces(UA_Server *server,

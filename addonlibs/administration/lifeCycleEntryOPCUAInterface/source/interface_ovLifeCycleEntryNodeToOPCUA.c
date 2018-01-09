@@ -192,7 +192,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
-	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_LIFECYCLEENTRY);
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_LIFECYCLEENTRY);
 
 
 	// References

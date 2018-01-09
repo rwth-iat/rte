@@ -28,6 +28,8 @@
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "nodeset_openaas.h"
+#include "nodeset_identification.h"
+#include "nodeset_lifeCycleEntry.h"
 
 extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
@@ -119,36 +121,53 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelVariable
 
 
 	// value
-	UA_String tmpValue;
-	UA_String_init(&tmpValue);
-	UA_UInt32 tmpValue2 = 0;
-	pobjtemp = element.pobj;
-	Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
-	if((!pVtblObj) || (ov_activitylock)){
-		pVtblObj = pclass_ov_object->v_pvtable;
-	}
-	result = (pVtblObj->m_getvar)(pobjtemp, &element, &value);
-	if (value.value.vartype == OV_VT_STRING){
-		if (value.value.valueunion.val_string != NULL)
-			tmpValue = UA_String_fromChars(value.value.valueunion.val_string);
-	}else{
-		tmpValue2 = value.value.valueunion.val_uint;
-	}
 
-	if (ov_string_compare("ModelIdSpec", pobj->v_identifier) == OV_STRCMP_EQUAL){
-		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_STRING];
-		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_String_new();
+	if (ov_string_compare("ModelId", pobj->v_identifier) == OV_STRCMP_EQUAL){
+		OV_ELEMENT tmpPart;
+		tmpPart.elemtype = OV_ET_NONE;
+		OV_ELEMENT tmpParrent;
+		tmpParrent.pobj = pobj;
+		tmpParrent.elemtype = OV_ET_OBJECT;
+		UA_Identification tmpidentification;
+		UA_Identification_init(&tmpidentification);
+		do {
+			ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
+			if (tmpPart.elemtype == OV_ET_NONE)
+				break;
+			if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "IdSpec") == OV_STRCMP_EQUAL){
+				if (*(OV_STRING*)tmpPart.pvalue != NULL)
+					tmpidentification.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
+				continue;
+			}
+			if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "IdType") == OV_STRCMP_EQUAL){
+				tmpidentification.idType = *(UA_UInt32*)tmpPart.pvalue;
+				continue;
+			}
+		} while(TRUE);
+
+
+		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION];
+		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_Identification_new();
 		if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
 			result = UA_STATUSCODE_BADOUTOFMEMORY;
 			return result;
 		}
 		((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 		((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
-		UA_String_copy(&tmpValue, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
-		UA_String_deleteMembers(&tmpValue);
+		UA_Identification_copy(&tmpidentification, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
+		UA_Identification_deleteMembers(&tmpidentification);
 		// dataType
-		((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_STRING);
+		((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespaceIndexIdentification, UA_NSIDENTIFICATIONID_IDENTIFICATION);
 	}else{
+		UA_UInt32 tmpValue = 0;
+		pobjtemp = element.pobj;
+		Ov_GetVTablePtr(ov_object, pVtblObj, pobjtemp);
+		if((!pVtblObj) || (ov_activitylock)){
+			pVtblObj = pclass_ov_object->v_pvtable;
+		}
+		result = (pVtblObj->m_getvar)(pobjtemp, &element, &value);
+		tmpValue = value.value.valueunion.val_uint;
+
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_UINT32];
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_UInt32_new();
 		if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
@@ -157,8 +176,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelVariable
 		}
 		((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 		((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
-		UA_UInt32_copy(&tmpValue2, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
-		UA_UInt32_deleteMembers(&tmpValue2);
+		UA_UInt32_copy(&tmpValue, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
+		UA_UInt32_deleteMembers(&tmpValue);
 		// dataType
 		((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_UINT32);
 	}

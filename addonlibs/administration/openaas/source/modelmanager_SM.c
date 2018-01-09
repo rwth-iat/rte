@@ -19,6 +19,7 @@
 #endif
 
 #include "openaas.h"
+#include "openaas_helpers.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMAASIdString_set(
@@ -156,63 +157,31 @@ OV_DLLFNCEXPORT OV_RESULT openaas_modelmanager_SMDelete_set(
 OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createSubModel(IdentificationType aasId, IdentificationType parentID, IdentificationType modelId, OV_STRING smName, OV_UINT revision, OV_UINT version){
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ov_object ptr = NULL;
-	OV_INSTPTR_openaas_aas paas = NULL;
 	OV_INSTPTR_openaas_SubModel pSubModel = NULL;
-	OV_INSTPTR_ov_object ptr2 = NULL;
-	OV_INSTPTR_ov_object ptr3 = NULL;
-	OV_INSTPTR_ov_object ptr4 = NULL;
-	OV_BOOL parentIsInAAS = FALSE;
 
-	ptr = ov_path_getobjectpointer(openaas_modelmanager_AASConvertListGet(aasId), 2);
-	if(ptr){
-		paas = Ov_StaticPtrCast(openaas_aas, ptr);
-		if (paas){
-			if (parentID.IdType != URI){
-				return AASSTATUSCODE_BADSMID;
-			}
-			ptr2 = ov_path_getobjectpointer(parentID.IdSpec, 2);
-			if (!ptr2)
-				return AASSTATUSCODE_BADSMID;
-
-			ptr3 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr2));
-			if (!ptr3){
-				ptr3 = ptr2->v_pouterobject;
-			}
-			if (!ptr3){
-				return AASSTATUSCODE_BADSMID;
-			}
-			do{
-				if (paas == Ov_StaticPtrCast(openaas_aas, ptr3)){
-					parentIsInAAS = TRUE;
-					break;
-				}
-				ptr4 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr3));
-				if (!ptr4){
-					ptr4 = ptr3->v_pouterobject;
-				}
-				ptr3 = ptr4;
-			}while (ptr3);
-
-			if (parentIsInAAS == FALSE){
-				return AASSTATUSCODE_BADSMID;
-			}
-
-			result = Ov_CreateObject(openaas_SubModel, pSubModel, Ov_StaticPtrCast(ov_domain, ptr2), smName);
-			if(Ov_Fail(result)){
-				ov_logfile_error("Fatal: could not create SubModel object - reason: %s", ov_result_getresulttext(result));
-				return openaas_modelmanager_ovresultToAASStatusCode(result);
-			}
-
-			ov_string_setvalue(&pSubModel->v_ModelIdSpec, modelId.IdSpec);
-			pSubModel->v_ModelIdType = modelId.IdType;
-			pSubModel->v_Revision = revision;
-			pSubModel->v_Version = version;
-		}else{
-			return AASSTATUSCODE_BADAASID;
-		}
-	}else{
-		return AASSTATUSCODE_BADAASID;
+	AASStatusCode status = checkForEmbeddingAAS(aasId,parentID);
+	if(status != AASSTATUSCODE_GOOD){
+		return status;
 	}
+
+	ptr = ov_path_getobjectpointer(parentID.IdSpec, 2);
+	if (!ptr)
+		return PVSSTATUSCODE_BADPARENTID;
+
+	pSubModel = Ov_StaticPtrCast(openaas_SubModel, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, ptr), smName));
+	if (pSubModel){
+		return AASSTATUSCODE_BADSMNAME;
+	}
+	result = Ov_CreateObject(openaas_SubModel, pSubModel, Ov_StaticPtrCast(ov_domain, ptr), smName);
+	if(Ov_Fail(result)){
+		ov_logfile_error("Fatal: could not create SubModel object - reason: %s", ov_result_getresulttext(result));
+		return openaas_modelmanager_ovresultToAASStatusCode(result);
+	}
+
+	ov_string_setvalue(&pSubModel->p_ModelId.v_IdSpec, modelId.IdSpec);
+	pSubModel->p_ModelId.v_IdType = modelId.IdType;
+	pSubModel->v_Revision = revision;
+	pSubModel->v_Version = version;
 
 	return AASSTATUSCODE_GOOD;
 }

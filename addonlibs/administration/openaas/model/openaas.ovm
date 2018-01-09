@@ -32,11 +32,13 @@ LIBRARY openaas
 	CLASS SubModel : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES
-            ModelIdSpec         : STRING INITIALVALUE    =   "";
-            ModelIdType         : UINT;
             Revision            : UINT;
             Version             : UINT;
         END_VARIABLES;
+        PARTS
+        	ModelId             : CLASS identification/Identification;
+        END_PARTS;
+        
         OPERATIONS
             getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
         END_OPERATIONS;

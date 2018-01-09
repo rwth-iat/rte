@@ -24,6 +24,7 @@ LIBRARY openaasOPCUAInterface
 		VARIABLES
 			modelnamespace : C_TYPE <UA_Namespace>;
             interfacenamespace : C_TYPE <UA_Namespace>;
+            modelnamespaceIndexIdentification : UINT;
 		END_VARIABLES;
 		OPERATIONS
 			ovModelManagerNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERNODETOOPCUA>;

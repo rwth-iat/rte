@@ -120,7 +120,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	OV_UINT lceCount = 0;
 	for (size_t i = 0; i < tmpNode.referencesSize; i++){
 		if (UA_NodeId_equal(&tmpNode.references[i].referenceTypeId, &tmpNodeId)){
-			tmpNode.references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_LIFECYCLEARCHIVETYPE);
+			tmpNode.references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_LIFECYCLEARCHIVETYPE);
 		}
 		ov_memstack_lock();
 		result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNode.references[i].targetId.nodeId, &path);

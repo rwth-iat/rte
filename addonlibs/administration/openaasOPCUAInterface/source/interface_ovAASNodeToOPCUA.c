@@ -119,7 +119,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 	ov_string_setvalue(&tmpString, NULL);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NS2ID_ASSETADMINITRATIONSHELLTYPE);
+			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSOPENAASID_ASSETADMINITRATIONSHELLTYPE);
 			continue;
 		}else if(UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringBody) || UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringView)){
 			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;

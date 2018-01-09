@@ -234,41 +234,41 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 
 	UA_UInt32 methodId = 0;
 	if (ov_string_compare(methodName, "createAAS") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_CREATEAAS;
+		methodId = UA_NSOPENAASID_CREATEAAS;
 	} else if (ov_string_compare(methodName, "deleteAAS") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_DELETEAAS;
+		methodId = UA_NSOPENAASID_DELETEAAS;
 	} else if (ov_string_compare(methodName,"createSubModel") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_CREATESUBMODEL;
+		methodId = UA_NSOPENAASID_CREATESUBMODEL;
 	} else if (ov_string_compare(methodName,"deleteSubModel") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_DELETESUBMODEL;
+		methodId = UA_NSOPENAASID_DELETESUBMODEL;
 	} else if (ov_string_compare(methodName, "createLCE") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_CREATELCE;
+		methodId = UA_NSOPENAASID_CREATELCE;
 	} else if (ov_string_compare(methodName, "deleteLCE") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_DELETELCE;
+		methodId = UA_NSOPENAASID_DELETELCE;
 	} else if (ov_string_compare(methodName, "getLCE") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_GETLCE;
+		methodId = UA_NSOPENAASID_GETLCE;
 	} else if (ov_string_compare(methodName, "setLCE") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_SETLCE;
+		methodId = UA_NSOPENAASID_SETLCE;
 	} else if (ov_string_compare(methodName, "getLCESimple") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_GETLCESIMPLE;
+		methodId = UA_NSOPENAASID_GETLCESIMPLE;
 	} else if (ov_string_compare(methodName, "setLCESimple") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_SETLCESIMPLE;
+		methodId = UA_NSOPENAASID_SETLCESIMPLE;
 	} else if (ov_string_compare(methodName, "createPVSL") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_CREATEPVSL;
+		methodId = UA_NSOPENAASID_CREATEPVSL;
 	} else if (ov_string_compare(methodName, "deletePVSL") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_DELETEPVSL;
+		methodId = UA_NSOPENAASID_DELETEPVSL;
 	} else if (ov_string_compare(methodName, "createPVS") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_CREATEPVS;
+		methodId = UA_NSOPENAASID_CREATEPVS;
 	} else if (ov_string_compare(methodName, "deletePVS") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_DELETEPVS;
+		methodId = UA_NSOPENAASID_DELETEPVS;
 	} else if (ov_string_compare(methodName, "getPVS") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_GETPVS;
+		methodId = UA_NSOPENAASID_GETPVS;
 	} else if (ov_string_compare(methodName, "setPVS") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_SETPVS;
+		methodId = UA_NSOPENAASID_SETPVS;
 	} else if (ov_string_compare(methodName, "getAASNodeId") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_GETAASNODEID;
+		methodId = UA_NSOPENAASID_GETAASNODEID;
 	} else if (ov_string_compare(methodName, "getLastLCEs") == OV_STRCMP_EQUAL) {
-		methodId = UA_NS2ID_GETLASTLCES;
+		methodId = UA_NSOPENAASID_GETLASTLCES;
 	}
 
 	if (methodId != 0) {

@@ -35,7 +35,7 @@
 #ifndef UA_free
   #define UA_free(_p_ptr) free(_p_ptr)
 #endif
-#define UA_NS2ID_SERVICESTYPE 1002
+#define UA_NSSERVICESID_SERVICESTYPE 1002
 
   extern UA_StatusCode nodeset(UA_Server *server);
   extern UA_StatusCode nodeset_returnNamespaces(UA_Server *server,
