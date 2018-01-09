@@ -346,4 +346,3 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerNode
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }
-
