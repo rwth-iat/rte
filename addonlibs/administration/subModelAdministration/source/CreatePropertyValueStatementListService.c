@@ -51,7 +51,7 @@ OV_DLLFNCEXPORT OV_RESULT subModelAdministration_CreatePropertyValueStatementLis
 	OV_UINT view = 0;
 	OV_UINT visibility = 0;
 	OV_STRING status = NULL;
-	OV_UINT result = NULL;
+	OV_UINT result = 0;
 
 	packedOutputArgList[0] = ov_database_malloc(sizeof(OV_STRING));
 	*(OV_STRING*)packedOutputArgList[0] = NULL;
