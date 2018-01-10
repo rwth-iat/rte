@@ -49,7 +49,7 @@ CC		?= $(GCC_BIN_PREFIX)gcc
 ifneq ($(TARGET), debug)
 	OPT = -O2 -fno-strict-aliasing
 endif
-CC_FLAGS	= -g -std=c99 -m32 -fPIC -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) $(EXTRA_CC_FLAGS)
+CC_FLAGS	= -g -std=c99 -m32 -fPIC -Wall -Wno-attributes $(OPT) $(EXTRA_CC_FLAGS)
 GCCVERSIONGTEQ4 := $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 4)
 ifeq "$(GCCVERSIONGTEQ4)" "1"
     CC_FLAGS += -fvisibility=hidden

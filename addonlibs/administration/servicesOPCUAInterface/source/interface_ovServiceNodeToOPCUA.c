@@ -71,6 +71,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
 		lText.text = UA_String_fromChars(tempString);
+		ov_string_setvalue(&tempString, NULL);
 	} else {
 		lText.text = UA_String_fromChars("");
 	}
@@ -114,15 +115,19 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".IdString");
 	UA_String IdString = UA_String_fromChars(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".IdType");
 	UA_String IdType = UA_String_fromChars(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".Revision");
 	UA_String Revision = UA_String_fromChars(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".Version");
 	UA_String Version = UA_String_fromChars(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".WSDL");
 	UA_String WSDL = UA_String_fromChars(tmpString);
@@ -140,6 +145,11 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;
 		}
 	}
+	UA_String_deleteMembers(&IdString);
+	UA_String_deleteMembers(&IdType);
+	UA_String_deleteMembers(&Revision);
+	UA_String_deleteMembers(&Version);
+	UA_String_deleteMembers(&WSDL);
 
 	UA_NodeId_deleteMembers(&tmpNodeId);
 
@@ -200,13 +210,14 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 		ov_string_append(&tmpString2, "/Ov");
 		if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString2) == OV_STRCMP_EQUAL){
 			tmpNamespace = i;
+			ov_string_setvalue(&tmpString2, NULL);
 			break;
 		}else{
 			tmpNamespace = opcua_pUaServer->v_namespace.index;
+			ov_string_setvalue(&tmpString2, NULL);
 		}
 		pclass = NULL;
 		plibrary = NULL;
-		ov_string_setvalue(&tmpString2, NULL);
 	}
 
 	newNode->references[newNode->referencesSize-1].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(tmpNamespace, tmpString);

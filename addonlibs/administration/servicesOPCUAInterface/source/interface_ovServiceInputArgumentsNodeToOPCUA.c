@@ -86,6 +86,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceInputArg
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
 		lText.text = UA_String_fromChars(tempString);
+		ov_string_setvalue(&tempString, NULL);
 	} else {
 		lText.text = UA_String_fromChars("");
 	}

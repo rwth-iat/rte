@@ -73,6 +73,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
 		lText.text = UA_String_fromChars(tempString);
+		ov_string_setvalue(&tempString, NULL);
 	} else {
 		lText.text = UA_String_fromChars("");
 	}
@@ -111,9 +112,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".ModelId");
 	UA_String ModelId = UA_String_fromChars(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".Revision");
 	UA_String Revision = UA_String_fromChars(tmpString);
+	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".Version");
 	UA_String Version = UA_String_fromChars(tmpString);
@@ -129,6 +132,9 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 		}
 	}
 	UA_NodeId_deleteMembers(&tmpNodeId);
+	UA_String_deleteMembers(&ModelId);
+	UA_String_deleteMembers(&Revision);
+	UA_String_deleteMembers(&Version);
 
 
 	*opcuaNode = newNode;

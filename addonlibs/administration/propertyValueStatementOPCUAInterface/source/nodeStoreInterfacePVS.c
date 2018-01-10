@@ -69,13 +69,13 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
-	}else if (len2 > 1 && (ov_string_compare(plist2[len2-1], "Value") == OV_STRCMP_EQUAL)){
+/*	}else if (len2 > 1 && (ov_string_compare(plist2[len2-1], "Value") == OV_STRCMP_EQUAL)){
 		if (propertyValueStatementOPCUAInterface_interface_ovPropertyValueStatementValueNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 		ov_string_freelist(plist);
 		ov_string_freelist(plist2);
 		ov_string_setvalue(&tmpString, NULL);
-		return tmpNode;
+		return tmpNode;*/
 	}else{
 		pobj = ov_path_getobjectpointer(tmpString, 2);
 		if (pobj == NULL){
