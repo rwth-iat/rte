@@ -160,24 +160,29 @@ OV_DLLFNCEXPORT OV_BOOL opcua_uaIdentificator_identify (
 	UA_TYPES_UINT32, maxChunkCount
 	UA_TYPES_STRING, endpointUrl
  * 	*/
-	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK /*|| dummy == 0*/){
-		KS_logfile_debug(("%s: could not decode protocolVersion in HelloMessage header (or == 0)", thisId->v_identifier));
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK){
+		//OPC UA Part 6, Hello Message:The Server shall always accept versions greater than what it supports.
+		KS_logfile_debug(("%s: could not decode protocolVersion in HelloMessage header", thisId->v_identifier));
 		return FALSE;
 	}
-	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy == 0){
-		KS_logfile_debug(("%s: could not decode receiveBufferSize in HelloMessage header (or == 0)", thisId->v_identifier));
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy < 8192){
+		//OPC UA Part 6, Hello Message: This value shall be greater than 8 192 bytes.
+		KS_logfile_debug(("%s: could not decode receiveBufferSize in HelloMessage header (or < 8192)", thisId->v_identifier));
 		return FALSE;
 	}
-	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy == 0){
-		KS_logfile_debug(("%s: could not decode sendBufferSize in HelloMessage header (or == 0)", thisId->v_identifier));
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy < 8192){
+		//OPC UA Part 6, Hello Message: This value shall be greater than 8 192 bytes.
+		KS_logfile_debug(("%s: could not decode sendBufferSize in HelloMessage header (or < 8192)", thisId->v_identifier));
 		return FALSE;
 	}
-	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy == 0){
-		KS_logfile_debug(("%s: could not decode maxMessageSize in HelloMessage header (or == 0)", thisId->v_identifier));
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK){
+		//OPC UA Part 6, Hello Message: A value of zero indicates that the Client has no limit.
+		KS_logfile_debug(("%s: could not decode maxMessageSize in HelloMessage header", thisId->v_identifier));
 		return FALSE;
 	}
-	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy == 0){
-		KS_logfile_debug(("%s: could not decode maxChunkCount in HelloMessage header (or == 0)", thisId->v_identifier));
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK){
+		//OPC UA Part 6, Hello Message: A value of zero indicates that the Client has no limit.
+		KS_logfile_debug(("%s: could not decode maxChunkCount in HelloMessage header", thisId->v_identifier));
 		return FALSE;
 	}
 	ov_memstack_lock();
