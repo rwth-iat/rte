@@ -561,9 +561,6 @@ static void OV_NodeStore_deleteNode(UA_Node *node){
 
 		ov_logfile_error("Delete Node: %s", tmpString);
 		ov_string_setvalue(&tmpString, NULL);
-		if (node->nodeClass == UA_NODECLASS_METHOD){
-			ov_string_setvalue((OV_STRING*) (&(((UA_MethodNode*) node)->methodHandle)),	NULL);
-		}
 		UA_Node_deleteMembersAnyNodeClass(node);
 	}
 	UA_free(node);
@@ -674,7 +671,6 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 		}else {
 
 		}
-
 	}
 
 	ov_string_freelist(plist);

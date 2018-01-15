@@ -66,7 +66,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(pobj->v_identifier);
-	qName.namespaceIndex = pinterface->v_interfacenamespace.index;
+	qName.namespaceIndex = nodeId->namespaceIndex;
 	newNode->browseName = qName;
 
 	// Description
@@ -75,7 +75,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
 		lText.text = UA_String_fromChars(tempString);
-		ov_string_setvalue(&tempString, NULL);
 	} else {
 		lText.text = UA_String_fromChars("");
 	}
@@ -114,7 +113,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".Body");
 	UA_String tmpStringBody = UA_String_fromChars(tmpString);
-	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".Views");
 	UA_String tmpStringView = UA_String_fromChars(tmpString);
@@ -129,8 +127,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 		}
 	}
 	UA_NodeId_deleteMembers(&tmpNodeId);
-	UA_String_deleteMembers(&tmpStringBody);
-	UA_String_deleteMembers(&tmpStringView);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

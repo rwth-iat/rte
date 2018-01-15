@@ -65,7 +65,7 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(plist[len-1]);
-	qName.namespaceIndex = pinterface->v_interfacenamespace.index;
+	qName.namespaceIndex = nodeId->namespaceIndex;
 	newNode->browseName = qName;
 
 	// Description

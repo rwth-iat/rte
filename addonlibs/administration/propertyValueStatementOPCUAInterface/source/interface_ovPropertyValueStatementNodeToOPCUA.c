@@ -67,7 +67,7 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(pobj->v_identifier);
-	qName.namespaceIndex = pinterface->v_interfacenamespace.index;
+	qName.namespaceIndex = nodeId->namespaceIndex;
 	newNode->browseName = qName;
 
 	// Description
@@ -76,7 +76,6 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
 		lText.text = UA_String_fromChars(tempString);
-		ov_string_setvalue(&tempString, NULL);
 	} else {
 		lText.text = UA_String_fromChars("");
 	}
@@ -124,9 +123,6 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	UA_Variant tmpValue;
 	UA_Variant_init(&tmpValue);
 	OV_ANY tmpValue2;
-	tmpValue2.value.vartype = OV_VT_VOID;
-	Ov_SetAnyValue(&tmpValue2, NULL);
-
 	do {
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
 		if (tmpPart.elemtype == OV_ET_NONE)

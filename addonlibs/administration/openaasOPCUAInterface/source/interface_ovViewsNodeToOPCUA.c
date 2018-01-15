@@ -65,7 +65,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovViewsNodeToOPCUA
 	// BrowseName
 	UA_QualifiedName qName;
 	qName.name = UA_String_fromChars(pobj->v_identifier);
-	qName.namespaceIndex = pinterface->v_interfacenamespace.index;
+	qName.namespaceIndex = nodeId->namespaceIndex;
 	newNode->browseName = qName;
 
 	// Description
