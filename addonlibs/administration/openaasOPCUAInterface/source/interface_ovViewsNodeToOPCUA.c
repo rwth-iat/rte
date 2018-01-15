@@ -74,10 +74,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovViewsNodeToOPCUA
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
 		lText.text = UA_String_fromChars(tempString);
+		ov_string_setvalue(&tempString, NULL);
 	} else {
 		lText.text = UA_String_fromChars("");
 	}
 	newNode->description = lText;
+
 
 	// DisplayName
 	lText.locale = UA_String_fromChars("en");

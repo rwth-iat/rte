@@ -146,6 +146,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	lText.locale = UA_String_fromChars("en");
 	if (tempString) {
 		lText.text = UA_String_fromChars(tempString);
+		ov_string_setvalue(&tempString, NULL);
 	} else {
 		lText.text = UA_String_fromChars("");
 	}
@@ -176,11 +177,8 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	newNode->writeMask = writeMask;
 
 	((UA_MethodNode*) newNode)->executable = TRUE;
-	((UA_MethodNode*) newNode)->attachedMethod =
-			openaasOPCUAInterface_interface_MethodCallbackModelmanager;
-	ov_string_setvalue(
-			(OV_STRING*) (&(((UA_MethodNode*) newNode)->methodHandle)),
-			plist2[0]);
+	((UA_MethodNode*) newNode)->attachedMethod = openaasOPCUAInterface_interface_MethodCallbackModelmanager;
+	ov_string_setvalue((OV_STRING*) (&(((UA_MethodNode*) newNode)->methodHandle)),plist2[0]);
 	ov_string_freelist(plist2);
 
 	// References
@@ -193,6 +191,7 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
 	if (!newNode->references) {
 		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+		UA_Node_deleteMembersAnyNodeClass(newNode);
 		UA_free(newNode);
 		return result;
 	}
@@ -272,15 +271,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 	}
 
 	if (methodId != 0) {
-		getNumericalNodeIdForInputOutputArgs(uaserver->v_serverData,
-				UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index,
-						methodId), &inArgId, &outArgId);
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(
-				pinterface->v_modelnamespace.index, methodId);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(
-				inArgId.namespaceIndex, inArgId.identifier.numeric);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(
-				outArgId.namespaceIndex, outArgId.identifier.numeric);
+		getNumericalNodeIdForInputOutputArgs(uaserver->v_serverData, UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, methodId), &inArgId, &outArgId);
+		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, methodId);
+		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(inArgId.namespaceIndex, inArgId.identifier.numeric);
+		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(outArgId.namespaceIndex, outArgId.identifier.numeric);
 	} else {
 		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, 0);
 		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(0, 0);
