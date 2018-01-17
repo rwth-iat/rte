@@ -1,0 +1,157 @@
+#include "ov.ovm"
+#include "fb.ovm"
+#include "opcua.ovm"
+#include "openaas.ovm"
+
+LIBRARY simpleExperimentDataArchiver
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of DataArchiver.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS DataArchiver : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			/* */
+			run : BOOL HAS_ACCESSORS FLAGS = "i" COMMENT = "Command to start execution of subscribtion" INITIALVALUE = FALSE;
+			start : BOOL HAS_ACCESSORS FLAGS = "i"	COMMENT = "Start command for record" INITIALVALUE = FALSE;
+			stop : BOOL HAS_ACCESSORS FLAGS = "i" COMMENT = "Stop command for record" INITIALVALUE = FALSE;
+			reset : BOOL HAS_ACCESSORS FLAGS = "i" COMMENT = "Reset command for connection" INITIALVALUE = FALSE; 
+			
+			NodeIDIdentifier[] : STRING FLAGS = "n" COMMENT = "Identifier list for the nodes";
+			NodeIDNSindex[] : UINT FLAGS = "n" COMMENT = "Namespace index list for the nodes";
+			NodeIDIdType[] : UINT FLAGS = "n" COMMENT = "IdentifierType list for the nodes (supported is String: 1)"; // , Numeric: 2, GUID: 3, Opaque: 4 not supported so far
+			
+			/* state machine */
+			state : UINT HAS_ACCESSORS FLAGS = "n" COMMENT = "Current state of the fb" INITIALVALUE = 1;
+			stateName : STRING HAS_SET_ACCESSOR FLAGS = "o";
+			
+			/* error handling */
+			errorMsg : STRING HAS_SET_ACCESSOR FLAGS = "o";
+			retryAfter : TIME_SPAN FLAGS = "i" COMMENT = "time span [s] until connection retry";
+			lastConnectionTry : TIME FLAGS = "o" COMMENT ="Time of last connection try";
+			
+			/* OPC UA inputs */
+			serverEndpointUrl : STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)" INITIALVALUE= "opc.tcp://localhost:16664";
+						
+			/* handle thread variables */
+			threadDataHndl : INT FLAGS = "n" INITIALVALUE = 0;
+
+		END_VARIABLES;
+		PARTS
+
+		END_PARTS;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor :  C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS	Variable : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, representing a variable (to be put in the containment of a get/setVar to get/set more than one variable on the same server)";
+		VARIABLES
+			NodeIDIdentifier : STRING HAS_ACCESSORS COMMENT =	"NodeID of variable" INITIALVALUE = "";
+			NodeIDNSindex : UINT HAS_ACCESSORS FLAGS = "i" COMMENT = "Namespace index list for the nodes";
+			NodeIDIdType : UINT HAS_ACCESSORS FLAGS = "i" COMMENT = "IdentifierType list for the nodes (supported is String: 1)"; // , Numeric: 2, GUID: 3, Opaque: 4 not supported so far
+			varValue : ANY HAS_ACCESSORS FLAGS = "o" COMMENT = "The Variable value";
+			varRes : UINT HAS_ACCESSORS FLAGS ="o" COMMENT =	"Result of opc ua subscription" INITIALVALUE =	0;
+			varTime : TIME HAS_ACCESSORS FLAGS = "o" COMMENT = "";
+			varID : STRING	FLAGS = "i" COMMENT = "eCl@ss oder IEC 61360-CDD";
+			order :	UINT HAS_ACCESSORS FLAGS = "n" COMMENT = "Place of variable in package" INITIALVALUE	=	0;
+			
+		END_VARIABLES;
+		OPERATIONS
+			getaccess :	C_FUNCTION <OV_FNC_GETACCESS>;		/*	just to make all variables visible on KS	*/
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	Factory	: CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT = "Factory for DataArchiver";
+		VARIABLES
+			/* OPC UA inputs */
+			serverEndpointUrl : STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)" INITIALVALUE= "opc.tcp://localhost:16664";
+			NodeIDIdentifier[] : STRING FLAGS = "i" COMMENT = "Identifier list for the nodes";
+			NodeIDNSindex[] : UINT FLAGS = "i" COMMENT = "Namespace index list for the nodes";
+			NodeIDIdType[] : UINT FLAGS = "i" COMMENT = "IdentifierType list for the nodes (supported is String: 1)"; // , Numeric: 2, GUID: 3, Opaque: 4 not supported so far
+			
+			/* csv file handling */
+			name: STRING FLAGS = "i" COMMENT="Name for DataArchiver";
+			placement: STRING FLAGS = "i" COMMENT="placement of DataArchiver" INITIALVALUE = "/TechUnits";
+			create : BOOL HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE = FALSE;
+		END_VARIABLES;
+			OPERATIONS
+			getaccess :	C_FUNCTION <OV_FNC_GETACCESS>;		/*	just to make all variables visible on KS	*/
+		END_OPERATIONS;
+	END_CLASS;
+	
+		CLASS writer : CLASS fb/functionblock
+		COMMENT = "writes Variables into a file";
+		VARIABLES
+			start : BOOL HAS_ACCESSORS FLAGS = "i"	COMMENT = "Start command for record" INITIALVALUE = FALSE;
+			stop : BOOL HAS_ACCESSORS FLAGS = "i" COMMENT = "Stop command for record" INITIALVALUE = FALSE;
+			reset : BOOL HAS_ACCESSORS FLAGS = "i" COMMENT = "Reset command for connection" INITIALVALUE = FALSE; 
+			
+			/* state machine */
+			state : UINT HAS_ACCESSORS FLAGS = "n" COMMENT = "Current state of the fb" INITIALVALUE = 1;
+			stateName : STRING HAS_SET_ACCESSOR FLAGS = "o";
+			timeLastWrite : TIME FLAGS = "n";
+			
+			/* error handling */
+			errorMsg : STRING HAS_SET_ACCESSOR FLAGS = "o";
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor :  C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS fileWriter : CLASS simpleExperimentDataArchiver/writer
+		IS_INSTANTIABLE;
+		COMMENT = "writes Variables into a file";
+		VARIABLES
+			/* csv file handling */
+			archiveDir : STRING HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Target directory for archive files";
+			fileName : STRING HAS_ACCESSORS FLAGS = "n"  COMMENT = "name of the archive file"; 
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor :  C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+		CLASS AASWriter : CLASS simpleExperimentDataArchiver/writer
+		IS_INSTANTIABLE;
+		COMMENT = "writes Variables into a AAS";
+		VARIABLES
+			/* aas handling */
+			aasId : STRING HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Target aas";
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor :  C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+
+	ASSOCIATION SubscriptionResult : ONE_TO_MANY
+	PARENT DataArchiver : CLASS simpleExperimentDataArchiver/DataArchiver;
+	CHILD  Variable : CLASS simpleExperimentDataArchiver/Variable;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HandleData : ONE_TO_MANY
+	PARENT DataArchiver : CLASS simpleExperimentDataArchiver/DataArchiver;
+	CHILD  DataHandler : CLASS simpleExperimentDataArchiver/writer;
+	END_ASSOCIATION;
+	
+END_LIBRARY;

@@ -899,7 +899,8 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/servicesOPCUAInterface
 				addonlibs/administration/openaasOPCUAInterface				
 				addonlibs/administration/subModelLifeCycleEntryOPCUAInterface
-				addonlibs/administration/subModelAdministrationOPCUAInterface}
+				addonlibs/administration/subModelAdministrationOPCUAInterface
+				addon_libs/administration/simpleExperimentDataArchiver}
 				
 print_msg "checking out all libraries of the acplt system"
 
