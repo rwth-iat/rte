@@ -892,13 +892,13 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/openaas				
 				addonlibs/administration/openAASDiscoveryServer
 				addonlibs/administration/subModelLifeCycleEntry
-				addonlibs/administration/subModelAdministration
-				addonlibs/administration/subModelDiscovery				
+				addonlibs/administration/subModelAdministration				
 				addonlibs/administration/identificationOPCUAInterface
 				addonlibs/administration/lifeCycleEntryOPCUAInterface
 				addonlibs/administration/propertyValueStatementOPCUAInterface
 				addonlibs/administration/servicesOPCUAInterface
-				addonlibs/administration/openaasOPCUAInterface				
+				addonlibs/administration/openaasOPCUAInterface	
+				addonlibs/administration/subModelDiscovery			
 				addonlibs/administration/subModelLifeCycleEntryOPCUAInterface
 				addonlibs/administration/subModelAdministrationOPCUAInterface
 				addonlibs/administration/subModelDiscoveryOPCUAInterface
