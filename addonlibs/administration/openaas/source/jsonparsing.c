@@ -27,6 +27,7 @@ const SRV_String JSON_EL_STR [JSON_EL_MAX+1] = {
 		{.data = "<" , .length = 1},
 		{.data = ""  , .length = 0}
 };
+
 const SRV_String JSON_ES_STR [JSON_ES_MAX+1] = {
 		{.data = "Confirmation",	.length = 12},
 		{.data = "Setting",			.length =  7},
@@ -181,14 +182,58 @@ JSON_RC ISOToDateTime(char* iso, int len, SRV_DateTime* jsonTime){
 	return JSON_RC_OK;
 }
 
-//TODO escape special characters?
 static JSON_RC tok2SrvStr(const char* js, const jsmntok_t* t, SRV_String* str){
 	if(!(t->type==JSMN_STRING))
 		return JSON_RC_WRONG_TYPE;
 	if(!str)
 		return JSON_RC_UNDEF;
 
-	SRV_String_setCopy(str, js+t->start, t->end-t->start);
+	const char* jsStr = js+t->start;
+
+	int len = t->end-t->start;
+	int offset = 0;
+
+	str->data = malloc(len+1);
+	if(!str->data)
+		return JSON_RC_MALLOC_FAIL;
+
+	for(int pos = 0;pos < len; pos++){
+		if(jsStr[pos] == '\\'){
+			pos++;
+			offset++;
+			switch(jsStr[pos]){
+			// replace escape sequences
+			case 'b':
+				str->data[pos-offset] = '\b';
+				break;
+			case 'f':
+				str->data[pos-offset] = '\f';
+				break;
+			case 'n':
+				str->data[pos-offset] = '\n';
+				break;
+			case 'r':
+				str->data[pos-offset] = '\r';
+				break;
+			case 't':
+				str->data[pos-offset] = '\t';
+				break;
+			case '\"':
+				str->data[pos-offset] = '\"';
+				break;
+			case '\\':
+				str->data[pos-offset] = '\\';
+				break;
+			default:
+				return JSON_RC_WRONG_VALUE;
+			}
+		} else {
+			str->data[pos-offset] = jsStr[pos];
+		}
+	}
+
+	str->length = len - offset;
+	str->data[str->length] = '\0';
 
 	return JSON_RC_OK;
 }
@@ -312,10 +357,15 @@ static JSON_RC tok2Any(const char* js, const jsmntok_t* t, SRV_extAny_t* value){
 			rc = tok2SrvStr(js, t, &time);
 			if(rc)
 				return rc;
-			rc = ISOToDateTime(time.data, time.length, &value->value.vt_datetime);
-			SRV_String_deleteMembers(&time);
-			if(rc)
-				return rc;
+			if(time.length){
+				rc = ISOToDateTime(time.data, time.length, &value->value.vt_datetime);
+				SRV_String_deleteMembers(&time);
+				if(rc)
+					return rc;
+			} else {
+				value->value.vt_datetime = 0;
+				SRV_String_deleteMembers(&time);
+			}
 		} else {
 			rc = tok2SrvStr(js, t, &value->value.vt_string);
 			if(rc)
@@ -423,7 +473,70 @@ static int json_append(SRV_String* js, int start, const char* str, int len, int 
 
 	return start+len;
 }
+static int json_append_escaped(SRV_String* js, int start, const char* str, int len, int maxLen){
 
+	if(!str)
+		return JSON_RC_BAD_INPUT;
+
+	if(len<0)
+		len = strlen(str);
+
+	int addedLen = 0;
+	int offset = 0;
+	char escape = 0;
+
+	for(int i=0; i<len; i++){
+		switch(str[i]){
+		case '\b': case '\f': case '\n':
+		case '\r': case '\t': case '\"':
+		case '\\':
+			addedLen++;
+		}
+	}
+
+	if(js){
+		if(maxLen<start+len+addedLen)
+			return JSON_RC_NO_SPACE;
+
+		for(int i = 0; i<len; i++){
+			switch(str[i]){
+			// escape invalid characters
+			case '\b':
+				escape = 'b';
+				break;
+			case '\f':
+				escape = 'f';
+				break;
+			case '\n':
+				escape = 'n';
+				break;
+			case '\r':
+				escape = 'r';
+				break;
+			case '\t':
+				escape = 't';
+				break;
+			case '\"':
+				escape = '\"';
+				break;
+			case '\\':
+				escape = '\\';
+				break;
+			default:
+				escape = 0;
+			}
+			if(escape){
+				js->data[start+i+offset] = '\\';
+				offset++;
+				js->data[start+i+offset] = escape;
+			} else {
+				js->data[start+i+offset] = str[i];
+			}
+		}
+	}
+
+	return start+len+addedLen;
+}
 
 int dateTimeToISO(SRV_DateTime t, char* iso, int maxLen){
 	int len;
@@ -442,10 +555,9 @@ int dateTimeToISO(SRV_DateTime t, char* iso, int maxLen){
 	return len;
 }
 
-//TODO escape special characters?
 static int json_appendString(SRV_String* js, int start, const char* str, int len, int maxLen){
 	int pos = json_append(js, start, "\"", 1, maxLen);
-	pos = json_append(js, pos, str, len, maxLen);
+	pos = json_append_escaped(js, pos, str, len, maxLen);
 	pos = json_append(js, pos, "\"", 1, maxLen);
 	return pos;
 }
@@ -473,7 +585,7 @@ static int json_appendKey(SRV_String* js, int start, const char* str, int len, i
 	} else {
 		pos = json_append(js, start, ",\"", 2, maxLen);
 	}
-	pos = json_append(js, pos, str, len, maxLen);
+	pos = json_append_escaped(js, pos, str, len, maxLen);
 	pos = json_append(js, pos, "\":", 2, maxLen);
 	return pos;
 }
@@ -481,7 +593,7 @@ static int json_appendKey(SRV_String* js, int start, const char* str, int len, i
 
 static int json_appendSrvStr(SRV_String* js, int start, const SRV_String* str, int maxLen){
 	int pos = json_append(js, start, "\"", 1, maxLen);
-	pos = json_append(js, pos, str->data, str->length, maxLen);
+	pos = json_append_escaped(js, pos, str->data, str->length, maxLen);
 	pos = json_append(js, pos, "\"", 1, maxLen);
 	return pos;
 }
@@ -718,11 +830,13 @@ JSON_RC jsonparsePVS(const jsmntok_t* t, const SRV_String* str, int start, int n
 			rc = tok2SrvStr(str->data, &t[j], &time);
 			if(rc)
 				return rc;
-			rc = ISOToDateTime(time.data, time.length, &pvs->value.time);
-			SRV_String_deleteMembers(&time);
-			if(rc)
-				return rc;
-			pvs->value.hasTime = true;
+			if(time.length){
+				rc = ISOToDateTime(time.data, time.length, &pvs->value.time);
+				SRV_String_deleteMembers(&time);
+				if(rc)
+					return rc;
+				pvs->value.hasTime = true;
+			}
 		} else if(jsoneq(str->data, &t[j], "ValueType")==0){
 			j++;
 			SRV_String tmpStr;
@@ -938,11 +1052,13 @@ JSON_RC jsonparseLCE(const jsmntok_t* t, const SRV_String* str, int start, int n
 			if(rc){
 				return rc;
 			}
-			rc =  ISOToDateTime(time.data, time.length, &lce->value.time);
-			SRV_String_deleteMembers(&time);
-			if(rc)
-				return rc;
-			lce->value.hasTime = true;
+			if(time.length){
+				rc =  ISOToDateTime(time.data, time.length, &lce->value.time);
+				SRV_String_deleteMembers(&time);
+				if(rc)
+					return rc;
+				lce->value.hasTime = true;
+			}
 		} else if(jsoneq(str->data, &t[j], "ValueType")==0){
 			j++;
 			SRV_String tmpStr;
@@ -3114,7 +3230,7 @@ JSON_RC genJson(SRV_String** js, const SRV_msgHeader* header, const void* srvStr
 		return JSON_RC_MALLOC_FAIL;
 	(*js)->data = malloc(len+1);
 	if(!(*js)->data){
-		//TODO should this be free?
+		//TODO should this be freed?
 		free(*js);
 		return JSON_RC_MALLOC_FAIL;
 	}

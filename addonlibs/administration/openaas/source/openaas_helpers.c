@@ -5,6 +5,10 @@
  *      Author: ubuntu
  */
 
+#ifndef OV_COMPILE_LIBRARY_openaas
+#define OV_COMPILE_LIBRARY_openaas
+#endif
+
 #include "openaas_helpers.h"
 
 OV_RESULT decodeMSG(const SRV_String* str, SRV_msgHeader** header, void** srvStruct, SRV_service_t* srvType, SRV_encoding_t *encoding){
@@ -71,6 +75,10 @@ OV_RESULT serviceValueToOVDataValue(OV_ANY* value, const SRV_extAny_t* serviceVa
 		value->value.vartype = OV_VT_BOOL;
 		value->value.valueunion.val_bool = serviceValue->value.vt_bool;
 		break;
+	case SRV_VT_SINGLE:
+		value->value.vartype = OV_VT_SINGLE;
+		value->value.valueunion.val_single = serviceValue->value.vt_single;
+		break;
 	case SRV_VT_DOUBLE:
 		value->value.vartype = OV_VT_DOUBLE;
 		value->value.valueunion.val_double = serviceValue->value.vt_double;
@@ -112,6 +120,10 @@ OV_RESULT OVDataValueToserviceValue(OV_ANY value, SRV_extAny_t* serviceValue){
 	case OV_VT_BOOL:
 		serviceValue->type = SRV_VT_BOOL;
 		serviceValue->value.vt_bool = value.value.valueunion.val_bool;
+		break;
+	case OV_VT_SINGLE:
+		serviceValue->type =SRV_VT_SINGLE;
+		serviceValue->value.vt_single = value.value.valueunion.val_single;
 		break;
 	case OV_VT_DOUBLE:
 		serviceValue->type = SRV_VT_DOUBLE;

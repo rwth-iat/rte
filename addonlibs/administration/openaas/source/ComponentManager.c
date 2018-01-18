@@ -27,6 +27,8 @@
 #include "openaas_helpers.h"
 #include "jsonparsing.h"
 #include "fb_database.h"
+#include "identification_helpers.h"
+#include "propertyValueStatement_helpers.h"
 #include "MessageSys_helpers.h"
 
 extern OV_INSTPTR_openaas_InterfaceDiscoveryServer pInterfaceDiscoveryServer;
@@ -504,8 +506,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		void *srvStructReceive = NULL;
 		SRV_service_t srvTypeReceive;
 		SRV_encoding_t encoding;
-		ov_logfile_info("AASComponentManager: Message received with content: %s", srvStringReceive->data);
-		ov_logfile_info("AASComponentManager: Message received with content: %s", srvStringReceive->data+500);
 		resultOV = decodeMSG(srvStringReceive, &headerReceive, &srvStructReceive, &srvTypeReceive, &encoding);
 		if (resultOV){
 			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
@@ -1119,7 +1119,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 							}
 							if (ppvsl[i].pvs[j].Mask & 0x08){ //PropertyID
 								SRV_String_setCopy(&getCoreDataRsp.pvsl[i].pvs[j].propertyId.idSpec, ppvsl[i].pvs[j].PropertyId.IdSpec, ov_string_getlength(ppvsl[i].pvs[j].PropertyId.IdSpec));
-								getCoreDataRsp.pvsl[i].pvs[j].propertyId.idType = ppvsl[i].PropertyId.IdType;
+								getCoreDataRsp.pvsl[i].pvs[j].propertyId.idType = ppvsl[i].pvs[j].PropertyId.IdType;
 							}
 							if (ppvsl[i].pvs[j].Mask & 0x10){ //View
 								getCoreDataRsp.pvsl[i].pvs[j].view = ppvsl[i].pvs[j].View;
@@ -1143,7 +1143,8 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 
 				getCoreDataRsp_t_deleteMembers(&getCoreDataRsp);
-				sendAnswer = TRUE;
+				if(!resultOV)
+					sendAnswer = TRUE;
 			}break;
 			case SRV_getCoreDataRsp:{
 				getCoreDataRsp_t *getCoreDataRsp = (getCoreDataRsp_t*)srvStructReceive;
