@@ -893,6 +893,7 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/openAASDiscoveryServer
 				addonlibs/administration/subModelLifeCycleEntry
 				addonlibs/administration/subModelAdministration
+				addonlibs/administration/subModelDiscovery				
 				addonlibs/administration/identificationOPCUAInterface
 				addonlibs/administration/lifeCycleEntryOPCUAInterface
 				addonlibs/administration/propertyValueStatementOPCUAInterface
@@ -900,6 +901,7 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/openaasOPCUAInterface				
 				addonlibs/administration/subModelLifeCycleEntryOPCUAInterface
 				addonlibs/administration/subModelAdministrationOPCUAInterface
+				addonlibs/administration/subModelDiscoveryOPCUAInterface
 				addonlibs/administration/simpleExperimentDataArchiver}
 				
 print_msg "checking out all libraries of the acplt system"
