@@ -131,7 +131,7 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_create_set(
 			break;
 		}
 		case (UA_IDTYPE_NUMERIC) : {
-			result = ov_string_print(&variableName,"%i",pobj->v_NodeIDIdentifier.value[ItemIterator]);
+			result = ov_string_print(&variableName,"%s",pobj->v_NodeIDIdentifier.value[ItemIterator]);
 			if(Ov_Fail(result)){
 				return result;
 			}
@@ -150,6 +150,8 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_create_set(
 		if(Ov_Fail(result)){
 			return result;
 		}
+		result = Ov_Link(fb_tasklist, pArchiver, pVariable);
+
 		result = Ov_Link(simpleExperimentDataArchiver_SubscriptionResult,pArchiver,pVariable);
 		if(Ov_Fail(result)){
 			return result;

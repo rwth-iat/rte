@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2017-11-17   File created
+*   2018-01-18   File created
 *
 *******************************************************************************
 *
@@ -93,20 +93,6 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Variable_varRes_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_UINT simpleExperimentDataArchiver_Variable_order_get(
-    OV_INSTPTR_simpleExperimentDataArchiver_Variable          pobj
-) {
-    return pobj->v_order;
-}
-
-OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Variable_order_set(
-    OV_INSTPTR_simpleExperimentDataArchiver_Variable          pobj,
-    const OV_UINT  value
-) {
-    pobj->v_order = value;
-    return OV_ERR_OK;
-}
-
 OV_DLLFNCEXPORT OV_TIME* simpleExperimentDataArchiver_Variable_varTime_get(
     OV_INSTPTR_simpleExperimentDataArchiver_Variable          pobj
 ) {
@@ -121,15 +107,65 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Variable_varTime_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS simpleExperimentDataArchiver_Variable_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
+OV_DLLFNCEXPORT OV_UINT simpleExperimentDataArchiver_Variable_order_get(
+    OV_INSTPTR_simpleExperimentDataArchiver_Variable          pobj
+) {
+    return pobj->v_order;
+}
+
+OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Variable_order_set(
+    OV_INSTPTR_simpleExperimentDataArchiver_Variable          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_order = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Variable_constructor(
+	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
+    //OV_INSTPTR_simpleExperimentDataArchiver_Variable pinst = Ov_StaticPtrCast(simpleExperimentDataArchiver_Variable, pobj);
+    OV_RESULT    result;
 
-	   return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
+    /* do what the base class does first */
+    result = fb_functionblock_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+
+
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT void simpleExperimentDataArchiver_Variable_destructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*    
+    *   local variables
+    */
+    //OV_INSTPTR_simpleExperimentDataArchiver_Variable pinst = Ov_StaticPtrCast(simpleExperimentDataArchiver_Variable, pobj);
+
+    /* do what */
+
+    /* destroy object */
+    fb_functionblock_destructor(pobj);
+
+    return;
+}
+
+OV_DLLFNCEXPORT void simpleExperimentDataArchiver_Variable_typemethod(
+	OV_INSTPTR_fb_functionblock	pfb,
+	OV_TIME						*pltc
+) {
+    /*    
+    *   local variables
+    */
+    //OV_INSTPTR_simpleExperimentDataArchiver_Variable pinst = Ov_StaticPtrCast(simpleExperimentDataArchiver_Variable, pfb);
+
+    return;
 }
 

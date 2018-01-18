@@ -355,34 +355,6 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_DataArchiver_run_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_BOOL simpleExperimentDataArchiver_DataArchiver_start_get(
-		OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pobj) {
-	return pobj->v_start;
-}
-
-OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_DataArchiver_start_set(
-		OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pobj,
-		const OV_BOOL value) {
-	/*set proctime to now to execute fb immediately after start command */
-	ov_time_gettime(&pobj->v_proctime);
-	pobj->v_start = value;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_BOOL simpleExperimentDataArchiver_DataArchiver_stop_get(
-		OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pobj) {
-	return pobj->v_stop;
-}
-
-OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_DataArchiver_stop_set(
-		OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pobj,
-		const OV_BOOL value) {
-	/*set proctime to now to execute fb immediately after stop command */
-	ov_time_gettime(&pobj->v_proctime);
-	pobj->v_stop = value;
-	return OV_ERR_OK;
-}
-
 OV_DLLFNCEXPORT OV_UINT simpleExperimentDataArchiver_DataArchiver_state_get(
 		OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pobj) {
 	return pobj->v_state;
@@ -481,8 +453,6 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_DataArchiver_constructor(
 
 	pinst->v_state = CONFIGURE;
 	pinst->v_run = FALSE;
-	pinst->v_start = FALSE;
-	pinst->v_stop = FALSE;
 	pinst->v_reset = FALSE;
 
 	/* allocate memory and initialize */
@@ -561,8 +531,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 
 #define RESETINPUT();\
 		pinst->v_run = FALSE;\
-		pinst->v_start = FALSE;\
-		pinst->v_stop = FALSE;\
 
 	/* get threadData pointer */
 	if(!pinst->v_threadDataHndl){
@@ -701,9 +669,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 		 *  STATE: CONNECTED
 		 * update  variables */
 	case CONNECTED:
-		/* reset stop command */
-		pinst->v_stop = FALSE;
-
 		/* check connection */
 		CHECKCONNECTION();
 
@@ -731,17 +696,7 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 		MUTEX_UNLOCK(&pthreadData->mutex);
 
 		/* free memory */
-		//FREEMEMORY();
-
-		MUTEX_LOCK(&pthreadData->mutex);\
-		if(pthreadData->connectionState.subDataVecLength > 0){\
-			Ov_HeapFree(pthreadData->connectionState.subDataVec);\
-			pthreadData->connectionState.subDataVecLength = 0;\
-		}\
-		MUTEX_UNLOCK(&pthreadData->mutex);\
-		Ov_SetDynamicVectorLength(&pinst->v_NodeIDNSindex,0,UINT);\
-		Ov_SetDynamicVectorLength(&pinst->v_NodeIDIdentifier,0,STRING);\
-		Ov_SetDynamicVectorLength(&pinst->v_NodeIDIdType,0,UINT);\
+		FREEMEMORY();
 
 		/* destroy thread */
 		DESTROYTHREAD();
@@ -811,12 +766,14 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_destructor(
 	 */
 	OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pinst = Ov_StaticPtrCast(simpleExperimentDataArchiver_DataArchiver, pobj);
 	thread_data * pthreadData = (thread_data *) pinst->v_threadDataHndl;
+	OV_UINT timeOut = 0;
 
 	/* free memory */
 	MUTEX_LOCK(&pthreadData->mutex);
 	pthreadData->thread_run = FALSE;
-	while(pthreadData->connectionState.connected == TRUE){
+	while(pthreadData->connectionState.connected == TRUE && timeOut > 10000){
 		// wait for connection end
+		timeOut++;
 	}
 	MUTEX_UNLOCK(&pthreadData->mutex);
 	pthread_join(pthreadData->thread,NULL);
@@ -830,8 +787,9 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_destructor(
 
 	FREEMEMORY();
 
-
 	Ov_HeapFree(pthreadData);
+
+
 
 	pinst->v_threadDataHndl = 0;
 

@@ -19,8 +19,6 @@ LIBRARY simpleExperimentDataArchiver
 		VARIABLES
 			/* */
 			run : BOOL HAS_ACCESSORS FLAGS = "i" COMMENT = "Command to start execution of subscribtion" INITIALVALUE = FALSE;
-			start : BOOL HAS_ACCESSORS FLAGS = "i"	COMMENT = "Start command for record" INITIALVALUE = FALSE;
-			stop : BOOL HAS_ACCESSORS FLAGS = "i" COMMENT = "Stop command for record" INITIALVALUE = FALSE;
 			reset : BOOL HAS_ACCESSORS FLAGS = "i" COMMENT = "Reset command for connection" INITIALVALUE = FALSE; 
 			
 			NodeIDIdentifier[] : STRING FLAGS = "n" COMMENT = "Identifier list for the nodes";
@@ -53,7 +51,7 @@ LIBRARY simpleExperimentDataArchiver
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS	Variable : CLASS ov/object
+	CLASS	Variable : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		COMMENT	=	"ov_object, representing a variable (to be put in the containment of a get/setVar to get/set more than one variable on the same server)";
 		VARIABLES
@@ -64,11 +62,12 @@ LIBRARY simpleExperimentDataArchiver
 			varRes : UINT HAS_ACCESSORS FLAGS ="o" COMMENT =	"Result of opc ua subscription" INITIALVALUE =	0;
 			varTime : TIME HAS_ACCESSORS FLAGS = "o" COMMENT = "";
 			varID : STRING	FLAGS = "i" COMMENT = "eCl@ss oder IEC 61360-CDD";
-			order :	UINT HAS_ACCESSORS FLAGS = "n" COMMENT = "Place of variable in package" INITIALVALUE	=	0;
-			
+			order :	UINT HAS_ACCESSORS FLAGS = "n" COMMENT = "Place of variable in package" INITIALVALUE	=	0;		
 		END_VARIABLES;
 		OPERATIONS
-			getaccess :	C_FUNCTION <OV_FNC_GETACCESS>;		/*	just to make all variables visible on KS	*/
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor :  C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
 
