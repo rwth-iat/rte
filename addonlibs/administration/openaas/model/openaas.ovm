@@ -18,6 +18,14 @@ LIBRARY openaas
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/   
         
+    CLASS Folder : CLASS ov/domain
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+        END_OPERATIONS;
+    END_CLASS;
+    
     CLASS Header : CLASS ov/domain
         IS_INSTANTIABLE;
         VARIABLES

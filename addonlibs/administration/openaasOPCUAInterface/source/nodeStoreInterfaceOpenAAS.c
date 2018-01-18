@@ -577,20 +577,17 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	OV_STRING *plist = NULL;
 	OV_STRING *plist2 = NULL;
 	OV_STRING *plist3 = NULL;
-	OV_STRING *plist4 = NULL;
 	OV_STRING tmpString = NULL;
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_UINT len = 0;
 	OV_UINT len2 = 0;
 	OV_UINT len3 = 0;
-	OV_UINT len4 = 0;
 	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
 		return NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "/", &len);
 	plist2 = ov_string_split(plist[len-1], ".", &len2);
 	plist3 = ov_string_split(tmpString, "||", &len3);
-	plist4 = ov_string_split(tmpString, "|", &len4);
 
 
 	if (len3 > 1){
@@ -599,7 +596,6 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			ov_string_freelist(plist);
 			ov_string_freelist(plist2);
 			ov_string_freelist(plist3);
-			ov_string_freelist(plist4);
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
@@ -608,30 +604,19 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 				ov_string_freelist(plist);
 				ov_string_freelist(plist2);
 				ov_string_freelist(plist3);
-				ov_string_freelist(plist4);
 				ov_string_setvalue(&tmpString, NULL);
 				return (UA_Node*) opcuaNode;
 			}
 		}
-	}else if (len4 > 1 ){
-		pobj = ov_path_getobjectpointer(plist4[0], 2);
-		if (pobj == NULL){
-			ov_string_freelist(plist);
-			ov_string_freelist(plist2);
-			ov_string_freelist(plist3);
-			ov_string_freelist(plist4);
-			ov_string_setvalue(&tmpString, NULL);
-			return NULL;
-		}
 	}else if (len2 > 1){
 		if (ov_string_compare(plist2[len2-1], "Views") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovViewsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			if (openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
 		}else if (ov_string_compare(plist2[len2-1], "Header") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovHeaderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			if (openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
 		}else if (ov_string_compare(plist2[len2-1], "Body") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovBodyNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+			if (openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
 		}else if (ov_string_compare(plist2[len2-1], "Revision") == OV_STRCMP_EQUAL){
 			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
@@ -649,7 +634,6 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			ov_string_freelist(plist);
 			ov_string_freelist(plist2);
 			ov_string_freelist(plist3);
-			ov_string_freelist(plist4);
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
@@ -663,15 +647,16 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 		}else if (Ov_CanCastTo(openaas_modelmanager, pobj)){
 			if (openaasOPCUAInterface_interface_ovModelManagerNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
+		}else if(Ov_CanCastTo(openaas_Folder, pobj)){
+			if (openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
 		}else {
-
 		}
 	}
 
 	ov_string_freelist(plist);
 	ov_string_freelist(plist2);
 	ov_string_freelist(plist3);
-	ov_string_freelist(plist4);
 	ov_string_setvalue(&tmpString, NULL);
 	return tmpNode;
 }

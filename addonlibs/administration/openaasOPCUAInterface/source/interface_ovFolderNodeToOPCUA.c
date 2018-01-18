@@ -32,7 +32,7 @@ extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
 
 
 
-OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovViewsNodeToOPCUA(
+OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -78,7 +78,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovViewsNodeToOPCUA
 		lText.text = UA_String_fromChars("");
 	}
 	newNode->description = lText;
-
 
 	// DisplayName
 	lText.locale = UA_String_fromChars("en");
