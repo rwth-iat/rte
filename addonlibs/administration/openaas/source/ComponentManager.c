@@ -233,7 +233,7 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		Ov_ForEachChildEx(ov_containment, &paas->p_Header.p_Config, ppvs, propertyValueStatement_PropertyValueStatement){
 			Ov_ForEachChildEx(ov_containment, ppvs, pPropertyId, propertyValueStatement_PropertyId){
 				if (pPropertyId->v_IdType == URI && ov_string_compare(pPropertyId->v_IdSpec, "http://acplt.org/Properties/AssetID")){
-					if (ppvs->v_Value.value.vartype == OV_VT_STRING){
+					if ((ppvs->v_Value.value.vartype &OV_VT_KSMASK) == OV_VT_STRING){
 						if (ov_string_compare(ppvs->v_Value.value.valueunion.val_string, "") != OV_STRCMP_EQUAL){
 							OV_UINT len = 0;
 							OV_STRING *plist = NULL;
@@ -391,7 +391,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		Ov_ForEachChildEx(ov_containment, &paas->p_Header.p_Config, ppvs, propertyValueStatement_PropertyValueStatement){
 			Ov_ForEachChildEx(ov_containment, ppvs, pPropertyId, propertyValueStatement_PropertyId){
 				if (pPropertyId->v_IdType == URI && ov_string_compare(pPropertyId->v_IdSpec, "http://acplt.org/Properties/AssetID")){
-					if (ppvs->v_Value.value.vartype == OV_VT_STRING){
+					if ((ppvs->v_Value.value.vartype & OV_VT_KSMASK) == OV_VT_STRING){
 						if (ov_string_compare(ppvs->v_Value.value.valueunion.val_string, "") != OV_STRCMP_EQUAL){
 							ov_string_setvalue(&tmpAssetId, ppvs->v_Value.value.valueunion.val_string);
 							break;
