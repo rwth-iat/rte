@@ -223,13 +223,18 @@ int subscription_AddMonitoredItem(UA_NodeId* NodeId, UA_UInt32 *monId, UA_UInt32
  * registers subscriptions */
 static int opcua_subscription_client(thread_data* pthreadData) {
 	/*create new opc ua client */
-	MUTEX_LOCK(&pthreadData->mutex);
-	UA_Client *client = UA_Client_new(UA_ClientConfig_standard);
 
+	UA_Client *client = UA_Client_new(UA_ClientConfig_standard);
+	MUTEX_LOCK(&pthreadData->mutex);
+	OV_STRING tmpEndpoint = NULL;
+	ov_string_setvalue(&tmpEndpoint, pthreadData->serverEndpointUrl);
+	MUTEX_UNLOCK(&pthreadData->mutex);
 	/* Connect to a server */
-	UA_StatusCode retval = UA_Client_connect(client, pthreadData->serverEndpointUrl);
+	UA_StatusCode retval = UA_Client_connect(client, tmpEndpoint);
+	ov_string_setvalue(&tmpEndpoint,"");
 	if (retval != UA_STATUSCODE_GOOD) {
 		// connection failed
+		MUTEX_LOCK(&pthreadData->mutex);
 		pthreadData->connectionState.error = TRUE;
 		MUTEX_UNLOCK(&pthreadData->mutex);
 		goto deleteClient;
@@ -240,17 +245,18 @@ static int opcua_subscription_client(thread_data* pthreadData) {
 	retval = UA_Client_Subscriptions_new(client, SubscriptionSettings, &subId);
 	if (retval != UA_STATUSCODE_GOOD) {
 		// create new subscription failed
+		MUTEX_LOCK(&pthreadData->mutex);
 		pthreadData->connectionState.error = TRUE;
 		MUTEX_UNLOCK(&pthreadData->mutex);
 		goto deleteClient;
 	}
-
+	MUTEX_LOCK(&pthreadData->mutex);
 	/* add monitored items to subscription */
 	for (OV_UINT ItemIterator = 0; ItemIterator < pthreadData->connectionState.subDataVecLength; ItemIterator++) {
 		retval = subscription_AddMonitoredItem(&pthreadData->connectionState.subDataVec[ItemIterator].subscriptionNodeId, &pthreadData->connectionState.subDataVec[ItemIterator].monId, subId, client, pthreadData);
 		if (retval != UA_STATUSCODE_GOOD) {
-			MUTEX_UNLOCK(&pthreadData->mutex);
 			pthreadData->connectionState.error = TRUE;
+			MUTEX_UNLOCK(&pthreadData->mutex);
 			goto deleteClient;
 		}
 	}
