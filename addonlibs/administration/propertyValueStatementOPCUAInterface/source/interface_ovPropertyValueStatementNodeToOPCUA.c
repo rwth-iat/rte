@@ -179,7 +179,10 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSPROPERTYVALUESTATEMENTID_PROPERTYVALUESTATEMENTTYPE);
-			break;
+			continue;
+		}
+		if (newNode->references[i].targetId.nodeId.namespaceIndex == pinterface->v_interfacenamespace.index){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 		}
 	}
 	UA_NodeId_deleteMembers(&tmpNodeId);

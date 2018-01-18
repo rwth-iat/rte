@@ -37,7 +37,7 @@ extern OV_INSTPTR_propertyValueStatementOPCUAInterface_interface pinterface;
 
 
 
-OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovExpressionLogicNodeToOPCUA(
+OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovExpressionSemanticNodeToOPCUA(
 		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -123,28 +123,28 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovE
 	OV_ELEMENT tmpParrent;
 	tmpParrent.pobj = pobj;
 	tmpParrent.elemtype = OV_ET_OBJECT;
-	UA_ExpressionLogicEnum tmpExpressionLogic = 0;
+	UA_ExpressionSemanticEnum tmpExpressionSemantic = 0;
 	do {
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
 		if (tmpPart.elemtype == OV_ET_NONE)
 			break;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "ExpressionLogicEnum") == OV_STRCMP_EQUAL){
-			tmpExpressionLogic = *(UA_UInt32*)tmpPart.pvalue;
+		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "ExpressionSemanticEnum") == OV_STRCMP_EQUAL){
+			tmpExpressionSemantic = *(UA_UInt32*)tmpPart.pvalue;
 			break;
 		}
 	} while(TRUE);
 
 
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_EXPRESSIONLOGICENUM];
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_ExpressionLogicEnum_new();
+	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_EXPRESSIONSEMANTICENUM];
+	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_ExpressionSemanticEnum_new();
 	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
 		return result;
 	}
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
-	UA_ExpressionLogicEnum_copy(&tmpExpressionLogic, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
-	UA_ExpressionLogicEnum_deleteMembers(&tmpExpressionLogic);
+	UA_ExpressionSemanticEnum_copy(&tmpExpressionSemantic, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
+	UA_ExpressionSemanticEnum_deleteMembers(&tmpExpressionSemantic);
 
 
 	// accessLevel
@@ -161,18 +161,37 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovE
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 	// dataType
-	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSPROPERTYVALUESTATEMENTID_EXPRESSIONLOGICENUM);
+	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSPROPERTYVALUESTATEMENTID_EXPRESSIONSEMANTICENUM);
 
 
 	// References
 	addReference(newNode);
+	OV_UINT len = 0;
+	OV_STRING *plist = NULL;
+	OV_STRING tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	plist = ov_string_split(tmpString, "/", &len);
+	ov_string_setvalue(&tmpString, plist[0]);
+	for (OV_UINT i = 1; i < len-1; i++){
+		ov_string_append(&tmpString, "/");
+		ov_string_append(&tmpString, plist[i]);
+	}
+	ov_string_freelist(plist);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
-			break;
+			continue;
 		}
+		OV_STRING tmpString2 = NULL;
+		copyOPCUAStringToOV(newNode->references[i].targetId.nodeId.identifier.string, &tmpString2);
+		if (ov_string_compare(tmpString, tmpString2) == OV_STRCMP_EQUAL &&
+			newNode->references[i].isInverse == UA_TRUE){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+		}
+		ov_string_setvalue(&tmpString2, NULL);
 	}
+	ov_string_setvalue(&tmpString, NULL);
 	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	*opcuaNode = newNode;

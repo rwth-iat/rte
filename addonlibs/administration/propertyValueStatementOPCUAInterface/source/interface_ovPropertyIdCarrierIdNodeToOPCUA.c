@@ -172,13 +172,32 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 
 	// References
 	addReference(newNode);
+	OV_UINT len = 0;
+	OV_STRING *plist = NULL;
+	OV_STRING tmpString = NULL;
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	plist = ov_string_split(tmpString, "/", &len);
+	ov_string_setvalue(&tmpString, plist[0]);
+	for (OV_UINT i = 1; i < len-1; i++){
+		ov_string_append(&tmpString, "/");
+		ov_string_append(&tmpString, plist[i]);
+	}
+	ov_string_freelist(plist);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
-			break;
+			continue;
 		}
+		OV_STRING tmpString2 = NULL;
+		copyOPCUAStringToOV(newNode->references[i].targetId.nodeId.identifier.string, &tmpString2);
+		if (ov_string_compare(tmpString, tmpString2) == OV_STRCMP_EQUAL &&
+			newNode->references[i].isInverse == UA_TRUE){
+			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+		}
+		ov_string_setvalue(&tmpString2, NULL);
 	}
+	ov_string_setvalue(&tmpString, NULL);
 	UA_NodeId_deleteMembers(&tmpNodeId);
 
 	*opcuaNode = newNode;

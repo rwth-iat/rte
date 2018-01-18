@@ -123,11 +123,15 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSOPENAASID_SUBMODELTYPE);
+			continue;
 		}
 		if (UA_String_equal(&ModelId, &newNode->references[i].targetId.nodeId.identifier.string) ||
 			UA_String_equal(&Revision, &newNode->references[i].targetId.nodeId.identifier.string) ||
 			UA_String_equal(&Version, &newNode->references[i].targetId.nodeId.identifier.string)){
 			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;
+			if (UA_String_equal(&ModelId, &newNode->references[i].targetId.nodeId.identifier.string) && newNode->references[i].referenceTypeId.identifier.numeric == UA_NS0ID_HASCOMPONENT){
+				newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			}
 		}
 	}
 	UA_NodeId_deleteMembers(&tmpNodeId);
