@@ -2,7 +2,6 @@
 #include "services.ovm"
 #include "openaas.ovm"
 #include "openAASDiscoveryServer.ovm"
-#include "openaasOPCUAInterface.ovm"
 
 LIBRARY subModelDiscovery
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
