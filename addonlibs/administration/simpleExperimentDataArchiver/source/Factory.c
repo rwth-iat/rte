@@ -131,7 +131,7 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_create_set(
 			break;
 		}
 		case (UA_IDTYPE_NUMERIC) : {
-			result = ov_string_print(&variableName,"%s",pobj->v_NodeIDIdentifier.value[ItemIterator]);
+			result = ov_string_print(&variableName,"%i-%s",pobj->v_NodeIDNSindex.value[ItemIterator],pobj->v_NodeIDIdentifier.value[ItemIterator]);
 			if(Ov_Fail(result)){
 				return result;
 			}
