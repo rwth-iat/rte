@@ -22,7 +22,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
                      const UA_NodeId *sessionId, void *sessionHandle,
                      size_t inputSize, const UA_Variant *input,
                      size_t outputSize, UA_Variant *output) {
-	UA_String tmpString;
+
 	UA_String *tmpStringArray = NULL;
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 
@@ -174,13 +174,18 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 				ov_database_free(outputs[i]);
 			break;
 		case OV_VT_STRING:
-			tmpString = UA_String_fromChars(*(OV_STRING*)outputs[i]);
+			{
+			UA_String tmpString;
+			UA_String_init(&tmpString);
+			if (*(OV_STRING*)outputs[i])
+				tmpString = UA_String_fromChars(*(OV_STRING*)outputs[i]);
 			UA_Variant_setScalarCopy(&output[i], &tmpString, &UA_TYPES[UA_TYPES_STRING]);
 			UA_String_deleteMembers(&tmpString);
 			if (*(OV_STRING*)outputs[i])
 				ov_database_free(*(OV_STRING*)outputs[i]);
 			if (outputs[i])
 				ov_database_free(outputs[i]);
+			}
 			break;
 		case OV_VT_BOOL_VEC:
 			UA_Variant_setArrayCopy(&output[i], (*(OV_GENERIC_VEC*)(outputs[i])).value, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_BOOLEAN]);
@@ -328,14 +333,6 @@ static void OV_NodeStore_deleteNodestore(void *handle, UA_UInt16 namespaceIndex)
 
 static void OV_NodeStore_deleteNode(UA_Node *node){
 	if (node){
-		OV_STRING tmpString = NULL;
-		if (node->nodeId.identifierType == UA_NODEIDTYPE_STRING)
-			copyOPCUAStringToOV(node->nodeId.identifier.string, &tmpString);
-		else
-			ov_string_print(&tmpString, "%i", node->nodeId.identifier.numeric);
-
-		ov_logfile_error("Delete Node: %s", tmpString);
-		ov_string_setvalue(&tmpString, NULL);
 		UA_Node_deleteMembersAnyNodeClass(node);
 	}
 	UA_free(node);

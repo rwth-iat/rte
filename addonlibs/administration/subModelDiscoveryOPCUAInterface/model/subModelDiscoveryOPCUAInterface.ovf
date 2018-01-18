@@ -1,0 +1,15 @@
+#ifndef subModelDiscoveryOPCUAInterface_OVF_INCLUDED
+#define subModelDiscoveryOPCUAInterface_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+typedef UA_NodestoreInterface* SERVICES_FNC_OVNODESTOREINTERFACESUBMODELDISCOVERYNEW(void);
+typedef void SERVICES_FNC_OVNODESTOREINTERFACESUBMODELDISCOVERYDELETE(UA_NodestoreInterface * nsi);
+
+               
+#endif                    

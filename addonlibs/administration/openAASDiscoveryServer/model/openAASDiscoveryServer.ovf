@@ -8,3 +8,6 @@
 		OV_STRING varName
 	);
 */
+typedef void DS_FNC_CLEANUPMESSAGEBOX(OV_INSTPTR_openAASDiscoveryServer_ComponentManager this);
+
+#endif

@@ -1,0 +1,64 @@
+#include "ov.ovm"
+#include "services.ovm"
+#include "openaas.ovm"
+#include "openAASDiscoveryServer.ovm"
+#include "openaasOPCUAInterface.ovm"
+
+LIBRARY subModelDiscovery
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of SubModelDiscovery.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/	
+	
+	CLASS GetAASIDfromAssetIDService : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES
+        	AssetIdType    : UINT   FLAGS="i";  
+            AssetIdString  : STRING FLAGS="i" INITIALVALUE    =   "";
+            Status  : STRING FLAGS="o" INITIALVALUE    =   ""; 
+            ASSIdType    : UINT   FLAGS="o";
+            ASSIdString : STRING FLAGS="o" INITIALVALUE = "";            
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS GetComfromASSIDService : CLASS services/Service
+	    IS_INSTANTIABLE;
+	    VARIABLES
+	        AASIdType    : UINT   FLAGS="i";  
+	        AASIdString  : STRING FLAGS="i" INITIALVALUE    =   "";
+	        Status  : STRING FLAGS="o" INITIALVALUE    =   ""; 
+	        Com[]  : STRING FLAGS="o";            
+	    END_VARIABLES;
+	    OPERATIONS
+	        CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+	    END_OPERATIONS;
+	END_CLASS;
+	
+	
+	CLASS SubModelDiscovery : CLASS openaas/SubModel
+		IS_INSTANTIABLE;
+		VARIABLES  
+		      			
+		END_VARIABLES;
+		PARTS
+			GetAASIDfromAssetIDService : CLASS subModelDiscovery/GetAASIDfromAssetIDService;
+			GetComfromASSIDService : CLASS subModelDiscovery/GetComfromASSIDService;
+			DiscoveryServer : CLASS openAASDiscoveryServer/DiscoveryServer;
+		END_PARTS;
+		OPERATIONS 
+			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+
+	
+END_LIBRARY;

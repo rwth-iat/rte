@@ -553,14 +553,6 @@ static void OV_NodeStore_deleteNodestore(void *handle, UA_UInt16 namespaceIndex)
 
 static void OV_NodeStore_deleteNode(UA_Node *node){
 	if (node){
-		OV_STRING tmpString = NULL;
-		if (node->nodeId.identifierType == UA_NODEIDTYPE_STRING)
-			copyOPCUAStringToOV(node->nodeId.identifier.string, &tmpString);
-		else
-			ov_string_print(&tmpString, "%i", node->nodeId.identifier.numeric);
-
-		ov_logfile_error("Delete Node: %s", tmpString);
-		ov_string_setvalue(&tmpString, NULL);
 		if (node->nodeClass == UA_NODECLASS_METHOD){
 			ov_string_setvalue((OV_STRING*) (&(((UA_MethodNode*) node)->methodHandle)),	NULL);
 		}

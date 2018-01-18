@@ -1,5 +1,6 @@
 #include "ov.ovm"
 #include "fb.ovm"
+#include "identification.ovm"
 #include "MessageSys.ovm"
 
 LIBRARY openAASDiscoveryServer
@@ -15,7 +16,7 @@ LIBRARY openAASDiscoveryServer
 	*/
 	
 	
-	CLASS OVDataForAAS : CLASS ov/object
+	CLASS OVDataForAAS : CLASS ov/domain
 		IS_INSTANTIABLE;
 		VARIABLES
 			ServerHost   :   STRING  
@@ -33,6 +34,17 @@ LIBRARY openAASDiscoveryServer
 		END_OPERATIONS;
 	END_CLASS;
 	
+	CLASS OVDataForAssetID : CLASS ov/object
+        IS_INSTANTIABLE;
+        VARIABLES
+            AASIDString        :   STRING  COMMENT =   "ASS-ID String" INITIALVALUE    =   "";
+            AASIDType          :   UINT INITIALVALUE = 0;
+        END_VARIABLES;
+        OPERATIONS
+            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+	
 	CLASS ComponentManager : CLASS fb/functionblock 
         IS_INSTANTIABLE;
         VARIABLES
@@ -47,6 +59,7 @@ LIBRARY openAASDiscoveryServer
             getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
             constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+            cleanupMessageBox : C_FUNCTION <DS_FNC_CLEANUPMESSAGEBOX>;
         END_OPERATIONS;
     END_CLASS;
 	
@@ -56,6 +69,8 @@ LIBRARY openAASDiscoveryServer
 		END_VARIABLES;
 		PARTS 
             ComponentManager : CLASS openAASDiscoveryServer/ComponentManager;
+            AASIDs : CLASS ov/domain;
+            AssetIDs : CLASS ov/domain;
         END_PARTS;
 		OPERATIONS
 			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;

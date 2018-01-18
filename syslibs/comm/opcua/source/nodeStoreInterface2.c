@@ -81,6 +81,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 		ov_string_append(&tmpString, "/Ov");
 		if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString) == OV_STRCMP_EQUAL){
 			dst->nodeId.nodeId.namespaceIndex = i;
+			ov_string_setvalue(&tmpString, NULL);
 			break;
 		}else{
 			dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
@@ -133,6 +134,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 			ov_string_append(&tmpString, "/Ov");
 			if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString) == OV_STRCMP_EQUAL){
 				dst->browseName.namespaceIndex = i;
+				ov_string_setvalue(&tmpString, NULL);
 				break;
 			}else{
 				dst->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
@@ -770,8 +772,9 @@ static void OV_NodeStore2_deleteNodestore(void *handle){
 }
 
 static void OV_NodeStore2_deleteNode(UA_Node *node){
-	if (node)
+	if (node){
 		UA_Node_deleteMembersAnyNodeClass(node);
+	}
 	UA_free(node);
 }
 static void OV_NodeStore2_releaseNode(void *handle, const UA_Node *node){
@@ -867,6 +870,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		ov_string_append(&tmpString, "/Ov");
 		if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString) == OV_STRCMP_EQUAL){
 			newNode->browseName.namespaceIndex = i;
+			ov_string_setvalue(&tmpString, NULL);
 			break;
 		}else{
 			newNode->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
@@ -903,6 +907,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		ov_string_append(&tmpString, "/Ov");
 		if (ov_string_compare(opcua_pUaServer->v_namespaceNames.value[i], tmpString) == OV_STRCMP_EQUAL){
 			newNode->nodeId.namespaceIndex = i;
+			ov_string_setvalue(&tmpString, NULL);
 			break;
 		}else{
 			newNode->nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;

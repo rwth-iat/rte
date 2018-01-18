@@ -1,0 +1,7 @@
+#ifndef subModelDiscoveryOPCUAInterface_OVT_INCLUDED
+#define subModelDiscoveryOPCUAInterface_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+#endif
