@@ -111,7 +111,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	((UA_VariableNode*)newNode)->arrayDimensions = NULL; // UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 
 	// valuerank
-	((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
+	((UA_VariableNode*)newNode)->valueRank = -1;	/*	scalar	*/
 
 
 	// value

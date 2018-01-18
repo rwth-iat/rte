@@ -130,7 +130,42 @@ static UA_StatusCode OV_NodeStore_insertNode(void *handle, UA_Node *node, UA_Nod
 	//return OV_NodeStore_insert(handle, node, parrentNode);
 }
 static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
-	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
+	OV_PATH 				path;
+	OV_INSTPTR_ov_object	pobj = NULL;
+	OV_TICKET 				*pTicket = NULL;
+	OV_VTBLPTR_ov_object	pVtblObj = NULL;
+	OV_ACCESS				access;
+
+	ov_memstack_lock();
+	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(node->nodeId, &path);
+	if(result != UA_STATUSCODE_GOOD){
+		ov_memstack_unlock();
+		return result;
+	}
+	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+	ov_memstack_unlock();
+	if(result != UA_STATUSCODE_GOOD){
+		return result;
+	}
+
+	if (pobj){
+		if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pobj)){ // PVS
+			OV_ELEMENT tmpPart;
+			tmpPart.elemtype = OV_ET_NONE;
+			OV_ELEMENT tmpParrent;
+			tmpParrent.pobj = pobj;
+			tmpParrent.elemtype = OV_ET_OBJECT;
+			do {
+				ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
+				if (tmpPart.elemtype == OV_ET_NONE)
+					break;
+				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Value") == OV_STRCMP_EQUAL)
+					ov_VariantToAny(((UA_Variant*)&((UA_VariableNode*)node)->value.data.value.value), (OV_ANY*)tmpPart.pvalue);
+			} while(TRUE);
+		}
+	}
+	return result;
 }
 static void OV_NodeStore_iterate(void *handle, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor){
 

@@ -110,10 +110,6 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
 	((UA_VariableNode*)newNode)->arrayDimensions = NULL; // UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 
-	// valuerank
-	((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
-
-
 	// value
 	OV_ELEMENT tmpPart;
 	tmpPart.elemtype = OV_ET_NONE;
@@ -142,6 +138,24 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(tmpValue2.value.vartype);
 	Ov_SetAnyValue(&tmpValue2, NULL);
 	UA_Variant_deleteMembers(&tmpValue);
+
+	// valuerank
+	switch(((OV_ANY*)tmpPart.pvalue)->value.vartype & OV_VT_KSMASK){
+	case OV_VT_ANY:
+	case OV_VT_VOID:
+		((UA_VariableNode*)newNode)->valueRank = -3;	/*	scalar or one dimension	*/
+		result = UA_STATUSCODE_GOOD;
+		break;
+	default:
+		if(((OV_ANY*)tmpPart.pvalue)->value.vartype & OV_VT_ISVECTOR){
+			((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
+			result = UA_STATUSCODE_GOOD;
+		} else {
+			((UA_VariableNode*)newNode)->valueRank = -1;	/*	scalar	*/
+			result = UA_STATUSCODE_GOOD;
+		}
+		break;
+	}
 
 
 	// accessLevel
