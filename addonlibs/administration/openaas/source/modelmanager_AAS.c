@@ -151,12 +151,7 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
 				OV_INSTPTR_propertyValueStatement_PropertyId pref =
 										Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);
-				pref->v_IdSpec = "http://openaas.org/properties/assetId";
-				pref->v_IdType = URI;
-			}else if (Ov_CanCastTo(propertyValueStatement_PropertyId, pchild)){
-				OV_INSTPTR_propertyValueStatement_PropertyId pref =
-										Ov_DynamicPtrCast(propertyValueStatement_PropertyId,pchild);
-				pref->v_IdSpec = "http://openaas.org/properties/assetId";
+				pref->v_IdSpec = "http://acplt.org/Properties/AssetID";
 				pref->v_IdType = URI;
 			}else if (Ov_CanCastTo(propertyValueStatement_View, pchild)){
 				OV_INSTPTR_propertyValueStatement_View pref =
