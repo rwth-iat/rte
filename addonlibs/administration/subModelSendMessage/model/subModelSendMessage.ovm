@@ -1,0 +1,44 @@
+#include "ov.ovm"
+#include "services.ovm"
+#include "openaas.ovm"
+
+LIBRARY subModelSendMessage
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of SubModelSendMessage.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/	
+	
+	CLASS SendMessageService : CLASS services/Service
+        IS_INSTANTIABLE;
+        VARIABLES
+        	message : STRING FLAGS="i" INITIALVALUE ="";        
+            targetPath : STRING FLAGS="i" INITIALVALUE ="/TechUnits/openAAS/Motor_M23.Body/ComponentManager.INBOX";   
+            Status  : STRING FLAGS="o" INITIALVALUE    =   "";         
+        END_VARIABLES;
+        OPERATIONS
+            CallMethod        :    C_FUNCTION    <SERVICE_FNC_CALLEDMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+	 
+	CLASS SubModelSendMessage : CLASS openaas/SubModel
+		IS_INSTANTIABLE;
+		VARIABLES  
+		      			
+		END_VARIABLES; 
+		PARTS
+			SendMessageService : CLASS subModelSendMessage/SendMessageService;
+		END_PARTS;
+		OPERATIONS 
+			getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+
+	
+END_LIBRARY;

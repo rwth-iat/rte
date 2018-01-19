@@ -1,0 +1,7 @@
+#ifndef subModelSendMessageOPCUAInterface_OVT_INCLUDED
+#define subModelSendMessageOPCUAInterface_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+#endif
