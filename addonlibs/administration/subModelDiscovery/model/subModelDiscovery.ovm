@@ -16,7 +16,7 @@ LIBRARY subModelDiscovery
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/	
 	
-	CLASS GetAASIDfromAssetIDService : CLASS services/Service
+	CLASS GetAASIDByAssetIDService : CLASS services/Service
         IS_INSTANTIABLE;
         VARIABLES
         	AssetIdType    : UINT   FLAGS="i";  
@@ -30,7 +30,7 @@ LIBRARY subModelDiscovery
         END_OPERATIONS;
     END_CLASS;
     
-    CLASS GetComfromASSIDService : CLASS services/Service
+    CLASS GetAASEntryPointByAASIDService : CLASS services/Service
 	    IS_INSTANTIABLE;
 	    VARIABLES
 	        AASIdType    : UINT   FLAGS="i";  
@@ -50,8 +50,8 @@ LIBRARY subModelDiscovery
 		      			
 		END_VARIABLES;
 		PARTS
-			GetAASIDfromAssetIDService : CLASS subModelDiscovery/GetAASIDfromAssetIDService;
-			GetComfromASSIDService : CLASS subModelDiscovery/GetComfromASSIDService;
+			GetAASIDByAssetIDService : CLASS subModelDiscovery/GetAASIDByAssetIDService;
+			GetAASEntryPointByAASIDService : CLASS subModelDiscovery/GetAASEntryPointByAASIDService;
 			DiscoveryServer : CLASS openAASDiscoveryServer/DiscoveryServer;
 		END_PARTS;
 		OPERATIONS 

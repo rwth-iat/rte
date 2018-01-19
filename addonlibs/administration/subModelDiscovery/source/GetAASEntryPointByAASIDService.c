@@ -25,7 +25,7 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetComfromASSIDService_CallMethod(      
+OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallMethod(
   OV_INSTPTR_services_Service pobj,       
   OV_UINT numberofInputArgs,       
   const void **packedInputArgList,       

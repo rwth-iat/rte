@@ -58,8 +58,8 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	if(Ov_CanCastTo(subModelDiscovery_SubModelDiscovery, pobj)){
 		if (openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
-	}else if(Ov_CanCastTo(subModelDiscovery_GetAASIDfromAssetIDService, pobj) ||
-			 Ov_CanCastTo(subModelDiscovery_GetComfromASSIDService, pobj)){
+	}else if(Ov_CanCastTo(subModelDiscovery_GetAASIDByAssetIDService, pobj) ||
+			 Ov_CanCastTo(subModelDiscovery_GetAASEntryPointByAASIDService, pobj)){
 		if (servicesOPCUAInterface_interface_ovServiceNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}
