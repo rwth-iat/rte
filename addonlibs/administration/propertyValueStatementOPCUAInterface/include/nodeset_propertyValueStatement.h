@@ -2,8 +2,8 @@
  * Any manual changes will be overwritten.
 
  */
-#ifndef NODESET_H_PROPERTYVALUESTATEMENT
-#define NODESET_H_PROPERTYVALUESTATEMENT
+#ifndef NODESET_PROPERTYVALUESTATEMENT_H_
+#define NODESET_PROPERTYVALUESTATEMENT_H_
 #ifdef UA_NO_AMALGAMATION
 #include "server/ua_server_internal.h"
   #include "ua_util.h"
@@ -46,4 +46,4 @@
   extern UA_StatusCode nodeset(UA_Server *server);
   extern UA_StatusCode nodeset_returnNamespaces(UA_Server *server,
           UA_UInt16 *namespacesSize, UA_Namespace **namspaces);
-#endif /* NODESET_H_ */
+#endif /* NODESET_PROPERTYVALUESTATEMENT_H_ */

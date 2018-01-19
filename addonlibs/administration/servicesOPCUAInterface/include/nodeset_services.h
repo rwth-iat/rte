@@ -2,8 +2,8 @@
  * Any manual changes will be overwritten.
 
  */
-#ifndef OV_COMPILE_LIBRARY_servicesOPCUAInterface
-#define OV_COMPILE_LIBRARY_servicesOPCUAInterface
+#ifndef NODESET_SERVICES_H_
+#define NODESET_SERVICES_H_
 #ifdef UA_NO_AMALGAMATION
 #include "server/ua_server_internal.h"
   #include "ua_util.h"
@@ -40,4 +40,4 @@
   extern UA_StatusCode nodeset(UA_Server *server);
   extern UA_StatusCode nodeset_returnNamespaces(UA_Server *server,
           UA_UInt16 *namespacesSize, UA_Namespace **namspaces);
-#endif /* NODESET_H_ */
+#endif /* NODESET_SERVICES_H_ */

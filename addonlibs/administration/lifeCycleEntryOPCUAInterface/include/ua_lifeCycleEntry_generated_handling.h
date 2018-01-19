@@ -1,8 +1,8 @@
 /* Generated from Opc.Ua.Types.bsd, identification.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/opcuaParser/tools/generate_datatypes.py
  * on host ubuntu-VirtualBox by user ubuntu at 2017-09-29 03:11:03 */
 
-#ifndef OV_COMPILE_LIBRARY_lifeCycleEntryOPCUAInterface
-#define OV_COMPILE_LIBRARY_lifeCycleEntryOPCUAInterface
+#ifndef UA_LIFECYCLEENTRY_GENERATED_HANDLING_H_
+#define UA_LIFECYCLEENTRY_GENERATED_HANDLING_H_
 
 #ifdef __cplusplus
 extern "C" {
