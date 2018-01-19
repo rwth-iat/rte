@@ -82,6 +82,7 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASIDByAssetIDService_CallMethod(
 		ov_string_setvalue(&status, "AssetID not found");
 	}
 
+	ov_string_setvalue(&tmpHexString, NULL);
 	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
 	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
     return OV_ERR_OK;

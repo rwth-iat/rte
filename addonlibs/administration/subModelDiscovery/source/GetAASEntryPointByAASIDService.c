@@ -130,6 +130,8 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 		ov_string_setvalue(&status, "ASSID not found");
 	}
 
+	ov_string_setvalue(&tmpHexString, NULL);
+
 	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
 	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
 
