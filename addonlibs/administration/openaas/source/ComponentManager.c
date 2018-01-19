@@ -419,10 +419,9 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		pTaskParent=Ov_GetParent(fb_tasklist, pinst);
 		tmpTimeSpan.usecs = pTaskParent->v_cyctime.usecs * pinst->v_messageCount;
 		tmpTimeSpan.secs = pTaskParent->v_cyctime.secs * pinst->v_messageCount;
-		if((OV_INT)tmpTimeSpan.usecs > 999999) {
+		while((OV_INT)tmpTimeSpan.usecs > 999999) {
 			tmpTimeSpan.usecs -= 1000000;
 			tmpTimeSpan.secs++;
-			return;
 		}
 		if (tmpTimeSpan.secs > pinst->v_messageTimeOut.secs || (tmpTimeSpan.secs == pinst->v_messageTimeOut.secs && tmpTimeSpan.usecs > pinst->v_messageTimeOut.usecs)){
 			pinst->v_messageCount = 0;
