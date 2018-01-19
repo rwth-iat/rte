@@ -39,13 +39,11 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 
 	OV_STRING status = NULL;
 
-	packedOutputArgList[0] = ov_database_malloc(sizeof(OV_STRING));
-	*(OV_STRING*)packedOutputArgList[0] = NULL;
-	typeArray[0] = OV_VT_STRING;
 
-	packedOutputArgList[1] = ov_database_malloc(sizeof(OV_STRING_VEC));
-	(*(OV_STRING_VEC*)packedOutputArgList[1]).value = NULL;
-	(*(OV_STRING_VEC*)packedOutputArgList[1]).veclen = 0;
+	packedOutputArgList[0] =  ov_database_malloc(sizeof(OV_STRING));
+	packedOutputArgList[1] =  ov_database_malloc(sizeof(OV_STRING_VEC));
+
+	typeArray[0] = OV_VT_STRING;
 	typeArray[1] = OV_VT_STRING_VEC;
 
 	OV_STRING tmpHexStringAAS = NULL;
@@ -107,34 +105,27 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 		}
 		ov_string_setvalue(&tmpString, NULL);
 		if (opcuaFound == TRUE){
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).value = ov_database_malloc(2*sizeof(OV_STRING));
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).value[0] = NULL;
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).value[0] = ov_database_malloc(ov_string_getlength(ksinfo));
-			strcpy((*(OV_STRING_VEC*)packedOutputArgList[1]).value[0], ksinfo);
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).value[1] = NULL;
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).value[1] = ov_database_malloc(ov_string_getlength(opcuaInfo));
-			strcpy((*(OV_STRING_VEC*)packedOutputArgList[1]).value[1], opcuaInfo);
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).veclen = 2;
-			ov_string_setvalue(&status, "KS and OPCUA Com found");
+			Ov_SetDynamicVectorLength((OV_STRING_VEC*)packedOutputArgList[1],2,STRING);
+            ov_string_setvalue(&((OV_STRING_VEC*)(packedOutputArgList[1]))->value[0], ksinfo);
+            ov_string_setvalue(&((OV_STRING_VEC*)(packedOutputArgList[1]))->value[1],opcuaInfo);
+			ov_string_setvalue(&status, "KS and OPC UA Endpoints found");
 		}else{
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).value = ov_database_malloc(1*sizeof(OV_STRING));
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).value[0] = NULL;
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).value[0] = ov_database_malloc(ov_string_getlength(ksinfo));
-			strcpy((*(OV_STRING_VEC*)packedOutputArgList[1]).value[0], ksinfo);
-			(*(OV_STRING_VEC*)packedOutputArgList[1]).veclen = 1;
-			ov_string_setvalue(&status, "KS Com found");
+			Ov_SetDynamicVectorLength((OV_STRING_VEC*)packedOutputArgList[1],1,STRING);
+            ov_string_setvalue(&((OV_STRING_VEC*)(packedOutputArgList[1]))->value[0], ksinfo);
+			ov_string_setvalue(&status, "KS Endpoint found");
 		}
+		ov_string_setvalue(&ksinfo,NULL);
+		ov_string_setvalue(&opcuaInfo,NULL);
 	}else{
 
-		ov_string_setvalue(&status, "ASSID not found");
+		ov_string_setvalue(&status, "AASID not found");
 	}
 
 	ov_string_setvalue(&tmpHexString, NULL);
-
-	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
 	ov_string_setvalue((OV_STRING*)packedOutputArgList[0],status);
-        ov_string_setvalue(&status,NULL);
-	
+    ov_string_setvalue(&status,NULL);
+	ov_string_setvalue(&tmpHexStringAAS,NULL);
+
     return OV_ERR_OK;
 }
 
