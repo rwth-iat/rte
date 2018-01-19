@@ -1,7 +1,7 @@
 /* Generated from Opc.Ua.Types.bsd, identification.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/opcuaParser/tools/generate_datatypes.py
  * on host ubuntu-VirtualBox by user ubuntu at 2017-09-29 03:11:03 */
-#ifndef UA_LIFECYCLEENTRY_GENERATED_ENCODING_BINARY_H_
-#define UA_LIFECYCLEENTRY_GENERATED_ENCODING_BINARY_H_
+#ifndef OV_COMPILE_LIBRARY_lifeCycleEntryOPCUAInterface
+#define OV_COMPILE_LIBRARY_lifeCycleEntryOPCUAInterface
 
 #ifdef UA_NO_AMALGAMATION
 #include "ua_types_encoding_binary.h"

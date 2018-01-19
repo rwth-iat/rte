@@ -2,8 +2,8 @@
  * Any manual changes will be overwritten.
 
  */
-#ifndef NODESET_H_OPENAAS
-#define NODESET_H_OPENAAS
+#ifndef OV_COMPILE_LIBRARY_openaasOPCUAInterface
+#define OV_COMPILE_LIBRARY_openaasOPCUAInterface
 #ifdef UA_NO_AMALGAMATION
 #include "server/ua_server_internal.h"
   #include "ua_util.h"
