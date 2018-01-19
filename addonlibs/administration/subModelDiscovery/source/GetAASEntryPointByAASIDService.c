@@ -49,16 +49,15 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 	typeArray[1] = OV_VT_STRING_VEC;
 
 	OV_STRING tmpHexStringAAS = NULL;
-	OV_STRING tmpHexString2 = NULL;
-	ov_string_print(&tmpHexString2, "%i", *(OV_UINT*)packedInputArgList[0]);
-	ov_string_print(&tmpHexStringAAS, "%x", tmpHexString2[0]);
-	ov_string_setvalue(&tmpHexString2, NULL);
+	OV_STRING tmpHexString = NULL;
+	ov_string_print(&tmpHexString, "%i", *(OV_UINT*)packedInputArgList[0]);
+	ov_string_print(&tmpHexStringAAS, "%x", tmpHexString[0]);
+	ov_string_setvalue(&tmpHexString, NULL);
 
 	for (OV_UINT i = 0; i < ov_string_getlength(*(OV_STRING*)(packedInputArgList[1])); i++){
-		OV_STRING tmpHexString2 = NULL;
-		ov_string_print(&tmpHexString2, "%x", (*(OV_STRING*)(packedInputArgList[1]))[i]);
-		ov_string_append(&tmpHexStringAAS, tmpHexString2);
-		ov_string_setvalue(&tmpHexString2, NULL);
+		ov_string_print(&tmpHexString, "%x", (*(OV_STRING*)(packedInputArgList[1]))[i]);
+		ov_string_append(&tmpHexStringAAS, tmpHexString);
+		ov_string_setvalue(&tmpHexString, NULL);
 	}
 
 	OV_INSTPTR_openAASDiscoveryServer_OVDataForAAS pOvDataForAAS = NULL;
@@ -133,8 +132,9 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 	ov_string_setvalue(&tmpHexString, NULL);
 
 	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
-	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
-
+	ov_string_setvalue((OV_STRING*)packedOutputArgList[0],status);
+        ov_string_setvalue(&status,NULL);
+	
     return OV_ERR_OK;
 }
 

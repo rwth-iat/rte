@@ -53,15 +53,15 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASIDByAssetIDService_CallMethod(
 
 
 	OV_STRING tmpHexStringAsset = NULL;
-	OV_STRING tmpHexString2 = NULL;
-	ov_string_print(&tmpHexString2, "%i", *(OV_UINT*)packedInputArgList[0]);
-	ov_string_print(&tmpHexStringAsset, "%x", tmpHexString2[0]);
-	ov_string_setvalue(&tmpHexString2, NULL);
+	OV_STRING tmpHexString = NULL;
+	ov_string_print(&tmpHexString, "%i", *(OV_UINT*)packedInputArgList[0]);
+	ov_string_print(&tmpHexStringAsset, "%x", tmpHexString[0]);
+	ov_string_setvalue(&tmpHexString, NULL);
 
 	for (OV_UINT i = 0; i < ov_string_getlength(*(OV_STRING*)(packedInputArgList[1])); i++){
-		ov_string_print(&tmpHexString2, "%x", (*(OV_STRING*)(packedInputArgList[1]))[i]);
-		ov_string_append(&tmpHexStringAsset, tmpHexString2);
-		ov_string_setvalue(&tmpHexString2, NULL);
+		ov_string_print(&tmpHexString, "%x", (*(OV_STRING*)(packedInputArgList[1]))[i]);
+		ov_string_append(&tmpHexStringAsset, tmpHexString);
+		ov_string_setvalue(&tmpHexString, NULL);
 	}
 
 	OV_INSTPTR_openAASDiscoveryServer_OVDataForAssetID pOvDataForAsset = NULL;
@@ -85,6 +85,7 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASIDByAssetIDService_CallMethod(
 	ov_string_setvalue(&tmpHexString, NULL);
 	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
 	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
+	
     return OV_ERR_OK;
 }
 
