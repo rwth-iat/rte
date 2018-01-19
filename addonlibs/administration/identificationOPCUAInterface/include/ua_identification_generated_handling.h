@@ -1,8 +1,8 @@
 /* Generated from Opc.Ua.Types.bsd, aas.bsd with script ../tools/generate_datatypes.py
  * on host ubuntu-VirtualBox by user ubuntu at 2017-07-05 12:52:11 */
 
-#ifndef OV_COMPILE_LIBRARY_identificationOPCUAInterface
-#define OV_COMPILE_LIBRARY_identificationOPCUAInterface
+#ifndef UA_IDENTIFICATION_GENERATED_HANDLING_H_
+#define UA_IDENTIFICATION_GENERATED_HANDLING_H_
 
 #ifdef __cplusplus
 extern "C" {
