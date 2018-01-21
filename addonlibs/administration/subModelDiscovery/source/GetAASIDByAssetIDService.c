@@ -75,17 +75,15 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASIDByAssetIDService_CallMethod(
 		ov_string_setvalue(&status, "AssetID found");
 
 		*(OV_UINT*)packedOutputArgList[1] = pOvDataForAsset->v_AASIDType;
+		ov_string_setvalue((OV_STRING*)packedOutputArgList[0],status);
 
-		*(OV_STRING*)packedOutputArgList[2] = ov_database_malloc(ov_string_getlength(pOvDataForAsset->v_AASIDString)+1);
-		strcpy(*(OV_STRING*)packedOutputArgList[2], pOvDataForAsset->v_AASIDString);
 	}else{
 		ov_string_setvalue(&status, "AssetID not found");
 	}
 	ov_string_setvalue(&tmpHexStringAsset, NULL);
 	ov_string_setvalue(&tmpHexString, NULL);
-	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
-	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
-	
+	ov_string_setvalue((OV_STRING*)packedOutputArgList[0],status);
+	ov_string_setvalue(&status,NULL);
     return OV_ERR_OK;
 }
 
