@@ -140,7 +140,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 		tmpValue2 = value.value.valueunion.val_uint;
 	}
 
-	if (ov_string_compare("IdString", pobj->v_identifier) == OV_STRCMP_EQUAL){
+	if (ov_string_compare("WSDL", pobj->v_identifier) == OV_STRCMP_EQUAL){
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_STRING];
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_String_new();
 		if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){

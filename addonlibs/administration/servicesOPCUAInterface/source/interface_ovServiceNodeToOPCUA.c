@@ -117,19 +117,11 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	OV_STRING tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".IdString");
-	UA_String IdString = UA_String_fromChars(tmpString);
-	ov_string_setvalue(&tmpString, NULL);
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".IdType");
-	UA_String IdType = UA_String_fromChars(tmpString);
-	ov_string_setvalue(&tmpString, NULL);
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".Revision");
+	ov_string_append(&tmpString, ".ServiceRevision");
 	UA_String Revision = UA_String_fromChars(tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".Version");
+	ov_string_append(&tmpString, ".ServiceVersion");
 	UA_String Version = UA_String_fromChars(tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
@@ -141,16 +133,12 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_METHODNODE);
 		}
-		if (UA_String_equal(&IdString, &newNode->references[i].targetId.nodeId.identifier.string) ||
-			UA_String_equal(&IdType, &newNode->references[i].targetId.nodeId.identifier.string) ||
-			UA_String_equal(&Revision, &newNode->references[i].targetId.nodeId.identifier.string) ||
+		if (UA_String_equal(&Revision, &newNode->references[i].targetId.nodeId.identifier.string) ||
 			UA_String_equal(&Version, &newNode->references[i].targetId.nodeId.identifier.string) ||
 			UA_String_equal(&WSDL, &newNode->references[i].targetId.nodeId.identifier.string)){
 			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;
 		}
 	}
-	UA_String_deleteMembers(&IdString);
-	UA_String_deleteMembers(&IdType);
 	UA_String_deleteMembers(&Revision);
 	UA_String_deleteMembers(&Version);
 	UA_String_deleteMembers(&WSDL);

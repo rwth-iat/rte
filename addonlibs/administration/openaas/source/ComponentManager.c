@@ -251,8 +251,8 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 									if (i != len-1)
 										ov_string_append(&answerBody, ":");
 								}
-								break;
 								ov_string_freelist(plist);
+								break;
 							}
 							ov_string_freelist(plist);
 						}

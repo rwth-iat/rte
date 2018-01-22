@@ -54,6 +54,7 @@ UA_StatusCode getNumericalNodeIdForInputOutputArgs(UA_Server *server,
 			found1 = true;
 			//UA_NodeId_copy(&bR.references[i].nodeId.nodeId,&inArgsId);
 			UA_String_deleteMembers(&tmpBN);
+			UA_QualifiedName_deleteMembers(&bN);
 			continue;
 		}
 		UA_String_deleteMembers(&tmpBN);
@@ -63,10 +64,14 @@ UA_StatusCode getNumericalNodeIdForInputOutputArgs(UA_Server *server,
 			found2 = true;
 			//UA_NodeId_copy(&bR.references[i].nodeId.nodeId,&outArgsId);
 			UA_String_deleteMembers(&tmpBN);
+			UA_QualifiedName_deleteMembers(&bN);
 			continue;
 		}
 		UA_String_deleteMembers(&tmpBN);
+		UA_QualifiedName_deleteMembers(&bN);
 	}
+	UA_BrowseDescription_deleteMembers(&bD);
+	UA_BrowseResult_deleteMembers(&bR);
 	if (found1 && found2)
 		return UA_STATUSCODE_GOOD;
 	return UA_STATUSCODE_BADNOTFOUND;

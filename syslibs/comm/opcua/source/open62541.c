@@ -25600,6 +25600,7 @@ Service_Call_single(UA_Server *server, UA_Session *session,
         if(result->statusCode != UA_STATUSCODE_GOOD){
             UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
             UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)inputArguments);
             return;
         }
     }
@@ -25617,6 +25618,7 @@ Service_Call_single(UA_Server *server, UA_Session *session,
             result->statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
             UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)methodCalled);
             UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)withObject);
+            UA_NodestoreSwitch_releaseNode(server, (const UA_Node*)outputArguments);
             return;
         }
         result->outputArgumentsSize = outputArguments->value.data.value.value.arrayLength;

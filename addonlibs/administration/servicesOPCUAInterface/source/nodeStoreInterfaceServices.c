@@ -30,9 +30,12 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 	OV_INSTPTR_services_Service pService = (OV_INSTPTR_services_Service)methodHandle;
 	Ov_GetVTablePtr(services_Service, pvtable, pService);
 
-	void **inputs = malloc(sizeof(void*)*inputSize);
+	void **inputs = ov_database_malloc(sizeof(void*)*inputSize);
+	for (OV_UINT i = 0; i < inputSize; i++){
+		inputs[i] = NULL;
+	}
 	OV_UINT inputCounts = 0;
-	for (int i = 0; i < inputSize; i++){
+	for (OV_UINT i = 0; i < inputSize; i++){
 		inputCounts++;
 		inputs[i] = NULL;
 		if (input[i].arrayLength == 0){
@@ -58,7 +61,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
-					inputs[i] = malloc(sizeof(OV_STRING));
+					inputs[i] = ov_database_malloc(sizeof(OV_STRING));
 					copyOPCUAStringToOV(*((UA_String*)(input[i].data)), (OV_STRING*)(inputs[i]));
 					break;
 				default:
@@ -71,7 +74,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
-					inputs[i] = malloc(sizeof(OV_BOOL_VEC));
+					inputs[i] = ov_database_malloc(sizeof(OV_BOOL_VEC));
 					(*(OV_BOOL_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_BOOL_VEC*)(inputs[i])).value = input[i].data;
 					break;
@@ -80,7 +83,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
-					inputs[i] = malloc(sizeof(OV_INT_VEC));
+					inputs[i] = ov_database_malloc(sizeof(OV_INT_VEC));
 					(*(OV_INT_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_INT_VEC*)(inputs[i])).value = input[i].data;
 					break;
@@ -89,7 +92,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
-					inputs[i] = malloc(sizeof(OV_UINT_VEC));
+					inputs[i] = ov_database_malloc(sizeof(OV_UINT_VEC));
 					(*(OV_UINT_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_UINT_VEC*)(inputs[i])).value = input[i].data;
 					break;
@@ -98,7 +101,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
-					inputs[i] = malloc(sizeof(OV_SINGLE_VEC));
+					inputs[i] = ov_database_malloc(sizeof(OV_SINGLE_VEC));
 					(*(OV_SINGLE_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_SINGLE_VEC*)(inputs[i])).value = input[i].data;
 					break;
@@ -107,7 +110,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
-					inputs[i] = malloc(sizeof(OV_DOUBLE_VEC));
+					inputs[i] = ov_database_malloc(sizeof(OV_DOUBLE_VEC));
 					(*(OV_DOUBLE_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_DOUBLE_VEC*)(inputs[i])).value = input[i].data;
 					break;
@@ -116,7 +119,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
-					inputs[i] = malloc(sizeof(OV_STRING_VEC));
+					inputs[i] = ov_database_malloc(sizeof(OV_STRING_VEC));
 					(*(OV_STRING_VEC*)(inputs[i])).veclen = input[i].arrayLength;
 					(*(OV_STRING_VEC*)(inputs[i])).value = malloc(input[i].arrayLength*sizeof(OV_STRING));
 					for (OV_UINT j = 0; j < input[i].arrayLength; j++){
@@ -133,13 +136,13 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 			}
 		}
 	}
-	void **outputs = malloc(sizeof(void*)*outputSize);
+
+	void **outputs = ov_database_malloc(sizeof(void*)*outputSize);
 	for (int i = 0; i < outputSize; i++){
 		outputs[i] = NULL;
 	}
 	OV_UINT *typeArray= ov_database_malloc(sizeof(OV_UINT)*outputSize);
 	pvtable->m_CallMethod(pService, inputSize, (const void**)inputs, outputSize, outputs, typeArray);
-
 
 	for (int i = 0; i < outputSize; i++){
 		switch (typeArray[i]){
@@ -182,7 +185,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 			UA_Variant_setScalarCopy(&output[i], &tmpString, &UA_TYPES[UA_TYPES_STRING]);
 			UA_String_deleteMembers(&tmpString);
 			if (*(OV_STRING*)outputs[i])
-				ov_database_free(*(OV_STRING*)outputs[i]);
+				ov_string_setvalue((OV_STRING*)outputs[i], NULL);
 			if (outputs[i])
 				ov_database_free(outputs[i]);
 			}
@@ -244,7 +247,8 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 		}
 	}
 
-	free(outputs);
+	ov_database_free(outputs);
+	ov_database_free(typeArray);
 
 	cleanup:
     	for (int i = 0; i < inputCounts; i++){
@@ -262,8 +266,8 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						inputs[i] = NULL;
 						break;
 					case UA_TYPES_STRING:
-						if (inputs[i] != NULL)
-							ov_database_free(*(OV_STRING*)(inputs[i]));
+						ov_string_setvalue((OV_STRING*)(inputs[i]), NULL);
+						ov_database_free(inputs[i]);
 						break;
 					default:
 						break;
@@ -273,48 +277,47 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 					case UA_TYPES_BOOLEAN:
 						if (inputs[i] != NULL){
 							(*(OV_BOOL_VEC*)(inputs[i])).veclen = 0;
+							ov_database_free(inputs[i]);
 							(*(OV_BOOL_VEC*)(inputs[i])).value = NULL;
-							free(inputs[i]);
 						}
 						break;
 					case UA_TYPES_INT32:
 						if (inputs[i] != NULL){
 							(*(OV_INT_VEC*)(inputs[i])).veclen = 0;
+							ov_database_free(inputs[i]);
 							(*(OV_INT_VEC*)(inputs[i])).value = NULL;
-							free(inputs[i]);
 						}
 						break;
 					case UA_TYPES_UINT32:
 						if (inputs[i] != NULL){
 							(*(OV_UINT_VEC*)(inputs[i])).veclen = 0;
+							ov_database_free(inputs[i]);
 							(*(OV_UINT_VEC*)(inputs[i])).value = NULL;
-							free(inputs[i]);
 						}
 						break;
 					case UA_TYPES_FLOAT:
 						if (inputs[i] != NULL){
 							(*(OV_SINGLE_VEC*)(inputs[i])).veclen = 0;
+							ov_database_free(inputs[i]);
 							(*(OV_SINGLE_VEC*)(inputs[i])).value = NULL;
-							free(inputs[i]);
 						}
 						break;
 					case UA_TYPES_DOUBLE:
 						if (inputs[i] != NULL){
 							(*(OV_DOUBLE_VEC*)(inputs[i])).veclen = 0;
+							ov_database_free(inputs[i]);
 							(*(OV_DOUBLE_VEC*)(inputs[i])).value = NULL;
-							free(inputs[i]);
 						}
 						break;
 					case UA_TYPES_STRING:
 						if (inputs[i] != NULL){
-
 							for (OV_UINT j = 0; j < (*(OV_STRING_VEC*)(inputs[i])).veclen; j++){
 								if ((*(OV_STRING_VEC*)(inputs[i])).value[j] != NULL)
-									ov_database_free((*(OV_STRING_VEC*)(inputs[i])).value[j]);
+									ov_string_setvalue(&(*(OV_STRING_VEC*)(inputs[i])).value[j], NULL);
 							}
 							(*(OV_STRING_VEC*)(inputs[i])).value = NULL;
+							ov_database_free(inputs[i]);
 							(*(OV_STRING_VEC*)(inputs[i])).veclen = 0;
-							free(inputs[i]);
 						}
 						break;
 					default:
@@ -322,7 +325,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 				}
 			}
     	}
-    free(inputs);
+    	ov_database_free(inputs);
 
 	return result;
 }
@@ -367,13 +370,16 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	plist3 = ov_string_split(plist2[len2-1], ".", &len3);
 
 	if (len3 > 1){
-		if (ov_string_compare(plist3[len3-1], "IdString") == OV_STRCMP_EQUAL ||
-			ov_string_compare(plist3[len3-1], "IdType") == OV_STRCMP_EQUAL ||
-			ov_string_compare(plist3[len3-1], "Revision") == OV_STRCMP_EQUAL ||
-			ov_string_compare(plist3[len3-1], "Version") == OV_STRCMP_EQUAL ||
+		if (ov_string_compare(plist3[len3-1], "ServiceRevision") == OV_STRCMP_EQUAL ||
+			ov_string_compare(plist3[len3-1], "ServiceVersion") == OV_STRCMP_EQUAL ||
 			ov_string_compare(plist3[len3-1], "WSDL") == OV_STRCMP_EQUAL){
-			if (servicesOPCUAInterface_interface_ovServiceVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-				tmpNode = opcuaNode;
+			if (servicesOPCUAInterface_interface_ovServiceVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+				ov_string_freelist(plist);
+				ov_string_freelist(plist2);
+				ov_string_freelist(plist3);
+				ov_string_setvalue(&tmpString, NULL);
+				return (UA_Node*) opcuaNode;
+			}
 		}
 	}
 
@@ -381,6 +387,8 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 		pobj = ov_path_getobjectpointer(plist[0], 2);
 		if (pobj == NULL){
 			ov_string_freelist(plist);
+			ov_string_freelist(plist2);
+			ov_string_freelist(plist3);
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
@@ -388,12 +396,16 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			if (ov_string_compare(plist[1], "InputArguments") == OV_STRCMP_EQUAL){
 				if (servicesOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
 					ov_string_freelist(plist);
+					ov_string_freelist(plist2);
+					ov_string_freelist(plist3);
 					ov_string_setvalue(&tmpString, NULL);
 					return (UA_Node*) opcuaNode;
 				}
 			}else if (ov_string_compare(plist[1], "OutputArguments") == OV_STRCMP_EQUAL){
 				if (servicesOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
 					ov_string_freelist(plist);
+					ov_string_freelist(plist2);
+					ov_string_freelist(plist3);
 					ov_string_setvalue(&tmpString, NULL);
 					return (UA_Node*) opcuaNode;
 				}
@@ -403,6 +415,8 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 		pobj = ov_path_getobjectpointer(tmpString, 2);
 		if (pobj == NULL){
 			ov_string_freelist(plist);
+			ov_string_freelist(plist2);
+			ov_string_freelist(plist3);
 			ov_string_setvalue(&tmpString, NULL);
 			return NULL;
 		}
@@ -413,6 +427,8 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			tmpNode = opcuaNode;
 	}
 	ov_string_freelist(plist);
+	ov_string_freelist(plist2);
+	ov_string_freelist(plist3);
 	ov_string_setvalue(&tmpString, NULL);
 	return tmpNode;
 }
