@@ -41,9 +41,12 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 
 
 	packedOutputArgList[0] =  ov_database_malloc(sizeof(OV_STRING));
-	packedOutputArgList[1] =  ov_database_malloc(sizeof(OV_STRING_VEC));
-
+	*(OV_STRING*)packedOutputArgList[0] = NULL;
 	typeArray[0] = OV_VT_STRING;
+
+	packedOutputArgList[1] =  ov_database_malloc(sizeof(OV_STRING_VEC));
+	(*(OV_STRING_VEC*)packedOutputArgList[1]).value = NULL;
+	(*(OV_STRING_VEC*)packedOutputArgList[1]).veclen = 0;
 	typeArray[1] = OV_VT_STRING_VEC;
 
 	OV_STRING tmpHexStringAAS = NULL;
@@ -121,7 +124,6 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 		ov_string_setvalue(&status, "AASID not found");
 	}
 
-	ov_string_setvalue(&tmpHexString, NULL);
 	ov_string_setvalue((OV_STRING*)packedOutputArgList[0],status);
     ov_string_setvalue(&status,NULL);
 	ov_string_setvalue(&tmpHexStringAAS,NULL);

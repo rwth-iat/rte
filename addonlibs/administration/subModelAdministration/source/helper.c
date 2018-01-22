@@ -5,6 +5,10 @@
  *      Author: ubuntu
  */
 
+#ifndef OV_COMPILE_LIBRARY_subModelAdministration
+#define OV_COMPILE_LIBRARY_subModelAdministration
+#endif
+
 #include "helper.h"
 #include "openaas.h"
 

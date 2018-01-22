@@ -80,7 +80,8 @@ OV_DLLFNCEXPORT OV_RESULT subModelAdministration_CreateSubModelService_CallMetho
 	FINALIZE:
 
 	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
-	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
+	ov_string_setvalue((OV_STRING*)packedOutputArgList[0],status);
+	ov_string_setvalue(&status,NULL);
 
     return OV_ERR_OK;
 }

@@ -43,21 +43,40 @@ OV_DLLFNCEXPORT OV_RESULT subModelSendMessage_SendMessageService_CallMethod(
 	typeArray[0] = OV_VT_STRING;
 
 
-	if(ov_string_compare(*(OV_STRING*)(packedInputArgList[0]), "") == OV_STRCMP_EQUAL || ov_string_compare(*(OV_STRING*)(packedInputArgList[1]), "") == OV_STRCMP_EQUAL){
+	if(ov_string_compare(*(OV_STRING*)(packedInputArgList[0]), "") == OV_STRCMP_EQUAL){
 		ov_string_setvalue(&status, "Input Variables not set");
 		goto FINALIZE;
 	}
 
+	OV_INSTPTR_ov_object ptr = NULL;
+	OV_INSTPTR_openaas_aas paas = NULL;
+	OV_INSTPTR_ov_object ptr2 = NULL;
 
-	OV_INSTPTR_ov_domain ptargetPathObj =  Ov_StaticPtrCast(ov_domain,ov_path_getobjectpointer(*(OV_STRING*)(packedInputArgList[1]),2));
-	if(!ptargetPathObj){
-		ov_string_setvalue(&status, "Path not found");
+
+	ptr = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	if (!ptr){
+		ptr = pobj->v_pouterobject;
+	}
+	do{
+		if (Ov_CanCastTo(openaas_aas, ptr)){
+			paas = Ov_StaticPtrCast(openaas_aas, ptr);
+			break;
+		}
+		ptr2 = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ptr));
+		if (!ptr2){
+			ptr2 = ptr->v_pouterobject;
+		}
+		ptr = ptr2;
+	}while (ptr);
+
+	if (!paas){
+		ov_string_setvalue(&status, "Could not find AAS");
 		goto FINALIZE;
 	}
 
-
 	OV_INSTPTR_MessageSys_Message pMessage = NULL;
-	OV_RESULT result = Ov_CreateObject(MessageSys_Message, pMessage, ptargetPathObj, "message");
+	OV_INSTPTR_openaas_AASComponentManager pComponentManager = &paas->p_ComponentManager;
+	OV_RESULT result = Ov_CreateObject(MessageSys_Message, pMessage, &pComponentManager->p_OUTBOX, "message");
 	if(Ov_Fail(result)) {
 		ov_string_setvalue(&status, "Could not create a Message object");
 		goto FINALIZE;
@@ -71,7 +90,7 @@ OV_DLLFNCEXPORT OV_RESULT subModelSendMessage_SendMessageService_CallMethod(
 	ov_string_setvalue(&msg->v_senderAddress,"127.0.0.1");
 	ov_string_setvalue(&msg->v_receiverAddress,"127.0.0.1");
 	ov_string_setvalue(&msg->v_senderName,"MANAGER");
-	ov_string_setvalue(&msg->v_senderName,"");
+	ov_string_setvalue(&msg->v_receiverName,"MANAGER");
 	ov_string_setvalue(&msg->v_senderComponent,"me");
 	ov_string_setvalue(&msg->v_receiverComponent,"");
 	msg->v_msgStatus = 0;
@@ -85,7 +104,8 @@ OV_DLLFNCEXPORT OV_RESULT subModelSendMessage_SendMessageService_CallMethod(
 
 	FINALIZE:
 	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
-	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
+	ov_string_setvalue((OV_STRING*)packedOutputArgList[0],status);
+	ov_string_setvalue(&status,NULL);
 	return OV_ERR_OK;
 }
 

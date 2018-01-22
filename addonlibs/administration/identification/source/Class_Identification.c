@@ -43,7 +43,7 @@ OV_DLLFNCEXPORT OV_RESULT identification_Identification_constructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_identification_Identification pinst = Ov_StaticPtrCast(identification_Identification, pobj);
+    //OV_INSTPTR_identification_Identification pinst = Ov_StaticPtrCast(identification_Identification, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */

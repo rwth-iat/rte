@@ -24,9 +24,6 @@ static void OV_NodeStore_deleteNodestore(void *handle, UA_UInt16 namespaceIndex)
 
 static void OV_NodeStore_deleteNode(UA_Node *node){
 	if (node){
-		if (node->nodeClass == UA_NODECLASS_METHOD){
-			ov_string_setvalue((OV_STRING*) (&(((UA_MethodNode*) node)->methodHandle)),	NULL);
-		}
 		UA_Node_deleteMembersAnyNodeClass(node);
 	}
 	UA_free(node);

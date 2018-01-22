@@ -70,14 +70,19 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 
 	// Description
 	UA_LocalizedText lText;
+	UA_LocalizedText_init(&lText);
 	lText.locale = UA_String_fromChars("en");
 	lText.text = UA_String_fromChars("");
-	newNode->description = lText;
+	UA_LocalizedText_copy(&lText,&newNode->description);
+	UA_LocalizedText_deleteMembers(&lText);
 
 	// DisplayName
-	lText.locale = UA_String_fromChars("en");
-	lText.text = UA_String_fromChars(plist[len-1]);
-	newNode->displayName = lText;
+	UA_LocalizedText displayName;
+	UA_LocalizedText_init(&displayName);
+	displayName.locale = UA_String_fromChars("en");
+	displayName.text = UA_String_fromChars(plist[len-1]);
+	UA_LocalizedText_copy(&displayName, &newNode->displayName);
+	UA_LocalizedText_deleteMembers(&displayName);
 
 	// NodeId
 	UA_NodeId_copy(nodeId, &newNode->nodeId);

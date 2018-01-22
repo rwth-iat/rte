@@ -18,7 +18,6 @@ LIBRARY subModelSendMessage
         IS_INSTANTIABLE;
         VARIABLES
         	message : STRING FLAGS="i" INITIALVALUE ="";        
-            targetPath : STRING FLAGS="i" INITIALVALUE ="/TechUnits/openAAS/Motor_M23.Body/ComponentManager.INBOX";   
             Status  : STRING FLAGS="o" INITIALVALUE    =   "";         
         END_VARIABLES;
         OPERATIONS

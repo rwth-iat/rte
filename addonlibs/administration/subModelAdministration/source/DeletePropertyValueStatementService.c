@@ -73,7 +73,8 @@ OV_DLLFNCEXPORT OV_RESULT subModelAdministration_DeletePropertyValueStatementSer
 	FINALIZE:
 
 	*(OV_STRING*)packedOutputArgList[0] = ov_database_malloc(ov_string_getlength(status)+1);
-	strcpy(*(OV_STRING*)packedOutputArgList[0], status);
+	ov_string_setvalue((OV_STRING*)packedOutputArgList[0],status);
+	ov_string_setvalue(&status,NULL);
 	IdentificationType_deleteMembers(&pvsId);
     return OV_ERR_OK;
 }

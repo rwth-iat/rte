@@ -75,7 +75,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	newNode->browseName = qName;
 
 	// Description
-	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &(element));
+	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &element);
 	UA_LocalizedText lText;
 	UA_LocalizedText_init(&lText);
 	lText.locale = UA_String_fromChars("en");
@@ -84,12 +84,8 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	} else {
 		lText.text = UA_String_fromChars("");
 	}
-	//newNode->description = lText;
-
 	UA_LocalizedText_copy(&lText,&newNode->description);
 	UA_LocalizedText_deleteMembers(&lText);
-
-
 
 	// DisplayName
 	UA_LocalizedText displayName;
@@ -98,6 +94,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	displayName.text = UA_String_fromChars(pobj->v_identifier);
 	UA_LocalizedText_copy(&displayName, &newNode->displayName);
 	UA_LocalizedText_deleteMembers(&displayName);
+
 	// NodeId
 	UA_NodeId_copy(nodeId, &newNode->nodeId);
 

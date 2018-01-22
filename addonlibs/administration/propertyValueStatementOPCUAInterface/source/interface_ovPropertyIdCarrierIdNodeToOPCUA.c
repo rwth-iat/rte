@@ -74,20 +74,25 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	newNode->browseName = qName;
 
 	// Description
-	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &(element));
+	OV_STRING tempString = pVtblObj->m_getcomment(pobj, &element);
 	UA_LocalizedText lText;
+	UA_LocalizedText_init(&lText);
 	lText.locale = UA_String_fromChars("en");
 	if(tempString){
 		lText.text = UA_String_fromChars(tempString);
 	} else {
 		lText.text = UA_String_fromChars("");
 	}
-	newNode->description = lText;
+	UA_LocalizedText_copy(&lText,&newNode->description);
+	UA_LocalizedText_deleteMembers(&lText);
 
 	// DisplayName
-	lText.locale = UA_String_fromChars("en");
-	lText.text = UA_String_fromChars(pobj->v_identifier);
-	newNode->displayName = lText;
+	UA_LocalizedText displayName;
+	UA_LocalizedText_init(&displayName);
+	displayName.locale = UA_String_fromChars("en");
+	displayName.text = UA_String_fromChars(pobj->v_identifier);
+	UA_LocalizedText_copy(&displayName, &newNode->displayName);
+	UA_LocalizedText_deleteMembers(&displayName);
 
 	// NodeId
 	UA_NodeId_copy(nodeId, &newNode->nodeId);
