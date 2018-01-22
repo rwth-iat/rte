@@ -58,13 +58,12 @@ OV_DLLFNCEXPORT OV_RESULT services_ExampleService_CallMethod(
 
 	packedOutputArgList[5] = ov_database_malloc(sizeof(OV_STRING));
 	*(OV_STRING*)packedOutputArgList[5] = NULL;
-	*(OV_STRING*)packedOutputArgList[5] = ov_database_malloc(ov_string_getlength(*(OV_STRING*)(packedInputArgList[5]))+1);
 	ov_string_setvalue((OV_STRING*)packedOutputArgList[5], *(OV_STRING*)(packedInputArgList[5]));
 	typeArray[5] = OV_VT_STRING;
 
 	packedOutputArgList[6] = ov_database_malloc(sizeof(OV_BOOL_VEC));
 	(*(OV_BOOL_VEC*)packedOutputArgList[6]).value = NULL;
-	(*(OV_BOOL_VEC*)packedOutputArgList[6]).value = ov_database_malloc((*(OV_BOOL_VEC*)(packedInputArgList[6])).veclen*sizeof(OV_BOOL));
+	Ov_SetDynamicVectorLength((OV_BOOL_VEC*)packedOutputArgList[6],(*(OV_BOOL_VEC*)(packedInputArgList[6])).veclen,BOOL);
 	for (OV_UINT i = 0; i < (*(OV_BOOL_VEC*)(packedInputArgList[6])).veclen; i++){
 		(*(OV_BOOL_VEC*)packedOutputArgList[6]).value[i] = (*(OV_BOOL_VEC*)packedInputArgList[6]).value[i];
 	}
@@ -73,7 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT services_ExampleService_CallMethod(
 
 	packedOutputArgList[7] = ov_database_malloc(sizeof(OV_INT_VEC));
 	(*(OV_INT_VEC*)packedOutputArgList[7]).value = NULL;
-	(*(OV_INT_VEC*)packedOutputArgList[7]).value = ov_database_malloc((*(OV_INT_VEC*)(packedInputArgList[7])).veclen*sizeof(OV_INT));
+	Ov_SetDynamicVectorLength((OV_INT_VEC*)packedOutputArgList[7],(*(OV_INT_VEC*)(packedInputArgList[7])).veclen,INT);
 	for (OV_UINT i = 0; i < (*(OV_INT_VEC*)(packedInputArgList[7])).veclen; i++){
 		(*(OV_INT_VEC*)packedOutputArgList[7]).value[i] = (*(OV_INT_VEC*)packedInputArgList[7]).value[i];
 	}
@@ -82,7 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT services_ExampleService_CallMethod(
 
 	packedOutputArgList[8] = ov_database_malloc(sizeof(OV_UINT_VEC));
 	(*(OV_UINT_VEC*)packedOutputArgList[8]).value = NULL;
-	(*(OV_UINT_VEC*)packedOutputArgList[8]).value = ov_database_malloc((*(OV_UINT_VEC*)(packedInputArgList[8])).veclen*sizeof(OV_UINT));
+	Ov_SetDynamicVectorLength((OV_UINT_VEC*)packedOutputArgList[8],(*(OV_UINT_VEC*)(packedInputArgList[8])).veclen,UINT);
 	for (OV_UINT i = 0; i < (*(OV_UINT_VEC*)(packedInputArgList[8])).veclen; i++){
 		(*(OV_UINT_VEC*)packedOutputArgList[8]).value[i] = (*(OV_UINT_VEC*)packedInputArgList[8]).value[i];
 	}
@@ -91,7 +90,7 @@ OV_DLLFNCEXPORT OV_RESULT services_ExampleService_CallMethod(
 
 	packedOutputArgList[9] = ov_database_malloc(sizeof(OV_SINGLE_VEC));
 	(*(OV_SINGLE_VEC*)packedOutputArgList[9]).value = NULL;
-	(*(OV_SINGLE_VEC*)packedOutputArgList[9]).value = ov_database_malloc((*(OV_SINGLE_VEC*)(packedInputArgList[9])).veclen*sizeof(OV_SINGLE));
+	Ov_SetDynamicVectorLength((OV_SINGLE_VEC*)packedOutputArgList[9],(*(OV_SINGLE_VEC*)(packedInputArgList[9])).veclen,SINGLE);
 	for (OV_UINT i = 0; i < (*(OV_SINGLE_VEC*)(packedInputArgList[9])).veclen; i++){
 		(*(OV_SINGLE_VEC*)packedOutputArgList[9]).value[i] = (*(OV_SINGLE_VEC*)packedInputArgList[9]).value[i];
 	}
@@ -100,7 +99,7 @@ OV_DLLFNCEXPORT OV_RESULT services_ExampleService_CallMethod(
 
 	packedOutputArgList[10] = ov_database_malloc(sizeof(OV_DOUBLE_VEC));
 	(*(OV_DOUBLE_VEC*)packedOutputArgList[10]).value = NULL;
-	(*(OV_DOUBLE_VEC*)packedOutputArgList[10]).value = ov_database_malloc((*(OV_DOUBLE_VEC*)(packedInputArgList[10])).veclen*sizeof(OV_DOUBLE));
+	Ov_SetDynamicVectorLength((OV_DOUBLE_VEC*)packedOutputArgList[10],(*(OV_DOUBLE_VEC*)(packedInputArgList[10])).veclen,DOUBLE);
 	for (OV_UINT i = 0; i < (*(OV_DOUBLE_VEC*)(packedInputArgList[10])).veclen; i++){
 		(*(OV_DOUBLE_VEC*)packedOutputArgList[10]).value[i] = (*(OV_DOUBLE_VEC*)packedInputArgList[10]).value[i];
 	}
@@ -109,10 +108,9 @@ OV_DLLFNCEXPORT OV_RESULT services_ExampleService_CallMethod(
 
 	packedOutputArgList[11] = ov_database_malloc(sizeof(OV_STRING_VEC));
 	(*(OV_STRING_VEC*)packedOutputArgList[11]).value = NULL;
-	(*(OV_STRING_VEC*)packedOutputArgList[11]).value = ov_database_malloc((*(OV_STRING_VEC*)(packedInputArgList[11])).veclen*sizeof(OV_STRING));
+	Ov_SetDynamicVectorLength((OV_STRING_VEC*)packedOutputArgList[11],(*(OV_STRING_VEC*)(packedInputArgList[11])).veclen,STRING);
 	for (OV_UINT i = 0; i < (*(OV_STRING_VEC*)(packedInputArgList[11])).veclen; i++){
 		(*(OV_STRING_VEC*)packedOutputArgList[11]).value[i] = NULL;
-		(*(OV_STRING_VEC*)packedOutputArgList[11]).value[i] = ov_database_malloc(ov_string_getlength((*(OV_STRING_VEC*)(packedInputArgList[11])).value[i]) + 1);
 		ov_string_setvalue(&(*(OV_STRING_VEC*)packedOutputArgList[11]).value[i], (*(OV_STRING_VEC*)packedInputArgList[11]).value[i]);
 	}
 	(*(OV_STRING_VEC*)packedOutputArgList[11]).veclen = (*(OV_STRING_VEC*)packedInputArgList[11]).veclen;
