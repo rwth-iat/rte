@@ -254,7 +254,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManager_typemethod(
 					ov_string_setvalue(&answerMessage, "RegisterAASRes:Failed, Asset-ID already exist");
 				}
 			}else{
-				ov_string_setvalue(&answerMessage, "RegisterAASRes:Failed, ASS-ID already exist");
+				ov_string_setvalue(&answerMessage, "RegisterAASRes:Failed, AAS-ID already exist");
 			}
 			ov_string_setvalue(&tmpHexStringAAS, NULL);
 			ov_string_setvalue(&tmpHexStringAsset, NULL);
