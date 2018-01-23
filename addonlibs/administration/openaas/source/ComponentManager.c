@@ -87,6 +87,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_AASComponentManager_constructor(
 }
 
 
+
 OV_DLLFNCEXPORT OV_ACCESS openaas_AASComponentManager_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
@@ -285,9 +286,30 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		Ov_ForEachChildEx(ov_containment, &paas->p_Header.p_Config, ppvs, propertyValueStatement_PropertyValueStatement){
 			Ov_ForEachChildEx(ov_containment, ppvs, pPropertyId, propertyValueStatement_PropertyId){
 				if (pPropertyId->v_IdType == URI && ov_string_compare(pPropertyId->v_IdSpec, "http://acplt.org/Properties/AssetID") == OV_STRCMP_EQUAL){
-					ov_string_append(&answerBody, ",");
-					ov_string_append(&answerBody, ppvs->v_Value.value.valueunion.val_string);
-					break;
+					if ((ppvs->v_Value.value.vartype &OV_VT_KSMASK) == OV_VT_STRING){
+						if (ov_string_compare(ppvs->v_Value.value.valueunion.val_string, "") != OV_STRCMP_EQUAL){
+							OV_UINT len = 0;
+							OV_STRING *plist = NULL;
+							plist= ov_string_split(ppvs->v_Value.value.valueunion.val_string, ":", &len);
+							if (len >= 1){
+								ov_string_append(&answerBody, ",");
+								if (ov_string_compare(plist[0], "URI") == OV_STRCMP_EQUAL){
+									ov_string_append(&answerBody, "0");
+								}else{
+									ov_string_append(&answerBody, "1");
+								}
+								ov_string_append(&answerBody, ",");
+								for (OV_UINT i = 1; i < len; i++){
+									ov_string_append(&answerBody, plist[i]);
+									if (i != len-1)
+										ov_string_append(&answerBody, ":");
+								}
+								ov_string_freelist(plist);
+								break;
+							}
+							ov_string_freelist(plist);
+						}
+					}
 				}
 			}
 		}
@@ -1791,3 +1813,23 @@ OV_DLLFNCEXPORT AASStatusCode openaas_AASComponentManager_sendMessage(OV_INSTPTR
     return (AASStatusCode)0;
 }
 
+OV_DLLFNCEXPORT void openaas_AASComponentManager_destructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_openaas_AASComponentManager pinst = Ov_StaticPtrCast(openaas_AASComponentManager, pobj);
+
+    /* do what */
+    IdentificationType tmpAASId;
+    IdentificationType_init(&tmpAASId);
+    sendingRequestToDiscoveryServer(pinst, 1, tmpAASId);
+    IdentificationType_deleteMembers(&tmpAASId);
+
+    /* destroy object */
+    fb_functionblock_destructor(pobj);
+
+
+    return;
+}

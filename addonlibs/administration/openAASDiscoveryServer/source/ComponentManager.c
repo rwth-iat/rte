@@ -264,7 +264,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManager_typemethod(
 		}
 
 	}else if (ov_string_compare(plistReq[0], "UnregisterAASReq") == OV_STRCMP_EQUAL){ // unregister Request
-		if (len2 == 3){
+		if (len2 == 4){
 			// TODO: Check of parameter format
 			OV_STRING tmpHexStringAAS = NULL;
 			ov_string_print(&tmpHexStringAAS, "%x", *plistParameter[0]);
@@ -296,7 +296,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManager_typemethod(
 				resultOV = Ov_DeleteObject(pOvDataForAAS);
 				if (resultOV){
 					ov_string_setvalue(&answerMessage, "UnregisterAASRes:Failed, Internal");
-					ov_logfile_info("ComponentManager:Could not delete OvDataForAsset object");
+					ov_logfile_info("ComponentManager:Could not delete pOvDataForAAS object");
 				}
 				pOvDataForAsset = Ov_StaticPtrCast(openAASDiscoveryServer_OVDataForAssetID, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &pDiscoveryServer->p_AssetIDs), tmpHexStringAsset));
 				if(!pOvDataForAsset){
