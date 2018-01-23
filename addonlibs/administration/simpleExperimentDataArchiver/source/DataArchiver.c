@@ -34,7 +34,6 @@
 #include <windows.h>
 #endif
 
-
 #if OV_SYSTEM_NT
 #define SLEEP(TIME) Sleep(TIME);
 #endif
@@ -42,16 +41,11 @@
 #define SLEEP(TIME) sleep(TIME);
 #endif
 
-int lockCount = 0;
-int mutexCount = 0;
-
 #define MUTEX_LOCK(MUTEX)\
 		pthread_mutex_lock(MUTEX);\
-		mutexCount++; \
 
 #define MUTEX_UNLOCK(MUTEX)\
 		pthread_mutex_unlock(MUTEX);\
-		mutexCount--; \
 
 /* typedefs */
 /* thread exchange-data */
@@ -62,6 +56,7 @@ typedef struct subData {
 	UA_DateTime timeStamp;
 	UA_UInt32 monId;
 	UA_UInt32 subId;
+	UA_StatusCode uaStatusCodeSub;
 } subData;
 
 typedef struct opcua_connection {
@@ -69,6 +64,7 @@ typedef struct opcua_connection {
 	UA_Boolean error;
 	UA_UInt16 subDataVecLength;
 	subData *subDataVec;
+	UA_StatusCode uaStatusCodeCon;
 } opcua_connection;
 
 /*Subscription settings values from UA_SubscriptionSettings_standard */
@@ -117,7 +113,6 @@ typedef struct thread_data{
 	UA_Boolean thread_run;
 	pthread_t thread;
 	OV_STRING serverEndpointUrl;
-	OV_STRING errorMsg;
 }thread_data;
 
 /* helper functions */
@@ -130,6 +125,7 @@ OV_BOOL initSubData(subData *Data, OV_INT NSI, OV_STRING NODE_ID, UA_IdType Type
 	UA_DateTime_init(&Data->timeStamp);
 	Data->monId = 0;
 	Data->newDataAvailable = FALSE;
+	Data->uaStatusCodeSub = UA_STATUSCODE_GOOD;
 
 	switch (Type){
 	case UA_IDTYPE_STRING:{ // 1
@@ -236,6 +232,7 @@ static int opcua_subscription_client(thread_data* pthreadData) {
 		// connection failed
 		MUTEX_LOCK(&pthreadData->mutex);
 		pthreadData->connectionState.error = TRUE;
+		pthreadData->connectionState.uaStatusCodeCon = retval;
 		MUTEX_UNLOCK(&pthreadData->mutex);
 		goto deleteClient;
 	}
@@ -247,18 +244,14 @@ static int opcua_subscription_client(thread_data* pthreadData) {
 		// create new subscription failed
 		MUTEX_LOCK(&pthreadData->mutex);
 		pthreadData->connectionState.error = TRUE;
+		pthreadData->connectionState.uaStatusCodeCon = retval;
 		MUTEX_UNLOCK(&pthreadData->mutex);
 		goto deleteClient;
 	}
 	MUTEX_LOCK(&pthreadData->mutex);
 	/* add monitored items to subscription */
 	for (OV_UINT ItemIterator = 0; ItemIterator < pthreadData->connectionState.subDataVecLength; ItemIterator++) {
-		retval = subscription_AddMonitoredItem(&pthreadData->connectionState.subDataVec[ItemIterator].subscriptionNodeId, &pthreadData->connectionState.subDataVec[ItemIterator].monId, subId, client, pthreadData);
-		if (retval != UA_STATUSCODE_GOOD) {
-			pthreadData->connectionState.error = TRUE;
-			MUTEX_UNLOCK(&pthreadData->mutex);
-			goto deleteClient;
-		}
+		pthreadData->connectionState.subDataVec[ItemIterator].uaStatusCodeSub = subscription_AddMonitoredItem(&pthreadData->connectionState.subDataVec[ItemIterator].subscriptionNodeId, &pthreadData->connectionState.subDataVec[ItemIterator].monId, subId, client, pthreadData);
 	}
 
 	pthreadData->connectionState.connected = true;
@@ -266,15 +259,18 @@ static int opcua_subscription_client(thread_data* pthreadData) {
 	MUTEX_UNLOCK(&pthreadData->mutex);
 
 	while ( run && retval == UA_STATUSCODE_GOOD) {
-		if (UA_Client_Subscriptions_manuallySendPublishRequest(client) != UA_STATUSCODE_GOOD){
+		retval = UA_Client_Subscriptions_manuallySendPublishRequest(client);
+		if ( retval != UA_STATUSCODE_GOOD){
 			MUTEX_LOCK(&pthreadData->mutex);
 			pthreadData->connectionState.error = TRUE;
+			pthreadData->connectionState.uaStatusCodeCon = retval;
 			MUTEX_UNLOCK(&pthreadData->mutex);
 			break;
 		}
 		if (UA_Client_getState(client) != UA_CLIENTSTATE_CONNECTED){
 			MUTEX_LOCK(&pthreadData->mutex);
 			pthreadData->connectionState.error = TRUE;
+			pthreadData->connectionState.uaStatusCodeCon = UA_STATUSCODE_BADNOTCONNECTED;
 			MUTEX_UNLOCK(&pthreadData->mutex);
 			break;
 		}
@@ -318,7 +314,7 @@ static void* thread_fcn(void*ptr){
 OV_RESULT writeResultToVariable(thread_data * pthreadData, OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pDataArchiver){
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_simpleExperimentDataArchiver_Variable pVariable = NULL;
-
+	UA_StatusCode retval = UA_STATUSCODE_GOOD;
 
 	MUTEX_LOCK(&pthreadData->mutex);
 	OV_UINT Iterator = 0;
@@ -327,13 +323,17 @@ OV_RESULT writeResultToVariable(thread_data * pthreadData, OV_INSTPTR_simpleExpe
 			Ov_SetAnyValue(&pVariable->v_varValue,NULL);
 		}
 
-		if(&pthreadData->connectionState.subDataVec[Iterator].newDataAvailable){
-			if(ov_VariantToAny(&pthreadData->connectionState.subDataVec[Iterator].data,&pVariable->v_varValue) == UA_STATUSCODE_GOOD){
+		if(&pthreadData->connectionState.subDataVec[Iterator].newDataAvailable &&
+				pthreadData->connectionState.subDataVec[Iterator].newDataAvailable &&
+				pthreadData->connectionState.subDataVec[Iterator].uaStatusCodeSub == UA_STATUSCODE_GOOD){
+			retval = ov_VariantToAny(&pthreadData->connectionState.subDataVec[Iterator].data,&pVariable->v_varValue);
+			simpleExperimentDataArchiver_Variable_varRes_set(pVariable,retval);
+			if(retval == UA_STATUSCODE_GOOD){
 				pVariable->v_varValue.time = ov_1601nsTimeToOvTime(pthreadData->connectionState.subDataVec[Iterator].timeStamp);
 				pVariable->v_varTime = ov_1601nsTimeToOvTime(pthreadData->connectionState.subDataVec[Iterator].timeStamp);
-			} else {
-				simpleExperimentDataArchiver_Variable_varRes_set(pVariable,OV_ERR_OK);
 			}
+		} else {
+			simpleExperimentDataArchiver_Variable_varRes_set(pVariable,pthreadData->connectionState.subDataVec[Iterator].uaStatusCodeSub);
 		}
 		Iterator++;
 	}
@@ -472,8 +472,10 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_DataArchiver_constructor(
 		pthreadData->connectionState.error = FALSE;
 		pthreadData->connectionState.subDataVecLength = 0;
 		pthreadData->connectionState.subDataVec = NULL;
+		pthreadData->connectionState.uaStatusCodeCon = UA_STATUSCODE_GOOD;
 		pthread_mutex_init(&pthreadData->mutex,NULL);
 		pthreadData->serverEndpointUrl = NULL;
+		pthreadData->thread_run = FALSE;
 	} else {
 		return OV_ERR_GENERIC;
 	}
@@ -491,11 +493,8 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pinst =
-			Ov_StaticPtrCast(simpleExperimentDataArchiver_DataArchiver, pfb);
-	DataArchiverState_Types state =
-			simpleExperimentDataArchiver_DataArchiver_state_get(pinst); /* current state of the fb*/
-	OV_BOOL error = FALSE; /* internal error bit for fb */
+	OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pinst = Ov_StaticPtrCast(simpleExperimentDataArchiver_DataArchiver, pfb);
+	DataArchiverState_Types state = simpleExperimentDataArchiver_DataArchiver_state_get(pinst); /* current state of the fb*/
 
 	OV_STRING tmpfilename = NULL;
 	OV_STRING tmpStr = NULL;
@@ -520,15 +519,13 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 #define CHECKCONNECTION() \
 		if(!&pthreadData->mutex){\
 			state = FAULT;\
-			error = TRUE;\
 			ov_string_setvalue(&pinst->v_errorMsg, "Not connected or Error");\
 		} else {\
 			MUTEX_LOCK(&pthreadData->mutex);\
 			if (!pthreadData->connectionState.connected || pthreadData->connectionState.error) {\
 				ov_time_gettime(&pinst->v_lastConnectionTry);\
 				state = FAULT;\
-				error = TRUE;\
-				ov_string_setvalue(&pinst->v_errorMsg, "Not connected or Error");\
+				ov_string_print(&pinst->v_errorMsg, "Not connected or Error - UA_STATUSCODE: %x",pthreadData->connectionState.uaStatusCodeCon);\
 				MUTEX_UNLOCK(&pthreadData->mutex);\
 				break;\
 			}\
@@ -541,7 +538,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 	/* get threadData pointer */
 	if(!pinst->v_threadDataHndl){
 		state = FAULT;
-		error = TRUE;
 		ov_string_setvalue(&pinst->v_errorMsg, "Constructor of FB failed");
 	} else {
 		pthreadData = (thread_data *) pinst->v_threadDataHndl;
@@ -568,7 +564,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 		ov_string_setvalue(&pthreadData->serverEndpointUrl,pinst->v_serverEndpointUrl);
 		if (ov_string_compare(pthreadData->serverEndpointUrl,"") == OV_STRCMP_EQUAL) {
 			ov_string_setvalue(&pinst->v_errorMsg,"PREPARECONNECTION: serverEndpointUrl missing");
-			error = TRUE;
 			state = FAULT;
 			break;
 		}
@@ -593,7 +588,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 						!= pinst->v_NodeIDNSindex.veclen))
 				|| pinst->v_NodeIDIdType.veclen == 0) {
 			ov_string_setvalue(&pinst->v_errorMsg,"PREPARECONNECTION: mismatch between NodeIDType, NodeIDIdentifier, NodeIDNSindex");
-			error = TRUE;
 			state = FAULT;
 			break;
 		}
@@ -606,7 +600,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 		if (index != pinst->v_NodeIDIdentifier.veclen) {
 			ov_string_setvalue(&pinst->v_errorMsg,
 					"PREPARECONNECTION: One NodeIDIdentifier is empty");
-			error = TRUE;
 			state = FAULT;
 			break;
 		}
@@ -617,7 +610,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 		pthreadData->connectionState.subDataVec = Ov_HeapMalloc( pinst->v_NodeIDIdentifier.veclen  * sizeof(subData));
 		if(!pthreadData->connectionState.subDataVec){
 			ov_string_setvalue(&pinst->v_errorMsg,"PREPARECONNECTION: Out of memory");
-			error = TRUE;
 			state = FAULT;
 			break;
 		}
@@ -629,12 +621,12 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 					pinst->v_NodeIDIdType.value[Iterator])){
 			} else {
 				ov_string_setvalue(&pinst->v_errorMsg, "PREPARECONNECTION: initSubData failed");
-				error = TRUE;
 				state = FAULT;
+				break;
 			}
 		}
 
-		if(error){
+		if(state == FAULT){
 			break;
 		}
 		/* Connect to server:
@@ -653,9 +645,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 			state = WAITING;
 		}
 
-		/* check connection */
-		//CHECKCONNECTION();
-
 		break;
 
 		/*****************************************************************************
@@ -664,9 +653,10 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_typemethod(
 	case WAITING:
 		MUTEX_LOCK(&pthreadData->mutex);
 		if(pthreadData->connectionState.error){
+			ov_string_print(&pinst->v_errorMsg, "UA_STATUSCODE: %x",pthreadData->connectionState.uaStatusCodeCon);
 			state = FAULT;
 		}
-		if (pthreadData->connectionState.connected){ //TODO: add timeout count
+		if(pthreadData->connectionState.connected){ //TODO: add timeout count
 			state = CONNECTED;
 		}
 		MUTEX_UNLOCK(&pthreadData->mutex);
@@ -794,8 +784,6 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_DataArchiver_destructor(
 	FREEMEMORY();
 
 	Ov_HeapFree(pthreadData);
-
-
 
 	pinst->v_threadDataHndl = 0;
 

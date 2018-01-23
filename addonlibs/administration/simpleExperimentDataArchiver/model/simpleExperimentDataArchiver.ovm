@@ -23,7 +23,7 @@ LIBRARY simpleExperimentDataArchiver
 			
 			NodeIDIdentifier[] : STRING FLAGS = "n" COMMENT = "Identifier list for the nodes";
 			NodeIDNSindex[] : UINT FLAGS = "n" COMMENT = "Namespace index list for the nodes";
-			NodeIDIdType[] : UINT FLAGS = "n" COMMENT = "IdentifierType list for the nodes (supported is String: 1)"; // , Numeric: 2, GUID: 3, Opaque: 4 not supported so far
+			NodeIDIdType[] : UINT FLAGS = "n" COMMENT = "IdentifierType list for the nodes (supported is Numeric: 0, String: 1)"; // ,  2, GUID: 3, Opaque: 4 not supported so far
 			
 			/* state machine */
 			state : UINT HAS_ACCESSORS FLAGS = "n" COMMENT = "Current state of the fb" INITIALVALUE = 1;
@@ -57,7 +57,7 @@ LIBRARY simpleExperimentDataArchiver
 		VARIABLES
 			NodeIDIdentifier : STRING HAS_ACCESSORS COMMENT =	"NodeID of variable" INITIALVALUE = "";
 			NodeIDNSindex : UINT HAS_ACCESSORS FLAGS = "i" COMMENT = "Namespace index list for the nodes";
-			NodeIDIdType : UINT HAS_ACCESSORS FLAGS = "i" COMMENT = "IdentifierType list for the nodes (supported is String: 1)"; // , Numeric: 2, GUID: 3, Opaque: 4 not supported so far
+			NodeIDIdType : UINT HAS_ACCESSORS FLAGS = "i" COMMENT = "IdentifierType list for the nodes (supported is Numeric: 0 String: 1)"; // GUID: 3, Opaque: 4 not supported so far
 			varValue : ANY HAS_ACCESSORS FLAGS = "o" COMMENT = "The Variable value";
 			varRes : UINT HAS_ACCESSORS FLAGS ="o" COMMENT =	"Result of opc ua subscription" INITIALVALUE =	0;
 			varTime : TIME HAS_ACCESSORS FLAGS = "o" COMMENT = "";
@@ -82,7 +82,7 @@ LIBRARY simpleExperimentDataArchiver
 			NodeIDIdType[] : UINT FLAGS = "i" COMMENT = "IdentifierType list for the nodes (supported is String: 1)"; // , Numeric: 2, GUID: 3, Opaque: 4 not supported so far
 			
 			/* csv file handling */
-			name: STRING FLAGS = "i" COMMENT="Name for DataArchiver";
+			name: STRING FLAGS = "i" COMMENT="Name for DataArchiver" INITIALVALUE = "subscription";
 			placement: STRING FLAGS = "i" COMMENT="placement of DataArchiver" INITIALVALUE = "/TechUnits";
 			create : BOOL HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE = FALSE;
 		END_VARIABLES;
