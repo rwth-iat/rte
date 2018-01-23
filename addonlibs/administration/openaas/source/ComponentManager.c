@@ -391,6 +391,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 
 	// First clean message box, so only up-to-date messages are handled.
 	cleanupMessageBox(pinst);
+	ov_string_setvalue(&pinst->v_errorText, NULL);
 
 	// StateMaschine
 	switch(pinst->v_state){
@@ -1633,9 +1634,9 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 								}
 								pchild = Ov_GetPreviousChild(ov_containment, pchild);
 							}
-							MessageSys_Message_senderAddress_set(answerMessage, plistParameter[1]);
-							MessageSys_Message_senderName_set(answerMessage, plistParameter[2]);
-							MessageSys_Message_senderComponent_set(answerMessage, plistParameter[3]);
+							MessageSys_Message_receiverAddress_set(answerMessage, plistParameter[1]);
+							MessageSys_Message_receiverName_set(answerMessage, plistParameter[2]);
+							MessageSys_Message_receiverComponent_set(answerMessage, plistParameter[3]);
 
 							// Message ready for sending
 							answerMessage->v_msgStatus = MSGREADYFORSENDING;

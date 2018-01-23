@@ -329,7 +329,8 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManager_typemethod(
 			}
 
 			OV_INSTPTR_openAASDiscoveryServer_OVDataForAAS pOvDataForAAS = NULL;
-			pOvDataForAAS = Ov_StaticPtrCast(openAASDiscoveryServer_OVDataForAAS, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pinst->v_pouterobject), tmpHexString));
+			OV_INSTPTR_openAASDiscoveryServer_DiscoveryServer pDiscoveryServer = Ov_StaticPtrCast(openAASDiscoveryServer_DiscoveryServer, pinst->v_pouterobject);
+			pOvDataForAAS = Ov_StaticPtrCast(openAASDiscoveryServer_OVDataForAAS, Ov_SearchChild(ov_containment, &pDiscoveryServer->p_AASIDs, tmpHexString));
 			ov_string_setvalue(&tmpHexString, NULL);
 			if(pOvDataForAAS){
 				ov_string_setvalue(&answerMessage, "GetAASRes:OK,");

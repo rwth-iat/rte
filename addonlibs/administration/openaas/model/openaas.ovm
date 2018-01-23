@@ -77,6 +77,7 @@ LIBRARY openaas
 		OPERATIONS
             getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
             constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;
             typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
             sendMessage : C_FUNCTION <UA_FNC_SENDAASMESSAGEINSYSTEM>;
 		END_OPERATIONS;

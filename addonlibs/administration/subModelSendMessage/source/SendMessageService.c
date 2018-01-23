@@ -76,7 +76,7 @@ OV_DLLFNCEXPORT OV_RESULT subModelSendMessage_SendMessageService_CallMethod(
 
 	OV_INSTPTR_MessageSys_Message pMessage = NULL;
 	OV_INSTPTR_openaas_AASComponentManager pComponentManager = &paas->p_ComponentManager;
-	OV_RESULT result = Ov_CreateObject(MessageSys_Message, pMessage, &pComponentManager->p_OUTBOX, "message");
+	OV_RESULT result = Ov_CreateObject(MessageSys_Message, pMessage, &pComponentManager->p_INBOX, "message");
 	if(Ov_Fail(result)) {
 		ov_string_setvalue(&status, "Could not create a Message object");
 		goto FINALIZE;
@@ -95,8 +95,7 @@ OV_DLLFNCEXPORT OV_RESULT subModelSendMessage_SendMessageService_CallMethod(
 	ov_string_setvalue(&msg->v_receiverComponent,"");
 	msg->v_msgStatus = 0;
 
-	ov_string_setvalue(&msg->v_msgID,"43885401");
-	ov_string_setvalue(&msg->v_msgID,"");
+	ov_string_setvalue(&msg->v_msgID,"15467");
 	ov_string_setvalue(&msg->v_auth,"");
 
 	msg->v_expectAnswer = false;
