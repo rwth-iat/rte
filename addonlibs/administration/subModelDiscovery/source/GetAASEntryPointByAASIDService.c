@@ -71,9 +71,9 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 	pOvDataForAAS = Ov_StaticPtrCast(openAASDiscoveryServer_OVDataForAAS, Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, &pDiscoveryServer->p_AASIDs), tmpHexStringAAS));
 	if(pOvDataForAAS){
 		OV_STRING ksinfo = NULL;
-		ov_string_setvalue(&ksinfo, "KS:");
+		ov_string_setvalue(&ksinfo, "KS;");
 		ov_string_append(&ksinfo, pOvDataForAAS->v_ServerHost);
-		ov_string_append(&ksinfo, ":7509/");
+		ov_string_append(&ksinfo, ":7509;");
 		ov_string_append(&ksinfo, pOvDataForAAS->v_ServerName);
 		// delete .Componentmanager
 		OV_STRING tmpString = NULL;
@@ -96,12 +96,12 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 			if(pInterface){
 				ov_string_setvalue(&opcuaInfo, "opc.tcp://");
 				ov_string_append(&opcuaInfo, pOvDataForAAS->v_ServerHost);
-				ov_string_append(&opcuaInfo, ":16664/ns=");
+				ov_string_append(&opcuaInfo, ":16664;");
 				OV_STRING tmpString2 = NULL;
 				ov_string_print(&tmpString2, "%i", pInterface->v_modelnamespace.index);
 				ov_string_append(&opcuaInfo, tmpString2);
 				ov_string_setvalue(&tmpString2, NULL);
-				ov_string_append(&opcuaInfo, ",Type=String,Identifier=");
+				ov_string_append(&opcuaInfo, ";String;");
 				ov_string_append(&opcuaInfo, tmpString);
 				opcuaFound = TRUE;
 			}
