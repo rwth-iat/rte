@@ -36,6 +36,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 	OV_STRING funcName = (OV_STRING)methodHandle;
 
 	if (ov_string_compare(funcName, "getAASNodeId") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL){
+			UA_NodeId tmpNodeId;
+			UA_NodeId_init(&tmpNodeId);
+			UA_Variant_setScalarCopy(&output[0], &tmpNodeId, &UA_TYPES[UA_TYPES_NODEID]);
+			UA_NodeId_deleteMembers(&tmpNodeId);
+			resultOV = OV_ERR_OK;
+		}
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 
 		IdentificationType tmpOVAASId;
@@ -52,6 +59,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		IdentificationType_deleteMembers(&tmpOVAASId);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createAAS") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL ||
+			input[2].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_String *tmpUAName = (UA_String*)(input[1].data);
 		UA_Identification *tmpUAAssetId = (UA_Identification*)(input[2].data);
@@ -77,6 +91,11 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		ov_database_free(tmpOVName);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deleteAAS") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 
 		IdentificationType tmpOVAASId;
@@ -90,6 +109,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		IdentificationType_deleteMembers(&tmpOVAASId);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createSubModel") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL ||
+			input[2].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUAParentId = (UA_Identification*)(input[1].data);
 		UA_Identification *tmpUAModelId = (UA_Identification*)(input[2].data);
@@ -130,6 +156,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		ov_database_free(tmpOVName);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deleteSubModel") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
+
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUASMId = (UA_Identification*)(input[1].data);
 
@@ -150,6 +183,21 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		IdentificationType_deleteMembers(&tmpOVSMId);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createPVSL") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL ||
+			input[2].data == NULL ||
+			input[3].data == NULL ||
+			input[4].data == NULL ||
+			input[5].data == NULL ||
+			input[6].data == NULL ||
+			input[7].data == NULL ||
+			input[8].data == NULL ||
+			input[9].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
+
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUAParentId = (UA_Identification*)(input[1].data);
 		UA_String *tmpUAPVSLName = (UA_String*)(input[2].data);
@@ -209,6 +257,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		IdentificationType_deleteMembers(&tmpOVPropertyId);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deletePVSL") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
+
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUAPVSLId = (UA_Identification*)(input[1].data);
 
@@ -230,6 +285,21 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		IdentificationType_deleteMembers(&tmpOVPVSLId);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createPVS") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL ||
+			input[2].data == NULL ||
+			input[3].data == NULL ||
+			input[4].data == NULL ||
+			input[5].data == NULL ||
+			input[6].data == NULL ||
+			input[7].data == NULL ||
+			input[8].data == NULL ||
+			input[9].data == NULL ||
+			input[10].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUAListId = (UA_Identification*)(input[1].data);
 		UA_String *tmpUAPVSName = (UA_String*)(input[2].data);
@@ -295,6 +365,12 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		Ov_SetAnyValue(&tmpOVValue, NULL);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deletePVS") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUAPVSId = (UA_Identification*)(input[1].data);
 
@@ -316,6 +392,54 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		IdentificationType_deleteMembers(&tmpOVPVSId);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "getPVS") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+
+			UA_String tmpUAPVSName;
+			UA_String_init(&tmpUAPVSName);
+			UA_Variant_setScalarCopy(&output[1], &tmpUAPVSName, &UA_TYPES[UA_TYPES_STRING]);
+			UA_String_deleteMembers(&tmpUAPVSName);
+
+			UA_Identification tmpUACarrierId;
+			UA_Identification_init(&tmpUACarrierId);
+			UA_Variant_setScalarCopy(&output[2], &tmpUACarrierId, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+			UA_Identification_deleteMembers(&tmpUACarrierId);
+
+			UA_ExpressionLogicEnum tmpUAExpressionLogic;
+			UA_ExpressionLogicEnum_init(&tmpUAExpressionLogic);
+			UA_Variant_setScalarCopy(&output[3], &tmpUAExpressionLogic, &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_EXPRESSIONLOGICENUM]);
+			UA_ExpressionLogicEnum_deleteMembers(&tmpUAExpressionLogic);
+
+			UA_ExpressionSemanticEnum tmpUAExpressionSemantic;
+			UA_ExpressionSemanticEnum_init(&tmpUAExpressionSemantic);
+			UA_Variant_setScalarCopy(&output[4], &tmpUAExpressionSemantic, &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_EXPRESSIONSEMANTICENUM]);
+			UA_ExpressionSemanticEnum_deleteMembers(&tmpUAExpressionSemantic);
+
+			UA_Identification tmpUAPropertyId;
+			UA_Identification_init(&tmpUAPropertyId);
+			UA_Variant_setScalarCopy(&output[5], &tmpUAPropertyId, &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION]);
+			UA_Identification_deleteMembers(&tmpUAPropertyId);
+
+			UA_ViewEnum tmpUAView;
+			UA_ViewEnum_init(&tmpUAView);
+			UA_Variant_setScalarCopy(&output[6], &tmpUAView, &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_VIEWENUM]);
+			UA_ViewEnum_deleteMembers(&tmpUAView);
+
+			UA_VisibilityEnum tmpUAVisibility;
+			UA_VisibilityEnum_init(&tmpUAVisibility);
+			UA_Variant_setScalarCopy(&output[7], &tmpUAVisibility, &UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_VISIBILITYENUM]);
+			UA_VisibilityEnum_deleteMembers(&tmpUAVisibility);
+
+			UA_DataValue tmpUAValue;
+			UA_DataValue_init(&tmpUAValue);
+			UA_Variant_setScalarCopy(&output[8], &tmpUAValue, &UA_TYPES[UA_TYPES_DATAVALUE]);
+			UA_DataValue_deleteMembers(&tmpUAValue);
+
+			resultOV = OV_ERR_OK;
+			resultOV = OV_ERR_OK;
+		}
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUAPVSlId = (UA_Identification*)(input[1].data);
 
@@ -416,6 +540,21 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackMode
 		Ov_SetAnyValue(&tmpOVValue, NULL);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "setPVS") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL ||
+			input[2].data == NULL ||
+			input[3].data == NULL ||
+			input[4].data == NULL ||
+			input[5].data == NULL ||
+			input[6].data == NULL ||
+			input[7].data == NULL ||
+			input[8].data == NULL ||
+			input[9].data == NULL ||
+			input[10].data == NULL){
+			result = AASSTATUSCODE_MISSINGARGUMENT;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_Identification *tmpUAAASId = (UA_Identification*)(input[0].data);
 		UA_Identification *tmpUAPVSId = (UA_Identification*)(input[1].data);
 		UA_UInt32 *tmpUAMask = (UA_UInt32*)(input[2].data);

@@ -55,6 +55,11 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 	pLCEArchiv = Ov_StaticPtrCast(lifeCycleEntry_LifeCycleArchive, pobj);
 
 	if (ov_string_compare(funcName, "createLCE") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL){
+			result = LCESTATUSCODE_BADMISSINGARGUMENTS;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_LifeCycleEntry *tmpUALCE = (UA_LifeCycleEntry*)(input[0].data);
 
 		LifeCycleEntry lce;
@@ -79,6 +84,11 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		LifeCycleEntry_deleteMembers(&lce);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "deleteLCE") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL){
+			result = LCESTATUSCODE_BADMISSINGARGUMENTS;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[0].data);
 
 		OV_UINT64 tmpOVLCEId;
@@ -89,6 +99,17 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "createLCESimple") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL ||
+			input[2].data == NULL ||
+			input[3].data == NULL ||
+			input[4].data == NULL ||
+			input[5].data == NULL ||
+			input[6].data == NULL){
+			result = LCESTATUSCODE_BADMISSINGARGUMENTS;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_UInt32 *tmpUACreatingInstanceIdType = (UA_UInt32*)(input[0].data);
 		UA_String *tmpUACreatingInstanceIdSpec = (UA_String*)(input[1].data);
 		UA_UInt32 *tmpUAWritingInstanceIdType = (UA_UInt32*)(input[2].data);
@@ -119,6 +140,11 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		LifeCycleEntry_deleteMembers(&lce);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "getLCE") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL){
+			result = LCESTATUSCODE_BADMISSINGARGUMENTS;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[0].data);
 
 		OV_UINT64 tmpOVLCEId;
@@ -153,6 +179,39 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		LifeCycleEntry_deleteMembers(&lce);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "getLCESimple") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL){
+			result = LCESTATUSCODE_BADMISSINGARGUMENTS;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+
+			UA_Identification tmpUACreatingInstance;
+			UA_Identification_init(&tmpUACreatingInstance);
+			UA_Variant_setScalarCopy(&output[1], &tmpUACreatingInstance.idType, &UA_TYPES[UA_TYPES_UINT32]);
+			UA_Variant_setScalarCopy(&output[2], &tmpUACreatingInstance.idSpec, &UA_TYPES[UA_TYPES_STRING]);
+			UA_Identification_deleteMembers(&tmpUACreatingInstance);
+
+			UA_Identification tmpUAWritingInstance;
+			UA_Identification_init(&tmpUAWritingInstance);
+			UA_Variant_setScalarCopy(&output[3], &tmpUAWritingInstance.idType, &UA_TYPES[UA_TYPES_UINT32]);
+			UA_Variant_setScalarCopy(&output[4], &tmpUAWritingInstance.idSpec, &UA_TYPES[UA_TYPES_STRING]);
+			UA_Identification_deleteMembers(&tmpUAWritingInstance);
+
+			UA_String tmpUAEventClass;
+			UA_String_init(&tmpUAEventClass);
+			UA_Variant_setScalarCopy(&output[7], &tmpUAEventClass, &UA_TYPES[UA_TYPES_STRING]);
+			UA_String_deleteMembers(&tmpUAEventClass);
+
+			UA_String tmpUASubject;
+			UA_String_init(&tmpUASubject);
+			UA_Variant_setScalarCopy(&output[6], &tmpUASubject, &UA_TYPES[UA_TYPES_STRING]);
+			UA_String_deleteMembers(&tmpUASubject);
+
+			UA_DataValue tmpUAValue;
+			UA_DataValue_init(&tmpUAValue);
+			UA_Variant_setScalarCopy(&output[5], &tmpUAValue, &UA_TYPES[UA_TYPES_DATAVALUE]);
+			UA_DataValue_deleteMembers(&tmpUAValue);
+
+			resultOV = OV_ERR_OK;
+		}
 		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[0].data);
 
 		OV_UINT64 tmpOVLCEId;
@@ -211,6 +270,15 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		LifeCycleEntry_deleteMembers(&lce);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "getLastLCEs") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL){
+			result = LCESTATUSCODE_BADMISSINGARGUMENTS;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			UA_LifeCycleEntry *tmpUALifeCycleEntry = UA_Array_new(0,&UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
+			UA_Variant_setArrayCopy(&output[1], tmpUALifeCycleEntry, 0, &UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
+			UA_Variant_setScalarCopy(&output[2], 0, &UA_TYPES[UA_TYPES_UINT32]);
+			UA_Array_delete(tmpUALifeCycleEntry,0,&UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_UInt32 *tmpUACount = (UA_UInt32*)(input[0].data);
 
 		OV_UINT tmpOVCount;
@@ -258,6 +326,12 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		}
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "setLCE") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL){
+			result = LCESTATUSCODE_BADMISSINGARGUMENTS;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[0].data);
 		UA_LifeCycleEntry *tmpUALCEData = (UA_LifeCycleEntry*)(input[1].data);
 
@@ -285,6 +359,18 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		LifeCycleEntry_deleteMembers(&lce);
 		resultOV = OV_ERR_OK;
 	}else if (ov_string_compare(funcName, "setLCESimple") == OV_STRCMP_EQUAL){
+		if (input[0].data == NULL ||
+			input[1].data == NULL ||
+			input[2].data == NULL ||
+			input[3].data == NULL ||
+			input[4].data == NULL ||
+			input[5].data == NULL ||
+			input[6].data == NULL ||
+			input[7].data == NULL){
+			result = LCESTATUSCODE_BADMISSINGARGUMENTS;
+			UA_Variant_setScalarCopy(&output[0], &result, &UA_TYPES[UA_TYPES_STATUSCODE]);
+			resultOV = OV_ERR_OK;
+		}
 		UA_UInt64 *tmpUALCEId = (UA_UInt64*)(input[0].data);
 		UA_UInt32 *tmpUACreatingInstanceIdType = (UA_UInt32*)(input[1].data);
 		UA_String *tmpUACreatingInstanceIdSpec = (UA_String*)(input[2].data);
