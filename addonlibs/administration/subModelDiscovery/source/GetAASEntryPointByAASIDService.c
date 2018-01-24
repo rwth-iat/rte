@@ -98,7 +98,7 @@ OV_DLLFNCEXPORT OV_RESULT subModelDiscovery_GetAASEntryPointByAASIDService_CallM
 				ov_string_append(&opcuaInfo, pOvDataForAAS->v_ServerHost);
 				ov_string_append(&opcuaInfo, ":16664;");
 				OV_STRING tmpString2 = NULL;
-				ov_string_print(&tmpString2, "%i", pInterface->v_modelnamespace.index);
+				ov_string_print(&tmpString2, "%i", pInterface->v_interfacenamespace.index);
 				ov_string_append(&opcuaInfo, tmpString2);
 				ov_string_setvalue(&tmpString2, NULL);
 				ov_string_append(&opcuaInfo, ";String;");
