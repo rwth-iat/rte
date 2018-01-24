@@ -1539,15 +1539,15 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 							pinst->v_state = 4;
 						}else{
 							ov_logfile_info("GetAASRes: Incorrect size of parameters");
-							pinst->v_state = 7;
+							pinst->v_state = 4;
 						}
 					}else{
 						ov_logfile_info("GetAASRes: Failed");
-						pinst->v_state = 7;
+						pinst->v_state = 4;
 					}
 				}else{
 					ov_logfile_info("Incorrect Message to GetAASReq");
-					pinst->v_state = 7;
+					pinst->v_state = 4;
 				}
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 				ov_string_freelist(plistReq);
@@ -1674,7 +1674,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 						}
 					}else{
 						ov_logfile_info("GetAASRes: Failed");
-						pinst->v_state = 7;
+						pinst->v_state = 2;
 					}
 				}else{
 					ov_logfile_info("Incorrect Message to GetAASReq");
