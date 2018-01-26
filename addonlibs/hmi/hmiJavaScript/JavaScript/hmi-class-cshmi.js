@@ -5292,9 +5292,10 @@ cshmi.prototype = {
 				return HMI.KSClient.deleteObject(path, cbfnc, !!cbfnc?true:false, responseFormat);
 			};
 			/**
-			 * @param path of the object to create
-			 * @param classname full class name of the new object
-			 * @@param cbfnc callback function for a async request
+			 * @param pathA of the first object
+			 * @param pathB of the second object
+			 * @param portnameA  name of the port
+			 * @param cbfnc callback function for a async request
 			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 			 * @return true, "" or null
 			 */
@@ -5302,9 +5303,10 @@ cshmi.prototype = {
 				return HMI.KSClient.linkObjects(pathA, pathB, portnameA, cbfnc, !!cbfnc?true:false, responseFormat);
 			};
 			/**
-			 * @param path of the object to create
-			 * @param classname full class name of the new object
-			 * @@param cbfnc callback function for a async request
+			 * @param pathA of the first object
+			 * @param pathB of the second object
+			 * @param portnameA  name of the port
+			 * @param cbfnc callback function for a async request
 			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 			 * @return true, "" or null
 			 */
