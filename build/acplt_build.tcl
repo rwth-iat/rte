@@ -884,7 +884,7 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/processcontrol/cmdlib 
 				addonlibs/processcontrol/PCMsgParser 
 				addonlibs/processcontrol/PCMsgCreator 
-				addonlibs/functionblock/SSChelper
+				addonlibs/functionblock/SSChelper}
 				# addonlibs/administration/identification
 				# addonlibs/administration/lifeCycleEntry
 				# addonlibs/administration/propertyValueStatement
@@ -904,7 +904,7 @@ set addon_libs {addonlibs/hmi/cshmi
 				# addonlibs/administration/subModelAdministrationOPCUAInterface
 				# addonlibs/administration/subModelDiscoveryOPCUAInterface
 				# addonlibs/administration/subModelSendMessageOPCUAInterface
-				# addonlibs/administration/simpleExperimentDataArchiver}
+				# addonlibs/administration/simpleExperimentDataArchiver
 			 	
 print_msg "checking out all libraries of the acplt system"
 
