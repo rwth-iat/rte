@@ -154,26 +154,6 @@ OV_RESULT OVDataValueToserviceValue(OV_ANY value, SRV_extAny_t* serviceValue){
 	return OV_ERR_OK;
 }
 
-OV_BOOL getAASIdbyObjectPointer(OV_INSTPTR_openaas_aas pAAS, IdentificationType* pAASId){
-	OV_INSTPTR_ov_object pchild = NULL;
-	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
-	if(!pAAS){
-		return false;
-	}
-
-	Ov_ForEachChild(ov_containment, &pAAS->p_Header.p_Config, pchild){
-		if (!Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
-			continue;
-		}
-		pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
-		IdentificationType_init(pAASId);
-		ov_string_setvalue(&pAASId->IdSpec, pCarrierId->v_IdSpec);
-		pAASId->IdType = pCarrierId->v_IdType;
-		return true;
-	}
-	return false;
-}
-
 AASStatusCode checkForEmbeddingAAS(IdentificationType aasId, IdentificationType objectId){
 	OV_INSTPTR_ov_object ptr = NULL;
 	OV_INSTPTR_openaas_aas paas = NULL;

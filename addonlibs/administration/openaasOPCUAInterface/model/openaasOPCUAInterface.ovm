@@ -23,7 +23,7 @@ LIBRARY openaasOPCUAInterface
 		COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
 		VARIABLES
 			modelnamespace : C_TYPE <UA_Namespace>;
-            interfacenamespace : C_TYPE <UA_Namespace>;
+            interfacenamespace : C_TYPE <UA_Namespace>; 
             modelnamespaceIndexIdentification : UINT;
 		END_VARIABLES;
 		OPERATIONS
@@ -31,7 +31,8 @@ LIBRARY openaasOPCUAInterface
 	        ovModelManagerMethodNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA>;
 	        ovAASNodeToOPCUA : C_FUNCTION <UA_FNC_OVAASNODETOOPCUA>;
 	        ovSubModelNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSUBMODELNODETOOPCUA>;
-	        ovSubModelVariablesNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSUBMODELVARIABLESNODETOOPCUA>; 
+	        ovSubModelVariablesNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSUBMODELVARIABLESNODETOOPCUA>;
+        	ovIDsNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSUBMODELVARIABLESNODETOOPCUA>;
 	        ovFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVFOLDERNODETOOPCUA>;
 	         
 	        ovNodeStoreInterfaceOpenAASNew : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASNEW>;

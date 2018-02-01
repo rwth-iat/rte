@@ -26,16 +26,6 @@ LIBRARY openaas
         END_OPERATIONS;
     END_CLASS;
     
-    CLASS Header : CLASS ov/domain
-        IS_INSTANTIABLE;
-        VARIABLES
-        END_VARIABLES;
-        PARTS
-        	Config : CLASS propertyValueStatement/PropertyValueStatementList;
-        END_PARTS;
-        OPERATIONS
-        END_OPERATIONS;
-    END_CLASS;
 	
 	CLASS SubModel : CLASS ov/domain
         IS_INSTANTIABLE;
@@ -88,9 +78,10 @@ LIBRARY openaas
 		VARIABLES   
 		END_VARIABLES;
 		PARTS 
-			Header           : CLASS openaas/Header;
-			Body             : CLASS ov/domain;
-			Views            : CLASS ov/domain;		
+			Header           : CLASS openaas/Folder;
+			Body             : CLASS openaas/Folder;
+			AASID           : CLASS identification/Identification;
+			AssetID         : CLASS identification/Identification;
 			ComponentManager : CLASS openaas/AASComponentManager;
 		END_PARTS;
 		OPERATIONS

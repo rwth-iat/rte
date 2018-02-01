@@ -748,14 +748,17 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 			}
 		}
 	}else if (len2 > 1){
-		if (ov_string_compare(plist2[len2-1], "Views") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-				tmpNode = opcuaNode;
-		}else if (ov_string_compare(plist2[len2-1], "Header") == OV_STRCMP_EQUAL){
+		if (ov_string_compare(plist2[len2-1], "Header") == OV_STRCMP_EQUAL){
 			if (openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
 		}else if (ov_string_compare(plist2[len2-1], "Body") == OV_STRCMP_EQUAL){
 			if (openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "AASID") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovIDsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+				tmpNode = opcuaNode;
+		}else if (ov_string_compare(plist2[len2-1], "AssetID") == OV_STRCMP_EQUAL){
+			if (openaasOPCUAInterface_interface_ovIDsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
 		}else if (ov_string_compare(plist2[len2-1], "Revision") == OV_STRCMP_EQUAL){
 			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)

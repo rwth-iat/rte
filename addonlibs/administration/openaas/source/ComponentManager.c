@@ -170,10 +170,6 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	OV_RESULT resultOV = OV_ERR_OK;
 	OV_INSTPTR_MessageSys_Message pRequestMessage = NULL;
 	OV_INSTPTR_MessageSys_MsgDelivery pmsgDelivery = NULL;
-	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyId pPropertyId = NULL;
-	OV_INSTPTR_ov_object pchild = NULL;
 	// Create MessageObject in Outbox
 	paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
 	ov_string_setvalue(&tempString, NULL);
@@ -221,46 +217,16 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	switch(requestType){
 	case 0:
 		ov_string_append(&answerBody, "RegisterAASReq:");
-		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
-			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
-				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
-				ov_string_print(&tempString, "%i", pCarrierId->v_IdType);
-				ov_string_append(&answerBody, tempString);
-				ov_string_append(&answerBody, ",");
-				ov_string_append(&answerBody, pCarrierId->v_IdSpec);
-				break;
-			}
-		}
-		Ov_ForEachChildEx(ov_containment, &paas->p_Header.p_Config, ppvs, propertyValueStatement_PropertyValueStatement){
-			Ov_ForEachChildEx(ov_containment, ppvs, pPropertyId, propertyValueStatement_PropertyId){
-				if (pPropertyId->v_IdType == URI && ov_string_compare(pPropertyId->v_IdSpec, "http://acplt.org/Properties/AssetID") == OV_STRCMP_EQUAL){
-					if ((ppvs->v_Value.value.vartype &OV_VT_KSMASK) == OV_VT_STRING){
-						if (ov_string_compare(ppvs->v_Value.value.valueunion.val_string, "") != OV_STRCMP_EQUAL){
-							OV_UINT len = 0;
-							OV_STRING *plist = NULL;
-							plist= ov_string_split(ppvs->v_Value.value.valueunion.val_string, ":", &len);
-							if (len >= 1){
-								ov_string_append(&answerBody, ",");
-								if (ov_string_compare(plist[0], "URI") == OV_STRCMP_EQUAL){
-									ov_string_append(&answerBody, "0");
-								}else{
-									ov_string_append(&answerBody, "1");
-								}
-								ov_string_append(&answerBody, ",");
-								for (OV_UINT i = 1; i < len; i++){
-									ov_string_append(&answerBody, plist[i]);
-									if (i != len-1)
-										ov_string_append(&answerBody, ":");
-								}
-								ov_string_freelist(plist);
-								break;
-							}
-							ov_string_freelist(plist);
-						}
-					}
-				}
-			}
-		}
+		ov_string_print(&tempString, "%i", paas->p_AASID.v_IdType);
+		ov_string_append(&answerBody, tempString);
+		ov_string_append(&answerBody, ",");
+		ov_string_append(&answerBody, paas->p_AASID.v_IdSpec);
+
+		ov_string_append(&answerBody, ",");
+		ov_string_print(&tempString, "%i", paas->p_AssetID.v_IdType);
+		ov_string_append(&answerBody, tempString);
+		ov_string_append(&answerBody, ",");
+		ov_string_append(&answerBody, paas->p_AssetID.v_IdSpec);
 
 		ov_string_setvalue(&tempString, NULL);
 		ov_string_append(&answerBody, ",");
@@ -272,47 +238,17 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		break;
 	case 1:
 		ov_string_append(&answerBody, "UnregisterAASReq:");
-		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
-			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
-				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
-				ov_string_append(&answerBody, pCarrierId->v_IdSpec);
-				ov_string_append(&answerBody, ",");
-				ov_string_print(&tempString, "%i", pCarrierId->v_IdType);
-				ov_string_append(&answerBody, tempString);
-				ov_string_setvalue(&tempString, NULL);
-				break;
-			}
-		}
-		Ov_ForEachChildEx(ov_containment, &paas->p_Header.p_Config, ppvs, propertyValueStatement_PropertyValueStatement){
-			Ov_ForEachChildEx(ov_containment, ppvs, pPropertyId, propertyValueStatement_PropertyId){
-				if (pPropertyId->v_IdType == URI && ov_string_compare(pPropertyId->v_IdSpec, "http://acplt.org/Properties/AssetID") == OV_STRCMP_EQUAL){
-					if ((ppvs->v_Value.value.vartype &OV_VT_KSMASK) == OV_VT_STRING){
-						if (ov_string_compare(ppvs->v_Value.value.valueunion.val_string, "") != OV_STRCMP_EQUAL){
-							OV_UINT len = 0;
-							OV_STRING *plist = NULL;
-							plist= ov_string_split(ppvs->v_Value.value.valueunion.val_string, ":", &len);
-							if (len >= 1){
-								ov_string_append(&answerBody, ",");
-								if (ov_string_compare(plist[0], "URI") == OV_STRCMP_EQUAL){
-									ov_string_append(&answerBody, "0");
-								}else{
-									ov_string_append(&answerBody, "1");
-								}
-								ov_string_append(&answerBody, ",");
-								for (OV_UINT i = 1; i < len; i++){
-									ov_string_append(&answerBody, plist[i]);
-									if (i != len-1)
-										ov_string_append(&answerBody, ":");
-								}
-								ov_string_freelist(plist);
-								break;
-							}
-							ov_string_freelist(plist);
-						}
-					}
-				}
-			}
-		}
+		ov_string_print(&tempString, "%i", paas->p_AASID.v_IdType);
+		ov_string_append(&answerBody, tempString);
+		ov_string_append(&answerBody, ",");
+		ov_string_append(&answerBody, paas->p_AASID.v_IdSpec);
+
+		ov_string_append(&answerBody, ",");
+		ov_string_print(&tempString, "%i", paas->p_AssetID.v_IdType);
+		ov_string_append(&answerBody, tempString);
+		ov_string_append(&answerBody, ",");
+		ov_string_append(&answerBody, paas->p_AssetID.v_IdSpec);
+		ov_string_setvalue(&tempString, NULL);
 		break;
 	case 2:
 		ov_string_append(&answerBody, "GetAASReq:");
@@ -385,9 +321,6 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 	OV_INSTPTR_fb_task pTaskParent = NULL;
 	OV_TIME_SPAN tmpTimeSpan;
 	OV_INSTPTR_ov_object pchild = NULL;
-	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierId = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyValueStatement ppvs = NULL;
-	OV_INSTPTR_propertyValueStatement_PropertyId pPropertyId = NULL;
 
 	// First clean message box, so only up-to-date messages are handled.
 	cleanupMessageBox(pinst);
@@ -398,43 +331,23 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 	case 0: //Waiting for the setting of AAS-ID and Asset-ID
 		pinst->v_messageCount = 0;
 		pinst->v_registered = FALSE;
-		IdentificationType tmpAASId;
-		IdentificationType_init(&tmpAASId);
-		OV_STRING tmpAssetId = NULL;
 
 
 		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
-		if(!getAASIdbyObjectPointer(paas,&tmpAASId)){
-			goto clean_state_0;
-		}
-		if(ov_string_compare(tmpAASId.IdSpec,"")==OV_STRCMP_EQUAL){
-			goto clean_state_0;
+		if(ov_string_compare(paas->p_AASID.v_IdSpec,"")==OV_STRCMP_EQUAL){
+			break;
 		}
 
-		Ov_ForEachChildEx(ov_containment, &paas->p_Header.p_Config, ppvs, propertyValueStatement_PropertyValueStatement){
-			Ov_ForEachChildEx(ov_containment, ppvs, pPropertyId, propertyValueStatement_PropertyId){
-				if (pPropertyId->v_IdType == URI && ov_string_compare(pPropertyId->v_IdSpec, "http://acplt.org/Properties/AssetID") == OV_STRCMP_EQUAL){
-					if ((ppvs->v_Value.value.vartype & OV_VT_KSMASK) == OV_VT_STRING){
-						if (ov_string_compare(ppvs->v_Value.value.valueunion.val_string, "") != OV_STRCMP_EQUAL){
-							ov_string_setvalue(&tmpAssetId, ppvs->v_Value.value.valueunion.val_string);
-							break;
-						}
-					}
-				}
-			}
+		if(ov_string_compare(paas->p_AssetID.v_IdSpec,"")==OV_STRCMP_EQUAL){
+			break;
 		}
-		if (!tmpAssetId)
-			goto clean_state_0;
 
 		//register AAS
-		sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
+		IdentificationType tmpASSId;
+		IdentificationType_init(&tmpASSId);
+		sendingRequestToDiscoveryServer(pinst, 0, tmpASSId);
+		IdentificationType_deleteMembers(&tmpASSId);
 		pinst->v_state = 1;
-
-
-		clean_state_0:
-		IdentificationType_deleteMembers(&tmpAASId);
-		ov_string_setvalue(&tmpAssetId, NULL);
-
 		break;
 	case 1: //Sending Register-Request and wait for answer
 		// Get the next message, if any.
@@ -548,14 +461,8 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		paas = Ov_StaticPtrCast(openaas_aas,pinst->v_pouterobject);
 		IdentificationType aasId;
 		IdentificationType_init(&aasId);
-		Ov_ForEachChild(ov_containment, &paas->p_Header.p_Config, pchild){
-			if (Ov_CanCastTo(propertyValueStatement_CarrierId, pchild)){
-				pCarrierId = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pchild);
-				ov_string_setvalue(&aasId.IdSpec, pCarrierId->v_IdSpec);
-				aasId.IdType = pCarrierId->v_IdType;
-				break;
-			}
-		}
+		ov_string_setvalue(&aasId.IdSpec, paas->p_AASID.v_IdSpec);
+		aasId.IdType = paas->p_AASID.v_IdType;
 
 		IdentificationType receiver;
 		IdentificationType_init(&receiver);
@@ -563,7 +470,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		receiver.IdType = headerReceive->receiver.idType;
 		OV_BOOL sendAnswer = FALSE;
 
-		if (getAASIdbyObjectPointer(paas,&aasId) && IdentificationTypeEqual(&receiver, &aasId)){ // MSG is for this AAS
+		if (IdentificationTypeEqual(&receiver, &aasId)){ // MSG is for this AAS
 			headerSend = SRV_msgHeader_t_reverseCopy(headerReceive);
 			switch (srvTypeReceive){
 			case SRV_createAASReq:{

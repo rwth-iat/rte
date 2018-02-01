@@ -116,25 +116,36 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	OV_STRING tmpString = NULL;
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".Header");
+	UA_String tmpStringHeader = UA_String_fromChars(tmpString);
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
 	ov_string_append(&tmpString, ".Body");
 	UA_String tmpStringBody = UA_String_fromChars(tmpString);
+	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	ov_string_append(&tmpString, ".AASID");
+	UA_String tmpStringAASID = UA_String_fromChars(tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".Views");
-	UA_String tmpStringView = UA_String_fromChars(tmpString);
+	ov_string_append(&tmpString, ".AssetID");
+	UA_String tmpStringAssetID = UA_String_fromChars(tmpString);
 	ov_string_setvalue(&tmpString, NULL);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
 			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSOPENAASID_ASSETADMINITRATIONSHELLTYPE);
 			continue;
-		}else if(UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringBody) || UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringView)){
+		}else if(UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringHeader) ||
+				 UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringBody) ||
+				 UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringAASID) ||
+				 UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringAssetID)){
 			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;
 			continue;
 		}
 	}
 	UA_NodeId_deleteMembers(&tmpNodeId);
+	UA_String_deleteMembers(&tmpStringHeader);
 	UA_String_deleteMembers(&tmpStringBody);
-	UA_String_deleteMembers(&tmpStringView);
+	UA_String_deleteMembers(&tmpStringAASID);
+	UA_String_deleteMembers(&tmpStringAssetID);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

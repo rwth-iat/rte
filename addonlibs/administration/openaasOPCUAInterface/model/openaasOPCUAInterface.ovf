@@ -19,7 +19,7 @@ typedef UA_StatusCode UA_FNC_OVAASNODETOOPCUA(void *handle, const UA_NodeId *nod
 typedef UA_StatusCode UA_FNC_OVSUBMODELNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVSUBMODELVARIABLESNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-
+typedef UA_StatusCode UA_FNC_OVIDSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 
 	
 
