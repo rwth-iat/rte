@@ -125,8 +125,8 @@ OV_DLLFNCEXPORT AASStatusCode openaas_modelmanager_createAAS(IdentificationType 
 		ov_string_setvalue(&paas->p_AASID.v_IdSpec, aasId.IdSpec);
 		paas->p_AASID.v_IdType = aasId.IdType;
 
-		ov_string_setvalue(&paas->p_AASID.v_IdSpec, assetId.IdSpec);
-		paas->p_AASID.v_IdType = assetId.IdType;
+		ov_string_setvalue(&paas->p_AssetID.v_IdSpec, assetId.IdSpec);
+		paas->p_AssetID.v_IdType = assetId.IdType;
 	}else{
 		return AASSTATUSCODE_BADUNEXPECTEDERROR;
 	}
