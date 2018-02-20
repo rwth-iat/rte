@@ -5232,10 +5232,10 @@ cshmi.prototype = {
 			
 			/**
 			 * @param path of object to query
-			 * @param requestType = OT_DOMAIN type of KS Object to query ("OT_DOMAIN", "OT_VARIABLE", "OT_LINK" or "OT_ANY")
-			 * @param requestOutput Array of interesting objects properties ("OP_NAME", "OP_TYPE", "OP_COMMENT", "OP_ACCESS", "OP_SEMANTIC", "OP_CREATIONTIME", "OP_CLASS" or "OT_ANY")
+			 * @param requestType = OT_DOMAIN type of KS Object to query ("OT_DOMAIN", "OT_VARIABLE", "OT_LINK" or "OT_ANY"). "OT_DOMAIN" if not supplied
+			 * @param requestOutput Array of interesting objects properties ("OP_NAME", "OP_TYPE", "OP_COMMENT", "OP_ACCESS", "OP_SEMANTIC", "OP_CREATIONTIME", "OP_CLASS" or "OT_ANY"). "OP_NAME" if not supplied
 			 * @param cbfnc callback function for a async request
-			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
+			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used). "text/tcl" if not supplied.
 			 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
 			 */
 			cshmimodel.getEP = function(path, requestType, requestOutput, cbfnc, responseFormat) {
@@ -5243,9 +5243,9 @@ cshmi.prototype = {
 			};
 			/**
 			 * @param path of the variable to fetch, multiple path possible via an Array
-			 * @param requestOutput Array of interesting objects properties ("OP_NAME", "OP_TYPE", "OP_VALUE", "OP_TIMESTAMP" or "OP_STATE")
+			 * @param requestOutput Array of interesting objects properties ("OP_NAME", "OP_TYPE", "OP_VALUE", "OP_TIMESTAMP" or "OP_STATE"). "OP_VALUE" if not supplied
 			 * @param cbfnc callback function for a async request
-			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
+			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used). "text/tcl" if not supplied.
 			 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
 			 */
 			cshmimodel.getVar = function(path, requestOutput, cbfnc, responseFormat){
@@ -5256,7 +5256,7 @@ cshmi.prototype = {
 			 * @param {String} value to set (StringVec are Arrays)
 			 * @param {String} type variable type (for example "KS_VT_STRING") to set, null if no change
 			 * @param cbfnc callback function for a async request
-			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
+			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used). "text/tcl" if not supplied.
 			 * @return true, "" or null
 			 */
 			cshmimodel.setVar = function(path, value, type, cbfnc, responseFormat){
@@ -5266,7 +5266,7 @@ cshmi.prototype = {
 			 * @param path of the object to rename
 			 * @param newname (optional with full path) of the object
 			 * @param cbfnc callback function for a async request
-			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
+			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used). "text/tcl" if not supplied.
 			 * @return true, "" or null
 			 */
 			cshmimodel.renameObjects = function(oldName, newName, cbfnc, responseFormat) {
@@ -5275,8 +5275,8 @@ cshmi.prototype = {
 			/**
 			 * @param path of the object to create
 			 * @param classname full class name of the new object
-			 * @@param cbfnc callback function for a async request
-			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
+			 * @param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used). "text/tcl" if not supplied.
 			 * @return true, "" or null
 			 */
 			cshmimodel.createObject = function(path, classname, cbfnc, responseFormat) {
@@ -5284,28 +5284,30 @@ cshmi.prototype = {
 			};
 			/**
 			 * @param path ob the object to delete
-			 * @@param cbfnc callback function for a async request
-			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
+			 * @param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used). "text/tcl" if not supplied.
 			 * @return true, "" or null
 			 */
 			cshmimodel.deleteObject = function(path, cbfnc, responseFormat) {
 				return HMI.KSClient.deleteObject(path, cbfnc, !!cbfnc?true:false, responseFormat);
 			};
 			/**
-			 * @param path of the object to create
-			 * @param classname full class name of the new object
-			 * @@param cbfnc callback function for a async request
-			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
+			 * @param pathA of the first object
+			 * @param pathB of the second object
+			 * @param portnameA  name of the port
+			 * @param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used). "text/tcl" if not supplied
 			 * @return true, "" or null
 			 */
 			cshmimodel.linkObjects = function(pathA, pathB, portnameA, cbfnc, responseFormat) {
 				return HMI.KSClient.linkObjects(pathA, pathB, portnameA, cbfnc, !!cbfnc?true:false, responseFormat);
 			};
 			/**
-			 * @param path of the object to create
-			 * @param classname full class name of the new object
-			 * @@param cbfnc callback function for a async request
-			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
+			 * @param pathA of the first object
+			 * @param pathB of the second object
+			 * @param portnameA  name of the port
+			 * @param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used). "text/tcl" if not supplied
 			 * @return true, "" or null
 			 */
 			cshmimodel.unlinkObjects = function(pathA, pathB, portnameA, cbfnc, responseFormat) {
