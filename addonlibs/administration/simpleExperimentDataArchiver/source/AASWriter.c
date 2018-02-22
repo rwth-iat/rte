@@ -121,7 +121,7 @@ OV_DLLFNCEXPORT void simpleExperimentDataArchiver_AASWriter_typemethod(
 	IdentificationType propertyId  = {.IdSpec = NULL, .IdType = URI};
 	ViewEnum view = 0;
 	VisibilityEnum visibility = 0;
-	OV_UINT mask = NULL;
+	OV_UINT mask = 0;
 	IdentificationType listId  = {.IdSpec = NULL, .IdType = URI};
 
 	/* PSV */
