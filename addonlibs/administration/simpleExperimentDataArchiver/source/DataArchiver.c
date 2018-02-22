@@ -41,11 +41,9 @@
 #define SLEEP(TIME) sleep(TIME);
 #endif
 
-#define MUTEX_LOCK(MUTEX)\
-		pthread_mutex_lock(MUTEX);\
+#define MUTEX_LOCK(MUTEX) pthread_mutex_lock(MUTEX);
 
-#define MUTEX_UNLOCK(MUTEX)\
-		pthread_mutex_unlock(MUTEX);\
+#define MUTEX_UNLOCK(MUTEX)pthread_mutex_unlock(MUTEX);
 
 /* typedefs */
 /* thread exchange-data */
