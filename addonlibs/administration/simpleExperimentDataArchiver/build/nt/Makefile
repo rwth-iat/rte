@@ -9,7 +9,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 SERVERSTARTKEYS = -w fb -w ksbase -w simpleExperimentDataArchiver
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = 
-EXTRA_CC_FLAGS = -pthread
+EXTRA_CC_FLAGS =
 EXTRA_LIBS = 
 LD_FLAGS = 
 COMPILER = GCC
@@ -25,5 +25,5 @@ all:
 %:
 	acplt_makmak -l simpleExperimentDataArchiver $(MAKMAKOPTIONS) $(TARGETOS)
 	tclsh $(PREBUILD) simpleExperimentDataArchiver $(MAKMAKOPTIONS)
-	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $* -lpthread
+	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	tclsh $(POSTBUILD) simpleExperimentDataArchiver
