@@ -31,7 +31,7 @@ script:
 after_success:
 - cp ./build/acplt_build.log ./logs/acplt_build-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__OK__.log
 - cd ..
-- git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
+- git clone -q --depth=5 -b gh-pages https://acplt-rte-bot:$GITHUB_API_KEY@github.com/acplt/rte-www
 - cd ./rte
 - if [[ ${TRAVIS_PULL_REQUEST} == "false" && ${CC} == "gcc" ]]; then bash ./tools/travis_createDoc_and_handlerepos.sh ; fi
 - cd ..
@@ -39,7 +39,7 @@ after_success:
 after_failure:
 - cp ./build/acplt_build.log ./logs/acplt_build-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__FAIL__.log
 - cd ..
-- git clone -q --depth=5 -b gh-pages https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
+- git clone -q --depth=5 -b gh-pages https://acplt-rte-bot:$GITHUB_API_KEY@github.com/acplt/rte-www
 - cd ./rte
 - cd ./build
 - tail -n 100 acplt_build.log
