@@ -18,9 +18,9 @@ fi
 
 git add -A ./logs/*
 echo "Pushing to github"
-git config --global user.email "rte_bot@outlook.de"
-git config --global user.name "rte-bot"
+git config --global user.email "travis"
+git config --global user.name "travis"
 git config --global push.default simple
 git commit -am "updated generated documentation (texinfo) on webpage and created releases by travis-ci [ci skip] (Job: ${TRAVIS_JOB_NUMBER})"
-git push -q https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
+git push -q https://acplt-rte-bot:$GITHUB_API_KEY@github.com/acplt/rte-www
 cd ..
