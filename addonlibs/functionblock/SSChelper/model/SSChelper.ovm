@@ -54,11 +54,12 @@ LIBRARY SSChelper
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
-		CLASS StringEq : CLASS fb/functionblock
+	
+	CLASS StringEq : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
 			in1 : STRING  FLAGS = "i" COMMENT = "string 1";
-			in2 : STRING FLAGS = "i" COMMENT = "string";
+			in2 : STRING FLAGS = "i" COMMENT = "string 2";
 			
 			result : BOOL FLAGS = "o" COMMENT = "Command to be processed";
 			// Add variables here. The syntax is:
