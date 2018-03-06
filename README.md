@@ -31,7 +31,8 @@ For cross compilation see [README_CROSSCOMPILATION.md](https://github.com/acplt/
 * Old but useful documentations can be found at: [ACPLT-OV Doc old](https://github.com/acplt/rte-www/blob/gh-pages/doc/old)
 
 ## Releases
-Here you'll find the latest 10 releases (of the 10 latest building commits) for linux (32 and 64 bit), windows 32 and Raspberry Pi: [Releases](http://acplt.github.io/rte-www/releases/)
+Here you'll find the latest 10 releases (of the 10 latest building commits) for linux (32 and 64 bit), windows 32 and Raspberry Pi: 
+[Releases](http://acplt.github.io/rte-www/releases/)
 
 # Using the environment
 
