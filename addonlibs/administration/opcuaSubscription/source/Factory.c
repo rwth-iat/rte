@@ -7,7 +7,7 @@
  *
  *   History
  *   -------
- *   2017-11-16   File created
+ *   2018-01-23   File created
  *
  *******************************************************************************
  *
@@ -16,12 +16,12 @@
  ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_simpleExperimentDataArchiver
-#define OV_COMPILE_LIBRARY_simpleExperimentDataArchiver
+#ifndef OV_COMPILE_LIBRARY_opcuaSubscription
+#define OV_COMPILE_LIBRARY_opcuaSubscription
 #endif
 
 
-#include "simpleExperimentDataArchiver.h"
+#include "opcuaSubscription.h"
 #include "libov/ov_macros.h"
 #include "fb_database.h"
 
@@ -34,21 +34,22 @@ OV_STRING replace_char(OV_STRING str, char find, char replace){
 	return str;
 }
 
-OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_serverEndpointUrl_set(
-		OV_INSTPTR_simpleExperimentDataArchiver_Factory          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcuaSubscription_Factory_serverEndpointUrl_set(
+		OV_INSTPTR_opcuaSubscription_Factory          pobj,
 		const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pobj->v_serverEndpointUrl,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_create_set(
-		OV_INSTPTR_simpleExperimentDataArchiver_Factory          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcuaSubscription_Factory_create_set(
+		OV_INSTPTR_opcuaSubscription_Factory          pobj,
 		const OV_BOOL  value
 ) {
 	/* local variables */
-	OV_INSTPTR_ov_domain pArchiverParent = NULL;
-	OV_INSTPTR_simpleExperimentDataArchiver_DataArchiver pArchiver = NULL;
-	OV_INSTPTR_simpleExperimentDataArchiver_Variable pVariable = NULL;
+	OV_INSTPTR_ov_domain pClientParent = NULL;
+	OV_INSTPTR_opcuaSubscription_subscriptionClient pClient = NULL;
+	OV_INSTPTR_opcuaSubscription_subscriptionSettings pSettings = NULL;
+	OV_INSTPTR_opcuaSubscription_Variable pVariable = NULL;
 	OV_STRING variableName = NULL;
 	OV_STRING tmpVariableName = NULL;
 
@@ -87,14 +88,14 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_create_set(
 
 	/* check if placement is possible */
 	ov_memstack_lock(); //TODO: check proper use of memstack_lock
-	pArchiverParent = Ov_DynamicPtrCast(ov_domain,ov_path_getobjectpointer(pobj->v_placement,2));
+	pClientParent = Ov_DynamicPtrCast(ov_domain,ov_path_getobjectpointer(pobj->v_placement,2));
 	ov_memstack_unlock();
-	if(!pArchiverParent){
+	if(!pClientParent){
 		return OV_ERR_BADPARAM;
 	}
 
-	/* create DataArchiver */
-	result = Ov_CreateObject(simpleExperimentDataArchiver_DataArchiver,pArchiver,pArchiverParent,pobj->v_name);
+	/* create subscriptionClient */
+	result = Ov_CreateObject(opcuaSubscription_subscriptionClient,pClient,pClientParent,pobj->v_name);
 	if(Ov_Fail(result)){
 		return result;
 	}
@@ -104,10 +105,10 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_create_set(
 	if (!pUrtask){
 		return OV_ERR_GENERIC;
 	}
-	Ov_Link(fb_tasklist, pUrtask, pArchiver);
+	Ov_Link(fb_tasklist, pUrtask, pClient);
 
 	/* set serverEndpointUrl */
-	simpleExperimentDataArchiver_DataArchiver_serverEndpointUrl_set(pArchiver, pobj->v_serverEndpointUrl);
+	opcuaSubscription_subscriptionClient_serverEndpointUrl_set(pClient, pobj->v_serverEndpointUrl);
 
 	/* create variable Children */
 	for(OV_UINT ItemIterator = 0; ItemIterator < pobj->v_NodeIDIdentifier.veclen; ItemIterator++){
@@ -146,29 +147,31 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_create_set(
 		default:
 			return OV_ERR_BADPARAM;
 		}
-		result = Ov_CreateObject(simpleExperimentDataArchiver_Variable,pVariable,Ov_DynamicPtrCast(ov_domain,pArchiver),variableName);
+		result = Ov_CreateObject(opcuaSubscription_Variable,pVariable,Ov_DynamicPtrCast(ov_domain,pClient),variableName);
 		if(Ov_Fail(result)){
 			return result;
 		}
-		result = Ov_Link(fb_tasklist, pArchiver, pVariable);
-
-		result = Ov_Link(simpleExperimentDataArchiver_SubscriptionResult,pArchiver,pVariable);
+		result = Ov_Link(fb_tasklist, pClient, pVariable);
 		if(Ov_Fail(result)){
 			return result;
 		}
-		result = simpleExperimentDataArchiver_Variable_order_set(pVariable,ItemIterator);
+		result = Ov_Link(opcuaSubscription_subscriptionResult,pClient,pVariable);
 		if(Ov_Fail(result)){
 			return result;
 		}
-		result = simpleExperimentDataArchiver_Variable_NodeIDIdentifier_set(pVariable,pobj->v_NodeIDIdentifier.value[ItemIterator]);
+		result = opcuaSubscription_Variable_order_set(pVariable,ItemIterator);
 		if(Ov_Fail(result)){
 			return result;
 		}
-		result = simpleExperimentDataArchiver_Variable_NodeIDIdType_set(pVariable,pobj->v_NodeIDIdType.value[ItemIterator]);
+		result = opcuaSubscription_Variable_NodeIDIdentifier_set(pVariable,pobj->v_NodeIDIdentifier.value[ItemIterator]);
 		if(Ov_Fail(result)){
 			return result;
 		}
-		result = simpleExperimentDataArchiver_Variable_NodeIDNSindex_set(pVariable,pobj->v_NodeIDNSindex.value[ItemIterator]);
+		result = opcuaSubscription_Variable_NodeIDIdType_set(pVariable,pobj->v_NodeIDIdType.value[ItemIterator]);
+		if(Ov_Fail(result)){
+			return result;
+		}
+		result = opcuaSubscription_Variable_NodeIDNSindex_set(pVariable,pobj->v_NodeIDNSindex.value[ItemIterator]);
 		if(Ov_Fail(result)){
 			return result;
 		}
@@ -177,10 +180,21 @@ OV_DLLFNCEXPORT OV_RESULT simpleExperimentDataArchiver_Factory_create_set(
 			return result;
 		}
 	}
-	return OV_ERR_OK;
+
+	/* create Settings object */
+	result = Ov_CreateObject(opcuaSubscription_subscriptionSettings,pSettings,Ov_DynamicPtrCast(ov_domain,pClient),"subscriptionSettings");
+	if(Ov_Fail(result)){
+		return result;
+	}
+	result = Ov_Link(opcuaSubscription_settings,pSettings,pClient);
+	if(Ov_Fail(result)){
+		return result;
+	}
+
+	return result;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS simpleExperimentDataArchiver_Factory_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS opcuaSubscription_Factory_getaccess(
 		OV_INSTPTR_ov_object	pobj,
 		const OV_ELEMENT		*pelem,
 		const OV_TICKET			*pticket

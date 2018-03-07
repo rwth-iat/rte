@@ -1,5 +1,5 @@
-#ifndef simpleExperimentDataArchiver_OVF_INCLUDED
-#define simpleExperimentDataArchiver_OVF_INCLUDED
+#ifndef opcuaSubscription_OVF_INCLUDED
+#define opcuaSubscription_OVF_INCLUDED
 
 /* 
 	Declare your C functions here. 

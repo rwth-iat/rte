@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   SubscriptionResult.c
+*   subscriptionResult.c
 *
 *   History
 *   -------
-*   2018-01-12   File created
+*   2018-01-23   File created
 *
 *******************************************************************************
 *
@@ -16,17 +16,17 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_simpleExperimentDataArchiver
-#define OV_COMPILE_LIBRARY_simpleExperimentDataArchiver
+#ifndef OV_COMPILE_LIBRARY_opcuaSubscription
+#define OV_COMPILE_LIBRARY_opcuaSubscription
 #endif
 
 
-#include "simpleExperimentDataArchiver.h"
+#include "opcuaSubscription.h"
 #include "libov/ov_association.h"
 
 #include "libov/ov_macros.h"
 
-OV_IMPL_LINK(simpleExperimentDataArchiver_SubscriptionResult)
-OV_IMPL_UNLINK(simpleExperimentDataArchiver_SubscriptionResult)
-OV_IMPL_GETACCESS(simpleExperimentDataArchiver_SubscriptionResult)
+OV_IMPL_LINK(opcuaSubscription_subscriptionResult)
+OV_IMPL_UNLINK(opcuaSubscription_subscriptionResult)
+OV_IMPL_GETACCESS(opcuaSubscription_subscriptionResult)
 

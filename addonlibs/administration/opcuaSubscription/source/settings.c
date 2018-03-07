@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   HandleData.c
+*   settings.c
 *
 *   History
 *   -------
-*   2017-11-17   File created
+*   2018-02-07   File created
 *
 *******************************************************************************
 *
@@ -16,17 +16,17 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_simpleExperimentDataArchiver
-#define OV_COMPILE_LIBRARY_simpleExperimentDataArchiver
+#ifndef OV_COMPILE_LIBRARY_opcuaSubscription
+#define OV_COMPILE_LIBRARY_opcuaSubscription
 #endif
 
 
-#include "simpleExperimentDataArchiver.h"
+#include "opcuaSubscription.h"
 #include "libov/ov_association.h"
 
 #include "libov/ov_macros.h"
 
-OV_IMPL_LINK(simpleExperimentDataArchiver_HandleData)
-OV_IMPL_UNLINK(simpleExperimentDataArchiver_HandleData)
-OV_IMPL_GETACCESS(simpleExperimentDataArchiver_HandleData)
+OV_IMPL_LINK(opcuaSubscription_settings)
+OV_IMPL_UNLINK(opcuaSubscription_settings)
+OV_IMPL_GETACCESS(opcuaSubscription_settings)
 
