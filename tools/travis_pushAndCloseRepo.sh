@@ -18,8 +18,8 @@ fi
 
 git add -A ./logs/*
 echo "Pushing to github"
-git config --global user.email "travis"
-git config --global user.name "travis"
+git config --global user.email "acplt-rte-bot@plt.rwth-aachen.de"
+git config --global user.name "acplt-rte-bot"
 git config --global push.default simple
 git commit -am "updated generated documentation (texinfo) on webpage and created releases by travis-ci [ci skip] (Job: ${TRAVIS_JOB_NUMBER})"
 git push -q https://acplt-rte-bot:$GITHUB_API_KEY@github.com/acplt/rte-www
