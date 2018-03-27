@@ -143,47 +143,58 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	}
 
 	if(port != ksPort){
-		Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibrary, ov_library){
-			if(ov_string_compare(pLibrary->v_identifier, "TCPbind") == OV_STRCMP_EQUAL){
+
+		Ov_ForEachChild(ov_containment, pinst, pListener){ // search for existing listener
+			pClass = Ov_GetParent(ov_instantiation,pListener);
+			if(ov_string_compare(pClass->v_identifier,"TCPListener")==OV_STRCMP_EQUAL ||
+					ov_string_compare(pClass->v_identifier,"UDPListener")==OV_STRCMP_EQUAL){
 				break;
 			}
 		}
-		if(!pLibrary){
-			ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find TCPbind library", pinst->v_identifier);
-		}
-		pClass = Ov_StaticPtrCast(ov_class, Ov_SearchChild(ov_containment, pLibrary, "TCPListener"));
-		if(pClass){
-			result = ov_class_createIDedObject(pClass, Ov_PtrUpCast(ov_domain, pinst), "TCPListener", OV_PMH_DEFAULT, NULL, NULL, NULL, &pListener);
-			if(Ov_OK(result)){
-				parent.elemtype = OV_ET_OBJECT;
-				parent.pobj = pListener;
-				child.elemtype = OV_ET_NONE;
-				result = ov_element_searchpart(&parent, &child, OV_ET_VARIABLE, "port");
-				if(Ov_OK(result)){
-					*((OV_INT*)child.pvalue) = port;
-				} else {
-					ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find port variable. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
+
+		if(!pListener){
+			Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibrary, ov_library){
+				if(ov_string_compare(pLibrary->v_identifier, "TCPbind") == OV_STRCMP_EQUAL){
+					break;
 				}
-				parent.elemtype = OV_ET_OBJECT;
-				parent.pobj = pListener;
-				child.elemtype = OV_ET_NONE;
-				result = ov_element_searchpart(&parent, &child, OV_ET_VARIABLE, "actimode");
+			}
+			if(!pLibrary){
+				ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find TCPbind library", pinst->v_identifier);
+			}
+			pClass = Ov_StaticPtrCast(ov_class, Ov_SearchChild(ov_containment, pLibrary, "TCPListener"));
+			if(pClass){
+				result = ov_class_createIDedObject(pClass, Ov_PtrUpCast(ov_domain, pinst), "TCPListener", OV_PMH_DEFAULT, NULL, NULL, NULL, &pListener);
 				if(Ov_OK(result)){
-					*((OV_INT*)child.pvalue) = 1;
+					parent.elemtype = OV_ET_OBJECT;
+					parent.pobj = pListener;
+					child.elemtype = OV_ET_NONE;
+					result = ov_element_searchpart(&parent, &child, OV_ET_VARIABLE, "port");
+					if(Ov_OK(result)){
+						*((OV_INT*)child.pvalue) = port;
+					} else {
+						ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find port variable. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
+					}
+					parent.elemtype = OV_ET_OBJECT;
+					parent.pobj = pListener;
+					child.elemtype = OV_ET_NONE;
+					result = ov_element_searchpart(&parent, &child, OV_ET_VARIABLE, "actimode");
+					if(Ov_OK(result)){
+						*((OV_INT*)child.pvalue) = 1;
+					} else {
+						ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find actimode variable. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
+					}
+					pAssoc = Ov_StaticPtrCast(ov_association, Ov_SearchChild(ov_containment, pLibrary, "AssocSpecificClientHandler"));
+					if(pAssoc){
+						result = ov_association_link(pAssoc, pListener, Ov_GetFirstChild(ov_instantiation, pclass_opcua_uaIdentificator), OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL);
+					} else {
+						ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find association class");
+					}
 				} else {
-					ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find actimode variable. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
-				}
-				pAssoc = Ov_StaticPtrCast(ov_association, Ov_SearchChild(ov_containment, pLibrary, "AssocSpecificClientHandler"));
-				if(pAssoc){
-					result = ov_association_link(pAssoc, pListener, Ov_GetFirstChild(ov_instantiation, pclass_opcua_uaIdentificator), OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL);
-				} else {
-					ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find association class");
+					ov_logfile_error("%s: something went wrong while creating the specific Listener - could not create object. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
 				}
 			} else {
-				ov_logfile_error("%s: something went wrong while creating the specific Listener - could not create object. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
+				ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find TCPListener class", pinst->v_identifier);
 			}
-		} else {
-			ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find TCPListener class", pinst->v_identifier);
 		}
 	}
 
@@ -579,6 +590,7 @@ OV_DLLFNCEXPORT void opcua_uaServer_shutdown(
     UA_ServerRun = FALSE;
     opcua_uaServer_stopServer(pinst);
     opcua_pUaServer = NULL;
+
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
 
