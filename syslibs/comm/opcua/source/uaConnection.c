@@ -189,7 +189,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaConnection_HandleRequest(
     */
 	OV_RESULT result;
 	OV_INSTPTR_opcua_uaConnection	pConnection	=	Ov_StaticPtrCast(opcua_uaConnection, this);
-KS_logfile_debug(("uaConnection %s: HandleRequest. Received %u bytes", this->v_identifier, dataReceived->length));
+//KS_logfile_debug(("uaConnection %s: HandleRequest. Received %u bytes", this->v_identifier, dataReceived->length));
 	result = ksbase_KSDATAPACKET_append(&(pConnection->v_buffer), dataReceived->data, dataReceived->length);
 	if(Ov_Fail(result)){
 		KS_logfile_error(("%s - HandleRequest: failed to copy dataPacket. Reason: %s", this->v_identifier, ov_result_getresulttext(result)));

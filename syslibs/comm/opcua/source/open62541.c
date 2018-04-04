@@ -854,7 +854,7 @@ size_t UA_readNumber(UA_Byte *buf, size_t buflen, UA_UInt32 *number);
 
 
 
-typedef UA_StatusCode (*UA_exchangeEncodeBuffer)(void *handle, UA_ByteString *buf, size_t offset);
+//typedef UA_StatusCode (*UA_exchangeEncodeBuffer)(void *handle, UA_ByteString *buf, size_t offset);
 
 UA_StatusCode UA_EXPORT
 UA_encodeBinary(const void *src, const UA_DataType *type,
