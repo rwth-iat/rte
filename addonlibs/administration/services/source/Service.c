@@ -33,7 +33,30 @@ OV_DLLFNCEXPORT OV_ACCESS services_Service_getaccess(
     /*
     *   local variables
     */
-	return (OV_ACCESS)OV_AC_WRITE | OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE | OV_AC_DELETEABLE | OV_AC_RENAMEABLE;
+
+	switch(pelem->elemtype) {
+		case OV_ET_VARIABLE:
+			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
+				if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
+					return OV_AC_NONE;
+				else{
+					if((pelem->elemunion.pvar->v_varprops & OV_VP_DERIVED)){
+						if((pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR)){
+							return OV_AC_READWRITE;
+						} else {
+							return OV_AC_READ;
+						}
+					} else {
+						return OV_AC_READWRITE;
+					}
+				}
+			}
+		break;
+		default:
+		break;
+	}
+
+	return ov_object_getaccess(pobj, pelem, pticket);
 }
 
 
