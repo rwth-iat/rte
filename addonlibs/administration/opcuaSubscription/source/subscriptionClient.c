@@ -227,10 +227,11 @@ static int opcua_subscription_client(thread_data* pthreadData) {
 	}
 	MUTEX_UNLOCK(&pthreadData->mutex);
 	/* Connect to a server */
+	UA_StatusCode retval = UA_STATUSCODE_GOOD;
 	if (pthreadData->signIn == FALSE)
-		UA_StatusCode retval = UA_Client_connect(client, tmpEndpoint);
+		retval = UA_Client_connect(client, tmpEndpoint);
 	else{
-		UA_StatusCode retval = A_Client_connect_username(client, tmpEndpoint, tmpUsername, tmpPassword);
+		retval = A_Client_connect_username(client, tmpEndpoint, tmpUsername, tmpPassword);
 		ov_string_setvalue(&tmpUsername,"");
 		ov_string_setvalue(&tmpPassword,"");
 	}
