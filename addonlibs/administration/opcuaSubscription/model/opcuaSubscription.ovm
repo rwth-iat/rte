@@ -38,7 +38,7 @@ LIBRARY opcuaSubscription
 			serverEndpointUrl : STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)" INITIALVALUE= "opc.tcp://localhost:16664";
 			Username : STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Username to sign in" INITIALVALUE= "";
 			Password : STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Password to sign in" INITIALVALUE= "";
-						
+						 
 			/* handle thread variables */
 			threadDataHndl : INT FLAGS = "n" INITIALVALUE = 0;
 

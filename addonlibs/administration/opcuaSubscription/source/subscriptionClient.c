@@ -441,12 +441,28 @@ OV_DLLFNCEXPORT OV_RESULT opcuaSubscription_subscriptionClient_errorMsg_set(
 	return ov_string_setvalue(&pobj->v_errorMsg,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcuaSubscription_subscriptionClient_serverEndpointUrl_set(
-		OV_INSTPTR_opcuaSubscription_subscriptionClient          pobj,
-		const OV_STRING  value
+OV_DLLFNCEXPORT OV_RESULT opcuaSubscription_subscriptionClient_SignIn_set(
+    OV_INSTPTR_opcuaSubscription_subscriptionClient          pobj,
+    const OV_BOOL  value
 ) {
-	return ov_string_setvalue(&pobj->v_serverEndpointUrl,value);
+    pobj->v_SignIn = value;
+    return OV_ERR_OK;
 }
+
+OV_DLLFNCEXPORT OV_RESULT opcuaSubscription_subscriptionClient_serverEndpointUrl_set(
+    OV_INSTPTR_opcuaSubscription_subscriptionClient          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_serverEndpointUrl,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT opcuaSubscription_subscriptionClient_Username_set(
+    OV_INSTPTR_opcuaSubscription_subscriptionClient          pobj,
+    const OV_STRING  value
+) {
+    return ov_string_setvalue(&pobj->v_Username,value);
+}
+
 
 /*******************************************************************************
  ****************************** CONSTRUCTOR ************************************
@@ -486,6 +502,9 @@ OV_DLLFNCEXPORT OV_RESULT opcuaSubscription_subscriptionClient_constructor(
 		pthreadData->connectionState.SubscriptionSettings = UA_SubscriptionSettings_standard;
 		pthread_mutex_init(&pthreadData->mutex,NULL);
 		pthreadData->serverEndpointUrl = NULL;
+		pthreadData->username = NULL;
+		pthreadData->password = NULL;
+		pthreadData->signIn = FALSE;
 		pthreadData->thread_run = FALSE;
 	} else {
 		return OV_ERR_GENERIC;
@@ -515,6 +534,9 @@ OV_DLLFNCEXPORT void opcuaSubscription_subscriptionClient_destructor(
 	pthread_join(pthreadData->thread,NULL);
 
 	ov_string_setvalue(&pthreadData->serverEndpointUrl,NULL);
+	ov_string_setvalue(&pthreadData->username,NULL);
+	ov_string_setvalue(&pthreadData->password,NULL);
+
 
 	FREEMEMORY();
 
@@ -613,6 +635,21 @@ OV_DLLFNCEXPORT void opcuaSubscription_subscriptionClient_typemethod(
 			ov_string_setvalue(&pinst->v_errorMsg,"PREPARECONNECTION: serverEndpointUrl missing");
 			state = FAULT;
 			break;
+		}
+		pthreadData->signIn = pinst->v_SignIn;
+		if (pthreadData->signIn == TRUE){
+			ov_string_setvalue(&pthreadData->username, pinst->v_Username);
+			if (ov_string_compare(pthreadData->username,"") == OV_STRCMP_EQUAL) {
+				ov_string_setvalue(&pinst->v_errorMsg,"PREPARECONNECTION: username missing");
+				state = FAULT;
+				break;
+			}
+			ov_string_setvalue(&pthreadData->password, pinst->v_Password);
+			if (ov_string_compare(pthreadData->password,"") == OV_STRCMP_EQUAL) {
+				ov_string_setvalue(&pinst->v_errorMsg,"PREPARECONNECTION: password missing");
+				state = FAULT;
+				break;
+			}
 		}
 
 		/*Subscription settings */
