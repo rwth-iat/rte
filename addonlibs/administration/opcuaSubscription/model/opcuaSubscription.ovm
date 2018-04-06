@@ -34,7 +34,10 @@ LIBRARY opcuaSubscription
 			lastConnectionTry : TIME FLAGS = "o" COMMENT ="Time of last connection try";
 			
 			/* OPC UA inputs */
+			SignIn : BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="TRUE if username and password is necessary" INITIALVALUE= FALSE;
 			serverEndpointUrl : STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)" INITIALVALUE= "opc.tcp://localhost:16664";
+			Username : STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Username to sign in" INITIALVALUE= "";
+			Password : STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Password to sign in" INITIALVALUE= "";
 						
 			/* handle thread variables */
 			threadDataHndl : INT FLAGS = "n" INITIALVALUE = 0;

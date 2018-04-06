@@ -73,6 +73,10 @@ typedef struct thread_data{
 	UA_Boolean thread_run;
 	pthread_t thread;
 	OV_STRING serverEndpointUrl;
+	OV_STRING serverEndpointUrl;
+	OV_STRING username;
+	OV_STRING password;
+	OV_BOOLEAN signIn;
 }thread_data;
 
 typedef enum {
@@ -214,10 +218,22 @@ static int opcua_subscription_client(thread_data* pthreadData) {
 	UA_Client *client = UA_Client_new(UA_ClientConfig_standard);
 	MUTEX_LOCK(&pthreadData->mutex);
 	OV_STRING tmpEndpoint = NULL;
+	OV_STRING tmpUsername = NULL;
+	OV_STRING tmpPassword = NULL;
 	ov_string_setvalue(&tmpEndpoint, pthreadData->serverEndpointUrl);
+	if (pthreadData->signIn == TRUE){
+		ov_string_setvalue(&tmpUsername, pthreadData->username);
+		ov_string_setvalue(&tmpPassword, pthreadData->password);
+	}
 	MUTEX_UNLOCK(&pthreadData->mutex);
 	/* Connect to a server */
-	UA_StatusCode retval = UA_Client_connect(client, tmpEndpoint);
+	if (pthreadData->signIn == FALSE)
+		UA_StatusCode retval = UA_Client_connect(client, tmpEndpoint);
+	else{
+		UA_StatusCode retval = A_Client_connect_username(client, tmpEndpoint, tmpUsername, tmpPassword);
+		ov_string_setvalue(&tmpUsername,"");
+		ov_string_setvalue(&tmpPassword,"");
+	}
 	ov_string_setvalue(&tmpEndpoint,"");
 	if (retval != UA_STATUSCODE_GOOD) {
 		// connection failed
