@@ -82,6 +82,9 @@ int main(int argc, char **argv) {
 	 */
 	char        *devLibs[MAX_INCLUDED_FILES + 1];
 	int         numDevLibs = 0;
+	char        *gitLibs[MAX_INCLUDED_FILES + 1];
+	char        *gitRelPath[MAX_INCLUDED_FILES + 1];
+	int         numGitLibs = 0;
 	char        *sysLibs[MAX_INCLUDED_FILES + 1];
 	int         numSysLibs = 0;
 	char        *libname=NULL;
@@ -94,8 +97,11 @@ int main(int argc, char **argv) {
 	char        libPath[512] = "";
 	char        devModelPath[512] = "";
 	char        devBinPath[512] = "";
+	char        gitModelPath[512] = "";
 	char        sysModelPath[512] = "";
 	char        sysBinPath[512] = "";
+	char		acpltHome[512] = "";
+	char*		penv = NULL;
 	int			new = 0;
 	int 	    i;
 	int 	    addOpenLib = 0;
@@ -243,7 +249,7 @@ int main(int argc, char **argv) {
 	}
 
 	//locate library
-	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, sysModelPath, sysBinPath, &new)){
+	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, gitModelPath, sysModelPath, sysBinPath, &new)){
 		return 1;
 	}
 
@@ -277,11 +283,17 @@ int main(int argc, char **argv) {
 	/*
 	 *   resolve dependencies
 	 */
-	makmak_searchbaselibs(libname, devModelPath, sysModelPath, devLibs, &numDevLibs, sysLibs, &numSysLibs);
+	makmak_searchbaselibs(libname, devModelPath, gitModelPath, sysModelPath,
+			devLibs, &numDevLibs, gitLibs, gitRelPath, &numGitLibs, sysLibs, &numSysLibs);
 
 	fprintf(stderr, "All model inclusions resolved:\n");
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(stderr,"%s in %s\n"  , devLibs[i], devModelPath);
+	}
+	for(i=0; i<numGitLibs; i++) {
+		sprintf(help, "%s in %s/%s/\n"  , gitLibs[i], gitModelPath, gitRelPath[i]);
+		compatiblePath(help);
+		fprintf(stderr, "%s", help);
 	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(stderr,"%s in %s\n"  , sysLibs[i], sysModelPath);
@@ -333,16 +345,34 @@ if(new == 0){
 	fprintf(fd,"BIN_DIR           = $(ROOT_DIR)bin/\n");
 }else{
 	/** newer structure **/
+
 	//server - dir
-	fprintf(fd,"ROOT_DIR          = ../../../../\n");
+	penv = getenv(ACPLT_HOME_ENVPATH);
+	if(penv){
+		strncpy(acpltHome, penv, sizeof(acpltHome)-2);
+		makefilePath(acpltHome);
+		if(acpltHome[strlen(acpltHome)-1]!='/'){
+			acpltHome[strlen(acpltHome)+1] = '\0';
+			acpltHome[strlen(acpltHome)] = '/';
+		}
+		fprintf(fd,"ROOT_DIR          = %s\n", acpltHome);
+	} else {
+		fprintf(fd,"ROOT_DIR          = ../../../../\n");
+	}
+
 	fprintf(fd,"BASE_DIR          = $(ROOT_DIR)\n");
 	fprintf(fd,"BASE_INC_DIR      = $(BASE_DIR)system/sysdevbase/ov/include/\n");
 	fprintf(fd,"BASE_LIB_DIR      = $(BASE_DIR)system/sysdevbase/ov/lib/\n");
 	fprintf(fd,"BASE_MODEL_DIR    = $(BASE_DIR)system/sysdevbase/ov/model/\n");
 	fprintf(fd,"BIN_DIR           = $(ROOT_DIR)system/sysbin/\n");
 
+	//git - dir
+	makefilePath(gitModelPath);
+	fprintf(fd,"GIT_DIR           = %s/\n", gitModelPath);
+
 	//server/user - dir
-	fprintf(fd,"USER_DIR          = ../../../\n");
+	makefilePath(devModelPath);
+	fprintf(fd,"USER_DIR          = %s\n", devModelPath);
 	fprintf(fd,"USERLIB_DIR       = $(ROOT_DIR)system/addonlibs/\n");
 	fprintf(fd,"SYS_DIR           = $(BASE_DIR)system/sysdevbase/\n");
 	fprintf(fd,"SYSLIB_DIR        = $(ROOT_DIR)system/syslibs/\n");
@@ -352,6 +382,10 @@ if(new == 0){
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd,"%s_MODEL_DIR           = $(USER_DIR)%s/model/\n"  , getUpperLibName(devLibs[i]), devLibs[i]);
 		fprintf(fd,"%s_INCLUDE_DIR         = $(USER_DIR)%s/include/\n", getUpperLibName(devLibs[i]), devLibs[i]);
+	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd,"%s_MODEL_DIR           = $(GIT_DIR)%s/%s/model/\n"  , getUpperLibName(gitLibs[i]), gitRelPath[i], gitLibs[i]);
+		fprintf(fd,"%s_INCLUDE_DIR         = $(GIT_DIR)%s/%s/include/\n", getUpperLibName(gitLibs[i]), gitRelPath[i], gitLibs[i]);
 	}
 	/* System-Bibliotheken? */
 	for(i=0; i<numSysLibs; i++) {
@@ -374,6 +408,10 @@ if(new == 0){
 		fprintf(fd,"\t\t\t/I$(%s_MODEL_DIR) /I$(%s_INCLUDE_DIR) \\\n",
 				getUpperLibName(devLibs[i]), getUpperLibName(devLibs[i]));
 	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd,"\t\t\t/I$(%s_MODEL_DIR) /I$(%s_INCLUDE_DIR) \\\n",
+				getUpperLibName(gitLibs[i]), getUpperLibName(gitLibs[i]));
+	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd,"\t\t\t/I$(%s_MODEL_DIR) /I$(%s_INCLUDE_DIR) \\\n",
 				getUpperLibName(sysLibs[i]), getUpperLibName(sysLibs[i]));
@@ -387,6 +425,10 @@ if(new == 0){
 		fprintf(fd,"\t\t\t-I$(%s_MODEL_DIR) -I$(%s_INCLUDE_DIR) \\\n",
 				getUpperLibName(devLibs[i]), getUpperLibName(devLibs[i]) );
 	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd,"\t\t\t-I$(%s_MODEL_DIR) -I$(%s_INCLUDE_DIR) \\\n",
+				getUpperLibName(gitLibs[i]), getUpperLibName(gitLibs[i]) );
+	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd,"\t\t\t-I$(%s_MODEL_DIR) -I$(%s_INCLUDE_DIR) \\\n",
 				getUpperLibName(sysLibs[i]), getUpperLibName(sysLibs[i]) );
@@ -399,6 +441,10 @@ if(new == 0){
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd,"\t\t\t$(%s_MODEL_DIR) $(%s_INCLUDE_DIR) \\\n",
 				getUpperLibName(devLibs[i]), getUpperLibName(devLibs[i]) );
+	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd,"\t\t\t$(%s_MODEL_DIR) $(%s_INCLUDE_DIR) \\\n",
+				getUpperLibName(gitLibs[i]), getUpperLibName(gitLibs[i]) );
 	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd,"\t\t\t$(%s_MODEL_DIR) $(%s_INCLUDE_DIR) \\\n",
@@ -441,6 +487,9 @@ if(new == 0){
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd,"\t%s.h \\\n", devLibs[i]);
 	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd,"\t%s.h \\\n", gitLibs[i]);
+	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd,"\t%s.h \\\n", sysLibs[i]);
 	}
@@ -464,6 +513,9 @@ if(new == 0){
 	fprintf(fd,"\tov.h \\\n");
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd,"\t%s.h \\\n", devLibs[i]);
+	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd,"\t%s.h \\\n", gitLibs[i]);
 	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd,"\t%s.h \\\n", sysLibs[i]);
@@ -621,11 +673,15 @@ if(new == 0){
 	fprintf(fd,"# ---------\n\n");
 	if(targetOs == TARGETOS_WIN){
 		fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
-		if(numDevLibs+numSysLibs > 0) {
+		if(numDevLibs+numGitLibs+numSysLibs > 0) {
 			fprintf(fd,"ADD_LIBS =");
 			for(i=0; i<numDevLibs; i++) {
 				/* link directly using dll */
 				fprintf(fd," $(USERLIB_DIR)/%s$(_DLL)", devLibs[i]);
+			}
+			for(i=0; i<numGitLibs; i++) {
+				/* link directly using dll */
+				fprintf(fd," $(USERLIB_DIR)/%s$(_DLL)", gitLibs[i]);
 			}
 			for(i=0; i<numSysLibs; i++) {
 				/* link directly using dll */
@@ -635,12 +691,17 @@ if(new == 0){
 		}
 	} else {
 		fprintf(fd,"# Swithces for additional libraries needed for dynamic linkage in Linux\n");
-		if(numDevLibs+numDevLibs > 0) {
+		if(numDevLibs+numGitLibs+numDevLibs > 0) {
 			fprintf(fd,"ADD_LIBS_SWITCHES =");
 			for(i=0; i<numDevLibs; i++) {
 				/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
 				/* link against .a */
 				fprintf(fd," %s$(_DLL)", devLibs[i]);
+			}
+			for(i=0; i<numGitLibs; i++) {
+				/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
+				/* link against .a */
+				fprintf(fd," %s$(_DLL)", gitLibs[i]);
 			}
 			for(i=0; i<numSysLibs; i++) {
 				/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
@@ -742,6 +803,9 @@ if(new == 0){
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
 	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(gitLibs[i]));
+	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
 	}
@@ -789,6 +853,9 @@ if(new == 0){
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
 	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(gitLibs[i]));
+	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
 	}
@@ -802,6 +869,9 @@ if(new == 0){
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
+	}
+	for(i=0; i<numGitLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(gitLibs[i]));
 	}
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
@@ -829,10 +899,13 @@ if(new == 0){
 		fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
 	} else {
 		fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
-		if(numDevLibs+numSysLibs > 0) {
+		if(numDevLibs+numGitLibs+numSysLibs > 0) {
 			//ugly method of copying dependencies, but it is the only one to work :(
 			for(i=0; i<numDevLibs; i++) {
 				fprintf(fd,"\tcp $(USERLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", devLibs[i], devLibs[i]);
+			}
+			for(i=0; i<numGitLibs; i++) {
+				fprintf(fd,"\tcp $(USERLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", gitLibs[i], gitLibs[i]);
 			}
 			for(i=0; i<numSysLibs; i++) {
 				fprintf(fd,"\tcp $(SYSLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", sysLibs[i], sysLibs[i]);

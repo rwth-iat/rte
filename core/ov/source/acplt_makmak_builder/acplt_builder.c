@@ -1056,6 +1056,7 @@ int main(int argc, char **argv) {
 	char        libPath[512] = "";
 	char        devModelPath[512] = "";
 	char        devBinPath[512] = "";
+	char        gitModelPath[512] = "";
 	char        sysModelPath[512] = "";
 	char        sysBinPath[512] = "";
 	int			newDirStructure = 0;
@@ -1065,6 +1066,9 @@ int main(int argc, char **argv) {
 	*/
 	char        	*devLibs[MAX_INCLUDED_FILES + 1];
 	int         	numDevLibs = 0;
+	char        	*gitLibs[MAX_INCLUDED_FILES + 1];
+	char        	*gitRelPath[MAX_INCLUDED_FILES + 1];
+	int         	numGitLibs = 0;
 	char        	*sysLibs[MAX_INCLUDED_FILES + 1];
 	int         	numSysLibs = 0;
 	char        	*libname=NULL;
@@ -1134,7 +1138,7 @@ HELP:
 
     /* Enviroment */
 	//locate library now
-	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, sysModelPath, sysBinPath, &newDirStructure)){
+	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, gitModelPath, sysModelPath, sysBinPath, &newDirStructure)){
 		return 1;
 	}
  
@@ -1145,10 +1149,11 @@ HELP:
 	//includepath_ptr = 0;
 	//fb_builder_setincludepaths(penv, libname);
 	//we reuse a function of makmak
-	makmak_searchbaselibs(libname, devModelPath, sysModelPath, devLibs, &numDevLibs, sysLibs, &numSysLibs);	
+	makmak_searchbaselibs(libname, devModelPath, gitModelPath, sysModelPath,
+			devLibs, &numDevLibs, gitLibs, gitRelPath, &numGitLibs, sysLibs, &numSysLibs);
 
 	//copy the output of searbaselibs
-	includepath_ptr = numDevLibs + numSysLibs;
+	includepath_ptr = numDevLibs + numGitLibs +numSysLibs;
 	for(i=0; i<numDevLibs; i++) {
 	    sprintf(outputpath, "%s%s/model/", devModelPath, devLibs[i]);
 	    compatiblePath(outputpath);
@@ -1162,6 +1167,19 @@ HELP:
 	    includepath[i] = ph;
 	}
 
+	for(i=0; i<numGitLibs; i++) {
+		sprintf(outputpath, "%s/%s/%s/model/", gitModelPath, gitRelPath[i], gitLibs[i]);
+		compatiblePath(outputpath);
+		/* Hinzufuegen */
+		ph = (char*)malloc(strlen(outputpath) + 1);
+		if(!ph) {
+			fprintf(stderr, "Out of memory\n");
+			exit(1);
+		}
+		strcpy(ph, outputpath);
+		includepath[numDevLibs+i] = ph;
+	}
+
 	for(i=0; i<numSysLibs; i++) {
 	    sprintf(outputpath, "%s%s/model/", sysModelPath, sysLibs[i]);
 	    compatiblePath(outputpath);
@@ -1172,7 +1190,7 @@ HELP:
 		exit(1);
 	    }
 	    strcpy(ph, outputpath);
-	    includepath[numDevLibs+i] = ph;
+	    includepath[numDevLibs+numGitLibs+i] = ph;
 	}
 
 	if(newDirStructure == 1){

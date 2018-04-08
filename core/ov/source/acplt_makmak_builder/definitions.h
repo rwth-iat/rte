@@ -9,8 +9,16 @@
 #endif
 
 //#include "fb_namedef.h"
-#define  IFBS_HOME_ENVPATH      "IFBS_HOME"
-#define  ACPLT_HOME_ENVPATH      "ACPLT_HOME"
+#define IFBS_HOME_ENVPATH		"IFBS_HOME"
+#define ACPLT_HOME_ENVPATH		"ACPLT_HOME"
+#define ACPLT_GIT_ENVPATH		"ACPLT_GIT"
+
+// defines for search location order in makmak
+#define MAKMAK_LOCATION_DEV		0
+#define MAKMAK_LOCATION_SYS		1
+#define MAKMAK_LOCATION_GIT		2
+
+#define MAKMAK_MAX_RECURSION_DEPTH	4
 
 #define MAX_INCLUDED_FILES 255
 

@@ -10,26 +10,77 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <dirent.h>
 
 /**
 
 	Handling the path location business and consistency checks
 
 **/
-int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* devBinPath, char* sysModelPath, char* sysBinPath, int* newDirStructure){
+int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* devBinPath,
+		char* gitModelPath, char* sysModelPath, char* sysBinPath, int* newDirStructure){
 	// Locate library
 	char	cCurrentPath[FILENAME_MAX];
 	char	help[512];
-	char	*penv;
-	int		env;
+	char	*penv = NULL;
+	char	*pgit = NULL;
+	int		env = 0; // 0x1 ACPLT_HOME; 0x2 ACPLT_GIT
 
 	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath))){
 		return 1;
     }
 	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
 
+	/* Explore enviroment */
+	if(getenv(ACPLT_HOME_ENVPATH) != NULL){
+		penv = getenv(ACPLT_HOME_ENVPATH);
+		compatiblePath(penv);
+		if(stat(penv, &st) == 0)
+			env = 1;
+	}
+
+	if(getenv(ACPLT_GIT_ENVPATH) != NULL){
+		pgit = getenv(ACPLT_GIT_ENVPATH);
+		compatiblePath(pgit);
+		if(stat(pgit, &st) == 0)
+			strcpy(gitModelPath, pgit);
+	}
+
 	//TRYING TO FIND THE LIBRARY
-	//1ST TRY: ARE WE IN libPath/build/platform/ ?
+	//1ST TRY: try to follow the ACPLT_HOME environment variable: take $ACPLT_HOME/dev
+	if(strlen(libPath)==0 && env == 1){
+		sprintf(help, "%s/dev/%s/model/%s.ovm", penv, libname, libname);
+		compatiblePath(help);
+		if(stat(help, &st) == 0){
+			*newDirStructure = 1;
+			sprintf(libPath, "%s/dev/%s", penv, libname);
+			sprintf(devModelPath, "%s/dev/", penv);
+			sprintf(devBinPath, "%s/addonlibs/", penv);
+			sprintf(sysModelPath, "%s/system/sysdevbase/", penv);
+			sprintf(sysBinPath, "%s/system/sysbin/", penv);
+		}
+	}
+
+	//2NDST TRY: try to follow the ACPLT_GIT environment variable
+	if(strlen(libPath)==0 && strlen(gitModelPath)>0){
+		searchGit(help, gitModelPath, libname);
+		if(strlen(help)>0){
+			sprintf(libPath, "%s/%s/%s", gitModelPath, help, libname);
+			compatiblePath(libPath);
+			if(stat(libPath, &st) == 0){
+				*newDirStructure = 1;
+				sprintf(devModelPath, "%s/dev/", penv);
+				sprintf(devBinPath, "%s/addonlibs/", penv);
+				sprintf(sysModelPath, "%s/system/sysdevbase/", penv);
+				sprintf(sysBinPath, "%s/system/sysbin/", penv);
+			} else {
+				// searchGit has its own checks so this schould not happen
+				libPath = "";
+			}
+		}
+	}
+
+	//3RD TRY: ARE WE IN libPath/build/platform/ ?
 	if(strlen(libPath)==0){
 		sprintf(help, "%s/../../model/%s.ovm", cCurrentPath, libname);
 		compatiblePath(help);
@@ -55,18 +106,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		}
 	}
 
-	/* Explore enviroment */
-	if(getenv(ACPLT_HOME_ENVPATH) != NULL){
-		//fprintf(stdout,"ACPLT server detected\n");
-		penv = getenv(ACPLT_HOME_ENVPATH);
-		env = 1;
-	}else{
-		//fprintf(stderr,"No environment variable found, exploring current working dir\n");
-		env = 0;
-	}
-
-
-	//2ND TRY: try to follow the ACPLT_HOME environment variable (older structure): take $ACPLT_HOME/user
+	//4TH TRY: try to follow the ACPLT_HOME environment variable (older structure): take $ACPLT_HOME/user
 	if(strlen(libPath)==0 && env == 1){
 		sprintf(help, "%s/user/%s/model/%s.ovm", penv, libname, libname);
 		compatiblePath(help);
@@ -79,21 +119,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		}
 	}
 
-	//3ND TRY: try to follow the ACPLT_HOME environment variable: take $ACPLT_HOME/dev
-	if(strlen(libPath)==0 && env == 1){
-		sprintf(help, "%s/dev/%s/model/%s.ovm", penv, libname, libname);
-		compatiblePath(help);
-		if(stat(help, &st) == 0){
-			*newDirStructure = 1;
-			sprintf(libPath, "%s/dev/%s", penv, libname);
-			sprintf(devModelPath, "%s/dev/", penv);
-			sprintf(devBinPath, "%s/addonlibs/", penv);
-			sprintf(sysModelPath, "%s/system/sysdevbase/", penv);
-			sprintf(sysBinPath, "%s/system/sysbin/", penv);
-		}
-	}
-
-	//4th TRY: search in current working dir
+	//5TH TRY: search in current working dir
 	if(strlen(libPath)==0){
 		sprintf(help, "%s/%s/model/%s.ovm", cCurrentPath, libname, libname);
 		compatiblePath(help);
@@ -137,6 +163,10 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		fprintf(stderr,"DevBin %s\n", devBinPath);
 		fprintf(stderr,"SysModel %s\n", sysModelPath);
 		fprintf(stderr,"SysBin %s\n", sysBinPath);
+		if(strlen(gitModelPath)>0)
+			fprintf(stderr,"GitModel %s\n", gitModelPath);
+		else
+			fprintf(stderr,"GitModel not set or invalid\n");
 	}
 
 	//======= some more paranoid consistency checls ===============
@@ -158,7 +188,6 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	return 0;
 }
 
-
 /*	----------------------------------------------------------------------	*/ 
 /*
  *  Update slashes to match windows plattform
@@ -176,6 +205,98 @@ void compatiblePath(char* string){
 #endif
 }
 
+void makefilePath(char* string){
+	char*	ph;
+	ph = string;
+	while(ph && (*ph)) {
+		if(*ph == '\\')
+			*ph = '/';
+		ph++;
+	}
+}
+
+
+void searchGit(char* path, const char* gitModelPath, const char* curlib){
+	char	help[512] = "";
+	char	tmpPath[512] = "";
+	struct stat st;
+
+	path[0] = '\0'; // set path to empty string
+
+	strcpy(help, gitModelPath);
+	compatiblePath(help);
+
+	if( stat(gitModelPath, &st) || !S_ISDIR(st.st_mode))
+		return;
+
+	if(help[strlen(help)-1] == '\\' || help[strlen(help)-1] == '/')
+		help[strlen(help)-1] = '\0';
+
+	searchGit_worker(path, help, tmpPath, curlib, 0);
+}
+
+void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const char* curlib, int depth){
+
+	char	help[512] = "";
+	const char* blacklist[3] = { "build", "doc", "tools"};
+
+	struct dirent*	dp;
+	DIR*			dir;
+	struct stat st;
+	int i = 0;
+
+	sprintf(help, "%s/%s", gitModelPath, relPath);
+	compatiblePath(help);
+
+	dir = opendir(help);
+	while((dp = readdir(dir))){
+
+		if(dp->d_name[0]=='.')
+			continue;
+
+		for(i = 0; i<sizeof(blacklist)/sizeof(char*); i++){ // skip unnecessary entries
+			if(strcmp(blacklist[i], dp->d_name)==0)
+				continue;
+		}
+
+		sprintf(help, "%s/%s/%s", gitModelPath, relPath, dp->d_name);
+		stat(help, &st);
+		if(!S_ISDIR(st.st_mode))
+			continue;
+
+		if(strcmp(curlib, dp->d_name)==0){
+
+			// check if library directory
+			sprintf(help, "%s/%s/%s/model/%s.ovm", gitModelPath, relPath, curlib, curlib);
+
+			compatiblePath(help);
+
+			if(fileExists(help)){ // we found our library
+				strcpy(path, relPath);
+
+				compatiblePath(path);
+				closedir(dir);
+				return;
+			}
+		}
+		if(depth < MAKMAK_MAX_RECURSION_DEPTH){ // if we reach this statement we have not found a suitable directory
+			if(depth>0)
+				sprintf(help, "%s/%s", relPath, dp->d_name);
+			else
+				strcpy(help, dp->d_name);
+
+			compatiblePath(help);
+			searchGit_worker(path, gitModelPath, help, curlib, depth+1);
+			if(strlen(path)>0){
+				closedir(dir);
+				return;
+			}
+		}
+	}
+	closedir(dir);
+	return;
+}
+
 /*	----------------------------------------------------------------------	*/
 /*
  *   Search base libraries
@@ -185,21 +306,26 @@ void compatiblePath(char* string){
     Searching for lib dependencies located in recursively, first in devModelPath, then in sysModelPath, results are saved in arrays devLibs and sysLibs with counters
 
 ***/
-void makmak_searchbaselibs(const char *lib, const char *devModelPath, const char *sysModelPath, char **devLibs, int* numDevLibs, char **sysLibs, int* numSysLibs) {
+void makmak_searchbaselibs(const char *lib, const char *devModelPath, const char* gitModelPath, const char *sysModelPath,
+		char **devLibs, int* numDevLibs, char** gitLibs, char** gitRelPath, int* numGitLibs, char **sysLibs, int* numSysLibs) {
 	char   originallib[512];
 	strcpy(originallib, lib);
-	makmak_searchbaselibs_worker(originallib, lib, devModelPath, sysModelPath, devLibs, numDevLibs, sysLibs, numSysLibs);
+	makmak_searchbaselibs_worker(originallib, lib, devModelPath, gitModelPath, sysModelPath,
+			devLibs, numDevLibs, gitLibs, gitRelPath, numGitLibs, sysLibs, numSysLibs);
 }
 
-void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, const char *devModelPath, const char *sysModelPath, char **devLibs, int* numDevLibs, char **sysLibs, int* numSysLibs) {
+void makmak_searchbaselibs_worker(const char *originallib, const char *curlib,
+		const char *devModelPath, const char* gitModelPath, const char *sysModelPath,
+		char **devLibs, int* numDevLibs, char** gitLibs, char** gitRelPath, int* numGitLibs, char **sysLibs, int* numSysLibs) {
 	/* Local variables */
 	char   help[512];
+	char   gitPath[512] = "";
 	FILE   *fd;
 	char   *incFile;
 	int    incFound;
 	char   *ph;
 	int    i;
-	int    dev = 1;
+	int    location = 0; // 0: dev; 1: sysbase; 2: git
 	FILE   *fdreadtest;
 
 	/* OV library? -- already included */
@@ -208,9 +334,9 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 	}
 
 	/* if no system dir is set */
-	if(dev == 0 && strlen(sysModelPath)==0){
-		return;
-	}
+	//if(location == 0 && strlen(sysModelPath)==0){
+	//	return;
+	//}
 
 	/* Exclude fb.dll from standard includes
 	if( !strcmp(lib, "fb") ) {
@@ -219,7 +345,7 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 	*/
 
 	/* prevent stack overflow */
-	if(*numDevLibs >= MAX_INCLUDED_FILES || *numSysLibs >= MAX_INCLUDED_FILES) {
+	if(*numDevLibs >= MAX_INCLUDED_FILES || *numSysLibs >= MAX_INCLUDED_FILES || *numGitLibs >= MAX_INCLUDED_FILES) {
 		fprintf(stderr, "To many included files.\n");
 		exit(0);
 	}
@@ -237,14 +363,31 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 			return;
 		}
 	}
+	/* inside of gitLibs */
+	for(i=0; i<*numGitLibs; i++) {
+		if( !strcmp(curlib, gitLibs[i]+(strlen(gitLibs[i])-1-strlen(curlib))) ) { // check for libname at end of gitLib
+			return;
+		}
+	}
 
-	//iterate at most two times for dev=0 and dev=1
-	while(dev >= 0){
+	//iterate at most three times for locations dev sys and git
+	while(location < 3){
 		/* locate library model */
-		if(dev==1){
+		switch(location){
+		case MAKMAK_LOCATION_DEV:
 			sprintf(help, "%s/%s/model/%s.ovm", devModelPath, curlib, curlib);
-		}else{
+			break;
+		case MAKMAK_LOCATION_SYS:
 			sprintf(help, "%s/%s/model/%s.ovm", sysModelPath, curlib, curlib);
+			break;
+		case MAKMAK_LOCATION_GIT:
+			searchGit(help, gitModelPath, curlib);
+			if(strlen(help)>0){
+				strcpy(gitPath, help);
+				sprintf(help, "%s/%s/%s/model/%s.ovm", gitModelPath, gitPath, curlib, curlib);
+			}
+
+			break;
 		}
 		compatiblePath(help);	
 
@@ -279,7 +422,7 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 							*ph = '\0';
 							incFound = 1;
 							break;
-						/* skip */					
+							/* skip */
 						case '>':
 						case ' ':
 						case '\t':
@@ -313,7 +456,8 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 							continue;
 						}
 						/** recursive deepining - search for ph **/
-						makmak_searchbaselibs_worker(originallib, ph, devModelPath, sysModelPath, devLibs, numDevLibs, sysLibs, numSysLibs);
+						makmak_searchbaselibs_worker(originallib, ph, devModelPath, gitModelPath, sysModelPath,
+								devLibs, numDevLibs, gitLibs, gitRelPath, numGitLibs, sysLibs, numSysLibs);
 						free(ph);
 					}
 				}
@@ -333,21 +477,40 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 				exit(0);
 			}
 			strcpy(ph, curlib);
-			if(dev == 1){
+			switch(location){
+			case MAKMAK_LOCATION_DEV:
 				devLibs[(*numDevLibs)++] = ph;
-			}else{
+				break;
+			case MAKMAK_LOCATION_SYS:
 				sysLibs[(*numSysLibs)++] = ph;
+				break;
+			case MAKMAK_LOCATION_GIT:
+				gitLibs[*numGitLibs] = ph;
+				ph = malloc(strlen(gitPath)+1);
+				if(!ph){
+					fprintf(stderr, "Out of memory\n");
+					exit(0);
+				}
+				makefilePath(gitPath);
+				strcpy(ph, gitPath);
+				gitRelPath[*numGitLibs] = ph;
+				(*numGitLibs)++;
+				break;
+			default:
+				fprintf(stderr, "invalid location %i\n", location);
+				free(ph);
+				return;
 			}
 			//jump out of the while queue
 			break;
 		}else{
 			/* make sure we have no self-dependency */
-			if(0 == strcmp(curlib, originallib)) {
-				return;
-			}
+			//if(0 == strcmp(curlib, originallib)) {
+			//	return;
+			//}
 
 			/* model file not found and it was the second search pass */
-			if(dev == 0){
+			if(location == 2){
 				/* inside of devLibs */
 				for(i=0; i<*numDevLibs; i++) {
 					if( !strcmp(curlib, devLibs[i]) ) {
@@ -360,11 +523,17 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 						return;
 					}
 				}
+				/* inside of gitLibs */
+				for(i=0; i<*numSysLibs; i++) {
+					if( !strcmp(curlib, gitLibs[i]+(strlen(gitLibs[i])-1-strlen(curlib))) ) {
+						return;
+					}
+				}
 				fprintf(stderr, "Error: .ovm model of included library %s could not be located\n", curlib);
 				exit(0);
 			}
 		}
-		dev--;																																
+		location++;
 	}
 }
 
