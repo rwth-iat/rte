@@ -3191,9 +3191,7 @@ cshmi.prototype = {
 				*/
 				
 				//get a rid of external brackets 
-				var response = req.responseText.replace(/{/g, "");
-				response = response.replace(/}/g, "");
-				var responseArray = HMI.KSClient.splitKsResponse(response, 1);
+				var responseArray = HMI.KSClient.splitKsResponse(req.responseText.slice(1, req.responseText.length-1), 0);
 				for (var i=0; i<responseArray.length; i++){
 					var responseDictionary = Array();
 					responseDictionary["OP_VALUE"] = responseArray[i];
