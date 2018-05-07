@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_ByteAddress_set(OV_INSTPTR_kbuslib_Clamp
 
 OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_BitOffset_set(OV_INSTPTR_kbuslib_Clamp pobj, const OV_UINT value)
 {
-	OV_INSTPTR_ov_object potherClamp;
+	//OV_INSTPTR_ov_object potherClamp;
 	
 	if((Ov_CanCastTo(kbuslib_DigitalOUT, pobj)) || (Ov_CanCastTo(kbuslib_DigitalIN, pobj)))
 	{
@@ -155,26 +155,22 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_ByteWidth_set(OV_INSTPTR_kbuslib_Clamp p
 	}
 	else
 	{	
-		if((value == 2) && (Ov_CanCastTo(kbuslib_AnalogOUT, pobj) || Ov_CanCastTo(kbuslib_AnalogIN, pobj)))
-		{
+		if((value == 2) && (Ov_CanCastTo(kbuslib_AnalogOUT, pobj) || Ov_CanCastTo(kbuslib_AnalogIN, pobj))) {
 			pobj->v_ByteWidth = value;
 			return OV_ERR_OK;
+		} else if((value == 0) && (Ov_CanCastTo(kbuslib_DigitalOUT, pobj) || Ov_CanCastTo(kbuslib_DigitalIN, pobj))) {
+			pobj->v_ByteWidth = value;
+			return OV_ERR_OK;
+		} else if((Ov_CanCastTo(kbuslib_MailBox, pobj))){
+			pobj->v_ByteWidth = value;
+			return OV_ERR_OK;
+		} else {
+			ov_logfile_error("%s: This value is legitim for special IOs only", pobj->v_identifier);
+			pobj->v_Error = FALSE;
+			pobj->v_ErrorCode = KBUS_ERROR_PARAM_CHANGE_NOT_ALLOWED;
+			ov_string_setvalue(&pobj->v_ErrorString, KBUS_ERRORSTR_PARAM_CHANGE_NOT_ALLOWED);
+			return(OV_ERR_NOACCESS);
 		}
-		else
-			if((value == 0) && (Ov_CanCastTo(kbuslib_DigitalOUT, pobj) || Ov_CanCastTo(kbuslib_DigitalIN, pobj)))
-			{
-				pobj->v_ByteWidth = value;
-				return OV_ERR_OK;
-			}
-			else
-			{
-		
-				ov_logfile_error("%s: This value is legitim for special IOs only", pobj->v_identifier);
-				pobj->v_Error = FALSE;
-				pobj->v_ErrorCode = KBUS_ERROR_PARAM_CHANGE_NOT_ALLOWED;
-				ov_string_setvalue(&pobj->v_ErrorString, KBUS_ERRORSTR_PARAM_CHANGE_NOT_ALLOWED);
-				return(OV_ERR_NOACCESS);
-			}
 	}
 }
 

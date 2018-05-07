@@ -245,6 +245,67 @@ LIBRARY kbuslib
 			typemethod	:	C_FUNCTION	<FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
+	
+	CLASS HARTAnalogIN	:	CLASS kbuslib/AnalogIN
+		IS_INSTANTIABLE;
+		COMMENT = "Analog input clamp with HART";
+		VARIABLES
+			channel	: UINT
+				FLAGS = "i"
+				COMMENT = "channel for Mailbox";
+		END_VARIABLES;
+	END_CLASS;
 
+	CLASS MailBox	:	CLASS kbuslib/Clamp
+		IS_INSTANTIABLE;
+		COMMENT = "kbus Messagebox";
+		VARIABLES
+				
+			busy		:	BOOL HAS_SET_ACCESSOR
+				FLAGS = "i"
+				COMMENT = "Messagebox in use";
+				
+			slot		: UINT
+				FLAGS = "i"
+				COMMENT = "slot of i/o card";
+			channel		: UINT
+				FLAGS = "i"
+				COMMENT = "Channel to use"
+				INITIALVALUE = 0;
+			
+			state		: UINT
+				FLAGS = "o"
+				COMMENT = "state of mailbox";
+			
+			readPos		: UINT
+				FLAGS = "o";
+			writePos	: UINT
+				FLAGS = "o";
+				
+			ByteAddressOut : UINT	HAS_SET_ACCESSOR
+				FLAGS = "i"
+				COMMENT = "Specifies Address in Bus for Output"
+				INITIALVALUE = 0;
+			
+//			opupier		: C_TYPE<OV_UINT64>;
+			
+			StatusByte	:	C_TYPE <OV_BYTE>; // internal toggle bit
+			
+			readBuffer	:	C_TYPE <OV_BYTE_VEC>;
+			writeBuffer	:	C_TYPE <OV_BYTE_VEC>;
+		END_VARIABLES;
+		OPERATIONS
+			startup		: C_FUNCTION <OV_FNC_STARTUP>;
+			readwrite	: C_FUNCTION <KBUSLIB_FNC_READWRITE>;
+			occupy		: C_FUNCTION <KBUSLIB_FNC_OCCUPYMAILBOX>;
+			free		: C_FUNCTION <KBUSLIB_FNC_FREEMAILBOX>;
+		END_OPERATIONS;
+	END_CLASS;
+
+ 
+ASSOCIATION mailBoxConnection : ONE_TO_MANY
+	PARENT mailBox	: CLASS kbuslib/MailBox;
+	CHILD clamps	: CLASS kbuslib/HARTAnalogIN;
+END_ASSOCIATION;
 
 END_LIBRARY;

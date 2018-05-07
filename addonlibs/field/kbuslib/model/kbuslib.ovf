@@ -1,0 +1,29 @@
+#ifndef kbuslib_OVF_INCLUDED
+#define kbuslib_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+
+typedef OV_DLLFNCEXPORT OV_RESULT KBUSLIB_FNC_READWRITE(
+		OV_INSTPTR_kbuslib_MailBox	pobj,
+		OV_BYTE* pMBoxPAE,
+		OV_BYTE* pMBoxPAA,
+		OV_BOOL* writeBack
+	);
+	
+typedef OV_DLLFNCEXPORT OV_RESULT KBUSLIB_FNC_OCCUPYMAILBOX(
+	OV_INSTPTR_kbuslib_MailBox	pMBox,
+	const OV_INSTPTR_ov_object		pobj
+	);
+	
+typedef OV_DLLFNCEXPORT OV_RESULT KBUSLIB_FNC_FREEMAILBOX(
+	OV_INSTPTR_kbuslib_MailBox	pMBox,
+	const OV_INSTPTR_ov_object		pobj
+	);
+
+#endif

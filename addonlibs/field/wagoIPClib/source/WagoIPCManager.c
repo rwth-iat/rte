@@ -35,6 +35,7 @@
 #include "kbus.h"
 #include "misc.h"
 
+#define COMCYCLETIME 25
 
 
 
@@ -138,6 +139,8 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 	OV_INSTPTR_kbuslib_Clamp pnewclamp = NULL;
 	OV_INSTPTR_ov_object pcClampobj;
 	OV_INSTPTR_kbuslib_Clamp pcClamp;
+	OV_INSTPTR_wagoIPClib_WagoIPCCom pCom = NULL;
+	OV_INSTPTR_kbuslib_MailBox pMailBox = NULL;
 	
 	OV_UINT tmp_number;
 	OV_BOOL write = FALSE;
@@ -147,12 +150,14 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 	unsigned short dig_output_offset;
 	unsigned int i;
 	unsigned int j;
+	unsigned int hartCount = 0;
 	OV_STRING clamp_name = NULL;
 	
 	int res;
 	double dtemp;
 	uint8_t btemp;
 	uint16_t value;
+	uint16_t rawValue;
 	
 	pinfo = kbus_get_info();		//get information
 	
@@ -415,8 +420,9 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 				break;
 				
 				default:		/*analog and special clamps are identified by product-id*/
-					if(((ppi_info[i].terminalname > 400) && (ppi_info[i].terminalname < 500))
-							&& ((ppi_info[i].terminalname != 404) && (ppi_info[i].terminalname!= 511)))
+					if((ppi_info[i].terminalname > 400) && (ppi_info[i].terminalname < 500)
+							&& (ppi_info[i].terminalname != 404) && (ppi_info[i].terminalname != 482)
+							&& (ppi_info[i].terminalname != 484))
 					{		/*analog in*/
 						for(j = 0; j < ppi_info[i].channels; j++)
 						{
@@ -452,8 +458,75 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 						break;
 					}
 					else
-					if(((ppi_info[i].terminalname > 500) && (ppi_info[i].terminalname < 600))
-							&& ((ppi_info[i].terminalname != 404) && (ppi_info[i].terminalname != 511)))
+					if((ppi_info[i].terminalname == 482) || (ppi_info[i].terminalname == 484))
+					{
+						/*create new HART clamp*/
+						//ov_logfile_debug("%i, %i, %i", ppi_info[i].channels, ppi_info[i].bitposPAE, ppi_info[i].bitposPAA);
+						// crate Mailbox
+						//todo
+						ov_string_print(&clamp_name, "Terminal%03hhu:MailBox", ppi_info[i].position);
+						if(Ov_Fail(Ov_CreateObject(kbuslib_MailBox, pMailBox, pinst, clamp_name)))
+						{
+							ov_logfile_error("%s: creation of HART mail box %s failed\n",
+									pinst->v_identifier, clamp_name);
+							pinst->v_autodetect = FALSE;
+
+							pinst->v_Error = FALSE;
+							pinst->v_ErrorCode = KBUS_ERROR_AUTODETECT;
+							ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_AUTODETECT);
+							misc_set_led_on(3);
+							misc_set_led_off(2);
+							return;
+						}
+						pMailBox->v_ByteAddress = ppi_info[i].bitposPAE / 8 + 2;
+						pMailBox->v_ByteAddressOut = ppi_info[i].bitposPAA / 8 + 2;
+						pMailBox->v_ByteWidth = 6;
+						pMailBox->v_Enabled = TRUE;
+						hartCount++;
+						pMailBox->v_slot = hartCount;
+
+						for(j = 0; j < 2; j++)
+						{
+							/*create new object with name "Terminal$terminalnumber:$channelnumber-AI"*/
+							ov_string_print(&clamp_name, "Terminal%03hhu:%02u-AI HART", ppi_info[i].position, j + 1);
+							if(Ov_Fail(Ov_CreateObject(kbuslib_HARTAnalogIN, pnewclamp, pinst, clamp_name)))
+							{
+								ov_logfile_error("%s: creation of HART AnalogIN %s failed\n",
+										pinst->v_identifier, clamp_name);
+								pinst->v_autodetect = FALSE;
+
+								pinst->v_Error = FALSE;
+								pinst->v_ErrorCode = KBUS_ERROR_AUTODETECT;
+								ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_AUTODETECT);
+								misc_set_led_on(3);
+								misc_set_led_off(2);
+								return;
+							}
+
+							if(Ov_Fail(Ov_Link(fb_tasklist, pinst, pnewclamp)))
+							{
+								ov_logfile_warning("%s: HART AnalogIN %s could not be linked into Tasklist",
+										pinst->v_identifier, clamp_name);
+							}
+							if(Ov_Fail(Ov_Link(kbuslib_mailBoxConnection, pMailBox,
+									Ov_StaticPtrCast(kbuslib_HARTAnalogIN, pnewclamp)))){
+								ov_logfile_warning("%s: HART AnalogIN %s could not be linked to mail box",
+										pinst->v_identifier, clamp_name);
+							}
+
+							/*set byte Address*/
+							// 8 byte offset for status byte and mail box
+							pnewclamp->v_ByteAddress = ppi_info[i].bitposPAE / 8 + j * sizeof(uint16_t) + 8;
+							Ov_StaticPtrCast(kbuslib_HARTAnalogIN, pnewclamp)->v_channel = j+1;
+							/*set byteWidth*/
+							pnewclamp->v_ByteWidth = 2;
+							pnewclamp->v_Enabled = TRUE;
+						}
+						break;
+					}
+					else
+					if((ppi_info[i].terminalname > 500) && (ppi_info[i].terminalname < 600)
+							&& (ppi_info[i].terminalname != 511))
 					{		/*analog out*/
 						for(j = 0; j < ppi_info[i].channels; j++)
 						{
@@ -578,6 +651,19 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 			i++;
 		}while(i<ppi_info[0].terminals);
 	
+		if(hartCount){
+			Ov_ForEachChildEx(ov_containment, pinst, pCom, wagoIPClib_WagoIPCCom){
+				break;
+			}
+		}
+		if(!pCom){
+			// create com block
+			ov_class_createobject(pclass_wagoIPClib_WagoIPCCom, (OV_INSTPTR_ov_domain)pinst, "com", OV_PMH_BEGIN, NULL, NULL, NULL, (OV_INSTPTR_ov_object*)(&pCom));
+			if(!pCom){
+				ov_logfile_error("%s: could not create com block", pinst->v_identifier);
+			}
+			pCom->v_cycInterval = COMCYCLETIME;
+		}
 		
 		
 	pinst->v_autodetect = FALSE;		/*autodetec only once*/
@@ -773,13 +859,12 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 						ov_string_setvalue(&pcClamp->v_ErrorString, KBUS_ERRORSTR_NOERROR); 
 					}
 					
-					
-					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value = 
-						(((uint16_t*) pinfo->image.inputs.data)[tmp_number / sizeof(uint16_t)] / 32767.00);
+					rawValue = ((uint16_t*) pinfo->image.inputs.data)[tmp_number / sizeof(uint16_t)];
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value = ((rawValue & 0x7FFC) / 32764.00);
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.value =
 							Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value;
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.time = pinst->v_LastRead;
-					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.state = OV_ST_GOOD;
+					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.state = (rawValue & 0x3)?OV_ST_BAD:OV_ST_GOOD;
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_TimeStamp = pinst->v_LastRead;
 				}
 				else
@@ -1121,7 +1206,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 	}
 	
 	
-			
+
 	/*	write back process images	*/
 	if(write)
 	{

@@ -48,6 +48,19 @@
 
 #include "libov/ov_macros.h"
 
+enum kbuslib_MBState{
+	MB_idle,
+	MB_startSend,
+	MB_sending,
+	MB_stopSend,
+	MB_startRead,
+	MB_startRead2,
+	MB_reading,
+	MB_stopRead,
+	MB_finished,
+	MB_errorState
+};
+
 
 enum
 {
