@@ -123,7 +123,6 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 			thisTCPCh->v_addrInfoReq = NULL;
 			return OV_ERR_GENERIC;
 		}
-		TCPbind_aresWorker_delGetAddrInfoElem(thisTCPCh->v_addrInfoReq);	//	deletion is scheduled, not done yet
 
 		//resolve connected peer
 		if(getpeername(thisTCPCh->v_addrInfoReq->socket, sa, &sas) == TCPBIND_SOCKET_ERROR)
