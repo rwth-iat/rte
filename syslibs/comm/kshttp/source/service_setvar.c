@@ -144,9 +144,8 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	kshttp_find_arguments(&request.urlQuery, "vartype", &vartypematch);
 	if(vartypematch.veclen< 1){
 		//getVar
-		addrpGet = Ov_MemStackAlloc(OV_STRING);
-		*addrpGet = (OV_STRING)ov_memstack_alloc(pathmatch.veclen*sizeof(OV_STRING));
-		if(!*addrpGet) {
+		addrpGet = (OV_STRING*)ov_memstack_alloc(pathmatch.veclen*sizeof(OV_STRING));
+		if(!addrpGet) {
 			ov_memstack_unlock();
 			fr = OV_ERR_TARGETGENERIC;
 			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": internal memory problem");

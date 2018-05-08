@@ -59,7 +59,7 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	*/
 	OV_STRING_VEC match = {0,NULL};
 
-	OV_STRING *addrp = NULL;
+	OV_STRING* addrp = NULL;
 
 	OV_GETVAR_PAR	params;
 	OV_GETVAR_RES	result;
@@ -89,10 +89,8 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	}
 
 	ov_memstack_lock();
-	addrp = Ov_MemStackAlloc(OV_STRING);
-
-	*addrp = (OV_STRING)ov_memstack_alloc(match.veclen*sizeof(OV_STRING));
-	if(!*addrp) {
+	addrp = (OV_STRING*)ov_memstack_alloc(match.veclen*sizeof(OV_STRING));
+	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
 		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": internal memory problem");
