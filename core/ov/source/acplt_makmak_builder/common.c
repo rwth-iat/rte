@@ -17,6 +17,13 @@
 	Handling the path location business and consistency checks
 
 **/
+
+int sortCompare(const void* a, const void* b){
+
+	return strcmp(*(char**)a, *(char**)b);
+
+}
+
 int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* devBinPath,
 		char* gitModelPath, char* sysModelPath, char* sysBinPath, int* newDirStructure){
 	// Locate library
@@ -237,18 +244,33 @@ void searchGit(char* path, const char* gitModelPath, const char* curlib){
 
 void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const char* curlib, int depth){
 
-	char	help[512] = "";
-	const char* blacklist[3] = { "build", "doc", "tools"};
+	char		help[512] = "";
+	const char*	blacklist[3] = { "build", "doc", "tools"};
+	char**		dirList = NULL;
 
 	struct dirent*	dp;
 	DIR*			dir;
-	struct stat st;
+	struct stat 	st;
+
+	unsigned int count = 0;
+	unsigned int pos = 0;
 	int i = 0;
 
 	sprintf(help, "%s/%s", gitModelPath, relPath);
 	compatiblePath(help);
 
 	dir = opendir(help);
+
+	while((dp = readdir(dir))){
+		count++;
+	}
+
+	dirList = calloc(count, sizeof(char*));
+	if(!dirList)
+		goto cleanup;
+
+	rewinddir(dir);
+
 	while((dp = readdir(dir))){
 
 		if(dp->d_name[0]=='.')
@@ -264,7 +286,19 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 		if(!S_ISDIR(st.st_mode))
 			continue;
 
-		if(strcmp(curlib, dp->d_name)==0){
+		dirList[pos] = strdup(dp->d_name);
+		pos++;
+	}
+
+	count = pos;
+	qsort(dirList, count, sizeof(char*), sortCompare);
+
+	for(pos = 0; pos<count; pos++){
+
+		if(!dirList[pos])
+			continue;
+
+		if(strcmp(curlib, dirList[pos])==0){
 
 			// check if library directory
 			sprintf(help, "%s/%s/%s/model/%s.ovm", gitModelPath, relPath, curlib, curlib);
@@ -275,26 +309,35 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 				strcpy(path, relPath);
 
 				compatiblePath(path);
-				closedir(dir);
-				return;
+				goto cleanup;
 			}
 		}
 		if(depth < MAKMAK_MAX_RECURSION_DEPTH){ // if we reach this statement we have not found a suitable directory
 			if(depth>0)
-				sprintf(help, "%s/%s", relPath, dp->d_name);
+				sprintf(help, "%s/%s", relPath, dirList[pos]);
 			else
-				strcpy(help, dp->d_name);
+				strcpy(help, dirList[pos]);
 
 			compatiblePath(help);
 			searchGit_worker(path, gitModelPath, help, curlib, depth+1);
 			if(strlen(path)>0){
-				closedir(dir);
-				return;
+				goto cleanup;
 			}
 		}
 	}
+
+	cleanup:
+	if(dirList){
+		for(i=0; i < count; i++){
+			free(dirList[i]);
+		}
+		free(dirList);
+	}
 	closedir(dir);
 	return;
+
+
+
 }
 
 /*	----------------------------------------------------------------------	*/
