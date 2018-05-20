@@ -471,6 +471,14 @@
 	ov_variable_setanyvalue((pany), (pvalue))
 
 /**
+*	Set the value of an ANY variable from a non ANY variable
+*	for example:
+*	Ov_SetAnyValueByPointer(&pObj->v_myTargetAnyvar, OV_VT_UINT, &myUint);
+*/
+#define Ov_SetAnyValueByPointer(pany, type, pvalue)							\
+	ov_variable_setanyvaluebypointer((pany), (type), (pvalue))
+
+/**
 *	Compare two vector variable values
 *	Please check against OV_VECCMP_EQUAL, OV_VECCMP_MORE and OV_VECCMP_LESS
 */

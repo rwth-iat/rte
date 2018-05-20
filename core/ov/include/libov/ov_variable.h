@@ -27,7 +27,7 @@
 *	--------
 *	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
-*	06-Dez-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: initialvalue of variable added.
+*	06-Dez-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: initialvalue of variable added.
 */
 
 #ifndef OV_VARIABLE_H_INCLUDED1
@@ -201,6 +201,16 @@ OV_BOOL ov_variable_canunload(
 OV_DLLFNCEXPORT OV_RESULT ov_variable_setanyvalue(
 	OV_ANY			*pany,
 	const OV_ANY	*pvalue
+);
+
+/**
+*	Set the value of an ANY variable by pointer
+*	You should use the macro Ov_SetAnyValueByPointer()
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_variable_setanyvaluebypointer(
+	OV_ANY*			pany,
+	OV_VAR_TYPE		type,
+	const void*		value
 );
 
 #ifdef __cplusplus

@@ -26,7 +26,7 @@
 *	--------
 *	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
-*	06-Dez-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: initialvalue of variable added.
+*	06-Dez-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: initialvalue of variable added.
 */
 
 #define OV_COMPILE_LIBOV
@@ -337,6 +337,90 @@ OV_DLLFNCEXPORT OV_RESULT ov_variable_setanyvalue(
 		*pany = value;
 	}
 	return result;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ov_variable_setanyvaluebypointer(OV_ANY* pany, OV_VAR_TYPE type, const void* value){
+
+	OV_ANY pvalue;
+
+	pvalue.state = OV_ST_NOTSUPPORTED;
+	pvalue.time = (OV_TIME){.secs = 0, .usecs = 0};
+	pvalue.value.vartype = type&OV_VT_KSMASK;
+
+	switch(type&OV_VT_KSMASK){
+	case OV_VT_BYTE:
+		pvalue.value.valueunion.val_byte = *((OV_BYTE*)value);
+		break;
+	case OV_VT_BOOL:
+		pvalue.value.valueunion.val_bool = *((OV_BOOL*)value);
+		break;
+	case OV_VT_INT:
+		pvalue.value.valueunion.val_int = *((OV_INT*)value);
+		break;
+	case OV_VT_UINT:
+		pvalue.value.valueunion.val_uint = *((OV_UINT*)value);
+		break;
+	case OV_VT_SINGLE:
+		pvalue.value.valueunion.val_single = *((OV_SINGLE*)value);
+		break;
+	case OV_VT_DOUBLE:
+		pvalue.value.valueunion.val_double = *((OV_DOUBLE*)value);
+		break;
+	case OV_VT_STRING:
+		pvalue.value.valueunion.val_string = *((OV_STRING*)value);
+		break;
+	case OV_VT_TIME:
+		pvalue.value.valueunion.val_time = *((OV_TIME*)value);
+		break;
+	case OV_VT_TIME_SPAN:
+		pvalue.value.valueunion.val_time_span = *((OV_TIME_SPAN*)value);
+		break;
+	case OV_VT_STATE:
+		pvalue.value.valueunion.val_state = *((OV_STATE*)value);
+		break;
+	case OV_VT_STRUCT:
+		pvalue.value.valueunion.val_struct = *((OV_STRUCT*)value);
+		break;
+
+	case OV_VT_BYTE_VEC:
+		pvalue.value.valueunion.val_byte_vec = *((OV_BYTE_VEC*)value);
+		break;
+	case OV_VT_BOOL_VEC:
+		pvalue.value.valueunion.val_bool_vec = *((OV_BOOL_VEC*)value);
+		break;
+	case OV_VT_INT_VEC:
+		pvalue.value.valueunion.val_int_vec = *((OV_INT_VEC*)value);
+		break;
+	case OV_VT_UINT_VEC:
+		pvalue.value.valueunion.val_uint_vec = *((OV_UINT_VEC*)value);
+		break;
+	case OV_VT_SINGLE_VEC:
+		pvalue.value.valueunion.val_single_vec = *((OV_SINGLE_VEC*)value);
+		break;
+	case OV_VT_DOUBLE_VEC:
+		pvalue.value.valueunion.val_double_vec = *((OV_DOUBLE_VEC*)value);
+		break;
+	case OV_VT_STRING_VEC:
+		pvalue.value.valueunion.val_string_vec = *((OV_STRING_VEC*)value);
+		break;
+	case OV_VT_TIME_VEC:
+		pvalue.value.valueunion.val_time_vec = *((OV_TIME_VEC*)value);
+		break;
+	case OV_VT_TIME_SPAN_VEC:
+		pvalue.value.valueunion.val_time_span_vec = *((OV_TIME_SPAN_VEC*)value);
+		break;
+/*	case OV_VT_TIME_SERIES:
+
+		break;*/
+	case OV_VT_STATE_VEC:
+		pvalue.value.valueunion.val_state_vec = *((OV_STATE_VEC*)value);
+		break;
+	case OV_VT_STRUCT_VEC:
+		pvalue.value.valueunion.val_struct_vec = *((OV_STRUCT_VEC*)value);
+		break;
+	}
+
+	return ov_variable_setanyvalue(pany, &pvalue);
 }
 
 /*	----------------------------------------------------------------------	*/
