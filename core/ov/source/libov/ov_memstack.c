@@ -54,6 +54,35 @@
 #include "libov/ov_malloc.h"
 #include "libov/ov_macros.h"
 
+#if OV_SYNC_PTHREAD
+#include <pthread.h>
+static pthread_mutex_t memstackMutex = PTHREAD_MUTEX_INITIALIZER;
+
+#define memstack_mutex_init()
+#define memstack_mutex_destroy()
+#define memstack_mutex_lock() pthread_mutex_lock(&memstackMutex)
+#define memstack_mutex_unlock() pthread_mutex_unlock(&memstackMutex)
+
+#elif OV_SYNC_NTMUTEX
+#include <windows.h>
+static HANDLE memstackMutex = NULL;
+
+#define memstack_mutex_init() memstackMutex=CreateMutexA(NULL, FALSE, NULL)
+#define memstack_mutex_destroy() CloseHandle(memstackMutex)
+// first lock creates mutex object because there is no good place to initialize it
+#define memstack_mutex_lock() \
+		if(!memstackMutex){memstackMutex=CreateMutexA(NULL, FALSE, NULL);}\
+		WaitForSingleObject(memstackMutex, INFINITE)
+#define memstack_mutex_unlock() ReleaseMutex(memstackMutex)
+
+#else
+#define memstack_mutex_init()
+#define memstack_mutex_destroy()
+#define memstack_mutex_lock()
+#define memstack_mutex_unlock()
+#endif
+
+
 /*	----------------------------------------------------------------------	*/
 
 /*
@@ -73,6 +102,10 @@ static OV_INT		refcount = 0;
 */
 OV_DLLFNCEXPORT OV_INT _F_ov_memstack_lock(void) {
 	/*
+	*	lock mutex
+	*/
+	memstack_mutex_lock();
+	/*
 	*	initialize if necessary
 	*/
 	if(!refcount) {
@@ -85,6 +118,10 @@ OV_DLLFNCEXPORT OV_INT _F_ov_memstack_lock(void) {
 	*/
 	refcount++;
 	Ov_WarnIf(refcount > 16);
+	/*
+	*	unlock mutex
+	*/
+	memstack_mutex_unlock();
 	return refcount;
 }
 
@@ -99,13 +136,22 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 	/*
 	*	local variables
 	*/
-	OV_BYTE		*ptr = pmem;
+	OV_BYTE		*ptr;
 	OV_MEMSTACK	*pnewpage;
+
+	/*
+	*	lock mutex
+	*/
+	memstack_mutex_lock();
+
+	ptr = pmem;
+
 	/*
 	*	test reference count
 	*/
 	if(!refcount) {
 		Ov_WarnIfNot(refcount);
+		memstack_mutex_unlock();
 		return NULL;
 	}
 	/*
@@ -116,6 +162,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 	*	return pointer to memory if new block fits in
 	*/
 	if(pmem <= ((OV_BYTE*)pmemstack)+OV_MEMSTACK_SIZE) {
+		memstack_mutex_unlock();
 		return ptr;
 	}
 	/*
@@ -132,11 +179,14 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 		pmemstack = pnewpage;
 		ptr = (OV_BYTE*)&pmemstack->memory;
 		pmem = ptr + Ov_AlignTo(sizeof(double), size);
+		memstack_mutex_unlock();
 		return ptr;
 	}
 	/*
 	*	no memory
+	*	unlock mutex
 	*/
+	memstack_mutex_unlock();
 	return NULL;
 }
 
@@ -147,6 +197,10 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 *	stack memory if necessary
 */
 OV_DLLFNCEXPORT OV_INT _F_ov_memstack_unlock(void) {
+	/*
+	*	lock mutex
+	*/
+	memstack_mutex_lock();
 	/*
 	*	decrement the reference count
 	*/
@@ -179,6 +233,10 @@ OV_DLLFNCEXPORT OV_INT _F_ov_memstack_unlock(void) {
 		printf("memstack freed\n");
 #endif
 	}
+	/*
+	*	unlock mutex
+	*/
+	memstack_mutex_unlock();
 	return refcount;
 }
 

@@ -40,6 +40,28 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 
+#if OV_SYNC_PTHREAD
+#include <pthread.h>
+static pthread_mutex_t databaseMutex = PTHREAD_MUTEX_INITIALIZER;
+#define database_mutex_init()
+#define database_mutex_destroy()
+#define database_mutex_lock() pthread_mutex_lock(&databaseMutex)
+#define database_mutex_unlock() pthread_mutex_unlock(&databaseMutex)
+
+#elif OV_SYNC_NTMUTEX
+#include <windows.h>
+static HANDLE databaseMutex = NULL;
+#define database_mutex_init() databaseMutex = CreateMutexA(NULL, FALSE, NULL)
+#define database_mutex_destroy() CloseHandle(databaseMutex)
+#define database_mutex_lock() WaitForSingleObject(databaseMutex, INFINITE)
+#define database_mutex_unlock() ReleaseMutex(databaseMutex)
+
+#else
+#define database_mutex_lock()
+#define database_mutex_unlock()
+#define database_mutex_init()
+#define database_mutex_destroy()
+#endif
 
 #if OV_SYSTEM_SOLARIS
 #include "/usr/ucbinclude/sys/file.h"
@@ -1533,6 +1555,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void) {
 	/*
 	*	library is started
 	*/
+	database_mutex_init();
 	pdb->started = TRUE;
 	return OV_ERR_OK;
 }
@@ -1565,6 +1588,7 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 		Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plib, ov_library) {
 			ov_library_close(plib);
 		}
+		database_mutex_destroy();
 		pdb->started = FALSE;
 	}
 }
@@ -1577,13 +1601,17 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
 	OV_UINT		size
 ) {
+	__ml_ptr ptmp = NULL;
 #ifdef OV_VALGRIND
     if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
 		return malloc(size);
 	}
 #endif
 	if(pdb) {
-		return ml_malloc(size);
+		database_mutex_lock();
+		ptmp = ml_malloc(size);
+		database_mutex_unlock();
+		return ptmp;
 	}
 	return NULL;
 }
@@ -1597,6 +1625,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 ) {
+	__ml_ptr ptmp = NULL;
 #ifdef OV_VALGRIND
 	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL){
 		if(!((uintptr_t)ptr >= (uintptr_t)pdb->baseaddr && (uintptr_t)ptr <= (uintptr_t)pdb->baseaddr+(uintptr_t)pdb->size)){
@@ -1612,7 +1641,10 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	}
 #endif
 	if(pdb) {
-		return ml_realloc(ptr, size);
+		database_mutex_lock();
+		ptmp = ml_realloc(ptr, size);
+		database_mutex_unlock();
+		return ptmp;
 	}
 	return NULL;
 }
@@ -1641,7 +1673,9 @@ OV_DLLFNCEXPORT void ov_database_free(
 	}
 #endif
 	if(pdb) {
+		database_mutex_lock();
 		ml_free(ptr);
+		database_mutex_unlock();
 	}
 }
 
@@ -1664,13 +1698,15 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
 */
 OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 	if(pdb) {
-		#ifdef _STDINT_H
-			uintptr_t free;
-		#else
-			OV_UINT free;
-			#define uintptr_t OV_UINT
-		#endif
+#ifdef _STDINT_H
+		uintptr_t free;
+#else
+		OV_UINT free;
+#define uintptr_t OV_UINT
+#endif
+		database_mutex_lock();
 		free = (uintptr_t)pdb->pend - (uintptr_t)pdb->pcurr + (uintptr_t)pmpinfo->bytes_free;
+		database_mutex_unlock();
 		if(free > OV_VL_MAXUINT){
 			return OV_VL_MAXUINT;
 		}
@@ -1691,7 +1727,9 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
 		OV_UINT used;
 	#endif
 	if(pdb) {
+		database_mutex_lock();
 		used = (uintptr_t)pdb->pstart - (uintptr_t)pdb->baseaddr + (uintptr_t)pmpinfo->bytes_used - (uintptr_t)pmpinfo->bytes_free;
+		database_mutex_unlock();
 		if(used > OV_VL_MAXUINT){
 			return OV_VL_MAXUINT;
 		}
@@ -1733,6 +1771,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void) {
 		*	find out how many blocks of the average size there are
 		*/
 		sum = 0;
+		database_mutex_lock();
 		for(i=logavgsize; i<BLOCKLOG; i++) {
 			num = 0;
 			for(pnext = pmpinfo->fraghead[i].next; pnext; pnext=pnext->next) {
@@ -1740,6 +1779,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void) {
 			}
 			sum += num*(1<<(i-logavgsize));
 		}
+		database_mutex_unlock();
 		sum += (pdb->pend-pdb->pcurr)/avgsize;
 		return ((ov_database_getfree()-sum*avgsize)*100)/ov_database_getfree();
 	}
