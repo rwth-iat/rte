@@ -39,6 +39,7 @@
 #include "config.h"
 #include <errno.h>
 #include <ctype.h>
+#include <parseTclVec.h>
 #include "urldecode.h"
 
 #define CHECK_BOOLTRUE(Value)	\
@@ -92,7 +93,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	OV_UINT len = 0;
 	OV_STRING *pArgumentList = NULL;
 	OV_STRING Temp = NULL;
-	OV_STRING Temp2 = NULL;
 	OV_UINT stringOffset = 0;
 	OV_RESULT fr = OV_ERR_OK;
 	OV_VAR_TYPE lastVarType = OV_VT_VOID;
@@ -396,63 +396,72 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	*/
 
 			case OV_VT_BOOL_VEC:
-				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				fr = parseTclVec(&pArgumentList, newvaluematch.value[i], '{', '}', &len);
+				if(Ov_Fail(fr)){
+					fr = OV_ERR_BADPARAM;
+					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
+					ov_memstack_unlock();
+					EXEC_SETVAR_RETURN fr;
+				}
 				addrp->var_current_props.value.valueunion.val_bool_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_bool_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_bool_vec, len, BOOL);
 				for(i = 0; i < len; i++){
-					//killing the first character
-					ov_string_setvalue(&Temp, pArgumentList[i]+1);
-					//kill the last character, now we have two null bytes at the end
-					Temp[ov_string_getlength(Temp)-1] = '\0';
-
-					if (CHECK_BOOLTRUE(Temp)){
+					if (CHECK_BOOLTRUE(pArgumentList[i])){
 						addrp->var_current_props.value.valueunion.val_bool_vec.value[i] = TRUE;
-					}else if (CHECK_BOOLFALSE(Temp)){
+					}else if (CHECK_BOOLFALSE(pArgumentList[i])){
 						addrp->var_current_props.value.valueunion.val_bool_vec.value[i] = FALSE;
 					}else{
 						//default
 						addrp->var_current_props.value.valueunion.val_bool_vec.value[i] = FALSE;
 					}
 				}
-				ov_string_freelist(pArgumentList);
 				break;
 
 			case OV_VT_INT_VEC:
-				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				fr = parseTclVec(&pArgumentList, newvaluematch.value[i], '{', '}', &len);
+				if(Ov_Fail(fr)){
+					fr = OV_ERR_BADPARAM;
+					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
+					ov_memstack_unlock();
+					EXEC_SETVAR_RETURN fr;
+				}
 				addrp->var_current_props.value.valueunion.val_int_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_int_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_int_vec, len, INT);
 				for(i = 0; i < len; i++){
-					tempLong = strtol(pArgumentList[i]+1,&endPtr,10);
-					if (endPtr == pArgumentList[i]+1) {
+					tempLong = strtol(pArgumentList[i],&endPtr,10);
+					if (endPtr == pArgumentList[i]) {
 						//not a number
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
-						ov_string_freelist(pArgumentList);
 						ov_memstack_unlock();
 						EXEC_SETVAR_RETURN fr;
 					}else if (ERANGE == errno || tempLong > OV_VL_MAXINT || tempLong < OV_VL_MININT) {
 						//not in range
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not in INT range");
-						ov_string_freelist(pArgumentList);
 						ov_memstack_unlock();
 						EXEC_SETVAR_RETURN fr;
 					}
 					addrp->var_current_props.value.valueunion.val_int_vec.value[i] = (OV_INT) tempLong;
 				}
-				ov_string_freelist(pArgumentList);
 				break;
 
 			case OV_VT_UINT_VEC:
-				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				fr = parseTclVec(&pArgumentList, newvaluematch.value[i], '{', '}', &len);
+				if(Ov_Fail(fr)){
+					fr = OV_ERR_BADPARAM;
+					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
+					ov_memstack_unlock();
+					EXEC_SETVAR_RETURN fr;
+				}
 				addrp->var_current_props.value.valueunion.val_uint_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_uint_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_uint_vec, len, UINT);
 				for(i = 0; i < len; i++){
-					tempUlong = strtoul(pArgumentList[i]+1,&endPtr,10);
-					if (endPtr == pArgumentList[i]+1) {
+					tempUlong = strtoul(pArgumentList[i],&endPtr,10);
+					if (endPtr == pArgumentList[i]) {
 						//not a number
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
@@ -467,31 +476,34 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					}
 					addrp->var_current_props.value.valueunion.val_uint_vec.value[i] = (OV_UINT) tempUlong;
 				}
-				ov_string_freelist(pArgumentList);
 				break;
 
 			case OV_VT_SINGLE_VEC:
 			case OV_VT_DOUBLE_VEC:
-				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				fr = parseTclVec(&pArgumentList, newvaluematch.value[i], '{', '}', &len);
+				if(Ov_Fail(fr)){
+					fr = OV_ERR_BADPARAM;
+					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
+					ov_memstack_unlock();
+					EXEC_SETVAR_RETURN fr;
+				}
 				for(i = 0; i < len; i++){
-					tempDouble = strtod(pArgumentList[i]+1, &endPtr);
-					if (endPtr == pArgumentList[i]+1) {
+					tempDouble = strtod(pArgumentList[i], &endPtr);
+					if (endPtr == pArgumentList[i]) {
 						//not a number
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
-						ov_string_freelist(pArgumentList);
 						ov_memstack_unlock();
 						EXEC_SETVAR_RETURN fr;
 					}else if (ERANGE == errno) {
 						//not in range
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not in range");
-						ov_string_freelist(pArgumentList);
 						ov_memstack_unlock();
 						EXEC_SETVAR_RETURN fr;
 					}
 					switch (addrp->var_current_props.value.vartype & OV_VT_KSMASK){
-						case OV_VT_SINGLE:
+						case OV_VT_SINGLE_VEC:
 							if(i==0){
 								addrp->var_current_props.value.valueunion.val_single_vec.veclen = 0;
 								addrp->var_current_props.value.valueunion.val_single_vec.value = NULL;
@@ -509,44 +521,24 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 							break;
 					}
 				}
-				ov_string_freelist(pArgumentList);
 				break;
 
 			case OV_VT_STRING_VEC:
 				//request could be "{hello}%20{world}"
-				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
-				addrp->var_current_props.value.valueunion.val_string_vec.veclen = 0;
-				addrp->var_current_props.value.valueunion.val_string_vec.value = NULL;
-				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_string_vec, len, STRING);
-
-				if(*pArgumentList[i] != '{' && len > 2){
+				fr = parseTclVec(&pArgumentList, newvaluematch.value[i], '{', '}', &len);
+				if(Ov_Fail(fr)){
 					fr = OV_ERR_BADPARAM;
 					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
 					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
 				}
+				addrp->var_current_props.value.valueunion.val_string_vec.veclen = 0;
+				addrp->var_current_props.value.valueunion.val_string_vec.value = NULL;
+				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_string_vec, len, STRING);
 
 				for(i = 0; i < len; i++){
-					//setting the content of the pointers to null
-					//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
-					addrp->var_current_props.value.valueunion.val_string_vec.value[i] = NULL;
-					ov_memstack_lock();
-					if(*pArgumentList[i] != '{'){
-						Temp2 = pArgumentList[i];
-					}else{
-						//killing the first character aka {
-						ov_string_setvalue(&Temp, pArgumentList[i]+1);
-						//kill the last character aka }, now we have two null bytes at the end
-						Temp[ov_string_getlength(Temp)-1] = '\0';
-						//finally decode URLencoding
-						Temp2 = url_decode(Temp);
-						//Temp2 = Temp;
-					}
-					fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[i], Temp2);
-					ov_memstack_unlock();
+					fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[i], pArgumentList[i]);
 				}
-				Temp2 = NULL; //had a memstack pointer only
-				ov_string_freelist(pArgumentList);
 				break;
 
 			case OV_VT_STRUCT_VEC:

@@ -228,6 +228,7 @@ OV_RESULT kshttp_response_part_finalize(OV_STRING* output, const HTTP_RESPONSEFO
 OV_RESULT kshttp_print_result_array(OV_STRING *output, const HTTP_RESPONSEFORMAT response_format, OV_RESULT *results, const OV_UINT len, const OV_STRING explain_text){
 	OV_UINT i = 0;
 	OV_STRING temp = NULL;
+	OV_STRING tmpExpText = NULL;
 	OV_RESULT fr = OV_ERR_OK;
 	OV_RESULT lasterror = OV_ERR_OK;
 
@@ -265,6 +266,9 @@ or
 		//wrap in "mixed" if multiple results were given
 		kshttp_response_part_begin(&temp, response_format, "mixed");
 	}
+
+	kshttp_escapeString(&tmpExpText, &explain_text, response_format);
+
 	for (i=0; i< len;i++){
 		if(Ov_Fail(results[i])){
 			fr = results[i];
@@ -277,12 +281,14 @@ or
 				}
 			}else{
 				if(temp == NULL){
-					ov_string_print(&temp, "%s: %s%s", kshttp_mapresult2string(fr), ov_result_getresulttext(fr), explain_text);
+					ov_string_print(&temp, "%s: %s%s", kshttp_mapresult2string(fr), ov_result_getresulttext(fr), tmpExpText);
 				}else{
-					ov_string_print(&temp, "%s%s: %s%s", temp, kshttp_mapresult2string(fr), ov_result_getresulttext(fr), explain_text);
+					ov_string_print(&temp, "%s%s: %s%s", temp, kshttp_mapresult2string(fr), ov_result_getresulttext(fr), tmpExpText);
 				}
 			}
 			kshttp_response_part_finalize(&temp, response_format, "failure");
+			if(response_format==KSX) // add more information as comment
+				ov_string_print(&temp, "%s <!-- %s %s -->", temp, ov_result_getresulttext(fr), tmpExpText);
 		}else{
 			kshttp_response_part_begin(&temp, response_format, "success");
 			kshttp_response_part_finalize(&temp, response_format, "success");
@@ -298,6 +304,9 @@ or
 	ov_string_append(output, temp);
 	if(temp){
 		ov_string_setvalue(&temp, NULL);
+	}
+	if(tmpExpText){
+		ov_string_setvalue(&tmpExpText, NULL);
 	}
 
 	return lasterror;
@@ -401,7 +410,7 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, const OV_TIME_SPAN* ptim
  * @param response_format
  * @return
  */
-OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING *strIn, const HTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_escapeString(OV_STRING* resultString, const OV_STRING *strIn, const HTTP_RESPONSEFORMAT response_format){
 	OV_STRING heapString;
 	OV_STRING	pcIn;
 	OV_STRING	pcOut = 0;

@@ -94,7 +94,7 @@ OV_RESULT kshttp_exec_getlogfile(const HTTP_REQUEST request, HTTP_RESPONSE *resp
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, const OV_TIME* time, const HTTP_RESPONSEFORMAT response_format);
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, const OV_TIME_SPAN* ptime, const HTTP_RESPONSEFORMAT response_format);
 OV_RESULT kshttp_asciitotime(OV_TIME* time, const OV_STRING timestring);
-OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, const HTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_escapeString(OV_STRING* resultString, const OV_STRING* strIn, const HTTP_RESPONSEFORMAT response_format);
 
 OV_RESULT kshttp_generateAndSendHttpMessage(
 		OV_STRING method,

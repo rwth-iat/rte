@@ -189,12 +189,8 @@ OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP
 					ov_memstack_lock();
 					temp = url_decode(pKeyValuepair[0]);
 					ov_string_setvalue(&clientRequest->urlQuery.value[2 * i], temp);
-					if(*pKeyValuepair[1] == '{'){
-						//we have an vectorvalue, so no url_decode is allowed
-						temp = pKeyValuepair[1];
-					}else{
-						temp = url_decode(pKeyValuepair[1]);
-					}
+
+					temp = url_decode(pKeyValuepair[1]);
 					ov_string_setvalue(&clientRequest->urlQuery.value[2 * i +1], temp);
 					ov_memstack_unlock();
 					temp = NULL;

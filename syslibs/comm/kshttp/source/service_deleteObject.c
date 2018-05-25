@@ -75,7 +75,7 @@ OV_RESULT kshttp_exec_deleteObject(const HTTP_REQUEST request, HTTP_RESPONSE *re
 	}
 
 	ov_memstack_lock();
-	addrp = (OV_STRING)ov_memstack_alloc(match.veclen*sizeof(OV_STRING));
+	addrp = (OV_STRING*)ov_memstack_alloc(match.veclen*sizeof(OV_STRING));
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
