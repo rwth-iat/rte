@@ -138,56 +138,53 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
 
 	//#####################################################################
-	//process vartype
-	//we have to get the vartypes via GetVar, if not specified in request
+	//process vartype, state and timestamp
+	//we have to get the values via GetVar
 	Ov_SetDynamicVectorLength(&vartypematch,0,STRING);
 	kshttp_find_arguments(&request.urlQuery, "vartype", &vartypematch);
-	if(vartypematch.veclen< 1){
-		//getVar
-		addrpGet = (OV_STRING*)ov_memstack_alloc(pathmatch.veclen*sizeof(OV_STRING));
-		if(!addrpGet) {
-			ov_memstack_unlock();
-			fr = OV_ERR_TARGETGENERIC;
-			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": internal memory problem");
-			EXEC_SETVAR_RETURN fr;
-		}
-		paramsGet.identifiers_val = addrpGet;
-		paramsGet.identifiers_len = pathmatch.veclen;
+	//getVar
+	addrpGet = (OV_STRING*)ov_memstack_alloc(pathmatch.veclen*sizeof(OV_STRING));
+	if(!addrpGet) {
+		ov_memstack_unlock();
+		fr = OV_ERR_TARGETGENERIC;
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": internal memory problem");
+		EXEC_SETVAR_RETURN fr;
+	}
+	paramsGet.identifiers_val = addrpGet;
+	paramsGet.identifiers_len = pathmatch.veclen;
 
-		for(i=0;i<pathmatch.veclen;i++){
-			*addrpGet = pathmatch.value[i];
+	for(i=0;i<pathmatch.veclen;i++){
+		*addrpGet = pathmatch.value[i];
 
-			//add one size of a pointer
-			addrpGet ++;
-		}
-		ov_ksserver_getvar(2, pticket, &paramsGet, &resultGet);
+		//add one size of a pointer
+		addrpGet ++;
+	}
+	ov_ksserver_getvar(2, pticket, &paramsGet, &resultGet);
 
-		if(Ov_Fail(resultGet.result)){
-			//memory problem or NOACCESS
-			kshttp_print_result_array(&response->contentString, request.response_format, &resultGet.result, 1, ": NOACCESS or memory problem with fetching the variable type");
-			ov_memstack_unlock();
-			EXEC_SETVAR_RETURN resultGet.result;
-		}
+	if(Ov_Fail(resultGet.result)){
+		//memory problem or NOACCESS
+		kshttp_print_result_array(&response->contentString, request.response_format, &resultGet.result, 1, ": NOACCESS or memory problem with fetching the variable type");
+		ov_memstack_unlock();
+		EXEC_SETVAR_RETURN resultGet.result;
 	}
 
 	//#####################################################################
 	//process multiple path requests at once
 	for(i=0;i<pathmatch.veclen;i++){
-		if(vartypematch.veclen< 1){
-			one_resultGet = *(resultGet.items_val + i);
-			if(Ov_Fail(one_resultGet.result)){
-				fr = one_resultGet.result;
-				kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": problem with fetching the variable type (Is the path to the variable valid?)");
-				ov_memstack_unlock();
-				EXEC_SETVAR_RETURN fr;
-			}
+
+		one_resultGet = *(resultGet.items_val + i);
+		if(Ov_Fail(one_resultGet.result)){
+			fr = one_resultGet.result;
+			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": problem with fetching the variable type (Is the path to the variable valid?)");
+			ov_memstack_unlock();
+			EXEC_SETVAR_RETURN fr;
+		}
+		addrp->var_current_props.state = one_resultGet.var_current_props.state;
+		ov_time_gettime(&addrp->var_current_props.time);
+
+		if (vartypematch.veclen< 1) {
 			addrp->var_current_props.value.vartype = one_resultGet.var_current_props.value.vartype;
-			addrp->var_current_props.state = one_resultGet.var_current_props.state;
-			/*addrp->var_current_props.time.secs = one_resultGet.var_current_props.time.secs;
-			addrp->var_current_props.time.usecs = one_resultGet.var_current_props.time.usecs;
-			*/
-			ov_time_gettime(&addrp->var_current_props.time);
-		}else if(vartypematch.veclen <= pathmatch.veclen && i < vartypematch.veclen){
+		}else if (i < vartypematch.veclen){
 			if(ov_string_compare(vartypematch.value[i], "KS_VT_VOID") == OV_STRCMP_EQUAL){
 				addrp->var_current_props.value.vartype = KS_VT_VOID;
 			}else if(ov_string_compare(vartypematch.value[i], "KS_VT_BOOL") == OV_STRCMP_EQUAL){
@@ -228,6 +225,11 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				addrp->var_current_props.value.vartype = KS_VT_TIME_SPAN_VEC;
 			}else if(ov_string_compare(vartypematch.value[i], "KS_VT_TIME_VEC") == OV_STRCMP_EQUAL){
 				addrp->var_current_props.value.vartype = KS_VT_TIME_VEC;
+			}else{
+				fr = OV_ERR_BADPARAM;
+				kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": unknown Vartype");
+				ov_memstack_unlock();
+				EXEC_SETVAR_RETURN fr;
 			}
 			lastVarType = addrp->var_current_props.value.vartype;
 		}else{
