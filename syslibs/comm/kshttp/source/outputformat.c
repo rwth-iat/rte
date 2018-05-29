@@ -573,5 +573,9 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, const OV_STRING *strIn, c
 	*pcOut = '\0';		/*append terminating '\0'*/
 	fr = ov_string_setvalue(resultString, heapString);
 	Ov_HeapFree(heapString);
+	if(!*resultString) {// return pointer to empty string if NULL
+		*resultString = Ov_DbMalloc(sizeof(char));
+		**resultString = '\0';
+	}
 	return fr;
 }
