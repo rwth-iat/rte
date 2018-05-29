@@ -262,10 +262,10 @@ OV_DLLFNCEXPORT void fb_controlchart_typemethod(
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_fb_controlchart pinst = Ov_StaticPtrCast(fb_controlchart, pfb);
-	OV_UINT    iterator = 0;
-	OV_INSTPTR_fb_intport en=NULL;
-	OV_INSTPTR_fb_stringport stringport=NULL;
+	//OV_INSTPTR_fb_controlchart pinst = Ov_StaticPtrCast(fb_controlchart, pfb);
+	//OV_UINT    iterator = 0;
+	//OV_INSTPTR_fb_intport en=NULL;
+	//OV_INSTPTR_fb_stringport stringport=NULL;
 
 /*	en=Ov_DynamicPtrCast(fb_intport,Ov_SearchChild(ov_containment,pinst,"EN"));
 	if(en!=NULL){

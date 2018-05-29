@@ -460,7 +460,7 @@ OV_RESULT fb_set_scalar_bool_varvalue_eval(
 		if( (((OV_BOOL_PV*)pelem->pvalue)->value != *pvalue) ||
     		(((OV_BOOL_PV*)pelem->pvalue)->state != pvarcurrprops->state) ||
     		(((OV_BOOL_PV*)pelem->pvalue)->time.secs != pvarcurrprops->time.secs) ||
-    		(((OV_BOOL_PV*)pelem->pvalue)->time.usecs == pvarcurrprops->time.usecs) ) {
+    		(((OV_BOOL_PV*)pelem->pvalue)->time.usecs != pvarcurrprops->time.usecs) ) {
             *changed = TRUE;
         }
     }
@@ -681,7 +681,7 @@ OV_RESULT fb_set_scalar_int_varvalue_eval(
 		if( (((OV_INT_PV*)pelem->pvalue)->value != *pvalue) ||
     		(((OV_INT_PV*)pelem->pvalue)->state != pvarcurrprops->state) ||
     		(((OV_INT_PV*)pelem->pvalue)->time.secs != pvarcurrprops->time.secs) ||
-    		(((OV_INT_PV*)pelem->pvalue)->time.usecs == pvarcurrprops->time.usecs) ) {
+    		(((OV_INT_PV*)pelem->pvalue)->time.usecs != pvarcurrprops->time.usecs) ) {
             *changed = TRUE;
         }
     }
@@ -885,7 +885,7 @@ OV_RESULT fb_set_scalar_uint_varvalue_eval(
 		if( (((OV_UINT_PV*)pelem->pvalue)->value != *pvalue) ||
     		(((OV_UINT_PV*)pelem->pvalue)->state != pvarcurrprops->state) ||
     		(((OV_UINT_PV*)pelem->pvalue)->time.secs != pvarcurrprops->time.secs) ||
-    		(((OV_UINT_PV*)pelem->pvalue)->time.usecs == pvarcurrprops->time.usecs) ) {
+    		(((OV_UINT_PV*)pelem->pvalue)->time.usecs != pvarcurrprops->time.usecs) ) {
             *changed = TRUE;
         }
     }
@@ -1105,7 +1105,7 @@ fprintf(stderr, "  Variable: SINGLE_PV? %d\n", pelem->elemunion.pvar->v_vartype)
 		if( (((OV_SINGLE_PV*)pelem->pvalue)->value != *pvalue) ||
     		(((OV_SINGLE_PV*)pelem->pvalue)->state != pvarcurrprops->state) ||
     		(((OV_SINGLE_PV*)pelem->pvalue)->time.secs != pvarcurrprops->time.secs) ||
-    		(((OV_SINGLE_PV*)pelem->pvalue)->time.usecs == pvarcurrprops->time.usecs) ) {
+    		(((OV_SINGLE_PV*)pelem->pvalue)->time.usecs != pvarcurrprops->time.usecs) ) {
             *changed = TRUE;
         }
     }
@@ -1327,7 +1327,7 @@ OV_RESULT fb_set_scalar_double_varvalue_eval(
 		if( (((OV_DOUBLE_PV*)pelem->pvalue)->value != *pvalue) ||
     		(((OV_DOUBLE_PV*)pelem->pvalue)->state != pvarcurrprops->state) ||
     		(((OV_DOUBLE_PV*)pelem->pvalue)->time.secs != pvarcurrprops->time.secs) ||
-    		(((OV_DOUBLE_PV*)pelem->pvalue)->time.usecs == pvarcurrprops->time.usecs) ) {
+    		(((OV_DOUBLE_PV*)pelem->pvalue)->time.usecs != pvarcurrprops->time.usecs) ) {
             *changed = TRUE;
         }
     }
@@ -2163,6 +2163,20 @@ fprintf(stderr, "ANY: TYP %d != %d\n", ksTyp, (pany->value.vartype & OV_VT_KSMAS
     	return ov_object_setvar(pobj, pelem, pvarcurrprops);
     }
     
+    // has state and changed?
+    if((pany->value.vartype&OV_VT_HAS_STATE) && pvarcurrprops->state != pany->state){
+    	*changed = TRUE;
+    	return ov_object_setvar(pobj, pelem, pvarcurrprops);
+    }
+
+    // has timestamp and changed?
+    if((pany->value.vartype&OV_VT_HAS_TIMESTAMP) &&
+    		(pvarcurrprops->time.secs != pany->time.secs ||
+    		 pvarcurrprops->time.usecs != pany->time.usecs)){
+    	*changed = TRUE;
+    	return ov_object_setvar(pobj, pelem, pvarcurrprops);
+    }
+
     switch(ksTyp) {
         case OV_VT_VOID:
                 *changed = TRUE;
@@ -5240,6 +5254,7 @@ void fb_free_string_struct(OV_STRING *pval, OV_UINT veclen) {
         free(pval);
     }
 }
+
 OV_RESULT fb_set_dynvec_string_varvalue(
     OV_INSTPTR_ov_object         pobj,
     const OV_ELEMENT            *pelem,
