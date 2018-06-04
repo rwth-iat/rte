@@ -8,6 +8,7 @@
 #endif
 
 #include "open62541.h"
+//#include "opcua_helpers.h"
 
 /*	restore pre-anti-warning state	*/
 #ifndef WIN32
@@ -25,6 +26,132 @@ struct UA_NodeStore {
     UA_UInt32          sizePrimeIndex;
 };
 
+
+/*
+ * NodestoreInterface Type Definition
+ * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ * Definition of the function signatures for the NodestoreInterface
+ */
+
+/**
+ * Nodestore Lifecycle
+ * ^^^^^^^^^^^^^^^^^^^ */
+
+/*
+ * Is called, when Server will be deleted.
+ * Do not call from a read-sidecritical section (multithreading).
+ */
+typedef void (*UA_Nodestore_deleteNodeStore)(void *nodestoreContext);
+/*
+ * Is called, when the Server uses this nodestore for a namespace with this namespaceIndex.
+ */
+typedef UA_StatusCode (*UA_Nodestore_linkNamespace)(void *handle, UA_UInt16 namespaceIndex);
+/*
+ * Is called, when the Server doesn't use this nodestore for a namespace with this namespaceIndex anymore.
+ */
+typedef UA_StatusCode (*UA_Nodestore_unlinkNamespace)(void *handle, UA_UInt16 namespaceIndex);
+
+
+/**
+ * Node Lifecycle
+ * ^^^^^^^^^^^^^^
+ *
+ * The following definitions are used to create empty nodes of the different
+ * node types. The memory is managed by the nodestore. Therefore, the node has
+ * to be removed via a special deleteNode function. (If the new node is not
+ * added to the nodestore.) */
+/* Create an editable node of the given NodeClass. */
+typedef UA_Node * (*UA_Nodestore_newNode)(void *nodestoreContext, UA_NodeClass nodeClass);
+
+/* Delete an editable node. */
+typedef void (*UA_Nodestore_deleteNode)(void *nodestoreContext, UA_Node *node);
+
+/**
+ * Insert / Get / Replace / Remove
+ * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ */
+/* Inserts a new node into the nodestore. If the nodeid is zero, then a fresh
+ * numeric nodeid from namespace 1 is assigned. If insertion fails, the node is
+ * deleted. */
+typedef UA_StatusCode (*UA_Nodestore_insertNode)(void *nodestoreContext, UA_Node *node, UA_NodeId *addedNodeId);
+
+/* Returns an editable copy of a node (needs to be deleted with the deleteNode
+   function or inserted / replaced into the nodestore). */
+typedef UA_StatusCode (*UA_Nodestore_getNodeCopy)(void *nodestoreContext, const UA_NodeId *nodeId, UA_Node **outNode);
+
+/* To replace a node, get an editable copy of the node, edit and replace with
+ * this function. If the node was already replaced since the copy was made,
+ * UA_STATUSCODE_BADINTERNALERROR is returned. If the nodeid is not found,
+ * UA_STATUSCODE_BADNODEIDUNKNOWN is returned. In both error cases, the editable
+ * node is deleted. */
+typedef UA_StatusCode (*UA_Nodestore_replaceNode)(void *nodestoreContext, UA_Node *node);
+
+/* Remove a node in the nodestore. */
+typedef UA_StatusCode (*UA_Nodestore_removeNode)(void *nodestoreContext, const UA_NodeId *nodeid);
+
+/**
+ * Iteration
+ * ^^^^^^^^^
+ * The following definitions are used to call a callback for every node in the
+ * nodestore. */
+typedef void (*UA_Nodestore_iterate)(void *nodestoreContext, void* visitorContext, UA_NodestoreVisitor visitor);
+
+/**
+ * Release
+ * ^^^^^^^^
+ * Prototype for implementation of multithreading capable nodestores with reference counters instead of RCU LOCK.
+ * Indicates that the node is no longer referenced by the caller.
+ */
+
+/* The returned node is immutable. */
+typedef const UA_Node * (*UA_Nodestore_getNode)(void *nodestoreContext, const UA_NodeId *nodeid);
+
+typedef void (*UA_Nodestore_releaseNode)(void *nodestoreContext, const UA_Node *node);
+
+
+/**
+ * NodestoreInterface Type
+ * ^^^^^^^^^^^^^^^^^^^^^^^
+ * Definition of the NodestoreInterface with function pointers to the nodestore.
+ */
+
+
+
+/* Namespace hinzugefügt */
+
+struct UA_Namespace{
+    UA_UInt16 index;
+    UA_String uri;
+    UA_Nodestore* nodestore;
+    UA_DataType* dataTypes;
+    size_t dataTypesSize;
+};
+
+
+typedef struct UA_Namespace UA_Namespace;
+
+void UA_EXPORT
+UA_Namespace_init(UA_Namespace * namespacePtr, const UA_String * namespaceUri);
+UA_Namespace UA_EXPORT *
+UA_Namespace_new(const UA_String * namespaceUri);
+UA_Namespace UA_EXPORT *
+UA_Namespace_newFromChar(const char * namespaceUri);
+void UA_EXPORT
+UA_Namespace_deleteMembers(UA_Namespace* namespacePtr);
+
+void
+UA_Namespace_updateDataTypes(UA_Namespace * namespaceToUpdate,
+                             UA_Namespace * namespaceNewDataTypes, UA_UInt16 newNamespaceIndex);
+void
+UA_Namespace_changeNodestore(UA_Namespace * namespacesToUpdate,
+                             UA_Namespace * namespaceNewNodestore,
+                             UA_Nodestore * defaultNodestore,
+                             UA_UInt16 newIdx);
+void
+UA_Namespace_updateNodestores(UA_Namespace * namespacesToUpdate, size_t namespacesToUpdateSize,
+size_t* oldNsIdxToNewNsIdx, size_t oldNsIdxToNewNsIdxSize);
+
+
+//////////////
 
 typedef UA_Connection* UA_ConnectionPTR;       
 typedef UA_Connection** UA_ConnectionPTRPTR;

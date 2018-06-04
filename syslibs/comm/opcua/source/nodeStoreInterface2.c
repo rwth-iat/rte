@@ -759,7 +759,8 @@ OV_DLLFNCEXPORT UA_StatusCode addReference(UA_Node *node){
 
 	for (size_t i = 0; i < node->referencesSize; i++){
 		UA_NodeId_copy(&(references[i].referenceTypeId), &(node->references[i].referenceTypeId));
-		UA_ExpandedNodeId_copy(&(references[i].nodeId), &(node->references[i].targetId));
+		UA_ExpandedNodeId_copy(&(references[i].nodeId), node->references[i].targetIds);
+	//	UA_ExpandedNodeId_copy(&(references[i].nodeId), &(node->references[i].targetIds));
 		node->references[i].isInverse = !references[i].isForward;
 	}
 
@@ -767,38 +768,38 @@ OV_DLLFNCEXPORT UA_StatusCode addReference(UA_Node *node){
 	return result;
 }
 
-static void OV_NodeStore2_deleteNodestore(void *handle){
+static void OV_NodeStore2_deleteNodestore(void *nodestoreContext){
 
 }
 
-static void OV_NodeStore2_deleteNode(UA_Node *node){
+static void OV_NodeStore2_deleteNode(void *nodestoreContext, UA_Node *node){
 	if (node){
-		UA_Node_deleteMembersAnyNodeClass(node);
+		UA_Node_deleteMembers(node);
 	}
 	UA_free(node);
 }
-static void OV_NodeStore2_releaseNode(void *handle, const UA_Node *node){
-	OV_NodeStore2_deleteNode((UA_Node*)node);
+static void OV_NodeStore2_releaseNode(void *nodestoreContext, const UA_Node *node){
+	OV_NodeStore2_deleteNode(nodestoreContext, (UA_Node*)node);
 }
-static UA_StatusCode OV_NodeStore2_insert(void *handle, UA_Node *node, UA_NodeId *parrentNode){
-	//OV_NodeStore2_releaseNode(handle, node);
+static UA_StatusCode OV_NodeStore2_insert(void *nodestoreContext, UA_Node *node, UA_NodeId *parrentNode){
+	//OV_NodeStore2_releaseNode(nodestoreContext, node);
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 
 
-static UA_StatusCode OV_NodeStore2_linkNamespace(void *handle, UA_UInt16 namespaceIndex){
+static UA_StatusCode OV_NodeStore2_linkNamespace(void *nodestoreContext, UA_UInt16 namespaceIndex){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
-static UA_StatusCode OV_NodeStore2_unlinkNamespace(void *handle, UA_UInt16 namespaceIndex){
+static UA_StatusCode OV_NodeStore2_unlinkNamespace(void *nodestoreContext, UA_UInt16 namespaceIndex){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
-static void OV_NodeStore2_iterate(void *handle, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor){
+static void OV_NodeStore2_iterate(void *nodestoreContext, void* visitornodestoreContext, UA_NodestoreVisitor visitor){
 }
-static UA_Node * OV_NodeStore2_newNode(UA_NodeClass nodeClass){ //TODO add nodestore handle? --> move nodeStore from static context to main
+static UA_Node * OV_NodeStore2_newNode(UA_NodeClass nodeClass){ //TODO add nodestore nodestoreContext? --> move nodeStore from static context to main
     return NULL;
 }
 
-static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *nodeId){
+static const UA_Node * OV_NodeStore2_getNode(void *nodestoreContext, const UA_NodeId *nodeId){
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
@@ -1238,16 +1239,16 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 
 	return newNode;
 }
-static UA_Node * OV_NodeStore2_getCopyNode(void *handle, const UA_NodeId *nodeId){
-	return (UA_Node*)OV_NodeStore2_getNode(handle, nodeId);
+static UA_Node * OV_NodeStore2_getCopyNode(void *nodestoreContext, const UA_NodeId *nodeId, UA_Node **outNode){
+	return (UA_Node*)OV_NodeStore2_getNode(nodestoreContext, nodeId);
 }
-static UA_StatusCode OV_NodeStore2_removeNode(void *handle, const UA_NodeId *nodeId){
+static UA_StatusCode OV_NodeStore2_removeNode(void *nodestoreContext, const UA_NodeId *nodeId){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
-static UA_StatusCode OV_NodeStore2_insertNode(void *handle, UA_Node *node, UA_NodeId *parrentNode){
-	return OV_NodeStore2_insert(handle, node, parrentNode);
+static UA_StatusCode OV_NodeStore2_insertNode(void *nodestoreContext, UA_Node *node, UA_NodeId *parrentNode){
+	return OV_NodeStore2_insert(nodestoreContext, node, parrentNode);
 }
-static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
+static UA_StatusCode OV_NodeStore2_replaceNode(void *nodestoreContext, UA_Node *node){
 	OV_PATH					path;
 	OV_INSTPTR_ov_object	pobj		=	NULL;
 	OV_VTBLPTR_ov_object	pVtblObj	=	NULL;
@@ -1427,31 +1428,35 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *handle, UA_Node *node){
 
 
 	ov_memstack_unlock();
-	OV_NodeStore2_releaseNode(handle, node);
+	OV_NodeStore2_releaseNode(nodestoreContext, node);
 	return UA_STATUSCODE_GOOD;
 }
 
-UA_NodestoreInterface*
+UA_Nodestore*
 opcua_nodeStoreFunctions_ovNodeStoreInterface2New(void) {
-	UA_NodestoreInterface *nsi = ov_database_malloc(sizeof(UA_NodestoreInterface));
-    nsi->handle =        	NULL;
-    nsi->deleteNodestore =  (UA_NodestoreInterface_deleteNodeStore) 		OV_NodeStore2_deleteNodestore;
-    nsi->newNode =       	(UA_NodestoreInterface_newNode)     OV_NodeStore2_newNode;
-    nsi->deleteNode =    	(UA_NodestoreInterface_deleteNode)  OV_NodeStore2_deleteNode;
-    nsi->insertNode =       	(UA_NodestoreInterface_insertNode)      OV_NodeStore2_insertNode;
-    nsi->getNode =          	(UA_NodestoreInterface_getNode)         OV_NodeStore2_getNode;
-    nsi->getNodeCopy =      	(UA_NodestoreInterface_getNodeCopy)     OV_NodeStore2_getCopyNode;
-    nsi->replaceNode =      	(UA_NodestoreInterface_replaceNode)     OV_NodeStore2_replaceNode;
-    nsi->removeNode =       	(UA_NodestoreInterface_removeNode)      OV_NodeStore2_removeNode;
-    nsi->iterate =       (UA_NodestoreInterface_iterate)     OV_NodeStore2_iterate;
-    nsi->releaseNode =      	(UA_NodestoreInterface_releaseNode) 	OV_NodeStore2_releaseNode;
-    nsi->linkNamespace = (UA_NodestoreInterface_linkNamespace) OV_NodeStore2_linkNamespace;
-    nsi->unlinkNamespace = (UA_NodestoreInterface_unlinkNamespace) OV_NodeStore2_unlinkNamespace;
+	UA_Nodestore *nsi = ov_database_malloc(sizeof(UA_Nodestore));
+    nsi->context =        	NULL;
+    nsi->deleteNodestore =  (UA_Nodestore_deleteNodeStore) 		OV_NodeStore2_deleteNodestore;
+    nsi->newNode =       	(UA_Nodestore_newNode)     OV_NodeStore2_newNode;
+    nsi->deleteNode =    	(UA_Nodestore_deleteNode)  OV_NodeStore2_deleteNode;
+    nsi->insertNode =       	(UA_Nodestore_insertNode)      OV_NodeStore2_insertNode;
+    nsi->getNode =          	(UA_Nodestore_getNode)         OV_NodeStore2_getNode;
+    nsi->getNodeCopy =      	(UA_Nodestore_getNodeCopy)     OV_NodeStore2_getCopyNode;
+    nsi->replaceNode =      	(UA_Nodestore_replaceNode)     OV_NodeStore2_replaceNode;
+    nsi->removeNode =       	(UA_Nodestore_removeNode)      OV_NodeStore2_removeNode;
+    nsi->iterate =       (UA_Nodestore_iterate)     OV_NodeStore2_iterate;
+    nsi->releaseNode =      	(UA_Nodestore_releaseNode) 	OV_NodeStore2_releaseNode;
+    //nsi->inPlaceEditAllowed =
+
+    /* nicht im Standart Nodestore enthalten */
+    // nsi->linkNamespace = (UA_Nodestore_linkNamespace) OV_NodeStore2_linkNamespace;
+    // nsi->unlinkNamespace = (UA_Nodestore_unlinkNamespace) OV_NodeStore2_unlinkNamespace;
+
     return nsi;
 }
 void
-opcua_nodeStoreFunctions_ovNodeStoreInterface2Delete(UA_NodestoreInterface * nodestoreInterface){
-	if (nodestoreInterface->handle)
-		UA_free(nodestoreInterface->handle);
+opcua_nodeStoreFunctions_ovNodeStoreInterface2Delete(UA_Nodestore * nodestoreInterface){
+	if (nodestoreInterface->context)
+		UA_free(nodestoreInterface->context);
 }
 

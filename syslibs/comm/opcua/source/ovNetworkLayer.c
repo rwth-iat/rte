@@ -98,7 +98,8 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     Ov_GetVTablePtr(opcua_ovNetworkLayer, pVtblNetworkLayer, pNetworkLayer);
     nl.handle = pNetworkLayer;
     nl.start = pVtblNetworkLayer->m_start;
-    nl.getJobs = pVtblNetworkLayer->m_getJobs;
+    nl.listen = pVtblNetworkLayer->m_listen;
+ //   nl.getJobs = pVtblNetworkLayer->m_getJobs;
     nl.stop = pVtblNetworkLayer->m_stop;
     nl.deleteMembers = pVtblNetworkLayer->m_delete;
     nl.discoveryUrl = pNetworkLayer->v_discoveryUrlInternal;
@@ -229,89 +230,61 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_ovNetworkLayer_getaccess(
 }
 
 OV_DLLFNCEXPORT UA_StatusCode opcua_ovNetworkLayer_start(
-	struct UA_ServerNetworkLayer *nl,
-	UA_Logger logger
+	UA_ServerNetworkLayer *nl,
+	const UA_String *customHostname
 ) {
 
     return (UA_StatusCode)0;
 }
 
-OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_getJobs(
-	struct UA_ServerNetworkLayer *nl,
-	UA_Job** jobs,
+OV_DLLFNCEXPORT UA_StatusCode opcua_ovNetworkLayer_listen(
+	UA_ServerNetworkLayer *nl,
+	UA_Server *server,
 	UA_UInt16 timeout
 ) {
 
 	OV_INSTPTR_opcua_uaConnection	pConnection	=	NULL;
-	OV_UINT								counter		=	0;
 	OV_UINT								closeConnCounter	=	0;
-	UA_Job		 						*newJobs	=	NULL;
 	OV_INSTPTR_opcua_ovNetworkLayer	this		=	Ov_StaticPtrCast(opcua_ovNetworkLayer, nl->handle);
 
-	/*	count work items	*/
-	Ov_ForEachChild(opcua_networkLayerToConnection, this, pConnection){
-		if(pConnection->v_workNext == TRUE){
-			counter++;
-		}
-
-	}
-
-	counter += this->v_connsToCloseCount * 2;
-
-	newJobs = UA_malloc(sizeof(UA_Job)*(counter+1));
-	if(!newJobs){
-		jobs = NULL;
-		return 0;
-	}
-
 	/*	iterate and collect work	*/
-	counter = 0;
 	Ov_ForEachChild(opcua_networkLayerToConnection, this, pConnection){
 		if(pConnection->v_workNext == TRUE){
-			newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE_NETWORKLAYER;
-			UA_ByteString_allocBuffer(&(newJobs[counter].job.binaryMessage.message), pConnection->v_buffer.length);
-			memcpy(newJobs[counter].job.binaryMessage.message.data, pConnection->v_buffer.data, pConnection->v_buffer.length);
-			ksbase_free_KSDATAPACKET(&(pConnection->v_buffer));
-			newJobs[counter].job.binaryMessage.connection = pConnection->v_connection;
+			UA_ByteString temp;
+			temp.data = pConnection->v_buffer.data;
+			temp.length = pConnection->v_buffer.length;
+			UA_Server_processBinaryMessage(server, pConnection->v_connection, &temp);
+			UA_ByteString_deleteMembers(&temp);
 			pConnection->v_workNext = FALSE;
-			counter++;
 		}
 	}
 
 	for(closeConnCounter = 0; closeConnCounter < this->v_connsToCloseCount; closeConnCounter++){
-		newJobs[counter].type = UA_JOBTYPE_DETACHCONNECTION;
-		newJobs[counter].job.closeConnection = this->v_connsToClose[closeConnCounter];
-		counter++;
-		newJobs[counter].type = UA_JOBTYPE_METHODCALL_DELAYED;
-		newJobs[counter].job.methodCall.method = FreeConnection;
-		newJobs[counter].job.methodCall.data = this->v_connsToClose[closeConnCounter];
-		counter++;
+		UA_Server_removeConnection(server, pConnection->v_connection);
+		FreeConnection(server, pConnection->v_connection);
 	}
 	Ov_HeapFree(this->v_connsToClose);
 	this->v_connsToClose = NULL;
 	this->v_connsToCloseCount = 0;
 
-	if(counter == 0) {
-		UA_free(newJobs);
-		*jobs = NULL;
-	} else {
-		*jobs = newJobs;
-	}
-
-	return counter;
+	return UA_STATUSCODE_GOOD;
 }
 
-OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_stop(
-	struct UA_ServerNetworkLayer *nl,
-	UA_Job** jobs
+//OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_stop(UA_ServerNetworkLayer *nl,
+//	UA_Server *server
+//) {
+//	return(UA_INT32)0;
+//
+//}
+
+OV_DLLFNCEXPORT void opcua_ovNetworkLayer_stop(UA_ServerNetworkLayer *nl,
+	UA_Server *server
 ) {
 
-    return (UA_Int32)0;
+
 }
 
-OV_DLLFNCEXPORT void opcua_ovNetworkLayer_delete(
-	struct UA_ServerNetworkLayer *nl
-) {
+OV_DLLFNCEXPORT void opcua_ovNetworkLayer_delete(UA_ServerNetworkLayer *nl) {
 //	Ov_HeapFree(pOVNetworkLayer->v_messageBuffer.data);
 //	UA_ByteString_deleteMembers(&(pOVNetworkLayer->v_sendBuffer));
 	Ov_DeleteObject(pOVNetworkLayer);
