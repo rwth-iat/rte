@@ -218,7 +218,7 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 
 	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
 
-	UA_Namespace_init(&pinst->v_namespace, &tmpNamespaceName);
+	//UA_Namespace_init(&pinst->v_namespace, &tmpNamespaceName);
 	UA_String_deleteMembers(&tmpNamespaceName);
 
 	pinst->v_namespace.nodestore = opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
@@ -252,7 +252,7 @@ static void opcua_uaServer_stopServer(OV_INSTPTR_opcua_uaServer pinst){
 	pinst->v_networkLayerOv.deleteMembers(&(pinst->v_networkLayerOv));
 	UA_Server_delete(pinst->v_serverData);
 
-	UA_Namespace_deleteMembers(&(pinst->v_namespace));
+	//UA_Namespace_deleteMembers(&(pinst->v_namespace));
 	return;
 }
 

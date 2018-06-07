@@ -1,0 +1,396 @@
+EXPORTS
+    UA_AccessControl_default @1
+    UA_Array_copy @2
+    UA_Array_delete @3
+    UA_Array_new @4
+    UA_BYTESTRING_NULL @5 DATA
+    UA_ByteString_allocBuffer @6
+    UA_CertificateVerification_AcceptAll @7
+    UA_ClientConfig_default @8 DATA
+    UA_ClientConnectionTCP @9
+    UA_Client_MonitoredItems_createDataChange @10
+    UA_Client_MonitoredItems_createDataChanges @11
+    UA_Client_MonitoredItems_createEvent @12
+    UA_Client_MonitoredItems_createEvents @13
+    UA_Client_MonitoredItems_delete @14
+    UA_Client_MonitoredItems_deleteSingle @15
+    UA_Client_NamespaceGetIndex @16
+    UA_Client_Subscriptions_create @17
+    UA_Client_Subscriptions_delete @18
+    UA_Client_Subscriptions_deleteSingle @19
+    UA_Client_Subscriptions_modify @20
+    UA_Client_addReference @21
+    UA_Client_call @22
+    UA_Client_close @23
+    UA_Client_connect @24
+    UA_Client_connect_noSession @25
+    UA_Client_connect_username @26
+    UA_Client_delete @27
+    UA_Client_deleteNode @28
+    UA_Client_deleteReference @29
+    UA_Client_disconnect @30
+    UA_Client_findServers @31
+    UA_Client_findServersOnNetwork @32
+    UA_Client_forEachChildNodeCall @33
+    UA_Client_getContext @34
+    UA_Client_getEndpoints @35
+    UA_Client_getState @36
+    UA_Client_manuallyRenewSecureChannel @37
+    UA_Client_new @38
+    UA_Client_readArrayDimensionsAttribute @39
+    UA_Client_reset @40
+    UA_Client_runAsync @41
+    UA_Client_writeArrayDimensionsAttribute @42
+    UA_ConnectionConfig_default @43 DATA
+    UA_Connection_deleteMembers @44
+    UA_DataTypeAttributes_default @45 DATA
+    UA_DateTime_localTimeUtcOffset @46
+    UA_DateTime_now @47
+    UA_DateTime_nowMonotonic @48
+    UA_DateTime_toStruct @49
+    UA_EXPANDEDNODEID_NULL @50 DATA
+    UA_ExpandedNodeId_equal @51
+    UA_GUID_NULL @52 DATA
+    UA_Guid_equal @53
+    UA_Guid_random @54
+    UA_Log_Stdout @55
+    UA_MethodAttributes_default @56 DATA
+    UA_NODEID_NULL @57 DATA
+    UA_NodeId_equal @58
+    UA_NodeId_hash @59
+    UA_NodeId_isNull @60
+    UA_Node_addReference @61
+    UA_Node_copy @62
+    UA_Node_copy_alloc @63
+    UA_Node_deleteMembers @64
+    UA_Node_deleteReference @65
+    UA_Node_deleteReferences @66
+    UA_Node_setAttributes @67
+    UA_Nodestore_default_new @68
+    UA_ObjectAttributes_default @69 DATA
+    UA_ObjectTypeAttributes_default @70 DATA
+    UA_QualifiedName_equal @71
+    UA_ReferenceTypeAttributes_default @72 DATA
+    UA_STRING_NULL @73 DATA
+    UA_SecurityPolicy_None @74
+    UA_ServerConfig_delete @75
+    UA_ServerConfig_new_minimal @76
+    UA_ServerConfig_set_customHostname @77
+    UA_ServerNetworkLayerTCP @78
+    UA_Server_addDataSourceVariableNode @79
+    UA_Server_addMethodNodeEx @80
+    UA_Server_addMethodNode_finish @81
+    UA_Server_addNamespace @82
+    UA_Server_addNode_begin @83
+    UA_Server_addNode_finish @84
+    UA_Server_addPeriodicServerRegisterCallback @85
+    UA_Server_addReference @86
+    UA_Server_addRepeatedCallback @87
+    UA_Server_browse @88
+    UA_Server_browseNext @89
+    UA_Server_call @90
+    UA_Server_changeRepeatedCallbackInterval @91
+    UA_Server_delete @92
+    UA_Server_deleteNode @93
+    UA_Server_deleteReference @94
+    UA_Server_forEachChildNodeCall @95
+    UA_Server_getNodeContext @96
+    UA_Server_new @97
+    UA_Server_processBinaryMessage @98
+    UA_Server_read @99
+    UA_Server_register_discovery @100
+    UA_Server_removeConnection @101
+    UA_Server_removeRepeatedCallback @102
+    UA_Server_run @103
+    UA_Server_run_iterate @104
+    UA_Server_run_shutdown @105
+    UA_Server_run_startup @106
+    UA_Server_setMethodNode_callback @107
+    UA_Server_setNodeContext @108
+    UA_Server_setNodeTypeLifecycle @109
+    UA_Server_setRegisterServerCallback @110
+    UA_Server_setVariableNode_dataSource @111
+    UA_Server_setVariableNode_valueCallback @112
+    UA_Server_translateBrowsePathToNodeIds @113
+    UA_Server_unregister_discovery @114
+    UA_Server_write @115
+    UA_StatusCode_name @116
+    UA_String_equal @117
+    UA_String_fromChars @118
+    UA_TRANSPORT @119 DATA
+    UA_TYPES @120 DATA
+    UA_UInt32_random @121
+    UA_VariableAttributes_default @122 DATA
+    UA_VariableTypeAttributes_default @123 DATA
+    UA_Variant_copyRange @124
+    UA_Variant_setArray @125
+    UA_Variant_setArrayCopy @126
+    UA_Variant_setRange @127
+    UA_Variant_setRangeCopy @128
+    UA_Variant_setScalar @129
+    UA_Variant_setScalarCopy @130
+    UA_ViewAttributes_default @131 DATA
+    UA_copy @132
+    UA_delete @133
+    UA_deleteMembers @134
+    UA_findDataType @135
+    UA_new @136
+    UA_parseEndpointUrl @137
+    UA_random_seed @138
+    __UA_Client_AsyncService @139
+    __UA_Client_Service @140
+    __UA_Client_addNode @141
+    __UA_Client_readAttribute @142
+    __UA_Client_writeAttribute @143
+    __UA_Server_addNode @144
+    __UA_Server_read @145
+    __UA_Server_write @146
+    addReference @147
+    copyOPCUAStringToOV @148
+    opcua_networkLayerToConnection_getaccess @149
+    opcua_networkLayerToConnection_link @150
+    opcua_networkLayerToConnection_unlink @151
+    opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess @152
+    opcua_nodeStoreFunctions_ovNodeStoreInterface2Delete @153
+    opcua_nodeStoreFunctions_ovNodeStoreInterface2New @154
+    opcua_nodeStoreFunctions_resolveNodeIdToOvObject @155
+    opcua_nodeStoreFunctions_resolveNodeIdToPath @156
+    opcua_nsOv_getNodeClassAndAccess @157
+    opcua_nsOv_nodeClassMaskMatchAndGetAccess @158
+    opcua_ovNetworkLayer_constructor @159
+    opcua_ovNetworkLayer_delete @160
+    opcua_ovNetworkLayer_destructor @161
+    opcua_ovNetworkLayer_discoveryUrl_get @162
+    opcua_ovNetworkLayer_getaccess @163
+    opcua_ovNetworkLayer_listen @164
+    opcua_ovNetworkLayer_shutdown @165
+    opcua_ovNetworkLayer_start @166
+    opcua_ovNetworkLayer_startup @167
+    opcua_ovNetworkLayer_stop @168
+    opcua_uaConnection_HandleRequest @169
+    opcua_uaConnection_constructor @170
+    opcua_uaConnection_destructor @171
+    opcua_uaConnection_shutdown @172
+    opcua_uaConnection_startup @173
+    opcua_uaConnection_typemethod @174
+    opcua_uaIdentificator_constructor @175
+    opcua_uaIdentificator_createClientHandler @176
+    opcua_uaIdentificator_identify @177
+    opcua_uaServer_ApplicationName_get @178
+    opcua_uaServer_ApplicationName_set @179
+    opcua_uaServer_ApplicationURI_get @180
+    opcua_uaServer_ApplicationURI_set @181
+    opcua_uaServer_LoginEnableAnonymous_get @182
+    opcua_uaServer_LoginEnableAnonymous_set @183
+    opcua_uaServer_LoginEnableUsernamePassword_get @184
+    opcua_uaServer_LoginEnableUsernamePassword_set @185
+    opcua_uaServer_LoginLoginsCount_get @186
+    opcua_uaServer_LoginPasswords_get @187
+    opcua_uaServer_LoginPasswords_set @188
+    opcua_uaServer_LoginUsernames_get @189
+    opcua_uaServer_LoginUsernames_set @190
+    opcua_uaServer_addInformationModel @191
+    opcua_uaServer_constructor @192
+    opcua_uaServer_destructor @193
+    opcua_uaServer_getaccess @194
+    opcua_uaServer_shutdown @195
+    opcua_uaServer_startup @196
+    opcua_uaServer_typemethod @197
+    opcua_uaSimpleTicketAuthenticator_TicketGetaccess @198
+    opcua_uaSimpleTicketAuthenticator_constructor @199
+    opcua_uaSimpleTicketAuthenticator_createticket @200
+    opcua_uaSimpleTicketAuthenticator_deleteticket @201
+    opcua_uaSimpleTicketAuthenticator_encodereply @202
+    opcua_uaSimpleTicketAuthenticator_shutdown @203
+    opcua_uaSimpleTicketAuthenticator_startup @204
+    ov_AnyToVariant @205
+    ov_VariantToAny @206
+    ov_library_open_opcua @207
+    ov_library_open_opcua_old @208
+    ov_resultToUaStatusCode @209
+    ov_varTypeToNodeId @210
+    passoc_opcua_networkLayerToConnection @211 DATA
+    pclass_opcua_nodeStoreFunctions @212 DATA
+    pclass_opcua_ovNetworkLayer @213 DATA
+    pclass_opcua_uaConnection @214 DATA
+    pclass_opcua_uaIdentificator @215 DATA
+    pclass_opcua_uaServer @216 DATA
+    pclass_opcua_uaSimpleTicketAuthenticator @217 DATA
+    read_xdr_string_tomemstack @218
+    read_xdr_uint @219
+
+IMPORTS
+
+    ksbase.dll.ks_isvalidname
+    ksbase.dll.ks_logfile_debug
+    ksbase.dll.ks_logfile_error
+    ksbase.dll.ks_logfile_info
+    ksbase.dll.ks_logfile_print_sysMsg
+    ksbase.dll.ks_logfile_warning
+    ksbase.dll.ks_splitOneStringPath
+    ksbase.dll.ksbase_AssocChannelClientHandler_getaccess
+    ksbase.dll.ksbase_AssocChannelClientHandler_link
+    ksbase.dll.ksbase_AssocChannelClientHandler_unlink
+    ksbase.dll.ksbase_AssocChannelDataHandler_getaccess
+    ksbase.dll.ksbase_AssocChannelDataHandler_link
+    ksbase.dll.ksbase_AssocChannelDataHandler_unlink
+    ksbase.dll.ksbase_AssocClientToTicketGenerator_getaccess
+    ksbase.dll.ksbase_AssocClientToTicketGenerator_link
+    ksbase.dll.ksbase_AssocClientToTicketGenerator_unlink
+    ksbase.dll.ksbase_AssocComTaskList_getaccess
+    ksbase.dll.ksbase_AssocComTaskList_link
+    ksbase.dll.ksbase_AssocComTaskList_unlink
+    ksbase.dll.ksbase_AssocCurrentChannel_getaccess
+    ksbase.dll.ksbase_AssocCurrentChannel_link
+    ksbase.dll.ksbase_AssocCurrentChannel_unlink
+    ksbase.dll.ksbase_Channel_shutdown
+    ksbase.dll.ksbase_Channel_startup
+    ksbase.dll.ksbase_ClientBase_processCreateObject
+    ksbase.dll.ksbase_ClientBase_processDeleteObject
+    ksbase.dll.ksbase_ClientBase_processGetCanonicalPath
+    ksbase.dll.ksbase_ClientBase_processGetEP
+    ksbase.dll.ksbase_ClientBase_processGetPP
+    ksbase.dll.ksbase_ClientBase_processGetServer
+    ksbase.dll.ksbase_ClientBase_processGetVar
+    ksbase.dll.ksbase_ClientBase_processLink
+    ksbase.dll.ksbase_ClientBase_processRegister
+    ksbase.dll.ksbase_ClientBase_processRenameObject
+    ksbase.dll.ksbase_ClientBase_processSetVar
+    ksbase.dll.ksbase_ClientBase_processUnLink
+    ksbase.dll.ksbase_ClientBase_processUnRegister
+    ksbase.dll.ksbase_ClientBase_requestCreateObject
+    ksbase.dll.ksbase_ClientBase_requestDeleteObject
+    ksbase.dll.ksbase_ClientBase_requestGetCanonicalPath
+    ksbase.dll.ksbase_ClientBase_requestGetEP
+    ksbase.dll.ksbase_ClientBase_requestGetPP
+    ksbase.dll.ksbase_ClientBase_requestGetServer
+    ksbase.dll.ksbase_ClientBase_requestGetVar
+    ksbase.dll.ksbase_ClientBase_requestLink
+    ksbase.dll.ksbase_ClientBase_requestRegister
+    ksbase.dll.ksbase_ClientBase_requestRenameObject
+    ksbase.dll.ksbase_ClientBase_requestSetVar
+    ksbase.dll.ksbase_ClientBase_requestUnLink
+    ksbase.dll.ksbase_ClientBase_requestUnRegister
+    ksbase.dll.ksbase_ClientBase_reset
+    ksbase.dll.ksbase_ClientBase_serverHost_set
+    ksbase.dll.ksbase_ClientBase_serverName_set
+    ksbase.dll.ksbase_ClientHandler_shutdown
+    ksbase.dll.ksbase_ClientHandler_startup
+    ksbase.dll.ksbase_ClientTicketGenerator_decodeReply
+    ksbase.dll.ksbase_ClientTicketGenerator_encodeTicket
+    ksbase.dll.ksbase_ComTask_actimode_get
+    ksbase.dll.ksbase_ComTask_actimode_set
+    ksbase.dll.ksbase_ComTask_calcExec
+    ksbase.dll.ksbase_ComTask_constructor
+    ksbase.dll.ksbase_ComTask_cycInterval_get
+    ksbase.dll.ksbase_ComTask_cycInterval_set
+    ksbase.dll.ksbase_ComTask_destructor
+    ksbase.dll.ksbase_ComTask_getaccess
+    ksbase.dll.ksbase_ComTask_typemethod
+    ksbase.dll.ksbase_KSDATAPACKET_append
+    ksbase.dll.ksbase_KSDATAPACKET_set
+    ksbase.dll.ksbase_Manager_getaccess
+    ksbase.dll.ksbase_Manager_getserverdata
+    ksbase.dll.ksbase_Manager_register
+    ksbase.dll.ksbase_Manager_shutdown
+    ksbase.dll.ksbase_Manager_unregister
+    ksbase.dll.ksbase_NoneAuth
+    ksbase.dll.ksbase_NoneTicketAuthenticator_TicketGetaccess
+    ksbase.dll.ksbase_NoneTicketAuthenticator_constructor
+    ksbase.dll.ksbase_NoneTicketAuthenticator_createticket
+    ksbase.dll.ksbase_NoneTicketAuthenticator_deleteticket
+    ksbase.dll.ksbase_NoneTicketAuthenticator_encodereply
+    ksbase.dll.ksbase_NoneTicketAuthenticator_startup
+    ksbase.dll.ksbase_NoneTicketGenerator_decodeReply
+    ksbase.dll.ksbase_NoneTicketGenerator_encodeTicket
+    ksbase.dll.ksbase_NoneTicketGenerator_startup
+    ksbase.dll.ksbase_ProtocolIdentificator_createClientHandler
+    ksbase.dll.ksbase_ProtocolIdentificator_getaccess
+    ksbase.dll.ksbase_ProtocolIdentificator_identify
+    ksbase.dll.ksbase_RootComTask_constructor
+    ksbase.dll.ksbase_RootComTask_cycsecs_get
+    ksbase.dll.ksbase_RootComTask_cycsecs_set
+    ksbase.dll.ksbase_RootComTask_cycusecs_get
+    ksbase.dll.ksbase_RootComTask_cycusecs_set
+    ksbase.dll.ksbase_RootComTask_getaccess
+    ksbase.dll.ksbase_RootComTask_shutdown
+    ksbase.dll.ksbase_RootComTask_startup
+    ksbase.dll.ksbase_ServerRep_constructor
+    ksbase.dll.ksbase_ServerRep_expirationtime_get
+    ksbase.dll.ksbase_ServerRep_expirationtime_set
+    ksbase.dll.ksbase_ServerRep_name_get
+    ksbase.dll.ksbase_ServerRep_name_set
+    ksbase.dll.ksbase_ServerRep_port_get
+    ksbase.dll.ksbase_ServerRep_port_set
+    ksbase.dll.ksbase_ServerRep_protocols_get
+    ksbase.dll.ksbase_ServerRep_protocols_set
+    ksbase.dll.ksbase_ServerRep_regtime_get
+    ksbase.dll.ksbase_ServerRep_regtime_set
+    ksbase.dll.ksbase_ServerRep_shutdown
+    ksbase.dll.ksbase_ServerRep_startup
+    ksbase.dll.ksbase_ServerRep_state_get
+    ksbase.dll.ksbase_ServerRep_state_set
+    ksbase.dll.ksbase_ServerRep_timetolive_get
+    ksbase.dll.ksbase_ServerRep_timetolive_set
+    ksbase.dll.ksbase_ServerRep_typemethod
+    ksbase.dll.ksbase_ServerRep_version_get
+    ksbase.dll.ksbase_ServerRep_version_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACDelete_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACDelete_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACInstantiate_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACInstantiate_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACLink_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACLink_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACRead_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACRead_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACRename_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACRename_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACUnlink_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACUnlink_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACWrite_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACWrite_set
+    ksbase.dll.ksbase_TicketAuthenticator_TicketGetaccess
+    ksbase.dll.ksbase_TicketAuthenticator_constructor
+    ksbase.dll.ksbase_TicketAuthenticator_createticket
+    ksbase.dll.ksbase_TicketAuthenticator_deleteticket
+    ksbase.dll.ksbase_TicketAuthenticator_encodereply
+    ksbase.dll.ksbase_TicketAuthenticator_shutdown
+    ksbase.dll.ksbase_TicketAuthenticator_startup
+    ksbase.dll.ksbase_free_KSDATAPACKET
+    ksbase.dll.noneticketvtbl
+    ksbase.dll.ov_ksserver_createobject
+    ksbase.dll.ov_ksserver_deleteobject
+    ksbase.dll.ov_ksserver_exgdata
+    ksbase.dll.ov_ksserver_getcanonicalpath
+    ksbase.dll.ov_ksserver_getep
+    ksbase.dll.ov_ksserver_gethist
+    ksbase.dll.ov_ksserver_getpp
+    ksbase.dll.ov_ksserver_getvar
+    ksbase.dll.ov_ksserver_link
+    ksbase.dll.ov_ksserver_renameobject
+    ksbase.dll.ov_ksserver_setvar
+    ksbase.dll.ov_ksserver_svclog_register
+    ksbase.dll.ov_ksserver_svclog_unregister
+    ksbase.dll.ov_ksserver_ticket_setnoneticketaccess
+    ksbase.dll.ov_ksserver_unlink
+    ksbase.dll.ov_library_open_ksbase
+    ksbase.dll.ov_library_open_ksbase_old
+    ksbase.dll.passoc_ksbase_AssocChannelClientHandler
+    ksbase.dll.passoc_ksbase_AssocChannelDataHandler
+    ksbase.dll.passoc_ksbase_AssocClientToTicketGenerator
+    ksbase.dll.passoc_ksbase_AssocComTaskList
+    ksbase.dll.passoc_ksbase_AssocCurrentChannel
+    ksbase.dll.pclass_ksbase_Channel
+    ksbase.dll.pclass_ksbase_ClientBase
+    ksbase.dll.pclass_ksbase_ClientHandler
+    ksbase.dll.pclass_ksbase_ClientTicketGenerator
+    ksbase.dll.pclass_ksbase_ComTask
+    ksbase.dll.pclass_ksbase_DataHandler
+    ksbase.dll.pclass_ksbase_Manager
+    ksbase.dll.pclass_ksbase_NoneTicketAuthenticator
+    ksbase.dll.pclass_ksbase_NoneTicketGenerator
+    ksbase.dll.pclass_ksbase_ProtocolIdentificator
+    ksbase.dll.pclass_ksbase_RootComTask
+    ksbase.dll.pclass_ksbase_ServerRep
+    ksbase.dll.pclass_ksbase_TicketAuthenticator
+    ksbase.dll.pclass_ksbase_baseClientHandlerExtension
