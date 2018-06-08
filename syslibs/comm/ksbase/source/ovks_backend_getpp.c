@@ -230,9 +230,8 @@ OV_RESULT ov_ksserver_getpp_additem(
 		/*
 		*	vendor objects must be treated specially
 		*/
-		if((pelem->pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
-			&& (pelem->pobj >= &pdb->vendorobj[0])
-		) {
+		if(Ov_GetParent(ov_containment, pelem->pobj)==&pdb->vendordom)
+		{
 			objtype = KS_OT_VARIABLE;
 			vendorobj = TRUE;
 		} else {
