@@ -313,7 +313,7 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_shutdown(
 		/*	yes, here it waits until the thread is through....	*/
 		InterlockedExchange(&(runWorkerThread), 0);
 		if(WaitForSingleObject(pinst->v_threadHandle, 5000) != WAIT_OBJECT_0){
-			KS_logfile_warning(("%s: worker thread did not terminate correctly and in time. some memory might be lost."));
+			KS_logfile_warning(("%s: worker thread did not terminate correctly and in time. some memory might be lost.", pinst->v_identifier));
 		}
 		pinst->v_handleValid = FALSE;
 #elif OV_SYSTEM_UNIX

@@ -2155,7 +2155,7 @@ fprintf(stderr, "ANY: Element ohne Value\n");
 	/* Typ gleich? */
 	ksTyp = pvarcurrprops->value.vartype & OV_VT_KSMASK;
 
-    if( ksTyp != (OV_UINT)(pany->value.vartype & OV_VT_KSMASK) ) {
+    if( pvarcurrprops->value.vartype != pany->value.vartype ) {
 #if SETVAR_DEBUG
 fprintf(stderr, "ANY: TYP %d != %d\n", ksTyp, (pany->value.vartype & OV_VT_KSMASK));
 #endif
