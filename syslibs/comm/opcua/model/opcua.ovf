@@ -11,7 +11,7 @@ typedef UA_Nodestore* UA_FNC_OVNODESTOREINTERFACE2NEW();
 typedef void UA_FNC_OVNODESTOREINTERFACE2DELETE(UA_Nodestore * nodestoreInterface);
 	
 /* opcua-Server functions */
-typedef UA_StatusCode UA_FNC_ADDINFORMATIONMODEL(UA_Namespace **namespace, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel);
+typedef UA_StatusCode UA_FNC_ADDINFORMATIONMODEL(OV_STRING *namespaces, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel);
 typedef UA_Int32 UA_FNC_RESOLVENODEIDTOPATH(UA_NodeId nodeId, OV_PATH* pPath);
 typedef OV_INSTPTR_ov_object UA_FNC_RESOLVENDOEIDTOOVOBJECT(UA_NodeId *nodeId);
 typedef UA_Int32 UA_FNC_GETVTBLPOINTERANDCHECKACCESS(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access);

@@ -19,39 +19,14 @@
 /* 
 	Define your data types here. 
 */
-struct UA_NodeStore {
-    struct nodeEntry **entries;
-    UA_UInt32          size;
-    UA_UInt32          count;
-    UA_UInt32          sizePrimeIndex;
-};
-
-
 /*
- * NodestoreInterface Type Definition
- * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- * Definition of the function signatures for the NodestoreInterface
- */
-
-/**
- * Nodestore Lifecycle
- * ^^^^^^^^^^^^^^^^^^^ */
-
-/*
- * Is called, when Server will be deleted.
- * Do not call from a read-sidecritical section (multithreading).
- */
-typedef void (*UA_Nodestore_deleteNodeStore)(void *nodestoreContext);
-/*
- * Is called, when the Server uses this nodestore for a namespace with this namespaceIndex.
- */
 typedef UA_StatusCode (*UA_Nodestore_linkNamespace)(void *handle, UA_UInt16 namespaceIndex);
-/*
+
  * Is called, when the Server doesn't use this nodestore for a namespace with this namespaceIndex anymore.
- */
+
 typedef UA_StatusCode (*UA_Nodestore_unlinkNamespace)(void *handle, UA_UInt16 namespaceIndex);
 
-
+*/
 /**
  * Node Lifecycle
  * ^^^^^^^^^^^^^^
@@ -61,6 +36,9 @@ typedef UA_StatusCode (*UA_Nodestore_unlinkNamespace)(void *handle, UA_UInt16 na
  * to be removed via a special deleteNode function. (If the new node is not
  * added to the nodestore.) */
 /* Create an editable node of the given NodeClass. */
+
+typedef void (*UA_Nodestore_deleteNodeStore)(void *nodestoreContext);
+	
 typedef UA_Node * (*UA_Nodestore_newNode)(void *nodestoreContext, UA_NodeClass nodeClass);
 
 /* Delete an editable node. */
@@ -108,16 +86,10 @@ typedef const UA_Node * (*UA_Nodestore_getNode)(void *nodestoreContext, const UA
 typedef void (*UA_Nodestore_releaseNode)(void *nodestoreContext, const UA_Node *node);
 
 
-/**
- * NodestoreInterface Type
- * ^^^^^^^^^^^^^^^^^^^^^^^
- * Definition of the NodestoreInterface with function pointers to the nodestore.
- */
-
 
 
 /* Namespace hinzugefügt */
-
+/*
 struct UA_Namespace{
     UA_UInt16 index;
     UA_String uri;
@@ -125,6 +97,7 @@ struct UA_Namespace{
     UA_DataType* dataTypes;
     size_t dataTypesSize;
 };
+
 
 
 typedef struct UA_Namespace UA_Namespace;
@@ -150,13 +123,14 @@ void
 UA_Namespace_updateNodestores(UA_Namespace * namespacesToUpdate, size_t namespacesToUpdateSize,
 size_t* oldNsIdxToNewNsIdx, size_t oldNsIdxToNewNsIdxSize);
 
-
 //////////////
-
+*/
 typedef UA_Connection* UA_ConnectionPTR;       
 typedef UA_Connection** UA_ConnectionPTRPTR;
 typedef UA_Server* OV_PTR_UA_Server;
 	
-typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
+//typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
 
+typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_String *namespaces);
+	
 #endif

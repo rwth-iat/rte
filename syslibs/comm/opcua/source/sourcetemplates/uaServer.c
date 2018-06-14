@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2018-06-07   File created
+*   2018-06-14   File created
 *
 *******************************************************************************
 *
@@ -209,7 +209,7 @@ OV_DLLFNCEXPORT void opcua_uaServer_typemethod (
     return;
 }
 
-OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(UA_Namespace **namespace, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel) {
+OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(OV_STRING *namespaces, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel) {
 
     return (UA_StatusCode)0;
 }

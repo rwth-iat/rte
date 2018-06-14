@@ -1239,8 +1239,14 @@ static const UA_Node * OV_NodeStore2_getNode(void *nodestoreContext, const UA_No
 
 	return newNode;
 }
-static UA_Node * OV_NodeStore2_getCopyNode(void *nodestoreContext, const UA_NodeId *nodeId, UA_Node **outNode){
-	return (UA_Node*)OV_NodeStore2_getNode(nodestoreContext, nodeId);
+static UA_StatusCode OV_NodeStore2_getCopyNode(void *nodestoreContext, const UA_NodeId *nodeId, UA_Node **outNode){
+	UA_Node* node = (UA_Node*)OV_NodeStore2_getNode(nodestoreContext, nodeId);
+	if(node == NULL){
+		return UA_STATUSCODE_BADOUTOFMEMORY;
+	}else{
+		*outNode = node;
+		return UA_STATUSCODE_GOOD;
+	}
 }
 static UA_StatusCode OV_NodeStore2_removeNode(void *nodestoreContext, const UA_NodeId *nodeId){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;

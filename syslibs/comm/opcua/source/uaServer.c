@@ -201,7 +201,7 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	logger = ov_UAlogger_new();
 	pinst->v_serverConfig.logger = logger;
 	pinst->v_serverConfig.serverCertificate = loadCertificate();
-	pinst->v_networkLayerOv = ServerNetworkLayerOV_new(UA_ConnectionConfig_default, port);    //_standard zu _default
+	pinst->v_networkLayerOv = ServerNetworkLayerOV_new(UA_ConnectionConfig_default, port);
 	pinst->v_serverConfig.networkLayers = &(pinst->v_networkLayerOv);
 	pinst->v_serverConfig.networkLayersSize = 1;
 
@@ -215,15 +215,16 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[1], tmpName);
 	ov_string_setvalue(&tmpName, NULL);
 
-
+/*
 	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
-
-	//UA_Namespace_init(&pinst->v_namespace, &tmpNamespaceName);
+	UA_Namespace_init(&pinst->v_namespace, &tmpNamespaceName);
 	UA_String_deleteMembers(&tmpNamespaceName);
-
+*/
 	pinst->v_namespace.nodestore = opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
-
 	//if(UA_Server_addNamespace_full(pinst->v_serverData, &(pinst->v_namespace)) != UA_STATUSCODE_GOOD){
+
+
+	// TODO: addNamespace gibt die Zahl des Namespace zurück, und nicht wie zuvor einen Statuscode
 	if(UA_Server_addNamespace(pinst->v_serverData, OV_UA_NAMESPACEURI) == 0){
 		ov_logfile_error("%s - init: could not add ov-namespace to ua server", pinst->v_identifier);
 	}

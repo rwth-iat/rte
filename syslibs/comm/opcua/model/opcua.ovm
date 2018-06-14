@@ -40,7 +40,7 @@ LIBRARY opcua
                 COMMENT    =    "Stack-specific representation of server data";
             networkLayerOv        :    C_TYPE    <UA_ServerNetworkLayer>
                 COMMENT    =    "Network layer within th ov-server";
-           namespace          : C_TYPE <UA_Namespace>;
+           namespace          : STRING;
            namespaceNames[]     : STRING;
            namespaceSize        : UINT;
         END_VARIABLES;    
