@@ -1438,8 +1438,7 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *nodestoreContext, UA_Node *
 	return UA_STATUSCODE_GOOD;
 }
 
-UA_Nodestore*
-opcua_nodeStoreFunctions_ovNodeStoreInterface2New(void) {
+UA_Nodestore *opcua_nodeStoreFunctions_ovNodeStoreInterface2New(void) {
 	UA_Nodestore *nsi = ov_database_malloc(sizeof(UA_Nodestore));
     nsi->context =        	NULL;
     nsi->deleteNodestore =  (UA_Nodestore_deleteNodeStore) 		OV_NodeStore2_deleteNodestore;

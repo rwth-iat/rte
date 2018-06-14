@@ -127,6 +127,7 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	OV_ELEMENT		parent;
 	OV_ELEMENT		child;
 
+
 	/*	determine port....	*/
 	ov_memstack_lock();
 	tempStackString = ov_vendortree_getcmdlineoption_value("UA_Port");
@@ -204,8 +205,8 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	pinst->v_networkLayerOv = ServerNetworkLayerOV_new(UA_ConnectionConfig_default, port);
 	pinst->v_serverConfig.networkLayers = &(pinst->v_networkLayerOv);
 	pinst->v_serverConfig.networkLayersSize = 1;
+	pinst->v_serverData = UA_Server_new(&pinst->v_serverConfig);
 
-	pinst->v_serverData = UA_Server_new(&pinst->v_serverConfig); 			//(&pinst.. ) statt (pinst->..)
 
 	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 2, STRING);
 	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[0], "http://opcfoundation.org/UA/");
@@ -220,12 +221,12 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	UA_Namespace_init(&pinst->v_namespace, &tmpNamespaceName);
 	UA_String_deleteMembers(&tmpNamespaceName);
 */
-	pinst->v_namespace.nodestore = opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
+	ov_string_setvalue(&pinst->v_namespace,OV_UA_NAMESPACEURI);
+
 	//if(UA_Server_addNamespace_full(pinst->v_serverData, &(pinst->v_namespace)) != UA_STATUSCODE_GOOD){
-
-
-	// TODO: addNamespace gibt die Zahl des Namespace zurück, und nicht wie zuvor einen Statuscode
-	if(UA_Server_addNamespace(pinst->v_serverData, OV_UA_NAMESPACEURI) == 0){
+	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
+	UA_UInt32 temp = UA_Server_addNamespace(pinst->v_serverData, OV_UA_NAMESPACEURI);
+	if(UA_Server_getNamespaceByName(pinst->v_serverData, tmpNamespaceName, &temp) != UA_STATUSCODE_GOOD){
 		ov_logfile_error("%s - init: could not add ov-namespace to ua server", pinst->v_identifier);
 	}
 	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 3, STRING);
@@ -696,8 +697,8 @@ OV_DLLFNCEXPORT void opcua_uaServer_typemethod (
 }
 
 
-/* TODO Namespace lÃ¶schen Implementieren */
-OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(UA_Namespace **namespace, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel) {
+/* TODO Namespace loeschen Implementieren */
+OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(OV_STRING *namespace, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel) {
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	OV_STRING tmpString = NULL;
 
@@ -717,7 +718,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(UA_Namespace **
 		}
 	}
 
-	UA_Namespace *tmpNamespace = NULL;
+	UA_String *tmpNamespace = NULL;
 	UA_UInt16 tmpNamespacesSize = 0;
 	if (loadInfoModel != NULL)
 		result = loadInfoModel(opcua_pUaServer->v_serverData, &tmpNamespacesSize, &tmpNamespace);
