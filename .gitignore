@@ -4,6 +4,7 @@ Thumbs.db
 /**/.settings/
 /**/build/
 /**/ov/source/libml/
+/**/source/sourcetemplates/
 
 # include rte build folder
 !/build/
