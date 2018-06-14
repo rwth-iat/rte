@@ -23,8 +23,11 @@
 
 #include "kbuslib.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_path.h"
 #include "kbusl.h"
 
+#define timespanToDouble(span)	\
+	((OV_DOUBLE)(span)->secs) + ((OV_DOUBLE)(span)->usecs)/1000000.0
 
 OV_DLLFNCEXPORT OV_RESULT kbuslib_MailBox_ByteAddressOut_set(
     OV_INSTPTR_kbuslib_MailBox          pobj,
@@ -39,11 +42,34 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_MailBox_busy_set(
     OV_INSTPTR_kbuslib_MailBox          pobj,
     const OV_BOOL  value
 ) {
-	if(pobj->v_busy && value)
-		return OV_ERR_NOACCESS;
 
-	pobj->v_busy = value;
-	return OV_ERR_OK;
+	if(value){
+		return kbuslib_MailBox_occupy(pobj, Ov_PtrUpCast(ov_object, pobj));
+	} else {
+		return kbuslib_MailBox_free(pobj, Ov_PtrUpCast(ov_object, pobj));
+	}
+
+}
+
+/*
+ * call ov_memstack_lock()/unlock() outside of this function
+ */
+OV_DLLFNCEXPORT OV_STRING* kbuslib_MailBox_queue_get(
+    OV_INSTPTR_kbuslib_MailBox          pobj,
+    OV_UINT *pveclen
+) {
+	*pveclen = pobj->v_occupier.len;
+	OV_STRING* tmpStr = ov_memstack_alloc(*pveclen*sizeof(OV_STRING));
+	if(!tmpStr){
+		*pveclen = 0;
+		return (OV_STRING*)0;
+	}
+
+	for(int i = 0; i<*pveclen; i++){
+		tmpStr[i] = ov_path_getcanonicalpath(pobj->v_occupier.ppObj[i], 2);
+	}
+
+    return tmpStr;
 }
 
 OV_DLLFNCEXPORT void kbuslib_MailBox_startup(
@@ -58,9 +84,33 @@ OV_DLLFNCEXPORT void kbuslib_MailBox_startup(
     kbuslib_Clamp_startup(pobj);
 
     /* do what */
+    pinst->v_busy = FALSE;
 	pinst->v_state = MB_idle;
+	pinst->v_readBuffer = (OV_BYTE_VEC){.veclen=0, .value=NULL};
+	pinst->v_writeBuffer = (OV_BYTE_VEC){.veclen=0, .value=NULL};
+	pinst->v_occupier.ppObj = NULL;
+	pinst->v_occupier.len = 0;
+
+    return;
+}
+
+OV_DLLFNCEXPORT void kbuslib_MailBox_shutdown(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_kbuslib_MailBox pinst = Ov_StaticPtrCast(kbuslib_MailBox, pobj);
+
+    /* do what */
 	Ov_SetDynamicVectorLength(&pinst->v_readBuffer, 0 , BYTE);
 	Ov_SetDynamicVectorLength(&pinst->v_writeBuffer, 0 , BYTE);
+	Ov_HeapFree(pinst->v_occupier.ppObj);
+	pinst->v_occupier.ppObj = NULL;
+	pinst->v_occupier.len = 0;
+
+    /* set the object's state to "shut down" */
+    fb_functionblock_shutdown(pobj);
 
     return;
 }
@@ -75,7 +125,8 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_MailBox_readwrite(
 	OV_UINT tmpCrc = 0x0;
 
 
-	//ov_logfile_debug("%s: in:  %02x %02x : %02x %02x %02x %02x", pobj->v_identifier, pMBoxPAE[0], pMBoxPAE[1],pMBoxPAE[2],pMBoxPAE[3],pMBoxPAE[4],pMBoxPAE[5]);
+	//if((pMBoxPAE[1]&0x80) != (pobj->v_StatusByte&0x80))
+		//ov_logfile_debug("%s: in:  %02x %02x : %02x %02x %02x %02x", pobj->v_identifier, pMBoxPAE[0], pMBoxPAE[1],pMBoxPAE[2],pMBoxPAE[3],pMBoxPAE[4],pMBoxPAE[5]);
 
 
 	switch((enum kbuslib_MBState)pobj->v_state){
@@ -234,18 +285,88 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_MailBox_readwrite(
     return OV_ERR_OK;
 }
 
+static OV_RESULT ov_queueAddElement(OV_QUEUE* pQueue, const OV_INSTPTR pobj){
+
+	for(int i=0; i<pQueue->len; i++){
+		if(pQueue->ppObj[i]==pobj)
+			return OV_ERR_OK; // already in queue
+	}
+
+	pQueue->ppObj = Ov_HeapRealloc(pQueue->ppObj, (pQueue->len+1)*sizeof(OV_INSTPTR));
+	if(!pQueue->ppObj){
+		pQueue->len = 0;
+		ov_logfile_error("failed to reallocate memory for queue");
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	pQueue->ppObj[pQueue->len++] = pobj;
+	return OV_ERR_OK;
+}
+
+static OV_RESULT ov_queuePopElement(OV_QUEUE* pQueue){
+
+	OV_INSTPTR* ppObj = NULL;
+
+	if(pQueue->len<2){ // 0 or 1; free queue
+		pQueue->len = 0;
+		pQueue->ppObj = NULL;
+		return OV_ERR_OK;
+	}
+
+	ppObj = Ov_HeapMalloc((pQueue->len-1)*sizeof(OV_INSTPTR));
+	if(!ppObj){
+		ov_logfile_error("failed to allocate memory for queue");
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+
+	memcpy(ppObj, pQueue->ppObj+1, (pQueue->len-1)*sizeof(OV_INSTPTR)); // copy old list from 2nd element
+	free(pQueue->ppObj);
+	pQueue->ppObj = ppObj;
+	pQueue->len--;
+	return OV_ERR_OK;
+}
+
 // TODO implement more sophisticated occupy scheme
 OV_DLLFNCEXPORT OV_RESULT kbuslib_MailBox_occupy(
 	OV_INSTPTR_kbuslib_MailBox	pMBox,
 	const OV_INSTPTR_ov_object		pobj
 	) {
 
-	if(pMBox->v_busy)
+	OV_QUEUE* queue = &pMBox->v_occupier;
+	OV_RESULT result;
+	OV_TIME now;
+	OV_TIME_SPAN diff;
+
+	if(!queue->len){
+		if(Ov_Fail(result=ov_queueAddElement(queue, pobj))){
+			return result;
+		}
+		pMBox->v_busy = TRUE;
+		return OV_ERR_OK;
+	}
+	if(queue->ppObj[0]==pobj){ // check if pobj is at the top
+		pMBox->v_busy = TRUE;
+		return OV_ERR_OK;
+	}
+
+	// check for timeout
+	if(!pMBox->v_busy){
+		ov_time_gettime(&now);
+		ov_time_diff(&diff, &now, &pMBox->v_lastFree);
+		if(timespanToDouble(&pMBox->v_queueTimeout)<timespanToDouble(&diff)){
+			if(Ov_Fail(result=ov_queuePopElement(queue))){
+				return result;
+			}
+			ov_time_gettime(&pMBox->v_lastFree);
+		}
+	}
+
+	if(queue->ppObj[0]!=pobj){ // check if pobj is at the top now
+		ov_queueAddElement(queue, pobj);
 		return OV_ERR_NOACCESS;
+	}
 
 	pMBox->v_busy = TRUE;
-
-    return OV_ERR_OK;
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_RESULT kbuslib_MailBox_free(
@@ -253,6 +374,25 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_MailBox_free(
 	const OV_INSTPTR_ov_object		pobj
 	) {
 
+	OV_QUEUE* queue = &pMBox->v_occupier;
+	OV_RESULT result;
+
+	if(!queue->len) { // nothing to free
+		pMBox->v_busy = FALSE;
+		return OV_ERR_OK;
+	}
+
+	// check if we occupy the mailbox
+	if(queue->ppObj[0]!=pobj &&
+			pobj!=Ov_PtrUpCast(ov_object, pMBox)){ // override from mailbox itself
+		return OV_ERR_NOACCESS;
+	}
+
+	if(Ov_Fail(result=ov_queuePopElement(queue))){
+		return result;
+	}
+
+	ov_time_gettime(&pMBox->v_lastFree);
 	pMBox->v_busy = FALSE;
 
     return OV_ERR_OK;

@@ -147,7 +147,14 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="kbuslib.null.173201512" name="kbuslib"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug (Linux)">
+			<resource resourceType="PROJECT" workspacePath="/kbuslib"/>
+		</configuration>
+		<configuration configurationName="Debug (Windows)">
+			<resource resourceType="PROJECT" workspacePath="/kbuslib"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -162,4 +169,5 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

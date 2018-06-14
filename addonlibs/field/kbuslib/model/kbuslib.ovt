@@ -1,0 +1,5 @@
+
+typedef struct {
+	OV_INSTPTR_ov_object* ppObj;
+	OV_UINT len;
+} OV_QUEUE;

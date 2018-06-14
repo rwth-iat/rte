@@ -264,7 +264,18 @@ LIBRARY kbuslib
 			busy		:	BOOL HAS_SET_ACCESSOR
 				FLAGS = "i"
 				COMMENT = "Messagebox in use";
-				
+			queue[]		: STRING
+				HAS_GET_ACCESSOR
+				IS_DERIVED
+				FLAGS = "o"
+				COMMENT = "list of waiting blocks";
+			lastFree	: TIME
+				FLAGS = "o"
+				COMMENT = "time of the last free";
+			queueTimeout	: TIME_SPAN
+				FLAGS = "i"
+				COMMENT = "timeout for queue elements to avoid deadlocks"
+				INITIALVALUE = 00:00:01.500000;
 			slot		: UINT
 				FLAGS = "i"
 				COMMENT = "slot of i/o card";
@@ -287,7 +298,7 @@ LIBRARY kbuslib
 				COMMENT = "Specifies Address in Bus for Output"
 				INITIALVALUE = 0;
 			
-//			opupier		: C_TYPE<OV_UINT64>;
+			occupier	: C_TYPE<OV_QUEUE>;
 			
 			StatusByte	:	C_TYPE <OV_BYTE>; // internal toggle bit
 			
@@ -296,6 +307,7 @@ LIBRARY kbuslib
 		END_VARIABLES;
 		OPERATIONS
 			startup		: C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown	: C_FUNCTION <OV_FNC_SHUTDOWN>;
 			readwrite	: C_FUNCTION <KBUSLIB_FNC_READWRITE>;
 			occupy		: C_FUNCTION <KBUSLIB_FNC_OCCUPYMAILBOX>;
 			free		: C_FUNCTION <KBUSLIB_FNC_FREEMAILBOX>;
