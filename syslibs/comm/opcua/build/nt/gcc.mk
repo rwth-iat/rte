@@ -33,7 +33,7 @@ include ../generic.mk
 # ---------
 
 OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)
-ADD_LIBS = $(SYSLIB_DIR)/ksbase$(_DLL)
+ADD_LIBS = $(USERLIB_DIR)/ksbase$(_DLL)
 ADD_LIBS += $(foreach lib, $(EXTRA_LIBS),$(lib))
 
 #	Compiler

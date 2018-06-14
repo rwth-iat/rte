@@ -26,8 +26,8 @@ USER_DIR          = C:/Users/vitus/Documents/AcpltDevelopmentKit/acplt/dev/
 USERLIB_DIR       = $(ROOT_DIR)system/addonlibs/
 SYS_DIR           = $(BASE_DIR)system/sysdevbase/
 SYSLIB_DIR        = $(ROOT_DIR)system/syslibs/
-KSBASE_MODEL_DIR           = $(SYS_DIR)ksbase/model/
-KSBASE_INCLUDE_DIR         = $(SYS_DIR)ksbase/include/
+KSBASE_MODEL_DIR           = $(USER_DIR)ksbase/model/
+KSBASE_INCLUDE_DIR         = $(USER_DIR)ksbase/include/
 #   Rules
 #   -----
 

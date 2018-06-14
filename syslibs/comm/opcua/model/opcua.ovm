@@ -5,7 +5,6 @@
     TODO: introduce a uaReference class to mirror references to outside namespaces and adapt the browse functions accordingly (return nodeId should suffice, I hope)
 */
 
-
 LIBRARY opcua
     VERSION   = "V0.1 (DD-Mon-YYYY)";
     AUTHOR    = "Lars Evertz, Florian Palm, Torben Deppe";

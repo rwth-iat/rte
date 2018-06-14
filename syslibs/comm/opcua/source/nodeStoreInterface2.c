@@ -795,7 +795,7 @@ static UA_StatusCode OV_NodeStore2_unlinkNamespace(void *nodestoreContext, UA_UI
 }
 static void OV_NodeStore2_iterate(void *nodestoreContext, void* visitornodestoreContext, UA_NodestoreVisitor visitor){
 }
-static UA_Node * OV_NodeStore2_newNode(UA_NodeClass nodeClass){ //TODO add nodestore nodestoreContext? --> move nodeStore from static context to main
+static UA_Node * OV_NodeStore2_newNode(void *nodestoreContext, UA_NodeClass nodeClass){ //TODO add nodestore nodestoreContext? --> move nodeStore from static context to main
     return NULL;
 }
 
