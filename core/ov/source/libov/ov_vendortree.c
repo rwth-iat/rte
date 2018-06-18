@@ -111,6 +111,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 		{ "server_name",			NULL,	ov_vendortree_getservername, NULL },
 		{ "server_time",			"UTC",	ov_vendortree_getservertime, NULL },
 		{ "server_version",			NULL,	ov_vendortree_getserverversion, NULL },
+		{ "mutex_on",				NULL,	ov_vendortree_getMutex, NULL },
 		{ "server_configuration",	NULL,	ov_vendortree_getserverconfiguration, ov_vendortree_setserverconfiguration },
 		{ "server_run",				NULL,	ov_vendortree_getserverrun, ov_vendortree_setserverrun },
 		{ "server_password",		NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
@@ -999,6 +1000,29 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_writebackup(
 	pvarcurrprops->value.valueunion.val_bool = Ov_OK(ov_database_write(db_backup_filename));
 	return OV_ERR_OK;
 }/*	----------------------------------------------------------------------	*/
+
+/**
+ *	Get mutex status
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMutex(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_BOOL;
+#if OV_SYNC_MUTEX
+	pvarcurrprops->value.valueunion.val_bool = TRUE;
+#else
+	pvarcurrprops->value.valueunion.val_bool = FALSE;
+#endif
+	return OV_ERR_OK;
+}
+OV_DLLFNCEXPORT OV_BOOL ov_vendortree_checkMutex() {
+#if OV_SYNC_MUTEX
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
 
 /**
  *	Set serverpassword external

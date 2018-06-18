@@ -169,9 +169,8 @@ OV_RESULT ov_ksserver_setvar_setitem(
 		/*
 		*	object may be a vendor object
 		*/
-		if((pelem->pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
-			&& (pelem->pobj >= &pdb->vendorobj[0])
-		) {
+		if(Ov_GetParent(ov_containment, pelem->pobj)==&pdb->vendordom)
+		{
 			return ov_vendortree_setvar(pobj, &pitem->var_current_props, pticket);
 		}
 		break;

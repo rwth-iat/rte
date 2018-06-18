@@ -231,9 +231,8 @@ void ov_ksserver_getvar_getitem(
 		/*
 		*	object may be a vendor object
 		*/
-		if((pobj < &pdb->vendorobj[OV_NUM_VENDOROBJECTS])
-			&& (pobj >= &pdb->vendorobj[0])
-		) {
+		if(Ov_GetParent(ov_containment, pelem->pobj)==&pdb->vendordom)
+		{
 			pitem->result = ov_vendortree_getvar(pobj, 
 				&pitem->var_current_props, pticket);
 			pitem->var_current_props.value.vartype &= OV_VT_KSMASK;

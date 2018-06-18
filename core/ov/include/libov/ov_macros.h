@@ -44,6 +44,7 @@
 #include "libov/ov_database.h"
 #include "libov/ov_memstack.h"
 #include "libov/ov_malloc.h"
+#include "libov/ov_vendortree.h"
 
 /*
 *	Upcast of an instance pointer of the parent class
@@ -518,6 +519,11 @@
 #define Ov_DoubleToTimeSpan(dbl, timespan)											\
 	(timespan).secs = (OV_INT)(dbl);													\
 	(timespan).usecs = (OV_INT)(((dbl)-(OV_DOUBLE)(timespan).secs)*(OV_DOUBLE)1e6)
+
+/**
+*	Check if mutex for database and memsatck is available
+*/
+#define Ov_CheckMutex()	(ov_vendortree_checkMutex())
 
 /**
 *	Allocate memory in the database

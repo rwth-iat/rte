@@ -330,6 +330,24 @@ char *strdup(const char *s);
 #endif
 
 /*
+*	Definitions about mutex
+*	-----------------------------------
+*/
+#ifndef OV_SYNC_PTHREAD
+#define OV_SYNC_PTHREAD 0
+#endif
+#if !OV_SYNC_PTHREAD
+#ifndef OV_SYNC_NTMUTEX
+#define OV_SYNC_NTMUTEX 0
+#endif
+#endif
+#if OV_SYNC_PTHREAD || OV_SYNC_NTMUTEX
+#define OV_SYNC_MUTEX 1
+#else
+#define OV_SYNC_MUTEX 0
+#endif
+
+/*
 *   Common definitions
 *	------------------
 */
