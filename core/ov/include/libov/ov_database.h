@@ -40,8 +40,8 @@ extern "C" {
 *	Maximum size of a database file
 */
 #ifndef OV_DATABASE_MAXSIZE
- #define OV_DATABASE_MAXSIZE	2147483648     //   2 GByte 
-//#define OV_DATABASE_MAXSIZE	524288000UL    // 500 MByte 
+ #define OV_DATABASE_MAXSIZE	2147483648UL	//   2 GByte
+//#define OV_DATABASE_MAXSIZE	524288000UL		// 500 MByte
 #endif
 
 
@@ -60,6 +60,14 @@ extern "C" {
 	helpname = (OV_STRING)malloc(strlen(varname)+strlen(getenv("ACPLT_HOME"))+2); \
 	sprintf(helpname, "%s%s%s", getenv("ACPLT_HOME"), FOLDER_DELIMITER, varname); \
 	varname = helpname
+
+/*
+ * option defines for loading database
+ */
+#define OV_DBOPT_QUIET			0x1		/*	don't output info while loading/unloading	*/
+#define OV_DBOPT_FORCECREATE	0x2		/*	force to create new database	*/
+#define OV_DBOPT_NOMAP			0x4		/*	disable mapping of database	*/
+#define OV_DBOPT_NOFILE			0x8		/*	no db file	*/
 
 /*		
  *	List structure for objectId -> object-pointer relation
@@ -200,7 +208,8 @@ OV_RESULT ov_database_idListGetRelationIndex(const OV_UINT idH, const OV_UINT id
 */
 OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	OV_STRING	filename,
-	OV_UINT		size
+	OV_UINT		size,
+	OV_UINT		flags
 );
 
 /*
@@ -220,7 +229,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 /*
 *	Map an existing database part 2
 */
-OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadlib(
+OV_DLLFNCEXPORT OV_RESULT ov_database_loadlib(
 	OV_STRING	filename
 );
 
@@ -239,6 +248,14 @@ OV_DLLFNCEXPORT void ov_database_flush(void);
 */
 OV_DLLFNCEXPORT OV_RESULT ov_database_write(OV_STRING dbname);
 
+/*
+*	Load database
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_database_load(OV_STRING filename,OV_UINT size, OV_UINT flags);
+/*
+*	Unload database
+*/
+OV_DLLFNCEXPORT void ov_database_unload(void);
 /*
 *	Initialize the database (subroutine)
 */

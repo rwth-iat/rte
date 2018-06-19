@@ -605,7 +605,7 @@ int main(int argc, char **argv) {
 			ov_logfile_error("Error: can not remove existing file \"%s\"", filename);
 			return EXIT_FAILURE;
 		}
-		result = ov_database_create(filename, size);
+		result = ov_database_create(filename, size, 0);
 		if(Ov_Fail(result)) {
 			ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
 					ov_result_getresulttext(result), result);
@@ -655,7 +655,7 @@ int main(int argc, char **argv) {
 
 		}
 		ov_logfile_info("Loading libraries \"%s\"...", filename);
-		result = ov_database_map_loadlib(filename);
+		result = ov_database_loadlib(filename);
 		if(Ov_Fail(result)) {
 			goto ERRORMSG;
 		}
