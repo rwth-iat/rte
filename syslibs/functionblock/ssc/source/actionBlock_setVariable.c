@@ -131,13 +131,15 @@ static OV_RESULT ssc_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, con
 	OV_RESULT result = OV_ERR_OK;
 	OV_ELEMENT element;
 	OV_ELEMENT varElement;
+	OV_ANY tmpAny = {.value.vartype=OV_VT_VOID};
 	OV_VTBLPTR_ov_object pVtblObj = NULL;
 
 	if(pTargetObj == NULL){
 		result = OV_ERR_BADPARAM;
 	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)){
 		//get variable in a functionchart
-		result = fb_functionchart_getport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
+		result = fb_functionchart_getport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, &tmpAny);
+		result |= Ov_SetAnyValue(value, &tmpAny);
 	}else{
 		//get variable in a object
 		varElement.elemtype = OV_ET_NONE;
@@ -149,7 +151,8 @@ static OV_RESULT ssc_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, con
 		if(varElement.elemtype == OV_ET_VARIABLE) {
 			//port found, use the getter to read the value
 			Ov_GetVTablePtr(ov_object, pVtblObj, pTargetObj);
-			result = pVtblObj->m_getvar(varElement.pobj, &varElement, value);
+			result = pVtblObj->m_getvar(varElement.pobj, &varElement, &tmpAny);
+			result |= Ov_SetAnyValue(value, &tmpAny);
 		}else{
 			result = OV_ERR_BADPARAM;
 		}
