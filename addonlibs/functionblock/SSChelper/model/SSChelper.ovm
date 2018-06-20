@@ -237,7 +237,7 @@ LIBRARY SSChelper
 			EXST 	 : STRING FLAGS = "o" COMMENT = "In what execution stat is the ESE. (PackML States)";
 			EXMODE 	 : STRING FLAGS = "o" COMMENT = "How will the ESE execute steps? (AUTO, MANUAL)";
 			OPMODE 	 : STRING FLAGS = "o" COMMENT = "What is the current function mode?";
-			WORKST 	 : STRING FLAGS = "o" COMMENT = "What step is executet at the moment?";
+			WORKST 	 : STRING FLAGS = "o" COMMENT = "What step is executed at the moment?";
 		END_VARIABLES;
 		OPERATIONS
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -264,6 +264,20 @@ LIBRARY SSChelper
 			IN1 : STRING FLAGS = "i" COMMENT = "String, that is switched through on FALSE." INITIALVALUE="";
 			IN2 : STRING FLAGS = "i" COMMENT = "String, that is switched through on TRUE."  INITIALVALUE="";
 		    OUT : STRING FLAGS = "o" COMMENT = "String from IN0 or IN1." INITIALVALUE="";
+		END_VARIABLES;
+		OPERATIONS
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	    CLASS StringVecSelect : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			K	: UINT   FLAGS = "i" COMMENT = "Index starting from 0.";
+			IN[]: STRING FLAGS = "i" COMMENT = "String vector to choose an entry from.";
+		    OUT : STRING FLAGS = "o" COMMENT = "String with index K from Vector.";
+		    CHECK: BOOL FLAGS = "o" COMMENT = "True if K is in range of IN and IN has length > 0.";
+		    LEN : UINT FLAGS = "o" COMMENT = "Lenght of vector in IN.";
 		END_VARIABLES;
 		OPERATIONS
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
