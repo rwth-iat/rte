@@ -207,7 +207,6 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	pinst->v_serverConfig.networkLayersSize = 1;
 	pinst->v_serverData = UA_Server_new(&pinst->v_serverConfig);
 
-
 	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 2, STRING);
 	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[0], "http://opcfoundation.org/UA/");
 
@@ -215,37 +214,44 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	copyOPCUAStringToOV(pinst->v_serverConfig.applicationDescription.applicationUri, &tmpName);
 	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[1], tmpName);
 	ov_string_setvalue(&tmpName, NULL);
-
-/*
-	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
-	UA_Namespace_init(&pinst->v_namespace, &tmpNamespaceName);
-	UA_String_deleteMembers(&tmpNamespaceName);
-*/
 	ov_string_setvalue(&pinst->v_namespace,OV_UA_NAMESPACEURI);
 
-	//if(UA_Server_addNamespace_full(pinst->v_serverData, &(pinst->v_namespace)) != UA_STATUSCODE_GOOD){
+
+	//TODO namespace via NodestoreSwtich
+	pinst->v_namespaceIndex = UA_UINT16_MAX ; //wie vorher weil doof
+	pinst->v_serverConfig.nodestore = *opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
+
 	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
 	UA_UInt32 temp = UA_Server_addNamespace(pinst->v_serverData, OV_UA_NAMESPACEURI);
 	if(UA_Server_getNamespaceByName(pinst->v_serverData, tmpNamespaceName, &temp) != UA_STATUSCODE_GOOD){
 		ov_logfile_error("%s - init: could not add ov-namespace to ua server", pinst->v_identifier);
 	}
-	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 3, STRING);
-	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[2], OV_UA_NAMESPACEURI);
+	else
+	{
+		pinst->v_namespaceIndex = temp;
+		Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 3, STRING);
+			ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[2], OV_UA_NAMESPACEURI);
 
+		/*	add reference to ov root	*/
+		OV_STRING tmpString = pdb->root.v_identifier;
 
-	/*	add reference to ov root	*/
-	OV_STRING tmpString = pdb->root.v_identifier;
-	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pinst->v_namespace.index, tmpString), true) != UA_STATUSCODE_GOOD){
-		ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
-	}
-
-	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pinst->v_namespace.index, "/acplt/ov/domain"), true) != UA_STATUSCODE_GOOD){
-			ov_logfile_error("%s - init: could not create reference to ov-namespace library", pinst->v_identifier);
+		if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+				//UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pinst->v_namespace.index, tmpString), true) != UA_STATUSCODE_GOOD){
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pinst->v_namespaceIndex, tmpString), true) != UA_STATUSCODE_GOOD){
+			ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
 		}
-	UA_Server_run_startup(opcua_pUaServer->v_serverData);
+
+		if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
+				//UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pinst->v_namespace.index, "/acplt/ov/domain"), true) != UA_STATUSCODE_GOOD){
+				UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pinst->v_namespaceIndex, "/acplt/ov/domain"), true) != UA_STATUSCODE_GOOD){
+				ov_logfile_error("%s - init: could not create reference to ov-namespace library", pinst->v_identifier);
+
+		}
+
+		UA_Server_run_startup(opcua_pUaServer->v_serverData);
+	}
 	return;
+
 }
 
 static void opcua_uaServer_stopServer(OV_INSTPTR_opcua_uaServer pinst){
@@ -698,21 +704,17 @@ OV_DLLFNCEXPORT void opcua_uaServer_typemethod (
 
 
 /* TODO Namespace loeschen Implementieren */
-OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(OV_STRING *namespace, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel) {
-	UA_StatusCode result = UA_STATUSCODE_GOOD;
-	OV_STRING tmpString = NULL;
+OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(OV_STRING *namespace,
+		OV_UINT namespaceIndex,	OV_UINT namespaceSize, OV_STRING *StartFolder,
+		opcua_loadInformationModel *loadInfoModel)
+{
 
+	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	for (OV_UINT i = 0; i < namespaceSize; i++){
-		//result = UA_Server_addNamespace_full(opcua_pUaServer->v_serverData, namespace[i]);
-		tmpString = NULL;
-		copyOPCUAStringToOV(namespace[i]->uri, &tmpString);
-		result = UA_Server_addNamespace(opcua_pUaServer->v_serverData, tmpString);
+		result = UA_Server_addNamespace(opcua_pUaServer->v_serverData, opcua_pUaServer->v_namespaceNames.value[i]);
 		if (result == 0){
 			for (OV_UINT k = 0; k < i; k++){
-				tmpString = NULL;
-				copyOPCUAStringToOV(namespace[k]->uri, &tmpString);
-				//UA_Server_deleteNamespace(opcua_pUaServer->v_serverData, tmpString);
-				ov_database_free(tmpString);
+				//UA_Server_deleteNamespace(opcua_pUaServer->v_serverData, opcua_pUaServer->v_namespaceNames.value[i]);
 			}
 			return result;
 		}
@@ -721,14 +723,10 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(OV_STRING *name
 	UA_String *tmpNamespace = NULL;
 	UA_UInt16 tmpNamespacesSize = 0;
 	if (loadInfoModel != NULL)
-		result = loadInfoModel(opcua_pUaServer->v_serverData, &tmpNamespacesSize, &tmpNamespace);
-
+		result = loadInfoModel(opcua_pUaServer->v_serverData, &tmpNamespacesSize, tmpNamespace);
 	if (result != UA_STATUSCODE_GOOD){
 		for (OV_UINT i = 0; i < namespaceSize; i++){
-			tmpString = NULL;
-			copyOPCUAStringToOV(namespace[i]->uri, &tmpString);
-			//UA_Server_deleteNamespace(opcua_pUaServer->v_serverData, tmpString);
-			ov_database_free(tmpString);
+			//UA_Server_deleteNamespace(opcua_pUaServer->v_serverData, opcua_pUaServer->v_namespaceNames.value[i]);
 		}
 		return result;
 	}
@@ -737,11 +735,10 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(OV_STRING *name
 		if (StartFolder[i] == NULL)
 			continue;
 		if(UA_Server_addReference(opcua_pUaServer->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(namespace[i]->index, StartFolder[i]), true) != UA_STATUSCODE_GOOD){
-			tmpString = NULL;
-			copyOPCUAStringToOV(namespace[i]->uri, &tmpString);
-			ov_logfile_error("%s - init: could not create reference to %s-namespace", opcua_pUaServer->v_identifier, tmpString);
-			ov_database_free(tmpString);
+				//UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(namespace[i]->index, StartFolder[i]), true) != UA_STATUSCODE_GOOD){
+				// TODO namespaceIndex via NodestoreSwitch -> Übergabeparameter wegnehmen, für jeden Nodestore, jeweiligen Index heraussuchen
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(namespaceIndex, StartFolder[i]), true) != UA_STATUSCODE_GOOD){
+			ov_logfile_error("%s - init: could not create reference to %s-namespace", opcua_pUaServer->v_identifier, opcua_pUaServer->v_namespaceNames.value[i]);
 		}
 	}
 
@@ -750,7 +747,6 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(OV_STRING *name
 	OV_UINT j = 0;
 	for (OV_UINT i = oldlength; i < opcua_pUaServer->v_namespaceNames.veclen; i ++){
 		OV_STRING tmpNamespaceUri = NULL;
-		copyOPCUAStringToOV(namespace[j]->uri, &tmpNamespaceUri);
 		ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[i], tmpNamespaceUri);
 		ov_string_setvalue(&tmpNamespaceUri, NULL);
 		j++;

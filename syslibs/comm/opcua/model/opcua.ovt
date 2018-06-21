@@ -87,44 +87,6 @@ typedef void (*UA_Nodestore_releaseNode)(void *nodestoreContext, const UA_Node *
 
 
 
-
-/* Namespace hinzugefügt */
-/*
-struct UA_Namespace{
-    UA_UInt16 index;
-    UA_String uri;
-    UA_Nodestore* nodestore;
-    UA_DataType* dataTypes;
-    size_t dataTypesSize;
-};
-
-
-
-typedef struct UA_Namespace UA_Namespace;
-
-void UA_EXPORT
-UA_Namespace_init(UA_Namespace * namespacePtr, const UA_String * namespaceUri);
-UA_Namespace UA_EXPORT *
-UA_Namespace_new(const UA_String * namespaceUri);
-UA_Namespace UA_EXPORT *
-UA_Namespace_newFromChar(const char * namespaceUri);
-void UA_EXPORT
-UA_Namespace_deleteMembers(UA_Namespace* namespacePtr);
-
-void
-UA_Namespace_updateDataTypes(UA_Namespace * namespaceToUpdate,
-                             UA_Namespace * namespaceNewDataTypes, UA_UInt16 newNamespaceIndex);
-void
-UA_Namespace_changeNodestore(UA_Namespace * namespacesToUpdate,
-                             UA_Namespace * namespaceNewNodestore,
-                             UA_Nodestore * defaultNodestore,
-                             UA_UInt16 newIdx);
-void
-UA_Namespace_updateNodestores(UA_Namespace * namespacesToUpdate, size_t namespacesToUpdateSize,
-size_t* oldNsIdxToNewNsIdx, size_t oldNsIdxToNewNsIdxSize);
-
-//////////////
-*/
 typedef UA_Connection* UA_ConnectionPTR;       
 typedef UA_Connection** UA_ConnectionPTRPTR;
 typedef UA_Server* OV_PTR_UA_Server;

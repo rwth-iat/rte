@@ -84,7 +84,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 			ov_string_setvalue(&tmpString, NULL);
 			break;
 		}else{
-			dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
+			dst->nodeId.nodeId.namespaceIndex = opcua_pUaServer->v_namespaceIndex;
 		}
 		pclass = NULL;
 		plibrary = NULL;
@@ -137,7 +137,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 				ov_string_setvalue(&tmpString, NULL);
 				break;
 			}else{
-				dst->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
+				dst->browseName.namespaceIndex = opcua_pUaServer->v_namespaceIndex;
 			}
 			pclass = NULL;
 			plibrary = NULL;
@@ -164,7 +164,7 @@ UA_StatusCode opcua_nsOv_fillReferenceDescription2(
 	}
 	if(resultMask & (1<<5)){	// TODO fixme	This is the type-node: using 0|58 (baseObjectType) for all variables
 		if(dst->nodeClass == UA_NODECLASS_OBJECT){
-			dst->typeDefinition.nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
+			dst->typeDefinition.nodeId.namespaceIndex = opcua_pUaServer->v_namespaceIndex;
 			dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 			dst->typeDefinition.nodeId.identifier.numeric = pElement->pobj->v_idL;
 		} else if(dst->nodeClass == UA_NODECLASS_VARIABLE){
@@ -536,7 +536,7 @@ UA_Int32 getReferenceDescriptions_OvReferences2(const UA_BrowseDescription* brow
 								maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 								if(maskMatch && (access & OV_AC_READ)){
 									if(fillDescription){
-										*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespace.index,
+										*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespaceIndex,
 												linkElement.elemunion.passoc->v_idL, UA_TRUE, resultMask, &(dst[*refCount]));
 									}
 									(*refCount)++;
@@ -549,7 +549,7 @@ UA_Int32 getReferenceDescriptions_OvReferences2(const UA_BrowseDescription* brow
 								maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 								if(maskMatch && (access & OV_AC_READ)){
 									if(fillDescription){
-										*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespace.index,
+										*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespaceIndex,
 												linkElement.elemunion.passoc->v_idL, UA_TRUE, resultMask, &(dst[*refCount]));
 									}
 									(*refCount)++;
@@ -577,7 +577,7 @@ UA_Int32 getReferenceDescriptions_OvReferences2(const UA_BrowseDescription* brow
 							maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 							if(maskMatch && (access & OV_AC_READ)){
 								if(fillDescription){
-									*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespace.index,
+									*statusCode = opcua_nsOv_fillReferenceDescription2(&referencedElement, opcua_pUaServer->v_namespaceIndex,
 											linkElement.elemunion.passoc->v_idL, UA_FALSE, resultMask, &(dst[*refCount]));
 								}
 								(*refCount)++;
@@ -874,7 +874,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *nodestoreContext, const UA_No
 			ov_string_setvalue(&tmpString, NULL);
 			break;
 		}else{
-			newNode->browseName.namespaceIndex = opcua_pUaServer->v_namespace.index;
+			newNode->browseName.namespaceIndex = opcua_pUaServer->v_namespaceIndex;
 		}
 		pclass = NULL;
 		plibrary = NULL;
@@ -911,7 +911,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *nodestoreContext, const UA_No
 			ov_string_setvalue(&tmpString, NULL);
 			break;
 		}else{
-			newNode->nodeId.namespaceIndex = opcua_pUaServer->v_namespace.index;
+			newNode->nodeId.namespaceIndex = opcua_pUaServer->v_namespaceIndex;
 		}
 		pclass = NULL;
 		plibrary = NULL;
@@ -1460,8 +1460,8 @@ UA_Nodestore *opcua_nodeStoreFunctions_ovNodeStoreInterface2New(void) {
     return nsi;
 }
 void
-opcua_nodeStoreFunctions_ovNodeStoreInterface2Delete(UA_Nodestore * nodestoreInterface){
-	if (nodestoreInterface->context)
-		UA_free(nodestoreInterface->context);
+opcua_nodeStoreFunctions_ovNodeStoreInterface2Delete(UA_Nodestore * nodestore){
+	if (nodestore->context)
+		UA_free(nodestore->context);
 }
 

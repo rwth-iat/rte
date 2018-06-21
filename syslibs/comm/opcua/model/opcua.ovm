@@ -42,6 +42,7 @@ LIBRARY opcua
                 COMMENT    =    "Network layer within th ov-server";
            namespace          : STRING;
            namespaceNames[]     : STRING;
+           namespaceIndex		: UINT;
            namespaceSize        : UINT;
         END_VARIABLES;    
         OPERATIONS
