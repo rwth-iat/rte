@@ -1087,6 +1087,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(
 	if(dbFlags&OV_DBOPT_NOMAP){
 
 		OV_UINT pos = 0;
+		OV_UINT read = 0;
 
 		pdb = Ov_HeapMalloc(size);
 		if(!pdb)
@@ -1094,8 +1095,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(
 
 		do
 		{
-			pos += read(fd, pdb, size-pos);
-		} while (pos < size);
+			read = read(fd, pdb+pos, size-pos);
+			pos += read;
+		} while (pos<size && read);
 
 		close(fd);
 		fd = 0;
@@ -1554,15 +1556,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_load(
 
 	if((dbFlags&OV_DBOPT_FORCECREATE)	||
 		(dbFlags&OV_DBOPT_NOFILE)){
-		ov_database_create(filename, size, 0);
+		result = ov_database_create(filename, size, 0);
 	} else {
 		result = ov_database_loadfile(filename);
 		if (Ov_Fail(result)) return result;
 		result = ov_database_loadlib(filename);
-		return result;
 	}
 
-	return OV_ERR_OK;
+	return result;
 }
 /*	----------------------------------------------------------------------	*/
 
