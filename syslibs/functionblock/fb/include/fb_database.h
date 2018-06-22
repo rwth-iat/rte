@@ -51,14 +51,17 @@ extern "C" {
 */
 OV_DLLFNCEXPORT OV_RESULT fb_database_create(
 	OV_STRING	filename,
-	OV_UINT		size
+	OV_UINT		size,
+	OV_UINT		flags
 );
 
 /*
 *	Map an existing database
 */
 OV_DLLFNCEXPORT OV_RESULT fb_database_map(
-	OV_STRING	filename
+	OV_STRING	filename,
+	OV_UINT size,
+	OV_UINT flags
 );
 
 /*

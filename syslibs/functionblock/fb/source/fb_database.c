@@ -58,8 +58,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- OV_RESULT fb_database_wrapmap(OV_STRING	filename);
- void      fb_database_wrapunmap(void);
+ OV_RESULT fb_database_wrapload(OV_STRING filename, OV_UINT size, OV_UINT flags);
+ void      fb_database_wrapunload(void);
  OV_RESULT fb_database_wrapstartup(void);
 #ifdef __cplusplus
 }
@@ -123,7 +123,8 @@ OV_DLLFNCEXPORT OV_BOOL fb_database_identifierok(
 */
 OV_DLLFNCEXPORT OV_RESULT fb_database_create(
 	OV_STRING	filename,
-	OV_UINT		size
+	OV_UINT		size,
+	OV_UINT		flags
 ) {
 	/*
 	*	local variables
@@ -162,7 +163,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_database_create(
 
 #endif  /* if 0 */
 	
-	result = ov_database_create(filename, size);
+	result = ov_database_create(filename, size, flags);
 	if(Ov_Fail(result)) {
 		return result;
 	}
@@ -172,7 +173,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_database_create(
 	*/
 	result = fb_database_checkstruct();
 	if(Ov_Fail(result)) {
-	    ov_database_unmap();
+	    ov_database_unload();
 		return result;
 	}
 	/*
@@ -186,8 +187,8 @@ OV_DLLFNCEXPORT OV_RESULT fb_database_create(
 /*
 *	Map an existing database
 */
-OV_DLLFNCEXPORT OV_RESULT fb_database_map(OV_STRING	filename) {
-    return fb_database_wrapmap(filename);
+OV_DLLFNCEXPORT OV_RESULT fb_database_load(OV_STRING	filename, OV_UINT size, OV_UINT flags) {
+    return fb_database_wrapload(filename, size, flags);
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -195,8 +196,8 @@ OV_DLLFNCEXPORT OV_RESULT fb_database_map(OV_STRING	filename) {
 /*
 *	Unmap the database
 */
-OV_DLLFNCEXPORT void fb_database_unmap(void) {
-	fb_database_wrapunmap();
+OV_DLLFNCEXPORT void fb_database_unload(void) {
+	fb_database_wrapunload();
 }
 
 /*	----------------------------------------------------------------------	*/

@@ -75,12 +75,12 @@ extern "C" {
 /*
 *	Map/unmap an existing database
 */
-void fb_database_wrapunmap(void) {
+void fb_database_wrapunload(void) {
 
 #if FB_CATCH_EXCEPTIONS == 1
     try {
 #endif
-        ov_database_unmap();
+        ov_database_unload();
 
 #if FB_CATCH_EXCEPTIONS == 1
     } catch(...) {
@@ -90,19 +90,19 @@ void fb_database_wrapunmap(void) {
     return;
 }
 /*	----------------------------------------------------------------------	*/
-OV_RESULT fb_database_wrapmap(OV_STRING	filename) {
+OV_RESULT fb_database_wrapload(OV_STRING filename, OV_UINT size, OV_UINT flags) {
     OV_RESULT res;
         
 #if FB_CATCH_EXCEPTIONS == 1
     try {
 #endif
 
-        res = ov_database_map(filename);
+        res = ov_database_load(filename, size, flags);
 
 #if FB_CATCH_EXCEPTIONS == 1
     } catch(...) {
         res = OV_ERR_TARGETGENERIC;        
-        fb_database_wrapunmap();
+        fb_database_wrapunload();
     }
 #endif
 
