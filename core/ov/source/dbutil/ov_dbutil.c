@@ -199,6 +199,7 @@ int main(int argc, char **argv) {
 
 	OV_INT	 		i;
 	OV_UINT			size = 0;
+	OV_UINT			dbflags = 0;
 	OV_STRING	        filename = NULL;
 	OV_STRING		dumpfilename = NULL;
 	OV_STRING		fbdStart = NULL;
@@ -252,6 +253,12 @@ int main(int argc, char **argv) {
 			} else {
 				goto HELP;
 			}
+		}
+		/*
+		 *	force create
+		 */
+		else if(!strcmp(argv[i], "--force-create")) {
+			dbflags |= OV_DBOPT_FORCECREATE;
 		}
 		/*
 		 *	create database with configfile option
@@ -427,7 +434,11 @@ int main(int argc, char **argv) {
 							size = strtoul(temp, NULL, 0);
 						free(temp);
 					}
-
+					/*	DBFORCECREATE	*/
+					else if(strstr(startRead, "DBFORCECREATE")==startRead)
+					{
+						dbflags |= OV_DBOPT_FORCECREATE;
+					}
 					/*
 					 * default: option unknown
 					 */
@@ -528,6 +539,7 @@ int main(int argc, char **argv) {
 					"The following optional arguments are available:\n"
 					"-f FILE, --file FILE            Set database filename (*.ovd)\n"
 					"-c SIZE, --create SIZE          Create a new database\n"
+					"--force-create                  Overwrite existing database file\n"
 					"-cf CONFIGFILE, --create-from-config CONFIGFILE\n"
 					"\tCreate a new database using the specified configfile.\n"
 					"\tThe size of the new database must be specified in the configfile or with -c.\n"
@@ -605,7 +617,7 @@ int main(int argc, char **argv) {
 			ov_logfile_error("Error: can not remove existing file \"%s\"", filename);
 			return EXIT_FAILURE;
 		}
-		result = ov_database_create(filename, size, 0);
+		result = ov_database_create(filename, size, dbflags);
 		if(Ov_Fail(result)) {
 			ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
 					ov_result_getresulttext(result), result);
@@ -619,6 +631,11 @@ int main(int argc, char **argv) {
 			goto ERRORMSG;
 		}
 		ov_logfile_info("Database mapped.");
+		ov_logfile_info("Loading libraries \"%s\"...", filename);
+		result = ov_database_loadlib(filename);
+		if(Ov_Fail(result)) {
+			goto ERRORMSG;
+		}
 		if (extended) {
 			/*
 			 *	Print extended database information
@@ -653,11 +670,6 @@ int main(int argc, char **argv) {
 				goto ERRORMSG;
 			}
 
-		}
-		ov_logfile_info("Loading libraries \"%s\"...", filename);
-		result = ov_database_loadlib(filename);
-		if(Ov_Fail(result)) {
-			goto ERRORMSG;
 		}
 	}
 	/*

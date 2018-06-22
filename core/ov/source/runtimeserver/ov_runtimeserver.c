@@ -450,7 +450,7 @@ int main(int argc, char **argv) {
 				 * e.g. SERVERNAME ov_server1
 				 *
 				 * recognized options are:
-				 * DBFILE		path to database file
+				 * DBFILE		path to database file. set to '-' to use no database
 				 * SERVERNAME	name of this ov_server
 				 * ID			Ticket Identification for server access
 				 * PORT			server port number
@@ -470,8 +470,11 @@ int main(int argc, char **argv) {
 				 * KSMAXSTRLENGTH	maximum length of strings to process with ks
 				 * KSMAXVECLENGTH	maximum length of vectors to process with ks
 				 * KSMAXITEMSPERREQ	maximum number of items per ks-request
-				 * DBSIZE		ignored. only for dbutil
-				 * DBUTILLOG	ignored. only for dbutil
+				 * DBSIZE			db size when need to create
+				 * DBUTILLOG		ignored. only for dbutil
+				 * DBNOMAP			read database but do not map
+				 * DBFORCECREATE	force creation of a new database
+				 * 					old database file is removed
 				 */
 
 				cfFile = fopen(configFile, "r");

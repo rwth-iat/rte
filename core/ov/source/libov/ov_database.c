@@ -1087,17 +1087,19 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(
 	if(dbFlags&OV_DBOPT_NOMAP){
 
 		OV_UINT pos = 0;
-		OV_UINT read = 0;
+		OV_UINT nread = 0;
 
 		pdb = Ov_HeapMalloc(size);
 		if(!pdb)
 			return OV_ERR_DBOUTOFMEMORY;
 
+		lseek(fd, 0, SEEK_SET);
+
 		do
 		{
-			read = read(fd, pdb+pos, size-pos);
-			pos += read;
-		} while (pos<size && read);
+			nread = read(fd, (OV_BYTE*)pdb+pos, size-pos);
+			pos += nread;
+		} while (pos<size && nread);
 
 		close(fd);
 		fd = 0;
@@ -1389,7 +1391,7 @@ OV_DLLFNCEXPORT void ov_database_unload(void) {
 	*/
 	if (pdb)	ov_database_shutdown();
 
-	if(dbFlags&OV_DBOPT_NOMAP){
+	if(dbFlags&(OV_DBOPT_NOMAP|OV_DBOPT_NOFILE)){
 		Ov_HeapFree(pdb);
 	} else {
 #if OV_SYSTEM_UNIX
