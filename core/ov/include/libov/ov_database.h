@@ -213,21 +213,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 );
 
 /*
-*	Map an existing database
+*	Load an existing database part 1
 */
-OV_DLLFNCEXPORT OV_RESULT ov_database_map(
+OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(
 	OV_STRING	filename
 );
 
 /*
-*	Map an existing database part 1
-*/
-OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
-	OV_STRING	filename
-);
-
-/*
-*	Map an existing database part 2
+*	Load an existing database part 2
 */
 OV_DLLFNCEXPORT OV_RESULT ov_database_loadlib(
 	OV_STRING	filename
@@ -236,7 +229,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadlib(
 /*
 *	Unmap the database
 */
-OV_DLLFNCEXPORT void ov_database_unmap(void);
+OV_DLLFNCEXPORT void ov_database_unload(void);
 
 /*
 *	Flush the contents of a database
@@ -252,10 +245,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_write(OV_STRING dbname);
 *	Load database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_database_load(OV_STRING filename,OV_UINT size, OV_UINT flags);
-/*
-*	Unload database
-*/
-OV_DLLFNCEXPORT void ov_database_unload(void);
+
 /*
 *	Initialize the database (subroutine)
 */

@@ -614,7 +614,7 @@ int main(int argc, char **argv) {
 		ov_logfile_info("Database created.");
 	} else {
 		ov_logfile_info("Mapping database \"%s\"...", filename);
-		result = ov_database_map_loadfile(filename);
+		result = ov_database_loadfile(filename);
 		if(Ov_Fail(result)) {
 			goto ERRORMSG;
 		}
@@ -667,7 +667,7 @@ int main(int argc, char **argv) {
 	ov_logfile_info("Used storage size is %ld Byte.", ov_database_getused());
 	ov_logfile_info("Free storage size is %ld Byte.", ov_database_getfree());
 	ov_logfile_info("Unmapping database \"%s\"...", filename);
-	ov_database_unmap();
+	ov_database_unload();
 	ov_logfile_info("Database unmapped.");
 
 

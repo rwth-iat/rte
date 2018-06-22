@@ -882,7 +882,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*	ensure that we are the first opener of the database file
 	*/
 	if(status != SS$_CREATED) {
-		ov_database_unmap();
+		ov_database_unload();
 		return OV_ERR_CANTCREATEFILE;
 	}
 	/*
@@ -914,7 +914,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*	    
 	*/	
 	if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
-		ov_database_unmap();
+		ov_database_unload();
 		return OV_ERR_DBOUTOFMEMORY;
 	}
 	
@@ -987,7 +987,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*/
 	result = ov_library_load(&pdb->ov, &OV_LIBRARY_DEF_ov);
 	if(Ov_Fail(result)) {
-		ov_database_unmap();
+		ov_database_unload();
 		return result;
 	}
 	/*
@@ -1014,28 +1014,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Map an existing database
+*	load an existing database part 1
 */
-OV_DLLFNCEXPORT OV_RESULT ov_database_map(
-	OV_STRING	filename
-) {
-	/*
-	*	local variables
-	*/
-	OV_RESULT	result;
-
-	result = ov_database_map_loadfile(filename);
-	if (result!=OV_ERR_OK) return result;
-	result = ov_database_loadlib(filename);
-	return result;
-}
-
-/*	----------------------------------------------------------------------	*/
-
-/*
-*	Map an existing database part 1
-*/
-OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
+OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(
 	OV_STRING	filename
 ) {
 	/*
@@ -1310,7 +1291,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 		 *	ensure that we are the first opener of the database file
 		 */
 		if(status != SS$_CREATED) {
-			ov_database_unmap();
+			ov_database_unload();
 			return OV_ERR_CANTOPENFILE;
 		}
 #endif
@@ -1325,14 +1306,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	*	test if we got the same filemapping size
 	*/
 	if (!pdb) {
-		ov_database_unmap();
+		ov_database_unload();
 		return OV_ERR_BADDATABASE;
 	}
 #if OV_SYSTEM_MC164
 	/* nothing to do */
 #else
 	if(size != pdb->size) {
-		ov_database_unmap();
+		ov_database_unload();
 		return OV_ERR_BADDATABASE;
 	}
 #endif
@@ -1342,7 +1323,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	if((OV_POINTER)pdb != pdb->baseaddr) {
 		result = ov_database_move((OV_BYTE*)pdb-(OV_BYTE*)(pdb->baseaddr));
 		if(Ov_Fail(result)) {
-			ov_database_unmap();
+			ov_database_unload();
 			return result;
 		}
 	}
@@ -1350,7 +1331,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 	*	restart the database memory pool
 	*/
 	if(!ml_restart(pmpinfo, pdb->pstart, ov_database_morecore)) {
-		ov_database_unmap();
+		ov_database_unload();
 		return OV_ERR_BADDATABASE;
 	}
 	return OV_ERR_OK;
@@ -1359,7 +1340,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_map_loadfile(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Map an existing database part 2
+*	load an existing database part 2
 */
 OV_DLLFNCEXPORT OV_RESULT ov_database_loadlib(
 	OV_STRING	filename
@@ -1391,7 +1372,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadlib(
 /*
 *	Unmap the database
 */
-OV_DLLFNCEXPORT void ov_database_unmap(void) {
+OV_DLLFNCEXPORT void ov_database_unload(void) {
 	/*
 	*	local variables
 	*/
@@ -1549,6 +1530,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_load(
 	OV_UINT		flags
 ) {
 	dbFlags = flags;
+	OV_RESULT	result;
 
 	if(ov_string_compare(filename, "-")==OV_STRCMP_EQUAL){
 		dbFlags |= OV_DBOPT_NOFILE;
@@ -1562,35 +1544,25 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_load(
 		return OV_ERR_BADPARAM;
 #endif
 
-#if OV_SYSTEM_UNIX || OV_SYSTEM_NT
+#if !(OV_SYSTEM_UNIX || OV_SYSTEM_NT)
+	/*
+	 * NOFILE and NOMAP only supported for Unix and NT
+	 */
+	if(dbFlags&(OV_DBOPT_NOFILE|OV_DBOPT_NOMAP))
+		return OV_ERR_BADPARAM;
+#endif
 
 	if((dbFlags&OV_DBOPT_FORCECREATE)	||
 		(dbFlags&OV_DBOPT_NOFILE)){
 		ov_database_create(filename, size, 0);
 	} else {
-		ov_database_map(filename);
+		result = ov_database_loadfile(filename);
+		if (Ov_Fail(result)) return result;
+		result = ov_database_loadlib(filename);
+		return result;
 	}
 
-#else
-
-	if(dbFlags&(OV_DBOPT_NOFILE|OV_DBOPT_NOMAP))
-			return OV_ERR_BADPARAM;
-		if(dbFlags&OV_DBOPT_FORCECREATE)
-			ov_database_create(filename, size, 0);
-		else
-			ov_database_map(filename);
-
-#endif
-
 	return OV_ERR_OK;
-}
-/*	----------------------------------------------------------------------	*/
-
-/*
-*	Unload database
-*/
-OV_DLLFNCEXPORT void ov_database_unload(void){
-
 }
 /*	----------------------------------------------------------------------	*/
 

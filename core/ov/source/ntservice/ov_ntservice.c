@@ -796,7 +796,7 @@ ERRORMSG:
 	*   unmap the database
 	*/
 	ov_logfile_info("Unmapping database \"%s\"...", filename);
-	ov_database_unmap();
+	ov_database_unload();
 	ov_logfile_info("Database unmapped.");
 	/*
 	*	close logfile
