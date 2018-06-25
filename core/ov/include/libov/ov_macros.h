@@ -31,10 +31,12 @@
 #define OV_MACROS_H_INCLUDED
 
 // for strdup
+/*
 #ifdef OV_COMPILE_LIBOV
 #define _POSIX_C_SOURCE 200809L
 #include <string.h>
 #endif
+*/
 
 #include "libov/ov_association.h"
 #include "libov/ov_class.h"
@@ -520,6 +522,16 @@
 	(timespan).secs = (OV_INT)(dbl);													\
 	(timespan).usecs = (OV_INT)(((dbl)-(OV_DOUBLE)(timespan).secs)*(OV_DOUBLE)1e6)
 
+/*
+ * load dependent library while loading
+ * use in ov_library_open_<lib>() function
+ */
+#define Ov_loadRequiredLib( lib )									\
+	{OV_INSTPTR_ov_library pLib;									\
+	if(!(pLib=ov_library_search((lib)))){							\
+		ov_logfile_info("loading required library %s ...", (lib));	\
+		Ov_CreateObject(ov_library, pLib, &pdb->acplt, (lib));	}}
+
 /**
 *	Check if mutex for database and memsatck is available
 */
@@ -606,15 +618,7 @@
 *	Duplicate a string on the heap
 *	Uses strdup on most platforms even if it is not part of ANSI C
 */
-#ifdef OV_COMPILE_LIBOV
-#if OV_SYSTEM_MC164 || OV_SYSTEM_RMOS
 #define Ov_HeapStrdup(ptr)	ov_strdup(ptr)
-#else
-#define Ov_HeapStrdup(ptr)	strdup(ptr)
-#endif
-#else
-#define Ov_HeapStrdup(ptr)	ov_strdup(ptr)
-#endif
 
 #endif
 /*
