@@ -226,6 +226,8 @@ OV_DLLFNCEXPORT void ksbase_ServerRep_typemethod(
 		ksbase_ServerRep_state_set(pinst, KSBASE_SERVERREP_STATE_INACTIVE);
 	}
 	//remove our entry after 5 minutes
+	if(timenow.secs<300) // prevent integer underflow
+		return;
 	timenow.secs -= 300;
 	if(ov_time_compare(&timenow, &(pinst->v_expirationtime)) == OV_TIMECMP_AFTER) {
 		Ov_DeleteObject(Ov_GetParent(ov_containment, pinst));
