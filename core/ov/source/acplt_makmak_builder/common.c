@@ -286,7 +286,8 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 		if(!S_ISDIR(st.st_mode))
 			continue;
 
-		dirList[pos] = strdup(dp->d_name);
+		dirList[pos] = malloc(strlen(dp->d_name)+1);
+		strcpy(dirList[pos], dp->d_name);
 		pos++;
 	}
 
