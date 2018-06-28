@@ -55,28 +55,6 @@ LIBRARY SSChelper
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS StringEq : CLASS fb/functionblock
-		IS_INSTANTIABLE;
-		VARIABLES
-			in1 : STRING  FLAGS = "i" COMMENT = "string 1";
-			in2 : STRING FLAGS = "i" COMMENT = "string 2";
-			
-			result : BOOL FLAGS = "o" COMMENT = "Command to be processed";
-			// Add variables here. The syntax is:
-			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
-			// Example:
-			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
-			// Example for a fb/functionblock based class
-			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
-		END_VARIABLES;
-		OPERATIONS
-			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
-			// if MY_FUNC is declared in SSChelper.ovf. Implement the functions in decoder.c.
-			// fb/functionblock based classes have to implement typemethod
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-		END_OPERATIONS;
-	END_CLASS;
-	
 	CLASS usercheck : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
@@ -257,6 +235,28 @@ LIBRARY SSChelper
 		END_OPERATIONS;
 	END_CLASS;
 	
+	CLASS StringEq : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			in1 : STRING  FLAGS = "i" COMMENT = "string 1";
+			in2 : STRING FLAGS = "i" COMMENT = "string 2";
+			
+			result : BOOL FLAGS = "o" COMMENT = "Command to be processed";
+			// Add variables here. The syntax is:
+			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
+			// Example:
+			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
+			// Example for a fb/functionblock based class
+			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+		END_VARIABLES;
+		OPERATIONS
+			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
+			// if MY_FUNC is declared in SSChelper.ovf. Implement the functions in decoder.c.
+			// fb/functionblock based classes have to implement typemethod
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
     CLASS StringSelect : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
@@ -270,7 +270,7 @@ LIBRARY SSChelper
 		END_OPERATIONS;
 	END_CLASS;
 	
-	    CLASS StringVecSelect : CLASS fb/functionblock
+	CLASS StringVecSelect : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
 			K	: UINT   FLAGS = "i" COMMENT = "Index starting from 0.";
@@ -283,13 +283,23 @@ LIBRARY SSChelper
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
-	/**
-		Add associations and their documentation here.
-		Association syntax is:
-	*/
-	//ASSOCIATION assocName : ONE_TO_MANY
-	//	PARENT parentVarName : CLASS ov/object;
-	//	CHILD  childVarName : CLASS ov/object;
-	//END_ASSOCIATION;
 	
+	CLASS StringSplit : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			IN 	  : STRING FLAGS = "i" COMMENT ="String input.";
+			DELIM : STRING FLAGS = "i" COMMENT ="Delimiter to split String.";
+			
+			OUT[] : STRING FLAGS = "o" COMMENT = "String split into string vector.";
+			LEN : UINT FLAGS = "o" COMMENT = "Lenght of vector in OUT. ";
+			
+			OUT1 : STRING FLAGS = "o" COMMENT = "String before first delimiter.";
+			OUT2 : STRING FLAGS = "o" COMMENT = "String after first delimiter.";
+			OUT3 : STRING FLAGS = "o" COMMENT = "String after last delimiter.";
+			FOUND: BOOL FLAGS = "o" COMMENT = "Delimiter found in IN String.";
+		END_VARIABLES;
+		OPERATIONS
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
 END_LIBRARY;
