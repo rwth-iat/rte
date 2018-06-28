@@ -458,6 +458,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
 					{/*	do a direct free in the datapacket as it frees nothing when length == 0	*/
 						Ov_HeapFree(thisCh->v_inData.data);
+						thisCh->v_inData.data = NULL;
 					}
 					/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
 					if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
@@ -484,6 +485,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
 					{	/*	do a direct free in the datapacket as it frees nothing when length == 0	*/
 						Ov_HeapFree(thisCh->v_inData.data);
+						thisCh->v_inData.data = NULL;
 					}
 					/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
 					if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED

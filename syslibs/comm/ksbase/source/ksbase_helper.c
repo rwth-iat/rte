@@ -190,7 +190,7 @@ OV_DLLFNCEXPORT void ksbase_free_KSDATAPACKET(KS_DATAPACKET* packet)
 	if(!packet)
 		return;
 
-	if(packet->length)
+	if(packet->length || packet->data)
 	{
 		if(packet->length > 65536){
 			KS_logfile_debug(("freeing large (>64k)  ks-datapacket, length is: %i", packet->length));
