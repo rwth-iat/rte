@@ -262,12 +262,15 @@ or
 		}
 	}
 
+	fr = kshttp_escapeString(&tmpExpText, &explain_text, response_format);
+	if(Ov_Fail(fr))
+		return fr;
+
 	if(len > 1 && lasterror != OV_ERR_OK){
 		//wrap in "mixed" if multiple results were given
 		kshttp_response_part_begin(&temp, response_format, "mixed");
 	}
 
-	kshttp_escapeString(&tmpExpText, &explain_text, response_format);
 
 	for (i=0; i< len;i++){
 		if(Ov_Fail(results[i])){
@@ -575,6 +578,8 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, const OV_STRING *strIn, c
 	Ov_HeapFree(heapString);
 	if(!*resultString) {// return pointer to empty string if NULL
 		*resultString = Ov_DbMalloc(sizeof(char));
+		if(!**resultString)
+			return OV_ERR_DBOUTOFMEMORY;
 		**resultString = '\0';
 	}
 	return fr;
