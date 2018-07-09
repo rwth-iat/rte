@@ -1278,7 +1278,7 @@ HELP:		ov_server_usage();
 	if(!(filename[1]==':'|| filename[0]=='\\'))
 #endif
 	{/*	relative path --> prepend basePath	*/
-		if(configBasePath && *configBasePath)
+		if(configBasePath && *configBasePath && strcmp(filename, "-")!=0)
 		{
 			hlpindex = strlen(configBasePath);
 			helper = calloc(hlpindex+strlen(filename)+2, sizeof(char));
