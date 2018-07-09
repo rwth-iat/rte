@@ -109,10 +109,13 @@ int main(int argc, char **argv) {
 	int			targetOs = 0;
 
 	//default to the own bitwidth
+
 #ifdef __x86_64
-	int	    	archBitwidth = 64;
+	int			archBitwidth = 64;
+#elif __arm__
+	int			archBitwidth = 0;
 #else
-	int	    	archBitwidth = 32;
+	int			archBitwidth = 32;
 #endif
 	
 	char        *builddir = NULL;
@@ -722,19 +725,36 @@ if(new == 0){
 	fprintf(fd,"else\n");
 	fprintf(fd,"GCC_BIN_PREFIX		= \n");
 	fprintf(fd,"endif\n\n");
+
+	fprintf(fd,"ifdef OV_ARCH\n");
+	fprintf(fd,"ifeq \"$(OV_ARCH)\" \"x86\"\n");
+	fprintf(fd,"OV_ARCH_BITWIDTH_FLAG	= -m32\n");
+	fprintf(fd,"else ifeq \"$(OV_ARCH)\" \"x86_64\"\n");
+	fprintf(fd,"OV_ARCH_BITWIDTH_FLAG	= -m64\n");
+	fprintf(fd,"else ifeq \"$(OV_ARCH)\" \"arm\"\n");
+	fprintf(fd,"OV_ARCH_BITWIDTH_FLAG	=\n");
+	fprintf(fd,"else\n");
+	fprintf(fd,"$(error unknown arch: $(OV_ARCH); valid options are {x86, x86_64, arm})\n");
+	fprintf(fd,"endif # ifeq OV_ARCH\n");
+	fprintf(fd,"else\n");
+
+	// set default bit width flag
+	fprintf(fd,"OV_ARCH_BITWIDTH_FLAG	= ");
+	if(archBitwidth){
+		fprintf(fd, "-m%i" , archBitwidth);
+	}
+	fprintf(fd, "\n");
+
+	fprintf(fd,"endif # ifdef OV_ARCH\n\n\n");
+
 	fprintf(fd,"CC		?= $(GCC_BIN_PREFIX)gcc\n");
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
 	fprintf(fd,"endif\n");
 	fprintf(fd,"CC_FLAGS	= -g -std=c99");
-	// remove the following #if to enable cross compiling on an ARM host system
-#if !__arm__
-	if(archBitwidth == 32){
-		fprintf(fd," -m32");
-	}else if(archBitwidth == 64){
-		fprintf(fd," -m64");
-	}
-#endif
+
+	fprintf(fd," $(OV_ARCH_BITWIDTH_FLAG)");
+
 	if(targetOs != TARGETOS_WIN){
 		fprintf(fd," -fPIC");	// all code is position independent on windows
 	}
@@ -759,24 +779,12 @@ if(new == 0){
 	fprintf(fd,"CC_INCLUDES	= $(INCLUDES) -I.\n");
 	fprintf(fd,"COMPILE_C	= $(CC) $(CC_FLAGS) $(CC_DEFINES) $(CC_INCLUDES) -c\n");
 
+	fprintf(fd,"LD		= $(CC) -shared");
+	fprintf(fd," $(OV_ARCH_BITWIDTH_FLAG)");
+
 	if(targetOs == TARGETOS_WIN){
-		fprintf(fd,"LD		= $(CC) -shared");
-		if(archBitwidth == 32){
-			fprintf(fd," -m32");
-		}else if(archBitwidth == 64){
-			fprintf(fd," -m64");
-		}
 		fprintf(fd," -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
 	} else {
-		fprintf(fd,"LD		= $(CC) -shared");
-// remove the following #if to enable cross compiling on an ARM host system
-#if !__arm__
-		if(archBitwidth == 32){
-			fprintf(fd," -m32");
-		}else if(archBitwidth == 64){
-			fprintf(fd," -m64");
-		}
-#endif
 		fprintf(fd,"\n");
 	}
 
