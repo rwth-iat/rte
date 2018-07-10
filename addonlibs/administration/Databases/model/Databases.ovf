@@ -1,0 +1,13 @@
+#ifndef Databases_OVF_INCLUDED
+#define Databases_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+typedef OV_RESULT DS_FNC_EXECQUERY(const OV_STRING query); 
+
+#endif

@@ -1,0 +1,33 @@
+#include "ov.ovm"
+#include "openAASDiscoveryServer.ovm"
+
+LIBRARY Databases
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "jerome lenssen";
+	COPYRIGHT = " ";
+	COMMENT   = "DBWrapper implementation for different databases/SQL languages";
+	
+	CLASS SQLite3 : CLASS openAASDiscoveryServer/DBWrapper
+		IS_INSTANTIABLE;
+		VARIABLES
+			table : STRING FLAGS = "i" INITIALVALUE = "";
+			ip	  : STRING FLAGS = "i" INITIALVALUE = "";
+			cert  : STRING FLAGS = "i" INITIALVALUE = "";
+			query : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE = "";
+			io	  : BOOL HAS_SET_ACCESSOR FLAGS = "i"   INITIALVALUE = FALSE;
+			db    : C_TYPE <SQLITE3_DB_HANDLE>;
+		END_VARIABLES;
+		OPERATIONS
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            connect     : C_FUNCTION <DS_FNC_CONNECT>;
+            disconnect  : C_FUNCTION <DS_FNC_DISCONNECT>;
+            insertData  : C_FUNCTION <DS_FNC_INSERTDATA>;
+            selectData  : C_FUNCTION <DS_FNC_SELECTDATA>;
+            deleteData	: C_FUNCTION <DS_FNC_DELETEDATA>;
+            updateData  : C_FUNCTION <DS_FNC_UPDATEDATA>;
+            getComponentID : C_FUNCTION <DS_FNC_GETCOMPONENTID>;
+            execQuery   : C_FUNCTION <DS_FNC_EXECQUERY>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+END_LIBRARY;

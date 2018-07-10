@@ -87,6 +87,20 @@
 		}
 	 }
 
+	 OV_INSTPTR_ov_library pLibDISCOVERYSERVER = NULL;
+	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibDISCOVERYSERVER, ov_library){
+		if(ov_string_compare(pLibDISCOVERYSERVER->v_identifier, "openAASDiscoveryServer") == OV_STRCMP_EQUAL){
+			break;
+		}
+	 }
+	 if(!pLibDISCOVERYSERVER){
+		result = Ov_CreateObject(ov_library, pLibDISCOVERYSERVER, &(pdb->acplt), "openAASDiscoveryServer");
+		if(Ov_Fail(result)){
+			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library openAASDiscoveryServer Reason: %s", ov_result_getresulttext(result));
+			return result;
+		}
+	 }
+
 	return result;
 	}
 

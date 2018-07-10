@@ -2,6 +2,12 @@
 #define openAASDiscoveryServer_OVT_INCLUDED
 
 /* 
-	Define your data types here. 
+    Define your data types here. 
 */
+
+typedef struct DB_QUERY {
+	OV_STRING_VEC column;
+	OV_STRING_VEC value;
+} DB_QUERY;
+
 #endif

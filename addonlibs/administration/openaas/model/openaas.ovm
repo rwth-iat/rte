@@ -5,6 +5,7 @@
 #include "propertyValueStatement.ovm"
 #include "lifeCycleEntry.ovm"
 #include "MessageSys.ovm"
+#include "openAASDiscoveryServer.ovm"
    
 LIBRARY openaas
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -59,6 +60,13 @@ LIBRARY openaas
             senderForMessageForwardedIdType : UINT;
             MsgIdForMessageForwarded : STRING FLAGS = "n" COMMENT = "Id of forwarded Message" INITIALVALUE = "";
             MsgIdForGetAASIdRequest  : STRING FLAGS = "n" COMMENT = "Id of getAASIdRequest Message" INITIALVALUE = "";
+            // error details
+            errorFlag           : BOOL FLAGS = "o" INITIALVALUE = FALSE;
+            errorMessage        : STRING FLAGS = "o" INITIALVALUE = "";
+            
+            // security details 
+            certificateDS       : STRING FLAGS = "o" INITIALVALUE = "";
+            securityKey         : STRING FLAGS = "o" INITIALVALUE = "";
 		END_VARIABLES;
 		PARTS
 			INBOX  : CLASS MessageSys/inbox;
@@ -96,6 +104,7 @@ LIBRARY openaas
         IPAddressAASDiscoveryServer     : STRING    COMMENT = "IP address of the AASDiscoveryServer" INITIALVALUE    =   "127.0.0.1";
         ManagerNameAASDiscoveryServer   : STRING    COMMENT = "Manager Name of the AASDiscoveryServer" INITIALVALUE    =   "MANAGER";
         PathToAASDiscoveryServer        : STRING    COMMENT = "Path to the AASDiscoveryServer" INITIALVALUE    =   "/TechUnits/DiscoveryServer";
+        OPCUANamespaceIndex             : UINT      COMMENT = "opcua NamespaceIndex of the components";
     END_VARIABLES;
     OPERATIONS        
     	constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;

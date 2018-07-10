@@ -1,0 +1,56 @@
+#include "ov.ovm"
+#include "openAASDiscoveryServer.ovm"
+
+LIBRARY DSServices
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of xxx.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS DSRegistrationServiceType1 : CLASS openAASDiscoveryServer/DSRegistrationService
+		IS_INSTANTIABLE;
+		VARIABLES 
+		END_VARIABLES;
+		OPERATIONS
+			executeService   : C_FUNCTION <DS_FNC_EXECUTESERVICE>;
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+   CLASS DSUnregistrationServiceType1 : CLASS openAASDiscoveryServer/DSUnRegistrationService
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+            executeService   : C_FUNCTION <DS_FNC_EXECUTESERVICE>;
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS DSSearchServiceType1 : CLASS openAASDiscoveryServer/DSSearchService
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+            executeService   : C_FUNCTION <DS_FNC_EXECUTESERVICE>;
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS; 
+    
+    CLASS DSSecurityServiceType1 : CLASS openAASDiscoveryServer/DSSecurityService
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+            executeService   : C_FUNCTION <DS_FNC_EXECUTESERVICE>;
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+	
+
+END_LIBRARY;

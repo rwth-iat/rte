@@ -1,0 +1,11 @@
+#ifndef Databases_OVT_INCLUDED
+#define Databases_OVT_INCLUDED
+
+#include "sqlite3.h"
+
+/* 
+	Define your data types here. 
+*/
+typedef sqlite3* SQLITE3_DB_HANDLE;
+
+#endif

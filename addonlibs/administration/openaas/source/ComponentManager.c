@@ -30,6 +30,7 @@
 #include "identification_helpers.h"
 #include "propertyValueStatement_helpers.h"
 #include "MessageSys_helpers.h"
+#include "json_helper.h"
 
 extern OV_INSTPTR_openaas_InterfaceDiscoveryServer pInterfaceDiscoveryServer;
 static OV_INT LOCALMSGCOUNTER;
@@ -39,7 +40,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_AASComponentManager_reset_set(
     const OV_BOOL  value
 ) {
 	if (value == TRUE){
-		pobj->v_state = 0;
+		pobj->v_state = 6;
 	}
     pobj->v_reset = value;
     return OV_ERR_OK;
@@ -184,21 +185,26 @@ static void cleanupMessageBox(OV_INSTPTR_openaas_AASComponentManager this) {
 }
 
 // RequestType:
-// 0:RegisterAAS
-// 1:UnregisterAAS
-// 2:GetAAS
-static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponentManager this, OV_UINT requestType, IdentificationType requestedAASId) {
+// 0:SecurityRequest
+// 1:RegistrationRequest
+// 2:SearchRequest
+// 3:UnregistrationRequest
+static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponentManager this, OV_UINT requestType, const IdentificationType* requestedAASId) {
 	OV_INSTPTR_openaas_aas paas;
-	OV_STRING tempString = NULL;
+	OV_STRING tmpString = NULL;
+	OV_STRING value = NULL;
+	OV_STRING tag = NULL;
+	OV_STRING SenderEndpoint = NULL;
+	OV_STRING ReceiverEndpoint = NULL;
 	OV_RESULT resultOV = OV_ERR_OK;
+	OV_STRING componentID = NULL;
+	OV_STRING certificate = NULL;
+	OV_STRING componentContent = NULL;
 	OV_INSTPTR_MessageSys_Message pRequestMessage = NULL;
 	OV_INSTPTR_MessageSys_MsgDelivery pmsgDelivery = NULL;
 	// Create MessageObject in Outbox
 	paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
-	ov_string_setvalue(&tempString, NULL);
-	ov_string_setvalue(&tempString, "Request");
-	resultOV = Ov_CreateObject(MessageSys_Message, pRequestMessage, &this->p_OUTBOX, tempString);
-	ov_string_setvalue(&tempString, NULL);
+	resultOV = Ov_CreateObject(MessageSys_Message, pRequestMessage, &this->p_OUTBOX, "Request");
 	if(Ov_Fail(resultOV)){
 		ov_logfile_error("Could not create an request Message. Reason: %s", ov_result_getresulttext(resultOV));
 		return NULL;
@@ -211,27 +217,41 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		return NULL;
 	}
 	MessageSys_Message_senderAddress_set(pRequestMessage, pInterfaceDiscoveryServer->v_IPAddressServer);
-
+	ov_string_setvalue(&SenderEndpoint, pInterfaceDiscoveryServer->v_IPAddressServer);
 	// ServerName
 	OV_STRING servername = NULL;
 	OV_ANY srvnameprops;
 	ov_vendortree_getservername(&srvnameprops, NULL);
 	ov_string_setvalue(&servername,srvnameprops.value.valueunion.val_string);
 	MessageSys_Message_senderName_set(pRequestMessage,servername);
+	ov_string_append(&SenderEndpoint, ":");
+	ov_string_append(&SenderEndpoint, servername);
 	ov_string_setvalue(&servername, NULL);
 
 	// Path
 	ov_memstack_lock();
 	MessageSys_Message_senderComponent_set(pRequestMessage, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,this), 2));
+	ov_string_append(&SenderEndpoint, ":");
+	ov_string_append(&SenderEndpoint, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,this), 2));
 	ov_memstack_unlock();
 
 	// Receiver = DiscoveryServer
 	MessageSys_Message_receiverAddress_set(pRequestMessage, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
+	ov_string_setvalue(&ReceiverEndpoint, pInterfaceDiscoveryServer->v_IPAddressAASDiscoveryServer);
 	MessageSys_Message_receiverName_set(pRequestMessage, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
-	ov_string_setvalue(&tempString, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
-	ov_string_append(&tempString, ".ComponentManager");
-	MessageSys_Message_receiverComponent_set(pRequestMessage, tempString);
-	ov_string_setvalue(&tempString, NULL);
+	ov_string_append(&ReceiverEndpoint, ":");
+	ov_string_append(&ReceiverEndpoint, pInterfaceDiscoveryServer->v_ManagerNameAASDiscoveryServer);
+	ov_string_setvalue(&tmpString, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
+	ov_string_append(&ReceiverEndpoint, ":");
+	ov_string_append(&ReceiverEndpoint, pInterfaceDiscoveryServer->v_PathToAASDiscoveryServer);
+	ov_string_append(&tmpString, ".ComponentManager");
+	ov_string_append(&ReceiverEndpoint, ".ComponentManager");
+	MessageSys_Message_receiverComponent_set(pRequestMessage, tmpString);
+	ov_string_setvalue(&tmpString, NULL);
+
+	ov_string_print(&componentID, "%i", paas->p_AASID.v_IdType);
+	ov_string_append(&componentID, ",");
+	ov_string_append(&componentID, paas->p_AASID.v_IdSpec);
 
 	// Body
 	// XML Encoding
@@ -239,47 +259,72 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	ov_string_setvalue(&answerBody, "<bdy>");
 	switch(requestType){
 	case 0:
-		ov_string_append(&answerBody, "RegisterAASReq:");
-		ov_string_print(&tempString, "%i", paas->p_AASID.v_IdType);
-		ov_string_append(&answerBody, tempString);
-		ov_string_append(&answerBody, ",");
-		ov_string_append(&answerBody, paas->p_AASID.v_IdSpec);
-
-		ov_string_append(&answerBody, ",");
-		ov_string_print(&tempString, "%i", paas->p_AssetID.v_IdType);
-		ov_string_append(&answerBody, tempString);
-		ov_string_append(&answerBody, ",");
-		ov_string_append(&answerBody, paas->p_AssetID.v_IdSpec);
-
-		ov_string_setvalue(&tempString, NULL);
-		ov_string_append(&answerBody, ",");
-		ov_string_append(&answerBody, pRequestMessage->v_senderAddress);
-		ov_string_append(&answerBody, ",");
-		ov_string_append(&answerBody, pRequestMessage->v_senderName);
-		ov_string_append(&answerBody, ",");
-		ov_string_append(&answerBody, pRequestMessage->v_senderComponent);
+		// TODO: get certificate from PVS
+		ov_string_setvalue(&certificate, "certificateOf");
+		ov_string_append(&certificate, componentID);
+		ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"1\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"certificate\":\"%s\"}}", SenderEndpoint, ReceiverEndpoint, MessageSys_Message_msgID_get(pRequestMessage), componentID, certificate);
+		ov_string_append(&answerBody, tmpString);
+		ov_string_setvalue(&tmpString, NULL);
+		ov_string_setvalue(&certificate, NULL);
 		break;
 	case 1:
-		ov_string_append(&answerBody, "UnregisterAASReq:");
-		ov_string_print(&tempString, "%i", paas->p_AASID.v_IdType);
-		ov_string_append(&answerBody, tempString);
-		ov_string_append(&answerBody, ",");
-		ov_string_append(&answerBody, paas->p_AASID.v_IdSpec);
-
-		ov_string_append(&answerBody, ",");
-		ov_string_print(&tempString, "%i", paas->p_AssetID.v_IdType);
-		ov_string_append(&answerBody, tempString);
-		ov_string_append(&answerBody, ",");
-		ov_string_append(&answerBody, paas->p_AssetID.v_IdSpec);
-		ov_string_setvalue(&tempString, NULL);
+		// TODO: get ComponentContent from AAS
+		ov_memstack_lock();
+		ov_string_print(&componentContent, "\"endpoints\":[{\"protocolType\":\"acplt_ks\",\"endpointSring\":\"%s\"}", SenderEndpoint);
+		if (pInterfaceDiscoveryServer->v_OPCUANamespaceIndex != 0){ // TODO: Check if OPCUA Server is running and getting nsindex
+			tmpString = NULL;
+			ov_string_print(&tmpString, ",{\"protocolType\":\"opcua\",\"endpointString\":\"opc.tcp://%s:16664;nsindex=%i, nodeId=%s\"}", pInterfaceDiscoveryServer->v_IPAddressServer, pInterfaceDiscoveryServer->v_OPCUANamespaceIndex, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,this), 2));
+			ov_string_append(&componentContent, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+		}
+		ov_string_append(&componentContent, "],\"tags\": [");
+		ov_memstack_unlock();
+		// AASID
+		tmpString = NULL;
+		ov_string_print(&value, "%i", paas->p_AASID.v_IdType);
+		ov_string_append(&value, ",");
+		ov_string_append(&value, paas->p_AASID.v_IdSpec);
+		ov_string_print(&tmpString, "{\"tag\":\"AASID\",\"value\":\"%s\"}", value);
+		ov_string_setvalue(&value, NULL);
+		ov_string_append(&componentContent, tmpString);
+		ov_string_setvalue(&tmpString, NULL);
+		// AssetID
+		ov_string_print(&value, "%i", paas->p_AssetID.v_IdType);
+		ov_string_append(&value, ",");
+		ov_string_append(&value, paas->p_AssetID.v_IdSpec);
+		ov_string_print(&tmpString, ",{\"tag\":\"ASSETID\",\"value\":\"%s\"}", value);
+		ov_string_setvalue(&value, NULL);
+		ov_string_append(&componentContent, tmpString);
+		ov_string_setvalue(&tmpString, NULL);
+		// Registration of other Tags
+		OV_INSTPTR_openaas_SubModel pSubmodel = NULL;
+		OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pPVSList = NULL;
+		OV_INSTPTR_propertyValueStatement_PropertyValueStatement pPVS = NULL;
+		Ov_ForEachChildEx(ov_containment, &paas->p_Header, pSubmodel, openaas_SubModel){
+			if (ov_string_compare(pSubmodel->v_identifier, "Identification") == OV_STRCMP_EQUAL){
+				Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
+					ov_string_setvalue(&tag, pPVSList->v_identifier);
+					Ov_ForEachChildEx(ov_containment, pPVSList, pPVS, propertyValueStatement_PropertyValueStatement){
+						ov_string_setvalue(&value, pPVS->v_Value.value.valueunion.val_string);
+						ov_string_print(&tmpString, ",{\"tag\":\"%s\",\"value\":\"%s\"}", tag, value);
+						ov_string_append(&componentContent, tmpString);
+						ov_string_setvalue(&tmpString, NULL);
+						ov_string_setvalue(&value, NULL);
+					}
+					ov_string_setvalue(&tag, NULL);
+				}
+			}
+		}
+		ov_string_append(&componentContent, "]");
+		ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"3\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", %s}}", SenderEndpoint, ReceiverEndpoint, MessageSys_Message_msgID_get(pRequestMessage), componentID, this->v_securityKey, componentContent);
+		ov_string_append(&answerBody, tmpString);
 		break;
 	case 2:
-		ov_string_append(&answerBody, "GetAASReq:");
-		ov_string_append(&answerBody, requestedAASId.IdSpec);
-		ov_string_append(&answerBody, ",");
-		ov_string_print(&tempString, "%i", requestedAASId.IdType);
-		ov_string_append(&answerBody, tempString);
-		ov_string_setvalue(&tempString, NULL);
+		break;
+	case 3:
+		ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"5\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\"}}", SenderEndpoint, ReceiverEndpoint, MessageSys_Message_msgID_get(pRequestMessage), componentID, this->v_securityKey);
+		ov_string_append(&answerBody, tmpString);
+		ov_string_setvalue(&tmpString, NULL);
 		break;
 	default:
 		Ov_DeleteObject((OV_INSTPTR_ov_object) pRequestMessage);
@@ -288,6 +333,7 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		return NULL;
 		break;
 	}
+	ov_string_setvalue(&componentID, NULL);
 	ov_string_append(&answerBody, "</bdy>");
 	ov_string_setvalue(&pRequestMessage->v_msgBody, answerBody);
 	ov_string_setvalue(&answerBody, NULL);
@@ -344,10 +390,13 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 	OV_INSTPTR_fb_task pTaskParent = NULL;
 	OV_TIME_SPAN tmpTimeSpan;
 	OV_INSTPTR_ov_object pchild = NULL;
+	response_data responseData;
+	response_data_init(&responseData);
 
 	// First clean message box, so only up-to-date messages are handled.
 	cleanupMessageBox(pinst);
 	ov_string_setvalue(&pinst->v_errorText, NULL);
+
 
 	// StateMaschine
 	switch(pinst->v_state){
@@ -365,15 +414,14 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			break;
 		}
 
-		//register AAS
-		IdentificationType tmpASSId;
-		IdentificationType_init(&tmpASSId);
-		sendingRequestToDiscoveryServer(pinst, 0, tmpASSId);
-		IdentificationType_deleteMembers(&tmpASSId);
+		//securityCheck AAS
+		sendingRequestToDiscoveryServer(pinst, 0, NULL);
 		pinst->v_state = 1;
 		break;
-	case 1: //Sending Register-Request and wait for answer
+	case 1: //Sending Security-Request and wait for answer
 		// Get the next message, if any.
+		ov_string_setvalue(&pinst->v_errorMessage, NULL);
+		pinst->v_errorFlag = FALSE;
 		pinst->v_messageCount++;
 		pTaskParent=Ov_GetParent(fb_tasklist, pinst);
 		tmpTimeSpan.usecs = pTaskParent->v_cyctime.usecs * pinst->v_messageCount;
@@ -384,10 +432,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		}
 		if (tmpTimeSpan.secs > pinst->v_messageTimeOut.secs || (tmpTimeSpan.secs == pinst->v_messageTimeOut.secs && tmpTimeSpan.usecs > pinst->v_messageTimeOut.usecs)){
 			pinst->v_messageCount = 0;
-			IdentificationType tmpAASId;
-			IdentificationType_init(&tmpAASId);
-			sendingRequestToDiscoveryServer(pinst, 0, tmpAASId);
-			IdentificationType_deleteMembers(&tmpAASId);
+			sendingRequestToDiscoveryServer(pinst, 0, NULL);
 		}
 		message = getNextMessage(pinst);
 		if (message == NULL) {
@@ -411,28 +456,108 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		memcpy(messageContent, (message->v_msgBody+5), messageLength-11);
 		messageContent[messageLength-11] = '\0';
 
-		plistReq= ov_string_split(messageContent, ":", &len);
+		// TODO: SecurityResponse
+		jsonResponseParse(&responseData, messageContent);
 		free (messageContent);
-		if (ov_string_compare(plistReq[0], "RegisterAASRes") == OV_STRCMP_EQUAL){ // register response
-			if (ov_string_compare(plistReq[1], "OK") == OV_STRCMP_EQUAL){ // register was successfully
-				pinst->v_state = 2;
-				pTaskParent=Ov_GetParent(fb_tasklist, pinst);
-				if(pTaskParent->v_cyctime.secs > 0)
-					pinst->v_messageCount = pinst->v_messageTimeOut.secs / pTaskParent->v_cyctime.secs;
-				else
-					pinst->v_messageCount = pinst->v_messageTimeOut.usecs / pTaskParent->v_cyctime.usecs;
-				pinst->v_registered = TRUE;
-			}else{ // Error
-				ov_string_setvalue(&pinst->v_errorText, plistReq[1]);
-				pinst->v_state = 6;
-			}
-		}else{ // no register response => delete message and wait for next one
+
+		if (responseData.header.messageType != 2){
+			// delete all used memory
+			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			return;
 		}
+		if (responseData.header.errorFlag == TRUE){
+			pinst->v_errorFlag = TRUE;
+			ov_string_setvalue(&pinst->v_errorMessage, responseData.header.errorMessage);
+			pinst->v_state = 8;
+			// delete all used memory
+			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			return;
+		}
+		// find certificate and securityKey
+		// Parsing Body
+		OV_STRING_VEC tags;
+		tags.value = NULL;
+		tags.veclen = 0;
+		OV_STRING_VEC values;
+		values.value = NULL;
+		values.veclen = 0;
+		Ov_SetDynamicVectorLength(&tags, 2, STRING);
+		Ov_SetDynamicVectorLength(&values, 2, STRING);
+
+		ov_string_setvalue(&tags.value[0], "certificate");
+		ov_string_setvalue(&tags.value[1], "securityKey");
+
+		jsonGetValuesByTags(tags, responseData.body, 1, &values);
+		ov_string_setvalue(&pinst->v_certificateDS, values.value[0]);
+		ov_string_setvalue(&pinst->v_securityKey, values.value[1]);
+		Ov_SetDynamicVectorLength(&tags, 0, STRING);
+		Ov_SetDynamicVectorLength(&values, 0, STRING);
 		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
-		ov_string_freelist(plistReq);
-		break;
-	case 2: //Process incoming messages
+		pinst->v_state = 2;
+		sendingRequestToDiscoveryServer(pinst, 1, NULL);
+	break;
+	case 2: //Sending Registration-Request and wait for answer
 		// Get the next message, if any.
+		ov_string_setvalue(&pinst->v_errorMessage, NULL);
+		pinst->v_errorFlag = FALSE;
+		pinst->v_messageCount++;
+		pTaskParent=Ov_GetParent(fb_tasklist, pinst);
+		tmpTimeSpan.usecs = pTaskParent->v_cyctime.usecs * pinst->v_messageCount;
+		tmpTimeSpan.secs = pTaskParent->v_cyctime.secs * pinst->v_messageCount;
+		while((OV_INT)tmpTimeSpan.usecs > 999999) {
+			tmpTimeSpan.usecs -= 1000000;
+			tmpTimeSpan.secs++;
+		}
+		if (tmpTimeSpan.secs > pinst->v_messageTimeOut.secs || (tmpTimeSpan.secs == pinst->v_messageTimeOut.secs && tmpTimeSpan.usecs > pinst->v_messageTimeOut.usecs)){
+			pinst->v_messageCount = 0;
+			sendingRequestToDiscoveryServer(pinst, 1, NULL);
+		}
+		message = getNextMessage(pinst);
+		if (message == NULL) {
+			// Nothing to do.
+			return;
+		}
+		// Decoding the Message
+		// XML Decoding
+		if (strncmp(message->v_msgBody, "<bdy>", 5) != 0){ // <bdy> not found
+			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			ov_logfile_info("AASComponentManager: <bdy> not found in msg. Reason");
+			return;
+		}
+		messageLength = ov_string_getlength(message->v_msgBody);
+		if (strncmp(&message->v_msgBody[messageLength-6], "</bdy>", 6) != 0){ // </bdy> not found
+			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			ov_logfile_info("AASComponentManager: </bdy> not found in msg. Reason");
+			return;
+		}
+		messageContent = malloc((messageLength-11+1)*sizeof(char));
+		memcpy(messageContent, (message->v_msgBody+5), messageLength-11);
+		messageContent[messageLength-11] = '\0';
+
+		// Check RegistrationResponse
+		jsonResponseParse(&responseData, messageContent);
+		free (messageContent);
+		if (responseData.header.messageType != 4){
+			// delete all used memory
+			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			return;
+		}
+		if (responseData.header.errorFlag == TRUE){
+			pinst->v_errorFlag = TRUE;
+			ov_string_setvalue(&pinst->v_errorMessage, responseData.header.errorMessage);
+			pinst->v_state = 8;
+			// delete all used memory
+			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			return;
+		}
+		pinst->v_state = 3; // no error
+		pinst->v_registered = TRUE;
+		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+	break;
+	case 3: //Process incoming messages
+		// Get the next message, if any.
+		ov_string_setvalue(&pinst->v_errorMessage, NULL);
+		pinst->v_errorFlag = FALSE;
 		message = getNextMessage(pinst);
 		if (message == NULL) {
 			// Nothing to do.
@@ -1272,13 +1397,13 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			pinst->v_senderForMessageForwardedIdType = sender.IdType;
 
 			OV_STRING requestId = NULL;
-			requestId = sendingRequestToDiscoveryServer(pinst, 2, sender);
+			requestId = sendingRequestToDiscoveryServer(pinst, 2, &sender);
 			IdentificationType_deleteMembers(&sender);
 			if (requestId){
 				ov_string_setvalue(&pinst->v_MsgIdForGetAASIdRequest, requestId);
 			}
 			pinst->v_messageCount = 0;
-			pinst->v_state = 3;
+			pinst->v_state = 4;
 		}
 
 		if (sendAnswer == TRUE){
@@ -1372,7 +1497,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		IdentificationType_deleteMembers(&receiver);
 		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 		break;
-	case 3: // Forward Message Getting the sender
+	case 4: // Forward Message Getting the sender
 		// Get the next message, if any.
 		pinst->v_messageCount++;
 		pTaskParent=Ov_GetParent(fb_tasklist, pinst);
@@ -1390,7 +1515,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			ov_string_setvalue(&tmpAAS.IdSpec, pinst->v_receiverForMessageForwardedIdString);
 			tmpAAS.IdType = pinst->v_receiverForMessageForwardedIdType;
 			OV_STRING requestId = NULL;
-			requestId = sendingRequestToDiscoveryServer(pinst, 2, tmpAAS);
+			requestId = sendingRequestToDiscoveryServer(pinst, 2, &tmpAAS);
 			if (requestId){
 				ov_string_setvalue(&pinst->v_MsgIdForGetAASIdRequest, requestId);
 			}
@@ -1460,24 +1585,24 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 							ov_string_setvalue(&receiver.IdSpec, pinst->v_receiverForMessageForwardedIdString);
 							receiver.IdType = pinst->v_receiverForMessageForwardedIdType;
 
-							requestId = sendingRequestToDiscoveryServer(pinst, 2, receiver);
+							requestId = sendingRequestToDiscoveryServer(pinst, 2, &receiver);
 							if (requestId){
 								ov_string_setvalue(&pinst->v_MsgIdForGetAASIdRequest, requestId);
 							}
 							IdentificationType_deleteMembers(&receiver);
 							pinst->v_messageCount = 0;
-							pinst->v_state = 4;
+							pinst->v_state = 5;
 						}else{
 							ov_logfile_info("GetAASRes: Incorrect size of parameters");
-							pinst->v_state = 4;
+							pinst->v_state = 5;
 						}
 					}else{
 						ov_logfile_info("GetAASRes: Failed");
-						pinst->v_state = 4;
+						pinst->v_state = 5;
 					}
 				}else{
 					ov_logfile_info("Incorrect Message to GetAASReq");
-					pinst->v_state = 4;
+					pinst->v_state = 5;
 				}
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 				ov_string_freelist(plistReq);
@@ -1486,7 +1611,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			pchild = Ov_GetPreviousChild(ov_containment, pchild);
 		}
 		break;
-	case 4: // Forward Message Getting the receiver
+	case 5: // Forward Message Getting the receiver
 		// Get the next message, if any.
 		pinst->v_messageCount++;
 		pTaskParent=Ov_GetParent(fb_tasklist, pinst);
@@ -1504,7 +1629,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			ov_string_setvalue(&tmpAAS.IdSpec, pinst->v_receiverForMessageForwardedIdString);
 			tmpAAS.IdType = pinst->v_receiverForMessageForwardedIdType;
 			OV_STRING requestId = NULL;
-			requestId = sendingRequestToDiscoveryServer(pinst, 2, tmpAAS);
+			requestId = sendingRequestToDiscoveryServer(pinst, 2, &tmpAAS);
 			if (requestId){
 				ov_string_setvalue(&pinst->v_MsgIdForGetAASIdRequest, requestId);
 			}
@@ -1555,7 +1680,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 									pchild = Ov_GetPreviousChild(ov_containment, pchild);
 								}
 								if (pchild == NULL){
-									pinst->v_state = 7;
+									pinst->v_state = 8;
 									break;
 								}
 								answerMessage = Ov_StaticPtrCast(MessageSys_Message, pchild);
@@ -1597,18 +1722,18 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 								pinst->v_messageCount = pinst->v_messageTimeOut.secs / pTaskParent->v_cyctime.secs;
 							else
 								pinst->v_messageCount = pinst->v_messageTimeOut.usecs / pTaskParent->v_cyctime.usecs;
-							pinst->v_state = 2;
+							pinst->v_state = 3;
 						}else{
 							ov_logfile_info("GetAASRes: Incorrect size of parameters");
-							pinst->v_state = 7;
+							pinst->v_state = 8;
 						}
 					}else{
 						ov_logfile_info("GetAASRes: Failed");
-						pinst->v_state = 2;
+						pinst->v_state = 3;
 					}
 				}else{
 					ov_logfile_info("Incorrect Message to GetAASReq");
-					pinst->v_state = 7;
+					pinst->v_state = 8;
 				}
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 				ov_string_freelist(plistReq);
@@ -1617,65 +1742,18 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			pchild = Ov_GetPreviousChild(ov_containment, pchild);
 		}
 		break;
-	case 5: //Sending Unregister-Request and wait for answer
+	case 6: //Sending Unregister-Request and wait for answer
 		// Get the next message, if any.
-		if (pinst->v_registered == FALSE){
-			pinst->v_state = 6;
-		}
-		pinst->v_messageCount++;
-		pTaskParent=Ov_GetParent(fb_tasklist, pinst);
-		tmpTimeSpan.usecs = pTaskParent->v_cyctime.usecs * pinst->v_messageCount;
-		tmpTimeSpan.secs = pTaskParent->v_cyctime.secs * pinst->v_messageCount;
-		if((OV_INT)tmpTimeSpan.usecs > 999999) {
-			tmpTimeSpan.usecs -= 1000000;
-			tmpTimeSpan.secs++;
-			return;
-		}
-		if (tmpTimeSpan.secs > pinst->v_messageTimeOut.secs || (tmpTimeSpan.secs == pinst->v_messageTimeOut.secs && tmpTimeSpan.usecs > pinst->v_messageTimeOut.usecs)){
-			pinst->v_messageCount = 0;
-			IdentificationType tmpAASId;
-			sendingRequestToDiscoveryServer(pinst, 1, tmpAASId);
-		}
-		message = getNextMessage(pinst);
-		if (message == NULL) {
-			// Nothing to do.
-			return;
-		}
-		// Decoding the Message
-		// XML Decoding
-		if (strncmp(message->v_msgBody, "<bdy>", 5) != 0){ // <bdy> not found
-			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
-			ov_logfile_info("AASComponentManager: <bdy> not found in msg. Reason");
-			return;
-		}
-		messageLength = ov_string_getlength(message->v_msgBody);
-		if (strncmp(&message->v_msgBody[messageLength-6], "</bdy>", 6) != 0){ // </bdy> not found
-			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
-			ov_logfile_info("AASComponentManager: </bdy> not found in msg. Reason");
-			return;
-		}
-		messageContent = malloc((messageLength-11+1)*sizeof(char));
-		memcpy(messageContent, (message->v_msgBody+5), messageLength-11);
-		messageContent[messageLength-11] = '\0';
-
-		plistReq= ov_string_split(messageContent, ":", &len);
-		free (messageContent);
-		if (ov_string_compare(plistReq[0], "UnregisterAASRes") == OV_STRCMP_EQUAL){ // unregister response
-			if (ov_string_compare(plistReq[1], "OK") == OV_STRCMP_EQUAL){ // unregister was successfully
-				pinst->v_state = 6;
-			}else{ // Error
-				ov_string_setvalue(&pinst->v_errorText, plistReq[1]);
-				pinst->v_state = 7;
-			}
-		}else{ // no register response => delete message and wait for next one
+		if (pinst->v_registered == TRUE){
+			sendingRequestToDiscoveryServer(pinst, 3, NULL);
 		}
 		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
-		ov_string_freelist(plistReq);
+		pinst->v_state = 7;
 		break;
+	case 7: //Ready for delete or reset
+		pinst->v_state = 0;
 		break;
-	case 6: //Ready for delete or reset
-		break;
-	case 7: // Error, wait for reset
+	case 8: // Error, wait for reset
 		break;
 	default:
 		break;
@@ -1753,10 +1831,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_destructor(
     OV_INSTPTR_openaas_AASComponentManager pinst = Ov_StaticPtrCast(openaas_AASComponentManager, pobj);
 
     /* do what */
-    IdentificationType tmpAASId;
-    IdentificationType_init(&tmpAASId);
-    sendingRequestToDiscoveryServer(pinst, 1, tmpAASId);
-    IdentificationType_deleteMembers(&tmpAASId);
+    sendingRequestToDiscoveryServer(pinst, 3, NULL);
 
     /* destroy object */
     fb_functionblock_destructor(pobj);
