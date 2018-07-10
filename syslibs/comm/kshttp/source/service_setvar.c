@@ -350,15 +350,17 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 			case OV_VT_TIME_SPAN:
 				//can be 42.1241 or P42.123456S or -P23.42S
 				ov_string_setvalue(&Temp, newvaluematch.value[i]);
-				if(Temp[0] == 'P'){
-					stringOffset = 1;
-					isNegative = FALSE;
-				}else if(Temp[0] == '-' && Temp[1] == 'P'){
-					stringOffset = 2;
-					isNegative = TRUE;
+				if(Temp){
+					if(Temp[0] == 'P'){
+						stringOffset = 1;
+						isNegative = FALSE;
+					}else if(Temp[0] == '-' && Temp[1] == 'P'){
+						stringOffset = 2;
+						isNegative = TRUE;
+					}
+					tempDouble = strtod(Temp+stringOffset, &endPtr);
 				}
-				tempDouble = strtod(Temp+stringOffset, &endPtr);
-				if (endPtr == Temp+stringOffset) {
+				if (!Temp || (endPtr == Temp+stringOffset)) {
 					//not a number
 					fr = OV_ERR_BADPARAM;
 					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a valid date");
