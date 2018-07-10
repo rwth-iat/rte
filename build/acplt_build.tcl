@@ -900,11 +900,9 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/lifeCycleEntryOPCUAInterface
 				addonlibs/administration/propertyValueStatementOPCUAInterface
 				addonlibs/administration/servicesOPCUAInterface
-				addonlibs/administration/openaasOPCUAInterface	
-				addonlibs/administration/subModelDiscovery			
+				addonlibs/administration/openaasOPCUAInterface				
 				addonlibs/administration/subModelLifeCycleEntryOPCUAInterface
 				addonlibs/administration/subModelAdministrationOPCUAInterface
-				addonlibs/administration/subModelDiscoveryOPCUAInterface
 				addonlibs/administration/subModelSendMessageOPCUAInterface
 				addonlibs/administration/opcuaSubscription}
 			 	
