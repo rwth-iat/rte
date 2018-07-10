@@ -889,8 +889,10 @@ set addon_libs {addonlibs/hmi/cshmi
 				addonlibs/administration/lifeCycleEntry
 				addonlibs/administration/propertyValueStatement
 				addonlibs/administration/services
-				addonlibs/administration/openaas				
 				addonlibs/administration/openAASDiscoveryServer
+				addonlibs/administration/openaas				
+				addonlibs/administration/DSServices
+				addonlibs/administration/Databases
 				addonlibs/administration/subModelLifeCycleEntry
 				addonlibs/administration/subModelAdministration
 				addonlibs/administration/subModelSendMessage
