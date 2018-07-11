@@ -45,21 +45,6 @@
 	 * Your code goes here.
 	 */
 
-	 OV_INSTPTR_ov_library pLibIDENTIFICATION = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibIDENTIFICATION, ov_library){
-		if(ov_string_compare(pLibIDENTIFICATION->v_identifier, "identification") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pLibIDENTIFICATION){
-		result = Ov_CreateObject(ov_library, pLibIDENTIFICATION, &(pdb->acplt), "identification");
-		if(Ov_Fail(result)){
-			ov_memstack_lock();
-			ov_logfile_error("lifeCycleEntry: Fatal: Couldn't load dependency Library identification Reason: %s", ov_result_getresulttext(result));
-			ov_memstack_unlock();
-			return result;
-		}
-	 }
 
 
 	return result;
