@@ -55,14 +55,10 @@
  	*       replace the 'setglobalvars' function created by the code generator
  	*       with a new one.
  	*/
- 	OV_STRING libid = Ov_HeapStrdup("lifeCycleEntry");
-	Ov_loadRequiredLib(libid);
-	libid = Ov_HeapStrdup("propertyValueStatement");
-	Ov_loadRequiredLib(libid);
-	libid = Ov_HeapStrdup("MessageSys");
-	Ov_loadRequiredLib(libid)
-	libid = Ov_HeapStrdup("openAASDiscoveryServer");
-	Ov_loadRequiredLib(libid)
+	Ov_loadRequiredLib("lifeCycleEntry");
+	Ov_loadRequiredLib("propertyValueStatement");
+	Ov_loadRequiredLib("MessageSys")
+	Ov_loadRequiredLib("openAASDiscoveryServer")
  	OV_LIBRARY_DEF_openaas_new = ov_library_open_openaas_old();
  	OV_LIBRARY_DEF_openaas_new->setglobalvarsfnc = ov_library_setglobalvars_openaas_new;
  	return OV_LIBRARY_DEF_openaas_new;

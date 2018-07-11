@@ -56,8 +56,7 @@
  	*       replace the 'setglobalvars' function created by the code generator
  	*       with a new one.
  	*/
- 	OV_STRING libid = Ov_HeapStrdup("opcua");
-	Ov_loadRequiredLib(libid);
+	Ov_loadRequiredLib("opcua");
  	OV_LIBRARY_DEF_identificationOPCUAInterface_new = ov_library_open_identificationOPCUAInterface_old();
  	OV_LIBRARY_DEF_identificationOPCUAInterface_new->setglobalvarsfnc = ov_library_setglobalvars_identificationOPCUAInterface_new;
  	return OV_LIBRARY_DEF_identificationOPCUAInterface_new;

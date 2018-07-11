@@ -56,14 +56,10 @@
  	*       replace the 'setglobalvars' function created by the code generator
  	*       with a new one.
  	*/
- 	OV_STRING libid = Ov_HeapStrdup("identificationOPCUAInterface");
-	Ov_loadRequiredLib(libid);
-	libid = Ov_HeapStrdup("lifeCycleEntryOPCUAInterface");
-	Ov_loadRequiredLib(libid);
-	libid = Ov_HeapStrdup("propertyValueStatementOPCUAInterface");
-	Ov_loadRequiredLib(libid)
-	libid = Ov_HeapStrdup("servicesOPCUAInterface");
-	Ov_loadRequiredLib(libid)
+	Ov_loadRequiredLib("identificationOPCUAInterface");
+	Ov_loadRequiredLib("lifeCycleEntryOPCUAInterface");
+	Ov_loadRequiredLib("propertyValueStatementOPCUAInterface")
+	Ov_loadRequiredLib("servicesOPCUAInterface")
  	OV_LIBRARY_DEF_openaasOPCUAInterface_new = ov_library_open_openaasOPCUAInterface_old();
  	OV_LIBRARY_DEF_openaasOPCUAInterface_new->setglobalvarsfnc = ov_library_setglobalvars_openaasOPCUAInterface_new;
  	return OV_LIBRARY_DEF_openaasOPCUAInterface_new;
