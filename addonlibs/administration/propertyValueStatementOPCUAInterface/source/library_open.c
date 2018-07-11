@@ -44,19 +44,6 @@
 	/*
 	 * Your code goes here.
 	 */
-	 OV_INSTPTR_ov_library pIdentificationOPCUAInterface = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pIdentificationOPCUAInterface, ov_library){
-		if(ov_string_compare(pIdentificationOPCUAInterface->v_identifier, "identificationOPCUAInterface") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pIdentificationOPCUAInterface){
-		result = Ov_CreateObject(ov_library, pIdentificationOPCUAInterface, &(pdb->acplt), "identificationOPCUAInterface");
-		if(Ov_Fail(result)){
-			ov_logfile_error("propertyValueStatementOPCUAInterface: Fatal: Couldn't load dependency Library identificationOPCUAInterface Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
 
 	return result;
 	}
@@ -68,6 +55,8 @@
  	*       replace the 'setglobalvars' function created by the code generator
  	*       with a new one.
  	*/
+ 	OV_STRING libid = Ov_HeapStrdup("identificationOPCUAInterface");
+	Ov_loadRequiredLib(libid);
  	OV_LIBRARY_DEF_propertyValueStatementOPCUAInterface_new = ov_library_open_propertyValueStatementOPCUAInterface_old();
  	OV_LIBRARY_DEF_propertyValueStatementOPCUAInterface_new->setglobalvarsfnc = ov_library_setglobalvars_propertyValueStatementOPCUAInterface_new;
  	return OV_LIBRARY_DEF_propertyValueStatementOPCUAInterface_new;

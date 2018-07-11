@@ -45,62 +45,6 @@
 	 * Your code goes here.
 	 */
 
-	 OV_INSTPTR_ov_library pidentificationOPCUAInterface = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pidentificationOPCUAInterface, ov_library){
-		if(ov_string_compare(pidentificationOPCUAInterface->v_identifier, "identificationOPCUAInterface") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pidentificationOPCUAInterface){
-		result = Ov_CreateObject(ov_library, pidentificationOPCUAInterface, &(pdb->acplt), "identificationOPCUAInterface");
-		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library identificationOPCUAInterface Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
-
-	 OV_INSTPTR_ov_library plifeCycleEntryOPCUAInterface = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plifeCycleEntryOPCUAInterface, ov_library){
-		if(ov_string_compare(plifeCycleEntryOPCUAInterface->v_identifier, "lifeCycleEntryOPCUAInterface") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!plifeCycleEntryOPCUAInterface){
-		result = Ov_CreateObject(ov_library, plifeCycleEntryOPCUAInterface, &(pdb->acplt), "lifeCycleEntryOPCUAInterface");
-		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library lifeCycleEntryOPCUAInterface Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
-
-	 OV_INSTPTR_ov_library ppropertyValueStatementOPCUAInterface = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, ppropertyValueStatementOPCUAInterface, ov_library){
-		if(ov_string_compare(ppropertyValueStatementOPCUAInterface->v_identifier, "propertyValueStatementOPCUAInterface") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!ppropertyValueStatementOPCUAInterface){
-		result = Ov_CreateObject(ov_library, ppropertyValueStatementOPCUAInterface, &(pdb->acplt), "propertyValueStatementOPCUAInterface");
-		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library propertyValueStatementOPCUAInterface Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
-
-	 OV_INSTPTR_ov_library pservicesOPCUAInterface = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pservicesOPCUAInterface, ov_library){
-		if(ov_string_compare(pservicesOPCUAInterface->v_identifier, "servicesOPCUAInterface") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pservicesOPCUAInterface){
-		result = Ov_CreateObject(ov_library, pservicesOPCUAInterface, &(pdb->acplt), "servicesOPCUAInterface");
-		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library servicesOPCUAInterface Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
-
 
 	return result;
 	}
@@ -112,6 +56,14 @@
  	*       replace the 'setglobalvars' function created by the code generator
  	*       with a new one.
  	*/
+ 	OV_STRING libid = Ov_HeapStrdup("identificationOPCUAInterface");
+	Ov_loadRequiredLib(libid);
+	libid = Ov_HeapStrdup("lifeCycleEntryOPCUAInterface");
+	Ov_loadRequiredLib(libid);
+	libid = Ov_HeapStrdup("propertyValueStatementOPCUAInterface");
+	Ov_loadRequiredLib(libid)
+	libid = Ov_HeapStrdup("servicesOPCUAInterface");
+	Ov_loadRequiredLib(libid)
  	OV_LIBRARY_DEF_openaasOPCUAInterface_new = ov_library_open_openaasOPCUAInterface_old();
  	OV_LIBRARY_DEF_openaasOPCUAInterface_new->setglobalvarsfnc = ov_library_setglobalvars_openaasOPCUAInterface_new;
  	return OV_LIBRARY_DEF_openaasOPCUAInterface_new;

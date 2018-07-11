@@ -44,62 +44,6 @@
 	/*
 	 * Your code goes here.
 	 */
-	 OV_INSTPTR_ov_library pLibLIFECYCLEENTRY = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibLIFECYCLEENTRY, ov_library){
-		if(ov_string_compare(pLibLIFECYCLEENTRY->v_identifier, "lifeCycleEntry") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pLibLIFECYCLEENTRY){
-		result = Ov_CreateObject(ov_library, pLibLIFECYCLEENTRY, &(pdb->acplt), "lifeCycleEntry");
-		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library lifeCycleEntry Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
-
-	 OV_INSTPTR_ov_library pLibPROPERTYVALUESTATEMENT = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibPROPERTYVALUESTATEMENT, ov_library){
-		if(ov_string_compare(pLibPROPERTYVALUESTATEMENT->v_identifier, "propertyValueStatement") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pLibPROPERTYVALUESTATEMENT){
-		result = Ov_CreateObject(ov_library, pLibPROPERTYVALUESTATEMENT, &(pdb->acplt), "propertyValueStatement");
-		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library propertyValueStatement Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
-
-
-	 OV_INSTPTR_ov_library pLibMESSAGESYS = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibMESSAGESYS, ov_library){
-		if(ov_string_compare(pLibMESSAGESYS->v_identifier, "MessageSys") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pLibMESSAGESYS){
-		result = Ov_CreateObject(ov_library, pLibMESSAGESYS, &(pdb->acplt), "MessageSys");
-		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library MessageSys Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
-
-	 OV_INSTPTR_ov_library pLibDISCOVERYSERVER = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibDISCOVERYSERVER, ov_library){
-		if(ov_string_compare(pLibDISCOVERYSERVER->v_identifier, "openAASDiscoveryServer") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pLibDISCOVERYSERVER){
-		result = Ov_CreateObject(ov_library, pLibDISCOVERYSERVER, &(pdb->acplt), "openAASDiscoveryServer");
-		if(Ov_Fail(result)){
-			ov_logfile_error("openaas: Fatal: Couldn't load dependency Library openAASDiscoveryServer Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
 
 	return result;
 	}
@@ -111,6 +55,14 @@
  	*       replace the 'setglobalvars' function created by the code generator
  	*       with a new one.
  	*/
+ 	OV_STRING libid = Ov_HeapStrdup("lifeCycleEntry");
+	Ov_loadRequiredLib(libid);
+	libid = Ov_HeapStrdup("propertyValueStatement");
+	Ov_loadRequiredLib(libid);
+	libid = Ov_HeapStrdup("MessageSys");
+	Ov_loadRequiredLib(libid)
+	libid = Ov_HeapStrdup("openAASDiscoveryServer");
+	Ov_loadRequiredLib(libid)
  	OV_LIBRARY_DEF_openaas_new = ov_library_open_openaas_old();
  	OV_LIBRARY_DEF_openaas_new->setglobalvarsfnc = ov_library_setglobalvars_openaas_new;
  	return OV_LIBRARY_DEF_openaas_new;

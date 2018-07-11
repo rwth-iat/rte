@@ -72,6 +72,8 @@
  	*       replace the 'setglobalvars' function created by the code generator
  	*       with a new one.
  	*/
+ 	OV_STRING libid = Ov_HeapStrdup("identification");
+	Ov_loadRequiredLib(libid);
  	OV_LIBRARY_DEF_propertyValueStatement_new = ov_library_open_propertyValueStatement_old();
  	OV_LIBRARY_DEF_propertyValueStatement_new->setglobalvarsfnc = ov_library_setglobalvars_propertyValueStatement_new;
  	return OV_LIBRARY_DEF_propertyValueStatement_new;

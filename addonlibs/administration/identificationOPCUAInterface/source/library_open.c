@@ -44,19 +44,7 @@
 	/*
 	 * Your code goes here.
 	 */
-	 OV_INSTPTR_ov_library pOPCUA = NULL;
-	 Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pOPCUA, ov_library){
-		if(ov_string_compare(pOPCUA->v_identifier, "opcua") == OV_STRCMP_EQUAL){
-			break;
-		}
-	 }
-	 if(!pOPCUA){
-		result = Ov_CreateObject(ov_library, pOPCUA, &(pdb->acplt), "opcua");
-		if(Ov_Fail(result)){
-			ov_logfile_error("identificationOPCUAInterface: Fatal: Couldn't load dependency Library opcua Reason: %s", ov_result_getresulttext(result));
-			return result;
-		}
-	 }
+
 
 	return result;
 	}
@@ -68,6 +56,8 @@
  	*       replace the 'setglobalvars' function created by the code generator
  	*       with a new one.
  	*/
+ 	OV_STRING libid = Ov_HeapStrdup("opcua");
+	Ov_loadRequiredLib(libid);
  	OV_LIBRARY_DEF_identificationOPCUAInterface_new = ov_library_open_identificationOPCUAInterface_old();
  	OV_LIBRARY_DEF_identificationOPCUAInterface_new->setglobalvarsfnc = ov_library_setglobalvars_identificationOPCUAInterface_new;
  	return OV_LIBRARY_DEF_identificationOPCUAInterface_new;
