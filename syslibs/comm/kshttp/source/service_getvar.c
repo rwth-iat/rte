@@ -38,6 +38,10 @@
 
 #include "config.h"
 
+#ifndef KSHTTP_BYTEVEC_BLOCKSIZE
+#define KSHTTP_BYTEVEC_BLOCKSIZE 2
+#endif
+
 #define EXEC_GETVAR_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&LoopEntryValue, NULL);\
@@ -71,6 +75,7 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	OV_STRING singleVecEntry = NULL;
 	OV_STRING LoopEntryList = NULL;
 	OV_STRING LoopEntryTypeString = NULL;
+	char*		ph = NULL;
 	OV_RESULT fr = OV_ERR_OK;
 	OV_RESULT lasterror = OV_ERR_OK;
 
@@ -237,9 +242,32 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				//****************** VEC: *******************
 				case OV_VT_BYTE_VEC:
 					ov_string_setvalue(&LoopEntryTypeString, "bytevec");
-					fr = OV_ERR_NOTIMPLEMENTED;
-					lasterror = fr;
-					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": bytevec");
+
+					ov_memstack_lock();
+					singleVecEntry = ov_memstack_alloc(Variable.value.valueunion.val_byte_vec.veclen*3+1); // two characters plus separators
+					if(singleVecEntry){
+						ph = singleVecEntry;
+						for(OV_UINT i = 0; i<Variable.value.valueunion.val_byte_vec.veclen; i++){
+#if KSHTTP_BYTEVEC_BLOCKSIZE
+							if(i&&!(i%KSHTTP_BYTEVEC_BLOCKSIZE)){
+								*ph++ = ' '; // add separator
+							}
+#endif
+							sprintf(ph, "%02x", Variable.value.valueunion.val_byte_vec.value[i]);
+							ph += 2;
+						}
+						*ph = '\0';
+						fr = ov_string_setvalue(&LoopEntryValue, singleVecEntry);
+					} else {
+						fr = OV_ERR_HEAPOUTOFMEMORY;
+					}
+					ov_memstack_unlock();
+
+					if(Ov_Fail(fr)){
+						lasterror = fr;
+						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": bytevec");
+					}
+
 					/* todo should be base64 encoded content
 					for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
 						ov_string_print(&singleVecEntry, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
