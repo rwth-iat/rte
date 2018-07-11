@@ -609,6 +609,7 @@ int ov_codegen_createsourcefile(
 	*	local variables
 	*/
 	FILE					*fp;
+	OV_OVM_LIBRARY_DEF		*ptmpLibs;
 	OV_OVM_STRUCTURE_DEF	*pstruct;
 	OV_OVM_CLASS_DEF		*pclass;
 	OV_OVM_VARIABLE_DEF		*pvar;
@@ -629,6 +630,7 @@ int ov_codegen_createsourcefile(
 	fprintf(fp, "#endif\n");
 	fprintf(fp, "\n");
 	fprintf(fp, "#include \"%s.h\"\n", plib->identifier);
+	fprintf(fp, "#include \"libov/ov_macros.h\"\n");
 	fprintf(fp, "\n");
 	/*
 	*	print global variable definitions associated with all structures
@@ -785,6 +787,14 @@ int ov_codegen_createsourcefile(
 	*	print implementation of function opening the library
 	*/
 	fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void) {\n", plib->identifier);
+	fprintf(fp, "    /*\n");
+	fprintf(fp, "     * loading required libraries\n");
+	fprintf(fp, "     */\n");
+	for(ptmpLibs=libraries; ptmpLibs; ptmpLibs=ptmpLibs->pnext) {
+		if(!strcmp(ptmpLibs->identifier, "ov") || !strcmp(ptmpLibs->identifier, libname))
+			continue;
+		fprintf(fp, "    Ov_loadRequiredLib(\"%s\");\n", ptmpLibs->identifier);
+	}
 	fprintf(fp, "    return &OV_LIBRARY_DEF_%s;\n", plib->identifier);
 	fprintf(fp, "}\n");
 	/*
