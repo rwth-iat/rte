@@ -679,9 +679,18 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	if(pdb) {
 		return OV_ERR_GENERIC;
 	}
+
 	// TODO_ADJUST_WHEN_LARGE_DB
 	if(!size || (size > (OV_UINT) OV_DATABASE_MAXSIZE) || (!filename&&!(dbFlags&(OV_DBOPT_NOFILE|OV_DBOPT_NOMAP)))) {
 		return OV_ERR_BADPARAM;
+	}
+
+	if((dbFlags&OV_DBOPT_VERBOSE)){
+		if(dbFlags&(OV_DBOPT_NOMAP|OV_DBOPT_NOFILE)){
+			ov_logfile_info("Creating database in memory...");
+		} else {
+			ov_logfile_info("Creating database \"%s\" ...", filename);
+		}
 	}
 
 	/* Rundup file size */
@@ -1008,6 +1017,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	
 #endif
 
+	if((dbFlags&OV_DBOPT_VERBOSE)){
+		ov_logfile_info("Database created.");
+	}
+
 	return OV_ERR_OK;
 }
 
@@ -1042,6 +1055,23 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(
 	if(!filename) {
 		return OV_ERR_BADPARAM;
 	}
+
+	if((dbFlags&OV_DBOPT_VERBOSE)){
+		if(!(dbFlags&OV_DBOPT_BACKUP)){
+			if(dbFlags&OV_DBOPT_NOMAP){
+				ov_logfile_info("Loading database \"%s\" into memory...", filename);
+			} else {
+				ov_logfile_info("Mapping database \"%s\"...", filename);
+			}
+		} else {
+			if(dbFlags&OV_DBOPT_NOMAP){
+				ov_logfile_info("Loading backup-database \"%s\" into memory...", filename);
+			} else {
+				ov_logfile_info("Mapping backup-database \"%s\"...", filename);
+			}
+		}
+	}
+
 
 #if OV_SYSTEM_UNIX
 		/*
@@ -1338,6 +1368,15 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(
 		ov_database_unload();
 		return OV_ERR_BADDATABASE;
 	}
+
+	if((dbFlags&OV_DBOPT_VERBOSE)){
+		if(dbFlags&OV_DBOPT_NOMAP){
+			ov_logfile_info("Database loaded.");
+		} else {
+			ov_logfile_info("Database mapped.");
+		}
+	}
+
 	return OV_ERR_OK;
 }
 
@@ -1394,6 +1433,9 @@ OV_DLLFNCEXPORT void ov_database_unload(void) {
 	if(dbFlags&(OV_DBOPT_NOMAP|OV_DBOPT_NOFILE)){
 		Ov_HeapFree(pdb);
 	} else {
+		if(dbFlags&OV_DBOPT_VERBOSE){
+			ov_logfile_info("Unmapping database ...");
+		}
 #if OV_SYSTEM_UNIX
 	/*
 	*	unmap the file and close it
@@ -1435,6 +1477,15 @@ OV_DLLFNCEXPORT void ov_database_unload(void) {
 	}
 
 	pdb = NULL;
+
+	if((dbFlags&OV_DBOPT_VERBOSE)){
+		if (dbFlags&(OV_DBOPT_NOMAP|OV_DBOPT_NOFILE)){
+			ov_logfile_info("Database freed.");
+		}else {
+			ov_logfile_info("Database unmapped.");
+		}
+	}
+
 	ov_vendortree_setdatabasename(NULL);
 }
 
@@ -1448,7 +1499,7 @@ OV_DLLFNCEXPORT void ov_database_flush(void) {
 	*	local variables
 	*/
 
-	if(dbFlags&OV_DBOPT_NOMAP)
+	if(dbFlags&(OV_DBOPT_NOMAP|OV_DBOPT_NOFILE))
 		return;
 
 #if OV_SYSTEM_OPENVMS
@@ -1652,6 +1703,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void) {
 		pdb->root.v_objectstate &= ~OV_OS_STARTED;
 		return OV_ERR_BADDATABASE;
 	}
+
+	if(dbFlags&OV_DBOPT_VERBOSE){
+		ov_logfile_info("Starting up database...");
+	}
+
 	/*
 	*	open and compare all libraries 
 	*/
@@ -1673,6 +1729,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void) {
 	/*
 	*	library is started
 	*/
+	if(dbFlags&OV_DBOPT_VERBOSE){
+		ov_logfile_info("Database started up.");
+	}
 	database_mutex_init();
 	pdb->started = TRUE;
 	return OV_ERR_OK;
@@ -1692,10 +1751,13 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 	*	shut down database
 	*/
 	if(pdb->started) {
-        /*
-        *	Flush the contents of a database
-        */
-	    ov_database_flush();
+		if(dbFlags&OV_DBOPT_VERBOSE){
+			ov_logfile_info("Shutting down database...");
+		}
+		/*
+		 *	Flush the contents of a database
+		 */
+		ov_database_flush();
 		/*
 		*	call shutdown method of root object
 		*/
@@ -1708,6 +1770,10 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 		}
 		database_mutex_destroy();
 		pdb->started = FALSE;
+
+		if(dbFlags&OV_DBOPT_VERBOSE){
+			ov_logfile_info("Database shut down.");
+		}
 	}
 }
 

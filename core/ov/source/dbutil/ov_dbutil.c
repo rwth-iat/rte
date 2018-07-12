@@ -199,7 +199,7 @@ int main(int argc, char **argv) {
 
 	OV_INT	 		i;
 	OV_UINT			size = 0;
-	OV_UINT			dbflags = 0;
+	OV_UINT			dbflags = OV_DBOPT_VERBOSE;
 	OV_STRING	        filename = NULL;
 	OV_STRING		dumpfilename = NULL;
 	OV_STRING		fbdStart = NULL;
@@ -253,12 +253,6 @@ int main(int argc, char **argv) {
 			} else {
 				goto HELP;
 			}
-		}
-		/*
-		 *	force create
-		 */
-		else if(!strcmp(argv[i], "--force-create")) {
-			dbflags |= OV_DBOPT_FORCECREATE;
 		}
 		/*
 		 *	create database with configfile option
@@ -434,11 +428,6 @@ int main(int argc, char **argv) {
 							size = strtoul(temp, NULL, 0);
 						free(temp);
 					}
-					/*	DBFORCECREATE	*/
-					else if(strstr(startRead, "DBFORCECREATE")==startRead)
-					{
-						dbflags |= OV_DBOPT_FORCECREATE;
-					}
 					/*
 					 * default: option unknown
 					 */
@@ -611,7 +600,6 @@ int main(int argc, char **argv) {
 		goto HELP;
 	}
 	if(size) {
-		ov_logfile_info("Creating database \"%s\"...", filename);
 		//removing the eventually existing file
 		if(stat(filename,&buffer)==0 && remove(filename)!=0){
 			ov_logfile_error("Error: can not remove existing file \"%s\"", filename);
@@ -623,16 +611,8 @@ int main(int argc, char **argv) {
 					ov_result_getresulttext(result), result);
 			return EXIT_FAILURE;
 		}
-		ov_logfile_info("Database created.");
 	} else {
-		ov_logfile_info("Mapping database \"%s\"...", filename);
-		result = ov_database_loadfile(filename);
-		if(Ov_Fail(result)) {
-			goto ERRORMSG;
-		}
-		ov_logfile_info("Database mapped.");
-		ov_logfile_info("Loading libraries \"%s\"...", filename);
-		result = ov_database_loadlib(filename);
+		result = ov_database_load(filename, 0, dbflags);
 		if(Ov_Fail(result)) {
 			goto ERRORMSG;
 		}
@@ -678,10 +658,7 @@ int main(int argc, char **argv) {
 	ov_logfile_info("Database size is %ld Byte.", ov_database_getsize());
 	ov_logfile_info("Used storage size is %ld Byte.", ov_database_getused());
 	ov_logfile_info("Free storage size is %ld Byte.", ov_database_getfree());
-	ov_logfile_info("Unmapping database \"%s\"...", filename);
 	ov_database_unload();
-	ov_logfile_info("Database unmapped.");
-
 
 	/*
 	 *	return

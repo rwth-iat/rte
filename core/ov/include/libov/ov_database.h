@@ -64,10 +64,11 @@ extern "C" {
 /*
  * option defines for loading database
  */
-#define OV_DBOPT_QUIET			0x1		/*	don't output info while loading/unloading	*/
-#define OV_DBOPT_FORCECREATE	0x2		/*	force to create new database	*/
-#define OV_DBOPT_NOMAP			0x4		/*	disable mapping of database	*/
-#define OV_DBOPT_NOFILE			0x8		/*	no db file	*/
+#define OV_DBOPT_VERBOSE		0x01		/*	output info while loading/unloading	*/
+#define OV_DBOPT_BACKUP			0x02		/*	flag that backup is being loaded	*/
+#define OV_DBOPT_FORCECREATE	0x04		/*	force to create new database	*/
+#define OV_DBOPT_NOMAP			0x08		/*	disable mapping of database	*/
+#define OV_DBOPT_NOFILE			0x10		/*	no db file	*/
 
 /*		
  *	List structure for objectId -> object-pointer relation

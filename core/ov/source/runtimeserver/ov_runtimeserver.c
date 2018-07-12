@@ -320,7 +320,7 @@ int main(int argc, char **argv) {
 	OV_RESULT				result;
 	OV_INT					port = 0; /* KS_ANYPORT */
 	OV_UINT					size = 0; /* database size */
-	OV_UINT					dbflags = 0; /* database options flags */
+	OV_UINT					dbflags = OV_DBOPT_VERBOSE; /* database options flags */
 	OV_UINT					maxAllowedJitter = 0;
 	OV_UINT					ks_maxItemsPerRequest = 0;
 	OV_UINT					maxStringLength = 0;
@@ -1304,7 +1304,6 @@ HELP:		ov_server_usage();
 			filename = helper;
 		}
 	}
-	ov_logfile_info("Mapping database \"%s\"...", filename);
 
 #ifdef OV_CATCH_EXCEPTIONS
 	result = ov_supervised_database_map(filename);
@@ -1317,12 +1316,11 @@ MAPBACKUP:
 		ov_backup = TRUE;
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 		ov_result_getresulttext(result), result);
-		ov_logfile_info("Mapping backup-database \"%s\"...", db_backup_filename);
 
 #ifdef OV_CATCH_EXCEPTIONS
 		result = ov_supervised_database_map(db_backup_filename);
 #else
-		result = ov_database_load(db_backup_filename, size, dbflags);
+		result = ov_database_load(db_backup_filename, size, dbflags|OV_DBOPT_BACKUP);
 #endif
 	}
 	if(Ov_Fail(result)) {
@@ -1333,7 +1331,6 @@ ERRORMSG:
 		ov_vendortree_free();
 		return EXIT_FAILURE;
 	}
-	ov_logfile_info("Database mapped.");
 
 	/*
 	 * set the commandline options
@@ -1416,7 +1413,6 @@ ERRORMSG:
 	*	start up the database if appropriate
 	*/
 	if(startup) {
-		ov_logfile_info("Starting up database...");
 #ifdef OV_CATCH_EXCEPTIONS
 		result = ov_supervised_database_startup();
 #else
@@ -1426,7 +1422,6 @@ ERRORMSG:
 			if ((!ov_backup) && (db_backup_filename)) goto MAPBACKUP;
 			goto ERRORMSG;
 		}
-		ov_logfile_info("Database started up.");
 	}
 	/*
 	*	create startup libraries
@@ -1490,9 +1485,7 @@ ERRORMSG:
 	*/
 
 	if(startup) {
-		ov_logfile_info("Shutting down database...");
 		ov_database_shutdown();
-		ov_logfile_info("Database shut down.");
 	}
 
 	/*
@@ -1507,10 +1500,8 @@ ERRORMSG:
 	*   unmap the database
 	*/
 
-	ov_logfile_info("Unmapping database \"%s\"...", filename);
 	ov_database_unload();
 	free(filename);
-	ov_logfile_info("Database unmapped.");
 
 	free(servername);
 	free(commandline_options);
