@@ -1440,7 +1440,7 @@ static UA_StatusCode OV_NodeStore2_replaceNode(void *nodestoreContext, UA_Node *
 
 UA_Nodestore *opcua_nodeStoreFunctions_ovNodeStoreInterface2New(void) {
 	UA_Nodestore *nsi = ov_database_malloc(sizeof(UA_Nodestore));
-    nsi->context =        	NULL;
+    nsi->context =        	nsi;
     nsi->deleteNodestore =  (UA_Nodestore_deleteNodeStore) 		OV_NodeStore2_deleteNodestore;
     nsi->newNode =       	(UA_Nodestore_newNode)     OV_NodeStore2_newNode;
     nsi->deleteNode =    	(UA_Nodestore_deleteNode)  OV_NodeStore2_deleteNode;
@@ -1451,9 +1451,9 @@ UA_Nodestore *opcua_nodeStoreFunctions_ovNodeStoreInterface2New(void) {
     nsi->removeNode =       	(UA_Nodestore_removeNode)      OV_NodeStore2_removeNode;
     nsi->iterate =       (UA_Nodestore_iterate)     OV_NodeStore2_iterate;
     nsi->releaseNode =      	(UA_Nodestore_releaseNode) 	OV_NodeStore2_releaseNode;
-    //nsi->inPlaceEditAllowed =
 
-    /* nicht im Standart Nodestore enthalten */
+    //nsi->inPlaceEditAllowed =
+    /* nicht im Standart Nodestore(interface) enthalten */
     // nsi->linkNamespace = (UA_Nodestore_linkNamespace) OV_NodeStore2_linkNamespace;
     // nsi->unlinkNamespace = (UA_Nodestore_unlinkNamespace) OV_NodeStore2_unlinkNamespace;
 

@@ -21547,9 +21547,10 @@ UA_SecureChannel_processChunk(UA_SecureChannel *channel, UA_ByteString *chunk,
 
 #if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
     /* The wrong ChannelId. Non-opened channels have the id zero. */
-    if(messageHeader.secureChannelId != channel->securityToken.channelId &&
+       if(messageHeader.secureChannelId != channel->securityToken.channelId &&
        channel->state != UA_SECURECHANNELSTATE_FRESH)
         return UA_STATUSCODE_BADSECURECHANNELIDINVALID;
+
 #endif
 
     UA_MessageType messageType = (UA_MessageType)

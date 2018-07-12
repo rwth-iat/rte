@@ -217,8 +217,7 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	ov_string_setvalue(&pinst->v_namespace,OV_UA_NAMESPACEURI);
 
 
-	//TODO namespace via NodestoreSwtich
-	pinst->v_namespaceIndex = UA_UINT16_MAX ; //wie vorher weil doof
+	pinst->v_namespaceIndex = UA_UINT16_MAX ;
 	pinst->v_serverConfig.nodestore = *opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
 
 	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);

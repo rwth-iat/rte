@@ -254,17 +254,18 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_ovNetworkLayer_listen(
 			temp.data = pConnection->v_buffer.data;
 			temp.length = pConnection->v_buffer.length;
 			UA_Server_processBinaryMessage(server, pConnection->v_connection, &temp);
-			UA_ByteString_deleteMembers(&temp);
+//			UA_ByteString_deleteMembers(&temp);
 			pConnection->v_workNext = FALSE;
 		}
 	}
 
-	for(closeConnCounter = 0; closeConnCounter < this->v_connsToCloseCount; closeConnCounter++){
+	/*for(closeConnCounter = 0; closeConnCounter < this->v_connsToCloseCount; closeConnCounter++){
 		UA_Server_removeConnection(server, pConnection->v_connection);
 		FreeConnection(server, pConnection->v_connection);
 	}
 	Ov_HeapFree(this->v_connsToClose);
 	this->v_connsToClose = NULL;
+	*/
 	this->v_connsToCloseCount = 0;
 
 	return UA_STATUSCODE_GOOD;
