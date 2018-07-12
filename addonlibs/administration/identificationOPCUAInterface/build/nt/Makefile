@@ -8,7 +8,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 #Project config parameters that are accessed by Eclipse
 SERVERSTARTKEYS = -w opcua -w identificationOPCUAInterface
 #/Project config parameters that are accessed by Eclipse
-MAKMAKOPTIONS = -o
+MAKMAKOPTIONS = 
 EXTRA_CC_FLAGS = -DPLT_USE_WINSOCK2=1 -DUA_EXTERNAL_NAMESPACES=1 -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DLOG_KS_INFO=0 -DSTATIC_LINKING=1 -DLOG_UA=1 -DLOG_UA_TO_OV=1 -DDEBUG=1 -DUA_DYNAMIC_LINKING_EXPORT -DUA_DYNAMIC_LINKING -Wextra -Wno-unused-parameter -Wno-declaration-after-statement -Wno-unused-function
 EXTRA_LIBS = 
 LD_FLAGS = 

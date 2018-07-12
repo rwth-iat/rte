@@ -8,7 +8,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 #Project config parameters that are accessed by Eclipse
 SERVERSTARTKEYS = -w openaas -w identificationOPCUAInterface -w propertyValueStatementOPCUAInterface -w lifeCycleEntryOPCUAInterface -w servicesOPCUAInterface -w openaasOPCUAInterface
 #/Project config parameters that are accessed by Eclipse
-MAKMAKOPTIONS = -o
+MAKMAKOPTIONS = 
 EXTRA_CC_FLAGS = 
 EXTRA_LIBS = 
 LD_FLAGS = 
