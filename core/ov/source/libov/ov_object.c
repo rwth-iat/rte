@@ -26,7 +26,7 @@
 *	--------
 *	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
-*	06-Dez-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: macro Ov_VarAddress for object_move changed.
+*	06-Dez-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: macro Ov_VarAddress for object_move changed.
 */
 /*
 *	Description:
@@ -1387,12 +1387,12 @@ OV_ACCESS ov_object_getaccess_nostartup(
 OV_RESULT ov_object_move(
 	OV_INSTPTR_ov_object		pobj,
 	const OV_INSTPTR_ov_object	pobjcopy,
-	const OV_INT				distance
+	const OV_PTRDIFF			distance
 ) {
 	/*
 	*	local variables
 	*/
-	OV_INT						offset;
+	OV_PTRDIFF					offset;
 	OV_INSTPTR_ov_class			pclass, pnextclass;
 	OV_INSTPTR_ov_object		pelem, pcurr, pnextelem;
 	OV_INSTPTR_ov_variable		pvar;

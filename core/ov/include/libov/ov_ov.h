@@ -27,7 +27,7 @@
 *	--------
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
-*	02-Apr-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: adjustings for KsHistory-objects.
+*	02-Apr-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: adjustings for KsHistory-objects.
 */
 
 #ifndef OV_OV_H_INCLUDED
@@ -49,6 +49,7 @@ extern "C" {
 *	-----------------
 */
 typedef void*		OV_POINTER;		/* generic pointer */
+typedef ptrdiff_t	OV_PTRDIFF;		/* difference between two pointers*/
 typedef enum_t		OV_ENUM;		/* enumeration value */
 typedef unsigned char	OV_BYTE;		/* used with C-type variables */
 

@@ -1097,7 +1097,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(
 
 		do
 		{
-			nread = read(fd, (OV_BYTE*)pdb+pos, size-pos);
+			nread = read(fd, ((OV_BYTE*)pdb)+pos, size-pos);
 			pos += nread;
 		} while (pos<size && nread);
 
@@ -1927,7 +1927,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void) {
 *
 */
 OV_RESULT ov_database_move(
-	const OV_INT	distance
+	const OV_PTRDIFF	distance
 ) {
 	/*
 	*	local variables

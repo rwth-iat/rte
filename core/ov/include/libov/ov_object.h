@@ -72,7 +72,7 @@ OV_ACCESS ov_object_getaccess_nostartup(
 OV_RESULT ov_object_move(
 	OV_INSTPTR_ov_object		pobj,
 	const OV_INSTPTR_ov_object	pobjcopy,
-	const OV_INT				distance
+	const OV_PTRDIFF			distance
 );
 
 #ifdef __cplusplus

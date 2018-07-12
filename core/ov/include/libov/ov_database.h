@@ -310,7 +310,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void);
 *	Move the database to a new base address (subroutine)
 */
 OV_RESULT ov_database_move(
-	const OV_INT	distance
+	const OV_PTRDIFF	distance
 );
 
 #ifdef __cplusplus
