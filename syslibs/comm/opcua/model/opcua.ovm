@@ -5,7 +5,6 @@
     TODO: introduce a uaReference class to mirror references to outside namespaces and adapt the browse functions accordingly (return nodeId should suffice, I hope)
 */
 
-
 LIBRARY opcua
     VERSION   = "V0.1 (DD-Mon-YYYY)";
     AUTHOR    = "Lars Evertz, Florian Palm, Torben Deppe";
@@ -41,8 +40,9 @@ LIBRARY opcua
                 COMMENT    =    "Stack-specific representation of server data";
             networkLayerOv        :    C_TYPE    <UA_ServerNetworkLayer>
                 COMMENT    =    "Network layer within th ov-server";
-           namespace          : C_TYPE <UA_Namespace>;
+           namespace          : STRING;
            namespaceNames[]     : STRING;
+           namespaceIndex		: UINT;
            namespaceSize        : UINT;
         END_VARIABLES;    
         OPERATIONS
@@ -146,7 +146,7 @@ LIBRARY opcua
              shutdown            :    C_FUNCTION    <OV_FNC_SHUTDOWN>;     
              getaccess            :    C_FUNCTION    <OV_FNC_GETACCESS>;       
              start                :    C_FUNCTION    <UA_FNC_STARTNL>;     
-             getJobs                :    C_FUNCTION    <UA_FNC_NLGETWORK>;     
+             listen                :    C_FUNCTION    <UA_FNC_NLGETWORK>;     
              stop                :    C_FUNCTION    <UA_FNC_STOPNL>;       
              delete                :    C_FUNCTION    <UA_FNC_DELETENL>;       
          END_OPERATIONS;
