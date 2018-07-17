@@ -56,6 +56,20 @@ else
 OV_DODEBUG	=
 endif
 
+ifdef OV_ARCH
+ifeq "$(OV_ARCH)" "x86"
+OV_ARCH_BITWIDTH_CFLAGS		=	-m32
+OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
+else ifeq "$(OV_ARCH)" "x86_64"
+OV_ARCH_BITWIDTH_CFLAGS		=	-m64
+OV_ARCH_BITWIDTH_LDFLAGS	=	-m64
+else ifeq "$(OV_ARCH)" "arm"
+OV_ARCH_BITWIDTH_CFLAGS		=
+OV_ARCH_BITWIDTH_LDFLAGS	=
+else
+$(error unknown arch: $(OV_ARCH); valid options are {x86, x86_64, arm})
+endif # ifeq OV_ARCH
+else
 ifdef OV_ARCH_BITWIDTH
 OV_ARCH_BITWIDTH_CFLAGS		=	-m$(OV_ARCH_BITWIDTH)
 OV_ARCH_BITWIDTH_LDFLAGS	=	-m$(OV_ARCH_BITWIDTH)
@@ -63,6 +77,8 @@ else
 OV_ARCH_BITWIDTH_CFLAGS		=	-m32
 OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
 endif
+endif # ifdef OV_ARCH
+
 
 OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER -DOV_SYNC_NTMUTEX=1
 
@@ -164,6 +180,9 @@ example: $(EXAMPLE)
 
 all: targets example
 
+buildtools: $(OV_CODEGEN_EXE) \
+	$(ACPLT_BUILDER_EXE) \
+	$(ACPLT_MAKMAK_EXE)
 
 #   Implicit Rules
 #   --------------
