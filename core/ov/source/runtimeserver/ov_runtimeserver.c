@@ -693,7 +693,8 @@ int main(int argc, char **argv) {
 							tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(temp)+2); //oldlength + new option length + ' ' + '\0'
 							if(tempstr)
 							{
-								sprintf(tempstr, "%s %s", tempstr, temp);
+								strcat(tempstr, " ");
+								strcat(tempstr, temp);
 								commandline_options = tempstr;
 							}
 						}
@@ -960,7 +961,8 @@ int main(int argc, char **argv) {
 					tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(argv[i])+2); //oldlength + new option length + ' ' + '\0'
 					if(tempstr)
 					{
-						sprintf(tempstr, "%s %s", tempstr, argv[i]);
+						strcat(tempstr, " ");
+						strcat(tempstr, argv[i]);
 						commandline_options = tempstr;
 					}
 				}
