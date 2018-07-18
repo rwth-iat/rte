@@ -337,6 +337,8 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	ov_string_append(&answerBody, "</bdy>");
 	ov_string_setvalue(&pRequestMessage->v_msgBody, answerBody);
 	ov_string_setvalue(&answerBody, NULL);
+	ov_string_setvalue(&ReceiverEndpoint, NULL);
+	ov_string_setvalue(&SenderEndpoint, NULL);
 
 	// Message ready for sending
 	pRequestMessage->v_msgStatus = MSGREADYFORSENDING;
