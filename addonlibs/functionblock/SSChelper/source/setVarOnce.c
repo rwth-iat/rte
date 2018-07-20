@@ -38,7 +38,7 @@ OV_DLLFNCEXPORT void SSChelper_setVarOnce_typemethod(
     OV_INSTPTR_ov_object target=NULL;
     OV_INSTPTR_ov_object trigger=NULL;
     OV_RESULT result = OV_ERR_OK;
-    OV_ANY triggerValue;
+    OV_ANY triggerValue = {.value.vartype=OV_VT_VOID};
     OV_BOOL extTrigger = FALSE;
 
     // reset trigger out signal and wait one cycle
@@ -72,6 +72,7 @@ OV_DLLFNCEXPORT void SSChelper_setVarOnce_typemethod(
     	    	extTrigger = triggerValue.value.valueunion.val_bool;
     	    }
     	}
+    	Ov_SetAnyValue(&triggerValue, NULL);
 
     	if(extTrigger){
     		//Write value

@@ -43,6 +43,7 @@ OV_DLLFNCEXPORT void SSChelper_getESEStatus_typemethod(
     	if(Ov_CanCastTo(fb_functionchart,ese)){
     		eseChart=Ov_DynamicPtrCast(fb_functionchart,ese);
 
+    		ov_memstack_lock();
     		fb_functionchart_getport(eseChart,"OCCUPIED",&tempvar);
     		ov_string_setvalue(&(pinst->v_OCCUPIED),tempvar.value.valueunion.val_string);
     		fb_functionchart_getport(eseChart,"OCCST",&tempvar);
@@ -55,6 +56,7 @@ OV_DLLFNCEXPORT void SSChelper_getESEStatus_typemethod(
     		ov_string_setvalue(&(pinst->v_OPMODE),tempvar.value.valueunion.val_string);
     		fb_functionchart_getport(eseChart,"WORKST",&tempvar);
     		ov_string_setvalue(&(pinst->v_WORKST),tempvar.value.valueunion.val_string);
+    		ov_memstack_unlock();
 
     		return;
     	}

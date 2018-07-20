@@ -42,6 +42,7 @@ OV_DLLFNCEXPORT void SSChelper_getSCUinfo_typemethod(
     	if(Ov_CanCastTo(fb_functionchart,temp)){
     		pCSU=Ov_DynamicPtrCast(fb_functionchart,temp);
     		temp=NULL;
+    		ov_memstack_lock();
     		fb_functionchart_getport(pCSU,"workState",&tempvar);
     		ov_string_setvalue(&(pinst->v_workingState),tempvar.value.valueunion.val_string);
     		fb_functionchart_getport(pCSU,"occupiedBy",&tempvar);
@@ -52,6 +53,7 @@ OV_DLLFNCEXPORT void SSChelper_getSCUinfo_typemethod(
     		//fb_functionchart_getport(pCSU,"error",&tempvar);
     		//if(tempvar.value.valueunion.val_bool){
     		//pinst->v_SetPoint=tempvar.value.valueunion.val_bool;}
+    		ov_memstack_unlock();
     		return;
     	}
 

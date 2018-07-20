@@ -148,8 +148,10 @@ OV_RESULT SSChelper_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, cons
 		result = OV_ERR_BADPARAM;
 	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)){
 		//get variable in a functionchart
+		ov_memstack_lock();
 		result = fb_functionchart_getport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, &tmpAny);
 		result |= Ov_SetAnyValue(value, &tmpAny);
+		ov_memstack_unlock();
 	}else{
 		//get variable in a object
 		varElement.elemtype = OV_ET_NONE;
@@ -161,8 +163,10 @@ OV_RESULT SSChelper_getNamedVariable(const OV_INSTPTR_ov_object pTargetObj, cons
 		if(varElement.elemtype == OV_ET_VARIABLE) {
 			//port found, use the getter to read the value
 			Ov_GetVTablePtr(ov_object, pVtblObj, pTargetObj);
+			ov_memstack_lock();
 			result = pVtblObj->m_getvar(varElement.pobj, &varElement, &tmpAny);
 			result |= Ov_SetAnyValue(value, &tmpAny);
+			ov_memstack_unlock();
 		}else{
 			result = OV_ERR_BADPARAM;
 		}

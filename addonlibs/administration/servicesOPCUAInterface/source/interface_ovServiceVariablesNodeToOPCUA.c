@@ -132,6 +132,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	if((!pVtblObj) || (ov_activitylock)){
 		pVtblObj = pclass_ov_object->v_pvtable;
 	}
+	ov_memstack_lock();
 	result = (pVtblObj->m_getvar)(pobjtemp, &element, &value);
 	if (value.value.vartype == OV_VT_STRING){
 		if (value.value.valueunion.val_string != NULL)
@@ -139,6 +140,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	}else{
 		tmpValue2 = value.value.valueunion.val_uint;
 	}
+	ov_memstack_unlock();
 
 	if (ov_string_compare("WSDL", pobj->v_identifier) == OV_STRCMP_EQUAL){
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_STRING];

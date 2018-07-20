@@ -170,8 +170,10 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelVariable
 		if((!pVtblObj) || (ov_activitylock)){
 			pVtblObj = pclass_ov_object->v_pvtable;
 		}
+		ov_memstack_lock();
 		result = (pVtblObj->m_getvar)(pobjtemp, &element, &value);
 		tmpValue = value.value.valueunion.val_uint;
+		ov_memstack_unlock();
 
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_TYPES[UA_TYPES_UINT32];
 		((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_UInt32_new();
