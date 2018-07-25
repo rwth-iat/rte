@@ -205,5 +205,6 @@ OV_DLLFNCEXPORT void opcua_uaConnection_typemethod (
     /*
     *   local variables
     */
+	ksbase_ClientHandler_typemethod(this);
 
 }

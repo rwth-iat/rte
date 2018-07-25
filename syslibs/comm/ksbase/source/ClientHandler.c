@@ -63,3 +63,17 @@ OV_DLLFNCEXPORT void ksbase_ClientHandler_shutdown(
 
     return;
 }
+
+OV_DLLFNCEXPORT void ksbase_ClientHandler_typemethod (
+	OV_INSTPTR_ksbase_ComTask	this
+) {
+    /*
+    *   local variables
+    */
+	if(!Ov_GetParent(ksbase_AssocChannelClientHandler,Ov_StaticPtrCast(ksbase_ClientHandler, this))){
+		// delete if no longer connected to channel
+		Ov_DeleteObject(this);
+	}
+
+    return;
+}
