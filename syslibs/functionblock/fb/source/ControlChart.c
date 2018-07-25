@@ -241,6 +241,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_controlchart_CMD_set(
 		keyvalue = ov_string_split(keyvaluelist[iterator], "=", &len);
 		if(len != 2){
 			//did not find exactly one "=", try next
+			ov_string_freelist(keyvalue);
 			continue;
 		}
 		orderVar.value.valueunion.val_string = keyvalue[1];

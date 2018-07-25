@@ -131,6 +131,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestUnRegister(
 	/*	generate Header	*/
 	ov_string_print(&requestUri, "/unregister?server=%s&version=%" OV_PRINT_UINT, servername, version);
 	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, NULL, NULL, FALSE, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
+	ov_string_setvalue(&requestUri, NULL);
 	return result;
 }
 
