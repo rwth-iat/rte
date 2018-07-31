@@ -27,7 +27,8 @@ typedef OV_RESULT DS_FNC_INSERTDATA(const OV_STRING table, const OV_STRING* fiel
 typedef OV_RESULT DS_FNC_SELECTDATA(const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* whereFields, OV_UINT whereFieldsLen, OV_STRING* whereValues, OV_UINT whereValuesLen, OV_STRING_VEC* result);
 typedef OV_RESULT DS_FNC_DELETEDATA(const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* values, OV_UINT valuesLen);
 typedef OV_RESULT DS_FNC_UPDATEDATA(const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* fieldValues, OV_UINT fieldValuesLen, const OV_STRING* whereFields, OV_UINT whereFieldsLen, OV_STRING* whereValues, OV_UINT whereValuesLen);
-typedef OV_RESULT DS_FNC_GETCOMPONENTID(const OV_STRING table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result);
+typedef OV_RESULT DS_FNC_GETCOMPONENTID(const OV_STRING_VEC* table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result);
+typedef OV_RESULT DS_FNC_GETFITTINGSTATEMENTS(const OV_STRING_VEC* table, const OV_STRING ComponentID, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result);
 
 // URMSWrapper
 typedef OV_RESULT DS_FNC_CHECKUSERRIGHTS(void);

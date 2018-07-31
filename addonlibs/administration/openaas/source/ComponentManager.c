@@ -42,7 +42,7 @@ OV_DLLFNCEXPORT OV_RESULT openaas_AASComponentManager_reset_set(
 	if (value == TRUE){
 		pobj->v_state = 6;
 	}
-    pobj->v_reset = value;
+    pobj->v_reset = FALSE;
     return OV_ERR_OK;
 }
 
@@ -192,8 +192,6 @@ static void cleanupMessageBox(OV_INSTPTR_openaas_AASComponentManager this) {
 static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponentManager this, OV_UINT requestType, const IdentificationType* requestedAASId) {
 	OV_INSTPTR_openaas_aas paas;
 	OV_STRING tmpString = NULL;
-	OV_STRING value = NULL;
-	OV_STRING tag = NULL;
 	OV_STRING SenderEndpoint = NULL;
 	OV_STRING ReceiverEndpoint = NULL;
 	OV_RESULT resultOV = OV_ERR_OK;
@@ -277,47 +275,277 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 			ov_string_append(&componentContent, tmpString);
 			ov_string_setvalue(&tmpString, NULL);
 		}
-		ov_string_append(&componentContent, "],\"tags\": [");
+		ov_string_append(&componentContent, "],\"statements\": [");
 		ov_memstack_unlock();
-		// AASID
-		tmpString = NULL;
-		ov_string_print(&value, "%i", paas->p_AASID.v_IdType);
-		ov_string_append(&value, ",");
-		ov_string_append(&value, paas->p_AASID.v_IdSpec);
-		ov_string_print(&tmpString, "{\"tag\":\"AASID\",\"value\":\"%s\"}", value);
-		ov_string_setvalue(&value, NULL);
-		ov_string_append(&componentContent, tmpString);
-		ov_string_setvalue(&tmpString, NULL);
-		// AssetID
-		ov_string_print(&value, "%i", paas->p_AssetID.v_IdType);
-		ov_string_append(&value, ",");
-		ov_string_append(&value, paas->p_AssetID.v_IdSpec);
-		ov_string_print(&tmpString, ",{\"tag\":\"ASSETID\",\"value\":\"%s\"}", value);
-		ov_string_setvalue(&value, NULL);
-		ov_string_append(&componentContent, tmpString);
-		ov_string_setvalue(&tmpString, NULL);
 		// Registration of other Tags
 		OV_INSTPTR_openaas_SubModel pSubmodel = NULL;
 		OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pPVSList = NULL;
 		OV_INSTPTR_propertyValueStatement_PropertyValueStatement pPVS = NULL;
+		OV_INSTPTR_propertyValueStatement_CarrierId pCarrierID = NULL;
+		OV_INSTPTR_propertyValueStatement_PropertyId pPropertyID = NULL;
+		OV_INSTPTR_propertyValueStatement_ExpressionSemantic pExpressionSemantic = NULL;
+		OV_INSTPTR_propertyValueStatement_ExpressionLogic pExpressionLogic = NULL;
+		OV_INSTPTR_ov_object pObject = NULL;
+		OV_INSTPTR_ov_object pObject2 = NULL;
 		Ov_ForEachChildEx(ov_containment, &paas->p_Header, pSubmodel, openaas_SubModel){
-			if (ov_string_compare(pSubmodel->v_identifier, "Identification") == OV_STRCMP_EQUAL){
-				Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
-					ov_string_setvalue(&tag, pPVSList->v_identifier);
-					Ov_ForEachChildEx(ov_containment, pPVSList, pPVS, propertyValueStatement_PropertyValueStatement){
-						ov_string_setvalue(&value, pPVS->v_Value.value.valueunion.val_string);
-						ov_string_print(&tmpString, ",{\"tag\":\"%s\",\"value\":\"%s\"}", tag, value);
+			Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
+				Ov_ForEachChild(ov_containment, pPVSList, pObject){
+					if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject)){
+						pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject);
+					}
+					if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject)){
+						pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject);
+					}
+					if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject)){
+						pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject);
+					}
+					if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject)){
+						pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject);
+					}
+					if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pObject)){
+						pPVS = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pObject);
+						Ov_ForEachChild(ov_containment, pPVS, pObject2){
+							if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject2)){
+								pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject2);
+							}
+							if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject2)){
+								pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject2);
+							}
+							if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject2)){
+								pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject2);
+							}
+							if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject2)){
+								pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject2);
+							}
+						}
+						ov_string_print(&tmpString, "{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
+						ov_string_append(&componentContent, tmpString);
+						ov_string_print(&tmpString, ",\"PropertyID\":\"%i,%s\"", pPropertyID->v_IdType, pPropertyID->v_IdSpec);
+						ov_string_append(&componentContent, tmpString);
+
+						switch(pExpressionSemantic->v_ExpressionSemanticEnum){
+							case 0:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Assurance\"");
+							break;
+							case 1:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Setting\"");
+							break;
+							case 2:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Measurement\"");
+							break;
+							case 3:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Requirement\"");
+							break;
+							default:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"\"");
+							break;
+						}
+						ov_string_append(&componentContent, tmpString);
+
+						switch(pExpressionLogic->v_ExpressionLogicEnum){
+							case 0:
+								ov_string_print(&tmpString, ",\"Relation\":\">\"");
+							break;
+							case 1:
+								ov_string_print(&tmpString, ",\"Relation\":\">=\"");
+							break;
+							case 2:
+								ov_string_print(&tmpString, ",\"Relation\":\"==\"");
+							break;
+							case 3:
+								ov_string_print(&tmpString, ",\"Relation\":\"!=\"");
+							break;
+							case 4:
+								ov_string_print(&tmpString, ",\"Relation\":\"<=\"");
+							break;
+							case 5:
+								ov_string_print(&tmpString, ",\"Relation\":\"<\"");
+							break;
+							default:
+								ov_string_print(&tmpString, ",\"Relation\":\"\"");
+							break;
+						}
+						ov_string_append(&componentContent, tmpString);
+						switch(pPVS->v_Value.value.vartype & OV_VT_KSMASK){
+							case OV_VT_BOOL:
+								ov_string_print(&tmpString, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_bool);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Boolean\"");
+								break;
+							case OV_VT_SINGLE:
+								ov_string_print(&tmpString, ",\"Value\":\"%f\"", pPVS->v_Value.value.valueunion.val_single);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
+								break;
+							case OV_VT_DOUBLE:
+								ov_string_print(&tmpString, ",\"Value\":\"%lf\"", pPVS->v_Value.value.valueunion.val_double);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
+								break;
+							case OV_VT_INT:
+								ov_string_print(&tmpString, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_int);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
+								break;
+							case OV_VT_UINT:
+								ov_string_print(&tmpString, ",\"Value\":\"%u\"", pPVS->v_Value.value.valueunion.val_uint);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
+								break;
+							case OV_VT_STRING:
+								if (pPVS->v_Value.value.valueunion.val_string != NULL)
+									ov_string_print(&tmpString, ",\"Value\":\"%s\"", pPVS->v_Value.value.valueunion.val_string);
+								else
+									ov_string_print(&tmpString, ",\"Value\":\"\"");
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Text\"");
+								break;
+							default:
+								ov_string_setvalue(&tmpString, ",\"Value\":\"\"");
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"\"");
+								break;
+						}
+						ov_string_append(&componentContent, tmpString);
+						ov_string_print(&tmpString, ",\"SubModel\":\"%s\"}", pSubmodel->v_identifier);
 						ov_string_append(&componentContent, tmpString);
 						ov_string_setvalue(&tmpString, NULL);
-						ov_string_setvalue(&value, NULL);
 					}
-					ov_string_setvalue(&tag, NULL);
+				}
+			}
+		}
+		Ov_ForEachChildEx(ov_containment, &paas->p_Body, pSubmodel, openaas_SubModel){
+			Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
+				Ov_ForEachChild(ov_containment, pPVSList, pObject){
+					if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject)){
+						pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject);
+					}
+					if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject)){
+						pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject);
+					}
+					if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject)){
+						pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject);
+					}
+					if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject)){
+						pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject);
+					}
+					if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pObject)){
+						pPVS = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pObject);
+						Ov_ForEachChild(ov_containment, pPVS, pObject2){
+							if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject2)){
+								pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject2);
+							}
+							if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject2)){
+								pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject2);
+							}
+							if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject2)){
+								pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject2);
+							}
+							if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject2)){
+								pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject2);
+							}
+						}
+
+						ov_string_print(&tmpString, "{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
+						ov_string_append(&componentContent, tmpString);
+						ov_string_print(&tmpString, ",\"PropertyID\":\"%i,%s\"", pPropertyID->v_IdType, pPropertyID->v_IdSpec);
+						ov_string_append(&componentContent, tmpString);
+						switch(pExpressionSemantic->v_ExpressionSemanticEnum){
+							case 0:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Assurance\"");
+							break;
+							case 1:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Setting\"");
+							break;
+							case 2:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Measurement\"");
+							break;
+							case 3:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Requirement\"");
+							break;
+							default:
+								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"\"");
+							break;
+						}
+						ov_string_append(&componentContent, tmpString);
+
+						switch(pExpressionLogic->v_ExpressionLogicEnum){
+							case 0:
+								ov_string_print(&tmpString, ",\"Relation\":\">\"");
+							break;
+							case 1:
+								ov_string_print(&tmpString, ",\"Relation\":\">=\"");
+							break;
+							case 2:
+								ov_string_print(&tmpString, ",\"Relation\":\"==\"");
+							break;
+							case 3:
+								ov_string_print(&tmpString, ",\"Relation\":\"!=\"");
+							break;
+							case 4:
+								ov_string_print(&tmpString, ",\"Relation\":\"<=\"");
+							break;
+							case 5:
+								ov_string_print(&tmpString, ",\"Relation\":\"<\"");
+							break;
+							default:
+								ov_string_print(&tmpString, ",\"Relation\":\"\"");
+							break;
+						}
+						ov_string_append(&componentContent, tmpString);
+						switch(pPVS->v_Value.value.vartype & OV_VT_KSMASK){
+							case OV_VT_BOOL:
+								ov_string_print(&tmpString, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_bool);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Boolean\"");
+								break;
+							case OV_VT_SINGLE:
+								ov_string_print(&tmpString, ",\"Value\":\"%f\"", pPVS->v_Value.value.valueunion.val_single);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
+								break;
+							case OV_VT_DOUBLE:
+								ov_string_print(&tmpString, ",\"Value\":\"%lf\"", pPVS->v_Value.value.valueunion.val_double);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
+								break;
+							case OV_VT_INT:
+								ov_string_print(&tmpString, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_int);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
+								break;
+							case OV_VT_UINT:
+								ov_string_print(&tmpString, ",\"Value\":\"%u\"", pPVS->v_Value.value.valueunion.val_uint);
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
+								break;
+							case OV_VT_STRING:
+								if (pPVS->v_Value.value.valueunion.val_string != NULL)
+									ov_string_print(&tmpString, ",\"Value\":\"%s\"", pPVS->v_Value.value.valueunion.val_string);
+								else
+									ov_string_print(&tmpString, ",\"Value\":\"\"");
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"Text\"");
+								break;
+							default:
+								ov_string_setvalue(&tmpString, ",\"Value\":\"\"");
+								ov_string_append(&componentContent, tmpString);
+								ov_string_print(&tmpString, ",\"ValueType\":\"\"");
+								break;
+						}
+						ov_string_append(&componentContent, tmpString);
+						ov_string_print(&tmpString, ",\"SubModel\":\"%s\"}", pSubmodel->v_identifier);
+						ov_string_append(&componentContent, tmpString);
+						ov_string_setvalue(&tmpString, NULL);
+					}
 				}
 			}
 		}
 		ov_string_append(&componentContent, "]");
 		ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"3\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", %s}}", SenderEndpoint, ReceiverEndpoint, MessageSys_Message_msgID_get(pRequestMessage), componentID, this->v_securityKey, componentContent);
+		ov_string_setvalue(&componentContent, NULL);
 		ov_string_append(&answerBody, tmpString);
+		ov_string_setvalue(&tmpString, NULL);
 		break;
 	case 2:
 		break;
@@ -465,6 +693,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		if (responseData.header.messageType != 2){
 			// delete all used memory
 			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			response_data_deleteMembers(&responseData);
 			return;
 		}
 		if (responseData.header.errorFlag == TRUE){
@@ -473,6 +702,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			pinst->v_state = 8;
 			// delete all used memory
 			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			response_data_deleteMembers(&responseData);
 			return;
 		}
 		// find certificate and securityKey
@@ -497,6 +727,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 		pinst->v_state = 2;
 		sendingRequestToDiscoveryServer(pinst, 1, NULL);
+		response_data_deleteMembers(&responseData);
 	break;
 	case 2: //Sending Registration-Request and wait for answer
 		// Get the next message, if any.
@@ -542,6 +773,7 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		if (responseData.header.messageType != 4){
 			// delete all used memory
 			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			response_data_deleteMembers(&responseData);
 			return;
 		}
 		if (responseData.header.errorFlag == TRUE){
@@ -550,11 +782,13 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 			pinst->v_state = 8;
 			// delete all used memory
 			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			response_data_deleteMembers(&responseData);
 			return;
 		}
 		pinst->v_state = 3; // no error
 		pinst->v_registered = TRUE;
 		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+		response_data_deleteMembers(&responseData);
 	break;
 	case 3: //Process incoming messages
 		// Get the next message, if any.
@@ -1746,14 +1980,20 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_typemethod(
 		break;
 	case 6: //Sending Unregister-Request and wait for answer
 		// Get the next message, if any.
+		Ov_ForEachChildEx(ov_containment, &pinst->p_OUTBOX, message, MessageSys_Message){
+			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+		}
 		if (pinst->v_registered == TRUE){
 			sendingRequestToDiscoveryServer(pinst, 3, NULL);
 		}
-		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
 		pinst->v_state = 7;
 		break;
 	case 7: //Ready for delete or reset
 		pinst->v_state = 0;
+		Ov_ForEachChildEx(ov_containment, &pinst->p_OUTBOX, message, MessageSys_Message){
+			pinst->v_state = 7;
+			break;
+		}
 		break;
 	case 8: // Error, wait for reset
 		break;
@@ -1833,7 +2073,8 @@ OV_DLLFNCEXPORT void openaas_AASComponentManager_destructor(
     OV_INSTPTR_openaas_AASComponentManager pinst = Ov_StaticPtrCast(openaas_AASComponentManager, pobj);
 
     /* do what */
-    sendingRequestToDiscoveryServer(pinst, 3, NULL);
+    if (pinst->v_state == 3 || pinst->v_state == 4 || pinst->v_state == 5)
+    	sendingRequestToDiscoveryServer(pinst, 3, NULL);
 
     /* destroy object */
     fb_functionblock_destructor(pobj);

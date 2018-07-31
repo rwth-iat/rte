@@ -30,9 +30,14 @@ struct endpoint{
 	OV_STRING endpointString;
 };
 
-struct tags{
-	OV_STRING tag;
+struct statement{
+	OV_STRING carrierID;
+	OV_STRING propertyID;
+	OV_STRING expressionSemantic;
+	OV_STRING relation;
 	OV_STRING value;
+	OV_STRING valueType;
+	OV_STRING subModel;
 };
 
 OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(OV_INSTPTR_openAASDiscoveryServer_DSService pinst, const json_data JsonInput, OV_STRING *JsonOutput, OV_STRING *errorMessage) {
@@ -42,8 +47,8 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 	// Parsing Body
 	OV_UINT endpointArraySize = 0;
 	struct endpoint *endpoints = NULL;
-	OV_UINT tagsArraySize = 0;
-	struct tags *tags = NULL;
+	OV_UINT statementsArraySize = 0;
+	struct statement *statements = NULL;
 	OV_STRING_VEC jsonTags;
 	jsonTags.value = NULL;
 	jsonTags.veclen = 0;
@@ -51,7 +56,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 	ov_string_setvalue(&jsonTags.value[0], "componentID");
 	ov_string_setvalue(&jsonTags.value[1], "securityKey");
 	ov_string_setvalue(&jsonTags.value[2], "endpoints");
-	ov_string_setvalue(&jsonTags.value[3], "tags");
+	ov_string_setvalue(&jsonTags.value[3], "statements");
 	OV_UINT_VEC tokenIndex;
 	tokenIndex.value = NULL;
 	tokenIndex.veclen = 0;
@@ -82,15 +87,32 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		endpoints[i].endpointString = NULL;
 		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[2]+2+i*5+4], &endpoints[i].endpointString);
 	}
-	// get tags from JSON
-	tagsArraySize = JsonInput.token[tokenIndex.value[3]+1].size;
-	tags = malloc(sizeof(struct endpoint)*tagsArraySize);
-	for (OV_UINT i = 0; i < tagsArraySize; i++){
-		tags[i].tag = NULL;
-		// value + 2 start of objects + i*5 next object + 2/4 values of tag and value
-		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*5+2], &tags[i].tag);
-		tags[i].value = NULL;
-		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*5+4], &tags[i].value);
+
+	// get statements from JSON
+	statementsArraySize = JsonInput.token[tokenIndex.value[3]+1].size;
+	statements = malloc(sizeof(struct statement)*statementsArraySize);
+	for (OV_UINT i = 0; i < statementsArraySize; i++){
+		// value + 2 start of objects + i*15 next object + 2 values of carrierID
+		statements[i].carrierID = NULL;
+		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*15+2], &statements[i].carrierID);
+		// value + 2 start of objects + i*15 next object + 4 values of propertyID
+		statements[i].propertyID = NULL;
+		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*15+4], &statements[i].propertyID);
+		// value + 2 start of objects + i*15 next object + 6 values of expressionSemantic
+		statements[i].expressionSemantic = NULL;
+		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*15+6], &statements[i].expressionSemantic);
+		// value + 2 start of objects + i*15 next object + 8 values of relation
+		statements[i].relation = NULL;
+		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*15+8], &statements[i].relation);
+		// value + 2 start of objects + i*15 next object + 10 values of value
+		statements[i].value = NULL;
+		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*15+10], &statements[i].value);
+		// value + 2 start of objects + i*15 next object + 10 values of value
+		statements[i].valueType = NULL;
+		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*15+12], &statements[i].valueType);
+		// value + 2 start of objects + i*15 next object + 12 values of subModel
+		statements[i].subModel = NULL;
+		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+2+i*15+14], &statements[i].subModel);
 	}
 
 	// delete old registered Data
@@ -104,12 +126,25 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		goto FINALIZE;
 	}
 	Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-	OV_STRING table  = "Endpoints";
+	OV_STRING table  = NULL;
 	OV_STRING tmpField = "ComponentID";
 	OV_STRING tmpValue = NULL;
 	ov_string_print(&tmpValue, "'%s'", componentID);
+	table  = "endpoints";
 	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
-	table  = "Tags";
+	table  = "statements_TextBoolean";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	table  = "statements_Numeric";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	table  = "propertyID";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	table  = "carrierID";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	table  = "expressionSemantic";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	table  = "relation";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	table  = "submodel";
 	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
 	ov_string_setvalue(&tmpValue, NULL);
 
@@ -138,6 +173,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		tmpValues[2] = NULL;
 		ov_string_print(&tmpValues[2], "'%s'", endpoints[i].endpointString);
 		resultOV = pDBWrapperVTable->m_insertData(table, tmpFields, 3, tmpValues, 3);
+		ov_string_setvalue(&tmpValues[0], NULL);
 		ov_string_setvalue(&tmpValues[1], NULL);
 		ov_string_setvalue(&tmpValues[2], NULL);
 		if (resultOV != OV_ERR_OK){
@@ -147,24 +183,98 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		}
 	}
 
-	// Insert tags in database
-	table  = "Tags";
-	tmpFields[0] = "ComponentID";
-	tmpFields[1] = "Tag";
-	tmpFields[2] = "Value";
-	tmpValues[0] = NULL;
-	ov_string_print(&tmpValues[0], "'%s'", componentID);
-	for (OV_UINT i = 0; i < tagsArraySize; i++){
-		tmpValues[1] = NULL;
-		ov_string_print(&tmpValues[1], "'%s'", tags[i].tag);
-		tmpValues[2] = NULL;
-		ov_string_print(&tmpValues[2], "'%s'", tags[i].value);
-		resultOV = pDBWrapperVTable->m_insertData(table, tmpFields, 3, tmpValues, 3);
-		ov_string_setvalue(&tmpValues[1], NULL);
-		ov_string_setvalue(&tmpValues[2], NULL);
+	// Insert statements in database
+	OV_STRING tmpFieldsStatements[7];
+	tmpFieldsStatements[0] = "ComponentID";
+	tmpFieldsStatements[1] = "CarrierID";
+	tmpFieldsStatements[2] = "PropertyID";
+	tmpFieldsStatements[3] = "ExpressionSemantic";
+	tmpFieldsStatements[4] = "Relation";
+	tmpFieldsStatements[5] = "Value";
+	tmpFieldsStatements[6] = "SubModel";
+	OV_STRING tmpValuesStatements[7];
+
+	OV_STRING tmpFieldsList[2];
+	tmpFieldsList[0] = "ComponentID";
+	tmpFieldsList[1] = "Value";
+	OV_STRING tmpValuesList[2];
+
+	for (OV_UINT i = 0; i < statementsArraySize; i++){
+		tmpValuesStatements[0] = NULL;
+		tmpValuesList[0] = NULL;
+		ov_string_print(&tmpValuesStatements[0], "'%s'", componentID);
+		ov_string_print(&tmpValuesList[0], "'%s'", componentID);
+
+		tmpValuesStatements[1] = NULL;
+		ov_string_print(&tmpValuesStatements[1], "'%s'", statements[i].carrierID);
+		tmpValuesList[1] = NULL;
+		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].carrierID);
+		table = "carrierID";
+		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		ov_string_setvalue(&tmpValuesList[1], NULL);
+
+		tmpValuesStatements[2] = NULL;
+		ov_string_print(&tmpValuesStatements[2], "'%s'", statements[i].propertyID);
+		tmpValuesList[1] = NULL;
+		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].propertyID);
+		table = "propertyID";
+		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		ov_string_setvalue(&tmpValuesList[1], NULL);
+
+		tmpValuesList[1] = NULL;
+		tmpValuesStatements[3] = NULL;
+		if (statements[i].expressionSemantic == NULL)
+			ov_string_print(&tmpValuesStatements[3], "''");
+		else
+			ov_string_print(&tmpValuesStatements[3], "'%s'", statements[i].expressionSemantic);
+		tmpValuesList[1] = NULL;
+		if (statements[i].expressionSemantic == NULL)
+			ov_string_print(&tmpValuesList[1], "''");
+		else
+			ov_string_print(&tmpValuesList[1], "'%s'", statements[i].expressionSemantic);
+		table = "expressionSemantic";
+		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		ov_string_setvalue(&tmpValuesList[1], NULL);
+
+		tmpValuesList[1] = NULL;
+		tmpValuesStatements[4] = NULL;
+		ov_string_print(&tmpValuesStatements[4], "'%s'", statements[i].relation);
+		tmpValuesList[1] = NULL;
+		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].relation);
+		table = "relation";
+		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		ov_string_setvalue(&tmpValuesList[1], NULL);
+
+		tmpValuesList[1] = NULL;
+		tmpValuesStatements[5] = NULL;
+		if (statements[i].value == NULL)
+			ov_string_print(&tmpValuesStatements[5], "''");
+		else
+			ov_string_print(&tmpValuesStatements[5], "'%s'", statements[i].value);
+
+		tmpValuesList[1] = NULL;
+		tmpValuesStatements[6] = NULL;
+		ov_string_print(&tmpValuesStatements[6], "'%s'", statements[i].subModel);
+		tmpValuesList[1] = NULL;
+		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].subModel);
+		table = "subModel";
+		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		ov_string_setvalue(&tmpValuesList[1], NULL);
+		ov_string_setvalue(&tmpValuesList[0], NULL);
+
+		if (ov_string_compare(statements[i].valueType, "Numeric") == OV_STRCMP_EQUAL){
+			table = "statements_Numeric";
+		}else{
+			table = "statements_TextBoolean";
+		}
+
+		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsStatements, 7, tmpValuesStatements, 7);
+		for (OV_UINT i = 0; i < 7; i++){
+			ov_string_setvalue(&tmpValuesStatements[i], NULL);
+		}
 		if (resultOV != OV_ERR_OK){
 			ov_string_setvalue(errorMessage, "Internal Error");
-			ov_logfile_error("Could not insert tags in database");
+			ov_logfile_error("Could not insert statements in database");
 			goto FINALIZE;
 		}
 	}
@@ -181,12 +291,17 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 	}
 	if (endpoints)
 		free(endpoints);
-	for (OV_UINT i = 0; i < tagsArraySize; i++){
-		ov_string_setvalue(&tags[i].tag, NULL);
-		ov_string_setvalue(&tags[i].value, NULL);
+	for (OV_UINT i = 0; i < statementsArraySize; i++){
+		ov_string_setvalue(&statements[i].carrierID, NULL);
+		ov_string_setvalue(&statements[i].propertyID, NULL);
+		ov_string_setvalue(&statements[i].expressionSemantic, NULL);
+		ov_string_setvalue(&statements[i].relation, NULL);
+		ov_string_setvalue(&statements[i].value, NULL);
+		ov_string_setvalue(&statements[i].valueType, NULL);
+		ov_string_setvalue(&statements[i].subModel, NULL);
 	}
-	if (tags)
-		free(tags);
+	if (statements)
+		free(statements);
     return OV_ERR_OK;
 }
 

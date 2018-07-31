@@ -42,6 +42,16 @@ LIBRARY DSServices
         END_OPERATIONS;
     END_CLASS; 
     
+    CLASS DSSearchServiceType2 : CLASS openAASDiscoveryServer/DSSearchService
+        IS_INSTANTIABLE;
+        VARIABLES
+        END_VARIABLES;
+        OPERATIONS
+            executeService   : C_FUNCTION <DS_FNC_EXECUTESERVICE>;
+            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
+    END_CLASS;
+    
     CLASS DSSecurityServiceType1 : CLASS openAASDiscoveryServer/DSSecurityService
         IS_INSTANTIABLE;
         VARIABLES

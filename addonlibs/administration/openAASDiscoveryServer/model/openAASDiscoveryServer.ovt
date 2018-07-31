@@ -8,6 +8,9 @@
 typedef struct DB_QUERY {
 	OV_STRING_VEC column;
 	OV_STRING_VEC value;
+	OV_STRING_VEC value_relation; 
+    OV_STRING_VEC value_optional;
+    OV_STRING_VEC value_optional_relation;
 } DB_QUERY;
 
 #endif
