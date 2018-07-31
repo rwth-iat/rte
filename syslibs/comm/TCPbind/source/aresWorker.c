@@ -234,6 +234,7 @@ void* workerThread( void* lpParam ){
 		Sleep(10);
 #endif
 	}
+	// TODO free GetAddrInfoElem's
 #if OV_SYSTEM_UNIX
 	pthread_cleanup_pop(1);
 #endif

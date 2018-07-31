@@ -528,6 +528,12 @@
 	(timespan).usecs = (OV_INT)(((dbl)-(OV_DOUBLE)(timespan).secs)*(OV_DOUBLE)1e6)
 
 /*
+ *	macro to replace NULL strings with empty strings
+ *	use for ov_string_print / printf functions
+ */
+#define str_s( str ) (str)?(str):""
+
+/*
  * load dependent library while loading
  * use in ov_library_open_<lib>() function
  */
