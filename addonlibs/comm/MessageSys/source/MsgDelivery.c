@@ -161,7 +161,7 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 	OV_INSTPTR_MessageSys_msgHandler pMsgHandler = NULL;
 	OV_INSTPTR_MessageSys_MsgSendExtension	pMsgSendExt	=	NULL;
 	OV_VTBLPTR_MessageSys_MsgSendExtension	pVtblSendExt	=	NULL;
-	OV_ANY value;
+	OV_ANY value = OV_ANY_INIT;
 	OV_STRING msgString = NULL;
 	OV_STRING headerString = NULL;
 	OV_UINT hdrLength = 0;

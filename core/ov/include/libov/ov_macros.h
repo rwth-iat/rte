@@ -481,6 +481,11 @@
 #define Ov_SetAnyValueByPointer(pany, type, pvalue)							\
 	ov_variable_setanyvaluebypointer((pany), (type), (pvalue))
 
+/*
+ *	initializer for OV_ANY types
+ */
+#define OV_ANY_INIT (OV_ANY){.time=(OV_TIME){.secs=0, .usecs=0}, .state=OV_ST_NOTSUPPORTED, .value.vartype=OV_VT_VOID}
+
 /**
 *	Compare two vector variable values
 *	Please check against OV_VECCMP_EQUAL, OV_VECCMP_MORE and OV_VECCMP_LESS
