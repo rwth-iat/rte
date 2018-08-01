@@ -193,6 +193,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 			if (responseData.header.messageType != 2){
 				// delete all used memory
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+				response_data_deleteMembers(&responseData);
 				return;
 			}
 			if (responseData.header.errorFlag == TRUE){
@@ -201,6 +202,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 				pTC->v_State = 6;
 				// delete all used memory
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+				response_data_deleteMembers(&responseData);
 				return;
 			}
 			// find certificate and securityKey
@@ -221,6 +223,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 			if (responseData.header.messageType != 4){
 				// delete all used memory
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+				response_data_deleteMembers(&responseData);
 				return;
 			}
 			if (responseData.header.errorFlag == TRUE){
@@ -229,6 +232,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 				pTC->v_State = 6;
 				// delete all used memory
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+				response_data_deleteMembers(&responseData);
 				return;
 			}
 		break;
@@ -236,6 +240,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 			if (responseData.header.messageType != 6){
 				// delete all used memory
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+				response_data_deleteMembers(&responseData);
 				return;
 			}
 			if (responseData.header.errorFlag == TRUE){
@@ -244,6 +249,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 				pTC->v_State = 6;
 				// delete all used memory
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+				response_data_deleteMembers(&responseData);
 				return;
 			}
 		break;
@@ -251,6 +257,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 			if (responseData.header.messageType != 8){
 				// delete all used memory
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+				response_data_deleteMembers(&responseData);
 				return;
 			}
 			if (responseData.header.errorFlag == TRUE){
@@ -259,6 +266,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 				pTC->v_State = 6;
 				// delete all used memory
 				Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+				response_data_deleteMembers(&responseData);
 				return;
 			}
 			// find aas
@@ -269,6 +277,7 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_ComponentManagerTC_typemethod(
 
 	// delete all used memory
 	Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+	response_data_deleteMembers(&responseData);
 	pTC->v_State = 6;
 
 	return;
