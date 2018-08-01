@@ -248,7 +248,6 @@ OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_listen(
 	OV_UINT closeConnCounter = 0;
 
 
-
 	/*	iterate and collect work	*/
 	Ov_ForEachChild(opcua_networkLayerToConnection, this, pConnection){
 		if(pConnection->v_workNext == TRUE){
@@ -256,14 +255,16 @@ OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_listen(
 			temp.data = pConnection->v_buffer.data;
 			temp.length = pConnection->v_buffer.length;
 			UA_Server_processBinaryMessage(server, pConnection->v_connection, &temp);
+			ksbase_free_KSDATAPACKET(&(pConnection->v_buffer));
 			pConnection->v_workNext = FALSE;
 		}
 	}
 
 	for(closeConnCounter = 0; closeConnCounter < this->v_connsToCloseCount; closeConnCounter++)
 	{
-				//UA_Server_removeConnection(server, this->v_connsToClose[closeConnCounter]);  wird auf OPCUA-Seite verwaltet?
-				FreeConnection(server, this->v_connsToClose[closeConnCounter]);
+		if(pConnection->v_connection == this->v_connsToClose[closeConnCounter])
+			UA_Server_removeConnection(server, pConnection->v_connection);
+		FreeConnection(server, this->v_connsToClose[closeConnCounter]);
 	}
 
 	Ov_HeapFree(this->v_connsToClose);
