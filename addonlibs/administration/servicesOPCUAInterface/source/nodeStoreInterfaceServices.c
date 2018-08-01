@@ -46,14 +46,14 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 				case UA_TYPES_FLOAT:
 				case UA_TYPES_DOUBLE:
 				case UA_TYPES_VARIANT:
-					if (input[i].data == NULL || input[i].data == 0x1){
+					if (input[i].data == NULL || input[i].data == (void*)0x1){
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
 					inputs[i] = input[i].data;
 					break;
 				case UA_TYPES_STRING:
-					if (input[i].data == NULL || input[i].data == 0x1){
+					if (input[i].data == NULL || input[i].data == (void*)0x1){
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}

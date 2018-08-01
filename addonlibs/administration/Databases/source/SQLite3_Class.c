@@ -143,6 +143,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_insertData(const OV_STRING table, co
 
 	if (rc == SQLITE_CONSTRAINT){
 		ov_string_setvalue(&query, NULL);
+		sqlite3_free(err_msg);
 		return OV_ERR_BADPARAM;
 	}
 	if(rc != SQLITE_OK) {
@@ -283,6 +284,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_updateData(const OV_STRING table, co
 
 	if (rc == SQLITE_CONSTRAINT){
 		ov_string_setvalue(&query, NULL);
+		sqlite3_free(err_msg);
 		return OV_ERR_BADPARAM;
 	}
 	if(rc != SQLITE_OK) {
