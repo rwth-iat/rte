@@ -102,7 +102,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
 		}
 	}
-	ov_string_setvalue(&wherevalues[0], NULL);
 
 	if (certificateCheckSuccessful == FALSE){
 		// TODO: Check certificate extern
@@ -211,12 +210,14 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 	if (FoundCertificate == FALSE){
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not find certificate of DS");
+		ov_string_setvalue(&wherevalues[0], NULL);
 		return OV_ERR_GENERIC;
 	}
 
 	ov_string_print(JsonOutput, "\"body\":{\"certificate\":\"%s\", \"securityKey\":\"%s\"}", certificateDS, securityKey);
 
 	FINALIZE:
+	ov_string_setvalue(&wherevalues[0], NULL);
 	ov_string_setvalue(&certificate, NULL);
 	ov_string_setvalue(&certificateDS, NULL);
 	ov_string_setvalue(&securityKey, NULL);
