@@ -240,17 +240,18 @@ OV_DLLFNCEXPORT OV_RESULT fb_controlchart_CMD_set(
 	for(iterator = 0;iterator < keyvaluelen;iterator++){
 		keyvalue = ov_string_split(keyvaluelist[iterator], "=", &len);
 		if(len != 2){
-			//did not found exactly one "=", try next
+			//did not find exactly one "=", try next
+			ov_string_freelist(keyvalue);
 			continue;
 		}
-		orderVar.value.valueunion.val_string = keyvalue[1];	//in heap mem
+		orderVar.value.valueunion.val_string = keyvalue[1];
 		//we want to skip an unsuccessful set, so no result check
 		(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, this), keyvalue[0], &orderVar);
+		ov_string_freelist(keyvalue);
 	}
 
 	ov_string_freelist(commandparts);
 	ov_string_freelist(keyvaluelist);
-	ov_string_freelist(keyvalue);
 
 	return OV_ERR_OK;
 }

@@ -23,7 +23,7 @@
 LIBRARY ksbase
 	VERSION   = "V0.1 (15-01-2013)";
 	AUTHOR    = "Lars Evertz";
-	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT = "Lehrstuhl fï¿½r Prozessleittechnik, RWTH Aachen University";
 	COMMENT   = "Generic communication library. Offers tasking and basic management functions. It is independent of protocols and transport bindings.";
 	
 	////////////////// Scheduling / Tasking components
@@ -93,6 +93,7 @@ LIBRARY ksbase
 		OPERATIONS
 			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			typemethod		:	C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
 			/**
 			 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
 			 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:

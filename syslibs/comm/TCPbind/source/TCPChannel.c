@@ -322,7 +322,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_shutdown(
 		pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, this);
 		if(pClientHandler)
 		{
-			Ov_DeleteObject(pClientHandler);
+			// activate client handler so it can delete itself
+			pClientHandler->v_actimode = 1;
 		}
 		this->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
 	}
@@ -493,7 +494,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					{
 						KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
 						Ov_DeleteObject(thisCh);
-
+						return;
 					}
 					else
 					{
@@ -635,7 +636,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		{
 			KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
 			Ov_DeleteObject(thisCh);
-
+			return;
 		}
 		else
 		{
@@ -674,6 +675,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		{
 			KS_logfile_info(("%s: received nothing for %u seconds. Deleting TCPChannel", this->v_identifier, thisCh->v_ConnectionTimeOut));
 			Ov_DeleteObject(thisCh);
+			return;
 		}
 	}
 

@@ -18,7 +18,8 @@ LIBRARY Databases
 			db    : C_TYPE <SQLITE3_DB_HANDLE>;
 		END_VARIABLES;
 		OPERATIONS
-            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+            startup : C_FUNCTION <OV_FNC_STARTUP>;
             connect     : C_FUNCTION <DS_FNC_CONNECT>;
             disconnect  : C_FUNCTION <DS_FNC_DISCONNECT>;
             insertData  : C_FUNCTION <DS_FNC_INSERTDATA>;
@@ -26,6 +27,7 @@ LIBRARY Databases
             deleteData	: C_FUNCTION <DS_FNC_DELETEDATA>;
             updateData  : C_FUNCTION <DS_FNC_UPDATEDATA>;
             getComponentID : C_FUNCTION <DS_FNC_GETCOMPONENTID>;
+            getFittingStatements : C_FUNCTION <DS_FNC_GETFITTINGSTATEMENTS>;
             execQuery   : C_FUNCTION <DS_FNC_EXECQUERY>;
 		END_OPERATIONS;
 	END_CLASS;

@@ -160,25 +160,27 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 
 	if(securityKeyAlreadyExist == FALSE){
 		// TODO: generate securityKey
-		srand(time(NULL));
-		OV_UINT i = rand();
-		ov_string_print(&securityKey, "AutgenKey%i", i);
-		// Insert securityKey in database
-		table  = "SecurityData";
-		fields[0] = "SecurityKey";
-		fieldsValues[0] = NULL;
-		ov_string_print(&fieldsValues[0], "'%s'", securityKey);
-		whereFields[0] = "ComponentID";
-		wherevalues[0] = NULL;
-		ov_string_print(&wherevalues[0], "'%s'", componentID);
-		resultOV = pDBWrapperVTable->m_updateData(table, fields, 1, fieldsValues, 1, whereFields, 1, wherevalues, 1);
-		ov_string_setvalue(&fieldsValues[0], NULL);
-		ov_string_setvalue(&wherevalues[0], NULL);
-		if (resultOV != OV_ERR_OK){
-			ov_string_setvalue(errorMessage, "Internal Error");
-			ov_logfile_error("Could not insert SecurityKey");
-			goto FINALIZE;
-		}
+		do{
+			srand(time(NULL));
+			OV_UINT i = rand();
+			ov_string_print(&securityKey, "AutgenKey%i", i);
+			// Insert securityKey in database
+			table  = "SecurityData";
+			fields[0] = "SecurityKey";
+			fieldsValues[0] = NULL;
+			ov_string_print(&fieldsValues[0], "'%s'", securityKey);
+			whereFields[0] = "ComponentID";
+			wherevalues[0] = NULL;
+			ov_string_print(&wherevalues[0], "'%s'", componentID);
+			resultOV = pDBWrapperVTable->m_updateData(table, fields, 1, fieldsValues, 1, whereFields, 1, wherevalues, 1);
+			ov_string_setvalue(&fieldsValues[0], NULL);
+			ov_string_setvalue(&wherevalues[0], NULL);
+			if (resultOV == OV_ERR_GENERIC){
+				ov_string_setvalue(errorMessage, "Internal Error");
+				ov_logfile_error("Could not insert SecurityKey");
+				goto FINALIZE;
+			}
+		}while (resultOV != OV_ERR_OK);
 	}
 
 	// get certificate of DS from DB

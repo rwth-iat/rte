@@ -101,8 +101,8 @@ static void* thread_fcn(void*ptr){
 
 	// create response-message
 	response_header responseHeader;
-	responseHeader.endpointReceiver = requestData.header.endpointReceiver;
-	responseHeader.endpointSender = requestData.header.endpointSender;
+	responseHeader.endpointReceiver = requestData.header.endpointSender;
+	responseHeader.endpointSender = requestData.header.endpointReceiver;
 	responseHeader.errorMessage = NULL;
 	// Check ErrorMessage
 	if (errorMessage){
@@ -148,43 +148,13 @@ static void* thread_fcn(void*ptr){
 	ov_string_setvalue(&responseHeader.messageID, NULL);
 	ov_string_setvalue(&responseHeader.errorMessage, NULL);
 	ov_string_setvalue(&JsonOutput, NULL);
+	ov_string_setvalue(&pthreadData->message, NULL);
 	Ov_HeapFree(pthreadData);
 
 	//pthread_exit(0);
 	return 0;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS openAASDiscoveryServer_DiscoveryServer_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
-) {
-    /*    
-    *   local variables
-    */
-	switch(pelem->elemtype) {
-		case OV_ET_VARIABLE:
-			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-				if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-					return OV_AC_NONE;
-				else{
-					if(pelem->elemunion.pvar->v_flags == 256) { // InputFlag is set
-						return OV_AC_READWRITE;
-					}
-					/* Nicht FB? */
-					if(pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR) {
-						return OV_AC_READWRITE;
-					}
-					return OV_AC_READ;
-				}
-			}
-		break;
-		default:
-		break;
-	}
-
-	return ov_object_getaccess(pobj, pelem, pticket);
-}
 
 OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_DiscoveryServer_getMessage(OV_INSTPTR_openAASDiscoveryServer_DiscoveryServer pinst, const OV_STRING JsonInput, OV_STRING *errorMessage) {
 
@@ -268,16 +238,16 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_DiscoveryServer_sendMessage(OV_
 			}
 
 			// Sender = Endpoint of Discovery-Server (IP, MANAGER-Name, Path)
-			MessageSys_Message_senderAddress_set(panswerMessage, pListIntern[0]);
-			MessageSys_Message_senderName_set(panswerMessage, pListIntern[1]);
-			MessageSys_Message_senderComponent_set(panswerMessage, pListIntern[2]);
-			ov_string_freelist(pListIntern);
+			MessageSys_Message_senderAddress_set(panswerMessage, pListExtern[0]);
+			MessageSys_Message_senderName_set(panswerMessage, pListExtern[1]);
+			MessageSys_Message_senderComponent_set(panswerMessage, pListExtern[2]);
+			ov_string_freelist(pListExtern);
 
 			// Receiver = Sender of old message
-			MessageSys_Message_receiverAddress_set(panswerMessage, pListExtern[0]);
-			MessageSys_Message_receiverName_set(panswerMessage, pListExtern[1]);
-			MessageSys_Message_receiverComponent_set(panswerMessage, pListExtern[2]);
-			ov_string_freelist(pListExtern);
+			MessageSys_Message_receiverAddress_set(panswerMessage, pListIntern[0]);
+			MessageSys_Message_receiverName_set(panswerMessage, pListIntern[1]);
+			MessageSys_Message_receiverComponent_set(panswerMessage, pListIntern[2]);
+			ov_string_freelist(pListIntern);
 
 			ov_string_setvalue(&panswerMessage->v_refMsgID, responseHeader.referToMessageID);
 
@@ -359,14 +329,13 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_DiscoveryServer_constructor(
     OV_RESULT    result;
 
     /* do what the base class does first */
-    result = ov_object_constructor(pobj);
+    result = fb_functionblock_constructor(pobj);
     if(Ov_Fail(result))
          return result;
 
     /* do what */
     pinst->v_threadDataHndl.value = NULL;
-    pinst->v_threadDataHndl.veclen = 0;
-
+	pinst->v_threadDataHndl.veclen = 0;
 
     return OV_ERR_OK;
 }
@@ -387,12 +356,65 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_DiscoveryServer_destructor(
 		ov_string_setvalue(&pthreadData->message, NULL);
 		Ov_HeapFree(pthreadData);
 		pinst->v_threadDataHndl.value[i] = 0;
-    }
-    Ov_SetDynamicVectorLength(&pinst->v_threadDataHndl, 0, INT);
-
+	}
+	Ov_SetDynamicVectorLength(&pinst->v_threadDataHndl, 0, INT);
     /* destroy object */
-    ov_object_destructor(pobj);
+    fb_functionblock_destructor(pobj);
 
     return;
 }
 
+OV_DLLFNCEXPORT void openAASDiscoveryServer_DiscoveryServer_typemethod(
+	OV_INSTPTR_fb_functionblock	pfb,
+	OV_TIME						*pltc
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_openAASDiscoveryServer_DiscoveryServer pinst = Ov_StaticPtrCast(openAASDiscoveryServer_DiscoveryServer, pfb);
+
+    OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
+	OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
+	pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pinst->p_Registration.v_DBWrapper.value[0], 2));
+	if (!pDBWrapper){
+		ov_logfile_error("Could not find DBWrapper Object");
+		return;
+	}
+	Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+
+	OV_STRING tmpFields = "Value";
+	OV_STRING_VEC result;
+	result.value = NULL;
+	result.veclen = 0;
+	// CarrierID
+	OV_STRING table = "CarrierID";
+	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	Ov_SetDynamicVectorValue(&pinst->v_CarrierIDList, result.value, result.veclen, STRING);
+	Ov_SetDynamicVectorLength(&result, 0, STRING);
+
+	// PropertyID
+	table = "PropertyID";
+	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	Ov_SetDynamicVectorValue(&pinst->v_PropertyIDList, result.value, result.veclen, STRING);
+	Ov_SetDynamicVectorLength(&result, 0, STRING);
+
+	// ExpressionSemantic
+	table = "ExpressionSemantic";
+	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	Ov_SetDynamicVectorValue(&pinst->v_ExpressionSemanticList, result.value, result.veclen, STRING);
+	Ov_SetDynamicVectorLength(&result, 0, STRING);
+
+	// Relation
+	table = "Relation";
+	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	Ov_SetDynamicVectorValue(&pinst->v_RelationList, result.value, result.veclen, STRING);
+	Ov_SetDynamicVectorLength(&result, 0, STRING);
+
+	// SubModel
+	table = "SubModel";
+	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	Ov_SetDynamicVectorValue(&pinst->v_SubModelList, result.value, result.veclen, STRING);
+	Ov_SetDynamicVectorLength(&result, 0, STRING);
+
+    return;
+}

@@ -33,6 +33,7 @@ LIBRARY openAASDiscoveryServer
             deleteData  : C_FUNCTION <DS_FNC_DELETEDATA> IS_ABSTRACT;
             updateData  : C_FUNCTION <DS_FNC_UPDATEDATA> IS_ABSTRACT;
             getComponentID : C_FUNCTION <DS_FNC_GETCOMPONENTID> IS_ABSTRACT;
+            getFittingStatements : C_FUNCTION <DS_FNC_GETFITTINGSTATEMENTS> IS_ABSTRACT;
         END_OPERATIONS;
     END_CLASS;
     
@@ -264,7 +265,7 @@ LIBRARY openAASDiscoveryServer
         END_OPERATIONS;
     END_CLASS;
 	
-	CLASS DiscoveryServer : CLASS ov/domain
+	CLASS DiscoveryServer : CLASS fb/functionblock 
 		IS_INSTANTIABLE;
 		VARIABLES
 			/* handle thread variables */
@@ -273,7 +274,12 @@ LIBRARY openAASDiscoveryServer
             // error details
             ErrorFlag           : BOOL FLAGS = "o" INITIALVALUE = FALSE;
             ErrorMessage        : STRING FLAGS = "o" INITIALVALUE = "";
-		END_VARIABLES;
+            CarrierIDList[]      : STRING FLAGS = "o";
+            PropertyIDList[]      : STRING FLAGS = "o";
+            ExpressionSemanticList[]      : STRING FLAGS = "o";
+            RelationList[]      : STRING FLAGS = "o";
+            SubModelList[]      : STRING FLAGS = "o";
+		END_VARIABLES; 
 		PARTS 
             ComponentManager : CLASS openAASDiscoveryServer/ComponentManagerDS;
             Security         : CLASS openAASDiscoveryServer/Security;
@@ -283,12 +289,12 @@ LIBRARY openAASDiscoveryServer
 		OPERATIONS
 			constructor      : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			destructor       : C_FUNCTION <OV_FNC_DESTRUCTOR>;
-			getaccess        : C_FUNCTION <OV_FNC_GETACCESS>;
 			getMessage       : C_FUNCTION <DS_FNC_GETMESSAGE>;
 			sendMessage      : C_FUNCTION <DS_FNC_SENDMESSAGE>;
+			typemethod       : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;		
-	END_CLASS;
-	
+	END_CLASS; 
+	 
 	CLASS ComponentManagerTC : CLASS fb/functionblock 
         IS_INSTANTIABLE;
         VARIABLES
@@ -346,7 +352,6 @@ LIBRARY openAASDiscoveryServer
             ComponentManager : CLASS openAASDiscoveryServer/ComponentManagerTC;
         END_PARTS; 
         OPERATIONS
-            getaccess        : C_FUNCTION <OV_FNC_GETACCESS>;
             typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;     
     END_CLASS;

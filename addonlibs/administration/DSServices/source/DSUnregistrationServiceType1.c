@@ -84,12 +84,60 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSUnregistrationServiceType1_executeService
 		ov_logfile_error("Could not delete data in Endpoints in database");
 		goto FINALIZE;
 	}
-	table  = "Tags";
+	table  = "statements_TextBoolean";
 	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
 		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
-		ov_logfile_error("Could not delete data in Tags in database");
+		ov_logfile_error("Could not delete data in Statements in database");
+		goto FINALIZE;
+	}
+	table  = "statements_Numeric";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	if (resultOV){
+		ov_string_setvalue(&tmpValues, NULL);
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not delete data in Statements in database");
+		goto FINALIZE;
+	}
+	table  = "CarrierID";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	if (resultOV){
+		ov_string_setvalue(&tmpValues, NULL);
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not delete data in Statements in database");
+		goto FINALIZE;
+	}
+	table  = "PropertyID";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	if (resultOV){
+		ov_string_setvalue(&tmpValues, NULL);
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not delete data in Statements in database");
+		goto FINALIZE;
+	}
+	table  = "ExpressionSemantic";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	if (resultOV){
+		ov_string_setvalue(&tmpValues, NULL);
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not delete data in Statements in database");
+		goto FINALIZE;
+	}
+	table  = "Relation";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	if (resultOV){
+		ov_string_setvalue(&tmpValues, NULL);
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not delete data in Statements in database");
+		goto FINALIZE;
+	}
+	table  = "SubModel";
+	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	if (resultOV){
+		ov_string_setvalue(&tmpValues, NULL);
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not delete data in Statements in database");
 		goto FINALIZE;
 	}
 	ov_string_setvalue(&tmpValues, NULL);

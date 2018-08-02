@@ -276,10 +276,12 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 		if(dp->d_name[0]=='.')
 			continue;
 
-		for(i = 0; i<sizeof(blacklist)/sizeof(char*); i++){ // skip unnecessary entries
+		for(i = 0; i<sizeof(blacklist)/sizeof(char*); i++){
 			if(strcmp(blacklist[i], dp->d_name)==0)
-				continue;
+				break;
 		}
+		if(i<sizeof(blacklist)/sizeof(char*))
+			continue; // skip unnecessary entries
 
 		sprintf(help, "%s/%s/%s", gitModelPath, relPath, dp->d_name);
 		stat(help, &st);
@@ -409,7 +411,7 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib,
 	}
 	/* inside of gitLibs */
 	for(i=0; i<*numGitLibs; i++) {
-		if( !strcmp(curlib, gitLibs[i]+(strlen(gitLibs[i])-1-strlen(curlib))) ) { // check for libname at end of gitLib
+		if( !strcmp(curlib, gitLibs[i]) ) {
 			return;
 		}
 	}

@@ -1091,6 +1091,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 		switch(element.elemtype){
 		case OV_ET_MEMBER:
 		case OV_ET_VARIABLE:
+			ov_memstack_lock();
 			result = ov_resultToUaStatusCode((pVtblObj->m_getvar)(pobjtemp, &element, &value));
 			value.value.vartype &= OV_VT_KSMASK;
 			if(result == UA_STATUSCODE_GOOD){
@@ -1099,6 +1100,7 @@ static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *node
 				((UA_VariableNode*)newNode)->dataType = ov_varTypeToNodeId(value.value.vartype);
 				value = emptyAny;
 			}
+			ov_memstack_unlock();
 			break;
 		default:
 			result = ov_resultToUaStatusCode(OV_ERR_BADPATH);

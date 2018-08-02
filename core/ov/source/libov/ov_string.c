@@ -297,6 +297,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	va_list		args;
 	OV_UINT		length;
 	OV_STRING	pc;
+	OV_STRING	tmpStr;
 	OV_RESULT	result;
 	/*
 	*	check parameters
@@ -360,7 +361,15 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 			*/
 			switch(*pc) {
 			case 's':
-				length += strlen(va_arg(args, char*));
+				tmpStr = va_arg(args, char*);
+				if(tmpStr){
+					length += strlen(tmpStr);
+				} else {
+					ov_logfile_error("passing NULL for string argument to ov_string_print()");
+					// ten characters should be enough to hold platform specific null sting
+					// just hope it doesn't crash
+					length += 10;
+				}
 				break;
 			case 'c':
 			case 'd':

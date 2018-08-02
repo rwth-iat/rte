@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
+#include "libov/ov_logfile.h"
 
 
 int jsoneq(const char *json, const jsmntok_t *tok, const char *s) {
@@ -388,6 +389,9 @@ OV_DLLFNCEXPORT OV_RESULT jsonGetValueByToken(const char* js, const jsmntok_t* t
 
 	int len = t->end-t->start;
 	int offset = 0;
+
+	if (len == 0)
+		return OV_ERR_OK;
 
 	char* pString = Ov_HeapMalloc(len+1);
 	if(!pString)

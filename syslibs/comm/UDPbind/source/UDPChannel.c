@@ -158,7 +158,8 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_shutdown(
 		pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, this);
 		if(pClientHandler)
 		{
-			Ov_DeleteObject(pClientHandler);
+			// activate client handler so it can delete itself
+			pClientHandler->v_actimode = 1;
 		}
 		this->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
 	}
@@ -379,7 +380,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 				&& !thisCh->v_inData.length) {
 			KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
 			Ov_DeleteObject(thisCh);
-
+			return;
 		} else {
 #if LOG_KS || LOG_KS_DEBUG
 			if(thisCh->v_ConnectionTimeOut != thisCh->v_UnusedDataTimeOut){
@@ -411,6 +412,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 		} else {
 			KS_logfile_info(("%s: received nothing for %u seconds. Deleting UDPChannel", this->v_identifier, thisCh->v_ConnectionTimeOut));
 			Ov_DeleteObject(thisCh);
+			return;
 		}
 	}
 

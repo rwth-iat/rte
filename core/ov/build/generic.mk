@@ -34,7 +34,11 @@
 
 #	generic part
 
+ifdef ACPLT_HOME
+ACPLT_DIR					= $(ACPLT_HOME)
+else
 ACPLT_DIR					= ../../../../
+endif
 ACPLT_BIN_DIR					= $(ACPLT_DIR)bin/
 ACPLT_LIB_DIR					= $(ACPLT_DIR)bin/$(SYSDIR)/
 
