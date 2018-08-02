@@ -131,7 +131,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 	table  = "SecurityData";
 	fields[0] = "SecurityKey";
 	whereFields[0] = "ComponentID";
-	wherevalues[0] = NULL;
 	ov_string_print(&wherevalues[0], "'%s'", componentID);
 	result.value = NULL;
 	result.veclen = 0;
@@ -155,7 +154,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 			break;
 		}
 	}
-	ov_string_setvalue(&wherevalues[0], NULL);
 
 	if(securityKeyAlreadyExist == FALSE){
 		// TODO: generate securityKey
@@ -169,11 +167,9 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 			fieldsValues[0] = NULL;
 			ov_string_print(&fieldsValues[0], "'%s'", securityKey);
 			whereFields[0] = "ComponentID";
-			wherevalues[0] = NULL;
 			ov_string_print(&wherevalues[0], "'%s'", componentID);
 			resultOV = pDBWrapperVTable->m_updateData(table, fields, 1, fieldsValues, 1, whereFields, 1, wherevalues, 1);
 			ov_string_setvalue(&fieldsValues[0], NULL);
-			ov_string_setvalue(&wherevalues[0], NULL);
 			if (resultOV == OV_ERR_GENERIC){
 				ov_string_setvalue(errorMessage, "Internal Error");
 				ov_logfile_error("Could not insert SecurityKey");
@@ -187,7 +183,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 	table  = "SecurityData";
 	fields[0] = "Certificate";
 	whereFields[0] = "ComponentID";
-	wherevalues[0] = "'DiscoveryServer'";
+	ov_string_setvalue(&wherevalues[0], "'DiscoveryServer'");
 	pDBWrapper = NULL;
 	pDBWrapperVTable = NULL;;
 	for (OV_UINT i = 0; i < pinst->v_DBWrapperUsed.veclen; i++){
