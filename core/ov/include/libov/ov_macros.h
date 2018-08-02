@@ -101,7 +101,7 @@
 */
 #define Ov_GetParent(assoc, pchild)											\
 	((OV_PPT_##assoc)((pchild)?(((pchild)->v_linktable)?((passoc_##assoc->v_assoctype==OV_AT_ONE_TO_MANY)?(((OV_ANCHOR*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
-	+((pchild)->__classinfo.OV_CCI_##assoc)-((pchild)->__classinfo.OV_CCI_##assoc)))->pparent):(*((OV_INSTPTR*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
+	+(0*((pchild)->__classinfo.OV_CCI_##assoc))))->pparent):(*((OV_INSTPTR*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
 	)))):(NULL)):(NULL)))
 
 /**
