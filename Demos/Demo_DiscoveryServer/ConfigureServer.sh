@@ -36,7 +36,4 @@ curl "http://localhost:7509/setVar?format=plain&path=/TechUnits/DiscoveryServer.
 curl "http://localhost:7509/setVar?format=plain&path=/TechUnits/DiscoveryServer.Search.DBWrapperPaths&newvalue=/TechUnits/DB1"
 curl "http://localhost:7509/setVar?format=plain&path=/TechUnits/DiscoveryServer.Search.DSServicePathForConfig&newvalue=/TechUnits/DSSearch"
 curl "http://localhost:7509/setVar?format=plain&path=/TechUnits/DiscoveryServer.Search.ConfigDSServices&newvalue=TRUE"
-
-# DB1
-curl "http://localhost:7509/setVar?format=plain&path=/TechUnits/DB1.StartConnect&newvalue=TRUE"
 exit
