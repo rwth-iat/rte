@@ -88,12 +88,12 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_connect(OV_INSTPTR_openAASDiscoveryS
 		// since v_db is not null we can retrieve sqlite3_errmsg()
 		ov_string_setvalue(&err_msg,  (OV_STRING)sqlite3_errmsg(pinst->v_db));
 		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		ov_string_setvalue(&err_msg,  NULL);
 		pinst->v_ErrorFlag = TRUE;
 		sqlite3_close(pinst->v_db);
 		pinst->v_State = 3;
 		return OV_ERR_GENERIC;
 	}
-	err_msg = NULL;
 
 	// reset error message
 	// TODO: what if db is already in bad state?
@@ -101,6 +101,100 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_connect(OV_INSTPTR_openAASDiscoveryS
 		pinst->v_ErrorFlag = FALSE;
 		ov_string_setvalue(&pinst->v_ErrorMessage, NULL);
 	}
+
+	// if new database is created, create tables and insert certificate of discovery server
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS SecurityData (ComponentID TEXT PRIMARY KEY, Certificate TEXT UNIQUE NOT NULL, SecurityKey TEXT UNIQUE);", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS Endpoints (ComponentID TEXT NOT NULL, ProtocolType TEXT NOT NULL, EndpointString TEXT NOT NULL);", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS PropertyID (ComponentID TEXT NOT NULL, Value TEXT NOT NULL, CONSTRAINT c1 UNIQUE (ComponentID, Value));", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS CarrierID (ComponentID TEXT NOT NULL, Value TEXT NOT NULL, CONSTRAINT c1 UNIQUE (ComponentID, Value));", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS ExpressionSemantic (ComponentID TEXT NOT NULL, Value TEXT NOT NULL, CONSTRAINT c1 UNIQUE (ComponentID, Value));", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS Relation (ComponentID TEXT NOT NULL, Value TEXT NOT NULL, CONSTRAINT c1 UNIQUE (ComponentID, Value));", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS SubModel (ComponentID TEXT NOT NULL, Value TEXT NOT NULL, CONSTRAINT c1 UNIQUE (ComponentID, Value));", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS statements_Numeric (ComponentID TEXT NOT NULL, CarrierID TEXT NOT NULL, PropertyID TEXT NOT NULL, ExpressionSemantic TEXT NOT NULL, Relation TEXT NOT NULL, Value NUMERIC NOT NULL, SubModel TEXT);", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+	rc = sqlite3_exec(pinst->v_db, "CREATE TABLE IF NOT EXISTS statements_TextBoolean (ComponentID TEXT NOT NULL, CarrierID TEXT NOT NULL, PropertyID TEXT NOT NULL, ExpressionSemantic TEXT NOT NULL, Relation TEXT NOT NULL, Value TEXT NOT NULL, SubModel TEXT);", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+
+	rc = sqlite3_exec(pinst->v_db, "INSERT OR IGNORE INTO securityData (ComponentID, Certificate) VALUES ('DiscoveryServer', 'CertificateOfDS');", NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		sqlite3_free(err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
+		return OV_ERR_GENERIC;
+	}
+
 	pinst->v_State = 1;
 
     return OV_ERR_OK;
