@@ -28,7 +28,7 @@ OV_RESULT checkSecurityKey(OV_STRING_VEC DBWrapperPath, OV_STRING componentID, O
 			break;
 
 		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-		resultOV = pDBWrapperVTable->m_selectData(table, &fields, 1, &whereFields, 1, &whereValues, 1, &result);
+		resultOV = pDBWrapperVTable->m_selectData(pDBWrapper, table, &fields, 1, &whereFields, 1, &whereValues, 1, &result);
 		if (resultOV != OV_ERR_OK){
 			pDBWrapper->v_ErrorFlag = TRUE;
 			ov_string_setvalue(&pDBWrapper->v_ErrorMessage, "Internal Error: SQL error");

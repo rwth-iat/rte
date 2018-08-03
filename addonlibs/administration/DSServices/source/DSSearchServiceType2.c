@@ -391,14 +391,14 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 			break;
 
 		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-		pDBWrapperVTable->m_getComponentID(table, query, searchStatementSize, &componentIDs);
+		pDBWrapperVTable->m_getComponentID(pDBWrapper, table, query, searchStatementSize, &componentIDs);
 
 		if (componentIDs.veclen > 0){
 			resultStatements = malloc(sizeof(OV_STRING_VEC)*componentIDs.veclen);
 			for (OV_UINT j = 0; j < componentIDs.veclen; j++){
 				resultStatements[j].value = NULL;
 				resultStatements[j].veclen = 0;
-				pDBWrapperVTable->m_getFittingStatements(table, componentIDs.value[j], query, searchStatementSize, &resultStatements[j]);
+				pDBWrapperVTable->m_getFittingStatements(pDBWrapper, table, componentIDs.value[j], query, searchStatementSize, &resultStatements[j]);
 			}
 			break;
 		}
@@ -444,7 +444,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 				break;
 
 			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-			pDBWrapperVTable->m_selectData("Endpoints", tmpFields, 2, &whereFields, 1, &tmpValues, 1, &endpointStruct);
+			pDBWrapperVTable->m_selectData(pDBWrapper, "Endpoints", tmpFields, 2, &whereFields, 1, &tmpValues, 1, &endpointStruct);
 			if (endpointStruct.veclen > 0){
 				components[i].endpointsSize = endpointStruct.veclen / 2;
 				components[i].endpoints = malloc(sizeof(struct endpoint)*endpointStruct.veclen / 2);

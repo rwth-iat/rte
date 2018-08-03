@@ -25,77 +25,7 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_URMSWrapper_StartConnect_set(
-    OV_INSTPTR_openAASDiscoveryServer_URMSWrapper          pobj,
-    const OV_BOOL  value
-) {
-    pobj->v_StartConnect = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_ACCESS openAASDiscoveryServer_URMSWrapper_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
-) {
-    /*    
-    *   local variables
-    */
-
-	switch(pelem->elemtype) {
-		case OV_ET_VARIABLE:
-			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-				if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-					return OV_AC_NONE;
-				else{
-					if(pelem->elemunion.pvar->v_flags == 256) { // InputFlag is set
-						return OV_AC_READWRITE;
-					}
-					/* Nicht FB? */
-					if(pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR) {
-						return OV_AC_READWRITE;
-					}
-					return OV_AC_READ;
-				}
-			}
-		break;
-		default:
-		break;
-	}
-	return ov_object_getaccess(pobj, pelem, pticket);
-}
-
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_URMSWrapper_constructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*    
-    *   local variables
-    */
-    //OV_INSTPTR_openAASDiscoveryServer_URMSWrapper pinst = Ov_StaticPtrCast(openAASDiscoveryServer_URMSWrapper, pobj);
-    OV_RESULT    result;
-
-    /* do what the base class does first */
-    result = ov_object_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-
-
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_URMSWrapper_connect(void) {
-
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_URMSWrapper_disconnect(void){
-
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_URMSWrapper_checkUserRights(void) {
+OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_URMSWrapper_checkUserRights(OV_INSTPTR_openAASDiscoveryServer_URMSWrapper this) {
 
     return OV_ERR_OK;
 }

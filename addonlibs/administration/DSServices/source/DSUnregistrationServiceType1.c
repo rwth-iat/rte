@@ -69,80 +69,71 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSUnregistrationServiceType1_executeService
 	OV_STRING tmpValues = NULL;
 	ov_string_print(&tmpValues, "'%s'", componentID);
 	OV_STRING table  = "SecurityData";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in SecurityData in database");
 		goto FINALIZE;
 	}
 	table  = "Endpoints";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in Endpoints in database");
 		goto FINALIZE;
 	}
 	table  = "statements_TextBoolean";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in Statements in database");
 		goto FINALIZE;
 	}
 	table  = "statements_Numeric";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in Statements in database");
 		goto FINALIZE;
 	}
 	table  = "CarrierID";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in Statements in database");
 		goto FINALIZE;
 	}
 	table  = "PropertyID";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in Statements in database");
 		goto FINALIZE;
 	}
 	table  = "ExpressionSemantic";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in Statements in database");
 		goto FINALIZE;
 	}
 	table  = "Relation";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in Statements in database");
 		goto FINALIZE;
 	}
 	table  = "SubModel";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpFields, 1, &tmpValues, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpFields, 1, &tmpValues, 1);
 	if (resultOV){
-		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(errorMessage, "Internal Error");
 		ov_logfile_error("Could not delete data in Statements in database");
 		goto FINALIZE;
 	}
-	ov_string_setvalue(&tmpValues, NULL);
 
 	FINALIZE:
+	ov_string_setvalue(&tmpValues, NULL);
 	ov_string_print(JsonOutput, "\"body\":{}");
 	Ov_SetDynamicVectorLength(&tags, 0, STRING);
 	Ov_SetDynamicVectorLength(&tokenIndex, 0, UINT);

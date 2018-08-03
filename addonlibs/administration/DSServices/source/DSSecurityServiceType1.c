@@ -84,7 +84,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 		}
 
 		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-		resultOV = pDBWrapperVTable->m_selectData(table, fields, 1, whereFields, 1, wherevalues, 1, &result);
+		resultOV = pDBWrapperVTable->m_selectData(pDBWrapper, table, fields, 1, whereFields, 1, wherevalues, 1, &result);
 		if (resultOV != OV_ERR_OK){
 			ov_string_setvalue(errorMessage, "Internal Error: SQL error");
 			goto FINALIZE;
@@ -116,7 +116,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 		fieldsValues[1] = NULL;
 		ov_string_print(&fieldsValues[1], "'%s'", certificate);
 		fieldsValues[2] = "''";
-		resultOV = pDBWrapperVTable->m_insertData(table, fields, 3, fieldsValues, 3);
+		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, fields, 3, fieldsValues, 3);
 		ov_string_setvalue(&fieldsValues[0], NULL);
 		ov_string_setvalue(&fieldsValues[1], NULL);
 		if (resultOV != OV_ERR_OK){
@@ -146,7 +146,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 		}
 
 		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-		pDBWrapperVTable->m_selectData(table, fields, 1, whereFields, 1, wherevalues, 1, &result);
+		pDBWrapperVTable->m_selectData(pDBWrapper, table, fields, 1, whereFields, 1, wherevalues, 1, &result);
 		if (result.veclen > 0){
 			securityKeyAlreadyExist = TRUE;
 			ov_string_setvalue(&securityKey, result.value[0]);// TODO: Handling more than one securityKey
@@ -168,7 +168,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 			ov_string_print(&fieldsValues[0], "'%s'", securityKey);
 			whereFields[0] = "ComponentID";
 			ov_string_print(&wherevalues[0], "'%s'", componentID);
-			resultOV = pDBWrapperVTable->m_updateData(table, fields, 1, fieldsValues, 1, whereFields, 1, wherevalues, 1);
+			resultOV = pDBWrapperVTable->m_updateData(pDBWrapper, table, fields, 1, fieldsValues, 1, whereFields, 1, wherevalues, 1);
 			ov_string_setvalue(&fieldsValues[0], NULL);
 			if (resultOV == OV_ERR_GENERIC){
 				ov_string_setvalue(errorMessage, "Internal Error");
@@ -192,7 +192,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 			break;
 
 		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-		pDBWrapperVTable->m_selectData(table, fields, 1, whereFields, 1, wherevalues, 1, &result);
+		pDBWrapperVTable->m_selectData(pDBWrapper, table, fields, 1, whereFields, 1, wherevalues, 1, &result);
 		for (OV_UINT j = 0; j < result.veclen; j++){
 			if (result.value[j] != NULL && ov_string_compare(result.value[j], "") != OV_STRCMP_EQUAL){ // TODO: Handling more than one certificate
 				ov_string_setvalue(&certificateDS, result.value[0]);

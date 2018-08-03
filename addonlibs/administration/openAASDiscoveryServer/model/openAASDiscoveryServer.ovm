@@ -13,21 +13,30 @@ LIBRARY openAASDiscoveryServer
 		@note Javadoc syntax is allowed here.
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/
-	CLASS DBWrapper : CLASS ov/domain
-        VARIABLES
+	CLASS Wrapper : CLASS ov/domain
+		VARIABLES
             Endpoint :  STRING FLAGS = "i" INITIALVALUE = "";
             User     :  STRING FLAGS = "i" INITIALVALUE = "";
             Password :  STRING FLAGS = "i" INITIALVALUE = "";
-            StartConnect  :  BOOL HAS_SET_ACCESSOR FLAGS="i" INITIALVALUE = FALSE;
+            Connect  :  BOOL HAS_SET_ACCESSOR FLAGS="i" INITIALVALUE = FALSE;
+            Disconnect  :  BOOL HAS_SET_ACCESSOR FLAGS="i" INITIALVALUE = FALSE;
+            State	 :  UINT FLAGS = "o" COMMENT = "0:Initialized, 1:Connected, 2:Disconnectes, 3:Error" INITIALVALUE = 0; 
             // error details
             ErrorFlag           : BOOL FLAGS = "o" INITIALVALUE = FALSE;
             ErrorMessage        : STRING FLAGS = "o" INITIALVALUE = "";
         END_VARIABLES;  
         OPERATIONS  
             getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
-            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             connect     : C_FUNCTION <DS_FNC_CONNECT> IS_ABSTRACT;
             disconnect  : C_FUNCTION <DS_FNC_DISCONNECT> IS_ABSTRACT;
+        END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS DBWrapper : CLASS openAASDiscoveryServer/Wrapper
+        VARIABLES
+          
+        END_VARIABLES;  
+        OPERATIONS  
             insertData  : C_FUNCTION <DS_FNC_INSERTDATA> IS_ABSTRACT;
             selectData  : C_FUNCTION <DS_FNC_SELECTDATA> IS_ABSTRACT;
             deleteData  : C_FUNCTION <DS_FNC_DELETEDATA> IS_ABSTRACT;
@@ -37,52 +46,31 @@ LIBRARY openAASDiscoveryServer
         END_OPERATIONS;
     END_CLASS;
     
-    CLASS URMSWrapper : CLASS ov/domain
+    CLASS URMSWrapper : CLASS openAASDiscoveryServer/Wrapper
         VARIABLES
-            Endpoint :  STRING FLAGS = "i" INITIALVALUE = "";
-            User     :  STRING FLAGS = "i" INITIALVALUE = "";
-            Password :  STRING FLAGS = "i" INITIALVALUE = "";
-            StartConnect  :  BOOL HAS_SET_ACCESSOR FLAGS="i" INITIALVALUE = FALSE;
+    
         END_VARIABLES;  
         OPERATIONS  
-            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
-            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            connect     : C_FUNCTION <DS_FNC_CONNECT>;
-            disconnect  : C_FUNCTION <DS_FNC_DISCONNECT>;
-            checkUserRights : C_FUNCTION <DS_FNC_CHECKUSERRIGHTS>;
+            checkUserRights : C_FUNCTION <DS_FNC_CHECKUSERRIGHTS> IS_ABSTRACT;
         END_OPERATIONS;
     END_CLASS;
     
-    CLASS CAWrapper : CLASS ov/domain
+    CLASS CAWrapper : CLASS openAASDiscoveryServer/Wrapper
         VARIABLES
-            Endpoint :  STRING FLAGS = "i" INITIALVALUE = "";
-            User     :  STRING FLAGS = "i" INITIALVALUE = "";
-            Password :  STRING FLAGS = "i" INITIALVALUE = "";
-            StartConnect  :  BOOL HAS_SET_ACCESSOR FLAGS="i" INITIALVALUE = FALSE;
+            
         END_VARIABLES;  
         OPERATIONS  
-            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
-            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            connect     : C_FUNCTION <DS_FNC_CONNECT>;
-            disconnect  : C_FUNCTION <DS_FNC_DISCONNECT>;
-            checkCertificate  : C_FUNCTION <DS_FNC_CHECKCERTIFICATE>;
+            checkCertificate  : C_FUNCTION <DS_FNC_CHECKCERTIFICATE> IS_ABSTRACT;
         END_OPERATIONS;
     END_CLASS;
     
-    CLASS SEWrapper : CLASS ov/domain
+    CLASS SEWrapper : CLASS openAASDiscoveryServer/Wrapper
         VARIABLES
-            Endpoint :  STRING FLAGS = "i" INITIALVALUE = "";
-            User     :  STRING FLAGS = "i" INITIALVALUE = "";
-            Password :  STRING FLAGS = "i" INITIALVALUE = "";
-            StartConnect  :  BOOL HAS_SET_ACCESSOR FLAGS="i" INITIALVALUE = FALSE;
+            
         END_VARIABLES;  
         OPERATIONS  
-            getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
-            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            connect     : C_FUNCTION <DS_FNC_CONNECT>;
-            disconnect  : C_FUNCTION <DS_FNC_DISCONNECT>;
-            storeData   : C_FUNCTION <DS_FNC_STOREDATA>;
-            searchData  : C_FUNCTION <DS_FNC_SEARCHDATA>;
+            storeData   : C_FUNCTION <DS_FNC_STOREDATA> IS_ABSTRACT;
+            searchData  : C_FUNCTION <DS_FNC_SEARCHDATA> IS_ABSTRACT;
         END_OPERATIONS;
     END_CLASS;
 	

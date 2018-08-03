@@ -388,31 +388,31 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_DiscoveryServer_typemethod(
 	result.veclen = 0;
 	// CarrierID
 	OV_STRING table = "CarrierID";
-	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
 	Ov_SetDynamicVectorValue(&pinst->v_CarrierIDList, result.value, result.veclen, STRING);
 	Ov_SetDynamicVectorLength(&result, 0, STRING);
 
 	// PropertyID
 	table = "PropertyID";
-	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
 	Ov_SetDynamicVectorValue(&pinst->v_PropertyIDList, result.value, result.veclen, STRING);
 	Ov_SetDynamicVectorLength(&result, 0, STRING);
 
 	// ExpressionSemantic
 	table = "ExpressionSemantic";
-	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
 	Ov_SetDynamicVectorValue(&pinst->v_ExpressionSemanticList, result.value, result.veclen, STRING);
 	Ov_SetDynamicVectorLength(&result, 0, STRING);
 
 	// Relation
 	table = "Relation";
-	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
 	Ov_SetDynamicVectorValue(&pinst->v_RelationList, result.value, result.veclen, STRING);
 	Ov_SetDynamicVectorLength(&result, 0, STRING);
 
 	// SubModel
 	table = "SubModel";
-	pDBWrapperVTable->m_selectData(table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+	pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
 	Ov_SetDynamicVectorValue(&pinst->v_SubModelList, result.value, result.veclen, STRING);
 	Ov_SetDynamicVectorLength(&result, 0, STRING);
 

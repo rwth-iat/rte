@@ -131,21 +131,21 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 	OV_STRING tmpValue = NULL;
 	ov_string_print(&tmpValue, "'%s'", componentID);
 	table  = "endpoints";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "statements_TextBoolean";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "statements_Numeric";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "propertyID";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "carrierID";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "expressionSemantic";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "relation";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "submodel";
-	resultOV = pDBWrapperVTable->m_deleteData(table, &tmpField, 1, &tmpValue, 1);
+	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	ov_string_setvalue(&tmpValue, NULL);
 
 	// Insert endpoints in database
@@ -172,7 +172,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		ov_string_print(&tmpValues[1], "'%s'", endpoints[i].protocolType);
 		tmpValues[2] = NULL;
 		ov_string_print(&tmpValues[2], "'%s'", endpoints[i].endpointString);
-		resultOV = pDBWrapperVTable->m_insertData(table, tmpFields, 3, tmpValues, 3);
+		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFields, 3, tmpValues, 3);
 		ov_string_setvalue(&tmpValues[0], NULL);
 		ov_string_setvalue(&tmpValues[1], NULL);
 		ov_string_setvalue(&tmpValues[2], NULL);
@@ -210,7 +210,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		tmpValuesList[1] = NULL;
 		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].carrierID);
 		table = "carrierID";
-		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
 
 		tmpValuesStatements[2] = NULL;
@@ -218,7 +218,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		tmpValuesList[1] = NULL;
 		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].propertyID);
 		table = "propertyID";
-		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
 
 		tmpValuesList[1] = NULL;
@@ -233,7 +233,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		else
 			ov_string_print(&tmpValuesList[1], "'%s'", statements[i].expressionSemantic);
 		table = "expressionSemantic";
-		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
 
 		tmpValuesList[1] = NULL;
@@ -242,7 +242,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		tmpValuesList[1] = NULL;
 		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].relation);
 		table = "relation";
-		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
 
 		tmpValuesList[1] = NULL;
@@ -258,7 +258,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		tmpValuesList[1] = NULL;
 		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].subModel);
 		table = "subModel";
-		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsList, 2, tmpValuesList, 2);
+		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
 		ov_string_setvalue(&tmpValuesList[0], NULL);
 
@@ -268,7 +268,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 			table = "statements_TextBoolean";
 		}
 
-		resultOV = pDBWrapperVTable->m_insertData(table, tmpFieldsStatements, 7, tmpValuesStatements, 7);
+		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsStatements, 7, tmpValuesStatements, 7);
 		for (OV_UINT i = 0; i < 7; i++){
 			ov_string_setvalue(&tmpValuesStatements[i], NULL);
 		}

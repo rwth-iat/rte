@@ -95,61 +95,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType1_executeService(OV_INST
 		goto FINALIZE;
 	}
 
-//	// get tags
-//	searchtagsSize = JsonInput.token[tokenIndex.value[2]+1].size;
-//	searchtags = malloc(sizeof(struct searchtag)*searchtagsSize);
-//	if (!searchtags){
-//		ov_string_setvalue(errorMessage, "Fault in malloc");
-//		goto FINALIZE;
-//	}
-//	for (OV_UINT i = 0; i < searchtagsSize; i++){
-//		searchtags[i].tag = NULL;
-//		// value + 2 start of objects + i*5 next object + 2/4 values of tag and value
-//		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[2]+2+i*5+2], &searchtags[i].tag);
-//		searchtags[i].value = NULL;
-//		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[2]+2+i*5+4], &searchtags[i].value);
-//	}
-//
-//	// search for tags in Database and get componentID and endpoints
-//	struct DB_QUERY * query = NULL;
-//	query = malloc(sizeof(struct DB_QUERY) * searchtagsSize);
-//
-//	for (OV_UINT i = 0; i < searchtagsSize; i++){
-//		query[i].column.veclen = 0;
-//		query[i].column.value = NULL;
-//		query[i].value.veclen = 0;
-//		query[i].value.value = NULL;
-//
-//		Ov_SetDynamicVectorLength(&query[i].column, query[i].column.veclen + 2, STRING);
-//		ov_string_setvalue(&query[i].column.value[query[i].column.veclen-2], "Tag");
-//		ov_string_setvalue(&query[i].column.value[query[i].column.veclen-1], "Value");
-//		Ov_SetDynamicVectorLength(&query[i].value, query[i].value.veclen + 2, STRING);
-//		ov_string_setvalue(&query[i].value.value[query[i].value.veclen-2], searchtags[i].tag);
-//		ov_string_setvalue(&query[i].value.value[query[i].value.veclen-1], searchtags[i].value);
-//	}
-//
-//	OV_STRING table  = "tags";
-//	// Find ComponentID by Tags
-//	OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
-//	OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
-//	for (OV_UINT i = 0; i < pinst->v_DBWrapperUsed.veclen; i++){
-//		pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pinst->v_DBWrapperUsed.value[i], 2));
-//		if (!pDBWrapper)
-//			break;
-//
-//		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-//		pDBWrapperVTable->m_getComponentID(table, query, searchtagsSize, &componentIDs);
-//		if (componentIDs.veclen > 0){
-//			break;
-//		}
-//	}
-//
-//	for (OV_UINT i = 0; i < searchtagsSize; i++){
-//		Ov_SetDynamicVectorLength(&query[i].column, 0, STRING);
-//		Ov_SetDynamicVectorLength(&query[i].value, 0, STRING);
-//	}
-//	free(query);
-
 	// get statements from JSON
 	searchStatementSize = JsonInput.token[tokenIndex.value[2]+1].size;
 	searchStatements = malloc(sizeof(struct searchStatement)*searchStatementSize);
@@ -183,99 +128,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType1_executeService(OV_INST
 	query = malloc(sizeof(struct DB_QUERY) * searchStatementSize);
 	OV_STRING_VEC* table  = NULL;
 	table = malloc(sizeof(OV_STRING_VEC) * searchStatementSize);
-//	OV_UINT queryNumber = 0;
-//	for (OV_UINT i = 0; i < searchStatementSize; i++){
-//		if (searchStatements[i].valueType == NULL || ov_string_compare(searchStatements[i].valueType, "") == OV_STRCMP_EQUAL){
-//			query[queryNumber].column.veclen = 0;
-//			query[queryNumber].column.value = NULL;
-//			query[queryNumber].value.veclen = 0;
-//			query[queryNumber].value.value = NULL;
-//			Ov_SetDynamicVectorLength(&query[i].column, query[queryNumber].column.veclen + 7, STRING);
-//			ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-6], "CarrierID");
-//			ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-5], "PropertyID");
-//			ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-4], "ExpressionSemantic");
-//			ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-3], "Relation");
-//			ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-2], "Value");
-//			ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-1], "SubModel");
-//			Ov_SetDynamicVectorLength(&query[queryNumber].value, query[queryNumber].value.veclen + 7, STRING);
-//			ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-6], searchStatements[i].carrierID);
-//			ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-5], searchStatements[i].propertyID);
-//			ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-4], searchStatements[i].expressionSemantic);
-//			ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-3], searchStatements[i].relation);
-//			ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-2], searchStatements[i].value);
-//			ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-1], searchStatements[i].submodel);
-//			queryNumber++;
-//			// Only EQUAL allowed
-//			continue;
-//		}
-//		if (ov_string_compare(searchStatements[i].valueType, "Integer") == OV_STRCMP_EQUAL || ov_string_compare(searchStatements[i].valueType, "Real") == OV_STRCMP_EQUAL){
-//			if (ov_string_compare(searchStatements[i].relation, "<"){
-//			for (OV_UINT i = 0; i < 6; i++){
-//				query[queryNumber].column.veclen = 0;
-//				query[queryNumber].column.value = NULL;
-//				query[queryNumber].value.veclen = 0;
-//				query[queryNumber].value.value = NULL;
-//				Ov_SetDynamicVectorLength(&query[i].column, query[queryNumber].column.veclen + 7, STRING);
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-6], "CarrierID");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-5], "PropertyID");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-4], "ExpressionSemantic");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-3], "Relation");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-2], "Value");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-1], "SubModel");
-//				Ov_SetDynamicVectorLength(&query[queryNumber].value, query[queryNumber].value.veclen + 7, STRING);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-6], searchStatements[i].carrierID);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-5], searchStatements[i].propertyID);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-4], searchStatements[i].expressionSemantic);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-1], searchStatements[i].submodel);
-//				switch (i){
-//					case 0: // <
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-3], "<");
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-2], searchStatements[i].value);
-//						break;
-//					case 1: // <=
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-3], "<");
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-2], searchStatements[i].value);
-//						break;
-//					case 2: // ==
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-3], "<");
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-2], searchStatements[i].value);
-//						break;
-//					case 3: // !=
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-3], "<");
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-2], searchStatements[i].value);
-//						break;
-//					case 4: // >
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-3], "<");
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-2], searchStatements[i].value);
-//						break;
-//					case 5: // >=
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-3], "<");
-//						ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-2], searchStatements[i].value);
-//						break;
-//				}
-//				queryNumber++;
-//			}
-//
-//				Ov_SetDynamicVectorLength(&query[i].column, query[queryNumber].column.veclen + 7, STRING);
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-6], "CarrierID");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-5], "PropertyID");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-4], "ExpressionSemantic");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-3], "Relation");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-2], "Value");
-//				ov_string_setvalue(&query[queryNumber].column.value[query[queryNumber].column.veclen-1], "SubModel");
-//				Ov_SetDynamicVectorLength(&query[queryNumber].value, query[queryNumber].value.veclen + 7, STRING);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-6], searchStatements[i].carrierID);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-5], searchStatements[i].propertyID);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-4], searchStatements[i].expressionSemantic);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-3], searchStatements[i].relation);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-2], searchStatements[i].value);
-//				ov_string_setvalue(&query[queryNumber].value.value[query[queryNumber].value.veclen-1], searchStatements[i].submodel);
-//			}
-//			queryCount = queryCount + 6;
-//			// GREATER THAN, GREATER, EQUAL, NOTEQUAL, LESS, LESS THAN allowed
-//			continue;
-//		}
-//	}
 
 
 	for (OV_UINT i = 0; i < searchStatementSize; i++){
@@ -313,14 +165,14 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType1_executeService(OV_INST
 			break;
 
 		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-		pDBWrapperVTable->m_getComponentID(table, query, searchStatementSize, &componentIDs);
+		pDBWrapperVTable->m_getComponentID(pDBWrapper, table, query, searchStatementSize, &componentIDs);
 
 		if (componentIDs.veclen > 0){
 			resultStatements = malloc(sizeof(OV_STRING_VEC)*componentIDs.veclen);
 			for (OV_UINT j = 0; j < componentIDs.veclen; j++){
 				resultStatements[j].value = NULL;
 				resultStatements[j].veclen = 0;
-				pDBWrapperVTable->m_getFittingStatements(table, componentIDs.value[j], query, searchStatementSize, &resultStatements[j]);
+				pDBWrapperVTable->m_getFittingStatements(pDBWrapper, table, componentIDs.value[j], query, searchStatementSize, &resultStatements[j]);
 			}
 			break;
 		}
@@ -363,7 +215,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType1_executeService(OV_INST
 				break;
 
 			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-			pDBWrapperVTable->m_selectData("Endpoints", tmpFields, 2, &whereFields, 1, &tmpValues, 1, &endpointStruct);
+			pDBWrapperVTable->m_selectData(pDBWrapper, "Endpoints", tmpFields, 2, &whereFields, 1, &tmpValues, 1, &endpointStruct);
 			if (endpointStruct.veclen > 0){
 				components[i].endpointsSize = endpointStruct.veclen / 2;
 				components[i].endpoints = malloc(sizeof(struct endpoint)*endpointStruct.veclen / 2);

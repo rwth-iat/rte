@@ -28,9 +28,6 @@
 #include <stdio.h>
 
 
-
-// global variables, access to object members and db handler
-OV_INSTPTR_Databases_SQLite3 SQLITE3_pinst = NULL;
 int rc;
 
 // callback function
@@ -72,47 +69,56 @@ static int callbackFittingStatements(void* data, int argc, char **argv, char **c
 	return 0;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_connect(void) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_connect(OV_INSTPTR_openAASDiscoveryServer_Wrapper this) {
 	OV_STRING err_msg = NULL;
 
 	// open database
-	rc = sqlite3_open(SQLITE3_pinst->v_Endpoint , &SQLITE3_pinst->v_db);
+	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
+	rc = sqlite3_open(pinst->v_Endpoint , &pinst->v_db);
 
 	// check first if db handle allocated
-	if(SQLITE3_pinst->v_db == NULL) {
-		ov_string_setvalue(&SQLITE3_pinst->v_ErrorMessage, "Could not allocate memory for DB handle!");
-		SQLITE3_pinst->v_ErrorFlag = TRUE;
+	if(pinst->v_db == NULL) {
+		ov_string_setvalue(&pinst->v_ErrorMessage, "Could not allocate memory for DB handle!");
+		pinst->v_ErrorFlag = TRUE;
+		pinst->v_State = 3;
 		return OV_ERR_GENERIC;
 	}
 	// check then if error occured
 	if( rc != SQLITE_OK) {
 		// since v_db is not null we can retrieve sqlite3_errmsg()
-		ov_string_setvalue(&err_msg,  (OV_STRING)sqlite3_errmsg(SQLITE3_pinst->v_db));
-		ov_string_setvalue(&SQLITE3_pinst->v_ErrorMessage, err_msg);
-		SQLITE3_pinst->v_ErrorFlag = TRUE;
-		sqlite3_close(SQLITE3_pinst->v_db);
+		ov_string_setvalue(&err_msg,  (OV_STRING)sqlite3_errmsg(pinst->v_db));
+		ov_string_setvalue(&pinst->v_ErrorMessage, err_msg);
+		pinst->v_ErrorFlag = TRUE;
+		sqlite3_close(pinst->v_db);
+		pinst->v_State = 3;
 		return OV_ERR_GENERIC;
 	}
 	err_msg = NULL;
 
 	// reset error message
 	// TODO: what if db is already in bad state?
-	if(!SQLITE3_pinst->v_ErrorFlag) {
-		SQLITE3_pinst->v_ErrorFlag = FALSE;
-		ov_string_setvalue(&SQLITE3_pinst->v_ErrorMessage, NULL);
+	if(!pinst->v_ErrorFlag) {
+		pinst->v_ErrorFlag = FALSE;
+		ov_string_setvalue(&pinst->v_ErrorMessage, NULL);
 	}
+	pinst->v_State = 1;
 
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_disconnect(void) {
-	sqlite3_close(SQLITE3_pinst->v_db);
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_disconnect(OV_INSTPTR_openAASDiscoveryServer_Wrapper this) {
+	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
+	sqlite3_close(pinst->v_db);
+	pinst->v_State = 2;
 
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_insertData(const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen,
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_insertData(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen,
 													   const OV_STRING* values, OV_UINT valuesLen) {
+
+	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
+
 	if(fieldsLen != valuesLen) {
 		return OV_ERR_BADPARAM;
 	}
@@ -139,7 +145,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_insertData(const OV_STRING table, co
 	//ov_logfile_info("%s", query);
 
 	char* err_msg = NULL;
-	rc = sqlite3_exec(SQLITE3_pinst->v_db, query, NULL, NULL, &err_msg);
+	rc = sqlite3_exec(pinst->v_db, query, NULL, NULL, &err_msg);
 
 	if (rc == SQLITE_CONSTRAINT){
 		ov_string_setvalue(&query, NULL);
@@ -157,8 +163,9 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_insertData(const OV_STRING table, co
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_selectData(const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* whereFields,
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_selectData(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* whereFields,
 													   OV_UINT whereFieldsLen, OV_STRING* whereValues, OV_UINT whereValuesLen, OV_STRING_VEC* result) {
+	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
 	if(whereFieldsLen != whereValuesLen) {
 		return OV_ERR_BADPARAM;
 	}
@@ -205,7 +212,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_selectData(const OV_STRING table, co
 	//ov_logfile_info("%s", query);
 
 	char* err_msg = NULL;
-	rc = sqlite3_exec(SQLITE3_pinst->v_db, query, callback, result, &err_msg);
+	rc = sqlite3_exec(pinst->v_db, query, callback, result, &err_msg);
 
 	if(rc != SQLITE_OK) {
 		ov_logfile_info("SQL Error: %s", err_msg);
@@ -218,8 +225,9 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_selectData(const OV_STRING table, co
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_deleteData(const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* values, OV_UINT valuesLen) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_deleteData(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* values, OV_UINT valuesLen) {
 	// build up DELETE query
+	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
 	OV_STRING query = NULL;
 	ov_string_setvalue(&query, "DELETE FROM ");
 	ov_string_print(&query, "%s%s ", query, table);
@@ -237,7 +245,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_deleteData(const OV_STRING table, co
 	//ov_logfile_info("%s", query);
 
 	char* err_msg = NULL;
-	rc = sqlite3_exec(SQLITE3_pinst->v_db, query, NULL, NULL, &err_msg);
+	rc = sqlite3_exec(pinst->v_db, query, NULL, NULL, &err_msg);
 
 	if(rc != SQLITE_OK) {
 		ov_logfile_info("SQL Error: %s", err_msg);
@@ -250,8 +258,9 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_deleteData(const OV_STRING table, co
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_updateData(const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* fieldValues, OV_UINT fieldValuesLen, const OV_STRING* whereFields, OV_UINT whereFieldsLen, OV_STRING* whereValues, OV_UINT whereValuesLen) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_updateData(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING table, const OV_STRING* fields, OV_UINT fieldsLen, const OV_STRING* fieldValues, OV_UINT fieldValuesLen, const OV_STRING* whereFields, OV_UINT whereFieldsLen, OV_STRING* whereValues, OV_UINT whereValuesLen) {
 	// build up UPDATE query
+	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
 	OV_STRING query = NULL;
 	ov_string_setvalue(&query, "UPDATE");
 	ov_string_print(&query, "%s %s", query, table);
@@ -280,7 +289,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_updateData(const OV_STRING table, co
 	//ov_logfile_info("%s", query);
 
 	char* err_msg = NULL;
-	rc = sqlite3_exec(SQLITE3_pinst->v_db, query, NULL, NULL, &err_msg);
+	rc = sqlite3_exec(pinst->v_db, query, NULL, NULL, &err_msg);
 
 	if (rc == SQLITE_CONSTRAINT){
 		ov_string_setvalue(&query, NULL);
@@ -298,8 +307,9 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_updateData(const OV_STRING table, co
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getComponentID(const OV_STRING_VEC* table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getComponentID(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC* table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
 	// TODO: Check Veclen => Errorhandling
+	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
 	if(querySize == 0) {
 		return OV_ERR_BADPARAM;
 	}
@@ -364,7 +374,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getComponentID(const OV_STRING_VEC* 
 	fclose(fp);
 
 	char* err_msg = NULL;
-	rc = sqlite3_exec(SQLITE3_pinst->v_db, query, callback, result, &err_msg);
+	rc = sqlite3_exec(pinst->v_db, query, callback, result, &err_msg);
 
 	if(rc != SQLITE_OK) {
 		ov_logfile_info("SQL Error: %s", err_msg);
@@ -377,8 +387,9 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getComponentID(const OV_STRING_VEC* 
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getFittingStatements(const OV_STRING_VEC* table, const OV_STRING ComponentID, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getFittingStatements(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC* table, const OV_STRING ComponentID, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
 	// TODO: Check Veclen => Errorhandling
+	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
 	if(querySize == 0) {
 		return OV_ERR_BADPARAM;
 	}
@@ -446,13 +457,8 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getFittingStatements(const OV_STRING
 	}
 	ov_string_append(&query, ");");
 
-		FILE *fp;
-		fp = fopen("Sql_log_getFittingStatements.txt", "a");
-		fprintf(fp, "%s", query);
-		fclose(fp);
-
 	char* err_msg = NULL;
-	rc = sqlite3_exec(SQLITE3_pinst->v_db, query, callbackFittingStatements, result, &err_msg);
+	rc = sqlite3_exec(pinst->v_db, query, callbackFittingStatements, result, &err_msg);
 
 	if(rc != SQLITE_OK) {
 		ov_logfile_info("SQL Error: %s", err_msg);
@@ -465,7 +471,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getFittingStatements(const OV_STRING
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_execQuery(const OV_STRING query) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_execQuery(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING query) {
 
     return OV_ERR_OK;
 }
@@ -480,7 +486,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_query_set(
 
 		ov_string_setvalue(&pobj->v_query,value);
 		//ov_logfile_info("%s", pobj->v_query);
-		rc = sqlite3_exec(SQLITE3_pinst->v_db, pobj->v_query, callback, (void*)data, &err_msg);
+		rc = sqlite3_exec(pobj->v_db, pobj->v_query, callback, (void*)data, &err_msg);
 
 		if( rc != SQLITE_DONE ) {
 			ov_logfile_info("SQL error: %s", err_msg);
@@ -516,7 +522,8 @@ OV_DLLFNCEXPORT void Databases_SQLite3_shutdown(
     */
 
     /* do what */
-    Databases_SQLite3_disconnect();
+	OV_INSTPTR_openAASDiscoveryServer_Wrapper pinst = Ov_StaticPtrCast(openAASDiscoveryServer_Wrapper, pobj);
+    Databases_SQLite3_disconnect(pinst);
 
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
@@ -530,13 +537,12 @@ OV_DLLFNCEXPORT void Databases_SQLite3_startup(
     /*
     *   local variables
     */
-    OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, pobj);
 
     /* do what the base class does first */
     ov_object_startup(pobj);
 
-    /* do what */
-    SQLITE3_pinst = pinst;
+    OV_INSTPTR_openAASDiscoveryServer_Wrapper pinst = Ov_StaticPtrCast(openAASDiscoveryServer_Wrapper, pobj);
+    Databases_SQLite3_connect(pinst);
 
     return;
 }

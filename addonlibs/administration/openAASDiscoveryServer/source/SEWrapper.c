@@ -25,82 +25,12 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_SEWrapper_StartConnect_set(
-    OV_INSTPTR_openAASDiscoveryServer_SEWrapper          pobj,
-    const OV_BOOL  value
-) {
-    pobj->v_StartConnect = value;
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_ACCESS openAASDiscoveryServer_SEWrapper_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
-) {
-    /*    
-    *   local variables
-    */
-
-	switch(pelem->elemtype) {
-		case OV_ET_VARIABLE:
-			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-				if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-					return OV_AC_NONE;
-				else{
-					if(pelem->elemunion.pvar->v_flags == 256) { // InputFlag is set
-						return OV_AC_READWRITE;
-					}
-					/* Nicht FB? */
-					if(pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR) {
-						return OV_AC_READWRITE;
-					}
-					return OV_AC_READ;
-				}
-			}
-		break;
-		default:
-		break;
-	}
-	return ov_object_getaccess(pobj, pelem, pticket);
-}
-
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_SEWrapper_constructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*    
-    *   local variables
-    */
-    //OV_INSTPTR_openAASDiscoveryServer_SEWrapper pinst = Ov_StaticPtrCast(openAASDiscoveryServer_SEWrapper, pobj);
-    OV_RESULT    result;
-
-    /* do what the base class does first */
-    result = ov_object_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-
+OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_SEWrapper_storeData(OV_INSTPTR_openAASDiscoveryServer_SEWrapper this) {
 
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_SEWrapper_connect(void) {
-
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_SEWrapper_disconnect(void) {
-
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_SEWrapper_storeData(void) {
-
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_SEWrapper_searchData(void){
+OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_SEWrapper_searchData(OV_INSTPTR_openAASDiscoveryServer_SEWrapper this){
 
     return OV_ERR_OK;
 }

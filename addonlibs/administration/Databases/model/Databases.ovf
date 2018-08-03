@@ -8,6 +8,6 @@
 		OV_STRING varName
 	);
 */
-typedef OV_RESULT DS_FNC_EXECQUERY(const OV_STRING query); 
+typedef OV_RESULT DS_FNC_EXECQUERY(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING query); 
 
 #endif
