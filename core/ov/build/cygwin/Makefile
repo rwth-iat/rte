@@ -384,13 +384,17 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	------------------------
 $(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ)
+ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(ACPLT_BUILDER_EXE)
+endif
 
 #	acplt_makmak
 #	------------------------
 $(ACPLT_MAKMAK_EXE) : $(ACPLT_MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS)
+ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(ACPLT_MAKMAK_EXE)
+endif
 
 #	ACPLT/OV dynov library
 #	--------------------------

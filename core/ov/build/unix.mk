@@ -234,13 +234,17 @@ ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
+ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(OV_CODEGEN_EXE)
+endif
 
 #	ACPLT/OV framework builder
 
 $(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
+ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(OV_BUILDER_EXE)
+endif
 
 #	ACPLT/OV database utility
 
@@ -267,7 +271,9 @@ fnmatch.o : fnmatch.c
 
 $(DBDUMP_EXE) : $(DBDUMP_OBJ)
 	$(CXX_LINK) -o $@ $^ $(LIBKSCLN_LIB) $(LIBKS_LIB) $(LIBPLT_LIB) $(CXX_LIBS)
+ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(DBDUMP_EXE)
+endif
 
 #	ACPLT/OV database parser
 
@@ -302,7 +308,9 @@ $(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)
 
 $(MAKMAK_EXE) : $(MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
+ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(MAKMAK_EXE)
+endif
 
 #	ACPLT/OV library informations tool
 
@@ -362,13 +370,17 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	------------------------
 $(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ) $(LD_LIB)
+ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(ACPLT_BUILDER_EXE)
+endif
 
 #	acplt_makmak
 #	------------------------
 $(ACPLT_MAKMAK_EXE) : $(ACPLT_MAKMAK_OBJ)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
+ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(ACPLT_MAKMAK_EXE)
+endif
 
 
 #	Install
