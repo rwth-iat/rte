@@ -363,6 +363,7 @@ static OV_RESULT ov_time_asciitotime_internal(
 	*	convert the string to a time
 	*/
 	memset(&tm, 0, sizeof(tm));
+	secs = 0;
 	usecs = 0;
 	sscanf(timestring, "%d/%d/%d %d:%d:%d.%" OV_PRINT_UINT, &tm.tm_year, &tm.tm_mon,
 		&tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &usecs);

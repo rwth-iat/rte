@@ -12,17 +12,19 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-/**
-
-	Handling the path location business and consistency checks
-
-**/
+//TODO replace sprintf with snprintf and warn if buffer is to small
 
 int sortCompare(const void* a, const void* b){
 
 	return strcmp(*(char**)a, *(char**)b);
 
 }
+
+/**
+
+	Handling the path location business and consistency checks
+
+**/
 
 int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* devBinPath,
 		char* gitModelPath, char* sysModelPath, char* sysBinPath, int* newDirStructure){
@@ -35,7 +37,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 
 	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath))){
 		return 1;
-    }
+	}
 	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
 
 	/* Explore enviroment */
@@ -256,7 +258,7 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 	unsigned int pos = 0;
 	int i = 0;
 
-	sprintf(help, "%s/%s", gitModelPath, relPath);
+	snprintf(help, sizeof(help), "%s/%s", gitModelPath, relPath);
 	compatiblePath(help);
 
 	dir = opendir(help);
@@ -317,7 +319,7 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 		}
 		if(depth < MAKMAK_MAX_RECURSION_DEPTH){ // if we reach this statement we have not found a suitable directory
 			if(depth>0)
-				sprintf(help, "%s/%s", relPath, dirList[pos]);
+				snprintf(help, sizeof(help), "%s/%s", relPath, dirList[pos]);
 			else
 				strcpy(help, dirList[pos]);
 

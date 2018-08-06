@@ -144,7 +144,7 @@ static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_domain p
 		//some children have no containment but their parts have interesting containments
 		if(Ov_GetClassPtr(pChildObj) == pclass_cshmi_IfThenElse){
 			pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pChildObj);
-			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_domain, Ov_GetPartPtr(if, pIfThenElse)), strResult, FALSE);
+			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_domain, &pIfThenElse->p_if), strResult, FALSE);
 			if(Ov_Fail(result)){
 				return result;
 			}

@@ -293,7 +293,7 @@ void MD5_Final(md5_hash_raw result, MD5_CTX *ctx)
 //a higher level wrapper by Sten Gruener
 void md5_string(md5_hash_return* dest, char* source){
 	MD5_CTX ctx;
-	md5_hash_raw hash;
+	md5_hash_raw hash = {0};
 
 	int i;
 	char* temp;
