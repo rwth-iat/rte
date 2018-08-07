@@ -327,6 +327,7 @@ LIBRARY openAASDiscoveryServer
             
             // search
             Tags              : STRING FLAGS = "i" COMMENT = "Tags to search for in JSON: FORMAT tag:value";
+            ResponseMode      : STRING FLAGS = "i" COMMENT = "full: give all statements back; else:only ID and endpoints" INITIALVALUE = "";
             SendSearchMessage : BOOL HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE = FALSE;
             AASFound          : STRING FLAGS = "o" COMMENT = "" INITIALVALUE = "";            
 

@@ -62,16 +62,19 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 	OV_STRING_VEC tags;
 	tags.value = NULL;
 	tags.veclen = 0;
-	Ov_SetDynamicVectorLength(&tags, 3, STRING);
+	Ov_SetDynamicVectorLength(&tags, 4, STRING);
 	ov_string_setvalue(&tags.value[0], "componentID");
 	ov_string_setvalue(&tags.value[1], "securityKey");
 	ov_string_setvalue(&tags.value[2], "statements");
+	ov_string_setvalue(&tags.value[3], "responseMode");
 	struct searchStatement *searchStatements = NULL;
 	OV_UINT searchStatementSize = 0;
 	OV_UINT_VEC tokenIndex;
 	tokenIndex.value = NULL;
 	tokenIndex.veclen = 0;
-	Ov_SetDynamicVectorLength(&tokenIndex, 3, UINT);
+	Ov_SetDynamicVectorLength(&tokenIndex, 4, UINT);
+	OV_STRING responseMode = NULL;
+
 
 	jsonGetTokenIndexByTags(tags, JsonInput, 1, &tokenIndex);
 
@@ -86,7 +89,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 		ov_string_setvalue(errorMessage, "SecurityKey is not correct");
 		goto FINALIZE;
 	}
-
 	// get statements from JSON
 	searchStatementSize = JsonInput.token[tokenIndex.value[2]+1].size;
 	searchStatements = malloc(sizeof(struct searchStatement)*searchStatementSize);
@@ -114,6 +116,8 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 		searchStatements[i].submodel = NULL;
 		jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[2]+2+i*15+14], &searchStatements[i].submodel);
 	}
+
+	jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[3]+1], &responseMode);
 
 	// search for statements in Database and get componentID and endpoints
 	OV_UINT queryCount = searchStatementSize;
@@ -382,7 +386,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 		}
 	}
 
-
 	OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 	OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
 	for (OV_UINT i = 0; i < pinst->v_DBWrapperUsed.veclen; i++){
@@ -391,16 +394,19 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 			break;
 
 		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+
 		pDBWrapperVTable->m_getComponentID(pDBWrapper, table, query, searchStatementSize, &componentIDs);
 
-		if (componentIDs.veclen > 0){
-			resultStatements = malloc(sizeof(OV_STRING_VEC)*componentIDs.veclen);
-			for (OV_UINT j = 0; j < componentIDs.veclen; j++){
-				resultStatements[j].value = NULL;
-				resultStatements[j].veclen = 0;
-				pDBWrapperVTable->m_getFittingStatements(pDBWrapper, table, componentIDs.value[j], query, searchStatementSize, &resultStatements[j]);
+		if (ov_string_compare(responseMode, "full") == OV_STRCMP_EQUAL){
+			if (componentIDs.veclen > 0){
+				resultStatements = malloc(sizeof(OV_STRING_VEC)*componentIDs.veclen);
+				for (OV_UINT j = 0; j < componentIDs.veclen; j++){
+					resultStatements[j].value = NULL;
+					resultStatements[j].veclen = 0;
+					pDBWrapperVTable->m_getFittingStatements(pDBWrapper, table, componentIDs.value[j], query, searchStatementSize, &resultStatements[j]);
+				}
+				break;
 			}
-			break;
 		}
 	}
 
@@ -445,6 +451,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 
 			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
 			pDBWrapperVTable->m_selectData(pDBWrapper, "Endpoints", tmpFields, 2, &whereFields, 1, &tmpValues, 1, &endpointStruct);
+
 			if (endpointStruct.veclen > 0){
 				components[i].endpointsSize = endpointStruct.veclen / 2;
 				components[i].endpoints = malloc(sizeof(struct endpoint)*endpointStruct.veclen / 2);
@@ -461,7 +468,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 		ov_string_setvalue(&tmpValues, NULL);
 		ov_string_setvalue(&whereFields, NULL);
 	}
-
 	// Generate Response
 	ov_string_setvalue(JsonOutput, "\"body\":{\"components\":[");
 	for (OV_UINT i = 0; i < componentIDs.veclen; i++){
@@ -480,13 +486,15 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 		ov_string_append(JsonOutput, "]");
 		ov_string_append(JsonOutput, ",\"statements\":[");
 		ov_string_setvalue(&tmpString, NULL);
-		for (OV_UINT j = 0; j < resultStatements[i].veclen; j++){
-			tmpString = NULL;
-			ov_string_print(&tmpString, "{%s}", resultStatements[i].value[j]);
-			ov_string_append(JsonOutput, tmpString);
-			ov_string_setvalue(&tmpString, NULL);
-			if (j < resultStatements[i].veclen - 1)
-				ov_string_append(JsonOutput, ",");
+		if (ov_string_compare(responseMode, "full") == OV_STRCMP_EQUAL){
+			for (OV_UINT j = 0; j < resultStatements[i].veclen; j++){
+				tmpString = NULL;
+				ov_string_print(&tmpString, "{%s}", resultStatements[i].value[j]);
+				ov_string_append(JsonOutput, tmpString);
+				ov_string_setvalue(&tmpString, NULL);
+				if (j < resultStatements[i].veclen - 1)
+					ov_string_append(JsonOutput, ",");
+			}
 		}
 		ov_string_append(JsonOutput, "]}");
 		if (i < componentIDs.veclen - 1)
@@ -500,11 +508,14 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 	ov_string_setvalue(&componentID, NULL);
 	ov_string_setvalue(&securityKey, NULL);
 
-	for (OV_UINT i = 0; i < componentIDs.veclen; i++){
-		Ov_SetDynamicVectorLength(&resultStatements[i], 0, STRING);
+	if (ov_string_compare(responseMode, "full") == OV_STRCMP_EQUAL){
+		for (OV_UINT i = 0; i < componentIDs.veclen; i++){
+			Ov_SetDynamicVectorLength(&resultStatements[i], 0, STRING);
+		}
 	}
 	if (resultStatements)
 		free(resultStatements);
+	ov_string_setvalue(&responseMode, NULL);
 
 	for (OV_UINT i = 0; i < componentIDs.veclen; i++){
 		ov_string_setvalue(&components[i].componentID, NULL);
@@ -529,6 +540,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 	}
 	if (searchStatements)
 		free(searchStatements);
+
 	return OV_ERR_OK;
 }
 

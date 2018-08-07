@@ -428,10 +428,14 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_TestClient_SendSearchMessage_se
 		// XML Encoding
 		OV_STRING answerBody = NULL;
 		ov_string_setvalue(&answerBody, "<bdy>");
-		if (pobj->v_Tags == NULL){
-			ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"7\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", \"statements\":[]}}", pobj->v_EndpointTestClient, pobj->v_EndpointDS, pobj->v_MessageCount, pobj->v_ComponentID, pobj->v_SecurityKey);
+		if (pobj->v_Tags == NULL && pobj->v_ResponseMode == NULL){
+			ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"7\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", \"statements\":[], \"responseMode\":\"\"}}", pobj->v_EndpointTestClient, pobj->v_EndpointDS, pobj->v_MessageCount, pobj->v_ComponentID, pobj->v_SecurityKey);
+		}else if (pobj->v_Tags == NULL){
+			ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"7\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", \"statements\":[], \"responseMode\":\"%s\"}}", pobj->v_EndpointTestClient, pobj->v_EndpointDS, pobj->v_MessageCount, pobj->v_ComponentID, pobj->v_SecurityKey, pobj->v_ResponseMode);
+		}else if (pobj->v_ResponseMode == NULL){
+			ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"7\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", \"statements\":[%s], \"responseMode\":\"\"}}", pobj->v_EndpointTestClient, pobj->v_EndpointDS, pobj->v_MessageCount, pobj->v_ComponentID, pobj->v_SecurityKey, pobj->v_Tags);
 		}else{
-			ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"7\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", \"statements\":[%s]}}", pobj->v_EndpointTestClient, pobj->v_EndpointDS, pobj->v_MessageCount, pobj->v_ComponentID, pobj->v_SecurityKey, pobj->v_Tags);
+			ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"7\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", \"statements\":[%s], \"responseMode\":\"%s\"}}", pobj->v_EndpointTestClient, pobj->v_EndpointDS, pobj->v_MessageCount, pobj->v_ComponentID, pobj->v_SecurityKey, pobj->v_Tags, pobj->v_ResponseMode);
 		}
 		ov_string_append(&answerBody, tmpString);
 		ov_string_setvalue(&tmpString, NULL);
