@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2018-07-30 13:44:58
+* Erstellt: 2018-08-06 14:57:59
 * 
 * HOST   : LOCALHOST:7509
 * SERVER : MANAGER
@@ -68,114 +68,6 @@
 
  INSTANCE  /data/kshttp :
     CLASS /acplt/ov/domain;
- END_INSTANCE;
-
- INSTANCE  /data/kshttp/sse%2Ehtml :
-    CLASS /acplt/kshttp/staticfile;
-    VARIABLE_VALUES
-      content : INPUT STRING = "<!DOCTYPE html>
-<html>
-<head>
-	<meta charset=\"windows-1252\">
-	<title>Stats of database_free</title>
-	<script type=\"text/javascript\" src=\"//cdnjs.cloudflare.com/ajax/libs/smoothie/1.27.0/smoothie.min.js\"></script>
-</head>
-<body>
-	<h1>Stats of database_free</h1>
-	
-	<canvas id=\"mycanvas\" width=\"400\" height=\"100\"></canvas>
-	
-	<script type=\"text/javascript\">
-	//an ajax request first
-	var ajaxRequest;	
-	try{
-		// Opera 8.0+, Firefox, Safari
-		ajaxRequest = new XMLHttpRequest();
-	} catch (e){
-		// Internet Explorer Browsers
-		try{
-			ajaxRequest = new ActiveXObject(\"Msxml2.XMLHTTP\");
-		} catch (e2) {
-			try{
-				ajaxRequest = new ActiveXObject(\"Microsoft.XMLHTTP\");
-			} catch (e3){
-				// Something went wrong
-				document.getElementsByTagName(\"h1\")[0].innerHTML = \"Your browser is too old, sorry!\";
-			}
-		}
-	}
-	// got the database size - init everything else
-	ajaxRequest.onreadystatechange = function(){
-		\"use strict\";
-		if(ajaxRequest.readyState === 4){
-			setInterval(function() {
-				var time = new Date().getTime();
-				if(line1 && time-lastUpdate > 990){
-					line1.append(time, lastData);
-				}
-			}, 1000);
-			if(EventSource !== undefined){
-				var source = new EventSource('/getVar?path=/vendor/database_free&stream=1&format=plain');
-				source.onmessage = function(e) {
-					lastUpdate = new Date().getTime();
-					lastData = parseInt(e.data, 10);
-					line1.append(lastUpdate, lastData);
-					if(smoothie){
-						smoothie.start();
-					}
-				};
-				source.onerror  = function(e) {
-					source.close();
-					if(smoothie){
-						smoothie.stop();
-					}
-				};
-			}else{
-				document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Your browser does not support EventSource\";
-			}
-			if(typeof SmoothieChart === \"function\"){
-				var smoothie = new SmoothieChart({ 
-					grid: { 
-						sharpLines:true,
-						strokeStyle: 'rgb(125, 0, 0)',
-						fillStyle: 'rgb(60, 0, 0)',
-						lineWidth: 1,
-						millisPerLine: 30000,
-						verticalSections: 2
-					}, 
-					interpolation:'step',
-					timestampFormatter:SmoothieChart.timeFormatter,
-					millisPerPixel:500, 
-					maxValue:parseInt(ajaxRequest.responseText, 10), 
-					minValue:0
-				});
-				smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });
-				smoothie.streamTo(document.getElementById('mycanvas'), 200);
-			}
-		}
-	};
-	ajaxRequest.open('GET', '/getVar?path=/vendor/database_size&format=plain', true);
-	try{
-		ajaxRequest.send(null);
-	} catch(err){
-		document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Perhaps this file was not served from an OV webserver.\";
-	}
-	if(typeof TimeSeries !== \"function\"){
-		document.getElementsByTagName(\"h1\")[0].innerHTML = \"Smoothie not loaded...\";
-	}else{
-		var line1 = new TimeSeries();
-	}
-	var lastUpdate = 0;
-	var lastData = 0;
-	</script>
-</body>
-</html>
-";
-      mimetype : INPUT STRING = "text/html";
-      encoding : INPUT STRING = "windows-1252";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 449;
-    END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /data/kshttp/index%2Ehtml :
@@ -725,6 +617,114 @@
       encoding : INPUT STRING = "windows-1252";
       idH : INPUT UINT = 0;
       idL : INPUT UINT = 450;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /data/kshttp/sse%2Ehtml :
+    CLASS /acplt/kshttp/staticfile;
+    VARIABLE_VALUES
+      content : INPUT STRING = "<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=\"windows-1252\">
+	<title>Stats of database_free</title>
+	<script type=\"text/javascript\" src=\"//cdnjs.cloudflare.com/ajax/libs/smoothie/1.27.0/smoothie.min.js\"></script>
+</head>
+<body>
+	<h1>Stats of database_free</h1>
+	
+	<canvas id=\"mycanvas\" width=\"400\" height=\"100\"></canvas>
+	
+	<script type=\"text/javascript\">
+	//an ajax request first
+	var ajaxRequest;	
+	try{
+		// Opera 8.0+, Firefox, Safari
+		ajaxRequest = new XMLHttpRequest();
+	} catch (e){
+		// Internet Explorer Browsers
+		try{
+			ajaxRequest = new ActiveXObject(\"Msxml2.XMLHTTP\");
+		} catch (e2) {
+			try{
+				ajaxRequest = new ActiveXObject(\"Microsoft.XMLHTTP\");
+			} catch (e3){
+				// Something went wrong
+				document.getElementsByTagName(\"h1\")[0].innerHTML = \"Your browser is too old, sorry!\";
+			}
+		}
+	}
+	// got the database size - init everything else
+	ajaxRequest.onreadystatechange = function(){
+		\"use strict\";
+		if(ajaxRequest.readyState === 4){
+			setInterval(function() {
+				var time = new Date().getTime();
+				if(line1 && time-lastUpdate > 990){
+					line1.append(time, lastData);
+				}
+			}, 1000);
+			if(EventSource !== undefined){
+				var source = new EventSource('/getVar?path=/vendor/database_free&stream=1&format=plain');
+				source.onmessage = function(e) {
+					lastUpdate = new Date().getTime();
+					lastData = parseInt(e.data, 10);
+					line1.append(lastUpdate, lastData);
+					if(smoothie){
+						smoothie.start();
+					}
+				};
+				source.onerror  = function(e) {
+					source.close();
+					if(smoothie){
+						smoothie.stop();
+					}
+				};
+			}else{
+				document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Your browser does not support EventSource\";
+			}
+			if(typeof SmoothieChart === \"function\"){
+				var smoothie = new SmoothieChart({ 
+					grid: { 
+						sharpLines:true,
+						strokeStyle: 'rgb(125, 0, 0)',
+						fillStyle: 'rgb(60, 0, 0)',
+						lineWidth: 1,
+						millisPerLine: 30000,
+						verticalSections: 2
+					}, 
+					interpolation:'step',
+					timestampFormatter:SmoothieChart.timeFormatter,
+					millisPerPixel:500, 
+					maxValue:parseInt(ajaxRequest.responseText, 10), 
+					minValue:0
+				});
+				smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });
+				smoothie.streamTo(document.getElementById('mycanvas'), 200);
+			}
+		}
+	};
+	ajaxRequest.open('GET', '/getVar?path=/vendor/database_size&format=plain', true);
+	try{
+		ajaxRequest.send(null);
+	} catch(err){
+		document.getElementsByTagName(\"h1\")[0].innerHTML = \"An error occured. Perhaps this file was not served from an OV webserver.\";
+	}
+	if(typeof TimeSeries !== \"function\"){
+		document.getElementsByTagName(\"h1\")[0].innerHTML = \"Smoothie not loaded...\";
+	}else{
+		var line1 = new TimeSeries();
+	}
+	var lastUpdate = 0;
+	var lastData = 0;
+	</script>
+</body>
+</html>
+";
+      mimetype : INPUT STRING = "text/html";
+      encoding : INPUT STRING = "windows-1252";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 451;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1633,7 +1633,7 @@ JavaScriptKSHTTPClient.prototype = {
       mimetype : INPUT STRING = "text/javascript";
       encoding : INPUT STRING = "windows-1252";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1524;
+      idL : INPUT UINT = 1514;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1652,7 +1652,7 @@ JavaScriptKSHTTPClient.prototype = {
       mimetype : INPUT STRING = "text/javascript";
       encoding : INPUT STRING = "windows-1252";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1525;
+      idL : INPUT UINT = 1515;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -10867,7 +10867,7 @@ return jQuery;
       mimetype : INPUT STRING = "text/javascript";
       encoding : INPUT STRING = "windows-1252";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1526;
+      idL : INPUT UINT = 1516;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -10946,11 +10946,11 @@ return jQuery;
 		const resultTemplate = c =>
 			`<div>
 				<h3 style='margin-bottom: 0'>${c.componentID.replace(/^0,/, 'URI: ').replace(/^1,/, 'ISO: ')}</h3>
-				<div>
+				<div >
 					${c.endpoints.map(endpointTemplate).join('<br/>')}
 				</div>
 				<table class='resultTable'>
-					<thead>
+					<thead >
 						<tr>
 							${Object.keys(c.statements[0]).map(key => '<th>' + key + '</th>').join('')}
 						</tr>
@@ -10960,11 +10960,22 @@ return jQuery;
 					</tbody>
 				</table>
 			</div>`;
+			
+		const resultTemplate2 = c =>
+			`<div>
+				<h3 style='margin-bottom: 0'>${c.componentID.replace(/^0,/, 'URI: ').replace(/^1,/, 'ISO: ')}</h3>
+				<div >
+					${c.endpoints.map(endpointTemplate).join('<br/>')}
+				</div>
+			</div>`;
 	
 		const components = JSON.parse(json).components;
 
 		document.querySelector('#results_count').textContent = 'Found ' + components.length + ' Components (' + sec + ' Seconds)';
-		document.querySelector('#results').innerHTML = components.map(resultTemplate).join('');
+		if (document.getElementById('mode').value === 'with fitting statements')
+			document.querySelector('#results').innerHTML = components.map(resultTemplate).join('');
+		else 
+			document.querySelector('#results').innerHTML = components.map(resultTemplate2).join('');
 	}
 	
 	function get_AASFound(Client, req){
@@ -11086,6 +11097,7 @@ return jQuery;
 			tbl.rows[0].cells[i].innerHTML = i;
 		}
 		columnCount = columnCount - 1;
+		update();
 	}
 	
 	function delete_allStatement(){
@@ -11098,6 +11110,7 @@ return jQuery;
 			}
 		}
 		columnCount = 1;
+		update();
 	}
 	
 	function send_search_request(){
@@ -11166,22 +11179,30 @@ return jQuery;
 			if (i != tbl.rows[0].cells.length-1){
 				request += ',';
 			}
+			update();
 		}
 		var ksClient = new JavaScriptKSHTTPClient();
 		ksClient.init('localhost', '7509');
 		ksClient.setVar(TestClientPath + '.Tags', request, null, null, false, 'text/ksx');
+		if (document.getElementById('mode').value === 'with fitting statements')
+			ksClient.setVar(TestClientPath + '.ResponseMode', 'full', null, null, false, 'text/ksx');
+		else
+			ksClient.setVar(TestClientPath + '.ResponseMode', 'minimal', null, null, false, 'text/ksx');
 		ksClient.getVar(TestClientPath + '.State', get_ClientState, true, 'text/ksx');
 	}	
 </script>
 <html>
+	<div style=\"background-color: #f1f3f4; border: #d5d5d5;font-family:Times New Roman;\">
 	<head>
 		<title>Discovery Server</title>
 	</head>
+	<div style=\"color: #08088A; font-size:30px\">
 	<h1>
-		<center>Discovery Server for Asset Administration Shell</center>
+		<center>ACPLT Discovery Server</center>
 	</h1>
+	</div>
 	<body>
-		<div style=\"background-color:lightgrey\">
+		<div style=\"background-color: #f1f3f4; border: #d5d5d5;font-size:24px; font-family:Times New Roman;\">
 			<table align=\"center\">
 				<tr>
 					<td colspan='2'>
@@ -11193,37 +11214,30 @@ return jQuery;
 					<td>
 						<center>SubModel</center>
 					</td>
-					<td rowspan='4'><input type=\"button\" style=\"width:150px; height:90px\" name=\"create statement\" type=\"button\" value=\"Create Statement\" onclick=\"create_statement()\"></td>
+					<td rowspan='4'><input type=\"button\" style=\"width:290px; height:140px;font-size:24px; font-family:Times New Roman;\" name=\"create statement\" type=\"button\" value=\"Create Statement\" onclick=\"create_statement()\"></td>
 					<td>
 						<center>Statement</center>
 					</td>
 				</tr>
 				<tr>			
 					<td colspan='2'>	
-						<input id=\"inputCarrierID\" style=\"width:410px\" list=\"carrierID\" name=\"carrierID\" autocomplete=\"off\">
+						<input id=\"inputCarrierID\" style=\"width:590px;font-size:24px; font-family:Times New Roman;\" list=\"carrierID\" name=\"carrierID\" autocomplete=\"off\">
 						<datalist id=\"carrierID\">
 						</datalist>
 					</td>
 					<td colspan='2'>	
-						<input id=\"inputPropertyID\" style=\"width:410px\" list=\"propertyID\" name=\"propertyID\" autocomplete=\"off\">
+						<input id=\"inputPropertyID\" style=\"width:590px;font-size:24px; font-family:Times New Roman;\" list=\"propertyID\" name=\"propertyID\" autocomplete=\"off\">
 						<datalist id=\"propertyID\">
 						</datalist>
 					</td>
-					<td>	
-						<input id=\"inputSubModel\" style=\"width:200px\" list=\"subModel\" name=\"subModel\" autocomplete=\"off\">
+					<td>
+						<input id=\"inputSubModel\" style=\"width:290px;font-size:24px; font-family:Times New Roman;\" list=\"subModel\" name=\"subModel\" autocomplete=\"off\">
 						<datalist id=\"subModel\">
 						</datalist>
 					</td>	
 					<td>	
-						<input id=\"inputStatements\" style=\"width:200px\" list=\"statement\" name=\"statement\" autocomplete=\"off\">
+						<input id=\"inputStatements\" style=\"width:290px;font-size:24px; font-family:Times New Roman;\" list=\"statement\" name=\"statement\" autocomplete=\"off\">
 						<datalist id=\"statement\">
-							<option value=\"1\">
-							<option value=\"2\">
-							<option value=\"2\">
-							<option value=\"3\">
-							<option value=\"4\">
-							<option value=\"5\">
-							<option value=\"6\">
 						</datalist>
 					</td>	
 				</tr>
@@ -11240,12 +11254,14 @@ return jQuery;
 					<td>
 						<center>ValueType</center>
 					</td>
-					<td rowspan='2'><input type=\"button\" style=\"width:204px; height:45px\" name=\"update server informatation\" type=\"button\" value=\"Update Server Information\" onclick=\"update()\"></td>
-					<td><input type=\"button\" style=\"width:204px; height:19px\"  name=\"delete statement\" type=\"button\" value=\"Delete Statement\" onclick=\"delete_statement()\"></td>
+					<td>
+						<center>Search Mode</center>
+					</td>		
+					<td><input type=\"button\" style=\"width:294px; height:38px;font-size:24px; font-family:Times New Roman;\"  name=\"delete statement\" type=\"button\" value=\"Delete Statement\" onclick=\"delete_statement()\"></td>
 				</tr>
 				<tr>
 					<td>	
-						<input id=\"inputExpressionSemantic\" style=\"width:200px\" list=\"expressionSemantic\" name=\"expressionSemantic\" autocomplete=\"off\">
+						<input id=\"inputExpressionSemantic\" style=\"width:290px;font-size:24px; font-family:Times New Roman;\" list=\"expressionSemantic\" name=\"expressionSemantic\" autocomplete=\"off\">
 						<datalist id=\"expressionSemantic\">
 							<option value=\"Assurance\">
 							<option value=\"Setting\">
@@ -11254,7 +11270,7 @@ return jQuery;
 						</datalist>
 					</td>
 					<td>	
-						<input id=\"inputRelation\" style=\"width:200px\" list=\"relation\" name=\"relation\" autocomplete=\"off\">
+						<input id=\"inputRelation\" style=\"width:290px;font-size:24px; font-family:Times New Roman;\" list=\"relation\" name=\"relation\" autocomplete=\"off\">
 						<datalist id=\"relation\">
 							<option value=\"<\">
 							<option value=\"<=\">
@@ -11265,21 +11281,27 @@ return jQuery;
 						</datalist>
 					</td>
 					<td>	
-						<input id=\"inputValue\" style=\"width:200px\" name=\"value\" onClick=\"update()\">
+						<input id=\"inputValue\" style=\"width:290px;font-size:24px; font-family:Times New Roman;\" name=\"value\" value=\"\" autocomplete=\"off\" onClick=\"update()\">
 					</td>
 					<td>
-						<input id=\"valueType\" style=\"width:200px\" list=\"valueTypes\" name=\"valueTypes\" autocomplete=\"off\">
+						<input id=\"valueType\" style=\"width:290px;font-size:24px; font-family:Times New Roman;\" list=\"valueTypes\" name=\"valueTypes\" autocomplete=\"off\">
 						<datalist id=\"valueTypes\">
 							<option value=\"Text\">
 							<option value=\"Numeric\">
 							<option value=\"Boolean\">
 						</datalist>
 					</td>
-					<td><input type=\"button\" style=\"width:204px; height:19px\" name=\"reset\" type=\"button\" value=\"Delete all Statements\" onclick=\"delete_allStatement()\"></td>
+					<td>
+						<input id=\"mode\" style=\"width:290px;font-size:24px; font-family:Times New Roman;\" list=\"modeList\" name=\"mode\" autocomplete=\"off\">
+						<datalist id=\"modeList\">
+							<option value=\"no statements\">
+							<option value=\"with fitting statements\">
+						</datalist>
+					</td>
+					<td><input type=\"button\" style=\"width:294px; height:38px;font-size:24px; font-family:Times New Roman;\" name=\"reset\" type=\"button\" value=\"Delete all Statements\" onclick=\"delete_allStatement()\"></td>
 				</tr>
 			</table>
-			<p></p>
-			<table id=\"searchTables\" align=\"center\" border=\"1\">
+			<table id=\"searchTables\" align=\"center\" border=\"1\" style=\"font-size:18px; font-family:Times New Roman; background-color:white;\">
 				<tr>
 					<td>Statement-Nr</td>
 				</tr>
@@ -11305,19 +11327,27 @@ return jQuery;
 					<td>SubModel</td>
 				</tr>
 			</table>
-			<p align=\"center\">
-				<input type=\"button\" align=\"right\"  name=\"send search request\" type=\"button\" value=\"Send search request\"  onclick=\"send_search_request()\">
-			</p>
+			<div align=\"center\">
+				<input align=\"center\" type=\"button\" align=\"right\"  name=\"send search request\" type=\"button\" value=\"Send search request\" style=\"width:294px; height:70px;font-size:24px; font-family:Times New Roman;\" onclick=\"send_search_request()\">
+			</div>
 		</div>
-		<span id=\"results_count\"></span>
-        <div id=\"results\">
-        </div>
+		</div>
+		<div font-family:Times New Roman;\">
+			<span id=\"results_count\"></span>
+			<div id=\"results\">
+			</div>
+		</div>
+		<script>
+			window.onload = function(){
+				update();
+			}
+		</script>
 	</body>
 </html>";
       mimetype : INPUT STRING = "text/html";
       encoding : INPUT STRING = "windows-1252";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1527;
+      idL : INPUT UINT = 1517;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11329,14 +11359,14 @@ return jQuery;
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2018-07-30 13:44:58.930600;
+      proctime : INPUT TIME = 2018-08-06 14:57:59.340600;
       cyctime : INPUT TIME_SPAN = 0.010000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000010;
+      calctime : OUTPUT TIME_SPAN = 0.000011;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 572;
+      idL : INPUT UINT = 578;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11353,7 +11383,7 @@ return jQuery;
     VARIABLE_VALUES
       asJSON : OUTPUT STRING = "%7B%22baseKsPath%22:%7B%22/%22:%5B%5D,%22/TechUnits%22:%5B%5D,%22/TechUnits/cshmi%22:%5B%5D,%22/TechUnits/cshmi/Templates%22:%5B%5D%7D,%22Elements%22:%7B%7D,%22Actions%22:%7B%7D,%22ChildList%22:%7B%22/TechUnits/cshmi%22:%7B%22ChildListParameters%22:%5B%22turbo /acplt/cshmi/downloadApplication%22,%22Templates /acplt/ov/domain%22%5D%7D,%22/TechUnits/cshmi/Templates%22:%7B%22ChildListParameters%22:%5B%5D%7D%7D%7D";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1520;
+      idL : INPUT UINT = 1196;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11385,7 +11415,7 @@ return jQuery;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1528;
+      idL : INPUT UINT = 1518;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11397,7 +11427,7 @@ return jQuery;
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 1581;
+      methcount : OUTPUT UINT = 1374;
       actimode : INPUT INT = 1;
       proctime : INPUT TIME = 2018-07-10 13:39:41.449048;
       cyctime : INPUT TIME_SPAN = 0.000000;
@@ -11406,7 +11436,7 @@ return jQuery;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1529;
+      idL : INPUT UINT = 1519;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11414,7 +11444,7 @@ return jQuery;
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1530;
+      idL : INPUT UINT = 1520;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11422,7 +11452,7 @@ return jQuery;
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1531;
+      idL : INPUT UINT = 1521;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11456,7 +11486,7 @@ return jQuery;
       DSServicePathForConfig : INPUT STRING = "/TechUnits/DSSecurity";
       ConfigDSServices : INPUT BOOL = FALSE;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1532;
+      idL : INPUT UINT = 1522;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11487,7 +11517,7 @@ return jQuery;
       DSServicePathForConfig : INPUT STRING = "/TechUnits/DSUnregistration";
       ConfigDSServices : INPUT BOOL = FALSE;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1533;
+      idL : INPUT UINT = 1523;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11516,7 +11546,7 @@ return jQuery;
       DSServicePathForConfig : INPUT STRING = "/TechUnits/DSSearch";
       ConfigDSServices : INPUT BOOL = FALSE;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1534;
+      idL : INPUT UINT = 1524;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11527,7 +11557,7 @@ return jQuery;
       CAWrapperUsed[0] : OUTPUT STRING = {};
       DBWrapperUsed[0] : OUTPUT STRING = {};
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1535;
+      idL : INPUT UINT = 1525;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11543,12 +11573,12 @@ return jQuery;
       User : INPUT STRING = "";
       Password : INPUT STRING = "";
       Connect : INPUT BOOL = FALSE;
-	  Disconnect : INPUT BOOL = FALSE;
+      Disconnect : INPUT BOOL = FALSE;
+      State : OUTPUT UINT = 1;
       ErrorFlag : OUTPUT BOOL = FALSE;
       ErrorMessage : OUTPUT STRING = "";
-	  State	: OUTPUT BOOL = FALSE;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1536;
+      idL : INPUT UINT = 1526;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11558,7 +11588,7 @@ return jQuery;
       SEWrapperUsed[0] : OUTPUT STRING = {};
       DBWrapperUsed[0] : OUTPUT STRING = {};
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1537;
+      idL : INPUT UINT = 1527;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11568,7 +11598,7 @@ return jQuery;
       SEWrapperUsed[0] : OUTPUT STRING = {};
       DBWrapperUsed[0] : OUTPUT STRING = {};
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1538;
+      idL : INPUT UINT = 1528;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11588,6 +11618,7 @@ return jQuery;
       SendRegistrationMessage : INPUT BOOL = FALSE;
       SendUnregistrationMessage : INPUT BOOL = FALSE;
       Tags : INPUT STRING = "{\"CarrierID\":\"\",\"PropertyID\":\"\",\"ExpressionSemantic\":\"\", \"Relation\":\"\",\"Value\":\"None\",\"ValueType\":\"Text\", \"Submodel\":\"\"}";
+      ResponseMode : INPUT STRING = "";
       SendSearchMessage : INPUT BOOL = FALSE;
       AASFound : OUTPUT STRING = "";
       Reset : INPUT BOOL = FALSE;
@@ -11597,16 +11628,16 @@ return jQuery;
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 1587;
+      methcount : OUTPUT UINT = 1380;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2018-07-30 13:44:40.851609;
+      proctime : INPUT TIME = 2018-08-06 14:57:45.404373;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000001;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1539;
+      idL : INPUT UINT = 1529;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11618,16 +11649,16 @@ return jQuery;
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 1588;
+      methcount : OUTPUT UINT = 1380;
       actimode : INPUT INT = 1;
       proctime : INPUT TIME = 2018-07-10 13:40:05.752065;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
-      calctime : OUTPUT TIME_SPAN = 0.000000;
+      calctime : OUTPUT TIME_SPAN = 0.000001;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1540;
+      idL : INPUT UINT = 1530;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11635,7 +11666,7 @@ return jQuery;
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1541;
+      idL : INPUT UINT = 1531;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11643,7 +11674,7 @@ return jQuery;
     CLASS /acplt/MessageSys/inbox;
     VARIABLE_VALUES
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1542;
+      idL : INPUT UINT = 1532;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11653,7 +11684,7 @@ return jQuery;
       SEWrapperUsed[0] : OUTPUT STRING = {};
       DBWrapperUsed[0] : OUTPUT STRING = {};
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1543;
+      idL : INPUT UINT = 1533;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -11708,27 +11739,28 @@ return jQuery;
  INSTANCE  /vendor :
     CLASS /acplt/ov/domain;
     VARIABLE_VALUES
-      libraries[16] : OUTPUT STRING = {"/acplt/ov" , "/acplt/ksbase" , "/acplt/TCPbind" , "/acplt/ksxdr" , "/acplt/kshttp" , "/acplt/fb" , "/acplt/openaas" , "/acplt/lifeCycleEntry" , "/acplt/identification" , "/acplt/propertyValueStatement" , "/acplt/MessageSys" , "/acplt/ksapi" , "/acplt/openAASDiscoveryServer" , "/acplt/DSServices" , "/acplt/Databases" , "/acplt/cshmi"};
-      classes[136] : OUTPUT STRING = {"/acplt/ov/domain" , "/acplt/ov/library" , "/acplt/ksbase/RootComTask" , "/acplt/ksbase/ServerRep" , "/acplt/ksbase/Manager" , "/acplt/ksbase/NoneTicketAuthenticator" , "/acplt/ksbase/NoneTicketGenerator" , "/acplt/TCPbind/TCPChannel" , "/acplt/TCPbind/aresWorker" , "/acplt/TCPbind/TCPListener" , "/acplt/ksxdr/xdrIdentificator" , "/acplt/ksxdr/xdrClientHandler" , "/acplt/ksxdr/xdrSimpleTicketAuthenticator" , "/acplt/ksxdr/xdrManagerCom" , "/acplt/ksxdr/xdrClient" , "/acplt/ksxdr/PMAskList" , "/acplt/kshttp/httpIdentificator" , "/acplt/kshttp/httpclienthandler" , "/acplt/kshttp/getvarpushhandler" , "/acplt/kshttp/httpSimpleTicketAuthenticator" , "/acplt/kshttp/httpManagerCom" , "/acplt/kshttp/httpClient" , "/acplt/kshttp/genericHttpClient" , "/acplt/kshttp/authenticatedsession" , "/acplt/kshttp/staticfile" , "/acplt/fb/dbinfoclass" , "/acplt/fb/task" , "/acplt/fb/connection" , "/acplt/fb/functionchart" , "/acplt/fb/boolport" , "/acplt/fb/intport" , "/acplt/fb/uintport" , "/acplt/fb/singleport" , "/acplt/fb/doubleport" , "/acplt/fb/timeport" , "/acplt/fb/timespanport" , "/acplt/fb/stringport" , "/acplt/fb/anyport" , "/acplt/fb/boolvecport" , "/acplt/fb/intvecport" , "/acplt/fb/uintvecport" , "/acplt/fb/singlevecport" , "/acplt/fb/doublevecport" , "/acplt/fb/timevecport" , "/acplt/fb/timespanvecport" , "/acplt/fb/stringvecport" , "/acplt/identification/Identification" , "/acplt/lifeCycleEntry/LifeCycleEntry" , "/acplt/lifeCycleEntry/LifeCycleArchive" , "/acplt/propertyValueStatement/PropertyValueStatement" , "/acplt/propertyValueStatement/CarrierId" , "/acplt/propertyValueStatement/PropertyId" , "/acplt/propertyValueStatement/ExpressionLogic" , "/acplt/propertyValueStatement/ExpressionSemantic" , "/acplt/propertyValueStatement/View" , "/acplt/propertyValueStatement/Visibility" , "/acplt/propertyValueStatement/PropertyValueStatementList" , "/acplt/propertyValueStatement/MatchPVSRA" , "/acplt/propertyValueStatement/MatchPVSLRA" , "/acplt/propertyValueStatement/PVSGenerator" , "/acplt/propertyValueStatement/HMIHelperPVSL" , "/acplt/propertyValueStatement/modelmanager" , "/acplt/MessageSys/MsgDelivery" , "/acplt/MessageSys/Message" , "/acplt/MessageSys/inbox" , "/acplt/MessageSys/msgIdentificator" , "/acplt/MessageSys/msgHandler" , "/acplt/ksapi/createObject" , "/acplt/ksapi/deleteObject" , "/acplt/ksapi/getVar" , "/acplt/ksapi/setVar" , "/acplt/ksapi/getEPidentifiers" , "/acplt/ksapi/getEP" , "/acplt/ksapi/Variable" , "/acplt/ksapi/renameObject" , "/acplt/ksapi/linkObject" , "/acplt/ksapi/unlinkObject" , "/acplt/openAASDiscoveryServer/Security" , "/acplt/openAASDiscoveryServer/Registration" , "/acplt/openAASDiscoveryServer/Search" , "/acplt/openAASDiscoveryServer/ComponentManagerDS" , "/acplt/openAASDiscoveryServer/DiscoveryServer" , "/acplt/openAASDiscoveryServer/ComponentManagerTC" , "/acplt/openAASDiscoveryServer/TestClient" , "/acplt/openaas/Folder" , "/acplt/openaas/SubModel" , "/acplt/openaas/AASComponentManager" , "/acplt/openaas/aas" , "/acplt/openaas/InterfaceDiscoveryServer" , "/acplt/openaas/AASConvertListType" , "/acplt/openaas/modelmanager" , "/acplt/openaas/simpleMessageCreator" , "/acplt/DSServices/DSRegistrationServiceType1" , "/acplt/DSServices/DSUnregistrationServiceType1" , "/acplt/DSServices/DSSearchServiceType1" , "/acplt/DSServices/DSSearchServiceType2" , "/acplt/DSServices/DSSecurityServiceType1" , "/acplt/Databases/SQLite3" , "/acplt/cshmi/Group" , "/acplt/cshmi/TemplateDefinition" , "/acplt/cshmi/csContainer" , "/acplt/cshmi/Template" , "/acplt/cshmi/Line" , "/acplt/cshmi/Rectangle" , "/acplt/cshmi/Circle" , "/acplt/cshmi/Ellipse" , "/acplt/cshmi/Polyline" , "/acplt/cshmi/Polygon" , "/acplt/cshmi/Path" , "/acplt/cshmi/Text" , "/acplt/cshmi/Image" , "/acplt/cshmi/Blackbox" , "/acplt/cshmi/GetValue" , "/acplt/cshmi/SetValue" , "/acplt/cshmi/SetConcatValue" , "/acplt/cshmi/SetMathValue" , "/acplt/cshmi/TranslationSource" , "/acplt/cshmi/IfThenElse" , "/acplt/cshmi/ChildrenIterator" , "/acplt/cshmi/InstantiateTemplate" , "/acplt/cshmi/RenameObject" , "/acplt/cshmi/CreateObject" , "/acplt/cshmi/DeleteObject" , "/acplt/cshmi/LinkObjects" , "/acplt/cshmi/UnlinkObjects" , "/acplt/cshmi/RoutePolyline" , "/acplt/cshmi/RebuildObject" , "/acplt/cshmi/Vibrate" , "/acplt/cshmi/debuggingbreakpoint" , "/acplt/cshmi/Compare" , "/acplt/cshmi/CompareIteratedChild" , "/acplt/cshmi/Confirm" , "/acplt/cshmi/ClientEvent" , "/acplt/cshmi/OperatorEvent" , "/acplt/cshmi/TimeEvent" , "/acplt/cshmi/downloadApplication"};
-      associations[22] : OUTPUT STRING = {"/acplt/ov/containment" , "/acplt/ov/instantiation" , "/acplt/ov/inheritance" , "/acplt/ov/parentrelationship" , "/acplt/ov/childrelationship" , "/acplt/ov/construction" , "/acplt/ov/embedment" , "/acplt/ksbase/AssocComTaskList" , "/acplt/ksbase/AssocChannelClientHandler" , "/acplt/ksbase/AssocChannelDataHandler" , "/acplt/ksbase/AssocCurrentChannel" , "/acplt/ksbase/AssocClientToTicketGenerator" , "/acplt/TCPbind/AssocSpecificClientHandler" , "/acplt/fb/variables" , "/acplt/fb/tasklist" , "/acplt/fb/inputconnections" , "/acplt/fb/outputconnections" , "/acplt/MessageSys/MsgDelivery2CurrentMessage" , "/acplt/MessageSys/MsgDelivery2Message" , "/acplt/MessageSys/Message2Channel" , "/acplt/MessageSys/SendExtension2Message" , "/acplt/ksapi/operationToVariable"};
-      instanceCount : OUTPUT UINT = 1538;
-      database_fragmentation : OUTPUT UINT = 0;
-      database_free : OUTPUT UINT = 49237424;
-      database_name : OUTPUT STRING = "/home/ubuntu/AcpltDevelopmentKit/acplt/servers/MANAGER/db.ovd";
-      database_size : OUTPUT UINT = 50003968;
+      libraries[16] : OUTPUT STRING = {"/acplt/ov" , "/acplt/ksbase" , "/acplt/TCPbind" , "/acplt/ksxdr" , "/acplt/kshttp" , "/acplt/fb" , "/acplt/DSServices" , "/acplt/ksapi" , "/acplt/MessageSys" , "/acplt/openAASDiscoveryServer" , "/acplt/Databases" , "/acplt/cshmi" , "/acplt/identification" , "/acplt/lifeCycleEntry" , "/acplt/openaas" , "/acplt/propertyValueStatement"};
+      classes[137] : OUTPUT STRING = {"/acplt/ov/domain" , "/acplt/ov/library" , "/acplt/ksbase/RootComTask" , "/acplt/ksbase/ServerRep" , "/acplt/ksbase/Manager" , "/acplt/ksbase/NoneTicketAuthenticator" , "/acplt/ksbase/NoneTicketGenerator" , "/acplt/TCPbind/TCPChannel" , "/acplt/TCPbind/aresWorker" , "/acplt/TCPbind/TCPListener" , "/acplt/ksxdr/xdrIdentificator" , "/acplt/ksxdr/xdrClientHandler" , "/acplt/ksxdr/xdrSimpleTicketAuthenticator" , "/acplt/ksxdr/xdrManagerCom" , "/acplt/ksxdr/xdrClient" , "/acplt/ksxdr/PMAskList" , "/acplt/kshttp/httpIdentificator" , "/acplt/kshttp/httpclienthandler" , "/acplt/kshttp/getvarpushhandler" , "/acplt/kshttp/httpSimpleTicketAuthenticator" , "/acplt/kshttp/httpManagerCom" , "/acplt/kshttp/httpClient" , "/acplt/kshttp/genericHttpClient" , "/acplt/kshttp/authenticatedsession" , "/acplt/kshttp/staticfile" , "/acplt/fb/dbinfoclass" , "/acplt/fb/task" , "/acplt/fb/connection" , "/acplt/fb/functionchart" , "/acplt/fb/boolport" , "/acplt/fb/intport" , "/acplt/fb/uintport" , "/acplt/fb/singleport" , "/acplt/fb/doubleport" , "/acplt/fb/timeport" , "/acplt/fb/timespanport" , "/acplt/fb/stringport" , "/acplt/fb/anyport" , "/acplt/fb/boolvecport" , "/acplt/fb/intvecport" , "/acplt/fb/uintvecport" , "/acplt/fb/singlevecport" , "/acplt/fb/doublevecport" , "/acplt/fb/timevecport" , "/acplt/fb/timespanvecport" , "/acplt/fb/stringvecport" , "/acplt/fb/controlchart" , "/acplt/ksapi/createObject" , "/acplt/ksapi/deleteObject" , "/acplt/ksapi/getVar" , "/acplt/ksapi/setVar" , "/acplt/ksapi/getEPidentifiers" , "/acplt/ksapi/getEP" , "/acplt/ksapi/Variable" , "/acplt/ksapi/renameObject" , "/acplt/ksapi/linkObject" , "/acplt/ksapi/unlinkObject" , "/acplt/MessageSys/MsgDelivery" , "/acplt/MessageSys/Message" , "/acplt/MessageSys/inbox" , "/acplt/MessageSys/msgIdentificator" , "/acplt/MessageSys/msgHandler" , "/acplt/openAASDiscoveryServer/Security" , "/acplt/openAASDiscoveryServer/Registration" , "/acplt/openAASDiscoveryServer/Search" , "/acplt/openAASDiscoveryServer/ComponentManagerDS" , "/acplt/openAASDiscoveryServer/DiscoveryServer" , "/acplt/openAASDiscoveryServer/ComponentManagerTC" , "/acplt/openAASDiscoveryServer/TestClient" , "/acplt/DSServices/DSRegistrationServiceType1" , "/acplt/DSServices/DSUnregistrationServiceType1" , "/acplt/DSServices/DSSearchServiceType1" , "/acplt/DSServices/DSSearchServiceType2" , "/acplt/DSServices/DSSecurityServiceType1" , "/acplt/Databases/SQLite3" , "/acplt/cshmi/Group" , "/acplt/cshmi/TemplateDefinition" , "/acplt/cshmi/csContainer" , "/acplt/cshmi/Template" , "/acplt/cshmi/Line" , "/acplt/cshmi/Rectangle" , "/acplt/cshmi/Circle" , "/acplt/cshmi/Ellipse" , "/acplt/cshmi/Polyline" , "/acplt/cshmi/Polygon" , "/acplt/cshmi/Path" , "/acplt/cshmi/Text" , "/acplt/cshmi/Image" , "/acplt/cshmi/Blackbox" , "/acplt/cshmi/GetValue" , "/acplt/cshmi/SetValue" , "/acplt/cshmi/SetConcatValue" , "/acplt/cshmi/SetMathValue" , "/acplt/cshmi/TranslationSource" , "/acplt/cshmi/IfThenElse" , "/acplt/cshmi/ChildrenIterator" , "/acplt/cshmi/InstantiateTemplate" , "/acplt/cshmi/RenameObject" , "/acplt/cshmi/CreateObject" , "/acplt/cshmi/DeleteObject" , "/acplt/cshmi/LinkObjects" , "/acplt/cshmi/UnlinkObjects" , "/acplt/cshmi/RoutePolyline" , "/acplt/cshmi/RebuildObject" , "/acplt/cshmi/Vibrate" , "/acplt/cshmi/debuggingbreakpoint" , "/acplt/cshmi/Compare" , "/acplt/cshmi/CompareIteratedChild" , "/acplt/cshmi/Confirm" , "/acplt/cshmi/ClientEvent" , "/acplt/cshmi/OperatorEvent" , "/acplt/cshmi/TimeEvent" , "/acplt/cshmi/downloadApplication" , "/acplt/identification/Identification" , "/acplt/lifeCycleEntry/LifeCycleEntry" , "/acplt/lifeCycleEntry/LifeCycleArchive" , "/acplt/propertyValueStatement/PropertyValueStatement" , "/acplt/propertyValueStatement/CarrierId" , "/acplt/propertyValueStatement/PropertyId" , "/acplt/propertyValueStatement/ExpressionLogic" , "/acplt/propertyValueStatement/ExpressionSemantic" , "/acplt/propertyValueStatement/View" , "/acplt/propertyValueStatement/Visibility" , "/acplt/propertyValueStatement/PropertyValueStatementList" , "/acplt/propertyValueStatement/MatchPVSRA" , "/acplt/propertyValueStatement/MatchPVSLRA" , "/acplt/propertyValueStatement/PVSGenerator" , "/acplt/propertyValueStatement/HMIHelperPVSL" , "/acplt/propertyValueStatement/modelmanager" , "/acplt/openaas/Folder" , "/acplt/openaas/SubModel" , "/acplt/openaas/AASComponentManager" , "/acplt/openaas/aas" , "/acplt/openaas/InterfaceDiscoveryServer" , "/acplt/openaas/AASConvertListType" , "/acplt/openaas/modelmanager" , "/acplt/openaas/simpleMessageCreator"};
+      associations[22] : OUTPUT STRING = {"/acplt/ov/containment" , "/acplt/ov/instantiation" , "/acplt/ov/inheritance" , "/acplt/ov/parentrelationship" , "/acplt/ov/childrelationship" , "/acplt/ov/construction" , "/acplt/ov/embedment" , "/acplt/ksbase/AssocComTaskList" , "/acplt/ksbase/AssocChannelClientHandler" , "/acplt/ksbase/AssocChannelDataHandler" , "/acplt/ksbase/AssocCurrentChannel" , "/acplt/ksbase/AssocClientToTicketGenerator" , "/acplt/TCPbind/AssocSpecificClientHandler" , "/acplt/fb/variables" , "/acplt/fb/tasklist" , "/acplt/fb/inputconnections" , "/acplt/fb/outputconnections" , "/acplt/ksapi/operationToVariable" , "/acplt/MessageSys/MsgDelivery2CurrentMessage" , "/acplt/MessageSys/MsgDelivery2Message" , "/acplt/MessageSys/Message2Channel" , "/acplt/MessageSys/SendExtension2Message"};
+      instanceCount : OUTPUT UINT = 1529;
+      database_fragmentation : OUTPUT UINT = 6;
+      database_free : OUTPUT UINT = 9237792;
+      database_name : OUTPUT STRING = "../../servers/MANAGER/db.ovd";
+      database_size : OUTPUT UINT = 10002432;
       database_started : OUTPUT BOOL = TRUE;
-      database_used : OUTPUT UINT = 766544;
+      database_used : OUTPUT UINT = 764640;
       name : OUTPUT STRING = "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
       ks_version : OUTPUT STRING = "";
       libov_version : OUTPUT STRING = "2.0.0";
       semantic_flags[32] : OUTPUT STRING = {"" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , ""};
       server_description : OUTPUT STRING = "generic ACPLT/OV server";
       server_name : OUTPUT STRING = "MANAGER";
-      server_time : OUTPUT TIME = 2018-07-30 13:44:59.204541;
+      server_time : OUTPUT TIME = 2018-08-06 14:57:59.601506;
       server_version : OUTPUT STRING = "1.3.2";
+      mutex_on : OUTPUT BOOL = FALSE;
       server_run : INPUT BOOL = TRUE;
-      serverPID : OUTPUT UINT = 18124;
-      startup_time : OUTPUT TIME = 2018-07-30 13:44:34.259300;
+      serverPID : OUTPUT UINT = 9064;
+      startup_time : OUTPUT TIME = 2018-08-06 14:57:37.493924;
       running_db_backup : OUTPUT BOOL = FALSE;
       write_db_backup : OUTPUT BOOL = FALSE;
       ov_time_offset : INPUT TIME_SPAN = 0.000000;
@@ -11739,6 +11771,6 @@ return jQuery;
       maxhierarchydepth : INPUT UINT = 64;
       ov_scheduler_allowedjitter : INPUT UINT = 0;
       ov_scheduler_numexceeds : OUTPUT UINT = 0;
-      cmdline_options : OUTPUT STRING = "CONFDIR=/home/ubuntu/AcpltDevelopmentKit/acplt/servers/MANAGER/";
+      cmdline_options : OUTPUT STRING = "CONFDIR=../../servers/MANAGER/";
     END_VARIABLE_VALUES;
  END_INSTANCE;
