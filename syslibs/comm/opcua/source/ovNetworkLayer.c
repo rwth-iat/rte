@@ -260,11 +260,14 @@ OV_DLLFNCEXPORT size_t opcua_ovNetworkLayer_listen(
 		}
 	}
 
-	for(closeConnCounter = 0; closeConnCounter < this->v_connsToCloseCount; closeConnCounter++)
-	{
-		if(pConnection->v_connection == this->v_connsToClose[closeConnCounter])
-			UA_Server_removeConnection(server, pConnection->v_connection);
-		FreeConnection(server, this->v_connsToClose[closeConnCounter]);
+	for(closeConnCounter = 0; closeConnCounter < this->v_connsToCloseCount; closeConnCounter++){
+		Ov_ForEachChild(opcua_networkLayerToConnection, this, pConnection){
+			if(pConnection->v_connection == this->v_connsToClose[closeConnCounter]){
+				UA_Server_removeConnection(server, pConnection->v_connection);
+			}
+
+			FreeConnection(server, this->v_connsToClose[closeConnCounter]);
+		}
 	}
 
 	Ov_HeapFree(this->v_connsToClose);
