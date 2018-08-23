@@ -90,6 +90,8 @@ typedef void (*UA_Nodestore_releaseNode)(void *nodestoreContext, const UA_Node *
 typedef UA_Connection* UA_ConnectionPTR;       
 typedef UA_Connection** UA_ConnectionPTRPTR;
 typedef UA_Server* OV_PTR_UA_Server;
+typedef UA_ServerConfig* UA_ServerConfigPTR;
+typedef UA_ServerNetworkLayer* UA_ServerNetworkLayerPTR; 
 	
 //typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
 

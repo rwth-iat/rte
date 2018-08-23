@@ -34,11 +34,11 @@ LIBRARY opcua
             ApplicationName    :    STRING
                 HAS_ACCESSORS
                 INITIALVALUE    =    "acplt-opcua";
-            serverConfig        :    C_TYPE    <UA_ServerConfig>
+            serverConfig        :    C_TYPE    <UA_ServerConfigPTR>
                 COMMENT =    "Stack-specific representation of server configuration";
             serverData            :    C_TYPE    <OV_PTR_UA_Server>
                 COMMENT    =    "Stack-specific representation of server data";
-            networkLayerOv        :    C_TYPE    <UA_ServerNetworkLayer>
+            networkLayerOv        :    C_TYPE    <UA_ServerNetworkLayerPTR>
                 COMMENT    =    "Network layer within th ov-server";
            namespace          : STRING;
            namespaceNames[]     : STRING;

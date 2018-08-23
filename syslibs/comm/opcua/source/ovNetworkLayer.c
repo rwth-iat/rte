@@ -57,13 +57,13 @@ OV_INSTPTR_opcua_ovNetworkLayer getOvNetworkLayer(){
 	return pOVNetworkLayer;
 }
 
-UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port) {
+UA_ServerNetworkLayer* ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port) {
     OV_INSTPTR_opcua_ovNetworkLayer	pNetworkLayer	=	NULL;
     OV_VTBLPTR_opcua_ovNetworkLayer	pVtblNetworkLayer	=	NULL;
     OV_RESULT							result;
 	OV_STRING	tempstr = NULL;
-    UA_ServerNetworkLayer nl;
-    memset(&nl, 0, sizeof(UA_ServerNetworkLayer));
+	UA_ServerNetworkLayer* nl = NULL;
+	nl = UA_calloc(1, sizeof(UA_ServerNetworkLayer));
 
     result = Ov_CreateIDedObject(opcua_ovNetworkLayer, pNetworkLayer, Ov_StaticPtrCast(ov_domain, Ov_GetFirstChild(ov_instantiation, pclass_opcua_uaServer)), "ovNetworkLayer");
     if(Ov_Fail(result)){
@@ -82,27 +82,15 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     	pNetworkLayer->v_discoveryUrlInternal = UA_String_fromChars(tempstr);
     	ov_string_setvalue(&tempstr, NULL);
     }
-    //UA_String_copy(&(pNetworkLayer->v_discoveryUrlInternal), &nl.discoveryUrl);
 
-//    pNetworkLayer->v_messageBuffer = (UA_ByteString){.length = conf.maxMessageSize, .data = Ov_HeapMalloc(conf.maxMessageSize)};
-//    if(!(pNetworkLayer->v_messageBuffer.data)){
-//    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for message buffer.");
-//    	return nl;
-//    }
-//    UA_ByteString_newMembers(&(pNetworkLayer->v_sendBuffer), conf.maxMessageSize);
-//    if(!pNetworkLayer->v_sendBuffer.data){
-//    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for send buffer.");
-//    	return nl;
-//    }
     pNetworkLayer->v_localConfig = conf;
     Ov_GetVTablePtr(opcua_ovNetworkLayer, pVtblNetworkLayer, pNetworkLayer);
-    nl.handle = pNetworkLayer;
-    nl.start = pVtblNetworkLayer->m_start;
-    nl.listen = pVtblNetworkLayer->m_listen;
- //   nl.getJobs = pVtblNetworkLayer->m_getJobs;
-    nl.stop = pVtblNetworkLayer->m_stop;
-    nl.deleteMembers = pVtblNetworkLayer->m_delete;
-    nl.discoveryUrl = pNetworkLayer->v_discoveryUrlInternal;
+    nl->handle = pNetworkLayer;
+    nl->start = pVtblNetworkLayer->m_start;
+    nl->listen = pVtblNetworkLayer->m_listen;
+    nl->stop = pVtblNetworkLayer->m_stop;
+    nl->deleteMembers = pVtblNetworkLayer->m_delete;
+    nl->discoveryUrl = pNetworkLayer->v_discoveryUrlInternal;
     return nl;
 }
 
@@ -188,11 +176,9 @@ OV_DLLFNCEXPORT void opcua_ovNetworkLayer_shutdown(
     /*    
     *   local variables
     */
-//    OV_INSTPTR_opcua_ovNetworkLayer pinst = Ov_StaticPtrCast(opcua_ovNetworkLayer, pobj);
 
     /* do what */
     pOVNetworkLayer = NULL;
-    // UA_String_delete(&(pOVNetworkLayer->v_discoveryUrlInternal));
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
 

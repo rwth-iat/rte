@@ -200,28 +200,34 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	}
 
 	logger = ov_UAlogger_new();
-	pinst->v_serverConfig.logger = logger;
-	pinst->v_serverConfig.serverCertificate = loadCertificate();
+	pinst->v_serverConfig->logger = logger;
+	pinst->v_serverConfig->serverCertificate = loadCertificate();
 	pinst->v_networkLayerOv = ServerNetworkLayerOV_new(UA_ConnectionConfig_default, port);
-	pinst->v_serverConfig.networkLayers = &(pinst->v_networkLayerOv);
-	pinst->v_serverConfig.networkLayersSize = 1;
-	pinst->v_serverData = UA_Server_new(&pinst->v_serverConfig);
+	for(size_t i = 0; i < pinst->v_serverConfig->networkLayersSize; ++i)
+		pinst->v_serverConfig->networkLayers[i].deleteMembers(&pinst->v_serverConfig->networkLayers[i]);
+	UA_free(pinst->v_serverConfig->networkLayers);
+	pinst->v_serverConfig->networkLayers = NULL;
+	pinst->v_serverConfig->networkLayersSize = 0;
+	pinst->v_serverConfig->networkLayers = pinst->v_networkLayerOv;
+	pinst->v_serverConfig->networkLayersSize = 1;
+	pinst->v_serverData = UA_Server_new(pinst->v_serverConfig);
 
 	Ov_SetDynamicVectorLength(&opcua_pUaServer->v_namespaceNames, 2, STRING);
 	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[0], "http://opcfoundation.org/UA/");
 
 	OV_STRING tmpName = NULL;
-	copyOPCUAStringToOV(pinst->v_serverConfig.applicationDescription.applicationUri, &tmpName);
+	copyOPCUAStringToOV(pinst->v_serverConfig->applicationDescription.applicationUri, &tmpName);
 	ov_string_setvalue(&opcua_pUaServer->v_namespaceNames.value[1], tmpName);
 	ov_string_setvalue(&tmpName, NULL);
 	ov_string_setvalue(&pinst->v_namespace,OV_UA_NAMESPACEURI);
 
 
 	pinst->v_namespaceIndex = UA_UINT16_MAX ;
-	pinst->v_serverConfig.nodestore = *opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
+	//pinst->v_serverConfig->nodestore.deleteNodestore(pinst->v_serverConfig->nodestore.context);
+	//pinst->v_serverConfig->nodestore = *opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
 
+	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
 	UA_UInt32 temp = UA_Server_addNamespace(pinst->v_serverData, OV_UA_NAMESPACEURI);
-
 	if(!temp){
 		ov_logfile_error("%s - init: could not add ov-namespace to ua server", pinst->v_identifier);
 	}
@@ -249,14 +255,15 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 
 		UA_Server_run_startup(opcua_pUaServer->v_serverData);
 	}
+	UA_String_deleteMembers(&tmpNamespaceName);
 	return;
 
 }
 
 static void opcua_uaServer_stopServer(OV_INSTPTR_opcua_uaServer pinst){
 	UA_Server_run_shutdown(opcua_pUaServer->v_serverData);
-	UA_ByteString_deleteMembers(&pinst->v_serverConfig.serverCertificate);
-	pinst->v_networkLayerOv.deleteMembers(&(pinst->v_networkLayerOv));
+	UA_ByteString_deleteMembers(&pinst->v_serverConfig->serverCertificate);
+	pinst->v_networkLayerOv->deleteMembers(pinst->v_networkLayerOv);
 	UA_Server_delete(pinst->v_serverData);
 
 	//UA_Namespace_deleteMembers(&(pinst->v_namespace));
@@ -275,12 +282,12 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginEnableAnonymous_set(
 ) {
 	UA_UserTokenType type= UA_USERTOKENTYPE_ANONYMOUS;
     //accessControl.enableAnonymousLogin gibt es nicht mehr
-	if(type != pobj->v_serverConfig.accessControl.userTokenPolicies->tokenType){
+	if(type != pobj->v_serverConfig->accessControl.userTokenPolicies->tokenType){
 		if(pobj->v_objectstate >= OV_OS_STARTED){
     		opcua_uaServer_stopServer(pobj);
     	}
     	pobj->v_LoginEnableAnonymous = value;
-    	pobj->v_serverConfig.accessControl.userTokenPolicies->tokenType = type;
+    	pobj->v_serverConfig->accessControl.userTokenPolicies->tokenType = type;
     	if(pobj->v_objectstate >= OV_OS_STARTED){
     		opcua_uaServer_initServer(pobj);
     	}
@@ -352,12 +359,12 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginEnableUsernamePassword_set(
     const OV_BOOL  value
 ) {
 	UA_UserTokenType type = UA_USERTOKENTYPE_USERNAME;
-	if(type != pobj->v_serverConfig.accessControl.userTokenPolicies->tokenType){
+	if(type != pobj->v_serverConfig->accessControl.userTokenPolicies->tokenType){
 		if(pobj->v_objectstate >= OV_OS_STARTED){
 			opcua_uaServer_stopServer(pobj);
 		}
 		pobj->v_LoginEnableUsernamePassword = value;
-		pobj->v_serverConfig.accessControl.userTokenPolicies->tokenType = type;
+		pobj->v_serverConfig->accessControl.userTokenPolicies->tokenType = type;
 		if(pobj->v_objectstate >= OV_OS_STARTED){
 			opcua_uaServer_initServer(pobj);
 		}
@@ -493,8 +500,8 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_ApplicationURI_set(
 		if(Ov_Fail(result)){
 			return result;
 		}
-		pobj->v_serverConfig.applicationDescription.applicationUri.length = ov_string_getlength(pobj->v_ApplicationURI);
-		pobj->v_serverConfig.applicationDescription.applicationUri.data = (UA_Byte*)pobj->v_ApplicationURI;
+		pobj->v_serverConfig->applicationDescription.applicationUri.length = ov_string_getlength(pobj->v_ApplicationURI);
+		pobj->v_serverConfig->applicationDescription.applicationUri.data = (UA_Byte*)pobj->v_ApplicationURI;
 		if(pobj->v_objectstate >= OV_OS_STARTED){
 			opcua_uaServer_initServer(pobj);
 		}
@@ -521,8 +528,8 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_ApplicationName_set(
 		if(Ov_Fail(result)){
 			return result;
 		}
-		pobj->v_serverConfig.applicationDescription.applicationName.text.length = ov_string_getlength(pobj->v_ApplicationName);
-		pobj->v_serverConfig.applicationDescription.applicationName.text.data = (UA_Byte*)pobj->v_ApplicationName;
+
+		pobj->v_serverConfig->applicationDescription.applicationName.text = UA_STRING_ALLOC(pobj->v_ApplicationName);
 		if(pobj->v_objectstate >= OV_OS_STARTED){
 			opcua_uaServer_initServer(pobj);
 		}
@@ -590,9 +597,10 @@ OV_DLLFNCEXPORT void opcua_uaServer_destructor(
     /*
     *   local variables
     */
-	//OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
+	OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
     /* do what */
 
+    UA_ServerConfig_delete(pinst->v_serverConfig);
     /* destroy object */
 	ksbase_ComTask_destructor(pobj);
 
@@ -617,7 +625,7 @@ OV_DLLFNCEXPORT void opcua_uaServer_startup(
     /*	initialize config struct as standard and copy in variables from the server object	*/
 
 
-    pinst->v_serverConfig = *UA_ServerConfig_new_default();  //UA_ServerConfig_standart zu *UA_ServerConfig_new_default()
+    pinst->v_serverConfig = UA_ServerConfig_new_default();  //UA_ServerConfig_standart zu *UA_ServerConfig_new_default()
     /* TODO: New AccessControl
     pinst->v_serverConfig.enableAnonymousLogin = pinst->v_LoginEnableAnonymous;
     pinst->v_serverConfig.enableUsernamePasswordLogin = pinst->v_LoginEnableUsernamePassword;
@@ -634,10 +642,10 @@ OV_DLLFNCEXPORT void opcua_uaServer_startup(
     	pinst->v_serverConfig.usernamePasswordLogins[iterator].password.length = ov_string_getlength(pinst->v_LoginPasswords.value[iterator]);
     }
     */
-    pinst->v_serverConfig.applicationDescription.applicationName.text.length = ov_string_getlength(pinst->v_ApplicationName);
-    pinst->v_serverConfig.applicationDescription.applicationName.text.data = (UA_Byte*)pinst->v_ApplicationName;
-    pinst->v_serverConfig.applicationDescription.applicationUri.length = ov_string_getlength(pinst->v_ApplicationURI);
-    pinst->v_serverConfig.applicationDescription.applicationUri.data = (UA_Byte*)pinst->v_ApplicationURI;
+    UA_LocalizedText_deleteMembers(&pinst->v_serverConfig->applicationDescription.applicationName);
+    pinst->v_serverConfig->applicationDescription.applicationName = UA_LOCALIZEDTEXT_ALLOC("en", pinst->v_ApplicationName);
+    UA_String_deleteMembers(&pinst->v_serverConfig->applicationDescription.applicationUri);
+    pinst->v_serverConfig->applicationDescription.applicationUri = UA_STRING_ALLOC(pinst->v_ApplicationURI);
     /*	initialize serverConfig	*/
     UA_ServerRun = TRUE;
     opcua_uaServer_initServer(pinst);
@@ -656,6 +664,7 @@ OV_DLLFNCEXPORT void opcua_uaServer_shutdown(
     UA_ServerRun = FALSE;
     opcua_uaServer_stopServer(pinst);
     opcua_pUaServer = NULL;
+
 
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
@@ -735,7 +744,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_uaServer_addInformationModel(OV_STRING *name
 			continue;
 		if(UA_Server_addReference(opcua_pUaServer->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
 				//UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(namespace[i]->index, StartFolder[i]), true) != UA_STATUSCODE_GOOD){
-				// TODO namespaceIndex via NodestoreSwitch -> Übergabeparameter wegnehmen, für jeden Nodestore, jeweiligen Index heraussuchen
+				// TODO namespaceIndex via NodestoreSwitch -> ï¿½bergabeparameter wegnehmen, fï¿½r jeden Nodestore, jeweiligen Index heraussuchen
 				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(namespaceIndex, StartFolder[i]), true) != UA_STATUSCODE_GOOD){
 			ov_logfile_error("%s - init: could not create reference to %s-namespace", opcua_pUaServer->v_identifier, opcua_pUaServer->v_namespaceNames.value[i]);
 		}

@@ -15,14 +15,14 @@
 MODEL_DIR         = ../../model/
 SOURCE_DIR        = ../../source/
 INCLUDE_DIR       = ../../include/
-ROOT_DIR          = C:/Users/vitus/Documents/AcpltDevelopmentKit/acplt/
+ROOT_DIR          = /home/vitus/AcpltDevelopmentKit/acplt/
 BASE_DIR          = $(ROOT_DIR)
 BASE_INC_DIR      = $(BASE_DIR)system/sysdevbase/ov/include/
 BASE_LIB_DIR      = $(BASE_DIR)system/sysdevbase/ov/lib/
 BASE_MODEL_DIR    = $(BASE_DIR)system/sysdevbase/ov/model/
 BIN_DIR           = $(ROOT_DIR)system/sysbin/
-GIT_DIR           = /
-USER_DIR          = C:/Users/vitus/Documents/AcpltDevelopmentKit/acplt/dev/
+GIT_DIR           = /home/vitus/AcpltDevelopmentKit/acplt/git/
+USER_DIR          = /home/vitus/AcpltDevelopmentKit/acplt/dev/
 USERLIB_DIR       = $(ROOT_DIR)system/addonlibs/
 SYS_DIR           = $(BASE_DIR)system/sysdevbase/
 SYSLIB_DIR        = $(ROOT_DIR)system/syslibs/
