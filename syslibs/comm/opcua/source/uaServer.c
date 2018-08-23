@@ -220,9 +220,9 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	pinst->v_namespaceIndex = UA_UINT16_MAX ;
 	pinst->v_serverConfig.nodestore = *opcua_nodeStoreFunctions_ovNodeStoreInterface2New();
 
-	UA_String tmpNamespaceName = UA_String_fromChars(OV_UA_NAMESPACEURI);
 	UA_UInt32 temp = UA_Server_addNamespace(pinst->v_serverData, OV_UA_NAMESPACEURI);
-	if(UA_Server_getNamespaceByName(pinst->v_serverData, tmpNamespaceName, &temp) != UA_STATUSCODE_GOOD){
+
+	if(!temp){
 		ov_logfile_error("%s - init: could not add ov-namespace to ua server", pinst->v_identifier);
 	}
 	else
