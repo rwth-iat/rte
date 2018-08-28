@@ -202,6 +202,7 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	logger = ov_UAlogger_new();
 	pinst->v_serverConfig->logger = logger;
 	pinst->v_serverConfig->serverCertificate = loadCertificate();
+	UA_free(pinst->v_networkLayerOv);
 	pinst->v_networkLayerOv = ServerNetworkLayerOV_new(UA_ConnectionConfig_default, port);
 	for(size_t i = 0; i < pinst->v_serverConfig->networkLayersSize; ++i)
 		pinst->v_serverConfig->networkLayers[i].deleteMembers(&pinst->v_serverConfig->networkLayers[i]);
