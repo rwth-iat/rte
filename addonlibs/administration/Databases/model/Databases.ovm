@@ -32,4 +32,33 @@ LIBRARY Databases
 		END_OPERATIONS;
 	END_CLASS;
 	
+	CLASS SQLC : CLASS openAASDiscoveryServer/DBWrapper
+		IS_INSTANTIABLE;
+		VARIABLES
+			table : STRING FLAGS = "i" INITIALVALUE = "";
+			ip	  : STRING FLAGS = "i" INITIALVALUE = "";
+			cert  : STRING FLAGS = "i" INITIALVALUE = "";
+			query : STRING HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE = "";
+			io	  : BOOL HAS_SET_ACCESSOR FLAGS = "i"   INITIALVALUE = FALSE;
+			db    : C_TYPE <SQLC_DB_HANDLE>;
+			tableRows[] : UINT FLAGS = "o";
+			dbNumberOfTables: UINT FLAGS = "h";
+			print : BOOL HAS_SET_ACCESSOR FLAGS = "i" INITIALVALUE = FALSE;
+			precision : DOUBLE FLAGS = "i";			
+		END_VARIABLES;
+		OPERATIONS
+            shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+            startup : C_FUNCTION <OV_FNC_STARTUP>;
+            connect     : C_FUNCTION <DS_FNC_CONNECT>;
+            disconnect  : C_FUNCTION <DS_FNC_DISCONNECT>;
+            insertData  : C_FUNCTION <DS_FNC_INSERTDATA>;
+            selectData  : C_FUNCTION <DS_FNC_SELECTDATA>;
+            deleteData	: C_FUNCTION <DS_FNC_DELETEDATA>;
+            updateData  : C_FUNCTION <DS_FNC_UPDATEDATA>;
+            getComponentID : C_FUNCTION <DS_FNC_GETCOMPONENTID>;
+            getFittingStatements : C_FUNCTION <DS_FNC_GETFITTINGSTATEMENTS>;
+            execQuery   : C_FUNCTION <DS_FNC_EXECQUERY>;
+		END_OPERATIONS;
+	END_CLASS;
+	
 END_LIBRARY;

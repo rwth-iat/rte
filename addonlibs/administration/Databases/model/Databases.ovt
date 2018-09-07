@@ -7,5 +7,6 @@
 	Define your data types here. 
 */
 typedef sqlite3* SQLITE3_DB_HANDLE;
+typedef struct table* SQLC_DB_HANDLE;
 
 #endif

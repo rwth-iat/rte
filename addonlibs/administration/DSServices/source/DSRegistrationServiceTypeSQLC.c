@@ -3,7 +3,7 @@
 *
 *   FILE
 *   ----
-*   DSRegistrationServiceType1.c
+*   DSRegistrationServiceTypeSQLC.c
 *
 *   History
 *   -------
@@ -40,7 +40,7 @@ struct statement{
 	OV_STRING subModel;
 };
 
-OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(OV_INSTPTR_openAASDiscoveryServer_DSService pinst, const json_data JsonInput, OV_STRING *JsonOutput, OV_STRING *errorMessage) {
+OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceTypeSQLC_executeService(OV_INSTPTR_openAASDiscoveryServer_DSService pinst, const json_data JsonInput, OV_STRING *JsonOutput, OV_STRING *errorMessage) {
     /*    
     *   local variables
     */
@@ -70,7 +70,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 	jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[1]+1], &securityKey);
 
 	// check securityKey
-	OV_RESULT resultOV = checkSecurityKey(pinst->v_DBWrapperUsed, componentID, securityKey);
+	OV_RESULT resultOV = checkSecurityKeySQLC(pinst->v_DBWrapperUsed, componentID, securityKey);
 	if (resultOV){
 		ov_string_setvalue(errorMessage, "SecurityKey is not correct");
 		goto FINALIZE;
@@ -129,7 +129,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 	OV_STRING table  = NULL;
 	OV_STRING tmpField = "ComponentID";
 	OV_STRING tmpValue = NULL;
-	ov_string_print(&tmpValue, "'%s'", componentID);
+	ov_string_print(&tmpValue, "%s", componentID);
 	table  = "Endpoints";
 	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "statements_TextBoolean";
@@ -166,12 +166,12 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 	tmpFields[1] = "ProtocolType";
 	tmpFields[2] = "EndpointString";
 	tmpValues[0] = NULL;
-	ov_string_print(&tmpValues[0], "'%s'", componentID);
+	ov_string_print(&tmpValues[0], "%s", componentID);
 	for (OV_UINT i = 0; i < endpointArraySize; i++){
 		tmpValues[1] = NULL;
-		ov_string_print(&tmpValues[1], "'%s'", endpoints[i].protocolType);
+		ov_string_print(&tmpValues[1], "%s", endpoints[i].protocolType);
 		tmpValues[2] = NULL;
-		ov_string_print(&tmpValues[2], "'%s'", endpoints[i].endpointString);
+		ov_string_print(&tmpValues[2], "%s", endpoints[i].endpointString);
 		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFields, 3, tmpValues, 3);
 		ov_string_setvalue(&tmpValues[0], NULL);
 		ov_string_setvalue(&tmpValues[1], NULL);
@@ -202,21 +202,21 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 	for (OV_UINT i = 0; i < statementsArraySize; i++){
 		tmpValuesStatements[0] = NULL;
 		tmpValuesList[0] = NULL;
-		ov_string_print(&tmpValuesStatements[0], "'%s'", componentID);
-		ov_string_print(&tmpValuesList[0], "'%s'", componentID);
+		ov_string_print(&tmpValuesStatements[0], "%s", componentID);
+		ov_string_print(&tmpValuesList[0], "%s", componentID);
 
 		tmpValuesStatements[1] = NULL;
-		ov_string_print(&tmpValuesStatements[1], "'%s'", statements[i].carrierID);
+		ov_string_print(&tmpValuesStatements[1], "%s", statements[i].carrierID);
 		tmpValuesList[1] = NULL;
-		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].carrierID);
+		ov_string_print(&tmpValuesList[1], "%s", statements[i].carrierID);
 		table = "CarrierID";
 		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
 
 		tmpValuesStatements[2] = NULL;
-		ov_string_print(&tmpValuesStatements[2], "'%s'", statements[i].propertyID);
+		ov_string_print(&tmpValuesStatements[2], "%s", statements[i].propertyID);
 		tmpValuesList[1] = NULL;
-		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].propertyID);
+		ov_string_print(&tmpValuesList[1], "%s", statements[i].propertyID);
 		table = "PropertyID";
 		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
@@ -224,23 +224,23 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		tmpValuesList[1] = NULL;
 		tmpValuesStatements[3] = NULL;
 		if (statements[i].expressionSemantic == NULL)
-			ov_string_print(&tmpValuesStatements[3], "''");
+			ov_string_print(&tmpValuesStatements[3], "");
 		else
-			ov_string_print(&tmpValuesStatements[3], "'%s'", statements[i].expressionSemantic);
+			ov_string_print(&tmpValuesStatements[3], "%s", statements[i].expressionSemantic);
 		tmpValuesList[1] = NULL;
 		if (statements[i].expressionSemantic == NULL)
-			ov_string_print(&tmpValuesList[1], "''");
+			ov_string_print(&tmpValuesList[1], "");
 		else
-			ov_string_print(&tmpValuesList[1], "'%s'", statements[i].expressionSemantic);
+			ov_string_print(&tmpValuesList[1], "%s", statements[i].expressionSemantic);
 		table = "ExpressionSemantic";
 		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
 
 		tmpValuesList[1] = NULL;
 		tmpValuesStatements[4] = NULL;
-		ov_string_print(&tmpValuesStatements[4], "'%s'", statements[i].relation);
+		ov_string_print(&tmpValuesStatements[4], "%s", statements[i].relation);
 		tmpValuesList[1] = NULL;
-		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].relation);
+		ov_string_print(&tmpValuesList[1], "%s", statements[i].relation);
 		table = "Relation";
 		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
@@ -248,15 +248,15 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		tmpValuesList[1] = NULL;
 		tmpValuesStatements[5] = NULL;
 		if (statements[i].value == NULL)
-			ov_string_print(&tmpValuesStatements[5], "''");
+			ov_string_print(&tmpValuesStatements[5], "");
 		else
-			ov_string_print(&tmpValuesStatements[5], "'%s'", statements[i].value);
+			ov_string_print(&tmpValuesStatements[5], "%s", statements[i].value);
 
 		tmpValuesList[1] = NULL;
 		tmpValuesStatements[6] = NULL;
-		ov_string_print(&tmpValuesStatements[6], "'%s'", statements[i].subModel);
+		ov_string_print(&tmpValuesStatements[6], "%s", statements[i].subModel);
 		tmpValuesList[1] = NULL;
-		ov_string_print(&tmpValuesList[1], "'%s'", statements[i].subModel);
+		ov_string_print(&tmpValuesList[1], "%s", statements[i].subModel);
 		table = "SubModel";
 		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFieldsList, 2, tmpValuesList, 2);
 		ov_string_setvalue(&tmpValuesList[1], NULL);
@@ -272,7 +272,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
 		for (OV_UINT i = 0; i < 7; i++){
 			ov_string_setvalue(&tmpValuesStatements[i], NULL);
 		}
-		if (resultOV != OV_ERR_OK){
+		if (resultOV != OV_ERR_OK && resultOV != OV_ERR_ALREADYEXISTS){
 			ov_string_setvalue(errorMessage, "Internal Error");
 			ov_logfile_error("Could not insert statements in database");
 			goto FINALIZE;
@@ -305,7 +305,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceType1_executeService(O
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS DSServices_DSRegistrationServiceType1_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS DSServices_DSRegistrationServiceTypeSQLC_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
