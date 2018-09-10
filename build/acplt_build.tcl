@@ -412,7 +412,7 @@ proc build_acplt_mingw {} {
 	#cd $builddir/base/libmpm 
 	#build_cygwin libmpm make -f Makefile
 	cd $builddir/base/ov/build/cygwin
-	build_cygwin ov $make -f makefile
+	build_cygwin ov $make -f makefile CC=mingw32-gcc
 	#cd $builddir/base/acplt_makmak/build/cygwin
 	#build_cygwin acplt_makmak make -f makefile
 	#enabling plt and ks just for fb_dbcommands	
@@ -755,7 +755,7 @@ proc create_release {} {
 	if { $targetOS == "nt" } then {
 		print_msg "Downloading tclsh.exe"
 		cd $releasedir/system/sysbin
-		execute "wget" "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/tclkit/tclkitsh-8.5.8-win32.upx.exe"
+		execute "wget --no-check-certificate" "https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/tclkit/tclkitsh-8.5.8-win32.upx.exe"
 		file copy -force tclkitsh-8.5.8-win32.upx.exe tclsh.exe
 		file delete -force tclkitsh-8.5.8-win32.upx.exe
 	}
