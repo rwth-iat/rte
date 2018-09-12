@@ -324,7 +324,9 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_Registration_getRegistrationMes
 			pvtable->m_executeService(Ov_DynamicPtrCast(openAASDiscoveryServer_DSService, pService), body, &tmpJsonOutput, errorMessage);
 	}
 	if (!*JsonOutput){
-		ov_string_setvalue(errorMessage, "Internal Error");
+		if (pinst->v_UsedDSServicePaths.veclen == 0){
+			ov_string_setvalue(errorMessage, "DSServices not configured");
+		}
 		ov_string_setvalue(JsonOutput, "\"body\"{}");
 		return OV_ERR_GENERIC;
 	}
@@ -360,7 +362,9 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServer_Registration_getUnregistrationM
 			pvtable->m_executeService(Ov_DynamicPtrCast(openAASDiscoveryServer_DSService, pService), body, &tmpJsonOutput, errorMessage);
 	}
 	if (!*JsonOutput){
-		ov_string_setvalue(errorMessage, "Internal Error");
+		if (pinst->v_UsedDSServicePaths.veclen == 0){
+			ov_string_setvalue(errorMessage, "DSServices not configured");
+		}
 		ov_string_setvalue(JsonOutput, "\"body\"{}");
 		return OV_ERR_GENERIC;
 	}
