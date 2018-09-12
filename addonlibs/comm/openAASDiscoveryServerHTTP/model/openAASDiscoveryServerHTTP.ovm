@@ -1,0 +1,38 @@
+#include "ov.ovm"
+#include "kshttp.ovm"
+#include "MessageSys.ovm"
+#include "openaas.ovm"
+#include "openAASDiscoveryServer.ovm"
+
+LIBRARY openAASDiscoveryServerHTTP
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = ""; 
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of openAASDiscoveryServerHTTPExt.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS openAASDiscoveryServerHTTPExt : CLASS kshttp/httpClientHandlerExtension
+		IS_INSTANTIABLE;
+		VARIABLES
+			
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			HandleExtendedRequest	:	C_FUNCTION	<KSHTTP_FNC_HANDLEEXTREQUEST>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;
