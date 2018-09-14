@@ -200,6 +200,7 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 	OV_STRING componentContent = NULL;
 	OV_INSTPTR_MessageSys_Message pRequestMessage = NULL;
 	OV_INSTPTR_MessageSys_MsgDelivery pmsgDelivery = NULL;
+	OV_STRING httpEndpoint = NULL;
 	// Create MessageObject in Outbox
 	paas = Ov_StaticPtrCast(openaas_aas,this->v_pouterobject);
 	resultOV = Ov_CreateObject(MessageSys_Message, pRequestMessage, &this->p_OUTBOX, "Request");
@@ -269,6 +270,14 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		// TODO: get ComponentContent from AAS
 		ov_memstack_lock();
 		ov_string_print(&componentContent, "\"endpoints\":[{\"protocolType\":\"acplt_ks\",\"endpointSring\":\"%s\"}", SenderEndpoint);
+		if(ov_library_search("openaasHTTP") != NULL){ // http-Endpoint
+			ov_string_print(&httpEndpoint, "%s:7509%s/aas", pInterfaceDiscoveryServer->v_IPAddressServer, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,paas), 2));
+			tmpString = NULL;
+			ov_string_print(&tmpString, ",{\"protocolType\":\"http\",\"endpointString\":\"%s\"}", httpEndpoint);
+			ov_string_append(&componentContent, tmpString);
+			ov_string_setvalue(&tmpString, NULL);
+			ov_string_setvalue(&httpEndpoint, NULL);
+		}
 		if (pInterfaceDiscoveryServer->v_OPCUANamespaceIndex != 0){ // TODO: Check if OPCUA Server is running and getting nsindex
 			tmpString = NULL;
 			ov_string_print(&tmpString, ",{\"protocolType\":\"opcua\",\"endpointString\":\"opc.tcp://%s:16664;nsindex=%i, nodeId=%s\"}", pInterfaceDiscoveryServer->v_IPAddressServer, pInterfaceDiscoveryServer->v_OPCUANamespaceIndex, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,this), 2));

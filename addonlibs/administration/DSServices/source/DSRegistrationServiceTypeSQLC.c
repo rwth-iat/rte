@@ -173,7 +173,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceTypeSQLC_executeServic
 		tmpValues[2] = NULL;
 		ov_string_print(&tmpValues[2], "%s", endpoints[i].endpointString);
 		resultOV = pDBWrapperVTable->m_insertData(pDBWrapper, table, tmpFields, 3, tmpValues, 3);
-		ov_string_setvalue(&tmpValues[0], NULL);
 		ov_string_setvalue(&tmpValues[1], NULL);
 		ov_string_setvalue(&tmpValues[2], NULL);
 		if (resultOV != OV_ERR_OK){
@@ -182,6 +181,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceTypeSQLC_executeServic
 			goto FINALIZE;
 		}
 	}
+	ov_string_setvalue(&tmpValues[0], NULL);
 
 	// Insert statements in database
 	OV_STRING tmpFieldsStatements[7];
