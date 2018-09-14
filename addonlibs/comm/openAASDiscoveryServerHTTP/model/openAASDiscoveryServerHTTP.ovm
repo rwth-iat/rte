@@ -18,15 +18,18 @@ LIBRARY openAASDiscoveryServerHTTP
 	CLASS openAASDiscoveryServerHTTPExt : CLASS kshttp/httpClientHandlerExtension
 		IS_INSTANTIABLE;
 		VARIABLES
-			
+			pDiscoveryServer : C_TYPE<OV_INSTPTR_openAASDiscoveryServer_DiscoveryServer>;
+			pInterfaceDiscoveryServer : C_TYPE<OV_INSTPTR_openaas_InterfaceDiscoveryServer>;
+			queryType : UINT INITIALVALUE = 0;
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			CheckCommand			:	C_FUNCTION	<KSHTTP_FNC_CHECKCOMMAND>;
 			HandleExtendedRequest	:	C_FUNCTION	<KSHTTP_FNC_HANDLEEXTREQUEST>;
 		END_OPERATIONS;
-	END_CLASS;
-	
-	/**
+	END_CLASS; 
+	 
+	/** 
 		Add associations and their documentation here.
 		Association syntax is:
 	*/

@@ -86,6 +86,50 @@ OV_RESULT getDiscoveryServer(OV_INSTPTR_openAASDiscoveryServer_DiscoveryServer *
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_BOOL openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt_CheckCommand(
+	const OV_INSTPTR_kshttp_httpClientHandlerExtension	pobj,
+	const OV_INSTPTR_kshttp_httpclienthandler	pClientHandler,
+	const OV_INSTPTR_ksbase_Channel pChannel,
+	const HTTP_REQUEST request
+) {
+    /*
+    *   local variables
+    */
+	OV_UINT len = 0;
+	OV_STRING* pList = NULL;
+	OV_UINT count = 0;
+	OV_INSTPTR_openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt pExt = NULL;
+	pExt = Ov_StaticPtrCast(openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt, pobj);
+	pExt->v_pInterfaceDiscoveryServer = NULL;
+	pExt->v_pDiscoveryServer = NULL;
+	pExt->v_queryType = 0;
+	// check if InterfaceDiscoverServer exist
+	pExt->v_pInterfaceDiscoveryServer = Ov_StaticPtrCast(openaas_InterfaceDiscoveryServer, Ov_GetFirstChild(ov_instantiation, pclass_openaas_InterfaceDiscoveryServer));
+	if(!pExt->v_pInterfaceDiscoveryServer){
+		return FALSE;
+	}
+
+	// get DiscoveryServer
+	if (getDiscoveryServer(&pExt->v_pDiscoveryServer, request.urlPath, &pList, &len, &count) != OV_ERR_OK){
+		return FALSE;
+	}
+
+	if (ov_string_compare(pList[count], "securityCheck") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 1;
+	}else if (ov_string_compare(pList[count], "registerAAS") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 2;
+	}else if (ov_string_compare(pList[count], "unregisterAAS") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 3;
+	}else if (ov_string_compare(pList[count], "searchForAAS") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 4;
+	}else{
+		return FALSE;
+	}
+	ov_string_freelist(pList);
+
+    return TRUE;
+}
+
 OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt_HandleExtendedRequest(
 	const OV_INSTPTR_kshttp_httpClientHandlerExtension	pobj,
 	const OV_INSTPTR_kshttp_httpclienthandler	pClientHandler,
@@ -96,30 +140,13 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
     /*    
     *   local variables
     */
-	OV_UINT len = 0;
-	OV_STRING* pList = NULL;
-	OV_INSTPTR_openaas_InterfaceDiscoveryServer pInterfaceDiscoveryServer = NULL;
-	OV_INSTPTR_openAASDiscoveryServer_DiscoveryServer pDiscoveryServer = NULL;
-	OV_UINT count = 0;
 	OV_STRING JsonOutput = NULL;
 	OV_STRING errorMessage = NULL;
 	OV_VTBLPTR_openAASDiscoveryServer_Registration pvtableRegistration = NULL;
 	OV_VTBLPTR_openAASDiscoveryServer_Security pvtableSecurity = NULL;
 	OV_VTBLPTR_openAASDiscoveryServer_Search pvtableSearch = NULL;
-
-	// check if InterfaceDiscoverServer exist
-	pInterfaceDiscoveryServer = Ov_StaticPtrCast(openaas_InterfaceDiscoveryServer, Ov_GetFirstChild(ov_instantiation, pclass_openaas_InterfaceDiscoveryServer));
-	if(!pInterfaceDiscoveryServer){
-		KS_logfile_info("InterfaceDiscoveryServer not found");
-		ov_string_setvalue(&response->contentString, "Internal Error");
-		return OV_ERR_OK;
-	}
-
-	// get DiscoveryServer
-	if (getDiscoveryServer(&pDiscoveryServer, request.urlPath, &pList, &len, &count) != OV_ERR_OK){
-		ov_string_setvalue(&response->contentString, HTTP_404_BODY);
-		return OV_ERR_OK;
-	}
+	OV_INSTPTR_openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt pExt = NULL;
+	pExt = Ov_StaticPtrCast(openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt, pobj);
 
 	if(request.urlQuery.veclen != 2){
 		KS_logfile_info(("wrong data size in content", request.requestMethod));
@@ -143,132 +170,98 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 		return OV_ERR_BADVALUE;
 	}
 
-	if (ov_string_compare(pList[count], "securityCheck") == OV_STRCMP_EQUAL){
-		Ov_GetVTablePtr(openAASDiscoveryServer_Security, pvtableSecurity, &pDiscoveryServer->p_Security);
-		if (pvtableSecurity){
-			if (pvtableSecurity->m_getSecurityMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pDiscoveryServer->p_Security), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
-				ov_string_setvalue(&JsonOutput, NULL);
-				KS_logfile_info(("Error in part-function: %s", errorMessage));
-				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				ov_string_setvalue(&errorMessage, NULL);
-				json_data_deleteMembers(&jsonData);
-				return OV_ERR_BADVALUE;
-			}
-			json_data_deleteMembers(&jsonData);
-			if (errorMessage){
-				ov_string_setvalue(&JsonOutput, NULL);
-				KS_logfile_info(("Error in part-function: %s", errorMessage));
-				ov_string_setvalue(&response->contentString, errorMessage);
-				ov_string_setvalue(&errorMessage, NULL);
-				return OV_ERR_BADVALUE;
+	switch(pExt->v_queryType){
+		case 1:
+			Ov_GetVTablePtr(openAASDiscoveryServer_Security, pvtableSecurity, &pExt->v_pDiscoveryServer->p_Security);
+			if (pvtableSecurity){
+				if (pvtableSecurity->m_getSecurityMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Security), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
+					ov_string_setvalue(&JsonOutput, NULL);
+					KS_logfile_info(("Error in part-function: %s", errorMessage));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					ov_string_setvalue(&errorMessage, NULL);
+					json_data_deleteMembers(&jsonData);
+					return OV_ERR_BADVALUE;
+				}
 			}else{
-				ov_string_setvalue(&response->contentString, (JsonOutput+7));
-				ov_string_setvalue(&JsonOutput, NULL);
-				ov_string_setvalue(&errorMessage, NULL);
-				return OV_ERR_OK;
-			}
-		}else{
-			json_data_deleteMembers(&jsonData);
-			KS_logfile_info(("Could not get VTable Pointer of Security-Object", request.requestMethod));
-			ov_string_setvalue(&response->contentString, "Internal Error\n");
-			return OV_ERR_BADVALUE;
-		}
-	}else if (ov_string_compare(pList[count], "registerAAS") == OV_STRCMP_EQUAL){
-		Ov_GetVTablePtr(openAASDiscoveryServer_Registration, pvtableRegistration, &pDiscoveryServer->p_Registration);
-		if (pvtableRegistration){
-			if (pvtableRegistration->m_getRegistrationMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pDiscoveryServer->p_Registration), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
-				ov_string_setvalue(&JsonOutput, NULL);
-				KS_logfile_info(("Error in part-function: %s", errorMessage));
-				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				ov_string_setvalue(&errorMessage, NULL);
 				json_data_deleteMembers(&jsonData);
-				return OV_ERR_BADVALUE;
-			}
-			json_data_deleteMembers(&jsonData);
-			if (errorMessage){
-				ov_string_setvalue(&JsonOutput, NULL);
-				KS_logfile_info(("Error in part-function: %s", errorMessage));
-				ov_string_setvalue(&response->contentString, errorMessage);
-				ov_string_setvalue(&errorMessage, NULL);
-				return OV_ERR_BADVALUE;
-			}else{
-				ov_string_setvalue(&response->contentString, (JsonOutput+7));
-				ov_string_setvalue(&JsonOutput, NULL);
-				ov_string_setvalue(&errorMessage, NULL);
-				return OV_ERR_OK;
-			}
-		}else{
-			json_data_deleteMembers(&jsonData);
-			KS_logfile_info(("Could not get VTable Pointer of Registration-Object", request.requestMethod));
-			ov_string_setvalue(&response->contentString, "Internal Error\n");
-			return OV_ERR_BADVALUE;
-		}
-	}else if (ov_string_compare(pList[count], "unregisterAAS") == OV_STRCMP_EQUAL){
-		Ov_GetVTablePtr(openAASDiscoveryServer_Registration, pvtableRegistration, &pDiscoveryServer->p_Registration);
-		if (pvtableRegistration){
-			if (pvtableRegistration->m_getUnregistrationMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pDiscoveryServer->p_Registration), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
-				ov_string_setvalue(&JsonOutput, NULL);
-				KS_logfile_info(("Error in part-function: %s", errorMessage));
+				KS_logfile_info(("Could not get VTable Pointer of Security-Object", request.requestMethod));
 				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				ov_string_setvalue(&errorMessage, NULL);
-				json_data_deleteMembers(&jsonData);
 				return OV_ERR_BADVALUE;
 			}
-			json_data_deleteMembers(&jsonData);
-			if (errorMessage){
-				ov_string_setvalue(&JsonOutput, NULL);
-				KS_logfile_info(("Error in part-function: %s", errorMessage));
-				ov_string_setvalue(&response->contentString, errorMessage);
-				ov_string_setvalue(&errorMessage, NULL);
-				return OV_ERR_BADVALUE;
+		break;
+		case 2:
+			Ov_GetVTablePtr(openAASDiscoveryServer_Registration, pvtableRegistration, &pExt->v_pDiscoveryServer->p_Registration);
+			if (pvtableRegistration){
+				if (pvtableRegistration->m_getRegistrationMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Registration), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
+					ov_string_setvalue(&JsonOutput, NULL);
+					KS_logfile_info(("Error in part-function: %s", errorMessage));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					ov_string_setvalue(&errorMessage, NULL);
+					json_data_deleteMembers(&jsonData);
+					return OV_ERR_BADVALUE;
+				}
 			}else{
-				ov_string_setvalue(&response->contentString, (JsonOutput+7));
-				ov_string_setvalue(&JsonOutput, NULL);
-				ov_string_setvalue(&errorMessage, NULL);
-				return OV_ERR_OK;
-			}
-		}else{
-			json_data_deleteMembers(&jsonData);
-			KS_logfile_info(("Could not get VTable Pointer of Registration-Object", request.requestMethod));
-			ov_string_setvalue(&response->contentString, "Internal Error\n");
-			return OV_ERR_BADVALUE;
-		}
-	}else if (ov_string_compare(pList[count], "searchForAAS") == OV_STRCMP_EQUAL){
-		Ov_GetVTablePtr(openAASDiscoveryServer_Search, pvtableSearch, &pDiscoveryServer->p_Search);
-		if (pvtableSearch){
-			if (pvtableSearch->m_getSearchMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pDiscoveryServer->p_Search), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
-				ov_string_setvalue(&JsonOutput, NULL);
-				KS_logfile_info(("Error in part-function: %s", errorMessage));
+				json_data_deleteMembers(&jsonData);
+				KS_logfile_info(("Could not get VTable Pointer of Registration-Object", request.requestMethod));
 				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				ov_string_setvalue(&errorMessage, NULL);
-				json_data_deleteMembers(&jsonData);
 				return OV_ERR_BADVALUE;
 			}
-			json_data_deleteMembers(&jsonData);
-			if (errorMessage){
-				ov_string_setvalue(&JsonOutput, NULL);
-				KS_logfile_info(("Error in part-function: %s", errorMessage));
-				ov_string_setvalue(&response->contentString, errorMessage);
-				ov_string_setvalue(&errorMessage, NULL);
-				return OV_ERR_BADVALUE;
+		break;
+		case 3:
+			Ov_GetVTablePtr(openAASDiscoveryServer_Registration, pvtableRegistration, &pExt->v_pDiscoveryServer->p_Registration);
+			if (pvtableRegistration){
+				if (pvtableRegistration->m_getUnregistrationMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Registration), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
+					ov_string_setvalue(&JsonOutput, NULL);
+					KS_logfile_info(("Error in part-function: %s", errorMessage));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					ov_string_setvalue(&errorMessage, NULL);
+					json_data_deleteMembers(&jsonData);
+					return OV_ERR_BADVALUE;
+				}
 			}else{
-				ov_string_setvalue(&response->contentString, (JsonOutput+7));
-				ov_string_setvalue(&JsonOutput, NULL);
-				ov_string_setvalue(&errorMessage, NULL);
-				return OV_ERR_OK;
+				json_data_deleteMembers(&jsonData);
+				KS_logfile_info(("Could not get VTable Pointer of Registration-Object", request.requestMethod));
+				ov_string_setvalue(&response->contentString, "Internal Error\n");
+				return OV_ERR_BADVALUE;
 			}
-		}else{
+		break;
+		case 4:
+			Ov_GetVTablePtr(openAASDiscoveryServer_Search, pvtableSearch, &pExt->v_pDiscoveryServer->p_Search);
+			if (pvtableSearch){
+				if (pvtableSearch->m_getSearchMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Search), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
+					ov_string_setvalue(&JsonOutput, NULL);
+					KS_logfile_info(("Error in part-function: %s", errorMessage));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					ov_string_setvalue(&errorMessage, NULL);
+					json_data_deleteMembers(&jsonData);
+					return OV_ERR_BADVALUE;
+				}
+			}else{
+				json_data_deleteMembers(&jsonData);
+				KS_logfile_info(("Could not get VTable Pointer of Search-Object", request.requestMethod));
+				ov_string_setvalue(&response->contentString, "Internal Error\n");
+				return OV_ERR_BADVALUE;
+			}
+		break;
+		default:
 			json_data_deleteMembers(&jsonData);
-			KS_logfile_info(("Could not get VTable Pointer of Search-Object", request.requestMethod));
-			ov_string_setvalue(&response->contentString, "Internal Error\n");
-			return OV_ERR_BADVALUE;
-		}
-	}else{
-		json_data_deleteMembers(&jsonData);
-		KS_logfile_info(("incompatible requestMethod %s for openaasHTTP Extension", request.requestMethod));
-		ov_string_setvalue(&response->contentString, "bad requestMethod for handler\n");
-		return OV_ERR_BADPARAM;
+			KS_logfile_info(("incompatible requestMethod %s for openaasHTTP Extension", request.requestMethod));
+			ov_string_setvalue(&response->contentString, "bad requestMethod for handler\n");
+			return OV_ERR_BADPARAM;
+		break;
 	}
+	json_data_deleteMembers(&jsonData);
+	if (errorMessage){
+		ov_string_setvalue(&JsonOutput, NULL);
+		KS_logfile_info(("Error in part-function: %s", errorMessage));
+		ov_string_setvalue(&response->contentString, errorMessage);
+		ov_string_setvalue(&errorMessage, NULL);
+		return OV_ERR_BADVALUE;
+	}
+	ov_string_setvalue(&response->contentString, (JsonOutput+7));
+	ov_string_setvalue(&JsonOutput, NULL);
+	ov_string_setvalue(&errorMessage, NULL);
+
 	response->keepAlive = FALSE;
 
     return OV_ERR_OK;
