@@ -313,13 +313,11 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 			/*	iterate over all httpClientHandlerExtension	*/
 			Ov_ForEachChildEx(ov_inheritance, pclass_kshttp_httpClientHandlerExtension, pExtensionClass, ov_class){
 				Ov_ForEachChildEx(ov_instantiation, pExtensionClass, pExtension, kshttp_httpClientHandlerExtension){
-					for(iterator = 0; iterator < pExtension->v_commandList.veclen; iterator++){
-						if(ov_string_match(request.urlPath, pExtension->v_commandList.value[iterator]) == TRUE){
-							extclientfound = TRUE;
-							break;
-						}
-					}
-					if(extclientfound == TRUE){
+					OV_VTBLPTR_kshttp_httpClientHandlerExtension pHEVTBL;
+					Ov_GetVTablePtr(kshttp_httpClientHandlerExtension, pHEVTBL, pExtension);
+					//((OV_VTBLPTR_kshttp_httpClientHandlerExtension)pExtensionClass->v_pvtable)->m_CheckCommand();
+					if(pHEVTBL->m_CheckCommand(pExtension, this, pChannel, request)){
+						extclientfound = TRUE;
 						break;
 					}
 				}

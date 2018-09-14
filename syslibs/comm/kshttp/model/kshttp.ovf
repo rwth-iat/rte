@@ -41,5 +41,11 @@ typedef OV_RESULT KSHTTP_FNC_GENERATEKSBODY(
 	OV_INSTPTR_ksbase_Channel pChannel,
 	OV_INSTPTR_kshttp_httpclienthandler this
 );
+typedef OV_BOOL KSHTTP_FNC_CHECKCOMMAND(
+	const OV_INSTPTR_kshttp_httpClientHandlerExtension	pobj,
+	const OV_INSTPTR_kshttp_httpclienthandler	pClientHandler,
+	const OV_INSTPTR_ksbase_Channel pChannel,
+	const HTTP_REQUEST request
+);
 
 #endif

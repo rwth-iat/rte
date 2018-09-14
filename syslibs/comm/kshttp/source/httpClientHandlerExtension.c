@@ -43,6 +43,25 @@
 
 #include "config.h"
 
+
+OV_DLLFNCEXPORT OV_BOOL kshttp_httpClientHandlerExtension_CheckCommand(
+	const OV_INSTPTR_kshttp_httpClientHandlerExtension	pobj,
+	const OV_INSTPTR_kshttp_httpclienthandler	pClientHandler,
+	const OV_INSTPTR_ksbase_Channel pChannel,
+	const HTTP_REQUEST request
+) {
+	OV_UINT iterator;
+
+	for(iterator = 0; iterator < pobj->v_commandList.veclen; iterator++){
+		if(ov_string_match(request.urlPath, pobj->v_commandList.value[iterator]) == TRUE){
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientHandlerExtension_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler this,
 	OV_INSTPTR_ksbase_Channel pChannel,
