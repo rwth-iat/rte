@@ -181,6 +181,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			return OV_ERR_BADVALUE;
 		}
 	}
+	ov_string_setvalue(&response->contentType, "application/json; charset=utf-8");
 
 	switch(pExt->v_queryType){
 		case 0: // securityCheck
@@ -273,7 +274,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			result.veclen = 0;
 			OV_STRING table = "CarrierID";
 			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
-			ov_string_setvalue(&response->contentString, "\"CarrierIDList\":[");
+			ov_string_setvalue(&response->contentString, "{\"CarrierIDList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
 					ov_string_append(&response->contentString, ",");
@@ -282,7 +283,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				ov_string_append(&response->contentString, result.value[i]);
 				ov_string_append(&response->contentString, "\"");
 			}
-			ov_string_append(&response->contentString, "]");
+			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
 			return OV_ERR_OK;
 			}
@@ -305,7 +306,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			result.veclen = 0;
 			OV_STRING table = "PropertyID";
 			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
-			ov_string_setvalue(&response->contentString, "\"PropertyIDList\":[");
+			ov_string_setvalue(&response->contentString, "{\"PropertyIDList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
 					ov_string_append(&response->contentString, ",");
@@ -314,7 +315,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				ov_string_append(&response->contentString, result.value[i]);
 				ov_string_append(&response->contentString, "\"");
 			}
-			ov_string_append(&response->contentString, "]");
+			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
 			return OV_ERR_OK;
 			}
@@ -337,7 +338,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			result.veclen = 0;
 			OV_STRING table = "ExpressionSemantic";
 			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
-			ov_string_setvalue(&response->contentString, "\"ExpressionSemanticList\":[");
+			ov_string_setvalue(&response->contentString, "{\"ExpressionSemanticList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
 					ov_string_append(&response->contentString, ",");
@@ -346,7 +347,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				ov_string_append(&response->contentString, result.value[i]);
 				ov_string_append(&response->contentString, "\"");
 			}
-			ov_string_append(&response->contentString, "]");
+			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
 			return OV_ERR_OK;
 			}
@@ -369,7 +370,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			result.veclen = 0;
 			OV_STRING table = "Relation";
 			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
-			ov_string_setvalue(&response->contentString, "\"RelationList\":[");
+			ov_string_setvalue(&response->contentString, "{\"RelationList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
 					ov_string_append(&response->contentString, ",");
@@ -378,7 +379,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				ov_string_append(&response->contentString, result.value[i]);
 				ov_string_append(&response->contentString, "\"");
 			}
-			ov_string_append(&response->contentString, "]");
+			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
 			return OV_ERR_OK;
 			}
@@ -401,7 +402,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			result.veclen = 0;
 			OV_STRING table = "SubModel";
 			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
-			ov_string_setvalue(&response->contentString, "\"SubModelList\":[");
+			ov_string_setvalue(&response->contentString, "{\"SubModelList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
 					ov_string_append(&response->contentString, ",");
@@ -410,7 +411,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				ov_string_append(&response->contentString, result.value[i]);
 				ov_string_append(&response->contentString, "\"");
 			}
-			ov_string_append(&response->contentString, "]");
+			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
 			return OV_ERR_OK;
 			}
