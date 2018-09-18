@@ -181,7 +181,6 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			return OV_ERR_BADVALUE;
 		}
 	}
-	ov_string_setvalue(&response->contentType, "application/json; charset=utf-8");
 
 	switch(pExt->v_queryType){
 		case 0: // securityCheck
@@ -190,16 +189,16 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				if (pvtableSecurity->m_getSecurityMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Security), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
 					ov_string_setvalue(&JsonOutput, NULL);
 					KS_logfile_info(("Error in part-function: %s", errorMessage));
-					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					ov_string_setvalue(&response->contentString, errorMessage);
 					ov_string_setvalue(&errorMessage, NULL);
 					json_data_deleteMembers(&jsonData);
-					return OV_ERR_BADVALUE;
+					return OV_ERR_OK;
 				}
 			}else{
 				json_data_deleteMembers(&jsonData);
 				KS_logfile_info(("Could not get VTable Pointer of Security-Object", request.requestMethod));
 				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_BADVALUE;
+				return OV_ERR_OK;
 			}
 		break;
 		case 1: // registerAAS
@@ -208,16 +207,16 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				if (pvtableRegistration->m_getRegistrationMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Registration), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
 					ov_string_setvalue(&JsonOutput, NULL);
 					KS_logfile_info(("Error in part-function: %s", errorMessage));
-					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					ov_string_setvalue(&response->contentString, errorMessage);
 					ov_string_setvalue(&errorMessage, NULL);
 					json_data_deleteMembers(&jsonData);
-					return OV_ERR_BADVALUE;
+					return OV_ERR_OK;
 				}
 			}else{
 				json_data_deleteMembers(&jsonData);
 				KS_logfile_info(("Could not get VTable Pointer of Registration-Object", request.requestMethod));
 				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_BADVALUE;
+				return OV_ERR_OK;
 			}
 		break;
 		case 2: // unregisterAAS
@@ -226,16 +225,16 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				if (pvtableRegistration->m_getUnregistrationMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Registration), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
 					ov_string_setvalue(&JsonOutput, NULL);
 					KS_logfile_info(("Error in part-function: %s", errorMessage));
-					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					ov_string_setvalue(&response->contentString, errorMessage);
 					ov_string_setvalue(&errorMessage, NULL);
 					json_data_deleteMembers(&jsonData);
-					return OV_ERR_BADVALUE;
+					return OV_ERR_OK;
 				}
 			}else{
 				json_data_deleteMembers(&jsonData);
 				KS_logfile_info(("Could not get VTable Pointer of Registration-Object", request.requestMethod));
 				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_BADVALUE;
+				return OV_ERR_OK;
 			}
 		break;
 		case 3: // searchForAAS
@@ -244,16 +243,16 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				if (pvtableSearch->m_getSearchMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Search), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
 					ov_string_setvalue(&JsonOutput, NULL);
 					KS_logfile_info(("Error in part-function: %s", errorMessage));
-					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					ov_string_setvalue(&response->contentString, errorMessage);
 					ov_string_setvalue(&errorMessage, NULL);
 					json_data_deleteMembers(&jsonData);
-					return OV_ERR_BADVALUE;
+					return OV_ERR_OK;
 				}
 			}else{
 				json_data_deleteMembers(&jsonData);
 				KS_logfile_info(("Could not get VTable Pointer of Search-Object", request.requestMethod));
 				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_BADVALUE;
+				return OV_ERR_OK;
 			}
 		break;
 		case 4: // getCarrierIDList
@@ -285,6 +284,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			}
 			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			ov_string_setvalue(&response->contentType, "application/json; charset=utf-8");
 			return OV_ERR_OK;
 			}
 		break;
@@ -317,6 +317,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			}
 			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			ov_string_setvalue(&response->contentType, "application/json; charset=utf-8");
 			return OV_ERR_OK;
 			}
 		break;
@@ -349,6 +350,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			}
 			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			ov_string_setvalue(&response->contentType, "application/json; charset=utf-8");
 			return OV_ERR_OK;
 			}
 		break;
@@ -381,6 +383,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			}
 			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			ov_string_setvalue(&response->contentType, "application/json; charset=utf-8");
 			return OV_ERR_OK;
 			}
 		break;
@@ -413,6 +416,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			}
 			ov_string_append(&response->contentString, "]}");
 			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			ov_string_setvalue(&response->contentType, "application/json; charset=utf-8");
 			return OV_ERR_OK;
 			}
 		break;
@@ -429,11 +433,12 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 		KS_logfile_info(("Error in part-function: %s", errorMessage));
 		ov_string_setvalue(&response->contentString, errorMessage);
 		ov_string_setvalue(&errorMessage, NULL);
-		return OV_ERR_BADVALUE;
+		return OV_ERR_OK;
 	}
 	ov_string_setvalue(&response->contentString, (JsonOutput+7));
 	ov_string_setvalue(&JsonOutput, NULL);
 	ov_string_setvalue(&errorMessage, NULL);
+	ov_string_setvalue(&response->contentType, "application/json; charset=utf-8");
 
 	response->keepAlive = FALSE;
 
