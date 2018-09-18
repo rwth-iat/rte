@@ -115,13 +115,23 @@ OV_DLLFNCEXPORT OV_BOOL openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt
 	}
 
 	if (ov_string_compare(pList[count], "securityCheck") == OV_STRCMP_EQUAL){
-		pExt->v_queryType = 1;
+		pExt->v_queryType = 0;
 	}else if (ov_string_compare(pList[count], "registerAAS") == OV_STRCMP_EQUAL){
-		pExt->v_queryType = 2;
+		pExt->v_queryType = 1;
 	}else if (ov_string_compare(pList[count], "unregisterAAS") == OV_STRCMP_EQUAL){
-		pExt->v_queryType = 3;
+		pExt->v_queryType = 2;
 	}else if (ov_string_compare(pList[count], "searchForAAS") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 3;
+	}else if (ov_string_compare(pList[count], "getCarrierIDList") == OV_STRCMP_EQUAL){
 		pExt->v_queryType = 4;
+	}else if (ov_string_compare(pList[count], "getPropertyIDList") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 5;
+	}else if (ov_string_compare(pList[count], "getExpressionSemanticList") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 6;
+	}else if (ov_string_compare(pList[count], "getRelationList") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 7;
+	}else if (ov_string_compare(pList[count], "getSubModelList") == OV_STRCMP_EQUAL){
+		pExt->v_queryType = 8;
 	}else{
 		return FALSE;
 	}
@@ -147,31 +157,33 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 	OV_VTBLPTR_openAASDiscoveryServer_Search pvtableSearch = NULL;
 	OV_INSTPTR_openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt pExt = NULL;
 	pExt = Ov_StaticPtrCast(openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPExt, pobj);
-
-	if(request.urlQuery.veclen != 2){
-		KS_logfile_info(("wrong data size in content", request.requestMethod));
-		ov_string_setvalue(&response->contentString, "wrong data size\n");
-		return OV_ERR_BADVALUE;
-	}
-	if (ov_string_compare(request.urlQuery.value[0], "data") != OV_STRCMP_EQUAL){
-		KS_logfile_info(("wrong key in content", request.requestMethod));
-		ov_string_setvalue(&response->contentString, "wrong key\n");
-		return OV_ERR_BADVALUE;
-	}
-
 	json_data jsonData;
 	json_data_init(&jsonData);
-	ov_string_setvalue(&jsonData.js, "\"body\":");
-	ov_string_append(&jsonData.js, request.urlQuery.value[1]);
 
-	if(jsonTokenize(&jsonData) != OV_ERR_OK) {
-		KS_logfile_info(("value not in correct json format", request.requestMethod));
-		ov_string_setvalue(&response->contentString, "value not in correct json format\n");
-		return OV_ERR_BADVALUE;
+	if (pExt->v_queryType < 4){
+		if(request.urlQuery.veclen != 2){
+			KS_logfile_info(("wrong data size in content", request.requestMethod));
+			ov_string_setvalue(&response->contentString, "wrong data size\n");
+			return OV_ERR_BADVALUE;
+		}
+		if (ov_string_compare(request.urlQuery.value[0], "data") != OV_STRCMP_EQUAL){
+			KS_logfile_info(("wrong key in content", request.requestMethod));
+			ov_string_setvalue(&response->contentString, "wrong key\n");
+			return OV_ERR_BADVALUE;
+		}
+
+		ov_string_setvalue(&jsonData.js, "\"body\":");
+		ov_string_append(&jsonData.js, request.urlQuery.value[1]);
+
+		if(jsonTokenize(&jsonData) != OV_ERR_OK) {
+			KS_logfile_info(("value not in correct json format", request.requestMethod));
+			ov_string_setvalue(&response->contentString, "value not in correct json format\n");
+			return OV_ERR_BADVALUE;
+		}
 	}
 
 	switch(pExt->v_queryType){
-		case 1:
+		case 0: // securityCheck
 			Ov_GetVTablePtr(openAASDiscoveryServer_Security, pvtableSecurity, &pExt->v_pDiscoveryServer->p_Security);
 			if (pvtableSecurity){
 				if (pvtableSecurity->m_getSecurityMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Security), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
@@ -189,7 +201,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				return OV_ERR_BADVALUE;
 			}
 		break;
-		case 2:
+		case 1: // registerAAS
 			Ov_GetVTablePtr(openAASDiscoveryServer_Registration, pvtableRegistration, &pExt->v_pDiscoveryServer->p_Registration);
 			if (pvtableRegistration){
 				if (pvtableRegistration->m_getRegistrationMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Registration), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
@@ -207,7 +219,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				return OV_ERR_BADVALUE;
 			}
 		break;
-		case 3:
+		case 2: // unregisterAAS
 			Ov_GetVTablePtr(openAASDiscoveryServer_Registration, pvtableRegistration, &pExt->v_pDiscoveryServer->p_Registration);
 			if (pvtableRegistration){
 				if (pvtableRegistration->m_getUnregistrationMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Registration), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
@@ -225,7 +237,7 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				return OV_ERR_BADVALUE;
 			}
 		break;
-		case 4:
+		case 3: // searchForAAS
 			Ov_GetVTablePtr(openAASDiscoveryServer_Search, pvtableSearch, &pExt->v_pDiscoveryServer->p_Search);
 			if (pvtableSearch){
 				if (pvtableSearch->m_getSearchMessage(Ov_DynamicPtrCast(openAASDiscoveryServer_Part, &pExt->v_pDiscoveryServer->p_Search), jsonData, &JsonOutput, &errorMessage) != OV_ERR_OK){
@@ -241,6 +253,166 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 				KS_logfile_info(("Could not get VTable Pointer of Search-Object", request.requestMethod));
 				ov_string_setvalue(&response->contentString, "Internal Error\n");
 				return OV_ERR_BADVALUE;
+			}
+		break;
+		case 4: // getCarrierIDList
+			{
+			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
+			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
+			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+			if (!pDBWrapper){
+				KS_logfile_info(("Could not get database Pointer"));
+				ov_string_setvalue(&response->contentString, "Internal Error\n");
+				return OV_ERR_OK;
+			}
+			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+
+			OV_STRING tmpFields = "Value";
+			OV_STRING_VEC result;
+			result.value = NULL;
+			result.veclen = 0;
+			OV_STRING table = "CarrierID";
+			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			ov_string_setvalue(&response->contentString, "\"CarrierIDList\":[");
+			for (OV_UINT i = 0; i < result.veclen; i++){
+				if (i != 0){
+					ov_string_append(&response->contentString, ",");
+				}
+				ov_string_append(&response->contentString, "\"");
+				ov_string_append(&response->contentString, result.value[i]);
+				ov_string_append(&response->contentString, "\"");
+			}
+			ov_string_append(&response->contentString, "]");
+			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			return OV_ERR_OK;
+			}
+		break;
+		case 5: // getPropertyIDList
+			{
+			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
+			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
+			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+			if (!pDBWrapper){
+				KS_logfile_info(("Could not get database Pointer"));
+				ov_string_setvalue(&response->contentString, "Internal Error\n");
+				return OV_ERR_OK;
+			}
+			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+
+			OV_STRING tmpFields = "Value";
+			OV_STRING_VEC result;
+			result.value = NULL;
+			result.veclen = 0;
+			OV_STRING table = "PropertyID";
+			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			ov_string_setvalue(&response->contentString, "\"PropertyIDList\":[");
+			for (OV_UINT i = 0; i < result.veclen; i++){
+				if (i != 0){
+					ov_string_append(&response->contentString, ",");
+				}
+				ov_string_append(&response->contentString, "\"");
+				ov_string_append(&response->contentString, result.value[i]);
+				ov_string_append(&response->contentString, "\"");
+			}
+			ov_string_append(&response->contentString, "]");
+			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			return OV_ERR_OK;
+			}
+		break;
+		case 6: // getExpressionSemanticList
+			{
+			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
+			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
+			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+			if (!pDBWrapper){
+				KS_logfile_info(("Could not get database Pointer"));
+				ov_string_setvalue(&response->contentString, "Internal Error\n");
+				return OV_ERR_OK;
+			}
+			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+
+			OV_STRING tmpFields = "Value";
+			OV_STRING_VEC result;
+			result.value = NULL;
+			result.veclen = 0;
+			OV_STRING table = "ExpressionSemantic";
+			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			ov_string_setvalue(&response->contentString, "\"ExpressionSemanticList\":[");
+			for (OV_UINT i = 0; i < result.veclen; i++){
+				if (i != 0){
+					ov_string_append(&response->contentString, ",");
+				}
+				ov_string_append(&response->contentString, "\"");
+				ov_string_append(&response->contentString, result.value[i]);
+				ov_string_append(&response->contentString, "\"");
+			}
+			ov_string_append(&response->contentString, "]");
+			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			return OV_ERR_OK;
+			}
+		break;
+		case 7: // getRelationList
+			{
+			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
+			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
+			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+			if (!pDBWrapper){
+				KS_logfile_info(("Could not get database Pointer"));
+				ov_string_setvalue(&response->contentString, "Internal Error\n");
+				return OV_ERR_OK;
+			}
+			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+
+			OV_STRING tmpFields = "Value";
+			OV_STRING_VEC result;
+			result.value = NULL;
+			result.veclen = 0;
+			OV_STRING table = "Relation";
+			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			ov_string_setvalue(&response->contentString, "\"RelationList\":[");
+			for (OV_UINT i = 0; i < result.veclen; i++){
+				if (i != 0){
+					ov_string_append(&response->contentString, ",");
+				}
+				ov_string_append(&response->contentString, "\"");
+				ov_string_append(&response->contentString, result.value[i]);
+				ov_string_append(&response->contentString, "\"");
+			}
+			ov_string_append(&response->contentString, "]");
+			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			return OV_ERR_OK;
+			}
+		break;
+		case 8: // getSubModelList
+			{
+			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
+			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
+			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+			if (!pDBWrapper){
+				KS_logfile_info(("Could not get database Pointer"));
+				ov_string_setvalue(&response->contentString, "Internal Error\n");
+				return OV_ERR_OK;
+			}
+			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+
+			OV_STRING tmpFields = "Value";
+			OV_STRING_VEC result;
+			result.value = NULL;
+			result.veclen = 0;
+			OV_STRING table = "SubModel";
+			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			ov_string_setvalue(&response->contentString, "\"SubModelList\":[");
+			for (OV_UINT i = 0; i < result.veclen; i++){
+				if (i != 0){
+					ov_string_append(&response->contentString, ",");
+				}
+				ov_string_append(&response->contentString, "\"");
+				ov_string_append(&response->contentString, result.value[i]);
+				ov_string_append(&response->contentString, "\"");
+			}
+			ov_string_append(&response->contentString, "]");
+			Ov_SetDynamicVectorLength(&result, 0, STRING);
+			return OV_ERR_OK;
 			}
 		break;
 		default:
