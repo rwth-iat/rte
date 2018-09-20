@@ -635,13 +635,13 @@
 *	String operations for heap and memstack
 */
 #define Ov_HeapStrSet(pstring, value)\
-	ov_string_setvalue_allocator((pstring), ov_alloc_heap, (format))
-#define Ov_HeapStrAppend(pstring, format)\
-	ov_string_append_allocator((pstring), ov_alloc_heap, (format))
+	ov_string_setvalue_allocator((pstring), ov_alloc_heap, (value))
+#define Ov_HeapStrAppend(pstring, append)\
+	ov_string_append_allocator((pstring), ov_alloc_heap, (append))
 #define Ov_StackStrSet(pstring, value)\
-	ov_string_setvalue_allocator((pstring), ov_alloc_stack, (format))
-#define Ov_StackStrAppend(pstring, format)\
-	ov_string_append_allocator((pstring), ov_alloc_stack, (format))
+	ov_string_setvalue_allocator((pstring), ov_alloc_stack, (value))
+#define Ov_StackStrAppend(pstring, append)\
+	ov_string_append_allocator((pstring), ov_alloc_stack, (append))
 
 #endif
 /*
