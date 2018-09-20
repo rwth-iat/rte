@@ -38,6 +38,15 @@
 extern "C" {
 #endif
 
+/**
+*	enumeration of possible memory locations
+*/
+enum ov_allocator{
+	ov_alloc_database,
+	ov_alloc_heap,
+	ov_alloc_stack
+};
+
 /*
 *	OV_STRINGCOMPARE:
 *	----------------
@@ -52,6 +61,15 @@ extern "C" {
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 	OV_STRING			*pstring,
+	const OV_STRING		value
+);
+
+/**
+*	Set value of a string in selected memory
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue_allocator(
+	OV_STRING			*pstring,
+	enum ov_allocator	allocator,
 	const OV_STRING		value
 );
 
@@ -92,7 +110,7 @@ OV_DLLFNCEXPORT OV_UINT ov_string_getlength(
 );
 
 /**
-*	Append a string to an existing one
+*	Append a string to an existing one in the database
 *	appending a NULL pointer results in a OV_ERR_BADPARAM
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_append(
@@ -101,10 +119,32 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_append(
 );
 
 /**
+*	Append a string to an existing one in selected memory
+*	appending a NULL pointer results in a OV_ERR_BADPARAM
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_string_append_allocator(
+	OV_STRING			*pstring,
+	enum ov_allocator	allocator,
+	const OV_STRING		appstring
+);
+
+/**
 *	Formatted print to a string
 *	crashes if a used value contains a NULL pointer
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_print(
+	OV_STRING		*pstring,
+	const OV_STRING	format,
+	...
+);
+
+OV_DLLFNCEXPORT OV_RESULT ov_string_heap_print(
+	OV_STRING		*pstring,
+	const OV_STRING	format,
+	...
+);
+
+OV_DLLFNCEXPORT OV_RESULT ov_string_stack_print(
 	OV_STRING		*pstring,
 	const OV_STRING	format,
 	...

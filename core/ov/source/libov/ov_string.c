@@ -41,11 +41,25 @@
 
 /*	----------------------------------------------------------------------	*/
 
+static OV_RESULT ov_string_print_allocator(
+	OV_STRING			*pstring,
+	enum ov_allocator	allocator,
+	const OV_STRING		format,
+	va_list				args
+);
+
 /*
 *	Set value of a string in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 	OV_STRING			*pstring,
+	const OV_STRING		value
+) {
+	return ov_string_setvalue_allocator(pstring, ov_alloc_database, value);
+}
+OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue_allocator(
+	OV_STRING			*pstring,
+	enum ov_allocator	allocator,
 	const OV_STRING		value
 ) {
 	/*
@@ -65,7 +79,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 	*/
 	if(!value || !*value) {
 		if(*pstring) {
-			ov_database_free(*pstring);
+			switch(allocator){
+			case ov_alloc_database:
+				ov_database_free(*pstring);
+				break;
+			case ov_alloc_heap:
+				ov_free(*pstring);
+				break;
+			case ov_alloc_stack:
+				break;
+			}
 			*pstring = NULL;
 		}
 		return OV_ERR_OK;
@@ -87,7 +110,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 	/*
 	*	allocate memory for new string
 	*/
-	string = ov_database_realloc(*pstring, stringLength+1);
+	switch(allocator){
+	case ov_alloc_database:
+		string = ov_database_realloc(*pstring, stringLength+1);
+		break;
+	case ov_alloc_heap:
+		string = ov_realloc(*pstring, stringLength+1);
+		break;
+	case ov_alloc_stack:
+		string = ov_memstack_alloc(stringLength+1);
+		break;
+	}
 	if(!string) {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
@@ -241,6 +274,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_append(
 	OV_STRING			*pstring,
 	const OV_STRING		appstring
 ) {
+	return ov_string_append_allocator(pstring, ov_alloc_database, appstring);
+}
+
+OV_DLLFNCEXPORT OV_RESULT ov_string_append_allocator(
+	OV_STRING			*pstring,
+	enum ov_allocator	allocator,
+	const OV_STRING		appstring
+) {
 	/*
 	*	local variables
 	*/
@@ -267,9 +308,20 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_append(
 		return OV_ERR_BADVALUE;
 	}
 	if(!newlength) {
-		return ov_string_setvalue(pstring, NULL);
+		return ov_string_setvalue_allocator(pstring, allocator, NULL);
 	}
-	newstring = (OV_STRING)ov_database_realloc(*pstring, newlength+1);
+	switch(allocator){
+	case ov_alloc_database:
+		newstring = (OV_STRING)ov_database_realloc(*pstring, newlength+1);
+		break;
+	case ov_alloc_heap:
+		newstring = (OV_STRING)ov_realloc(*pstring, newlength+1);
+		break;
+	case ov_alloc_stack:
+		newstring = (OV_STRING)ov_memstack_alloc(newlength+1);
+		strcpy(newstring, *pstring);
+		break;
+	}
 	if(!newstring) {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
@@ -291,10 +343,50 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	const OV_STRING	format,
 	...
 ) {
+	va_list		args;
+	OV_RESULT	result;
+	va_start(args, format);
+	result = ov_string_print_allocator(pstring, ov_alloc_database, format, args);
+	va_end(args);
+	return result;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ov_string_heap_print(
+	OV_STRING		*pstring,
+	const OV_STRING	format,
+	...
+) {
+	va_list		args;
+	OV_RESULT	result;
+	va_start(args, format);
+	result = ov_string_print_allocator(pstring, ov_alloc_heap, format, args);
+	va_end(args);
+	return result;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ov_string_stack_print(
+	OV_STRING		*pstring,
+	const OV_STRING	format,
+	...
+) {
+	va_list		args;
+	OV_RESULT	result;
+	va_start(args, format);
+	result = ov_string_print_allocator(pstring, ov_alloc_stack, format, args);
+	va_end(args);
+	return result;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ov_string_print_allocator(
+	OV_STRING			*pstring,
+	enum ov_allocator	allocator,
+	const OV_STRING		format,
+	va_list		args
+) {
 	/*
 	*	local variables
 	*/
-	va_list		args;
+	va_list		args_copy;
 	OV_UINT		length;
 	OV_STRING	pc;
 	OV_STRING	tmpStr;
@@ -308,7 +400,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	/*
 	*	calculate buffer size
 	*/
-	va_start(args, format);
+	va_copy(args_copy, args);
 	length = strlen(format)+1;
 	pc = format;
 	while(*pc) {
@@ -334,7 +426,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 			*/
 			if(*pc == '*') {
 				pc++;
-				length += abs(va_arg(args, int));
+				length += abs(va_arg(args_copy, int));
 			} else {
 				length += strtoul(pc, &pc, 10);
 			}
@@ -345,7 +437,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 				pc++;
 				if(*pc == '*') {
 					pc++;
-					length += abs(va_arg(args, int));
+					length += abs(va_arg(args_copy, int));
 				} else {
 					length += strtoul(pc, &pc, 10);
 				}
@@ -361,7 +453,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 			*/
 			switch(*pc) {
 			case 's':
-				tmpStr = va_arg(args, char*);
+				tmpStr = va_arg(args_copy, char*);
 				if(tmpStr){
 					length += strlen(tmpStr);
 				} else {
@@ -382,7 +474,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 				*	reserve space, 32 should be enough
 				*/
 				length += 32;
-				(void)va_arg(args, int);
+				(void)va_arg(args_copy, int);
 				break;
 			case 'e':
 			case 'f':
@@ -395,7 +487,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 				*	exponent of an IEEE double)
 				*/
 				length += 340;
-				(void)va_arg(args, double);
+				(void)va_arg(args_copy, double);
 				break;
 			case 'n':
 			case 'p':
@@ -403,7 +495,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 				*	reserve space, 32 should be enough
 				*/
 				length += 32;
-				(void)va_arg(args, char*);
+				(void)va_arg(args_copy, char*);
 				break;
 			case '%':
 				break;
@@ -416,7 +508,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 			}
 		}
 	}
-	va_end(args);
+	va_end(args_copy);
 	/*
 	*	allocate memory for the string on the memory stack
 	*/
@@ -429,7 +521,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	/*
 	*	create the actual string
 	*/
-	va_start(args, format);
 #if defined(OV_DEBUG) && OV_SYSTEM_UNIX && !OV_SYSTEM_SOLARIS
 	if(vsnprintf(pc, length, format, args) >= length) {
 		Ov_Warning("string buffer too small");
@@ -439,11 +530,24 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 #else
 	vsprintf(pc, format, args);
 #endif
-	va_end(args);
 	/*
 	*	set the string value
 	*/
-	result = ov_string_setvalue(pstring, pc);
+	switch(allocator){
+	case ov_alloc_database:
+	case ov_alloc_heap:
+		result = ov_string_setvalue_allocator(pstring, allocator, pc);
+		break;
+	case ov_alloc_stack:
+		if(ov_vendortree_MaxStringLength() && ov_vendortree_MaxStringLength()<strlen(pc)){
+			*pstring = NULL;
+			result = OV_ERR_BADVALUE;
+		} else {
+			*pstring = pc;
+			result = OV_ERR_OK;
+		}
+		break;
+	}
 	ov_memstack_unlock();
 	return result;
 }

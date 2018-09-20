@@ -631,6 +631,18 @@
 */
 #define Ov_HeapStrdup(ptr)	ov_strdup(ptr)
 
+/**
+*	String operations for heap and memstack
+*/
+#define Ov_HeapStrSet(pstring, value)\
+	ov_string_setvalue_allocator((pstring), ov_alloc_heap, (format))
+#define Ov_HeapStrAppend(pstring, format)\
+	ov_string_append_allocator((pstring), ov_alloc_heap, (format))
+#define Ov_StackStrSet(pstring, value)\
+	ov_string_setvalue_allocator((pstring), ov_alloc_stack, (format))
+#define Ov_StackStrAppend(pstring, format)\
+	ov_string_append_allocator((pstring), ov_alloc_stack, (format))
+
 #endif
 /*
 *	End of file
