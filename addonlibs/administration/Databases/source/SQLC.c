@@ -265,7 +265,7 @@ OV_RESULT InsertRowIntoTable(OV_INSTPTR_Databases_SQLC pinst, struct table* tabl
 		tmpTable[table->usedRows.veclen] = ov_database_malloc(sizeof(void*)*table->columnNames.veclen);
 		if (tmpTable[table->usedRows.veclen] == NULL){
 			ov_logfile_error("no free memory to add columns for table");
-			ov_database_free(&tmpTable);
+			ov_database_free(tmpTable);
 			return OV_ERR_GENERIC;
 		}
 		// set values
