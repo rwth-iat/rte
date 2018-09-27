@@ -769,7 +769,8 @@ OV_DLLFNCEXPORT UA_StatusCode addReference(UA_Node *node){
 }
 
 static void OV_NodeStore2_deleteNodestore(void *nodestoreContext){
-
+	//iterate over nodes and delete each
+	//delete nodestore
 }
 
 static void OV_NodeStore2_deleteNode(void *nodestoreContext, UA_Node *node){
@@ -787,12 +788,13 @@ static UA_StatusCode OV_NodeStore2_insert(void *nodestoreContext, UA_Node *node,
 }
 
 
-static UA_StatusCode OV_NodeStore2_linkNamespace(void *nodestoreContext, UA_UInt16 namespaceIndex){
+/*static UA_StatusCode OV_NodeStore2_linkNamespace(void *nodestoreContext, UA_UInt16 namespaceIndex){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 static UA_StatusCode OV_NodeStore2_unlinkNamespace(void *nodestoreContext, UA_UInt16 namespaceIndex){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
+*/
 static void OV_NodeStore2_iterate(void *nodestoreContext, void* visitornodestoreContext, UA_NodestoreVisitor visitor){
 }
 static UA_Node * OV_NodeStore2_newNode(void *nodestoreContext, UA_NodeClass nodeClass){ //TODO add nodestore nodestoreContext? --> move nodeStore from static context to main

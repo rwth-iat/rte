@@ -88,7 +88,7 @@ static void ov_ua_connection_closeConnection(UA_Connection *connection) {
 
 
 static OV_RESULT create_UA_Connection(OV_INSTPTR_opcua_uaConnection pinst){
-	 pinst->v_connection = Ov_HeapMalloc(sizeof(UA_Connection));
+		pinst->v_connection = Ov_HeapMalloc(sizeof(UA_Connection));
 	    if(!pinst->v_connection){
 	    	ov_logfile_error("%s: could not allocate memory for UA_Connection. Aborting", pinst->v_identifier);
 	    	return OV_ERR_HEAPOUTOFMEMORY;
