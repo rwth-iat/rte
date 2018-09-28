@@ -12,25 +12,27 @@
 #include "nodeStoreSwitch.h"
 
 // beim intiallisieren config->nodestore = nodestoreSwitch;
+#define maxsize 99
 
-static UA_UInt16 findNSHandle(UA_NodestoreSwitch *pSwitch, void *nodestoreHandle)
+
+static UA_UInt16 findNSHandle(UA_NodestoreSwitch *pSwitch, void *nsHandle)
 {
 	UA_UInt16 i;
 	for(i=0; i<pSwitch->size; i++)
 	{
-	 if(pSwitch->nodestoreArray[i]->context == *nodestoreHandle)
+	 if(pSwitch->nodestoreArray[i]->context == *nsHandle)
 	 {
 	   return i;
 	 }
 	}
-	return 0;
+	return maxsize;
 }
 
- static UA_Boolean checkNSHandle(UA_NodestoreSwitch *pSwitch, void *nodestoreHandle){
+ static UA_Boolean checkNSHandle(UA_NodestoreSwitch *pSwitch, void *nsHandle){
 	 int i;
 	 for(i=0; i<pSwitch->size; i++)
 	 {
-		 if(pSwitch->nodestoreArray[i]->context == *nodestoreHandle)
+		 if(pSwitch->nodestoreArray[i]->context == *nsHandle)
 		 {
 			 return true;
 		 }
@@ -95,15 +97,16 @@ void nodeToDefaultStore(void *visitorContext, const UA_Node *node)
 }
 
 UA_StatusCode UA_NodestoreSwitch_unlinkNodestore(UA_NodestoreSwitch *pSwitch,
-		void *nodestoreHandle) {
-	int i = findNSHandle(pSwitch, nodestoreHandle);
-	if(i = 0)
+		void *nsHandle) {
+	int i = findNSHandle(pSwitch, nsHandle);
+	if(i == 0 || i == maxsize)
 		return UA_STATUSCODE_BADNOTFOUND;
 	//TODO:
 	//vorhandene Knoten im zu unlinkenden Nodestore default Nodestore zuordnen
 //	ptrSwitch->nodestoreArray[i]->iterate(ptrSwitch->nodestoreArray[i]->context, ptrSwitch->context, );
 
 
+	pSwitch->nodestoreArray[i]->deleteNodestore(pSwitch->nodestoreArray[i]->context);
 	//Array um 1 nach vorne damit keine luecken
 	for(--i;pSwitch->nodestoreArray[i] == NULL; i++)
 	{
@@ -114,22 +117,14 @@ UA_StatusCode UA_NodestoreSwitch_unlinkNodestore(UA_NodestoreSwitch *pSwitch,
 
 
 UA_StatusCode UA_NodestoreSwitch_changeNodestore(UA_NodestoreSwitch *pSwitch,
-		void *nodestoreHandleOut, void *nodestoreHandleIn) {
-	int i= findNSHandle(pSwitch, nodestoreHandleOut);
+		void *nsHandleOut, void *nsHandleIn) {
+	int i= findNSHandle(pSwitch, nsHandleOut);
 	if(i == 0)
 		return UA_STATUSCODE_BADNOTFOUND;
-	//ptrSwitch->nodestoreArray[i]->iterate  Nodes von altem Nodestore zu neuem hinzufügen
-	UA_NodestoreSwitch_deleteNodestore(pSwitch, nodestoreHandleOut);
+	//ptrSwitch->nodestoreArray[i]->iterate  Nodes von altem Nodestore zu Neuem hinzufügen
+	UA_NodestoreSwitch_deleteNodestore(pSwitch, nsHandleOut);
 	return UA_STATUSCODE_GOOD;
 
-}
-
-
-UA_StatusCode UA_NodestoreSwitch_deleteNodestore(UA_NodestoreSwitch *pSwitch, void *nodestoreHandle)
-{
-	if(pSwitch->nodestoreArray[0] == nodestoreHandle)
-			return UA_STATUSCODE_BADINTERNALERROR;
-	return UA_STATUSCODE_BADNOTFOUND;
 }
 
 
@@ -137,22 +132,40 @@ UA_StatusCode UA_NodestoreSwitch_deleteNodestore(UA_NodestoreSwitch *pSwitch, vo
  * NodestoreInterface Function routing
 */
 
- UA_Node *UA_NodestoreSwitch_newNode(UA_NodestoreSwitch *pSwitch, UA_NodeClass nodeClass, void *nodestoreHandle)
+ UA_Node *UA_NodestoreSwitch_newNode(UA_NodestoreSwitch *pSwitch, UA_NodeClass nodeClass, void *nsHandle)
  {
-	 if(!checkNSHandle(pSwitch, nodestoreHandle))
+	 UA_UInt16 i = findNSHandle(pSwitch, nsHandle);
+	 if(i == maxsize)
 	 {
 		 return NULL;
 	 }
-	 return server->namespaces[namespaceIndex].nodestore->newNode(nodeClass);
+	 return pSwitch->nodestoreArray[i]->newNode(nodeClass);
  }
 
- void UA_NodestoreSwitch_deleteNode(UA_Server* server, UA_Node *node)
+ UA_StatusCode UA_NodestoreSwitch_deleteNode(UA_NodestoreSwitch *pSwitch, UA_Node *node)
  {
-	 if(checkNSHandle(server, node->nodeId.namespaceIndex))
-	 {
-		 server->namespaces[node->nodeId.namespaceIndex].nodestore->deleteNode(node);
-	 }
+	UA_UInt16 i,j=0;
+	for(i=0; i<pSwitch->size; i++)
+	{
+		j = findNSHandle(pSwitch, pSwitch->nodestoreArray[i]->context);
+		if(j != maxsize)
+		{
+			pSwitch->nodestoreArray[j]->deleteNode(pSwitch->nodestoreArray[j]->context, node);
+			return UA_STATUSCODE_GOOD;
+		}
+	}
+	return UA_STATUSCODE_BADNOTFOUND;
  }
+
+ UA_StatusCode UA_NodestoreSwitch_deleteNodeinStore(UA_NodestoreSwitch *pSwitch, void *nsHandle, UA_Node *node)
+ {
+	 UA_UInt16 i = findNSHandle(pSwitch, nsHandle);
+	 if(i == maxsize)
+		 return UA_STATUSCODE_BADNOTFOUND;
+	 pSwitch->nodestoreArray[i]->deleteNode(pSwitch->nodestoreArray[i]->context, node);
+	 return UA_STATUSCODE_GOOD;
+ }
+
 
  UA_StatusCode UA_NodestoreSwitch_insertNode(UA_Server* server, UA_Node *node,
  UA_NodeId *addedNodeId)
