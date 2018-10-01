@@ -264,7 +264,8 @@ static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 static void opcua_uaServer_stopServer(OV_INSTPTR_opcua_uaServer pinst){
 	UA_Server_run_shutdown(opcua_pUaServer->v_serverData);
 	UA_ByteString_deleteMembers(&pinst->v_serverConfig->serverCertificate);
-	pinst->v_serverConfig->nodestore.deleteNodestore(pinst->v_serverConfig->nodestore.context); //müsste alle vorhandenen Nodes löschen zZ nicht implementiert
+	//müsste alle vorhandenen Nodes löschen zZ nicht implementiert deswegen bleiben Connections erhalten bei Shutdown
+	pinst->v_serverConfig->nodestore.deleteNodestore(pinst->v_serverConfig->nodestore.context);
 	pinst->v_networkLayerOv->deleteMembers(pinst->v_networkLayerOv);
 	UA_Server_delete(pinst->v_serverData);
 
