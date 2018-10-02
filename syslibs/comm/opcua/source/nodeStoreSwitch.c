@@ -41,22 +41,22 @@ static UA_UInt16 findNSHandle(UA_NodestoreSwitch *pSwitch, void *nsHandle)
  }
 
 
-UA_StatusCode UA_NodestoreSwitch_init(UA_NodestoreSwitch *pSwitch)
+
+
+UA_NodestoreSwitch* UA_NodestoreSwitch_init(UA_NodestoreSwitch *pSwitch)
 {
 	pSwitch->context = (void*)UA_malloc(sizeof(void));
 	pSwitch->size = 0;
 	pSwitch->nodestoreArray[0] = UA_malloc(1 * sizeof(UA_Nodestore));
 	UA_StatusCode retval = UA_Nodestore_default_new(pSwitch->nodestoreArray[0]);
 
-    if(retval != UA_STATUSCODE_GOOD) {
+    if(retval != UA_STATUSCODE_GOOD)
     	UA_free(pSwitch);
-    	return UA_STATUSCODE_BADINTERNALERROR;
-    }
     else
     {
     	UA_NodestoreSwitch_linkNodestore(pSwitch, pSwitch->nodestoreArray[0]);
-    	return UA_STATUSCODE_GOOD;
     }
+    return pSwitch;
 
 }
 
@@ -68,9 +68,11 @@ UA_StatusCode UA_NodestoreSwitch_linkNodestore(UA_NodestoreSwitch *pSwitch,
 {
 	pSwitch->size = pSwitch->size + 1;
 	if(pSwitch->size > 1)
-		pSwitch->nodestoreArray[pSwitch->size-1] = UA_malloc(1* sizeof(UA_Nodestore));
-	pSwitch->nodestoreArray[pSwitch->size-1]->context = ns->context;
-	pSwitch->nodestoreArray[pSwitch->size-1]->deleteNodestore =ns->deleteNodestore;
+		pSwitch->nodestoreArray[pSwitch->size-1] = UA_malloc(sizeof(UA_Nodestore));
+
+	pSwitch->context = UA_malloc(sizeof(void));
+	ns->context =  pSwitch->nodestoreArray[pSwitch->size-1]->context;
+	ns->deleteNodestore = (UA_Nodestore_deleteNodestore) pSwitch->nodestoreArray[pSwitch->size-1]->deleteNodestore;
 	pSwitch->nodestoreArray[pSwitch->size-1]->inPlaceEditAllowed = ns->inPlaceEditAllowed;
 	pSwitch->nodestoreArray[pSwitch->size-1]->newNode = ns->newNode;
 	pSwitch->nodestoreArray[pSwitch->size-1]->deleteNode = ns->deleteNode;
@@ -86,13 +88,8 @@ UA_StatusCode UA_NodestoreSwitch_linkNodestore(UA_NodestoreSwitch *pSwitch,
 
 }
 
-//typedef void (*UA_NodestoreVisitor)(void *visitorContext, const UA_Node *node);
 
 
-void nodeToDefaultStore(void *visitorContext, const UA_Node *node)
-{
-
-}
 
 UA_StatusCode UA_NodestoreSwitch_unlinkNodestore(UA_NodestoreSwitch *pSwitch,
 		void *nsHandle) {

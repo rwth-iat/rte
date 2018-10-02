@@ -1454,7 +1454,7 @@ UA_Nodestore *opcua_nodeStoreFunctions_ovNodeStoreInterface2New(void) {
     nsi->iterate =       (UA_Nodestore_iterate)     OV_NodeStore2_iterate;
     nsi->releaseNode =      	(UA_Nodestore_releaseNode) 	OV_NodeStore2_releaseNode;
 
-    //nsi->inPlaceEditAllowed =
+    nsi->inPlaceEditAllowed = true;
     /* nicht im Standart Nodestore(interface) enthalten */
     // nsi->linkNamespace = (UA_Nodestore_linkNamespace) OV_NodeStore2_linkNamespace;
     // nsi->unlinkNamespace = (UA_Nodestore_unlinkNamespace) OV_NodeStore2_unlinkNamespace;
