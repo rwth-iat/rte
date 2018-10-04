@@ -23,19 +23,41 @@ extern "C" {
 /* in ServerConfig wird UA_NodestoreSwitch als UA_Nodestore angegeben  */
 
 struct UA_NodestoreSwitch {
-	void *context;
 	int size=1;
 	UA_Nodestore *nodestoreArray[];
 
 };
 
-
 typedef struct UA_NodestoreSwitch UA_NodestoreSwitch;
 
-UA_StatusCode UA_NodestoreSwitch_init(UA_NodestoreSwitch *pSwitch);
+
+/* Standard functions for nodestore
+ * Searches for the Node or inserts/creates it to default nodestore
+ * */
 UA_StatusCode UA_NodestoreSwitch_iterate(UA_NodestoreSwitch, void* visitorContext, UA_NodestoreVisitor visitor);
+UA_StatusCode UA_NodestoreSwitch_deleteNodestoreSwitch(UA_NodestoreSwitch *pSwitch);
+void UA_NodestoreSwitch_deleteNode(UA_NodestoreSwitch *pSwitch, UA_NodeId *NodeId);
+UA_StatusCode UA_NodestoreSwitch_insertNode(UA_NodestoreSwitch *pSwitch,UA_Node *node, UA_NodeId *addedNodeId);
+const UA_Node *UA_NodestoreSwitch_getNode(UA_NodestoreSwitch *pSwitch ,const UA_NodeId *nodeId);
+UA_Node * UA_NodestoreSwitch_getNodeCopy(UA_NodestoreSwitch *pSwitch ,const UA_NodeId *nodeId);
+UA_StatusCode UA_NodestoreSwitch_replaceNode(UA_NodestoreSwitch *pSwitch ,UA_Node *node);
+UA_StatusCode UA_NodestoreSwitch_removeNode(const UA_NodeId *nodeId);
+void releaseNode(UA_NodestoreSwitch *pSwitch ,const UA_Node *node);
+UA_Node * UA_NodestoreSwitch_newNode(UA_NodestoreSwitch *pSwitch, UA_NodeClass nodeClass);
+
+
+/* Added functions to explicit to NodestoreSwitch */
 UA_StatusCode UA_NodestoreSwitch_init(UA_NodestoreSwitch *pSwitch);
-UA_StatusCode UA_NodestoreSwitch_deleteNodestore(UA_NodestoreSwitch *pSwitch, void *nodestoreHandle);
+void UA_NodestoreSwitch_deleteNode_inNS(UA_NodestoreSwitch *pSwitch, UA_NodeId *NodeId);
+UA_StatusCode UA_NodestoreSwitch_insertNode_inNS(UA_NodestoreSwitch *pSwitch,UA_Node *node, UA_NodeId *addedNodeId);
+const UA_Node *UA_NodestoreSwitch_getNode_inNS(UA_NodestoreSwitch *pSwitch ,const UA_NodeId *nodeId);
+UA_Node * UA_NodestoreSwitch_getNodeCopy_inNS(UA_NodestoreSwitch *pSwitch ,const UA_NodeId *nodeId);
+UA_StatusCode UA_NodestoreSwitch_replaceNode_inNS(UA_NodestoreSwitch *pSwitch ,UA_Node *node);
+UA_StatusCode UA_NodestoreSwitch_removeNode_inNS(const UA_NodeId *nodeId);
+void releaseNode_inNS(UA_NodestoreSwitch *pSwitch ,const UA_Node *node);
+UA_Node * UA_NodestoreSwitch_newNode_inNS(UA_NodestoreSwitch *pSwitch, UA_NodeClass nodeClass);
+
+
 UA_StatusCode UA_NodestoreSwitch_changeNodestore(UA_NodestoreSwitch *pSwitch,
 		void *nodestoreHandleOut, void *nodestoreHandleIn);
 UA_StatusCode UA_NodestoreSwitch_unlinkNodestore(UA_NodestoreSwitch *pSwitch,
@@ -43,28 +65,9 @@ UA_StatusCode UA_NodestoreSwitch_unlinkNodestore(UA_NodestoreSwitch *pSwitch,
 UA_StatusCode UA_NodestoreSwitch_linkNodestore(UA_NodestoreSwitch *pSwitch,
 		UA_Nodestore *ns);
 
-void UA_NodestoreSwitch_deleteNode(UA_NodestoreSwitch pSwitch, UA_NodeId *NodeId);
 
 
-UA_StatusCode UA_NodestoreSwitch_insertNode(UA_Node *node, UA_NodeId *addedNodeId);
 
-
-const UA_Node *UA_NodestoreSwitch_getNode(const UA_NodeId *nodeId);
-
-
-UA_Node * UA_NodestoreSwitch_getNodeCopy(const UA_NodeId *nodeId);
-
-
-UA_StatusCode UA_NodestoreSwitch_replaceNode(UA_Node *node);
-
-
-UA_StatusCode UA_NodestoreSwitch_removeNode(const UA_NodeId *nodeId);
-
-void releaseNode(const UA_Node *node);
-
-
-UA_Node * UA_NodestoreSwitch_newNode(UA_Server* server, UA_NodeClass nodeClass,
-		UA_UInt16 namespaceIndex);
 
 
 

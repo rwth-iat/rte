@@ -30,7 +30,7 @@ UA_StatusCode UA_NoedstoreSwitch_new(UA_Nodestore *ns)
 
 void *UA_NodestoreSwitchInterface_deleteNodestore(void *nodestoreContext)
 {
-	UA_NodestoreSwitch_deleteNodestore(nodestoreContext);
+	UA_NodestoreSwitch_deleteNodestoreSwitch(nodestoreContext);
 }
 
 UA_Node *UA_NodestoreSwitchInterface_newNode(void *nodestoreContext, UA_NodeClass nodeClass)
