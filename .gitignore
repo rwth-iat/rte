@@ -12,3 +12,15 @@ Thumbs.db
 /build/acplt/
 /build/acplt.build/
 /build/*.log
+
+# Ignore CMake builds...
+cmake_build_*/**/*
+
+# Ignore VS Code stuff...
+.vscode
+
+# Ignore generated files
+**/ov_ovmparser.c
+**/ov_ovmparser.h
+**/ov_ovmscanner.c
+**/ov_ovmscanner.h

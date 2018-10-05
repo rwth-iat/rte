@@ -1,0 +1,12 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
+
+MESSAGE("Processing makmak Source directory...")
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR} ${OV_INCLUDE_DIR})
+
+SET(OV_BUILDER_SRC  acplt_builder.c
+                    common.c
+    )
+
+ADD_EXECUTABLE(ov_builder ${OV_BUILDER_SRC})
+TARGET_COMPILE_DEFINITIONS(ov_builder PRIVATE ${OV_DEFINES})

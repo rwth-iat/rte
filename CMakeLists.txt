@@ -1,0 +1,38 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
+PROJECT(acpltov)
+
+INCLUDE(FindFLEX)
+INCLUDE(FindBISON)
+
+SET(OV_GENERAL_DEFINES "")
+
+IF(${MSVC})
+    SET(FLEX_FLAGS -d)
+    SET(BISON_FLAGS "-t -d")
+
+    # Replace the MD (dynamic linking of runtime)
+	# with MT flag (static linking of runtime)
+	# for all configurations
+	set(CompilerFlags
+		CMAKE_CXX_FLAGS
+		CMAKE_CXX_FLAGS_DEBUG
+		CMAKE_CXX_FLAGS_RELEASE
+		CMAKE_CXX_FLAGS_RELWITHDEBINFO
+		CMAKE_CXX_FLAGS_MINSIZEREL
+		CMAKE_C_FLAGS
+		CMAKE_C_FLAGS_DEBUG
+		CMAKE_C_FLAGS_RELEASE
+		CMAKE_C_FLAGS_RELWITHDEBINFO
+		CMAKE_C_FLAGS_MINSIZEREL
+	)
+	foreach(CompilerFlag ${CompilerFlags})
+		string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+    endforeach()
+
+    SET(OV_PLATFORM_DEFINES "-DOV_SYSTEM_NT=1")
+ENDIF()
+
+SET(OV_DEFINES ${OV_GENERAL_DEFINES} ${OV_PLATFORM_DEFINES})
+MESSAGE("OV Defines are: " ${OV_DEFINES})
+
+ADD_SUBDIRECTORY(core/ov)
