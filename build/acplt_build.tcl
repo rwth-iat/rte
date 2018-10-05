@@ -646,7 +646,7 @@ proc release_lib_better {libname option} {
 				}
 				set success [build_package $libname $make $option GCC_BIN_PREFIX=$CrossPrefix BIN_DIR= $MAKMAKOPTION]
 			} else {			
-				set success [build_package $libname $make $option]
+				set success [build_package $libname $make CC=mingw32-gcc $option]
 			}
 			
 			if { $success == 0 } {
