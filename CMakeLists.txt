@@ -38,7 +38,7 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
             string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
         endforeach()    
 
-        SET(OV_GENERAL_DEFINES ${OV_GENERAL_DEFINES} "-D_CRT_SECURE_NO_WARNINGS=1")
+        SET(OV_GENERAL_DEFINES ${OV_GENERAL_DEFINES} "-D_CRT_SECURE_NO_WARNINGS=1")        
     ENDIF()
     SET(OV_PLATFORM_DEFINES "-DOV_SYSTEM_NT=1")	
 ELSEIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
