@@ -1,0 +1,18 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
+
+MESSAGE("Processing codegen Source directory...")
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR} ${OV_INCLUDE_DIR})
+
+SET (LIBML_SRC   ml_free.c
+                ml_malloc.c
+                ml_realloc.c
+    )
+
+ADD_LIBRARY(libml ${LIBML_SRC})
+
+TARGET_COMPILE_DEFINITIONS(libml PRIVATE ${OV_DEFINES})
+
+IF(${MSVC})
+    TARGET_COMPILE_DEFINITIONS(libml PRIVATE -D__STDC__=1 -DML_SYSTEM_WIN -DDBG_TO_STDERR=0)
+ENDIF()

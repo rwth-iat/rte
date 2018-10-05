@@ -3,7 +3,8 @@ Thumbs.db
 # ignore library build artifacts
 /**/.settings/
 /**/build/
-/**/ov/source/libml/
+/**/ov/source/libml/*.a
+/**/ov/source/libml/*.o
 /**/source/sourcetemplates/
 
 # include rte build folder
@@ -14,7 +15,7 @@ Thumbs.db
 /build/*.log
 
 # Ignore CMake builds...
-cmake_build_*/**/*
+cmake_build_*
 
 # Ignore VS Code stuff...
 .vscode
