@@ -21,7 +21,7 @@
 *   Historie
 *   --------
 *   2008-04-30 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen
-*
+*   2018 Florian Palm: added TLSF-define to use tlsf memory allocator
 ******************************************************************************/
 
 #include "../../include/libml/ml_malloc.h"
@@ -66,6 +66,8 @@ ml_initialize(
     __ml_byte_t *heapbase,
     __ml_ptr     (*func)(__ml_size_t __size)
 ) {
+  
+
     __ml_size_t i;
     
     if (!ml_info_ptr || !heapbase || !func) {
@@ -89,6 +91,7 @@ ml_initialize(
     _ml_info_ptr->bytes_free  = 0;
 
     return 1;
+
 }
 
 
@@ -195,6 +198,8 @@ fprintf(stderr, "   getfreeblock(%" PRIuPTR ") vom groesseren abgeschnitten. Res
 /* Allocate memory from the heap.  */
 __ml_ptr
 ml_malloc(__ml_size_t size) {
+  
+  
     __ml_ptr          result;
     __ml_size_t       blocks;
     __ml_size_t       i;
@@ -303,4 +308,5 @@ fprintf(stderr, "  ml_malloc %" PRIuPTR " (%" PRIuPTR ") size %" PRIuPTR "\n\n"
 #endif
   
     return result;
+
 }

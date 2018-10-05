@@ -134,8 +134,9 @@ typedef struct {
 } ml_info;
 
 extern ml_info *_ml_info_ptr;
-
-
+#ifdef TLSF
+size_t  ml_initializetlsf(size_t mem_pool_size, void *mem_pool);
+#endif
 /* Set everything up and remember that we have.  */
 int ml_initialize (ml_info *ml_info_ptr, __ml_byte_t *heapbase, __ml_ptr (*func)(__ml_size_t __size));
 

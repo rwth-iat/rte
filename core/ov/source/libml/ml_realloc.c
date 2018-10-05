@@ -24,6 +24,7 @@
 *   
 ******************************************************************************/
 #include "../../include/libml/ml_malloc.h"
+
 #ifdef ML_SYSTEM_WIN
 #include <windows.h>
 #include <winbase.h>
@@ -37,6 +38,8 @@
    internals of both ml_free and ml_malloc. */
 __ml_ptr
 ml_realloc (__ml_ptr ptr, __ml_size_t size) {
+  
+
   __ml_ptr     result;
   __ml_size_t  newsize, oldsize, copysize;
   __ml_size_t  offs;
@@ -84,6 +87,8 @@ fprintf(stderr, "  ml_realloc gebe adresse %" PRIuPTR " frei\n", (__ml_size_t)pt
   ml_free(ptr);
   
   return result;
+
+  
 }
 
 /*	----------------------------------------------------------------------	*/

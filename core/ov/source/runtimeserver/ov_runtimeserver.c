@@ -295,7 +295,6 @@ int main(int argc, char **argv) {
 	/*
 	*	local variables
 	*/
-
 	OV_STRING				filename = NULL;	/*	malloced	*/
 	OV_STRING				servername = NULL;	/*	malloced	*/
 	OV_STRING				configFile	=	NULL;	/*	not malloced	*/
@@ -313,7 +312,7 @@ int main(int argc, char **argv) {
 	OV_UINT					line = 0;
 	OV_UINT					hlpindex = 0;
 	OV_BOOL					logfileSpecified = FALSE;
-	OV_BOOL					exec = FALSE;
+OV_BOOL exec = FALSE;
 	OV_INSTPTR_ov_library	plib;
 	OV_INSTPTR_ov_domain	pdom;
 	OV_INT					i;
@@ -350,6 +349,7 @@ int main(int argc, char **argv) {
 	/*
 	*	parse command line arguments
 	*/
+	usetlsfAllocator = FALSE;
 	for(i=1; i<argc; i++) {
 		/*
 		*	set database filename option
@@ -1447,6 +1447,8 @@ ERRORMSG:
 	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
 	ov_vendortree_setServerPID();
 	if(!exit){
+		//set memory allocator to tlsf
+		usetlsfAllocator = TRUE;
 		/*
 		*   run server
 		*/

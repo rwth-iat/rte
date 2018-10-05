@@ -43,7 +43,6 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 #include "libov/ov_config.h"
-
 #include "ov_dbutil.h"
 
 /*	----------------------------------------------------------------------	*/
@@ -113,7 +112,7 @@ char* readValue(char* line)
 	stripSpaceAtEnd(temp);
 	if(*temp)
 	{
-		value = malloc(strlen(temp) + 1);
+		value = ov_malloc(strlen(temp) + 1);
 		if(!value)	/*	out of memory	*/
 			return NULL;
 
@@ -122,7 +121,9 @@ char* readValue(char* line)
 	}
 	else
 	{
-		value = calloc(1, sizeof(char));
+                value = ov_malloc(sizeof(char));
+                memset(value,0,sizeof(char)*1); 
+		//value = calloc(1, sizeof(char));
 		if(!value)	/*	out of memory	*/
 			return NULL;
 		return value;
@@ -188,6 +189,7 @@ void ov_newline(
 
 /*	----------------------------------------------------------------------	*/
 
+
 /*
  *	Main program
  */
@@ -227,7 +229,7 @@ int main(int argc, char **argv) {
 #endif
 
 
-
+	usetlsfAllocator = FALSE;
 	/*
 	 *	parse command line arguments
 	 */
@@ -312,7 +314,7 @@ int main(int argc, char **argv) {
 				if((j>0))
 				{
 
-					configBasePath = malloc(j+2);
+					configBasePath = ov_malloc(j+2);
 					if(!configBasePath)
 					{
 						ov_logfile_error("Could not reserve memory for basePath. Aborting.");
@@ -388,7 +390,8 @@ int main(int argc, char **argv) {
 										if(configBasePath && *configBasePath)
 										{
 											hlpindex = strlen(configBasePath);
-											helper = calloc(hlpindex+strlen(temp)+2, sizeof(char));
+											helper = ov_malloc((hlpindex+strlen(temp)+2)*sizeof(char));
+											memset(helper,0,(hlpindex+strlen(temp)+2)*sizeof(char));
 											if(!helper)
 											{
 												ov_logfile_error("Could not reserve memory for logfile path. Aborting.");
@@ -414,7 +417,7 @@ int main(int argc, char **argv) {
 									return EXIT_FAILURE;
 								}
 							}
-							free(temp);
+							//ov_free(temp);
 							logfileSpecified = TRUE;
 						}
 					}
@@ -426,7 +429,7 @@ int main(int argc, char **argv) {
 							return EXIT_FAILURE;
 						if(!size)
 							size = strtoul(temp, NULL, 0);
-						free(temp);
+						//ov_free(temp);
 					}
 					/*
 					 * default: option unknown
@@ -574,12 +577,15 @@ int main(int argc, char **argv) {
 		if(configBasePath && *configBasePath)
 		{
 			hlpindex = strlen(configBasePath);
-			helper = calloc(hlpindex+strlen(filename)+2, sizeof(char));
-			if(!helper)
+			//helper = calloc(hlpindex+strlen(filename)+2, sizeof(char));
+                        helper = ov_malloc((hlpindex+strlen(filename)+2)*sizeof(char));
+                        		
+	                if(!helper)
 			{
 				ov_logfile_error("Could not reserve memory for filename path. Aborting.");
 				return EXIT_FAILURE;
 			}
+			memset(helper,0,(hlpindex+strlen(filename))*sizeof(char));
 			strcpy(helper, configBasePath);
 			if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
 			{

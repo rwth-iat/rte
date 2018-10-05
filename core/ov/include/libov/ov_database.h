@@ -36,6 +36,8 @@
 extern "C" {
 #endif
 
+
+
 /*
 *	Maximum size of a database file
 */
@@ -162,7 +164,7 @@ extern OV_DATABASE_INFO OV_MEMSPEC	*pdbmem;
 #else
 #define OV_EXTERN OV_DLLVARIMPORT
 #endif
-
+OV_EXTERN OV_BOOL usetlsfAllocator;
 OV_EXTERN OV_DATABASE_INFO OV_MEMSPEC	*pdb;
 OV_EXTERN OV_STRING db_backup_filename;
 #undef OV_EXTERN
