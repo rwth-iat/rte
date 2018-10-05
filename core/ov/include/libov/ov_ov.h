@@ -166,7 +166,7 @@ typedef OV_ENUM OV_VAR_PROPS;
 *
 *	Use of C99 fixed width data types of intstd.h and inttypes.h
 */
-#ifdef _STDINT_H
+#if defined(_STDINT_H) || defined(_STDINT)
 	typedef	int32_t	OV_BOOL;		/* bool value */
 	typedef int32_t	OV_INT;			/* integer value */
 	typedef uint32_t	OV_UINT;	/* unsigned integer value */
@@ -184,7 +184,7 @@ typedef OV_ENUM OV_VAR_PROPS;
 	#define OV_VL_MININT	INT32_MIN
 	#define OV_VL_MININT64	INT64_MIN
 #else
-	typedef	boot_t	OV_BOOL;		/* bool value */
+	typedef	bool_t	OV_BOOL;		/* bool value */
 	typedef long	OV_INT;			/* integer value */
 	typedef u_long	OV_UINT;	/* unsigned integer value */
 	typedef __int64		OV_INT64;			/* 64bit integer value -- internal use only -- */
