@@ -112,10 +112,10 @@ int flock_solaris (int filedes, int oper)
 
 #ifndef __STDC__
 #define __STDC__ 1
-#include "ml_malloc.h"
+#include "libml/ml_malloc.h"
 #undef __STDC__
 #else
-#include "ml_malloc.h"
+#include "libml/ml_malloc.h"
 #endif
 
 #if OV_SYSTEM_MC164

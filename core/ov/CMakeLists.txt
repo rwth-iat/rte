@@ -5,7 +5,13 @@ MESSAGE("Processing OV Source directory...")
 
 SET(OV_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/source)
 SET(OV_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
+SET(OV_MODEL_DIR ${CMAKE_CURRENT_LIST_DIR}/model)
 
-#ADD_SUBDIRECTORY(${OV_SRC_DIR}/acplt_makmak_builder)
+SET(OV_MODEL_SRC)
+
+# TODO: Needs code change!
+# ADD_SUBDIRECTORY(${OV_SRC_DIR}/acplt_makmak_builder)
+
 ADD_SUBDIRECTORY(${OV_SRC_DIR}/codegen)
 ADD_SUBDIRECTORY(${OV_SRC_DIR}/libml)
+ADD_SUBDIRECTORY(${OV_SRC_DIR}/libov)
