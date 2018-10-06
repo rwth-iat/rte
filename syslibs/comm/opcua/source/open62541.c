@@ -856,12 +856,12 @@ size_t UA_readNumber(UA_Byte *buf, size_t buflen, UA_UInt32 *number);
 
 //typedef UA_StatusCode (*UA_exchangeEncodeBuffer)(void *handle, UA_ByteString *buf, size_t offset);
 
-UA_StatusCode UA_EXPORT
+UA_EXPORT UA_StatusCode
 UA_encodeBinary(const void *src, const UA_DataType *type,
                 UA_exchangeEncodeBuffer exchangeCallback, void *exchangeHandle,
                 UA_ByteString *dst, size_t *offset) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
 
-UA_StatusCode UA_EXPORT
+UA_EXPORT UA_StatusCode
 UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst,
                 const UA_DataType *type,
                 size_t newNamespacesSize, UA_Namespace *newNamespaces) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
@@ -7108,7 +7108,7 @@ UA_encodeBinaryInternal(const void *src, const UA_DataType *type) {
     return retval;
 }
 
-UA_StatusCode
+UA_EXPORT UA_StatusCode
 UA_encodeBinary(const void *src, const UA_DataType *type,
                 UA_exchangeEncodeBuffer exchangeCallback, void *exchangeHandle,
                 UA_ByteString *dst, size_t *offset) {

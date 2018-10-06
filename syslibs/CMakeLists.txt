@@ -25,3 +25,4 @@ ADD_SUBDIRECTORY(comm/UDPbind)
 ADD_SUBDIRECTORY(comm/ksxdr)
 # TODO: Change mechanism for static files
 #ADD_SUBDIRECTORY(comm/kshttp)
+ADD_SUBDIRECTORY(comm/opcua)
