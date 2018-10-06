@@ -18,6 +18,12 @@ SET(KSBASE_INCLUDE_DIR ${KSBASE_ROOT_DIR}/include)
 SET(KSBASE_MODEL_DIR ${KSBASE_ROOT_DIR}/model)
 SET(KSBASE_MODEL_FILE ${KSBASE_MODEL_DIR}/ksbase.ovm)
 
+# Search directories of FB needed by all builds
+SET(FB_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/functionblock/fb)
+SET(FB_MODEL_DIR ${FB_ROOT_DIR}/model)
+SET(FB_INCLUDE_DIR ${FB_ROOT_DIR}/include)
+SET(FB_MODEL_FILE ${FB_MODEL_DIR}/fb.ovm)
+
 # Build communication libraries
 ADD_SUBDIRECTORY(comm/ksbase)
 ADD_SUBDIRECTORY(comm/TCPbind)
@@ -26,3 +32,6 @@ ADD_SUBDIRECTORY(comm/ksxdr)
 # TODO: Change mechanism for static files
 #ADD_SUBDIRECTORY(comm/kshttp)
 ADD_SUBDIRECTORY(comm/opcua)
+
+###### BUILD FUNCTIONBLOCK LIBRARIES #########
+ADD_SUBDIRECTORY(functionblock/fb)
