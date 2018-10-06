@@ -1,0 +1,25 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
+
+MESSAGE("Processing dbutil Source directory...")
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR} ${OV_INCLUDE_DIR} ${OV_MODEL_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+SET(OV_OVM ${OV_MODEL_DIR}/ov.ovm)
+SET(LIBOV_MOD_SRC ${CMAKE_CURRENT_BINARY_DIR}/ov.c)
+
+SET     (DBUTIL_SRC     ov_dbutil.c
+                        ov_dbutil.h
+                        fbddump.c
+                        dump.c
+        )
+
+ADD_CUSTOM_COMMAND(OUTPUT ${LIBOV_MOD_SRC}
+    COMMAND $<TARGET_FILE:ov_codegen> -I ${OV_MODEL_DIR} -f ${OV_OVM} -l ov
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ov_codegen)
+    
+SET_SOURCE_FILES_PROPERTIES(${LIBOV_MOD_SRC} GENERATED)    
+
+ADD_EXECUTABLE(ov_dbutil ${DBUTIL_SRC} ${LIBOV_MOD_SRC})
+TARGET_LINK_LIBRARIES(ov_dbutil libov)
+TARGET_COMPILE_DEFINITIONS(ov_dbutil PRIVATE ${OV_DEFINES})
