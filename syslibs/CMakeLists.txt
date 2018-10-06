@@ -12,5 +12,12 @@ SET(OV_INCLUDE_DIR ${OV_DIR}/include)
 
 SET(OV_MODEL_FILE ${OV_MODEL_DIR}/ov.ovm)
 
+# Set variables for ksbase reused along all libs
+SET(KSBASE_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/comm/ksbase)
+SET(KSBASE_INCLUDE_DIR ${KSBASE_ROOT_DIR}/include)
+SET(KSBASE_MODEL_DIR ${KSBASE_ROOT_DIR}/model)
+SET(KSBASE_MODEL_FILE ${KSBASE_MODEL_DIR}/ksbase.ovm)
+
 # Build communication libraries
 ADD_SUBDIRECTORY(comm/ksbase)
+ADD_SUBDIRECTORY(comm/TCPbind)
