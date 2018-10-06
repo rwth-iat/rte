@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
 PROJECT(acpltov)
 
+OPTION(OV_BUILD_SYSLIBS "Determine if syslibs should get built" ON)
+
 INCLUDE(FindFLEX)
 INCLUDE(FindBISON)
 
@@ -65,4 +67,11 @@ ENDIF()
 SET(OV_DEFINES ${OV_GENERAL_DEFINES} ${OV_PLATFORM_DEFINES})
 MESSAGE("OV Defines are: " ${OV_DEFINES})
 
+# Core system build
 ADD_SUBDIRECTORY(core/ov)
+
+#Add system libs to build
+IF(${OV_BUILD_SYSLIBS})
+    MESSAGE("Including syslibs into build")
+    ADD_SUBDIRECTORY(syslibs)
+ENDIF()
