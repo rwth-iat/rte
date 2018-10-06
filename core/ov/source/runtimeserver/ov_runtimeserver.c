@@ -186,7 +186,7 @@ static OV_RESULT ov_ksserver_stripped_create(
 	if(sighandler) {
 		signal(SIGTERM, sighandler);
 		signal(SIGINT, sighandler);
-#if !PLT_SYSTEM_NT
+#if !OV_SYSTEM_NT
 		signal(SIGHUP, sighandler);
 #endif
 	}
