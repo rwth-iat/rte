@@ -6,6 +6,16 @@ OPTION(OV_BUILD_SYSLIBS "Determine if syslibs should get built" ON)
 INCLUDE(FindFLEX)
 INCLUDE(FindBISON)
 
+# Configure installation paths
+SET(SYSTEM_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/system)
+SET(BIN_INSTALL_DIR ${SYSTEM_INSTALL_DIR}/sysbin)
+SET(SYSLIB_INSTALL_DIR ${SYSTEM_INSTALL_DIR}/syslibs)
+SET(DEV_INSTALL_DIR ${SYSTEM_INSTALL_DIR}/sysdevbase)
+
+MESSAGE(STATUS "Installation to prefix: " ${CMAKE_INSTALL_PREFIX})
+MESSAGE(STATUS "Binaries will be installed to: " ${BIN_INSTALL_DIR})
+MESSAGE(STATUS "Libraries will be installed to: " ${SYSLIB_INSTALL_DIR})
+
 SET(OV_GENERAL_DEFINES "")
 
 #Determine the Platform defines for libks
