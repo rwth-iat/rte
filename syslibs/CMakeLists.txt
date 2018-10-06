@@ -21,3 +21,4 @@ SET(KSBASE_MODEL_FILE ${KSBASE_MODEL_DIR}/ksbase.ovm)
 # Build communication libraries
 ADD_SUBDIRECTORY(comm/ksbase)
 ADD_SUBDIRECTORY(comm/TCPbind)
+ADD_SUBDIRECTORY(comm/UDPbind)
