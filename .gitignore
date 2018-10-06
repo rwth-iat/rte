@@ -25,3 +25,5 @@ cmake_build_*
 **/ov_ovmparser.h
 **/ov_ovmscanner.c
 **/ov_ovmscanner.h
+
+syslibs/comm/kshttp/source/generated_static_index.c

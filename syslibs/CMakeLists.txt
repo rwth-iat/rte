@@ -23,3 +23,5 @@ ADD_SUBDIRECTORY(comm/ksbase)
 ADD_SUBDIRECTORY(comm/TCPbind)
 ADD_SUBDIRECTORY(comm/UDPbind)
 ADD_SUBDIRECTORY(comm/ksxdr)
+# TODO: Change mechanism for static files
+#ADD_SUBDIRECTORY(comm/kshttp)

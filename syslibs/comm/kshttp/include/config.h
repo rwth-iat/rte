@@ -64,7 +64,7 @@
 
 OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP_RESPONSE *serverResponse);
 OV_RESULT kshttp_find_arguments(const OV_STRING_VEC* urlQuery, const OV_STRING varname, OV_STRING_VEC* re);
-OV_STRING kshttp_ov_path_topercent_noslash (OV_STRING org);
+OV_DLLFNCEXPORT OV_STRING kshttp_ov_path_topercent_noslash (OV_STRING org);
 OV_RESULT kshttp_authorize(int level, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd);
 OV_RESULT kshttp_include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
 OV_RESULT kshttp_printresponseheader(OV_STRING* output, const HTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type);
