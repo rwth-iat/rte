@@ -35,3 +35,4 @@ ADD_SUBDIRECTORY(comm/opcua)
 
 ###### BUILD FUNCTIONBLOCK LIBRARIES #########
 ADD_SUBDIRECTORY(functionblock/fb)
+ADD_SUBDIRECTORY(functionblock/ssc)
