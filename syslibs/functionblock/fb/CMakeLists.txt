@@ -48,3 +48,20 @@ SET(MODEL_FILES		${LIB_MODEL_DIR}/${LIB_NAME}.ovt
 					${LIB_MODEL_DIR}/${LIB_NAME}.ovm
 					${LIB_MODEL_DIR}/${LIB_NAME}.ovf)
 ADD_CUSTOM_TARGET(${LIB_NAME}_Model SOURCES ${MODEL_FILES})
+
+###################### Installation part for system library ########################
+
+# Install the DLL into the syslibs directory
+INSTALL(TARGETS ${LIB_NAME}
+	RUNTIME DESTINATION ${SYSLIB_INSTALL_DIR})
+
+# Install the model directory
+INSTALL(FILES	${MODEL_FILES}
+	DESTINATION ${DEV_INSTALL_DIR}/${LIB_NAME}/model)
+
+INSTALL(DIRECTORY ${LIB_INC_DIR}
+	DESTINATION ${DEV_INSTALL_DIR}/${LIB_NAME})
+
+INSTALL(TARGETS ${LIB_NAME}
+	RUNTIME DESTINATION ${DEV_INSTALL_DIR}/${LIB_NAME}/lib
+	ARCHIVE DESTINATION ${DEV_INSTALL_DIR}/${LIB_NAME}/lib)
