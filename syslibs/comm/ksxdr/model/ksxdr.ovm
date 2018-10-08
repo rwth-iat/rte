@@ -240,7 +240,7 @@ LIBRARY ksxdr
 			timeOut			:	UINT
 				COMMENT		=	"Timeout for requests in ms"
 				INITIALVALUE	=	10000;
-		END_VARIABLES;
+			END_VARIABLES;
 		OPERATIONS
 			HandleData			:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
 			typemethod  		:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
