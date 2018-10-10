@@ -82,6 +82,7 @@ static void ov_ua_connection_closeConnection(UA_Connection *connection) {
 			Ov_DeleteObject(pChannel);
 		}
 	}
+	Ov_HeapFree(connection);
 	connection = NULL;
 }
 
