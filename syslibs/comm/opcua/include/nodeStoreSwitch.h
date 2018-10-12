@@ -57,7 +57,7 @@ UA_StatusCode UA_NodestoreSwitch_replaceNode_inNS(UA_NodestoreSwitch *pSwitch, v
 UA_StatusCode UA_NodestoreSwitch_removeNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle,const UA_NodeId *nodeId);
 void releaseNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle ,const UA_Node *node);
 UA_Node * UA_NodestoreSwitch_newNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle, UA_NodeClass nodeClass);
-
+void UA_NodestoreSwitch_releaseNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle, UA_Node *node);
 
 UA_StatusCode UA_NodestoreSwitch_changeNodestore(UA_NodestoreSwitch *pSwitch,
 		void *nodestoreHandleOut, void *nodestoreHandleIn);

@@ -33,7 +33,7 @@ static int findNSHandle(UA_NodestoreSwitch *pSwitch, void *nsHandle)
 UA_StatusCode UA_NodestoreSwitch_init(UA_NodestoreSwitch *pSwitch)
 {
 	pSwitch->size = 0;
-	pSwitch->nodestoreArray[0] = UA_malloc(1 * sizeof(UA_Nodestore));
+	pSwitch->nodestoreArray[0] = (UA_Nodestore*) UA_malloc(1 * sizeof(UA_Nodestore));
 	UA_StatusCode retval = UA_Nodestore_default_new(pSwitch->nodestoreArray[0]);
 
     if(retval != UA_STATUSCODE_GOOD)
@@ -56,7 +56,7 @@ UA_StatusCode UA_NodestoreSwitch_linkNodestore(UA_NodestoreSwitch *pSwitch,
 {
 	pSwitch->size = pSwitch->size + 1;
 	if(pSwitch->size > 1)
-		pSwitch->nodestoreArray[pSwitch->size-1] = UA_malloc(sizeof(UA_Nodestore));
+		pSwitch->nodestoreArray[pSwitch->size-1] = (UA_Nodestore*) UA_malloc(sizeof(UA_Nodestore));
 	if(!pSwitch->nodestoreArray[pSwitch->size-1])
 		return UA_STATUSCODE_BADOUTOFMEMORY;
 
@@ -146,7 +146,7 @@ UA_StatusCode UA_NodestoreSwitch_deleteNodestoreSwitch(UA_NodestoreSwitch *pSwit
 
  void UA_NodestoreSwitch_deleteNode(UA_NodestoreSwitch *pSwitch, UA_Node *node)
  {
-	UA_UInt16 i,j=0;
+	int i,j=0;
 	for(i=0; i<pSwitch->size; i++)
 	{
 		j = findNSHandle(pSwitch, pSwitch->nodestoreArray[i]->context);
@@ -159,7 +159,7 @@ UA_StatusCode UA_NodestoreSwitch_deleteNodestoreSwitch(UA_NodestoreSwitch *pSwit
 
  void UA_NodestoreSwitch_deleteNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle, UA_Node *node)
  {
-	 UA_UInt16 i = findNSHandle(pSwitch, nsHandle);
+	 int i = findNSHandle(pSwitch, nsHandle);
 	 if(i == pSwitch->size)
 		 return;
 	 pSwitch->nodestoreArray[i]->deleteNode(pSwitch->nodestoreArray[i]->context, node);

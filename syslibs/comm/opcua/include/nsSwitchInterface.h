@@ -37,7 +37,7 @@ struct UA_NodestoreSwitch_Interface{
 
 typedef struct UA_NodestoreSwitch_Interface UA_NodestoreSwitch_Interface;
 
-
+UA_StatusCode UA_NodestoreSwitch_new(UA_Nodestore *ns);
 void UA_NodestoreSwitchInterface_deleteNodestore(void *nodestoreContext);
 
 UA_Node *UA_NodestoreSwitchInterface_newNode(void *nodestoreContext, UA_NodeClass nodeClass);
@@ -53,7 +53,7 @@ UA_StatusCode UA_NodestoreSwitchInterface_removeNode(void *nodestoreContext, con
 void UA_NodestoreSwitchInterface_iterate(void *nodestoreContext, void* visitorContext,
 	                    UA_NodestoreVisitor visitor);
 
-UA_StatusCode UA_NodestoreSwitch_new(UA_Nodestore *ns);
+
 
 #ifdef __cplusplus
 } // extern "C"
