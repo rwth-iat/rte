@@ -1,5 +1,14 @@
 puts "== Begin processing static files ==" 
-cd "../../staticfiles"
+# Conditionally take either the first argument (for CMake)
+# or set to default ("classic" TCL build)
+set wdir [lindex $argv 0]
+if { $wdir == ""} then {	
+	set wdir "../../staticfiles"	
+}
+puts "Static file working directory is: $wdir"
+
+cd $wdir
+
 set contentname "content"
 set mimetypename "mimetype"
 set encodingname "encoding"
@@ -62,7 +71,7 @@ proc processDir {dirname} {
 		puts $out "			ov_logfile_error(\"Fatal: Could not create Object '$filename': %s\", ov_result_getresulttext(result));"
 		puts $out "			return result;"
 		puts $out "		\}"
-		puts $out "		ov_string_setvalue(&(pindexhtml->v_content), \"\\"
+		puts $out "		ov_string_setvalue(&(pindexhtml->v_content), "
 		
 		# line-by-line, read the original file
 		while {[gets $in line] != -1} {
@@ -78,12 +87,12 @@ proc processDir {dirname} {
 #				set line [stripLineComments $line]
 			}
 			#recode lineending
-			set line "$line\\n\\"
+			set line "$line\\n"
 			# then write the transformed line
-			puts $out $line
+			puts $out \"$line\"
 		}
 		close $in
-		puts $out "\");"
+		puts $out ");"
 		puts $out "		ov_string_setvalue(&(pindexhtml->v_${mimetypename}), \"$mimetype\");";
 		puts $out "		ov_string_setvalue(&(pindexhtml->v_${encodingname}), \"$encodingvalue\");";
 		puts $out "	\}"
