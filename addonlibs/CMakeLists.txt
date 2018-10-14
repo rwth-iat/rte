@@ -28,3 +28,4 @@ SET(FB_MODEL_FILE ${FB_MODEL_DIR}/fb.ovm)
 
 # Build communication client libraries
 ADD_SUBDIRECTORY(commclient/ksapi)
+ADD_SUBDIRECTORY(commclient/fbcomlib)
