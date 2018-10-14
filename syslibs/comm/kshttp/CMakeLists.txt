@@ -2,6 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.11)
 
 SET(LIB_NAME kshttp)
 
+FIND_PACKAGE(TCL REQUIRED)
+
 SET(SPECIAL_LIB_DEFINES -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -Dov_library_open_${LIB_NAME}=ov_library_open_${LIB_NAME}_old)
 
 ################ GENERIC PART #################################
@@ -30,7 +32,7 @@ SET(LIB_DEFINES ${SPECIAL_LIB_DEFINES} ${GENERIC_LIB_DEFINES})
 SET(STATICFILE_SRC ${LIB_SRC_DIR}/generated_static_index.c)
 
 ADD_CUSTOM_COMMAND(OUTPUT ${STATICFILE_SRC}
-	COMMAND tclsh.exe ${LIB_BUILD_DIR}/prebuild.tcl  "\"${STATICFILE_DIR}\""
+	COMMAND ${TCL_TCLSH} ${LIB_BUILD_DIR}/prebuild.tcl  "\"${STATICFILE_DIR}\""
 	WORKING_DIRECTORY ${LIB_BUILD_DIR})
 
 ############### Generate model files ###############################
