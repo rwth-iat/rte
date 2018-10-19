@@ -21,10 +21,9 @@ int main(void) {
     signal(SIGTERM, stopHandler);
 
     UA_ServerConfig *config = UA_ServerConfig_new_default();
-    UA_Nodestore *ns = UA_malloc(sizeof ns);
+    UA_Nodestore *ns = (UA_Nodestore*)UA_malloc(sizeof *ns);
     UA_StatusCode retval = UA_NodestoreSwitch_new(ns);
     config->nodestore = *ns;
-
     UA_Server *server = UA_Server_new(config);
 
     retval = UA_Server_run(server, &running);

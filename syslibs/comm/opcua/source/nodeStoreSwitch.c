@@ -41,7 +41,6 @@ UA_StatusCode UA_NodestoreSwitch_init(UA_NodestoreSwitch *pSwitch)
     	UA_free(pSwitch);
     	return UA_STATUSCODE_BADOUTOFMEMORY;
     }
-
     else
     	UA_NodestoreSwitch_linkNodestore(pSwitch, pSwitch->nodestoreArray[0]);
     return UA_STATUSCODE_GOOD;
@@ -60,7 +59,7 @@ UA_StatusCode UA_NodestoreSwitch_linkNodestore(UA_NodestoreSwitch *pSwitch,
 	if(!pSwitch->nodestoreArray[pSwitch->size-1])
 		return UA_STATUSCODE_BADOUTOFMEMORY;
 
-	ns->context =  pSwitch->nodestoreArray[pSwitch->size-1]->context;
+	ns->context =  pSwitch->nodestoreArray[pSwitch->size-1]->context;	//todo: muss context von neuem Nodestore zugwiesen werden?
 	ns->deleteNodestore = pSwitch->nodestoreArray[pSwitch->size-1]->deleteNodestore;
 	ns->inPlaceEditAllowed = pSwitch->nodestoreArray[pSwitch->size-1]->inPlaceEditAllowed;
 	ns->newNode = pSwitch->nodestoreArray[pSwitch->size-1]->newNode;
@@ -108,9 +107,7 @@ UA_StatusCode UA_NodestoreSwitch_changeNodestore(UA_NodestoreSwitch *pSwitch,
 	int i= findNSHandle(pSwitch, nsHandleOut);
 	if(i == 0)
 		return UA_STATUSCODE_BADNOTFOUND;
-	//TODO:
-	//ptrSwitch->nodestoreArray[i]->iterate  Nodes von altem Nodestore zu Neuem hinzufügen
-	UA_NodestoreSwitch_unlinkNodestore(pSwitch, nsHandleOut);
+	pSwitch->nodestoreArray[i]->context = nsHandleIn;
 	return UA_STATUSCODE_GOOD;
 
 }
