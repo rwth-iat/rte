@@ -8,7 +8,9 @@
 #ifndef UA_NODESTORE_SWITCH_H_
 #define UA_NODESTORE_SWITCH_H_
 
+
 #include "open62541.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,21 +36,22 @@ typedef struct UA_NodestoreSwitch UA_NodestoreSwitch;
 /* Standard functions for nodestore
  * Searches for the Node or inserts/creates it to default nodestore
  * */
-void UA_NodestoreSwitch_iterate(UA_NodestoreSwitch *pSwitch, void* visitorContext, UA_NodestoreVisitor visitor);
-UA_StatusCode UA_NodestoreSwitch_deleteNodestoreSwitch(UA_NodestoreSwitch *pSwitch);
-void UA_NodestoreSwitch_deleteNode(UA_NodestoreSwitch *pSwitch, UA_Node *node);
-UA_StatusCode UA_NodestoreSwitch_insertNode(UA_NodestoreSwitch *pSwitch,UA_Node *node, UA_NodeId *addedNodeId);
-const UA_Node *UA_NodestoreSwitch_getNode(UA_NodestoreSwitch *pSwitch ,const UA_NodeId *nodeId);
-UA_StatusCode UA_NodestoreSwitch_getNodeCopy(UA_NodestoreSwitch *pSwitch ,const UA_NodeId *nodeId, UA_Node **outNode);
-UA_StatusCode UA_NodestoreSwitch_replaceNode(UA_NodestoreSwitch *pSwitch ,UA_Node *node);
-UA_StatusCode UA_NodestoreSwitch_removeNode(UA_NodestoreSwitch *pSwitch ,const UA_NodeId *nodeId);
-void releaseNode(UA_NodestoreSwitch *pSwitch ,const UA_Node *node);
-UA_Node * UA_NodestoreSwitch_newNode(UA_NodestoreSwitch *pSwitch, UA_NodeClass nodeClass);
-void UA_NodestoreSwitch_releaseNode(UA_NodestoreSwitch *pSwitch, const UA_Node *node);
+void UA_NodestoreSwitch_iterate(void *switchHandle, void* visitorContext, UA_NodestoreVisitor visitor);
+void UA_NodestoreSwitch_deleteNodestores(void *switchHandle);
+void UA_NodestoreSwitch_deleteNode(void *switchHandle, UA_Node *node);
+UA_StatusCode UA_NodestoreSwitch_insertNode(void *switchHandle,UA_Node *node, UA_NodeId *addedNodeId);
+const UA_Node *UA_NodestoreSwitch_getNode(void *switchHandle ,const UA_NodeId *nodeId);
+UA_StatusCode UA_NodestoreSwitch_getNodeCopy(void *switchHandle ,const UA_NodeId *nodeId, UA_Node **outNode);
+UA_StatusCode UA_NodestoreSwitch_replaceNode(void *switchHandle ,UA_Node *node);
+UA_StatusCode UA_NodestoreSwitch_removeNode(void *switchHandle ,const UA_NodeId *nodeId);
+void releaseNode(void *switchHandle ,const UA_Node *node);
+UA_Node * UA_NodestoreSwitch_newNode(void *switchHandle, UA_NodeClass nodeClass);
+void UA_NodestoreSwitch_releaseNode(void *switchHandle, const UA_Node *node);
 
 
 /* Added functions to explicit to NodestoreSwitch */
-UA_StatusCode UA_NodestoreSwitch_init(UA_NodestoreSwitch *pSwitch);
+UA_NodestoreSwitch *UA_NodestoreSwitch_new(UA_Nodestore *ns);
+void UA_NodestoreSwitch_deleteSwitch(UA_NodestoreSwitch *pSwitch);
 void UA_NodestoreSwitch_deleteNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle, UA_Node *Node);
 UA_StatusCode UA_NodestoreSwitch_insertNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle, UA_Node *node, UA_NodeId *addedNodeId);
 const UA_Node *UA_NodestoreSwitch_getNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle,const UA_NodeId *nodeId);
