@@ -332,7 +332,7 @@ OV_BOOL exec = FALSE;
 	OV_BOOL					exit = FALSE;
 #ifdef TLSF
 	size_t poolsize = 0;
-
+	void* heap = NULL;
 #endif
 
 
@@ -348,6 +348,10 @@ OV_BOOL exec = FALSE;
 	*	if we are debugging, log to stderr (if not
 	*	specified by the command line options)
 	*/
+
+
+
+
 #ifdef OV_DEBUG
 	ov_logfile_logtostderr(NULL);
 #endif
@@ -888,6 +892,13 @@ OV_BOOL exec = FALSE;
 							return EXIT_FAILURE;
 						if(!poolsize){
 							poolsize = strtoul(temp, NULL, 0);
+						    enableTSLFAllocator();
+						    heap = malloc(poolsize);
+						    if(heap != NULL)
+						      ov_initHeap(poolsize,heap);
+							else
+								return OV_ERR_HEAPOUTOFMEMORY;
+
 						}
 						free(temp);
 					}
@@ -1212,7 +1223,7 @@ HELP:		ov_server_usage();
 	*/
 
 
-    enableTSLFAllocator();
+
 #if OV_SYSTEM_RMOS
 	if(terminate) {
 		ov_logfile_info("Sending terminate message...");
@@ -1468,8 +1479,7 @@ ERRORMSG:
 	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
 	ov_vendortree_setServerPID();
 	if(!exit){
-		//set memory allocator to tlsf
-		usetlsfAllocator = TRUE;
+
 		/*
 		*   run server
 		*/

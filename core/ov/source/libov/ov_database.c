@@ -750,8 +750,12 @@ OV_UINT flags) {
 #if OV_DYNAMIC_DATABASE
 		return OV_ERR_BADPARAM;
 #endif
-
+#ifdef TLSF
+		/*use another pool for the database as Ov_HeapMalloc points to the tlsf allocator */
+		pdb = malloc(size);
+#else
 		pdb = Ov_HeapMalloc(size);
+#endif
 		if (!pdb)
 			return OV_ERR_DBOUTOFMEMORY;
 	} else {
@@ -976,8 +980,8 @@ OV_UINT flags) {
 	 *
 	 */
 #ifdef TLSF
-	dbpool= pdb->pstart;
-init_memory_pool(pdb->pend-pdb->pstart,pdb->pstart);
+   dbpool= pdb->pstart;
+   init_memory_pool(pdb->pend-pdb->pstart,pdb->pstart);
 #endif
 //	if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
 //		ov_database_unload();
@@ -1955,8 +1959,12 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 #define uintptr_t OV_UINT
 #endif
 		database_mutex_lock();
+#ifdef TLSF
+		free = pdb->size - get_used_size(pdb->pstart);
+#else
 		free = (uintptr_t) pdb->pend - (uintptr_t) pdb->pcurr
 				+ (uintptr_t)pmpinfo->bytes_free;
+#endif
 		database_mutex_unlock();
 		if (free > OV_VL_MAXUINT) {
 			return OV_VL_MAXUINT;
@@ -1980,9 +1988,13 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
 #endif
 	if (pdb) {
 		database_mutex_lock();
+#ifdef TLSF
+		used = get_used_size(dbpool);
+#else
 		used = (uintptr_t) pdb->pstart - (uintptr_t) pdb->baseaddr
 				+ (uintptr_t)pmpinfo->bytes_used
 				- (uintptr_t)pmpinfo->bytes_free;
+#endif
 		database_mutex_unlock();
 		if (used > OV_VL_MAXUINT) {
 			return OV_VL_MAXUINT;
