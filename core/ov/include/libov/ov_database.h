@@ -169,6 +169,14 @@ OV_EXTERN OV_DATABASE_INFO OV_MEMSPEC	*pdb;
 OV_EXTERN OV_STRING db_backup_filename;
 #undef OV_EXTERN
 
+
+#ifdef TLSF
+OV_DLLFNCEXPORT void enableTSLFAllocator();
+OV_DLLFNCEXPORT void disableTLSFAllocator();
+OV_DLLFNCEXPORT OV_BOOL isTLSFEnabled();
+OV_DLLFNCEXPORT void setMemoryPool(void* pool, size_t poolSize);
+#endif
+
 /**	
  *	Get a numeric id and increment the internal counter
  */

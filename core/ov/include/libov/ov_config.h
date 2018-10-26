@@ -81,6 +81,8 @@
 #define OV_ARCH_NOMMU	0
 
 
+/* TLSF Realtime memory allocator, used for database, memstack and heap */
+#define TLSF 1
 /*
 *	Compiler
 *	--------

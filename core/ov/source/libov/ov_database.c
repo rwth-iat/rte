@@ -31,7 +31,6 @@
  */
 
 #define OV_COMPILE_LIBOV
-#define TLSF
 
 #include "libov/ov_database.h"
 #include "libov/ov_object.h"
@@ -156,12 +155,25 @@ OV_DATABASE_INFO OV_MEMSPEC *pdbmem;
 #endif
 
 #ifdef TLSF
-#define NUM_MALLOC      (10000)
-#define SIZE_MALLOC     (1000)
-#define mempool_SIZE	(NUM_MALLOC*SIZE_MALLOC)
-static char mempool[mempool_SIZE];
-#endif
 
+static void* mempool;
+static size_t mempoolSize;
+
+void enableTSLFAllocator(){
+	usetlsfAllocator = TRUE;
+}
+void disableTLSFAllocator(){
+	usetlsfAllocator =FALSE;
+}
+OV_BOOL isTLSFEnabled(){
+	return usetlsfAllocator;
+}
+void setMemoryPool(void* pool, size_t poolSize){
+	mempool = pool;
+	mempoolSize = poolSize;
+	init_memory_pool(mempoolSize,mempool);
+}
+#endif
 /*
  *	VTable of any object in case we dont start up the database
  */
@@ -969,9 +981,7 @@ OV_UINT flags) {
 //		ov_database_unload();
 //		return OV_ERR_DBOUTOFMEMORY;
 //	}
-#ifdef TLSF
-	init_memory_pool(mempool_SIZE, mempool);
-#endif
+
 	/*
 	 *	initialize idCounter
 	 */
@@ -1924,7 +1934,7 @@ OV_DLLFNCEXPORT void ov_database_free(OV_POINTER ptr) {
 OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
 #ifdef TLSF
 	if (usetlsfAllocator) {
-		return mempool_SIZE;
+		return mempoolSize;
 	}
 #endif
 	if (pdb) {
@@ -1942,7 +1952,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 
 #ifdef TLSF
 	if (usetlsfAllocator)
-		return mempool_SIZE - get_used_size(mempool);
+		return mempoolSize - get_used_size(mempool);
 #endif
 	if (pdb) {
 

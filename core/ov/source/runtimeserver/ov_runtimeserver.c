@@ -330,6 +330,11 @@ OV_BOOL exec = FALSE;
 	OV_BOOL					startup = TRUE;
 	int						exit_status = EXIT_SUCCESS;
 	OV_BOOL					exit = FALSE;
+#ifdef TLSF
+	size_t poolsize = 0;
+	void* mempool = NULL;
+#endif
+
 
 #if OV_SYSTEM_RMOS
 	OV_UINT		            taskid;
@@ -349,7 +354,7 @@ OV_BOOL exec = FALSE;
 	/*
 	*	parse command line arguments
 	*/
-	usetlsfAllocator = FALSE;
+
 	for(i=1; i<argc; i++) {
 		/*
 		*	set database filename option
@@ -874,6 +879,22 @@ OV_BOOL exec = FALSE;
 							size = strtoul(temp, NULL, 0);
 						free(temp);
 					}
+#ifdef TLSF
+					/*	DBSIZE	*/
+					else if(strstr(startRead, "HEAPSIZE")==startRead)
+					{
+						temp = readValue(startRead);
+						if(!temp || !*temp)
+							return EXIT_FAILURE;
+						if(!poolsize){
+							poolsize = strtoul(temp, NULL, 0);
+							mempool = malloc(poolsize);
+							setMemoryPool(mempool,poolsize);
+
+						}
+						free(temp);
+					}
+#endif
 					/*	DBNOMAP	*/
 					else if(strstr(startRead, "DBNOMAP")==startRead)
 					{
@@ -1192,6 +1213,8 @@ HELP:		ov_server_usage();
 	/*
 	*	terminate server if appropriate (RMOS only)
 	*/
+
+    enableTSLFAllocator();
 #if OV_SYSTEM_RMOS
 	if(terminate) {
 		ov_logfile_info("Sending terminate message...");
