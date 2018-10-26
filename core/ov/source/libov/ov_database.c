@@ -156,8 +156,7 @@ OV_DATABASE_INFO OV_MEMSPEC *pdbmem;
 
 #ifdef TLSF
 
-static void* mempool;
-static size_t mempoolSize;
+static void* dbpool;
 
 void enableTSLFAllocator(){
 	usetlsfAllocator = TRUE;
@@ -168,11 +167,7 @@ void disableTLSFAllocator(){
 OV_BOOL isTLSFEnabled(){
 	return usetlsfAllocator;
 }
-void setMemoryPool(void* pool, size_t poolSize){
-	mempool = pool;
-	mempoolSize = poolSize;
-	init_memory_pool(mempoolSize,mempool);
-}
+
 #endif
 /*
  *	VTable of any object in case we dont start up the database
@@ -755,6 +750,7 @@ OV_UINT flags) {
 #if OV_DYNAMIC_DATABASE
 		return OV_ERR_BADPARAM;
 #endif
+
 		pdb = Ov_HeapMalloc(size);
 		if (!pdb)
 			return OV_ERR_DBOUTOFMEMORY;
@@ -965,10 +961,13 @@ OV_UINT flags) {
 #endif
 	pdb->baseaddr = (OV_POINTER) pdb;
 	pdb->size = size;
-
+#ifdef TLSF
+   pdb->pstart = pdb->pcurr = (OV_BYTE*) ((OV_BYTE*) pdb->baseaddr
+			+ BLOCKIFY(sizeof(OV_DATABASE_INFO) ) * BLOCKSIZE);
+#else
 	pdb->pstart = pdb->pcurr = (OV_BYTE*) ((OV_BYTE*) pdb->baseaddr
 			+ BLOCKIFY(sizeof(OV_DATABASE_INFO) + sizeof(ml_info)) * BLOCKSIZE);
-
+#endif
 	pdb->pend = (OV_BYTE*) ((OV_BYTE*) pdb + size);
 	pdb->started = FALSE;
 
@@ -976,7 +975,10 @@ OV_UINT flags) {
 	 *	initialize the database memory mempool
 	 *
 	 */
-
+#ifdef TLSF
+	dbpool= pdb->pstart;
+init_memory_pool(pdb->pend-pdb->pstart,pdb->pstart);
+#endif
 //	if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
 //		ov_database_unload();
 //		return OV_ERR_DBOUTOFMEMORY;
@@ -1794,9 +1796,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void) {
  *	Shut down the database
  */
 OV_DLLFNCEXPORT void ov_database_shutdown(void) {
-#ifdef TLSF
-	destroy_memory_pool(mempool);
-#endif
+
 	/*
 	 *	local variables
 	 */
@@ -1839,7 +1839,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(OV_UINT size) {
 #ifdef TLSF
 	if (usetlsfAllocator) {
 		ov_logfile_info("tlsf malloc called, size: %i \n", size);
-		return tlsf_malloc(size);
+		return malloc_ex(size,dbpool);
 	}
 #endif
 #ifdef OV_VALGRIND
@@ -1864,7 +1864,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(OV_UINT size) {
 OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, OV_UINT size) {
 #ifdef TLSF
 	if (usetlsfAllocator) {
-		return tlsf_realloc(ptr, size);
+		return realloc_ex(ptr, size,dbpool);
 	}
 #endif
 	__ml_ptr ptmp = NULL;
@@ -1899,7 +1899,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, OV_UINT size) {
 OV_DLLFNCEXPORT void ov_database_free(OV_POINTER ptr) {
 #ifdef TLSF
 	if (usetlsfAllocator) {
-		tlsf_free(ptr);
+		free_ex(ptr,dbpool);
 		return;
 	}
 #endif
@@ -1932,11 +1932,7 @@ OV_DLLFNCEXPORT void ov_database_free(OV_POINTER ptr) {
  *	Get size of the database
  */
 OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
-#ifdef TLSF
-	if (usetlsfAllocator) {
-		return mempoolSize;
-	}
-#endif
+
 	if (pdb) {
 		return pdb->size;
 	}
@@ -1950,10 +1946,6 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
  */
 OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 
-#ifdef TLSF
-	if (usetlsfAllocator)
-		return mempoolSize - get_used_size(mempool);
-#endif
 	if (pdb) {
 
 #ifdef _STDINT_H
@@ -1980,11 +1972,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
  *	Get used storage in the database
  */
 OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
-#ifdef TLSF
-	if (usetlsfAllocator) {
-		return get_used_size(mempool);
-	}
-#endif
+
 #ifdef _STDINT_H
 	uintptr_t used;
 #else

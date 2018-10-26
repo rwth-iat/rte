@@ -174,7 +174,7 @@ OV_EXTERN OV_STRING db_backup_filename;
 OV_DLLFNCEXPORT void enableTSLFAllocator();
 OV_DLLFNCEXPORT void disableTLSFAllocator();
 OV_DLLFNCEXPORT OV_BOOL isTLSFEnabled();
-OV_DLLFNCEXPORT void setMemoryPool(void* pool, size_t poolSize);
+
 #endif
 
 /**	

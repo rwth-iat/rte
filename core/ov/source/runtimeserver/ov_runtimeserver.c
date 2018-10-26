@@ -332,7 +332,7 @@ OV_BOOL exec = FALSE;
 	OV_BOOL					exit = FALSE;
 #ifdef TLSF
 	size_t poolsize = 0;
-	void* mempool = NULL;
+
 #endif
 
 
@@ -888,9 +888,6 @@ OV_BOOL exec = FALSE;
 							return EXIT_FAILURE;
 						if(!poolsize){
 							poolsize = strtoul(temp, NULL, 0);
-							mempool = malloc(poolsize);
-							setMemoryPool(mempool,poolsize);
-
 						}
 						free(temp);
 					}
@@ -1213,6 +1210,7 @@ HELP:		ov_server_usage();
 	/*
 	*	terminate server if appropriate (RMOS only)
 	*/
+
 
     enableTSLFAllocator();
 #if OV_SYSTEM_RMOS
