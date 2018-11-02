@@ -26,7 +26,7 @@ extern "C" {
 
 struct UA_NodestoreSwitch {
 	int size;
-	UA_Nodestore *nodestoreArray[];
+	UA_Nodestore *nodestoreArray;
 
 };
 
