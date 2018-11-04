@@ -5,7 +5,7 @@ SET(LIB_NAME ksbase)
 SET(SPECIAL_LIB_DEFINES -DLOG_KS_COMPILE=1 -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DLOG_KS_TO_OV=1 -Dov_library_open_${LIB_NAME}=ov_library_open_${LIB_NAME}_old)
 
 ################ GENERIC PART #################################
-SET(OV_SRC ${CMAKE_CURRENT_BINARY_DIR}/ov.c)
+SET(OV_SRC ${CMAKE_CURRENT_BINARY_DIR}/ov.h)
 
 SET(LIB_ROOT ${CMAKE_CURRENT_LIST_DIR})
 SET(LIB_INC_DIR ${LIB_ROOT}/include)
