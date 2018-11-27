@@ -1001,7 +1001,7 @@ OV_UINT flags) {
     	((char *)dbpool)[i] = 0;
         getrusage(RUSAGE_SELF, &usage);
     }
-   init_memory_pool(pdb->pend-pdb->pstart,dbpool;
+   init_memory_pool(pdb->pend-pdb->pstart,dbpool);
 #else
    if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
 		ov_database_unload();
