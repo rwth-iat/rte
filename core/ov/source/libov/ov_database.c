@@ -39,7 +39,14 @@
 #include "libov/ov_time.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
+#ifdef TLSF
 #include "libov/tlsf.h"
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#endif
+
 #if OV_SYNC_PTHREAD
 #include <pthread.h>
 static pthread_mutex_t databaseMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -980,14 +987,27 @@ OV_UINT flags) {
 	 *
 	 */
 #ifdef TLSF
-   dbpool= pdb->pstart;
-   init_memory_pool(pdb->pend-pdb->pstart,pdb->pstart);
-#endif
-//	if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
-//		ov_database_unload();
-//		return OV_ERR_DBOUTOFMEMORY;
-//	}
 
+	if (mlockall(MCL_CURRENT | MCL_FUTURE )){
+	  perror("mlockall failed:");
+	}
+
+    size_t page_size = sysconf(_SC_PAGESIZE);
+
+    struct rusage usage;
+    dbpool= pdb->pstart;
+    for (size_t i=0; i < size; i+=page_size)
+    {
+    	((char *)dbpool)[i] = 0;
+        getrusage(RUSAGE_SELF, &usage);
+    }
+   init_memory_pool(pdb->pend-pdb->pstart,dbpool;
+#else
+   if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
+		ov_database_unload();
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+#endif
 	/*
 	 *	initialize idCounter
 	 */
@@ -1492,7 +1512,7 @@ OV_DLLFNCEXPORT void ov_database_unload(void) {
 		ov_database_shutdown();
 
 	if (dbFlags & (OV_DBOPT_NOMAP | OV_DBOPT_NOFILE)) {
-		Ov_HeapFree(pdb);
+		free(pdb);
 	} else {
 		if (dbFlags & OV_DBOPT_VERBOSE) {
 			ov_logfile_info("Unmapping database ...");
@@ -1842,7 +1862,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(OV_UINT size) {
 	__ml_ptr ptmp = NULL;
 #ifdef TLSF
 	if (usetlsfAllocator) {
-		ov_logfile_info("tlsf malloc called, size: %i \n", size);
+		//ov_logfile_info("tlsf malloc called, size: %i \n", size);
 		return malloc_ex(size,dbpool);
 	}
 #endif
