@@ -61,7 +61,7 @@ ELSEIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Base Compiler Flags
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fno-implicit-templates")			
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")			
-    IF (${BUILD_ARCH} STREQUAL "x86")
+    IF ("${BUILD_ARCH}" STREQUAL "x86")
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
     ELSEIF(${BUILD_ARCH} STREQUAL "x64")
