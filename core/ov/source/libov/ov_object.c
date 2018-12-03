@@ -1494,6 +1494,9 @@ OV_RESULT ov_object_move(
 							case OV_VT_ANY:
 								pany = (OV_ANY*)Ov_VarAddress(pobj, pvar->v_offset);
 								switch(pany->value.vartype & OV_VT_KSMASK) {
+								case OV_VT_STRING:
+									Ov_Adjust(OV_STRING, pany->value.valueunion.val_string);
+									break;
 								case OV_VT_BYTE_VEC:
 								case OV_VT_BOOL_VEC:
 								case OV_VT_INT_VEC:
