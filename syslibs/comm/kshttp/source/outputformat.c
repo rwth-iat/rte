@@ -375,7 +375,7 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, const OV_TIME_SPAN* ptim
 	OV_INT			secs = ptime->secs;
 
 	if(response_format != KSX){
-		ov_string_print(timestring, "%i.%06i", ptime->secs, ptime->usecs);
+		ov_string_print(timestring, "%i.%06i", ptime->secs, (ptime->secs<0)?-ptime->usecs:ptime->usecs);
 		return OV_ERR_OK;
 	}
 	//XML format requested
@@ -384,7 +384,7 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, const OV_TIME_SPAN* ptim
 		secs = -ptime->secs;
 	}
 	if(ptime->usecs != 0){
-		ov_string_print(timestring, "%i.%06iS", secs, ptime->usecs);
+		ov_string_print(timestring, "%i.%06iS", secs, (ptime->secs<0)?-ptime->usecs:ptime->usecs);
 	}else{
 		ov_string_print(timestring, "%iS", secs);
 	}
