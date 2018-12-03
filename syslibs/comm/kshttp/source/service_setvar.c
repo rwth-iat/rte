@@ -348,14 +348,14 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_TIME_SPAN:
-				//can be 42.1241 or P42.123456S or -P23.42S
+				//can be 42.1241 or PT42.123456S or -PT23.42S
 				ov_string_setvalue(&Temp, newvaluematch.value[i]);
 				if(Temp){
-					if(Temp[0] == 'P'){
-						stringOffset = 1;
-						isNegative = FALSE;
-					}else if(Temp[0] == '-' && Temp[1] == 'P'){
+					if(Temp[0] == 'P' && Temp[1] == 'T'){
 						stringOffset = 2;
+						isNegative = FALSE;
+					}else if(Temp[0] == '-' && Temp[1] == 'P' && Temp[2] == 'T'){
+						stringOffset = 3;
 						isNegative = TRUE;
 					}
 					tempDouble = strtod(Temp+stringOffset, &endPtr);
