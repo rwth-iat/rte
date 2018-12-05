@@ -574,7 +574,7 @@
 #define Ov_MemStackAlloc(type)	((type*)ov_memstack_alloc(sizeof(type)))
 
 #ifdef TLSF
-OV_DLLFNCEXPORT void ov_initHeap(size_t size, void* heappool);
+OV_DLLFNCEXPORT void ov_initHeap(size_t size);
 #endif
 
 /**

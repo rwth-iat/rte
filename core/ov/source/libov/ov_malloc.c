@@ -43,6 +43,13 @@
 #include "libov/ov_malloc.h"
 #include "libov/tlsf.h"
 
+#ifdef TLSF
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/mman.h>
+   #include <unistd.h>
+#endif
+
 #if OV_SYSTEM_MC164
 #define malloc	xmalloc
 #define free	xfree
@@ -53,8 +60,19 @@
 #ifdef TLSF
 static void *heappool = NULL;
 
-OV_DLLFNCEXPORT void ov_initHeap(size_t size, void* heap){
-	heappool = heap;
+OV_DLLFNCEXPORT void ov_initHeap(size_t size){
+
+	heappool = malloc(size);
+	if (mlockall(MCL_CURRENT | MCL_FUTURE ))
+	{
+		   ov_logfile_error("mlockall failed:");
+	}
+
+	size_t  page_size = sysconf(_SC_PAGESIZE);
+	for (size_t i=0; i < size; i+=page_size)
+	{
+		((char*)heappool)[i] = 0;
+	}
 	init_memory_pool(size,heappool);
 }
 

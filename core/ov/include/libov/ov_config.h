@@ -82,7 +82,7 @@
 
 
 /* TLSF Realtime memory allocator, used for database, memstack and heap */
-//#define TLSF 0
+#define TLSF 0
 /*
 *	Compiler
 *	--------

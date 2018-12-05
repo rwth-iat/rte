@@ -20,12 +20,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
 
-#ifdef TLSF
-#include <sys/time.h> // needed for getrusage
-#include <sys/resource.h> // needed for getrusage
-#include <sys/mman.h> // Needed for mlockall()
-   #include <unistd.h> // needed for sysconf(int name);
-#endif
+
 
 /*	----------------------------------------------------------------------	*/
 /*
@@ -319,7 +314,7 @@ int main(int argc, char **argv) {
 	OV_UINT					line = 0;
 	OV_UINT					hlpindex = 0;
 	OV_BOOL					logfileSpecified = FALSE;
-OV_BOOL exec = FALSE;
+    OV_BOOL 				exec = FALSE;
 	OV_INSTPTR_ov_library	plib;
 	OV_INSTPTR_ov_domain	pdom;
 	OV_INT					i;
@@ -339,7 +334,6 @@ OV_BOOL exec = FALSE;
 	OV_BOOL					exit = FALSE;
 #ifdef TLSF
 	size_t poolsize = 0;
-	void* heap = NULL;
 #endif
 
 
@@ -901,27 +895,10 @@ OV_BOOL exec = FALSE;
 						if(!poolsize){
 							poolsize = strtoul(temp, NULL, 0);
 						    enableTSLFAllocator();
-						    if (mlockall(MCL_CURRENT | MCL_FUTURE ))
-						    {
-						           perror("mlockall failed:");
-						    }
-						    heap = malloc(poolsize);
-						    struct rusage usage;
-						    size_t  page_size = sysconf(_SC_PAGESIZE);
-						    for (size_t i=0; i < poolsize; i+=page_size)
-						    {
-						        ((char*)heap)[i] = 0;
-						        // print the number of major and minor pagefaults this application has triggered
-						        getrusage(RUSAGE_SELF, &usage);
-						        printf("Major-pagefaults:%d, Minor Pagefaults:%d\n", usage.ru_majflt, usage.ru_minflt);
-						    }
-						       // buffer is never released, or swapped, so using it from now will never lead to any pagefault
-
-
-						    if(heap != NULL)
-						      ov_initHeap(poolsize,heap);
-							else
-								return OV_ERR_HEAPOUTOFMEMORY;
+						    ov_initHeap(poolsize);
+						}
+						else{
+							return OV_ERR_HEAPOUTOFMEMORY;
 
 						}
 						free(temp);
