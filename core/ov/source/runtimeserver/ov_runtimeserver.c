@@ -884,7 +884,7 @@ int main(int argc, char **argv) {
 							size = strtoul(temp, NULL, 0);
 						free(temp);
 					}
-#ifdef TLSF
+#if TLSF
 					/*	HEAPSIZE	*/
 					else if(strstr(startRead, "HEAPSIZE")==startRead)
 					{
@@ -894,7 +894,6 @@ int main(int argc, char **argv) {
 							return EXIT_FAILURE;
 						if(!poolsize){
 							poolsize = strtoul(temp, NULL, 0);
-						    enableTSLFAllocator();
 						    ov_initHeap(poolsize);
 						}
 						else{

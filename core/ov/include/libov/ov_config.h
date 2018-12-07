@@ -33,6 +33,9 @@
 *	Plattforms
 *	----------
 */
+
+#define OV_VALGRIND 1
+
 #ifdef __NT__
 #define OV_SYSTEM_NT 1
 #endif
@@ -82,7 +85,10 @@
 
 
 /* TLSF Realtime memory allocator, used for database, memstack and heap */
-#define TLSF 0
+#define TLSF 1
+#define TLSF_STATISTIC 1
+#define TLSF_USE_LOCKS 1
+#define OV_RT 1
 /*
 *	Compiler
 *	--------
@@ -329,6 +335,10 @@ char *strdup(const char *s);
 */
 #ifndef OV_DYNAMIC_DATABASE
 #define OV_DYNAMIC_DATABASE 0
+#endif
+
+#ifndef USE_MMAP
+#define USE_MMAP 0
 #endif
 
 /*

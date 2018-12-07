@@ -57,7 +57,7 @@
 #endif
 
 /*	----------------------------------------------------------------------	*/
-#ifdef TLSF
+#if TLSF
 static void *heappool = NULL;
 
 OV_DLLFNCEXPORT void ov_initHeap(size_t size){
@@ -85,10 +85,9 @@ OV_DLLFNCEXPORT void ov_initHeap(size_t size){
 OV_DLLFNCEXPORT OV_POINTER ov_malloc(
 	OV_UINT		size
 ) {
-#ifdef TLSF
-	return malloc_ex(size,heappool);
+#if TLSF
+	return tlsf_malloc(size, ov_heap);
 #endif
-
 	return malloc(size);
 }
 
@@ -100,8 +99,8 @@ OV_DLLFNCEXPORT OV_POINTER ov_malloc(
 OV_DLLFNCEXPORT void ov_free(
 	OV_POINTER	ptr
 ) {
-#ifdef TLSF
-	free_ex(ptr,heappool);
+#if TLSF
+	tlsf_free(ptr, ov_heap);
 #else
 	free(ptr);
 #endif
@@ -116,8 +115,8 @@ OV_DLLFNCEXPORT OV_POINTER ov_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 ) {
-#ifdef TLSF
-	return realloc_ex(ptr,size,heappool);
+#if TLSF
+	return tlsf_realloc(ptr, size, ov_heap);
 #endif
 	return realloc(ptr, size);
 }
