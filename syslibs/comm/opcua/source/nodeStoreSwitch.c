@@ -46,7 +46,6 @@ UA_NodestoreSwitch *UA_NodestoreSwitch_new()
 }
 
 
-
 UA_StatusCode UA_NodestoreSwitch_linkDefaultNodestore(UA_NodestoreSwitch *pSwitch, UA_Nodestore *ns, UA_UInt16 namespaceindex)
 {
 	if(ns == NULL)
@@ -55,6 +54,22 @@ UA_StatusCode UA_NodestoreSwitch_linkDefaultNodestore(UA_NodestoreSwitch *pSwitc
 	pSwitch->defaultNodestore = ns;
 	return (pSwitch->nodestoreArray[namespaceindex]->context != NULL) ? UA_STATUSCODE_GOOD : UA_STATUSCODE_BADINTERNALERROR;
 
+}
+
+void UA_NodestoreSwitch_linkNodestoreSwitch(UA_NodestoreSwitch *pSwitch ,UA_Nodestore *ns)
+{
+	ns->context = pSwitch;
+	ns->deleteNodestore = UA_NodestoreSwitch_deleteNodestores;
+	ns->inPlaceEditAllowed = true;
+	ns->newNode = UA_NodestoreSwitch_newNode;
+	ns->deleteNode = UA_NodestoreSwitch_deleteNode;
+	ns->getNode = UA_NodestoreSwitch_getNode;
+	ns->releaseNode = UA_NodestoreSwitch_releaseNode;
+	ns->getNodeCopy = UA_NodestoreSwitch_getNodeCopy;
+	ns->insertNode = UA_NodestoreSwitch_insertNode;
+	ns->replaceNode = UA_NodestoreSwitch_replaceNode;
+	ns->iterate = UA_NodestoreSwitch_iterate;
+	ns->removeNode = UA_NodestoreSwitch_removeNode;
 }
 
 

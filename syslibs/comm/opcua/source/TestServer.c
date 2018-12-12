@@ -20,11 +20,24 @@ int main(void) {
     signal(SIGTERM, stopHandler);
 
     UA_ServerConfig *config = UA_ServerConfig_new_default();
-
-    //standardnodestore mitübergeben, oder löschen
     UA_NodestoreSwitch *pSwitch = UA_NodestoreSwitch_new();
-    UA_Server *server = UA_Server_new(config);
+    UA_Nodestore ns0temp;
+    ns0temp.context = &config->nodestore;
+    ns0temp.deleteNode = config->nodestore.deleteNode;
+    ns0temp.deleteNodestore = config->nodestore.deleteNodestore;
+    ns0temp.getNode = config->nodestore.getNode;
+    ns0temp.getNodeCopy = config->nodestore.getNodeCopy;
+    ns0temp.inPlaceEditAllowed = config->nodestore.inPlaceEditAllowed;
+    ns0temp.insertNode = config->nodestore.insertNode;
+    ns0temp.iterate = config->nodestore.iterate;
+    ns0temp.newNode = config->nodestore.newNode;
+    ns0temp.releaseNode = config->nodestore.releaseNode;
+    ns0temp.removeNode = config->nodestore.removeNode;
+    ns0temp.replaceNode = config->nodestore.replaceNode;
 
+    UA_NodestoreSwitch_linkDefaultNodestore(pSwitch, &ns0temp, 0);
+    UA_NodestoreSwitch_linkNodestoreSwitch(pSwitch, &config->nodestore);
+    UA_Server *server = UA_Server_new(config);
 
 
     /* Add the variable node to the information model */
@@ -81,3 +94,4 @@ int main(void) {
     return (int)retval;
 
 }
+

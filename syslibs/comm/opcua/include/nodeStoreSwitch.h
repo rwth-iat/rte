@@ -2,9 +2,7 @@
 #ifndef UA_NODESTORE_SWITCH_H_
 #define UA_NODESTORE_SWITCH_H_
 
-
 #include "open62541.h"
-
 
 #ifdef __cplusplus
 
@@ -12,17 +10,11 @@ extern "C" {
 
 #endif
 
-
-
 /**
  * Nodestore lifecycle
  *
  *
  */
-
-/* in ServerConfig wird UA_NodestoreSwitch als UA_Nodestore angegeben  */
-
-
 
 struct UA_NodestoreSwitch {
 
@@ -33,15 +25,11 @@ struct UA_NodestoreSwitch {
 
 };
 
-
 typedef struct UA_NodestoreSwitch UA_NodestoreSwitch;
 
 
-
 /* Standard functions for nodestore
-
- * Searches for the Node or inserts/creates it to default nodestore
-
+ * Searches for the Node or inserts/creates it to defaultNodestore
  * */
 
 void UA_NodestoreSwitch_iterate(void *switchHandle, void* visitorContext, UA_NodestoreVisitor visitor);
@@ -55,8 +43,9 @@ UA_StatusCode UA_NodestoreSwitch_removeNode(void *switchHandle ,const UA_NodeId 
 void releaseNode(void *switchHandle ,const UA_Node *node);
 UA_Node * UA_NodestoreSwitch_newNode(void *switchHandle, UA_NodeClass nodeClass);
 void UA_NodestoreSwitch_releaseNode(void *switchHandle, const UA_Node *node);
+void UA_NodestoreSwitch_linkNodestoreSwitch(UA_NodestoreSwitch *pSwitch,UA_Nodestore *ns);
 
-//* Added functions to explicit to NodestoreSwitch *//
+//* Added functions*//
 UA_NodestoreSwitch *UA_NodestoreSwitch_new();
 void UA_NodestoreSwitch_deleteSwitch(UA_NodestoreSwitch *pSwitch);
 UA_StatusCode UA_NodestoreSwitch_linkDefaultNodestore(UA_NodestoreSwitch *pSwitch, UA_Nodestore *ns, UA_UInt16 namespaceindex);
