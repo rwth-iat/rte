@@ -5,9 +5,9 @@
  *      Author: vitus
  */
 
-
 #include <signal.h>
 #include "nodeStoreSwitch.h"
+
 
 UA_Boolean running = true;
 static void stopHandler(int sig) {
@@ -20,17 +20,25 @@ int main(void) {
     signal(SIGTERM, stopHandler);
 
     UA_ServerConfig *config = UA_ServerConfig_new_default();
-    //UA_Nodestore *ns = (UA_Nodestore*)UA_malloc(sizeof *ns);
-    //UA_NodestoreSwitch *pSwitch = UA_NodestoreSwitch_new(ns);
-    UA_NodestoreSwitch *pSwitch = UA_NodestoreSwitch_new(&config->nodestore);
-    //config->nodestore = *ns;
-    UA_Server *server = UA_Server_new(config);
-    //UA_Nodestore *ns2 = (UA_Nodestore*)UA_malloc(sizeof *ns2);
-    //UA_StatusCode retval = UA_Nodestore_default_new(ns2);
-    //UA_NodestoreSwitch_linkNodestore(pSwitch, ns2);
-    //UA_NodestoreSwitch_newNode(&config->nodestore, UA_NODECLASS_VARIABLE);
 
-//
+    //standardnodestore mitübergeben, oder löschen
+    UA_NodestoreSwitch *pSwitch = UA_NodestoreSwitch_new();
+    UA_Server *server = UA_Server_new(config);
+
+
+
+    /* Add the variable node to the information model */
+    UA_NodeId myIntegerNodeId = UA_NODEID_STRING(1, "the.answer");
+
+    UA_QualifiedName myIntegerName = UA_QUALIFIEDNAME(1, "the answer");
+    UA_NodeId parentNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
+    UA_Node testNode;
+    testNode.context = &testNode;
+    testNode.nodeId = myIntegerNodeId;
+    testNode.browseName = myIntegerName;
+    testNode.writeMask = UA_ACCESSLEVELMASK_READ | UA_ACCESSLEVELMASK_WRITE;
+
+
 //    UA_VariableAttributes attr = UA_VariableAttributes_default;
 //       UA_Int32 myInteger = 42;
 //       UA_Variant_setScalar(&attr.value, &myInteger, &UA_TYPES[UA_TYPES_INT32]);
@@ -71,4 +79,5 @@ int main(void) {
     UA_Server_delete(server);
     UA_ServerConfig_delete(config);
     return (int)retval;
+
 }
