@@ -48,7 +48,7 @@ void UA_NodestoreSwitch_linkNodestoreSwitch(UA_NodestoreSwitch *pSwitch,UA_Nodes
 //* Added functions*//
 UA_NodestoreSwitch *UA_NodestoreSwitch_new();
 void UA_NodestoreSwitch_deleteSwitch(UA_NodestoreSwitch *pSwitch);
-UA_StatusCode UA_NodestoreSwitch_linkDefaultNodestore(UA_NodestoreSwitch *pSwitch, UA_Nodestore *ns, UA_UInt16 namespaceindex);
+UA_StatusCode UA_NodestoreSwitch_linkDefaultNodestore(UA_NodestoreSwitch *pSwitch, UA_Nodestore *ns);
 UA_StatusCode UA_NodestoreSwitch_changeNodestore(UA_NodestoreSwitch *pSwitch, void *nodestoreHandleOut, UA_Nodestore *nsIn);
 UA_StatusCode UA_NodestoreSwitch_linkNodestore(UA_NodestoreSwitch *pSwitch, UA_Nodestore *ns, UA_UInt16 namespaceindex);
 UA_StatusCode UA_NodestoreSwitch_unlinkNodestore(UA_NodestoreSwitch *pSwitch, UA_Nodestore *ns);

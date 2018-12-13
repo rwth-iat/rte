@@ -35,7 +35,7 @@ int main(void) {
     ns0temp.removeNode = config->nodestore.removeNode;
     ns0temp.replaceNode = config->nodestore.replaceNode;
 
-    UA_NodestoreSwitch_linkDefaultNodestore(pSwitch, &ns0temp, 0);
+    UA_NodestoreSwitch_linkDefaultNodestore(pSwitch, &ns0temp);
     UA_NodestoreSwitch_linkNodestoreSwitch(pSwitch, &config->nodestore);
     UA_Server *server = UA_Server_new(config);
 
