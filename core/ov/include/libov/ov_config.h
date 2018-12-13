@@ -175,6 +175,8 @@
 #endif
 #endif
 
+#define OV_INLINE inline
+
 #if OV_SYSTEM_NT
 #define OV_DYNAMIC_DATABASE		0
 #if !OV_ARCH_NOMMU

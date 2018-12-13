@@ -388,11 +388,15 @@ endif
 
 install : all
 	@echo Installing files to '$(ACPLT_BIN_DIR)'
-	@-cp *.so $(ACPLT_BIN_DIR)
-	@-cp $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) $(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(OV_RUNTIMESERVER_EXE) \
-		 $(DBDUMP_EXE) $(DBPARSE_EXE) $(OVXIPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(ACPLT_BIN_DIR)
+	@-cp -v $(OV_CODEGEN_EXE) $(ACPLT_BUILDER_EXE) $(OV_DBUTIL_EXE) $(OV_RUNTIMESERVER_EXE) \
+		 $(ACPLT_MAKMAK_EXE) $(ACPLT_BIN_DIR)
 	@echo Installing files to '$(ACPLT_LIB_DIR)'
-	@-cp *.a $(ACPLT_LIB_DIR)
+	@-cp -v *$(_DLL) $(ACPLT_LIB_DIR)
+#	@-cp *.so $(ACPLT_BIN_DIR)
+#	@-cp $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) $(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(OV_RUNTIMESERVER_EXE) \
+#		 $(DBDUMP_EXE) $(DBPARSE_EXE) $(OVXIPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(ACPLT_BIN_DIR)
+#	@echo Installing files to '$(ACPLT_LIB_DIR)'
+#	@-cp *.a $(ACPLT_LIB_DIR)
 	@echo Done.
 
 #	Clean up

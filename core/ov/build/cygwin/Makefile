@@ -24,7 +24,7 @@
 #	--------
 #	17-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
-#	09-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
+#	09-Jul-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
 
 
 
@@ -426,8 +426,12 @@ tasklib.c tasklib.h : $(OV_CODEGEN_EXE)
 #	-------
 
 install : all
-	@echo Installing files to '$(PLT_BIN_DIR)'
-	@-cp $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL) $(PLT_BIN_DIR)
+	@echo Installing files to '$(ACPLT_BIN_DIR)'
+	@-cp -v $(OV_RUNTIMESERVER_EXE) $(OV_CODEGEN_EXE) $(ACPLT_BUILDER_EXE) $(ACPLT_MAKMAK_EXE) \
+	$(OV_DBUTIL_EXE) "$(ACPLT_BIN_DIR)"
+	@echo Installing files to '$(ACPLT_LIB_DIR)'
+	@-cp -v *$(_DLL) "$(ACPLT_LIB_DIR)"
+#	@-cp $(ALL) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL) $(PLT_BIN_DIR)
 	@echo Done.
 
 #	Clean up

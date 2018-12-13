@@ -25,7 +25,7 @@
 #	--------
 #	17-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
-#	09-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
+#	09-Jul-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
 
 
 
@@ -39,8 +39,8 @@ ACPLT_DIR					= $(ACPLT_HOME)
 else
 ACPLT_DIR					= ../../../../
 endif
-ACPLT_BIN_DIR					= $(ACPLT_DIR)bin/
-ACPLT_LIB_DIR					= $(ACPLT_DIR)bin/$(SYSDIR)/
+ACPLT_BIN_DIR					= $(ACPLT_DIR)/system/sysbin/
+ACPLT_LIB_DIR					= $(ACPLT_DIR)/system/syslibs/
 
 ACPLT_OV_DIR				= ../../
 OV_INCLUDE_DIR				= $(ACPLT_OV_DIR)include/

@@ -35,6 +35,7 @@
 #include "libov/ov_database.h"
 #include "libov/ov_memstack.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_logfile.h"
 
 #include <stdarg.h>
 #include <ctype.h>
