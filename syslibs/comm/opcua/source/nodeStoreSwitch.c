@@ -14,7 +14,7 @@
 
 // beim intiallisieren config->nodestore = nodestoreSwitch;
 
-
+//TODO checks for defaultNS != NULL --> Allow defaultNS to be NULL and return error (or NULL)
 
 static size_t findNSHandle(UA_NodestoreSwitch *pSwitch, void *nsHandle)
 {
@@ -57,6 +57,7 @@ UA_StatusCode UA_NodestoreSwitch_linkDefaultNodestore(UA_NodestoreSwitch *pSwitc
 
 void UA_NodestoreSwitch_linkNodestoreSwitch(UA_NodestoreSwitch *pSwitch ,UA_Nodestore *ns)
 {
+	//TODO move to own function for reuse (~UA_Nodestore_replace(ns_old, ns_new))
 	ns->context = pSwitch;
 	ns->deleteNodestore = UA_NodestoreSwitch_deleteNodestores;
 	ns->inPlaceEditAllowed = true;
@@ -75,29 +76,21 @@ void UA_NodestoreSwitch_linkNodestoreSwitch(UA_NodestoreSwitch *pSwitch ,UA_Node
 UA_StatusCode UA_NodestoreSwitch_linkNodestore(UA_NodestoreSwitch *pSwitch,
 		UA_Nodestore *ns, UA_UInt16 namespaceindex)
 {
+	//TODO make multithreading save --> Lock/Unlock or CRTISECTION
 	if(pSwitch->size <= namespaceindex)
 	{
 		UA_Nodestore **tmpPointer = NULL;
-		tmpPointer = realloc(pSwitch->nodestoreArray , namespaceindex+1 * sizeof (UA_Nodestore*));
-		if(tmpPointer)
+		tmpPointer = UA_realloc(pSwitch->nodestoreArray , namespaceindex+1 * sizeof (UA_Nodestore*));
+		if(!tmpPointer)
 			return UA_STATUSCODE_BADOUTOFMEMORY;
+		for (UA_UINT i = pSwitch->size; i < namespaceindex + 1; i++){
+			pSwitch->nodestoreArray[i] = NULL;
+		}
 		pSwitch->nodestoreArray = tmpPointer;
 		pSwitch->size = namespaceindex+1;
 	}
 
 	pSwitch->nodestoreArray[namespaceindex] = ns;
-//	pSwitch->nodestoreArray[pSwitch->size-1].context = nsHandle->context ;
-//	pSwitch->nodestoreArray[pSwitch->size-1].deleteNodestore = nsHandle->deleteNodestore;
-//	pSwitch->nodestoreArray[pSwitch->size-1].inPlaceEditAllowed = nsHandle->inPlaceEditAllowed;
-//	pSwitch->nodestoreArray[pSwitch->size-1].newNode = nsHandle->newNode;
-//	pSwitch->nodestoreArray[pSwitch->size-1].deleteNode = ns->deleteNode;
-//	pSwitch->nodestoreArray[pSwitch->size-1].getNode = ns->getNode;
-//	pSwitch->nodestoreArray[pSwitch->size-1].releaseNode = ns->releaseNode;
-//	pSwitch->nodestoreArray[pSwitch->size-1].getNodeCopy = ns->getNodeCopy;
-//	pSwitch->nodestoreArray[pSwitch->size-1].insertNode = ns->insertNode;
-//	pSwitch->nodestoreArray[pSwitch->size-1].replaceNode = ns->replaceNode;
-//	pSwitch->nodestoreArray[pSwitch->size-1].removeNode = ns->removeNode;
-//	pSwitch->nodestoreArray[pSwitch->size-1].iterate = ns->iterate;
 	return UA_STATUSCODE_GOOD;
 
 }
@@ -105,6 +98,7 @@ UA_StatusCode UA_NodestoreSwitch_linkNodestore(UA_NodestoreSwitch *pSwitch,
 
 UA_StatusCode UA_NodestoreSwitch_unlinkNodestore(UA_NodestoreSwitch *pSwitch, UA_Nodestore *ns)
 {
+	//TODO make multithreading save --> Lock/Unlock or CRTISECTION
 	size_t flag = 0;
 	if(ns == NULL)
 		return UA_STATUSCODE_BADNOTFOUND;
@@ -117,14 +111,16 @@ UA_StatusCode UA_NodestoreSwitch_unlinkNodestore(UA_NodestoreSwitch *pSwitch, UA
 				pSwitch->nodestoreArray[i]->deleteNodestore(pSwitch->nodestoreArray[i]->context);
 				flag = 1;
 			}
-			UA_free(&pSwitch->nodestoreArray[i]);
+			pSwitch->nodestoreArray[i] = NULL;//UA_free(&pSwitch->nodestoreArray[i]);
+			//TODO resize ns array if ns is last in array?
 		}
 
 	}
 	return (flag == 1) ? UA_STATUSCODE_GOOD : UA_STATUSCODE_BADNOTFOUND;
 }
 
-
+//TODO check and change to replace all ns --> comfortfunction --> change to getNodestore(nsIndex)
+//TODO  add getNSIndexes(nsHandle) --> change findNSHandle for all matches
 UA_StatusCode UA_NodestoreSwitch_changeNodestore(UA_NodestoreSwitch *pSwitch, void *nsHandleOut, UA_Nodestore *nsIn) {
 	size_t i= findNSHandle(pSwitch, nsHandleOut);
 	if(i == pSwitch->size)
@@ -136,7 +132,7 @@ UA_StatusCode UA_NodestoreSwitch_changeNodestore(UA_NodestoreSwitch *pSwitch, vo
 
 }
 
-
+//TODO change nsHandle to nsIndex in all "inNS" functions --> Comfort functionality
  UA_Node *UA_NodestoreSwitch_newNode_inNS(UA_NodestoreSwitch *pSwitch, void *nsHandle, UA_NodeClass nodeClass)
   {
 	 size_t i = findNSHandle(pSwitch, nsHandle);
@@ -308,9 +304,10 @@ void UA_NodestoreSwitch_releaseNode(void *switchHandle, const UA_Node *node)
 	UA_NodestoreSwitch *pSwitch = switchHandle;
  	for(size_t i=0; i< pSwitch->size; i++)
  	{
- 		pSwitch->nodestoreArray[i]->deleteNodestore(pSwitch->nodestoreArray[i]->context);
- 		UA_free(&pSwitch->nodestoreArray[i]);
+ 		pSwitch->nodestoreArray[i]->deleteNodestore(pSwitch->nodestoreArray[i]->context); //TODO check if NULL before
+ 		UA_free(&pSwitch->nodestoreArray[i]); //TODO change to = NULL --> replace in whole document
  	}
+	//TODO also delete default nodestore
  }
 
 

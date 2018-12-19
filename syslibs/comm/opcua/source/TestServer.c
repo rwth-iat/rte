@@ -39,17 +39,16 @@ int main(void) {
     UA_NodestoreSwitch_linkNodestoreSwitch(pSwitch, &config->nodestore);
     UA_Server *server = UA_Server_new(config);
 
-
-    /* Add the variable node to the information model */
-    UA_NodeId myIntegerNodeId = UA_NODEID_STRING(1, "the.answer");
-
-    UA_QualifiedName myIntegerName = UA_QUALIFIEDNAME(1, "the answer");
-    UA_NodeId parentNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
-    UA_Node testNode;
-    testNode.context = &testNode;
-    testNode.nodeId = myIntegerNodeId;
-    testNode.browseName = myIntegerName;
-    testNode.writeMask = UA_ACCESSLEVELMASK_READ | UA_ACCESSLEVELMASK_WRITE;
+//    /* Add the variable node to the information model */
+//    UA_NodeId myIntegerNodeId = UA_NODEID_STRING(1, "the.answer");
+//
+//    UA_QualifiedName myIntegerName = UA_QUALIFIEDNAME(1, "the answer");
+//    UA_NodeId parentNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
+//    UA_Node testNode;
+//    testNode.context = &testNode;
+//    testNode.nodeId = myIntegerNodeId;
+//    testNode.browseName = myIntegerName;
+//    testNode.writeMask = UA_ACCESSLEVELMASK_READ | UA_ACCESSLEVELMASK_WRITE;
 
 
 //    UA_VariableAttributes attr = UA_VariableAttributes_default;
