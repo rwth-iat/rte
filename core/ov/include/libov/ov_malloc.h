@@ -48,6 +48,12 @@
 extern "C" {
 #endif
 
+
+#if TLSF
+OV_DLLFNCEXPORT void ov_initHeap(size_t size);
+OV_DLLFNCEXPORT void ov_destroyHeap();
+#endif
+
 /**
 *	Allocate memory on the heap
 *	you should use the macro Ov_HeapMalloc() in your code

@@ -894,7 +894,6 @@ int main(int argc, char **argv) {
 							return EXIT_FAILURE;
 						if(!poolsize){
 							poolsize = strtoul(temp, NULL, 0);
-						    ov_initHeap(poolsize);
 						}
 						else{
 							return OV_ERR_HEAPOUTOFMEMORY;
@@ -1237,12 +1236,23 @@ HELP:		ov_server_usage();
 	}
 #endif
 	/*
+	 *
+	 */
+	if(!poolsize){
+		ov_logfile_error("No heap size specified");
+		ov_logfile_free();
+		return EXIT_FAILURE;
+	}
+	ov_initHeap(poolsize);
+
+	/*
 	*	check servername
 	*/
 	if(!servername) {
 		ov_logfile_error("No server name set. Aborting.");
 		ov_server_usage();
 		ov_logfile_free();
+		ov_destroyHeap();
 		return EXIT_FAILURE;
 	}
 #ifdef OV_TICKET_DEMO
@@ -1301,6 +1311,7 @@ HELP:		ov_server_usage();
 		ov_server_usage();
 		ov_logfile_free();
 		ov_vendortree_free();
+		ov_destroyHeap();
 		return EXIT_FAILURE;
 	}
 	/*
@@ -1321,6 +1332,7 @@ HELP:		ov_server_usage();
 				ov_logfile_error("Could not reserve memory for filename path. Aborting.");
 				ov_logfile_free();
 				ov_vendortree_free();
+				ov_destroyHeap();
 				return EXIT_FAILURE;
 			}
 			strcpy(helper, configBasePath);
@@ -1363,6 +1375,7 @@ ERRORMSG:
 			ov_result_getresulttext(result), result);
 		ov_logfile_free();
 		ov_vendortree_free();
+		ov_destroyHeap();
 		return EXIT_FAILURE;
 	}
 
@@ -1554,6 +1567,7 @@ ERRORMSG:
 	ov_logfile_close();
 	ov_logfile_free();
 	ov_vendortree_free();
+	ov_destroyHeap();
 	return exit_status;
 }
 

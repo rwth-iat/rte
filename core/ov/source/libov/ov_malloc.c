@@ -74,6 +74,15 @@ OV_DLLFNCEXPORT void ov_initHeap(size_t size){
 		((char*)heappool)[i] = 0;
 	}
 	init_memory_pool(size,heappool);
+	tlsf_set_pool(ov_heap, heappool);
+}
+
+OV_DLLFNCEXPORT void ov_destroyHeap(){
+
+	destroy_memory_pool(heappool);
+	free(heappool);
+	heappool = NULL;
+
 }
 
 #endif

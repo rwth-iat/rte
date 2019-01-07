@@ -40,7 +40,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_path.h"
-#ifdef TLSF
+#if TLSF
 #include "libov/tlsf.h"
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -129,6 +129,9 @@ int flock_solaris (int filedes, int oper)
 #endif
 
 #if OV_SYSTEM_MC164
+#define malloc	xmalloc
+#define free	xfree
+#define realloc	xrealloc
 #define memset xmemset
 #define memcpy xmemcpy
 #endif
@@ -163,9 +166,7 @@ OV_DATABASE_INFO OV_MEMSPEC *pdbmem;
 #endif
 
 #if TLSF
-
 static void* dbpool;
-
 #endif
 /*
  *	VTable of any object in case we dont start up the database
@@ -749,12 +750,8 @@ OV_UINT flags) {
 #if OV_DYNAMIC_DATABASE
 		return OV_ERR_BADPARAM;
 #endif
-#ifdef TLSF
-		/*use another pool for the database as Ov_HeapMalloc points to the tlsf allocator */
+		/* Always use malloc to  */
 		pdb = malloc(size);
-#else
-		pdb = Ov_HeapMalloc(size);
-#endif
 		if (!pdb)
 			return OV_ERR_DBOUTOFMEMORY;
 	} else {
@@ -896,13 +893,13 @@ OV_UINT flags) {
 		/*
 		 *	get database memory
 		 */
-		pdb = (OV_DATABASE_INFO*)Ov_HeapMalloc(size);
+		pdb = (OV_DATABASE_INFO*)malloc(size);
 		if(!pdb) {
 			return OV_ERR_HEAPOUTOFMEMORY;
 		}
 		file = fopen(filename, "wb+");
 		if(!file) {
-			Ov_HeapFree(pdb);
+			free(pdb);
 			return OV_ERR_CANTCREATEFILE;
 		}
 #endif
@@ -964,7 +961,7 @@ OV_UINT flags) {
 #endif
 	pdb->baseaddr = (OV_POINTER) pdb;
 	pdb->size = size;
-#ifdef TLSF
+#if TLSF
    pdb->pstart = pdb->pcurr = (OV_BYTE*) ((OV_BYTE*) pdb->baseaddr
 			+ BLOCKIFY(sizeof(OV_DATABASE_INFO) ) * BLOCKSIZE);
 #else
@@ -978,7 +975,7 @@ OV_UINT flags) {
 	 *	initialize the database memory mempool
 	 *
 	 */
-#ifdef TLSF
+#if TLSF
 
 	if (mlockall(MCL_CURRENT | MCL_FUTURE )){
 	  perror("mlockall failed:");
@@ -1196,9 +1193,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 		OV_UINT pos = 0;
 		OV_UINT nread = 0;
 
-		pdb = Ov_HeapMalloc(size);
+		pdb = malloc(size);
 		if (!pdb)
-			return OV_ERR_DBOUTOFMEMORY;
+			return OV_ERR_HEAPOUTOFMEMORY;
 
 		lseek(fd, 0, SEEK_SET);
 
@@ -1273,12 +1270,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 		if(SetFilePointer(hfile, 0, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
 		return OV_ERR_CANTREADFROMFILE;
 
-		pdb = Ov_HeapMalloc(size);
+		pdb = malloc(size);
 		if(!pdb)
 		return OV_ERR_DBOUTOFMEMORY;
 
 		if(!ReadFile(hfile, (LPVOID)pdb, size, &bytesread, NULL)) {
-			Ov_HeapFree(pdb);
+			free(pdb);
 			pdb = NULL;
 			return OV_ERR_CANTREADFROMFILE;
 		}
@@ -1345,7 +1342,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 	/*
 	 *	get database memory
 	 */
-	pdb = (OV_DATABASE_INFO*)Ov_HeapMalloc(size);
+	pdb = (OV_DATABASE_INFO*)malloc(size);
 	if(!pdb) {
 		return OV_ERR_HEAPOUTOFMEMORY;
 	}
@@ -1353,12 +1350,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 	 *	read the file to memory
 	 */
 	if(fseek(file, 0, SEEK_SET) < 0) {
-		Ov_HeapFree(pdb);
+		free(pdb);
 		fclose(file);
 		return OV_ERR_CANTREADFROMFILE;
 	}
 	if(fread((char*)pdb, size, 1, file) != 1) {
-		Ov_HeapFree(pdb);
+		free(pdb);
 		fclose(file);
 		return OV_ERR_CANTREADFROMFILE;
 	}
@@ -1544,7 +1541,7 @@ OV_DLLFNCEXPORT void ov_database_unload(void) {
 		 */
 		if (pdb) ov_database_flush();
 		if (file) fclose(file);
-		if (pdb) Ov_HeapFree(pdb);
+		if (pdb) free(pdb);
 #endif
 #if OV_SYSTEM_OPENVMS
 		/*
