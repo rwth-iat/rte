@@ -35,7 +35,12 @@
 *	----------
 */
 %x comment_state
-
+/*
+*	Lex options
+*	-----------
+*/
+%option nounput
+%option noinput
 /*
 *   lex C definitions
 *   -----------------
