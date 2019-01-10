@@ -88,7 +88,7 @@
 #define TLSF 1
 #define TLSF_STATISTIC 1
 #define TLSF_USE_LOCKS 1
-#define OV_RT 1
+#define OV_RT 0
 /*
 *	Compiler
 *	--------
