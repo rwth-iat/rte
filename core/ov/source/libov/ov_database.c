@@ -43,9 +43,11 @@
 #if TLSF
 #include "libov/tlsf.h"
 #include <sys/time.h>
+#include <unistd.h>
+#if OV_SYSTEM_UNIX
 #include <sys/resource.h>
 #include <sys/mman.h>
-#include <unistd.h>
+#endif
 #endif
 
 #if OV_SYNC_PTHREAD && (!TLSF || !TLSF_USE_LOCKS)
@@ -103,9 +105,6 @@ int flock_solaris (int filedes, int oper)
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#if TLSF
-#include "libov/tlsf.h"
-#endif
 #endif
 #if OV_SYSTEM_NT || OV_SYSTEM_RMOS
 #include <fcntl.h>
@@ -977,24 +976,27 @@ OV_UINT flags) {
 	 */
 #if TLSF
 
+#if OV_SYSTEM_UNIX
 	if (mlockall(MCL_CURRENT | MCL_FUTURE )){
-	  perror("mlockall failed:");
+		perror("mlockall failed:");
 	}
 
-    size_t page_size = sysconf(_SC_PAGESIZE);
+	size_t page_size = sysconf(_SC_PAGESIZE);
 
-    struct rusage usage;
-    dbpool= pdb->pstart;
-    for (size_t i=0; i < size; i+=page_size)
-    {
-    	((char *)dbpool)[i] = 0;
-        getrusage(RUSAGE_SELF, &usage);
-    }
-   init_memory_pool(pdb->pend-pdb->pstart,dbpool);
-   tlsf_set_pool(ov_database, dbpool);
-   tlsf_set_static(TRUE, dbpool);
+	struct rusage usage;
+	dbpool= pdb->pstart;
+	for (size_t i=0; i < size; i+=page_size)
+	{
+		((char *)dbpool)[i] = 0;
+		getrusage(RUSAGE_SELF, &usage);
+	}
+#endif
+
+	init_memory_pool(pdb->pend-pdb->pstart,dbpool);
+	tlsf_set_pool(ov_database, dbpool);
+	tlsf_set_static(TRUE, dbpool);
 #else
-   if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
+	if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
 		ov_database_unload();
 		return OV_ERR_DBOUTOFMEMORY;
 	}

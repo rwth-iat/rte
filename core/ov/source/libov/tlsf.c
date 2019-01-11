@@ -1111,6 +1111,7 @@ int tlsf_move_pool(void* _tlsf, ptrdiff_t diff){
 	tlsf_t* tlsf = (tlsf_t*) _tlsf;
 	area_info_t* ai = NULL;
 	bhdr_t* bh = NULL;
+	int i, j;
 
 	// adjust areas
 	AdjustPointer(tlsf->area_head, diff);
@@ -1148,8 +1149,8 @@ int tlsf_move_pool(void* _tlsf, ptrdiff_t diff){
 	}
 
 	// adjust tlsf matrix
-	for(int i = 0; i<REAL_FLI; i++){
-		for(int j = 0; j<MAX_SLI; j++){
+	for(i = 0; i<REAL_FLI; i++){
+		for(j = 0; j<MAX_SLI; j++){
 			AdjustPointer(tlsf->matrix[i][j], diff);
 		}
 	}

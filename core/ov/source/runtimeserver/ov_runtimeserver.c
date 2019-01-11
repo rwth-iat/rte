@@ -332,7 +332,7 @@ int main(int argc, char **argv) {
 	OV_BOOL					startup = TRUE;
 	int						exit_status = EXIT_SUCCESS;
 	OV_BOOL					exit = FALSE;
-#ifdef TLSF
+#if TLSF
 	size_t poolsize = 0;
 #endif
 

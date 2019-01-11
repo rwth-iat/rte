@@ -43,11 +43,13 @@
 #include "libov/ov_malloc.h"
 #include "libov/tlsf.h"
 
-#ifdef TLSF
+#if TLSF
 #include <sys/time.h>
+#include <unistd.h>
+#if OV_SYSTEM_UNIX
 #include <sys/resource.h>
 #include <sys/mman.h>
-   #include <unistd.h>
+#endif
 #endif
 
 #if OV_SYSTEM_MC164
@@ -63,6 +65,7 @@ static void *heappool = NULL;
 OV_DLLFNCEXPORT void ov_initHeap(size_t size){
 
 	heappool = malloc(size);
+#if OV_SYSTEM_UNIX
 	if (mlockall(MCL_CURRENT | MCL_FUTURE ))
 	{
 		   ov_logfile_error("mlockall failed:");
@@ -73,6 +76,8 @@ OV_DLLFNCEXPORT void ov_initHeap(size_t size){
 	{
 		((char*)heappool)[i] = 0;
 	}
+#endif
+
 	init_memory_pool(size,heappool);
 	tlsf_set_pool(ov_heap, heappool);
 }
@@ -142,7 +147,7 @@ OV_DLLFNCEXPORT OV_STRING ov_strdup(
 	*	local variables
 	*/
     OV_STRING result;
-#ifdef TLSF
+#if TLSF
     result = (OV_STRING)ov_malloc(strlen(string)+1);
 #else
 	result = (OV_STRING)malloc(strlen(string)+1);
