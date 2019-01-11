@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
 	 *
 	 */
 	if(!opts.poolsize){
-		ov_logfile_error("No heap size specified");
+		fprintf(stderr, "No heap size specified");
 		ov_logfile_free();
 		ov_options_free(&opts);
 		return EXIT_FAILURE;

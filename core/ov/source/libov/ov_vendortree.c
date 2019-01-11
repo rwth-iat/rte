@@ -587,8 +587,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getdatabasefrag(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 ) {
-	pvarcurrprops->value.vartype = OV_VT_UINT;
-	pvarcurrprops->value.valueunion.val_uint = ov_database_getfrag();
+	pvarcurrprops->value.vartype = OV_VT_DOUBLE;
+	pvarcurrprops->value.valueunion.val_double = ov_database_getfrag();
 	return OV_ERR_OK;
 }
 

@@ -976,6 +976,7 @@ OV_UINT flags) {
 	 *
 	 */
 #if TLSF
+	dbpool= pdb->pstart;
 
 #if OV_SYSTEM_UNIX
 	if (mlockall(MCL_CURRENT | MCL_FUTURE )){
@@ -985,7 +986,6 @@ OV_UINT flags) {
 	size_t page_size = sysconf(_SC_PAGESIZE);
 
 	struct rusage usage;
-	dbpool= pdb->pstart;
 	for (size_t i=0; i < size; i+=page_size)
 	{
 		((char *)dbpool)[i] = 0;
@@ -1437,8 +1437,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 			return result;
 		}
 	}
-
-#if !TLSF
+#if TLSF
+	dbpool = pdb->pstart;
+	tlsf_set_pool(ov_database, dbpool);
+#else
 	/*
 	 *	restart the database memory mempool
 	 */
@@ -2034,10 +2036,10 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
 /*
  *	Get fragmentation of the database
  */
-OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void) {
+OV_DLLFNCEXPORT OV_DOUBLE ov_database_getfrag(void) {
 
 #if TLSF
-	return get_fragmentation(dbpool) * 100.0;
+	return (get_fragmentation(dbpool) * 100.0);
 #else
 	/*
 	 *	local variables
@@ -2112,7 +2114,7 @@ OV_RESULT ov_database_move(const OV_PTRDIFF distance) {
 	 *	local variables
 	 */
 	OV_DATABASE_INFO *pdbcopy;
-	OV_RESULT result;
+	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ov_object pobj;
 	OV_INST_ov_association assoc_inheritance;
 	OV_INST_ov_association assoc_childrelationship;
@@ -2233,7 +2235,7 @@ OV_RESULT ov_database_move(const OV_PTRDIFF distance) {
 	 *	adjust pointers of the memory mempool
 	 */
 #if TLSF
-	if(tlsf_move_pool(dbpool, distance)){
+	if(tlsf_move_pool(pdb->pstart, distance)){
 		result = OV_ERR_BADDATABASE;
 	}
 #else

@@ -6,10 +6,10 @@
 #include <windows.h>
 
 #define TLSF_MLOCK_T            HANDLE
-#define TLSF_CREATE_LOCK(l)     (*l) = CreateMutexA(NULL, FALSE, NULL)
-#define TLSF_DESTROY_LOCK(l)    CloseHandle((*l)); (*l) = NULL;
-#define TLSF_ACQUIRE_LOCK(l)    WaitForSingleObject((*l), INFINITE)
-#define TLSF_RELEASE_LOCK(l)    ReleaseMutex((*l))
+#define TLSF_CREATE_LOCK(l)     *(l) = CreateMutexA(NULL, FALSE, NULL)
+#define TLSF_DESTROY_LOCK(l)    CloseHandle(*(l)); *(l) = NULL;
+#define TLSF_ACQUIRE_LOCK(l)    WaitForSingleObject(*(l), INFINITE)
+#define TLSF_RELEASE_LOCK(l)    ReleaseMutex(*(l))
 
 #else
 

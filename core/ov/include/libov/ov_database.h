@@ -305,7 +305,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getused(void);
 /*
 *	Get fragmentation of the database
 */
-OV_DLLFNCEXPORT OV_UINT ov_database_getfrag(void);
+OV_DLLFNCEXPORT OV_DOUBLE ov_database_getfrag(void);
 
 /*
 *	Move the database to a new base address (subroutine)
