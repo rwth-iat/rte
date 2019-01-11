@@ -76,6 +76,10 @@
 #define	USE_SBRK 	(0)
 #endif
 
+#ifndef USE_VIRTALLOC
+#define USE_VIRTALLOC (0)
+#endif
+
 #ifndef OV_RT
 #define OV_RT (0)
 #endif
@@ -113,6 +117,10 @@
 
 #if USE_MMAP
 #include <sys/mman.h>
+#endif
+
+#if USE_VIRTALLOC
+#include <windows.h>
 #endif
 
 #include "libov/tlsf.h"
@@ -172,7 +180,7 @@
 #define PREV_USED	(0x0)
 
 
-#define DEFAULT_AREA_SIZE (1024*10)
+#define DEFAULT_AREA_SIZE (1024*100)
 
 #ifdef USE_MMAP
 #define PAGE_SIZE (getpagesize())
@@ -416,10 +424,15 @@ static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl
 		set_bit (_fl, &_tlsf -> fl_bitmap);								\
 	} while(0)
 
-#if USE_SBRK || USE_MMAP
+#if USE_SBRK || USE_MMAP || USE_VIRTALLOC
 static __inline__ void *get_new_area(size_t * size) 
 {
     void *area;
+
+#if USE_VIRTALLOC
+    area = VirtualAlloc(NULL, *size, MEM_COMMIT, PAGE_READWRITE);
+    return area;
+#endif
 
 #if USE_SBRK
     area = (void *)sbrk(0);
@@ -427,13 +440,12 @@ static __inline__ void *get_new_area(size_t * size)
         return area;
 #endif
 
+#if USE_MMAP
 #ifndef MAP_ANONYMOUS
 /* https://dev.openwrt.org/ticket/322 */
 # define MAP_ANONYMOUS MAP_ANON
 #endif
 
-
-#if USE_MMAP
     *size = ROUNDUP(*size, PAGE_SIZE);
     if ((area = mmap(0, *size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0)) != MAP_FAILED)
         return area;
@@ -710,9 +722,8 @@ void destroy_memory_pool(void *mem_pool)
 }
 
 
-void tlsf_activate(void);
-void tlsf_activate(void) {
-#if USE_MMAP || USE_SBRK
+__inline__ void* tlsf_activate(void) {
+#if USE_MMAP || USE_SBRK || USE_VIRTALLOC
     if (!mp[0]) {
         size_t area_size;
         void *area;
@@ -721,10 +732,12 @@ void tlsf_activate(void) {
         area_size = (area_size > DEFAULT_AREA_SIZE) ? area_size : DEFAULT_AREA_SIZE;
         area = get_new_area(&area_size);
         if (area == ((void *) ~0))
-	  return; /* Not enough system memory */
+        	return NULL; /* Not enough system memory */
         init_memory_pool(area_size, area);
+        mp[0] = area;
     }
 #endif
+    return mp[0];
 }
 
 /******************************************************************/
@@ -764,7 +777,11 @@ void *tlsf_malloc(size_t size, ov_tlsf_pool pool)
     	return NULL;
     }
 
-    if(!mp[pool])
+    if(!mp[pool]
+#if USE_MMAP || USE_SBRK || USE_VIRTALLOC
+		   && pool!=ov_heap
+#endif
+    )
     	return NULL;
 
     tlsf_activate();
@@ -879,12 +896,12 @@ void *malloc_ex(size_t size, void *mem_pool)
     /* Searching a free block, recall that this function changes the values of fl and sl,
        so they are not longer valid when the function fails */
     b = FIND_SUITABLE_BLOCK(tlsf, &fl, &sl);
-#if USE_MMAP || USE_SBRK
+#if USE_MMAP || USE_SBRK || USE_VIRTALLOC
     if (!b && !tlsf->isStatic) {
         size_t area_size;
         void *area;
         /* Growing the pool size when needed */
-        area_size = size + BHDR_OVERHEAD * 8;   /* size plus enough room for the requered headers. */
+        area_size = (size+(size>>1)) + BHDR_OVERHEAD * 8;   /* size plus enough room for the requered headers. */
         area_size = (area_size > DEFAULT_AREA_SIZE) ? area_size : DEFAULT_AREA_SIZE;
         area = get_new_area(&area_size);        /* Call sbrk or mmap */
         if (area == ((void *) ~0))

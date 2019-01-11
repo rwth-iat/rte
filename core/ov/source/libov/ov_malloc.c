@@ -61,35 +61,46 @@
 /*	----------------------------------------------------------------------	*/
 #if TLSF
 static void *heappool = NULL;
+static OV_BOOL freeHeappool = FALSE;
 
 OV_DLLFNCEXPORT void ov_initHeap(size_t size){
 
-	heappool = malloc(size);
-#if OV_SYSTEM_UNIX
-	if (mlockall(MCL_CURRENT | MCL_FUTURE ))
-	{
-		   ov_logfile_error("mlockall failed:");
-	}
+	if(size) {
+		heappool = malloc(size);
+		freeHeappool = TRUE;
 
-	size_t  page_size = sysconf(_SC_PAGESIZE);
-	for (size_t i=0; i < size; i+=page_size)
-	{
-		((char*)heappool)[i] = 0;
-	}
+#if OV_SYSTEM_UNIX
+		if (mlockall(MCL_CURRENT | MCL_FUTURE ))
+		{
+			ov_logfile_error("mlockall failed:");
+		}
+
+		size_t  page_size = sysconf(_SC_PAGESIZE);
+		for (size_t i=0; i < size; i+=page_size)
+		{
+			((char*)heappool)[i] = 0;
+		}
 #endif
 
-	init_memory_pool(size,heappool);
-	tlsf_set_pool(ov_heap, heappool);
+		init_memory_pool(size,heappool);
+		tlsf_set_pool(ov_heap, heappool);
+	}
+#if USE_MMAP || USE_SBRK || USE_VIRTALLOC
+	else
+		heappool = tlsf_activate();
+#endif
 }
 
 OV_DLLFNCEXPORT void ov_destroyHeap(){
 
 	destroy_memory_pool(heappool);
-	free(heappool);
-	heappool = NULL;
+	if(freeHeappool){
+		free(heappool);
+		freeHeappool = FALSE;
+	}
+		heappool = NULL;
 
 }
-
 #endif
 /*
 *	Allocate memory on the heap
@@ -136,7 +147,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_realloc(
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Duplicate a string on the heap using malloc
+*	Duplicate a string on the heap
 */
 OV_DLLFNCEXPORT OV_STRING ov_strdup(
 	OV_STRING	string
@@ -145,8 +156,12 @@ OV_DLLFNCEXPORT OV_STRING ov_strdup(
 	*	local variables
 	*/
     OV_STRING result;
+
+	if(!string)
+		return NULL;
+
 #if TLSF
-    result = (OV_STRING)ov_malloc(strlen(string)+1);
+    result = (OV_STRING)tlsf_malloc(strlen(string)+1, ov_heap);
 #else
 	result = (OV_STRING)malloc(strlen(string)+1);
 #endif

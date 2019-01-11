@@ -85,6 +85,7 @@
 #ifndef TLSF
 #define TLSF 1
 #endif
+
 #ifndef OV_RT
 #define OV_RT 0
 #endif
@@ -342,8 +343,24 @@ char *strdup(const char *s);
 #define OV_DYNAMIC_DATABASE 0
 #endif
 
+#if OV_SYSTEM_UNIX && !OV_RT
+#ifndef USE_SBRK
+#define USE_SBRK 1
+#endif
 #ifndef USE_MMAP
+#define USE_MMAP 1
+#endif
+#else
+#define USE_SBRK 0
 #define USE_MMAP 0
+#endif
+
+#if OV_SYSTEM_NT && !OV_RT
+#ifndef USE_VIRTALLOC
+#define USE_VIRTALLOC 1
+#endif
+#else
+#define USE_VIRTALLOC 0
 #endif
 
 /*

@@ -251,12 +251,14 @@ int main(int argc, char **argv) {
 	/*
 	 *
 	 */
+#if !(USE_MMAP || USE_SBRK || USE_VIRTALLOC)
 	if(!opts.poolsize){
 		fprintf(stderr, "No heap size specified");
 		ov_logfile_free();
 		ov_options_free(&opts);
 		return EXIT_FAILURE;
 	}
+#endif
 	ov_initHeap(opts.poolsize);
 
 	/*
