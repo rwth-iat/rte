@@ -429,10 +429,10 @@ OV_RESULT ov_readConfigFile(ov_options* opts, char* configFile){
 				return EXIT_FAILURE;
 			}
 		}
-#if TLSF
 		/*	HEAPSIZE	*/
 		else if(strstr(startRead, "HEAPSIZE")==startRead)
 		{
+#if TLSF
 			//ov_logfile_info("TLSF is activated");
 			temp = readValue(startRead);
 			if(!temp || !*temp)
@@ -444,8 +444,8 @@ OV_RESULT ov_readConfigFile(ov_options* opts, char* configFile){
 				return OV_ERR_HEAPOUTOFMEMORY;
 			}
 			free(temp);
-		}
 #endif
+		}
 		/*	ID	*/
 		else if(strstr(startRead, "ID")==startRead)
 		{

@@ -82,10 +82,16 @@
 
 
 /* TLSF Realtime memory allocator, used for database, memstack and heap */
+#ifndef TLSF
 #define TLSF 1
+#endif
+#ifndef OV_RT
+#define OV_RT 0
+#endif
+
 #define TLSF_STATISTIC 1
 #define TLSF_USE_LOCKS 1
-#define OV_RT 0
+
 /*
 *	Compiler
 *	--------
