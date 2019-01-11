@@ -81,6 +81,11 @@
 #define OV_ARCH_NOMMU	0
 
 
+/* TLSF Realtime memory allocator, used for database, memstack and heap */
+#define TLSF 1
+#define TLSF_STATISTIC 1
+#define TLSF_USE_LOCKS 1
+#define OV_RT 0
 /*
 *	Compiler
 *	--------
@@ -329,6 +334,10 @@ char *strdup(const char *s);
 */
 #ifndef OV_DYNAMIC_DATABASE
 #define OV_DYNAMIC_DATABASE 0
+#endif
+
+#ifndef USE_MMAP
+#define USE_MMAP 0
 #endif
 
 /*

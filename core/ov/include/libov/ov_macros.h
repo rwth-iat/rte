@@ -580,7 +580,7 @@
 #if OV_SYSTEM_MC164
 #define Ov_HeapAlloc(type)	((type*)xmalloc(sizeof(type)))
 #else
-#define Ov_HeapAlloc(type)	((type*)malloc(sizeof(type)))
+#define Ov_HeapAlloc(type)	((type*)ov_malloc(sizeof(type)))
 #endif
 #else
 #define Ov_HeapAlloc(type)	((type*)ov_malloc(sizeof(type)))
@@ -593,7 +593,7 @@
 #if OV_SYSTEM_MC164
 #define Ov_HeapMalloc(size)	xmalloc(size)
 #else
-#define Ov_HeapMalloc(size)	malloc(size)
+#define Ov_HeapMalloc(size)	ov_malloc(size)
 #endif
 #else
 #define Ov_HeapMalloc(size)	ov_malloc(size)
@@ -606,7 +606,7 @@
 #if OV_SYSTEM_MC164
 #define Ov_HeapRealloc(ptr, size)	xrealloc(ptr, size)
 #else
-#define Ov_HeapRealloc(ptr, size)	realloc(ptr, size)
+#define Ov_HeapRealloc(ptr, size)	ov_realloc(ptr, size)
 #endif
 #else
 #define Ov_HeapRealloc(ptr, size)	ov_realloc(ptr, size)
@@ -616,13 +616,13 @@
 *	Free memory allocated on the heap
 */
 #ifdef OV_COMPILE_LIBOV
-#if OV_SYSTEM_MC164
-#define Ov_HeapFree(ptr)	xfree(ptr)
+  #if OV_SYSTEM_MC164
+    #define Ov_HeapFree(ptr)	xfree(ptr)
+  #else
+    #define Ov_HeapFree(ptr)	ov_free(ptr)
+  #endif
 #else
-#define Ov_HeapFree(ptr)	free(ptr)
-#endif
-#else
-#define Ov_HeapFree(ptr)	ov_free(ptr)
+  #define Ov_HeapFree(ptr)	ov_free(ptr)
 #endif
 
 /**

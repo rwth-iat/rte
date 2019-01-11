@@ -202,13 +202,13 @@ depend : $(SOURCES)
 #	---------
 
 #	ACPLT/OV library
-
+$(TLSF_LIB) : tlsf.o
 $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
 
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB)
-	$(LD) -o $@ $^ $(LD_LIB)
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(TLSF_LIB)
+	$(LD) -o $@ $^ $(LD_LIB) 
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
@@ -219,7 +219,7 @@ $(OV_LIBOVKS_LIB) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ)
 	$(RANLIB) $@
 
 $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(ACPLTKS_LIBS)
-	$(LD) -o $@ $^ $(CXX_LIBS)
+	$(LD) -o $@ $^ $(CXX_LIBS) 
 
 ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	$(CXX_COMPILE) -o $@ $<
@@ -248,7 +248,7 @@ endif
 
 #	ACPLT/OV database utility
 
-$(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_DLL)
+$(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_DLL) tlsf.o
 	$(LINK) -rdynamic -o $@ $^ $(C_LIBS) $(LD_LIB)
 
 #	ACPLT/KS-Server for ACPLT/OV

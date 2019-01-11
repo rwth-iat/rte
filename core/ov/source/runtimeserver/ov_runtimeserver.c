@@ -249,6 +249,17 @@ int main(int argc, char **argv) {
 	}
 #endif
 	/*
+	 *
+	 */
+	if(!opts.poolsize){
+		ov_logfile_error("No heap size specified");
+		ov_logfile_free();
+		ov_options_free(&opts);
+		return EXIT_FAILURE;
+	}
+	ov_initHeap(opts.poolsize);
+
+	/*
 	 *	check servername
 	 */
 	if(!opts.servername) {
@@ -256,6 +267,7 @@ int main(int argc, char **argv) {
 		ov_server_usage();
 		ov_logfile_free();
 		ov_options_free(&opts);
+		ov_destroyHeap();
 		return EXIT_FAILURE;
 	}
 #ifdef OV_TICKET_DEMO
@@ -315,6 +327,7 @@ int main(int argc, char **argv) {
 		ov_logfile_free();
 		ov_vendortree_free();
 		ov_options_free(&opts);
+		ov_destroyHeap();
 		return EXIT_FAILURE;
 	}
 	/*
@@ -378,6 +391,7 @@ int main(int argc, char **argv) {
 		ov_logfile_free();
 		ov_vendortree_free();
 		ov_options_free(&opts);
+		ov_destroyHeap();
 		return EXIT_FAILURE;
 	}
 
@@ -558,6 +572,7 @@ int main(int argc, char **argv) {
 	ov_logfile_free();
 	ov_vendortree_free();
 	ov_options_free(&opts);
+	ov_destroyHeap();
 	return exit_status;
 }
 

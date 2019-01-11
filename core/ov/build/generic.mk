@@ -80,7 +80,7 @@ ACPLT_KS_SOURCE_DIR			= $(ACPLT_KS_DIR)src/
 #LIBMPM_DIR				= ../../../../libmpm/
 LIBMPM_INCLUDE_DIR				= $(OV_INCLUDE_DIR)libml/
 LIBMPM_SOURCE_DIR				= $(OV_SOURCE_DIR)libml/
-
+LIBTLSF_SOURCE_DIR				=$(OV_SOURCE_DIR)libov/
 #	platforms requiring ONC/RPC
 
 ONCRPC_DIR				= ../../../../oncrpc/
@@ -279,7 +279,7 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	---------------------
 
 #LIBMPM_LIB			= $(ACPLT_LIB_DIR)libmpm$(_LIB)
-
+LIBTLSF = $(LIBTLSF_SOURCE_DIR)libtlsf($_LIB)
 ifeq ($(COMPILER), MSVC)
 LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libml_vc$(_LIB)
 else

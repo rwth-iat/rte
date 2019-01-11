@@ -4,7 +4,7 @@
 #***   #####################################
 #***
 #***   L T S o f t
-#***   Agentur für Leittechnik Software GmbH
+#***   Agentur fï¿½r Leittechnik Software GmbH
 #***   Brabanterstr. 13
 #***   D-50171 Kerpen
 #***   Tel : 02237/92869-2
@@ -42,7 +42,7 @@ OV_ARCH_BITWIDTH_CFLAGS		=	-m32
 OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
 endif
 
-CFLAGS = $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -O2 -DML_SYSTEM_UNIX -DDBG_TO_STDERR=0 -fPIC
+CFLAGS = $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -O0 -g -DML_SYSTEM_UNIX -DDBG_TO_STDERR=0 -fPIC
 
 
 ifneq "$(origin GCC_BIN_PREFIX)" "undefined"

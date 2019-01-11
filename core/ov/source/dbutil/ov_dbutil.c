@@ -46,7 +46,6 @@
 #include "libov/ov_path.h"
 #include "libov/ov_config.h"
 #include "libov/ov_options.h"
-
 #include "ov_dbutil.h"
 
 /*
@@ -183,6 +182,11 @@ int main(int argc, char **argv) {
 		ov_logfile_logtostdout(NULL);
 	}
 
+	if(!opts.poolsize){
+		opts.poolsize = DBUTIL_DEFAULT_HEAP_SIZE;
+	}
+	ov_initHeap(opts.poolsize);
+
 	/*
 	 *	create new or map existing database
 	 */
@@ -193,6 +197,7 @@ int main(int argc, char **argv) {
 		ov_dbutil_usage();
 		ov_logfile_free();
 		ov_options_free(&opts);
+		ov_destroyHeap();
 		return EXIT_FAILURE;
 	}
 #if OV_SYSTEM_UNIX
@@ -233,6 +238,7 @@ int main(int argc, char **argv) {
 		ov_dbutil_usage();
 		ov_logfile_free();
 		ov_options_free(&opts);
+		ov_destroyHeap();
 		return EXIT_FAILURE;
 	}
 	if(opts.dbSize) {
@@ -241,6 +247,7 @@ int main(int argc, char **argv) {
 			ov_logfile_error("Error: can not remove existing file \"%s\"", opts.dbFilename);
 			ov_logfile_free();
 			ov_options_free(&opts);
+			ov_destroyHeap();
 			return EXIT_FAILURE;
 		}
 		result = ov_database_create(opts.dbFilename, opts.dbSize, opts.dbflags);
@@ -249,6 +256,7 @@ int main(int argc, char **argv) {
 					ov_result_getresulttext(result), result);
 			ov_logfile_free();
 			ov_options_free(&opts);
+			ov_destroyHeap();
 			return EXIT_FAILURE;
 		}
 	} else {
@@ -302,6 +310,7 @@ int main(int argc, char **argv) {
 
 	ov_logfile_free();
 	ov_options_free(&opts);
+	ov_destroyHeap();
 
 	/*
 	 *	return

@@ -26,7 +26,7 @@
 *	--------
 *	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
-*	06-Dez-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: macro Ov_VarAddress for object_move changed.
+*	06-Dez-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: macro Ov_VarAddress for object_move changed.
 */
 /*
 *	Description:

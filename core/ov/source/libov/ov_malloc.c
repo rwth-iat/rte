@@ -41,6 +41,16 @@
 #define OV_COMPILE_LIBOV
 
 #include "libov/ov_malloc.h"
+#include "libov/tlsf.h"
+
+#if TLSF
+#include <sys/time.h>
+#include <unistd.h>
+#if OV_SYSTEM_UNIX
+#include <sys/resource.h>
+#include <sys/mman.h>
+#endif
+#endif
 
 #if OV_SYSTEM_MC164
 #define malloc	xmalloc
@@ -49,13 +59,47 @@
 #endif
 
 /*	----------------------------------------------------------------------	*/
+#if TLSF
+static void *heappool = NULL;
 
+OV_DLLFNCEXPORT void ov_initHeap(size_t size){
+
+	heappool = malloc(size);
+#if OV_SYSTEM_UNIX
+	if (mlockall(MCL_CURRENT | MCL_FUTURE ))
+	{
+		   ov_logfile_error("mlockall failed:");
+	}
+
+	size_t  page_size = sysconf(_SC_PAGESIZE);
+	for (size_t i=0; i < size; i+=page_size)
+	{
+		((char*)heappool)[i] = 0;
+	}
+#endif
+
+	init_memory_pool(size,heappool);
+	tlsf_set_pool(ov_heap, heappool);
+}
+
+OV_DLLFNCEXPORT void ov_destroyHeap(){
+
+	destroy_memory_pool(heappool);
+	free(heappool);
+	heappool = NULL;
+
+}
+
+#endif
 /*
 *	Allocate memory on the heap
 */
 OV_DLLFNCEXPORT OV_POINTER ov_malloc(
 	OV_UINT		size
 ) {
+#if TLSF
+	return tlsf_malloc(size, ov_heap);
+#endif
 	return malloc(size);
 }
 
@@ -67,7 +111,11 @@ OV_DLLFNCEXPORT OV_POINTER ov_malloc(
 OV_DLLFNCEXPORT void ov_free(
 	OV_POINTER	ptr
 ) {
+#if TLSF
+	tlsf_free(ptr, ov_heap);
+#else
 	free(ptr);
+#endif
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -79,6 +127,9 @@ OV_DLLFNCEXPORT OV_POINTER ov_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 ) {
+#if TLSF
+	return tlsf_realloc(ptr, size, ov_heap);
+#endif
 	return realloc(ptr, size);
 }
 
@@ -94,7 +145,11 @@ OV_DLLFNCEXPORT OV_STRING ov_strdup(
 	*	local variables
 	*/
     OV_STRING result;
+#if TLSF
+    result = (OV_STRING)ov_malloc(strlen(string)+1);
+#else
 	result = (OV_STRING)malloc(strlen(string)+1);
+#endif
     if(!result) {
         return NULL;
     }

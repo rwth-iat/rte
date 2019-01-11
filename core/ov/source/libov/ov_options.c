@@ -70,6 +70,10 @@ void ov_options_init(ov_options* opts){
 	opts->startup = TRUE;
 	memset(opts->libraries, 0, sizeof(opts->libraries));
 
+#if TLSF
+	opts->poolsize = 0;
+#endif
+
 #if OV_SYSTEM_RMOS
 	opts->taskid = 0;
 	opts->terminate = FALSE;
@@ -314,6 +318,7 @@ OV_RESULT ov_readConfigFile(ov_options* opts, char* configFile){
 	 * recognized options are:
 	 * DBFILE		path to database file. set to '-' to use no database
 	 * SERVERNAME	name of this ov_server
+	 * HEAPSIZE		size of TLSF heap pool
 	 * ID			Ticket Identification for server access
 	 * PORT			server port number
 	 * LIBRARY		Start server with library. one library per line
@@ -424,6 +429,23 @@ OV_RESULT ov_readConfigFile(ov_options* opts, char* configFile){
 				return EXIT_FAILURE;
 			}
 		}
+#if TLSF
+		/*	HEAPSIZE	*/
+		else if(strstr(startRead, "HEAPSIZE")==startRead)
+		{
+			//ov_logfile_info("TLSF is activated");
+			temp = readValue(startRead);
+			if(!temp || !*temp)
+				return EXIT_FAILURE;
+			if(!opts->poolsize){
+				opts->poolsize = strtoul(temp, NULL, 0);
+			}
+			else{
+				return OV_ERR_HEAPOUTOFMEMORY;
+			}
+			free(temp);
+		}
+#endif
 		/*	ID	*/
 		else if(strstr(startRead, "ID")==startRead)
 		{
@@ -963,7 +985,6 @@ OV_RESULT ov_readArgs(ov_options* opts, int argc, char** argv){
 				goto HELP;
 			}
 		}
-
 #if OV_SYSTEM_RMOS
 		/*
 		 *	terminate server option

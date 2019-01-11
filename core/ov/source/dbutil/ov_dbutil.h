@@ -31,6 +31,8 @@
 #ifndef OV_DBUTIL_H_
 #define OV_DBUTIL_H_
 
+#define DBUTIL_DEFAULT_HEAP_SIZE 1000000
+
 OV_UINT ov_sizeof(OV_UINT vartype);
 void ov_newline(FILE* handle,int rnum);
 
