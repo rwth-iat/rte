@@ -115,7 +115,7 @@ OV_DLLFNCEXPORT OV_UINT ov_heapGetFreeSize(){
 }
 
 OV_DLLFNCEXPORT OV_DOUBLE ov_heapGetFragmentation(){
-	return get_fragmentation(heappool);
+	return get_fragmentation(heappool)*100.0;
 }
 #else
 OV_DLLFNCEXPORT void ov_initHeap(size_t size) {};
