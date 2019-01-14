@@ -70,7 +70,7 @@ void ov_options_init(ov_options* opts){
 	opts->startup = TRUE;
 	memset(opts->libraries, 0, sizeof(opts->libraries));
 
-#if TLSF
+#if TLSF_HEAP
 	opts->poolsize = 0;
 #endif
 
@@ -432,7 +432,7 @@ OV_RESULT ov_readConfigFile(ov_options* opts, char* configFile){
 		/*	HEAPSIZE	*/
 		else if(strstr(startRead, "HEAPSIZE")==startRead)
 		{
-#if TLSF
+#if TLSF_HEAP
 			//ov_logfile_info("TLSF is activated");
 			temp = readValue(startRead);
 			if(!temp || !*temp)

@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
 	 *
 	 */
 
-#if TLSF
+#if TLSF_HEAP
 #if !(USE_MMAP || USE_SBRK || USE_VIRTALLOC)
 	if(!opts.poolsize){
 		fprintf(stderr, "No heap size specified");

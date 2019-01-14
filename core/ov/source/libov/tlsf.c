@@ -52,7 +52,10 @@
 /*#define USE_SBRK        (0) */
 /*#define USE_MMAP        (0) */
 
+#define _DEFAULT_SOURCE
 #include "libov/ov_config.h"
+
+//#define _DEFAULT_SOURCE
 
 #ifndef USE_PRINTF
 #define USE_PRINTF      (1)
@@ -83,7 +86,6 @@
 #ifndef OV_RT
 #define OV_RT (0)
 #endif
-
 
 #if TLSF_USE_LOCKS
 #include <libov/tlsf_target.h>
@@ -180,10 +182,16 @@
 #define PREV_USED	(0x0)
 
 
-#define DEFAULT_AREA_SIZE (1024*100)
+#define DEFAULT_AREA_SIZE (1024*128)
 
 #ifdef USE_MMAP
 #define PAGE_SIZE (getpagesize())
+#endif
+
+#if USE_VIRTALLOC
+#define VIRTALLOC_RESERVE (1024*1024*32)	/* reserved continuous memory */
+static LPTSTR lpNextPage = NULL;
+static DWORD dpagesize = 0; /* doubled pagesize */
 #endif
 
 #ifdef USE_PRINTF
@@ -272,7 +280,7 @@ static __inline__ void MAPPING_SEARCH(size_t * _r, int *_fl, int *_sl);
 static __inline__ void MAPPING_INSERT(size_t _r, int *_fl, int *_sl);
 static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl);
 static __inline__ bhdr_t *process_area(void *area, size_t size);
-#if USE_SBRK || USE_MMAP
+#if USE_SBRK || USE_MMAP || USE_VIRTALLOC
 static __inline__ void *get_new_area(size_t * size);
 #endif
 
@@ -430,8 +438,29 @@ static __inline__ void *get_new_area(size_t * size)
     void *area;
 
 #if USE_VIRTALLOC
-    area = VirtualAlloc(NULL, *size, MEM_COMMIT, PAGE_READWRITE);
-    return area;
+    if(!lpNextPage){
+    	SYSTEM_INFO sysInf;
+    	GetSystemInfo(&sysInf);
+    	dpagesize = 2 * sysInf.dwPageSize;
+    	lpNextPage = VirtualAlloc(NULL, VIRTALLOC_RESERVE,
+    			MEM_RESERVE, PAGE_NOACCESS);
+    }
+
+    *size = ROUNDUP(*size, dpagesize);
+    area = VirtualAlloc(lpNextPage, *size, MEM_COMMIT, PAGE_READWRITE);
+
+    if(!area){
+    	/*
+    	 * remaining reserved block too small
+    	 * allocate separate block
+    	 */
+    	area = VirtualAlloc(NULL, *size, MEM_COMMIT, PAGE_READWRITE);
+    }
+
+    if(area){
+    	lpNextPage = (LPTSTR)(((char*)area)+*size);
+    	return area;
+    }
 #endif
 
 #if USE_SBRK

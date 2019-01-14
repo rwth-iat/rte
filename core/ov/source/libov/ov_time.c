@@ -30,6 +30,7 @@
 
 #define OV_COMPILE_LIBOV
 
+#define _DEFAULT_SOURCE
 #include "libov/ov_time.h"
 #include "libov/ov_database.h"
 #include "libov/ov_ov.h"

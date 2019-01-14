@@ -986,9 +986,9 @@ OV_UINT flags) {
 	size_t page_size = sysconf(_SC_PAGESIZE);
 
 	struct rusage usage;
-	for (size_t i=0; i < size; i+=page_size)
+	for (size_t i=0; (OV_BYTE*)dbpool+i < pdb->pend; i+=page_size)
 	{
-		((char *)dbpool)[i] = 0;
+		((OV_BYTE*)dbpool)[i] = 0;
 		getrusage(RUSAGE_SELF, &usage);
 	}
 #endif

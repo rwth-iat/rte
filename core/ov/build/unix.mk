@@ -202,12 +202,13 @@ depend : $(SOURCES)
 #	---------
 
 #	ACPLT/OV library
-$(TLSF_LIB) : tlsf.o
-$(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ)
+$(TLSF_OBJ) : tlsf.o
+
+$(OV_LIBOV_LIB) : $(TLSF_OBJ) $(OV_LIBOV_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
 
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(TLSF_LIB)
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(TLSF_OBJ)
 	$(LD) -o $@ $^ $(LD_LIB) 
 
 ov.c ov.h : $(OV_CODEGEN_EXE)

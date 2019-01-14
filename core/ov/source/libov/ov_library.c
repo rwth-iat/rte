@@ -32,7 +32,7 @@
 
 #define OV_COMPILE_LIBOV
 
-#define _BSD_SOURCE
+#define _DEFAULT_SOURCE
 #include <stdlib.h>
 
 #include "libov/ov_library.h"

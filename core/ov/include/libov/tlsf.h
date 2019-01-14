@@ -53,7 +53,7 @@ extern int tlsf_set_pool(ov_tlsf_pool pool, void* mem_pool);
 extern void tlsf_set_static(bool_t isStatic, void* mem_pool);
 extern int tlsf_move_pool(void* _tlsf, ptrdiff_t diff);
 
-extern __inline__ void *tlsf_activate(void);
+extern void *tlsf_activate(void);
 extern void *tlsf_malloc(size_t size, ov_tlsf_pool pool);
 extern void tlsf_free(void *ptr, ov_tlsf_pool pool);
 extern void *tlsf_realloc(void *ptr, size_t size, ov_tlsf_pool pool);

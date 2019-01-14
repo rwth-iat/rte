@@ -178,14 +178,21 @@ int main(int argc, char **argv) {
 		return EXIT_FAILURE;
 	}
 
+	/* disable nomap and nofile options */
+	opts.dbflags &= ~(OV_DBOPT_NOMAP | OV_DBOPT_NOFILE);
+
 	if(!opts.logfile){ // no logfile specified; log to stdout
 		ov_logfile_logtostdout(NULL);
 	}
 
+#if TLSF_HEAP
+#if !(USE_MMAP || USE_SBRK || USE_VIRTALLOC)
 	if(!opts.poolsize){
 		opts.poolsize = DBUTIL_DEFAULT_HEAP_SIZE;
 	}
+#endif
 	ov_initHeap(opts.poolsize);
+#endif
 
 	/*
 	 *	create new or map existing database

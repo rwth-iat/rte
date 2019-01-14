@@ -45,6 +45,9 @@
 *   lex C definitions
 *   -----------------
 */
+%top{
+#define _POSIX_SOURCE 1
+}
 %{
 #include "ov_codegen.h"
 #include "ov_ovmparser.h"

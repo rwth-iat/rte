@@ -41,7 +41,7 @@ typedef struct struct_ov_options {
 
 	OV_UINT		dbflags;
 
-#if TLSF
+#if TLSF_HEAP
 	size_t		poolsize;
 #endif
 

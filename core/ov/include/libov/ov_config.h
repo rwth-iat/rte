@@ -82,6 +82,13 @@
 
 
 /* TLSF Realtime memory allocator, used for database, memstack and heap */
+#ifndef TLSF_HEAP
+#define TLSF_HEAP 1
+#endif
+#if TLSF_HEAP
+#define TLSF 1
+#endif
+
 #ifndef TLSF
 #define TLSF 1
 #endif
@@ -351,6 +358,7 @@ char *strdup(const char *s);
 #define USE_MMAP 1
 #endif
 #else
+/* disable memory allocation system calls for RT */
 #define USE_SBRK 0
 #define USE_MMAP 0
 #endif
@@ -360,6 +368,7 @@ char *strdup(const char *s);
 #define USE_VIRTALLOC 1
 #endif
 #else
+/* disable memory allocation system calls for RT */
 #define USE_VIRTALLOC 0
 #endif
 

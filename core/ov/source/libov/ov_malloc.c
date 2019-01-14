@@ -41,9 +41,10 @@
 #define OV_COMPILE_LIBOV
 
 #include "libov/ov_malloc.h"
+#include "libov/ov_logfile.h"
 #include "libov/tlsf.h"
 
-#if TLSF
+#if TLSF_HEAP
 #include <sys/time.h>
 #include <unistd.h>
 #if OV_SYSTEM_UNIX
@@ -59,7 +60,7 @@
 #endif
 
 /*	----------------------------------------------------------------------	*/
-#if TLSF
+#if TLSF_HEAP
 static void *heappool = NULL;
 static OV_BOOL freeHeappool = FALSE;
 
@@ -132,7 +133,7 @@ OV_DLLFNCEXPORT OV_DOUBLE ov_heapGetFragmentation(){return 0.0;}
 OV_DLLFNCEXPORT OV_POINTER ov_malloc(
 	OV_UINT		size
 ) {
-#if TLSF
+#if TLSF_HEAP
 	return tlsf_malloc(size, ov_heap);
 #endif
 	return malloc(size);
@@ -146,7 +147,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_malloc(
 OV_DLLFNCEXPORT void ov_free(
 	OV_POINTER	ptr
 ) {
-#if TLSF
+#if TLSF_HEAP
 	tlsf_free(ptr, ov_heap);
 #else
 	free(ptr);
@@ -162,7 +163,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 ) {
-#if TLSF
+#if TLSF_HEAP
 	return tlsf_realloc(ptr, size, ov_heap);
 #endif
 	return realloc(ptr, size);
@@ -184,7 +185,7 @@ OV_DLLFNCEXPORT OV_STRING ov_strdup(
 	if(!string)
 		return NULL;
 
-#if TLSF
+#if TLSF_HEAP
     result = (OV_STRING)tlsf_malloc(strlen(string)+1, ov_heap);
 #else
 	result = (OV_STRING)malloc(strlen(string)+1);
