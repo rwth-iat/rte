@@ -48,10 +48,23 @@
 extern "C" {
 #endif
 
-#if TLSF
+/*
+ * Initializes tlsf heap pool
+ */
 OV_DLLFNCEXPORT void ov_initHeap(size_t size);
+
+/*
+ * Destroys the tlsf heap pool
+ */
 OV_DLLFNCEXPORT void ov_destroyHeap();
-#endif
+
+/*
+ * Statistics functions for heap
+ */
+OV_DLLFNCEXPORT OV_UINT ov_heapGetPoolSize();
+OV_DLLFNCEXPORT OV_UINT ov_heapGetUsedSize();
+OV_DLLFNCEXPORT OV_UINT ov_heapGetFreeSize();
+OV_DLLFNCEXPORT OV_DOUBLE ov_heapGetFragmentation();
 
 /**
 *	Allocate memory on the heap
@@ -80,7 +93,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_realloc(
 );
 
 /*
-*	Duplicate a string on the heap using malloc
+*	Duplicate a string on the heap
 */
 OV_DLLFNCEXPORT OV_STRING ov_strdup(
 	OV_STRING	string

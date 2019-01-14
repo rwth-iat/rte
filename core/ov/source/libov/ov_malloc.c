@@ -101,7 +101,31 @@ OV_DLLFNCEXPORT void ov_destroyHeap(){
 		heappool = NULL;
 
 }
+
+OV_DLLFNCEXPORT OV_UINT ov_heapGetPoolSize(){
+	return get_pool_size(heappool);
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_heapGetUsedSize(){
+	return get_used_size(heappool);
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_heapGetFreeSize(){
+	return get_free_size(heappool);
+}
+
+OV_DLLFNCEXPORT OV_DOUBLE ov_heapGetFragmentation(){
+	return get_fragmentation(heappool);
+}
+#else
+OV_DLLFNCEXPORT void ov_initHeap(size_t size) {};
+OV_DLLFNCEXPORT void ov_destroyHeap(){};
+OV_DLLFNCEXPORT OV_UINT ov_heapGetPoolSize(){return 0;}
+OV_DLLFNCEXPORT OV_UINT ov_heapGetUsedSize(){return 0;}
+OV_DLLFNCEXPORT OV_UINT ov_heapGetFreeSize(){return 0;}
+OV_DLLFNCEXPORT OV_DOUBLE ov_heapGetFragmentation(){return 0.0;}
 #endif
+
 /*
 *	Allocate memory on the heap
 */

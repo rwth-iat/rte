@@ -621,6 +621,8 @@ size_t get_used_size(void *mem_pool)
 {
 /******************************************************************/
 #if TLSF_STATISTIC
+	if(!mem_pool)
+		return 0;
     return ((tlsf_t *) mem_pool)->used_size;
 #else
     return 0;

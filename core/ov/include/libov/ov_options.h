@@ -42,7 +42,7 @@ typedef struct struct_ov_options {
 	OV_UINT		dbflags;
 
 #if TLSF
-	size_t poolsize;
+	size_t		poolsize;
 #endif
 
 #if OV_SYSTEM_RMOS

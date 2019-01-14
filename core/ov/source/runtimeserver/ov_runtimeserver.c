@@ -251,6 +251,8 @@ int main(int argc, char **argv) {
 	/*
 	 *
 	 */
+
+#if TLSF
 #if !(USE_MMAP || USE_SBRK || USE_VIRTALLOC)
 	if(!opts.poolsize){
 		fprintf(stderr, "No heap size specified");
@@ -260,6 +262,7 @@ int main(int argc, char **argv) {
 	}
 #endif
 	ov_initHeap(opts.poolsize);
+#endif
 
 	/*
 	 *	check servername
