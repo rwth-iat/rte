@@ -1312,8 +1312,12 @@ int tlsf_check_pool(void* _tlsf){
 	for(int i = 0; i < n_block; i++){
 		if((blocklist[i]->size & PREV_STATE)==PREV_FREE){
 			// previous block pointer should be set
-			if(blocklist[i]->prev_hdr != blocklist[i-1])
+			if(blocklist[i]->prev_hdr != blocklist[i-1]){
+				free(blocklist);
+				free(blocklist_free);
+				free(check_free);
 				return 3;
+			}
 		}
 	}
 
@@ -1324,6 +1328,9 @@ int tlsf_check_pool(void* _tlsf){
 		if(	(bh->ptr.free_ptr.prev&&(find_block(blocklist_free, n_free, bh->ptr.free_ptr.prev)==-1)) ||
 			(bh->ptr.free_ptr.next&&(find_block(blocklist_free, n_free, bh->ptr.free_ptr.next)==-1)) ){
 			// previous / next points to invalid block
+			free(blocklist);
+			free(blocklist_free);
+			free(check_free);
 			return 4;
 		}
 	}
@@ -1337,6 +1344,9 @@ int tlsf_check_pool(void* _tlsf){
 				pos = find_block(blocklist_free, n_free, bh);
 				if(pos<0){
 					// invalid block in matrix
+					free(blocklist);
+					free(blocklist_free);
+					free(check_free);
 					return 5;
 				}
 				check_free[pos]=1;
@@ -1348,10 +1358,16 @@ int tlsf_check_pool(void* _tlsf){
 	for(int i = 0; i < n_free; i++){
 		if(!check_free[i]){
 			// not all free blocks in matrix
+			free(blocklist);
+			free(blocklist_free);
+			free(check_free);
 			return 6;
 		}
 	}
 
+	free(blocklist);
+	free(blocklist_free);
+	free(check_free);
 	return 0;
 }
 
