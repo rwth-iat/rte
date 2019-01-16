@@ -21,7 +21,7 @@ static const char *LogLevelNames[6] = {"trace", "debug", "info", "warning", "err
 static const char *LogCategoryNames[6] = {"network", "securechannel", "session", "server", "client", "userland"};
 #endif
 
-static void ov_UAlogger(UA_LogLevel level, UA_LogCategory category, const char *msg, va_list args) {
+static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory category, const char *msg, va_list args) {
 #if LOG_UA
 	time_t now;
 	struct tm *ptr;
@@ -71,5 +71,9 @@ static void ov_UAlogger(UA_LogLevel level, UA_LogCategory category, const char *
 }
 
 UA_Logger ov_UAlogger_new(void) {
-	return ov_UAlogger;
+	UA_Logger logger;
+	logger.context = NULL;
+	logger.log = ov_UAlogger;
+	logger.clear = NULL;
+	return logger;
 }

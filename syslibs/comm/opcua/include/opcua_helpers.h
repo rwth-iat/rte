@@ -43,12 +43,6 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny);
 UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess);
 OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess);
 
-UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port);
-
-OV_INSTPTR_opcua_ovNetworkLayer getOvNetworkLayer();
-void opcua_ovNetworklayer_addConnToDelete(UA_Connection* connection);
-void opcua_ovNetworklayer_addConnToClose(UA_Connection* connection);
-
 OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst);
 
 UA_StatusCode addReference(UA_Node *node);

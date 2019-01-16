@@ -14,22 +14,14 @@
 #define WIN32
 #endif
 
-#define OV_UA_NAMESPACEURI "iec62541-ov.acplt.org"
+
 /* 
 	Define your data types here. 
 */
-struct UA_NodeStore {
-    struct nodeEntry **entries;
-    UA_UInt32          size;
-    UA_UInt32          count;
-    UA_UInt32          sizePrimeIndex;
-};
 
-
-typedef UA_Connection* UA_ConnectionPTR;       
-typedef UA_Connection** UA_ConnectionPTRPTR;
 typedef UA_Server* OV_PTR_UA_Server;
+typedef UA_ServerConfig* OV_PTR_UA_ServerConfig;
 	
-typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
+//typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
 
 #endif
