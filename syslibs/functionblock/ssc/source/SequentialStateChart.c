@@ -454,8 +454,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_resetSsc(
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_ssc_SequentialStateChart pSscAction = NULL;
 	OV_RESULT result = OV_ERR_OK;
-	OV_ANY orderVar;
-	OV_UINT iterator = 0;
+	//OV_ANY orderVar = OV_ANY_INIT;
+	//OV_UINT iterator = 0;
 
 	//reset all steps; find and link INIT-step to taskActiveStep
 	Ov_ForEachChildEx(ov_containment, pinst, pStep, ssc_step){

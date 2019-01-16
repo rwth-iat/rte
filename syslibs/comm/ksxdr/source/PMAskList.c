@@ -102,7 +102,8 @@ OV_DLLFNCEXPORT void ksxdr_PMAskList_typemethod (
 		}
 		thisAskList->v_index = 0;
 		thisAskList->v_state = STATE_START;
-		//fall into - no break needed
+		// fall through
+		// no break
 	case STATE_START:
 		if(thisAskList->v_index < thisAskList->v_hosts.veclen){
 			result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler,
@@ -130,7 +131,9 @@ OV_DLLFNCEXPORT void ksxdr_PMAskList_typemethod (
 			thisAskList->v_nextAskTime.usecs = 0;
 			return;
 		}
-		// fall into - no break needed
+
+		// fall through
+		// no break
 	case STATE_AWAITING_CONNECTION:
 		/*	get pointer to channel and to its Vtable	*/
 		if(!pChannel || !pVtblChannel){
