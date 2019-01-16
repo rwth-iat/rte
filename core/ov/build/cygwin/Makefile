@@ -438,7 +438,7 @@ install : all
 #	--------
 
 clean :
-	-@del *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
+#	-@del *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
 	-@rm *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
 
 #	Include dependencies

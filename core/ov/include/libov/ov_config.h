@@ -98,7 +98,6 @@
 #endif
 
 #define TLSF_STATISTIC 1
-#define TLSF_USE_LOCKS 1
 
 /*
 *	Compiler
@@ -386,8 +385,10 @@ char *strdup(const char *s);
 #endif
 #if OV_SYNC_PTHREAD || OV_SYNC_NTMUTEX
 #define OV_SYNC_MUTEX 1
+#define TLSF_USE_LOCKS 1
 #else
 #define OV_SYNC_MUTEX 0
+#define TLSF_USE_LOCKS 0
 #endif
 
 /*
