@@ -24,18 +24,33 @@
 #include "opcua.h"
 #include "libov/ov_macros.h"
 
+#include "opcua_helpers.h"
+
 OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
     OV_INSTPTR_opcua_uaServer          pobj,
     const OV_BOOL  value
 ) {
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
+	if(pobj->v_error)
+		return OV_ERR_GENERIC;
+
 	if(value != pobj->v_run){
 		if(value){ //start server
 
 			//Create new config
-		    UA_ServerConfig* config = UA_ServerConfig_new_default();
-			//TODO update config, from uaServerConfig object
-		    //TODO insert OV Logger
+		    UA_ServerConfig* config = NULL;
+
+		    //Update config from ov object
+		    OV_INSTPTR_opcua_uaServerConfig pOvConfig = Ov_GetFirstChild(opcua_uaConfigToServer, pobj);
+		    if(pOvConfig){
+				//Create new config
+			    config = UA_ServerConfig_new_minimal(pOvConfig->v_port, NULL);
+			    //TODO update other config values
+		    }else{
+		    	config = UA_ServerConfig_new_default();
+		    }
+		    config->logger = ov_UAlogger_new();
+
 		    if(!config){
 	            ov_string_setvalue(&pobj->v_errorText, "UA_ServerConfig_new_default failed.");
 	            pobj->v_error = TRUE;
@@ -61,67 +76,57 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 				return OV_ERR_GENERIC;
 			}
 
-			pobj->v_config = config;
+			pobj->v_uaConfig = config;
 			pobj->v_server = server;
 			pobj->v_isRunning = TRUE;
 
 		}else{ //shutdown server
-		    if(pobj->v_server != NULL){
-		    	retval = UA_Server_run_shutdown(pobj->v_server);
-			    UA_Server_delete(pobj->v_server);
-			    pobj->v_server = NULL;
-		    }
-		    if(pobj->v_config != NULL){
-		    	UA_ServerConfig_delete(pobj->v_config);
-		    	pobj->v_config = NULL;
-		    }
-			if(retval != UA_STATUSCODE_GOOD){
+
+			//Shutdown server
+			retval = UA_Server_run_shutdown(pobj->v_server); //Always returns good
+			UA_Server_delete(pobj->v_server);
+			pobj->v_isRunning = FALSE;
+
+			//Delete config
+			//TODO save nodestore switch?
+			UA_ServerConfig_delete(pobj->v_uaConfig);
+
+			if(retval != UA_STATUSCODE_GOOD){ //Never gone happen
 				ov_string_print(&pobj->v_errorText, "UA_Server_run_shutdown failed: %s" , UA_StatusCode_name(retval));
 				pobj->v_error = TRUE;
 				return OV_ERR_GENERIC; //TODO check wether return is neccessary?
 			}
-			pobj->v_isRunning = FALSE;
 		}
 	    pobj->v_run = value;
-	    pobj->v_error = FALSE;
 	}
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_constructor(
-	OV_INSTPTR_ov_object 	pobj
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_reset_set(
+    OV_INSTPTR_opcua_uaServer          pobj,
+    const OV_BOOL  value
 ) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
-    OV_RESULT    result;
-
-    /* do what the base class does first */
-    result = ksbase_ComTask_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-    pinst->v_server = NULL;
-    pinst->v_config = NULL;
-
+    if(value){
+    	pobj->v_error = FALSE;
+    	opcua_uaServer_run_set(pobj, FALSE);
+    }
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void opcua_uaServer_destructor(
+OV_DLLFNCEXPORT void opcua_uaServer_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
+    /*
     *   local variables
     */
     OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
 
-    /* do what */
-    opcua_uaServer_run_set(pinst, FALSE);
+    /* do what the base class does first */
+    ov_object_startup(pobj);
 
-    /* destroy object */
-    ksbase_ComTask_destructor(pobj);
+    /* do what */
+    //Restore running state from shutdown
+    opcua_uaServer_run_set(pinst, pinst->v_isRunning);
 
     return;
 }
@@ -135,7 +140,9 @@ OV_DLLFNCEXPORT void opcua_uaServer_shutdown(
     OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
 
     /* do what */
+    OV_BOOL isRunning = pinst->v_isRunning; //Save running state
     opcua_uaServer_run_set(pinst, FALSE);
+    pinst->v_isRunning = isRunning; //Restore running state
 
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
@@ -180,14 +187,7 @@ OV_DLLFNCEXPORT void opcua_uaServer_typemethod (
     *   local variables
     */
 	OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, this);
-	if(pinst->v_run){
-
-		if(pinst->v_server == NULL){
-			ov_string_setvalue(&pinst->v_errorText, "Can't UA_Server_run_iterate because server is NULL.");
-			pinst->v_error = TRUE;
-			return;
-		}
-
+	if(pinst->v_isRunning){
 		/* timeout is the maximum possible delay (in millisec) until the next
 		   _iterate call. Otherwise, the server might miss an internal timeout
 		   or cannot react to messages with the promised responsiveness. */

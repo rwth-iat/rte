@@ -24,6 +24,10 @@ LIBRARY opcua
         	isRunning          :    BOOL
         		FLAGS = "o"
         	    COMMENT = "Determins, whether OPC UA server is running";
+        	reset              :    BOOL
+        		HAS_SET_ACCESSOR
+        		FLAGS = "i"
+        		COMMENT = "Shuts down the server and resets the error flag.";
         	error              :    BOOL
         		FLAGS = "o"
         	    COMMENT = "Determins, whether an error occured.";
@@ -32,7 +36,7 @@ LIBRARY opcua
         	    COMMENT = "Text of last error."
         	    INITIALVALUE = "";
         	//privat variables
-            config             :    C_TYPE <OV_PTR_UA_ServerConfig>
+            uaConfig             :    C_TYPE <OV_PTR_UA_ServerConfig>
                 FLAGS = "n"
                 COMMENT = "Stack-specific representation of server configuration.";
             server             :    C_TYPE <OV_PTR_UA_Server>
@@ -40,8 +44,7 @@ LIBRARY opcua
                 COMMENT = "Stack-specific representation of server data.";
         END_VARIABLES;    
         OPERATIONS
-            constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            destructor         :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
+        	startup            :    C_FUNCTION <OV_FNC_STARTUP>;
             shutdown           :    C_FUNCTION <OV_FNC_SHUTDOWN>;
             getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
             typemethod         :    C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
@@ -50,6 +53,7 @@ LIBRARY opcua
 
 
 //TODO comments
+//TODO add reset method, to reset config to default values.
     CLASS uaServerConfig	:	CLASS ov/object
     	IS_INSTANTIABLE;
     	COMMENT = "Holds all configuration data for an OPC UA Server, that are configurable in the OV System. Should be placed beneath uaServer.";
@@ -65,9 +69,22 @@ LIBRARY opcua
                 INITIALVALUE   =    "iec62541-ov.acplt.org";
             port               :	UINT
             	HAS_SET_ACCESSOR
+            	COMMENT = "Has to be unique within the system, otherwise undefined behaviour."
             	INITIALVALUE   =    4840;
     	END_VARIABLES;
+    	OPERATIONS
+            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
+        END_OPERATIONS;
     END_CLASS;
+    
+    /*    
+        Add associations and their documentation here.
+        Association syntax is:
+    */
+    ASSOCIATION uaConfigToServer : ONE_TO_ONE
+        PARENT server   : CLASS opcua/uaServer;
+        CHILD  config   : CLASS opcua/uaServerConfig;
+    END_ASSOCIATION;
 
 END_LIBRARY;
 
