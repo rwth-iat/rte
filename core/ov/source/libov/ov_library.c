@@ -32,7 +32,12 @@
 
 #define OV_COMPILE_LIBOV
 
+// for getenv
+#define _GNU_SOURCE
+// for putenv
+#define _SVID_SOURCE
 #define _DEFAULT_SOURCE
+
 #include <stdlib.h>
 
 #include "libov/ov_library.h"

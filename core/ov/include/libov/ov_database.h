@@ -40,8 +40,8 @@ extern "C" {
 *	Maximum size of a database file
 */
 #ifndef OV_DATABASE_MAXSIZE
- #define OV_DATABASE_MAXSIZE	2147483648UL	//   2 GByte
-//#define OV_DATABASE_MAXSIZE	524288000UL		// 500 MByte
+#define OV_DATABASE_MAXSIZE		1024UL*1024*1024*2		//   2 GByte
+//#define OV_DATABASE_MAXSIZE		1024UL*1024*512			// 500 MByte
 #endif
 
 
@@ -64,7 +64,7 @@ extern "C" {
 /*
  * option defines for loading database
  */
-#define OV_DBOPT_VERBOSE		0x01		/*	output info while loading/unloading	*/
+#define OV_DBOPT_VERBOSE		0x01		/*	output info when loading/unloading	*/
 #define OV_DBOPT_BACKUP			0x02		/*	flag that backup is being loaded	*/
 #define OV_DBOPT_FORCECREATE	0x04		/*	force to create new database	*/
 #define OV_DBOPT_NOMAP			0x08		/*	disable mapping of database	*/
@@ -121,7 +121,7 @@ typedef struct {
 */
 typedef struct {
 	OV_POINTER			baseaddr;	/* base address of the filemapping */
-	OV_UINT				size;		/* size of the filemapping TODO_ADJUST_WHEN_LARGE_DB */
+	size_t				size;		/* size of the filemapping TODO_ADJUST_WHEN_LARGE_DB */
 	OV_BYTE OV_MEMSPEC		*pstart;	/* beginning of the database memory */
 	OV_BYTE OV_MEMSPEC		*pend;		/* end of the database memory */
 	OV_BYTE OV_MEMSPEC		*pcurr;		/* current position of the core pointer */
@@ -209,7 +209,7 @@ OV_RESULT ov_database_idListGetRelationIndex(const OV_UINT idH, const OV_UINT id
 */
 OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	OV_STRING	filename,
-	OV_UINT		size,
+	size_t		size,
 	OV_UINT		flags
 );
 
@@ -245,7 +245,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_write(OV_STRING dbname);
 /*
 *	Load database
 */
-OV_DLLFNCEXPORT OV_RESULT ov_database_load(OV_STRING filename,OV_UINT size, OV_UINT flags);
+OV_DLLFNCEXPORT OV_RESULT ov_database_load(OV_STRING filename,size_t size, OV_UINT flags);
 
 /*
 *	Initialize the database (subroutine)
@@ -267,7 +267,7 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void);
 *	you should use the macro Ov_DbMalloc() in your code
 */
 OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
-	OV_UINT		size
+	size_t		size
 );
 
 /**
@@ -276,7 +276,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
 */
 OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	OV_POINTER	ptr,
-	OV_UINT		size
+	size_t		size
 );
 
 /**

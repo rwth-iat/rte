@@ -87,6 +87,11 @@ OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
 endif
 endif # ifdef OV_ARCH
 
+ifndef NO_LIBML
+NO_LIBML			= 1
+OV_PLATFORM_DEFINES	+= -DNO_LIBML=1
+endif
+
 #	Compiler
 #	--------
 
@@ -208,7 +213,7 @@ $(OV_LIBOV_LIB) : $(TLSF_OBJ) $(OV_LIBOV_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
 
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(TLSF_OBJ)
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(TLSF_OBJ) $(LIBMPM_LIB)
 	$(LD) -o $@ $^ $(LD_LIB) 
 
 ov.c ov.h : $(OV_CODEGEN_EXE)

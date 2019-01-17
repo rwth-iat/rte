@@ -280,11 +280,15 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 
 #LIBMPM_LIB			= $(ACPLT_LIB_DIR)libmpm$(_LIB)
 LIBTLSF = $(LIBTLSF_SOURCE_DIR)libtlsf($_LIB)
+ifeq ($(NO_LIBML), 1)
+LIBMPM_LIB			= 
+else
 ifeq ($(COMPILER), MSVC)
 LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libml_vc$(_LIB)
 else
 LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libml$(_LIB)
 endif
+endif # ifeq NO_LIBML 1
 
 ifeq ($(SYSTEM), NT)
 ifeq ($(COMPILER), MSVC)

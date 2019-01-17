@@ -83,7 +83,7 @@
 
 /* TLSF Realtime memory allocator, used for database, memstack and heap */
 #ifndef TLSF_HEAP
-#define TLSF_HEAP 1
+#define TLSF_HEAP 0
 #endif
 #if TLSF_HEAP
 #define TLSF 1

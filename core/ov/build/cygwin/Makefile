@@ -82,6 +82,11 @@ endif # ifdef OV_ARCH
 
 OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER -DOV_SYNC_NTMUTEX=1
 
+ifndef NO_LIBML
+NO_LIBML	= 1
+OV_PLATFORM_DEFINES	+= -DNO_LIBML=1
+endif
+
 #	Compiler
 #	--------
 
@@ -162,7 +167,11 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
+ifeq ($(NO_LIBML), 1)
+LIBMPM_LIB			=
+else
 LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libml$(_LIB)
+endif
 
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 
@@ -228,11 +237,11 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_DLL)
 	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
 
 #dllwrap have problems on 64bit, but holger is 2014 not brave enough to change 32 bit build
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)
 ifeq ($(OV_ARCH_BITWIDTH),64)
 	$(LD) -o $@ -Wl,--output-def,$(basename $@).def $^ $(LD_LIB)
 else
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)
 	@echo EXPORTS > $(basename $@).def
 	@$(GCC_BIN_PREFIX)nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^

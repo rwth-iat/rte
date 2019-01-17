@@ -52,10 +52,9 @@
 /*#define USE_SBRK        (0) */
 /*#define USE_MMAP        (0) */
 
+#define _BSD_SOURCE
 #define _DEFAULT_SOURCE
 #include "libov/ov_config.h"
-
-//#define _DEFAULT_SOURCE
 
 #ifndef USE_PRINTF
 #define USE_PRINTF      (1)
