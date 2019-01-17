@@ -104,6 +104,7 @@ int main(int argc, char **argv) {
 	char*		penv = NULL;
 	int			new = 0;
 	int 	    i;
+	int 		isSysLib = 0;
 	int 	    addOpenLib = 0;
 	int	    	force = 0;
 	int			targetOs = 0;
@@ -156,6 +157,12 @@ int main(int argc, char **argv) {
 		 */
 		else if( !strcmp(argv[i], "-o") || !strcmp(argv[i], "--userdefined-open") ) {
 			addOpenLib = 1;
+		}
+		/*
+		 *	'syslib' option
+		 */
+		else if( !strcmp(argv[i], "-s") || !strcmp(argv[i], "--syslib") ) {
+			isSysLib = 1;
 		}
 		/*
 		 *	'force' option
@@ -218,6 +225,7 @@ int main(int argc, char **argv) {
 					"-l   LIBNAME                Set name of the library whose makefile is to be generated\n"
 					"The following optional arguments are available:\n"
 					"-o   OR --userdefined-open  Add user defined 'openlib' option\n"
+					"-s   OT --syslib            Mark as system library\n"
 					"-h   OR --help              Display this help message and exit\n"
 					"-f   OR --force             Force overwriting Makefile (project settings), note that .tcl scripts will never be overwritten\n"
 					"-m32 OR -m64 OR -mARM       Force bit width of the library (default is the same as this executable: ");
@@ -828,10 +836,16 @@ if(new == 0){
 	fprintf(fd,"\t$(STRIP) --strip-debug $(USERLIB_DLL)\n");
 	// host system either
 #if OV_SYSTEM_NT
-	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
+	if(isSysLib)
+		fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(SYSLIB_DIR))\n");
+	else
+		fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
 	fprintf(fd,"endif\n\n");
 #else
-	fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n");
+	if(isSysLib)
+		fprintf(fd,"\tcp $(USERLIB_DLL) $(SYSLIB_DIR)\n");
+	else
+		fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n");
 	fprintf(fd,"endif\n\n");
 #endif
 	fprintf(fd,"\n");
@@ -840,10 +854,24 @@ if(new == 0){
 	fprintf(fd,"ifndef STATIC_ONLY\n");
 	// host system either
 #if OV_SYSTEM_NT
-	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
+	if(isSysLib){
+		fprintf(fd,"ifdef OV_DEVELOP\n");
+		fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
+		fprintf(fd,"else\n");
+		fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(SYSLIB_DIR))\n");
+		fprintf(fd,"endif\n");
+	} else
+		fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
 	fprintf(fd,"endif\n\n");
 #else
-	fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n");
+	if(isSysLib){
+		fprintf(fd,"ifdef OV_DEVELOP\n");
+		fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n");
+		fprintf(fd,"else\n");
+		fprintf(fd,"\tcp $(USERLIB_DLL) $(SYSLIB_DIR)\n");
+		fprintf(fd,"endif\n");
+	} else
+		fprintf(fd,"\tcp $(USERLIB_DLL) $(USERLIB_DIR)\n");
 	fprintf(fd,"endif\n\n");
 #endif
 	fprintf(fd,"\n");

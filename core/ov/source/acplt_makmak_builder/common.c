@@ -174,8 +174,10 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		fprintf(stderr,"SysBin %s\n", sysBinPath);
 		if(strlen(gitModelPath)>0)
 			fprintf(stderr,"GitModel %s\n", gitModelPath);
+		else if(pgit)
+			fprintf(stderr,"GitModel invalid: %s\n", pgit);
 		else
-			fprintf(stderr,"GitModel not set or invalid\n");
+			fprintf(stderr,"GitModel not set\n");
 	}
 
 	//======= some more paranoid consistency checls ===============
