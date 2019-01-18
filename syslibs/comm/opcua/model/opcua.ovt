@@ -19,8 +19,16 @@
 	Define your data types here. 
 */
 
+typedef struct OV_UA_InformationModel {
+//    UA_UInt16 index;
+    UA_String uri;
+    UA_Nodestore* store;
+    UA_DataTypeArray* dataTypes;
+} OV_UA_InformationModel;
+
 typedef UA_Server* OV_PTR_UA_Server;
 typedef UA_ServerConfig* OV_PTR_UA_ServerConfig;
+typedef OV_UA_InformationModel* OV_PTR_UA_INFORMATIONMODEL;
 	
 //typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
 

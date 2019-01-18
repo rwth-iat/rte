@@ -14,6 +14,9 @@
 //typedef OV_INSTPTR_ov_object UA_FNC_RESOLVENDOEIDTOOVOBJECT(UA_NodeId *nodeId);
 //typedef UA_Int32 UA_FNC_GETVTBLPOINTERANDCHECKACCESS(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access);
 
+typedef OV_RESULT OPCUA_FNC_LOADINFORMATIONMODEL(void);
+typedef OV_RESULT OPCUA_FNC_UNLOADINFORMATIONMODEL(void);
+
 	
 #endif
 

@@ -77,14 +77,40 @@ LIBRARY opcua
         END_OPERATIONS;
     END_CLASS;
     
+    CLASS uaInterface	:	CLASS ov/object
+    	COMMENT = "Defines an interface to an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
+    	VARIABLES
+            trafo             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
+                FLAGS = "n"
+                COMMENT = "Information model to transform interface (hence library) specific ov objects to ua nodes.";
+            types             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
+                FLAGS = "n"
+                COMMENT = "Information model to store interface (hence library) specific ua type nodes.";
+    	END_VARIABLES;
+    	OPERATIONS
+            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
+            load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
+            unload             :    C_FUNCTION <OPCUA_FNC_UNLOADINFORMATIONMODEL>;
+        END_OPERATIONS;
+    END_CLASS;
+    
     /*    
         Add associations and their documentation here.
         Association syntax is:
     */
     ASSOCIATION uaConfigToServer : ONE_TO_ONE
-        PARENT server   : CLASS opcua/uaServer;
-        CHILD  config   : CLASS opcua/uaServerConfig;
+        PARENT server    : CLASS opcua/uaServer;
+        CHILD  config    : CLASS opcua/uaServerConfig;
+    END_ASSOCIATION;
+    
+    ASSOCIATION uaInterfaceToServer : ONE_TO_MANY
+        PARENT server    : CLASS opcua/uaServer;
+        CHILD  interfaces: CLASS opcua/uaInterface;
+    END_ASSOCIATION;
+    
+    ASSOCIATION uaInterfaceDependency : MANY_TO_MANY
+        PARENT parent    : CLASS opcua/uaInterface;
+        CHILD  child     : CLASS opcua/uaInterface;
     END_ASSOCIATION;
 
 END_LIBRARY;
-
