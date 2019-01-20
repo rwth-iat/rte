@@ -10,9 +10,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#if OV_SYSTEM_NT
+#include <Windows.h>
+#else
 #include <dirent.h>
-
-//TODO replace sprintf with snprintf and warn if buffer is to small
+#endif
 
 int sortCompare(const void* a, const void* b){
 
@@ -31,7 +33,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	// Locate library
 	char	cCurrentPath[FILENAME_MAX];
 	char	help[512];
-	char	*penv = NULL;
+	char	*penv = ""; // init as empty string so we don't try to print NULL
 	char	*pgit = NULL;
 	int		env = 0; // 0x1 ACPLT_HOME; 0x2 ACPLT_GIT
 
@@ -51,13 +53,15 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	if(getenv(ACPLT_GIT_ENVPATH) != NULL){
 		pgit = getenv(ACPLT_GIT_ENVPATH);
 		compatiblePath(pgit);
-		if(stat(pgit, &st) == 0)
+		if(stat(pgit, &st) == 0){
 			strcpy(gitModelPath, pgit);
+			env |= 2;
+		}
 	}
 
 	//TRYING TO FIND THE LIBRARY
 	//1ST TRY: try to follow the ACPLT_HOME environment variable: take $ACPLT_HOME/dev
-	if(strlen(libPath)==0 && env == 1){
+	if(strlen(libPath)==0 && (env&0x1)){
 		sprintf(help, "%s/dev/%s/model/%s.ovm", penv, libname, libname);
 		compatiblePath(help);
 		if(stat(help, &st) == 0){
@@ -71,7 +75,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	}
 
 	//2NDST TRY: try to follow the ACPLT_GIT environment variable
-	if(strlen(libPath)==0 && strlen(gitModelPath)>0){
+	if(strlen(libPath)==0 && (env&0x1) && (env&0x2)){
 		searchGit(help, gitModelPath, libname);
 		if(strlen(help)>0){
 			sprintf(libPath, "%s/%s/%s", gitModelPath, help, libname);
@@ -83,7 +87,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 				sprintf(sysModelPath, "%s/system/sysdevbase/", penv);
 				sprintf(sysBinPath, "%s/system/sysbin/", penv);
 			} else {
-				// searchGit has its own checks so this schould not happen
+				// searchGit has its own checks so this should not happen
 				libPath = "";
 			}
 		}
@@ -116,7 +120,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	}
 
 	//4TH TRY: try to follow the ACPLT_HOME environment variable (older structure): take $ACPLT_HOME/user
-	if(strlen(libPath)==0 && env == 1){
+	if(strlen(libPath)==0 && (env&0x1)){
 		sprintf(help, "%s/user/%s/model/%s.ovm", penv, libname, libname);
 		compatiblePath(help);
 		if(stat(help, &st) == 0){
@@ -172,12 +176,12 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		fprintf(stderr,"DevBin %s\n", devBinPath);
 		fprintf(stderr,"SysModel %s\n", sysModelPath);
 		fprintf(stderr,"SysBin %s\n", sysBinPath);
-		if(strlen(gitModelPath)>0)
+		if(env&0x2)
 			fprintf(stderr,"GitModel %s\n", gitModelPath);
 		else if(pgit)
-			fprintf(stderr,"GitModel invalid: %s\n", pgit);
+			fprintf(stderr,"GitModel: invalid ACPLT_GIT=%s\n", pgit);
 		else
-			fprintf(stderr,"GitModel not set\n");
+			fprintf(stderr,"GitModel: ACPLT_GIT not set\n");
 	}
 
 	//======= some more paranoid consistency checls ===============
@@ -205,13 +209,36 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
  */
 void compatiblePath(char* string){
 #if OV_SYSTEM_NT
-	char* ph;
+	char* ph, *ph2;
+
+	if(!string)
+		return;
+
 	ph = string;
-	while(ph && (*ph)) {
-		if(*ph == '/') {
-			*ph = '\\';
-		}
+	// convert cygwin path to windows path
+	if(!strncmp(string, "/cygdrive/", 10)){
+		ph2 = ph + 10;
+		*ph = *ph2;
 		ph++;
+		*ph = ':';
+		ph++;
+		ph2++;
+		while(*ph2){
+			if(*ph2 == '/')
+				*ph = '\\';
+			else
+				*ph = *ph2;
+			ph++;
+			ph2++;
+		}
+		*ph = 0;
+	} else {
+		while(ph && (*ph)) {
+			if(*ph == '/') {
+				*ph = '\\';
+			}
+			ph++;
+		}
 	}
 #endif
 }
@@ -226,31 +253,67 @@ void makefilePath(char* string){
 	}
 }
 
+#if OV_SYSTEM_NT
 
-void searchGit(char* path, const char* gitModelPath, const char* curlib){
-	char	help[512] = "";
-	char	tmpPath[512] = "";
-	struct stat st;
+static int getFolderList(char* startDir, char** blacklist, int blCount, char*** dirList){
+	char		help[512] = "";
 
-	path[0] = '\0'; // set path to empty string
+	WIN32_FIND_DATA fdFile;
+	HANDLE hFind = NULL;
 
-	strcpy(help, gitModelPath);
-	compatiblePath(help);
+	unsigned int count = 0;
+	unsigned int pos = 0;
+	int i = 0;
 
-	if( stat(gitModelPath, &st) || !S_ISDIR(st.st_mode))
-		return;
+	sprintf(help, "%s\\*", startDir);
 
-	if(help[strlen(help)-1] == '\\' || help[strlen(help)-1] == '/')
-		help[strlen(help)-1] = '\0';
+	if((hFind = FindFirstFile(help, &fdFile)) == INVALID_HANDLE_VALUE)
+		return -1;
 
-	searchGit_worker(path, help, tmpPath, curlib, 0);
+	do{
+		count++;
+	} while(FindNextFile(hFind, &fdFile));
+
+	FindClose(hFind);
+
+	*dirList = calloc(count, sizeof(char*));
+	if(!*dirList){
+		return -1;
+	}
+
+	if((hFind = FindFirstFile(help, &fdFile)) == INVALID_HANDLE_VALUE){
+		free(*dirList);
+		return -1;
+	}
+
+	do {
+
+		if(fdFile.cFileName[0]=='.')
+			continue;
+
+		if(!(fdFile.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY))
+			continue;
+
+		for(i = 0; i<blCount; i++){
+			if(strcmp(blacklist[i], fdFile.cFileName)==0)
+				break;
+		}
+		if(i<blCount)
+			continue; // skip unnecessary entries
+
+		(*dirList)[pos] = malloc(strlen(fdFile.cFileName)+1);
+		strcpy((*dirList)[pos], fdFile.cFileName);
+		pos++;
+	} while(FindNextFile(hFind, &fdFile));
+
+	FindClose(hFind);
+	return pos;
 }
 
-void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const char* curlib, int depth){
+#else
 
+static int getFolderList(char* startDir, char** blacklist, int blCount, char*** dirList){
 	char		help[512] = "";
-	const char*	blacklist[3] = { "build", "doc", "tools"};
-	char**		dirList = NULL;
 
 	struct dirent*	dp;
 	DIR*			dir;
@@ -260,18 +323,17 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 	unsigned int pos = 0;
 	int i = 0;
 
-	snprintf(help, sizeof(help), "%s/%s", gitModelPath, relPath);
-	compatiblePath(help);
-
-	dir = opendir(help);
+	dir = opendir(startDir);
 
 	while((dp = readdir(dir))){
 		count++;
 	}
 
-	dirList = calloc(count, sizeof(char*));
-	if(!dirList)
-		goto cleanup;
+	*dirList = calloc(count, sizeof(char*));
+	if(!*dirList){
+		closedir(dir);
+		return -1;
+	}
 
 	rewinddir(dir);
 
@@ -280,24 +342,46 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 		if(dp->d_name[0]=='.')
 			continue;
 
-		for(i = 0; i<sizeof(blacklist)/sizeof(char*); i++){
+		for(i = 0; i<blCount; i++){
 			if(strcmp(blacklist[i], dp->d_name)==0)
 				break;
 		}
-		if(i<sizeof(blacklist)/sizeof(char*))
+		if(i<blCount)
 			continue; // skip unnecessary entries
 
-		sprintf(help, "%s/%s/%s", gitModelPath, relPath, dp->d_name);
+		sprintf(help, "%s/%s", startDir, dp->d_name);
+		compatiblePath(help);
 		stat(help, &st);
 		if(!S_ISDIR(st.st_mode))
 			continue;
 
-		dirList[pos] = malloc(strlen(dp->d_name)+1);
-		strcpy(dirList[pos], dp->d_name);
+		(*dirList)[pos] = malloc(strlen(dp->d_name)+1);
+		strcpy((*dirList)[pos], dp->d_name);
 		pos++;
 	}
 
-	count = pos;
+	closedir(dir);
+	return pos;
+}
+
+#endif
+
+static void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const char* curlib, int depth){
+	char		help[512] = "";
+	const char*	blacklist[3] = { "build", "doc", "tools"};
+	char**		dirList = NULL;
+
+	unsigned int count = 0;
+	unsigned int pos = 0;
+	int i = 0;
+
+	snprintf(help, sizeof(help), "%s/%s", gitModelPath, relPath);
+	compatiblePath(help);
+
+	count = getFolderList(help, (char**) &blacklist, sizeof(blacklist)/sizeof(char*), &dirList);
+	if(count<1)
+		return;
+
 	qsort(dirList, count, sizeof(char*), sortCompare);
 
 	for(pos = 0; pos<count; pos++){
@@ -340,11 +424,26 @@ void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const
 		}
 		free(dirList);
 	}
-	closedir(dir);
 	return;
+}
 
+void searchGit(char* path, const char* gitModelPath, const char* curlib){
+	char	help[512] = "";
+	char	tmpPath[512] = "";
+	struct stat st;
 
+	path[0] = '\0'; // set path to empty string
 
+	strcpy(help, gitModelPath);
+	compatiblePath(help);
+
+	if( stat(gitModelPath, &st) || !S_ISDIR(st.st_mode))
+		return;
+
+	if(help[strlen(help)-1] == '\\' || help[strlen(help)-1] == '/')
+		help[strlen(help)-1] = '\0';
+
+	searchGit_worker(path, help, tmpPath, curlib, 0);
 }
 
 /*	----------------------------------------------------------------------	*/

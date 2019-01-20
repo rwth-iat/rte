@@ -189,6 +189,15 @@ example: $(EXAMPLE)
 
 all: targets example
 
+buildtools_install: buildtools
+ifndef OV_BUILDTOOLS_PATH
+	$(error OV_BUILDTOOLS_PATH needs to be defined to install)
+endif
+	cp $(OV_CODEGEN_EXE) $(OV_BUILDTOOLS_PATH)
+	cp $(ACPLT_BUILDER_EXE) $(OV_BUILDTOOLS_PATH)
+	cp $(ACPLT_MAKMAK_EXE) $(OV_BUILDTOOLS_PATH)
+
+
 buildtools: $(OV_CODEGEN_EXE) \
 	$(ACPLT_BUILDER_EXE) \
 	$(ACPLT_MAKMAK_EXE)
@@ -212,7 +221,7 @@ buildtools: $(OV_CODEGEN_EXE) \
 	$(BISON) -t -d -o$@ $<
 
 .ovm.c:
-	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_RUN) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 .ovm.h:
 	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
@@ -238,7 +247,7 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_DLL)
 
 #dllwrap have problems on 64bit, but holger is 2014 not brave enough to change 32 bit build
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)
-ifeq ($(OV_ARCH_BITWIDTH),64)
+ifeq ($(OV_ARCH),x86_64)
 	$(LD) -o $@ -Wl,--output-def,$(basename $@).def $^ $(LD_LIB)
 else
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)

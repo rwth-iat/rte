@@ -165,6 +165,15 @@ example: $(EXAMPLE)
 
 all: targets example
 
+buildtools_install: buildtools
+ifndef OV_BUILDTOOLS_PATH
+	$(error OV_BUILDTOOLS_PATH needs to be defined to install)
+endif
+	cp $(OV_CODEGEN_EXE) $(OV_BUILDTOOLS_PATH)
+	cp $(ACPLT_BUILDER_EXE) $(OV_BUILDTOOLS_PATH)
+	cp $(ACPLT_MAKMAK_EXE) $(OV_BUILDTOOLS_PATH)
+
+
 buildtools: $(OV_CODEGEN_EXE) \
 	$(ACPLT_BUILDER_EXE) \
 	$(ACPLT_MAKMAK_EXE)
@@ -185,10 +194,10 @@ buildtools: $(OV_CODEGEN_EXE) \
 	$(BISON) -t -d -o$@ $<
 
 .ovm.c:
-	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_RUN) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 .ovm.h:
-	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_RUN) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 #   Dependencies
 #   ------------

@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 
 /* this one is needed to use mkdir in windows */
-#ifdef OV_SYSTEM_NT
+#if OV_SYSTEM_NT
 #include <direct.h>
 #endif
 

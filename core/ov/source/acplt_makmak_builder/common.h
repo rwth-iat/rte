@@ -1,6 +1,6 @@
 
 
-#ifdef OV_SYSTEM_NT
+#if OV_SYSTEM_NT
     #include <direct.h>
     #define GetCurrentDir _getcwd
 #else
@@ -8,7 +8,6 @@
     #define GetCurrentDir getcwd
 #endif
 
-void searchGit_worker(char* path, const char* gitModelPath, char* relPath, const char* curlib, int depth);
 void searchGit(char* path, const char* gitModelPath, const char* curlib);
 
 int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* devBinPath,

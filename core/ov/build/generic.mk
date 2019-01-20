@@ -329,6 +329,7 @@ OV_CODEGEN_SRC := ov_ovmparser.c ov_ovmscanner.c \
 OV_CODEGEN_OBJ  = $(foreach source, $(OV_CODEGEN_SRC), \
 	$(basename $(notdir $(source)))$(_OBJ))
 OV_CODEGEN_EXE  = ov_codegen$(_EXE)
+OV_CODEGEN_RUN	= $(OV_CODEGEN_EXE)
 OV_CODEGEN_RES	 = $(basename $(OV_CODEGEN_EXE))$(_RES)
 
 #	ACPLT/OV framework builder

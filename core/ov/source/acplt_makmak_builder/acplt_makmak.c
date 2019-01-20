@@ -376,6 +376,7 @@ if(new == 0){
 	fprintf(fd,"BASE_LIB_DIR      = $(BASE_DIR)system/sysdevbase/ov/lib/\n");
 	fprintf(fd,"BASE_MODEL_DIR    = $(BASE_DIR)system/sysdevbase/ov/model/\n");
 	fprintf(fd,"BIN_DIR           = $(ROOT_DIR)system/sysbin/\n");
+	fprintf(fd,"CODEGEN_DIR       ?= $(BINDIR)\n");
 
 	//git - dir
 	makefilePath(gitModelPath);
@@ -727,7 +728,7 @@ if(new == 0){
 	/* Compiler-Optionen */
 	fprintf(fd,"#	Compiler\n");
 	fprintf(fd,"#	--------\n");
-	fprintf(fd,"OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)\n\n");
+	fprintf(fd,"OV_CODEGEN_EXE = $(CODEGEN_DIR)ov_codegen$(_EXE)\n\n");
 	fprintf(fd,"ifneq \"$(origin GCC_BIN_PREFIX)\" \"undefined\"\n");
 	fprintf(fd,"CC = $(GCC_BIN_PREFIX)gcc\n");
 	fprintf(fd,"else\n");
