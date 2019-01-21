@@ -46,14 +46,14 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	if(getenv(ACPLT_HOME_ENVPATH) != NULL){
 		penv = getenv(ACPLT_HOME_ENVPATH);
 		compatiblePath(penv);
-		if(stat(penv, &st) == 0)
+		if(acplt_isDir(penv))
 			env = 1;
 	}
 
 	if(getenv(ACPLT_GIT_ENVPATH) != NULL){
 		pgit = getenv(ACPLT_GIT_ENVPATH);
 		compatiblePath(pgit);
-		if(stat(pgit, &st) == 0){
+		if(acplt_isDir(pgit)){
 			strcpy(gitModelPath, pgit);
 			env |= 2;
 		}
@@ -64,7 +64,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	if(strlen(libPath)==0 && (env&0x1)){
 		sprintf(help, "%s/dev/%s/model/%s.ovm", penv, libname, libname);
 		compatiblePath(help);
-		if(stat(help, &st) == 0){
+		if(acplt_isFile(help)){
 			*newDirStructure = 1;
 			sprintf(libPath, "%s/dev/%s", penv, libname);
 			sprintf(devModelPath, "%s/dev/", penv);
@@ -80,7 +80,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		if(strlen(help)>0){
 			sprintf(libPath, "%s/%s/%s", gitModelPath, help, libname);
 			compatiblePath(libPath);
-			if(stat(libPath, &st) == 0){
+			if(acplt_isDir(libPath)){
 				*newDirStructure = 1;
 				sprintf(devModelPath, "%s/dev/", penv);
 				sprintf(devBinPath, "%s/addonlibs/", penv);
@@ -97,12 +97,12 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	if(strlen(libPath)==0){
 		sprintf(help, "%s/../../model/%s.ovm", cCurrentPath, libname);
 		compatiblePath(help);
-		if(stat(help, &st) == 0){
+		if(acplt_isFile(help)){
 			sprintf(libPath, "%s/../..", cCurrentPath);
 			//newDirStructure or old structure?
 			sprintf(help, "%s/../../user", libPath);
 			compatiblePath(help);
-			if(stat(help, &st) == 0){
+			if(acplt_isDir(help)){
 				//old
 				*newDirStructure = 0;
 				sprintf(devModelPath, "%s/../../user/", libPath);
@@ -123,7 +123,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	if(strlen(libPath)==0 && (env&0x1)){
 		sprintf(help, "%s/user/%s/model/%s.ovm", penv, libname, libname);
 		compatiblePath(help);
-		if(stat(help, &st) == 0){
+		if(acplt_isFile(help)){
 			*newDirStructure = 0;
 			sprintf(libPath, "%s/user/%s", penv, libname);
 			sprintf(devModelPath, "%s/user/", penv);
@@ -136,12 +136,12 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	if(strlen(libPath)==0){
 		sprintf(help, "%s/%s/model/%s.ovm", cCurrentPath, libname, libname);
 		compatiblePath(help);
-		if(stat(help, &st) == 0){
+		if(acplt_isFile(help)){
 			sprintf(libPath, "%s/%s", cCurrentPath, libname);
 			//newDirStructure or old structure?
 			sprintf(help, "%s/../../user", libPath);
 			compatiblePath(help);
-			if(stat(help, &st) == 0){
+			if(acplt_isDir(help)){
 				//old
 				*newDirStructure = 0;
 				sprintf(devModelPath, "%s/../../user/", libPath);
@@ -188,7 +188,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	/* Check if lib dir is present */
 	sprintf(help, "%s", libPath);
 	compatiblePath(help);
-	if(stat(help, &st) != 0){
+	if(!acplt_isDir(help)){
 			fprintf(stderr,"Error: Directory %s does not exist\n", help);
 			return 1;
 	}
@@ -196,7 +196,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 	/* Check if model dir is present */
 	sprintf(help, "%s/model", libPath);
 	compatiblePath(help);
-	if(stat(help, &st) != 0){
+	if(!acplt_isDir(help)){
 			fprintf(stderr,"Error: Model directory %s does not exist\n", help);
 			return 1;
 	}
@@ -430,14 +430,13 @@ static void searchGit_worker(char* path, const char* gitModelPath, char* relPath
 void searchGit(char* path, const char* gitModelPath, const char* curlib){
 	char	help[512] = "";
 	char	tmpPath[512] = "";
-	struct stat st;
 
 	path[0] = '\0'; // set path to empty string
 
 	strcpy(help, gitModelPath);
 	compatiblePath(help);
 
-	if( stat(gitModelPath, &st) || !S_ISDIR(st.st_mode))
+	if(!acplt_isDir(gitModelPath))
 		return;
 
 	if(help[strlen(help)-1] == '\\' || help[strlen(help)-1] == '/')
@@ -690,14 +689,22 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib,
 /*
  * Checks whether a file exists
  */
-int fileExists(char* filename){
-	FILE* file;
-	file = fopen(filename, "r");
-	if(file){
-		fclose(file);
-		return 1;
-	}
-	return 0;
+int fileExists(const char* filename){
+#if OV_SYSTEM_NT
+	DWORD attr = GetFileAttributes(filename);
+	if(attr==INVALID_FILE_ATTRIBUTES)
+		return 0;
+	if(attr&FILE_ATTRIBUTE_DIRECTORY)
+		return 2;
+	return 1;
+#else
+	struct stat st;
+	if(stat(filename, &st)!=0)
+		return 0;
+	if(S_ISDIR(st.st_mode))
+		return 2;
+	return 1;
+#endif
 }
 
 /*	----------------------------------------------------------------------	*/

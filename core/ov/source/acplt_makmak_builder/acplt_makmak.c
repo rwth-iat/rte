@@ -279,7 +279,7 @@ int main(int argc, char **argv) {
 	/* Check if build dir is present */
 	sprintf(help, "%s/build", libPath);
 	compatiblePath(help);
-	if(stat(help, &st) != 0){
+	if(!acplt_isDir(help)){
 			//fprintf(stdout,"Creating directory '%s'... \n", help);
 			acplt_mkdir(help);
 	}
@@ -287,7 +287,7 @@ int main(int argc, char **argv) {
 	/* Check if platform dir is present */
 	sprintf(help, "%s/build/%s", libPath, builddir);
 	compatiblePath(help);
-	if(stat(help, &st) != 0){
+	if(!acplt_isDir(help)){
 		acplt_mkdir(help);
 	}
 
