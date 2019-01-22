@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #if OV_SYSTEM_NT
-#include <Windows.h>
+#include <windows.h>
 #else
 #include <dirent.h>
 #endif

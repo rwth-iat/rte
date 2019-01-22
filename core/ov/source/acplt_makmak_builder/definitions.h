@@ -2,7 +2,7 @@
 /* this one is needed to use mkdir in windows */
 #if OV_SYSTEM_NT
 #include <direct.h>
-#include <Windows.h>
+#include <windows.h>
 #else
 /* needed to check whether a dir exists */
 #include <sys/stat.h>
