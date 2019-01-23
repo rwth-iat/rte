@@ -21,9 +21,9 @@ rm -R acplt acplt.build
 tclsh acplt_build.tcl cross windows32.cross
 if [ $? != 0 ] ; then 
   tail -n 100 acplt_build.log 
-  cp acplt_build.log ../logs/acplt_build-${TAG}-win32__FAIL__.log
+  cp acplt_build.log ../logs/acplt_build-${TRAVIS_JOB_NUMBER}-${TAG}-win32__FAIL__.log
 else
-  cp acplt_build.log ../logs/acplt_build-${TAG}-win32__OK__.log
+  cp acplt_build.log ../logs/acplt_build-${TRAVIS_JOB_NUMBER}-${TAG}-win32__OK__.log
 fi
 echo "Packing Windows release"
 rm -R ./acplt/dev
@@ -45,9 +45,9 @@ export PATH=/home/travis/RaspberryTools/tools/arm-bcm2708/gcc-linaro-arm-linux-g
 tclsh acplt_build.tcl cross raspberryPi.cross
 if [ $? != 0 ] ; then 
   tail -n 100 acplt_build.log 
-  cp acplt_build.log ../logs/acplt_build-${TAG}-RPi__FAIL__.log
+  cp acplt_build.log ../logs/acplt_build-${TRAVIS_JOB_NUMBER}-${TAG}-RPi__FAIL__.log
 else
-  cp acplt_build.log ../logs/acplt_build-${TAG}-RPi__OK__.log
+  cp acplt_build.log ../logs/acplt_build-${TRAVIS_JOB_NUMBER}-${TAG}-RPi__OK__.log
 fi
 echo "Packing Release for Raspberry Pi"
 rm -R ./acplt/dev
