@@ -67,6 +67,17 @@ OV_ACCESS ov_object_getaccess_nostartup(
 );
 
 /*
+ * extended get access function that gives additional access
+ * read access to every variable
+ * write access to variables with flag 'i' or set accessor
+ */
+OV_DLLFNCEXPORT OV_ACCESS ov_object_getaccessEx(
+	OV_INSTPTR_ov_object		pobj,
+	const OV_ELEMENT			*pelem,
+	const OV_TICKET				*pticket
+);
+
+/*
 *	Move an object and its children/parts to a new address (subroutine)
 */
 OV_RESULT ov_object_move(

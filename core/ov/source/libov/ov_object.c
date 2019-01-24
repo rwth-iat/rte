@@ -518,6 +518,38 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 	return OV_AC_NONE;
 }
 
+/*
+ * extended get access function that gives additional access
+ * read access to every variable
+ * write access to variables with flag 'i' or set accessor
+ */
+OV_DLLFNCEXPORT OV_ACCESS ov_object_getaccessEx(
+	OV_INSTPTR_ov_object		pobj,
+	const OV_ELEMENT			*pelem,
+	const OV_TICKET				*pticket
+) {
+	/*
+	 *	switch based on the element's type
+	 */
+	switch(pelem->elemtype) {
+	case OV_ET_VARIABLE:
+		if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
+			if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE) {
+				return OV_AC_NONE;	// skip ctype
+			}
+			if((pelem->elemunion.pvar->v_flags&(1<<('i'-'a'))) ||
+					(pelem->elemunion.pvar->v_varprops&OV_VP_SETACCESSOR)){
+				return OV_AC_READWRITE;		// write access for 'i' or set accessor
+			}
+			return OV_AC_READ;	// read access for everything else
+		}
+		break;
+	default:
+		break;
+	}
+	return ov_object_getaccess(pobj, pelem, pticket);
+}
+
 /*	----------------------------------------------------------------------	*/
 
 /**
