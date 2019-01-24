@@ -21,7 +21,7 @@
 */
 
 typedef struct OV_UA_InformationModel {
-//    UA_UInt16 index;
+    UA_UInt16 index;
     UA_String uri;
     UA_Nodestore* store;
     UA_DataTypeArray* dataTypes;

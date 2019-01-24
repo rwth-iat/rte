@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2019-01-18   File created
+*   2019-01-24   File created
 *
 *******************************************************************************
 *
@@ -28,9 +28,5 @@
 
 OV_IMPL_LINK(opcua_uaInterfaceDependency)
 OV_IMPL_UNLINK(opcua_uaInterfaceDependency)
-
-//ReadOnly Association --> Linking and Unlinking is done via interfaces
-OV_DECL_GETACCESS(opcua_uaInterfaceDependency) {
-		return OV_AC_READ;
-}
+OV_IMPL_GETACCESS(opcua_uaInterfaceDependency)
 

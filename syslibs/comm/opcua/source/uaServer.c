@@ -41,7 +41,7 @@ static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText)
     	ov_string_setvalue(errorText, "UA_Nodestore malloc failed. Not enough heap memory.");
     	return OV_ERR_GENERIC;
     }
-	//TODO move to own function for reuse (~UA_Nodestore_replace(ns_old, ns_new))
+	//TODO move to own function for reuse (~UA_Nodestore_copy(ns_old, ns_new))
     uaDefaultStore->context = config->nodestore.context;
     uaDefaultStore->deleteNode = config->nodestore.deleteNode;
     uaDefaultStore->deleteNodestore = config->nodestore.deleteNodestore;
@@ -55,7 +55,7 @@ static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText)
     uaDefaultStore->removeNode = config->nodestore.removeNode;
     uaDefaultStore->replaceNode = config->nodestore.replaceNode;
 
-    // add store for namespace 0 and 1
+    // add ua default store for namespace 0 and 1
     retval = UA_NodestoreSwitch_linkNodestoreToNamespace(storeSwitch, uaDefaultStore, 0);
 	if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
     	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
@@ -139,7 +139,9 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 	            return OV_ERR_GENERIC;
 		    }
 
-		    //TODO load interfaces, namespaces, ... from connected
+			//Link generic ov interface interface to server at first association //TODO move to constructor
+			OV_INSTPTR_opcua_uaInterface pGenericInterface = Ov_PtrUpCast(opcua_uaInterface, Ov_GetPartPtr(genericInterface, pobj));
+			Ov_LinkPlaced(opcua_uaServerToInterfaces, pobj, pGenericInterface, OV_PMH_BEGIN);
 
 		    //Startup server
 			retval = UA_Server_run_startup(server);
@@ -151,20 +153,28 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 				return OV_ERR_GENERIC;
 			}
 
-			pobj->v_uaConfig = config;
+			//TODO link interfaces
+			//TODO use Call makro?
+			//OV_VTBLPTR_opcua_ovInterface pVtblGenericInterface = NULL;
+			//Ov_GetVTablePtr(opcua_uaInterface, pVtblGenericInterface, pGenericInterface);
+			//if(pVtblGenericInterface){
+			//	pVtblGenericInterface->m_load(pGenericInterface);
+			//}
+
 			pobj->v_server = server;
 			pobj->v_isRunning = TRUE;
 
 		}else{ //shutdown server
 
 			//Shutdown server
+			UA_ServerConfig* config = UA_Server_getConfig(pobj->v_server);
 			retval = UA_Server_run_shutdown(pobj->v_server); //Always returns good
+
+			//Delete config and server
+		    //TODO unload interfaces
+			UA_ServerConfig_delete(config);
 			UA_Server_delete(pobj->v_server);
 			pobj->v_isRunning = FALSE;
-
-			//Delete config
-		    //TODO unload interfaces
-			UA_ServerConfig_delete(pobj->v_uaConfig);
 
 			if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
 				ov_string_print(&pobj->v_errorText, "UA_Server_run_shutdown failed: %s" , UA_StatusCode_name(retval));

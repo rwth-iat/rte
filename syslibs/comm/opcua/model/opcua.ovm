@@ -12,6 +12,35 @@ LIBRARY opcua
     COPYRIGHT = "";
     COMMENT   = "Implements an OPC UA server with access to the models in the ov system.";
 
+
+//TODO remove ua in front of OV class (already clear by stating the library: opcua/interface, opcua/server ...)
+    CLASS uaInterface	:	CLASS ov/object
+    	COMMENT = "Abstract class to define interface for an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
+    	VARIABLES
+            trafo             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
+                FLAGS = "n"
+                COMMENT = "Information model to transform interface (hence library) specific ov objects to ua nodes.";
+            types             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
+                FLAGS = "n"
+                COMMENT = "Information model to store interface (hence library) specific ua type nodes.";
+    	END_VARIABLES;
+    	OPERATIONS
+            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
+            load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
+            unload             :    C_FUNCTION <OPCUA_FNC_UNLOADINFORMATIONMODEL>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS ovInterface :	CLASS opcua/uaInterface
+    	IS_INSTANTIABLE;
+    	COMMENT = "Generic. Holds the corresponding nodestores for UA Types and Transformations.";
+    	OPERATIONS
+        	constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            destructor         :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
+        END_OPERATIONS;
+    END_CLASS;
+
+
     CLASS uaServer        :    CLASS ksbase/ComTask
         IS_INSTANTIABLE;
         COMMENT = "Represents a UA Server with access to the OV Information model.";
@@ -36,13 +65,13 @@ LIBRARY opcua
         	    COMMENT = "Text of last error."
         	    INITIALVALUE = "";
         	//privat variables
-            uaConfig           :    C_TYPE <OV_PTR_UA_ServerConfig>
-                FLAGS = "n"
-                COMMENT = "Stack-specific representation of server configuration.";
             server             :    C_TYPE <OV_PTR_UA_Server>
                 FLAGS = "n"
                 COMMENT = "Stack-specific representation of server data.";
-        END_VARIABLES;    
+        END_VARIABLES;
+        PARTS
+		    genericInterface   :	CLASS	opcua/ovInterface;
+        END_PARTS;    
         OPERATIONS
         	startup            :    C_FUNCTION <OV_FNC_STARTUP>;
             shutdown           :    C_FUNCTION <OV_FNC_SHUTDOWN>;
@@ -51,7 +80,6 @@ LIBRARY opcua
         END_OPERATIONS;
     END_CLASS;
 
-
 //TODO comments
 //TODO add reset method, to reset config to default values.
     CLASS uaServerConfig	:	CLASS ov/object
@@ -59,38 +87,22 @@ LIBRARY opcua
     	COMMENT = "Holds all configuration data for an OPC UA Server, that are configurable in the OV System. Should be placed beneath uaServer.";
     	VARIABLES
     		applicationURI     :    STRING
-                HAS_SET_ACCESSOR
+    		   	FLAGS = "i"
                 INITIALVALUE   =    "urn:acplt:open62541:acplt-iec62541Server";
             applicationName    :    STRING
-                HAS_SET_ACCESSOR
+               	FLAGS = "i"
                 INITIALVALUE   =    "acplt-opcua";
             ns1URI             :    STRING
-                HAS_SET_ACCESSOR
+                FLAGS = "i"            
                 INITIALVALUE   =    "iec62541-ov.acplt.org";
             port               :	UINT
             	HAS_SET_ACCESSOR
+            	FLAGS = "i"
             	COMMENT = "Has to be unique within the system, otherwise undefined behaviour."
             	INITIALVALUE   =    4840;
     	END_VARIABLES;
     	OPERATIONS
             getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
-        END_OPERATIONS;
-    END_CLASS;
-    
-    CLASS uaInterface	:	CLASS ov/object
-    	COMMENT = "Abstract class to define interface for an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
-    	VARIABLES
-            trafo             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
-                FLAGS = "n"
-                COMMENT = "Information model to transform interface (hence library) specific ov objects to ua nodes.";
-            types             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
-                FLAGS = "n"
-                COMMENT = "Information model to store interface (hence library) specific ua type nodes.";
-    	END_VARIABLES;
-    	OPERATIONS
-            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
-            load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
-            unload             :    C_FUNCTION <OPCUA_FNC_UNLOADINFORMATIONMODEL>;
         END_OPERATIONS;
     END_CLASS;
     
@@ -103,7 +115,7 @@ LIBRARY opcua
         CHILD  config    : CLASS opcua/uaServerConfig;
     END_ASSOCIATION;
     
-    ASSOCIATION uaInterfaceToServer : ONE_TO_MANY
+    ASSOCIATION uaServerToInterfaces : ONE_TO_MANY
         PARENT server    : CLASS opcua/uaServer;
         CHILD  interfaces: CLASS opcua/uaInterface;
     END_ASSOCIATION;

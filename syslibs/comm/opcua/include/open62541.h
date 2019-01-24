@@ -13130,7 +13130,7 @@ UA_Guid UA_EXPORT UA_Guid_random(void);     /* no cryptographic entropy */
  * true, the member datatype is looked up in the array of builtin datatypes
  * instead. */
 typedef struct UA_DataTypeArray {
-    const struct UA_DataTypeArray *next;
+    struct UA_DataTypeArray *next;
     const size_t typesSize;
     const UA_DataType *types;
 } UA_DataTypeArray;
@@ -25790,7 +25790,7 @@ struct UA_ServerConfig {
 
     /* Custom DataTypes. Attention! Custom datatypes are not cleaned up together
      * with the configuration. So it is possible to allocate them on ROM. */
-    const UA_DataTypeArray *customDataTypes;
+    UA_DataTypeArray *customDataTypes;
 
     /**
      * .. note:: See the section on :ref:`generic-types`. Examples for working
