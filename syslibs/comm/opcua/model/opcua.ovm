@@ -36,7 +36,7 @@ LIBRARY opcua
         	    COMMENT = "Text of last error."
         	    INITIALVALUE = "";
         	//privat variables
-            uaConfig             :    C_TYPE <OV_PTR_UA_ServerConfig>
+            uaConfig           :    C_TYPE <OV_PTR_UA_ServerConfig>
                 FLAGS = "n"
                 COMMENT = "Stack-specific representation of server configuration.";
             server             :    C_TYPE <OV_PTR_UA_Server>
@@ -78,7 +78,7 @@ LIBRARY opcua
     END_CLASS;
     
     CLASS uaInterface	:	CLASS ov/object
-    	COMMENT = "Defines an interface to an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
+    	COMMENT = "Abstract class to define interface for an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
     	VARIABLES
             trafo             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
                 FLAGS = "n"

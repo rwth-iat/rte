@@ -20,7 +20,7 @@
 static size_t findNSHandle(UA_NodestoreSwitch *storeSwitch, void *nsHandle)
 {
 	size_t i;
-	for(i=0; i<storeSwitch->nodestoreArraySize; i++)
+	for(i=0; i<storeSwitch->size; i++)
 	{
 	 if(storeSwitch->nodestoreArray[i]->context == nsHandle)
 	 {
@@ -39,7 +39,7 @@ UA_NodestoreSwitch *UA_NodestoreSwitch_new()
 		return NULL;
 	storeSwitch->defaultNodestore = NULL;
 	storeSwitch->nodestoreArray = NULL;
-	storeSwitch->nodestoreArraySize = 0;
+	storeSwitch->size = 0;
 	return storeSwitch;
 }
 
@@ -50,12 +50,10 @@ UA_StatusCode UA_NodestoreSwitch_linkDefaultNodestore(UA_NodestoreSwitch *storeS
 		return UA_STATUSCODE_BADNOTFOUND;
 	storeSwitch->defaultNodestore = store;
 	return UA_STATUSCODE_GOOD;
-
 }
 
 void UA_NodestoreSwitch_linkNodestoreSwitchToServer(UA_NodestoreSwitch *storeSwitch ,UA_Nodestore *store)
 {
-	//TODO move to own function for reuse (~UA_Nodestore_replace(ns_old, ns_new))
 	store->context = storeSwitch;
 	store->deleteNodestore = UA_NodestoreSwitch_deleteNodestores;
 	store->inPlaceEditAllowed = true;
@@ -75,17 +73,17 @@ UA_StatusCode UA_NodestoreSwitch_linkNodestoreToNamespace(UA_NodestoreSwitch *st
 		UA_Nodestore *ns, UA_UInt16 namespaceindex)
 {
 	//TODO make multithreading save --> Lock/Unlock or CRTISECTION
-	if(storeSwitch->nodestoreArraySize <= namespaceindex)
+	if(storeSwitch->size <= namespaceindex)
 	{
 		UA_Nodestore **tmpPointer = NULL;
 		tmpPointer = UA_realloc(storeSwitch->nodestoreArray , namespaceindex+1 * sizeof (UA_Nodestore*));
 		if(!tmpPointer)
 			return UA_STATUSCODE_BADOUTOFMEMORY;
-		for (UA_UInt16 i = storeSwitch->nodestoreArraySize; i < namespaceindex + 1; i++){
+		storeSwitch->nodestoreArray = tmpPointer;
+		for (UA_UInt16 i = storeSwitch->size; i < namespaceindex + 1; i++){
 			storeSwitch->nodestoreArray[i] = NULL;
 		}
-		storeSwitch->nodestoreArray = tmpPointer;
-		storeSwitch->nodestoreArraySize = namespaceindex+1;
+		storeSwitch->size = namespaceindex+1;
 	}
 
 	storeSwitch->nodestoreArray[namespaceindex] = ns;
@@ -100,7 +98,7 @@ UA_StatusCode UA_NodestoreSwitch_unlinkNodestoreFromNamespace(UA_NodestoreSwitch
 	size_t flag = 0;
 	if(ns == NULL)
 		return UA_STATUSCODE_BADNOTFOUND;
-	for(size_t i=0; i< storeSwitch->nodestoreArraySize; i++)
+	for(size_t i=0; i< storeSwitch->size; i++)
 	{
 		if(storeSwitch->nodestoreArray[i] == ns)
 		{
@@ -121,7 +119,7 @@ UA_StatusCode UA_NodestoreSwitch_unlinkNodestoreFromNamespace(UA_NodestoreSwitch
 //TODO  add getNSIndexes(nsHandle) --> change findNSHandle for all matches
 UA_StatusCode UA_NodestoreSwitch_changeNodestore(UA_NodestoreSwitch *storeSwitch, void *nsHandleOut, UA_Nodestore *nsIn) {
 	size_t i= findNSHandle(storeSwitch, nsHandleOut);
-	if(i == storeSwitch->nodestoreArraySize)
+	if(i == storeSwitch->size)
 		return UA_STATUSCODE_BADNOTFOUND;
 	if(nsIn == NULL)
 		return UA_STATUSCODE_BADINTERNALERROR;
@@ -140,88 +138,106 @@ void UA_NodestoreSwitch_deleteSwitch(UA_NodestoreSwitch *storeSwitch)
 void UA_NodestoreSwitch_deleteNode(void *storeSwitchHandle, UA_Node *node)
 {
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
-	size_t i,j=0;
-	for(i=0; i<storeSwitch->nodestoreArraySize; i++)
-	{
-		j = findNSHandle(storeSwitch, storeSwitch->nodestoreArray[i]->context);
-		if(j != storeSwitch->nodestoreArraySize)
-		{
-			storeSwitch->nodestoreArray[j]->deleteNode(storeSwitch->nodestoreArray[j]->context, node);
+	if (node->nodeId.namespaceIndex < storeSwitch->size){
+		if (storeSwitch->nodestoreArray[node->nodeId.namespaceIndex] != NULL){
+			return (storeSwitch->nodestoreArray[node->nodeId.namespaceIndex]->deleteNode(storeSwitch->nodestoreArray[node->nodeId.namespaceIndex]->context, node));
 		}
+	}
+	if(storeSwitch->defaultNodestore != NULL){
+		return storeSwitch->defaultNodestore->deleteNode(storeSwitch->defaultNodestore->context, node);
 	}
 }
 
 UA_StatusCode UA_NodestoreSwitch_insertNode(void *storeSwitchHandle, UA_Node *node, UA_NodeId *addedNodeId)
 {
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
-	if (node->nodeId.namespaceIndex < storeSwitch->nodestoreArraySize){
+	if (node->nodeId.namespaceIndex < storeSwitch->size){
 		if (storeSwitch->nodestoreArray[node->nodeId.namespaceIndex] != NULL){
 			return (storeSwitch->nodestoreArray[node->nodeId.namespaceIndex]->insertNode(storeSwitch->nodestoreArray[node->nodeId.namespaceIndex]->context, node, addedNodeId));
 		}
 	}
-	return storeSwitch->defaultNodestore->insertNode(storeSwitch->defaultNodestore->context, node, addedNodeId);
+	if(storeSwitch->defaultNodestore != NULL){
+		return storeSwitch->defaultNodestore->insertNode(storeSwitch->defaultNodestore->context, node, addedNodeId);
+	}
+	return UA_STATUSCODE_BADNODEIDINVALID;
 }
 
 const UA_Node *UA_NodestoreSwitch_getNode(void *storeSwitchHandle, const UA_NodeId *nodeId)
 {
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
-	if (nodeId->namespaceIndex < storeSwitch->nodestoreArraySize){
+	if (nodeId->namespaceIndex < storeSwitch->size){
 		if (storeSwitch->nodestoreArray[nodeId->namespaceIndex] != NULL){
 			return (storeSwitch->nodestoreArray[nodeId->namespaceIndex]->getNode(storeSwitch->nodestoreArray[nodeId->namespaceIndex]->context,nodeId));
 		}
 	}
-	return (const UA_Node*) storeSwitch->defaultNodestore->getNode(storeSwitch->defaultNodestore->context, nodeId);
+
+	if(storeSwitch->defaultNodestore != NULL){
+		return (const UA_Node*) storeSwitch->defaultNodestore->getNode(storeSwitch->defaultNodestore->context, nodeId);
+	}
+	return NULL;
 }
 
 UA_StatusCode UA_NodestoreSwitch_getNodeCopy(void *storeSwitchHandle, const UA_NodeId *nodeId, UA_Node **outNode)
 {
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
-	if (nodeId->namespaceIndex < storeSwitch->nodestoreArraySize){
+	if (nodeId->namespaceIndex < storeSwitch->size){
 		if (storeSwitch->nodestoreArray[nodeId->namespaceIndex] != NULL){
 			return storeSwitch->nodestoreArray[nodeId->namespaceIndex]->getNodeCopy(storeSwitch->nodestoreArray[nodeId->namespaceIndex]->context, nodeId, outNode);
 		}
 	}
-	return storeSwitch->defaultNodestore->getNodeCopy(storeSwitch->defaultNodestore->context, nodeId, outNode);
+	if(storeSwitch->defaultNodestore != NULL){
+		return storeSwitch->defaultNodestore->getNodeCopy(storeSwitch->defaultNodestore->context, nodeId, outNode);
+	}
+	return UA_STATUSCODE_BADNODEIDINVALID;
 }
 
 UA_StatusCode UA_NodestoreSwitch_replaceNode(void *storeSwitchHandle, UA_Node *node)
 {
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
-	if (node->nodeId.namespaceIndex < storeSwitch->nodestoreArraySize){
+	if (node->nodeId.namespaceIndex < storeSwitch->size){
 		if (storeSwitch->nodestoreArray[node->nodeId.namespaceIndex] != NULL){
 			return storeSwitch->nodestoreArray[node->nodeId.namespaceIndex]->replaceNode(storeSwitch->nodestoreArray[node->nodeId.namespaceIndex]->context, node);
 		}
 	}
-	return storeSwitch->defaultNodestore->replaceNode(storeSwitch->defaultNodestore->context, node);
+	if(storeSwitch->defaultNodestore != NULL){
+		return storeSwitch->defaultNodestore->replaceNode(storeSwitch->defaultNodestore->context, node);
+	}
+	return UA_STATUSCODE_BADNODEIDINVALID;
 }
 
 UA_StatusCode UA_NodestoreSwitch_removeNode(void *storeSwitchHandle, const UA_NodeId *nodeId)
 {
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
-	if (nodeId->namespaceIndex < storeSwitch->nodestoreArraySize){
+	if (nodeId->namespaceIndex < storeSwitch->size){
 		if (storeSwitch->nodestoreArray[nodeId->namespaceIndex] != NULL){
 			return storeSwitch->nodestoreArray[nodeId->namespaceIndex]->removeNode(storeSwitch->nodestoreArray[nodeId->namespaceIndex]->context, nodeId);
 		}
 	}
-	return storeSwitch->defaultNodestore->removeNode(storeSwitch->defaultNodestore->context, nodeId);
+	if(storeSwitch->defaultNodestore != NULL){
+		return storeSwitch->defaultNodestore->removeNode(storeSwitch->defaultNodestore->context, nodeId);
+	}
+	return UA_STATUSCODE_BADNODEIDINVALID;
 }
 
 void UA_NodestoreSwitch_releaseNode(void *storeSwitchHandle, const UA_Node *node)
 {
+	if(node == NULL) return;
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
-	if (node->nodeId.namespaceIndex < storeSwitch->nodestoreArraySize){
+	if (node->nodeId.namespaceIndex < storeSwitch->size){
 		if (storeSwitch->nodestoreArray[node->nodeId.namespaceIndex] != NULL){
 			return storeSwitch->nodestoreArray[node->nodeId.namespaceIndex]->releaseNode(storeSwitch->nodestoreArray[node->nodeId.namespaceIndex]->context, node);
 		}
 	}
-	return storeSwitch->defaultNodestore->releaseNode(storeSwitch->defaultNodestore->context, node);
+	if(storeSwitch->defaultNodestore != NULL){
+		return storeSwitch->defaultNodestore->releaseNode(storeSwitch->defaultNodestore->context, node);
+	}
 }
 
  void UA_NodestoreSwitch_deleteNodestores(void *storeSwitchHandle)
  {
 
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
- 	for(size_t i=0; i< storeSwitch->nodestoreArraySize; i++)
+ 	for(size_t i=0; i< storeSwitch->size; i++)
  	{
  		storeSwitch->nodestoreArray[i]->deleteNodestore(storeSwitch->nodestoreArray[i]->context); //TODO check if NULL before
  		UA_free(&storeSwitch->nodestoreArray[i]); //TODO change to = NULL --> replace in whole document
@@ -241,8 +257,8 @@ void UA_NodestoreSwitch_releaseNode(void *storeSwitchHandle, const UA_Node *node
   void UA_NodestoreSwitch_iterate(void *storeSwitchHandle, void *visitorContext, UA_NodestoreVisitor visitor)
   {
   	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
-  	UA_Nodestore *tempArray[storeSwitch->nodestoreArraySize];
-  	for(size_t i=0; i<storeSwitch->nodestoreArraySize; i++)
+  	UA_Nodestore *tempArray[storeSwitch->size];
+  	for(size_t i=0; i<storeSwitch->size; i++)
   	{
   		for(size_t j=0; j<=i; j++)
   		{

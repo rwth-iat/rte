@@ -8,6 +8,7 @@
 #endif
 
 #include "open62541.h"
+#include "nodeStoreSwitch.h"
 
 /*	restore pre-anti-warning state	*/
 #ifndef WIN32

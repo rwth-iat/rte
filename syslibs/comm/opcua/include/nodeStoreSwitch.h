@@ -43,7 +43,8 @@ UA_StatusCode UA_NodestoreSwitch_removeNode(void *switchHandle ,const UA_NodeId 
 void releaseNode(void *switchHandle ,const UA_Node *node);
 UA_Node * UA_NodestoreSwitch_newNode(void *switchHandle, UA_NodeClass nodeClass);
 void UA_NodestoreSwitch_releaseNode(void *switchHandle, const UA_Node *node);
-void UA_NodestoreSwitch_linkNodestoreSwitch(UA_NodestoreSwitch *pSwitch,UA_Nodestore *ns);
+UA_StatusCode UA_NodestoreSwitch_linkNodestoreToNamespace(UA_NodestoreSwitch *storeSwitch, UA_Nodestore *ns, UA_UInt16 namespaceindex);
+void UA_NodestoreSwitch_linkNodestoreSwitchToServer(UA_NodestoreSwitch *storeSwitch ,UA_Nodestore *store);
 
 //* Added functions*//
 UA_NodestoreSwitch *UA_NodestoreSwitch_new();

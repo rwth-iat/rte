@@ -26,11 +26,75 @@
 
 #include "opcua_helpers.h"
 
+static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText){
+	UA_StatusCode retval = UA_STATUSCODE_GOOD;
+    UA_NodestoreSwitch * storeSwitch = UA_NodestoreSwitch_new();
+    if(storeSwitch == NULL){
+    	ov_string_setvalue(errorText, "UA_NodestoreSwitch_new failed. Not enough heap memory.");
+    	return OV_ERR_HEAPOUTOFMEMORY;
+    }
+
+    //Save default store from config temporary
+    UA_Nodestore* uaDefaultStore = UA_malloc(sizeof(UA_Nodestore));
+	if(uaDefaultStore == NULL){ //Never gone happen based on current implementation
+    	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
+    	ov_string_setvalue(errorText, "UA_Nodestore malloc failed. Not enough heap memory.");
+    	return OV_ERR_GENERIC;
+    }
+	//TODO move to own function for reuse (~UA_Nodestore_replace(ns_old, ns_new))
+    uaDefaultStore->context = config->nodestore.context;
+    uaDefaultStore->deleteNode = config->nodestore.deleteNode;
+    uaDefaultStore->deleteNodestore = config->nodestore.deleteNodestore;
+    uaDefaultStore->getNode = config->nodestore.getNode;
+    uaDefaultStore->getNodeCopy = config->nodestore.getNodeCopy;
+    uaDefaultStore->inPlaceEditAllowed = config->nodestore.inPlaceEditAllowed;
+    uaDefaultStore->insertNode = config->nodestore.insertNode;
+    uaDefaultStore->iterate = config->nodestore.iterate;
+    uaDefaultStore->newNode = config->nodestore.newNode;
+    uaDefaultStore->releaseNode = config->nodestore.releaseNode;
+    uaDefaultStore->removeNode = config->nodestore.removeNode;
+    uaDefaultStore->replaceNode = config->nodestore.replaceNode;
+
+    // add store for namespace 0 and 1
+    retval = UA_NodestoreSwitch_linkNodestoreToNamespace(storeSwitch, uaDefaultStore, 0);
+	if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
+    	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
+    	UA_free(uaDefaultStore);
+		ov_string_print(errorText, "UA_NodestoreSwitch_linkNodestoreToNamespace failed: %s" , UA_StatusCode_name(retval));
+    	return OV_ERR_GENERIC;
+    }
+    retval = UA_NodestoreSwitch_linkNodestoreToNamespace(storeSwitch, uaDefaultStore, 1);
+	if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
+    	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
+    	UA_free(uaDefaultStore);
+		ov_string_print(errorText, "UA_NodestoreSwitch_linkNodestoreToNamespace failed: %s" , UA_StatusCode_name(retval));
+    	return OV_ERR_GENERIC;
+    }
+
+    //link default to switch
+	//TODO change due to newNode problem
+    retval = UA_NodestoreSwitch_linkDefaultNodestore(storeSwitch, uaDefaultStore);
+	if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
+    	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
+    	UA_free(uaDefaultStore);
+		ov_string_print(errorText, "UA_NodestoreSwitch_linkDefaultNodestore failed: %s" , UA_StatusCode_name(retval));
+    	return OV_ERR_GENERIC;
+    }
+
+	//link switch to config
+	UA_NodestoreSwitch_linkNodestoreSwitchToServer(storeSwitch, &config->nodestore);
+	return OV_ERR_OK;
+}
+
+
+//TODO move server startup and shutdown to typemethod?
+//TODO write some static functions and proper error clean up (goto error/cleanup)
 OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
     OV_INSTPTR_opcua_uaServer          pobj,
     const OV_BOOL  value
 ) {
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
+	OV_RESULT result = OV_ERR_OK;
 	if(pobj->v_error)
 		return OV_ERR_GENERIC;
 
@@ -51,10 +115,19 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 		    }
 		    config->logger = ov_UAlogger_new();
 
+		    //Check that config was created
 		    if(!config){
 	            ov_string_setvalue(&pobj->v_errorText, "UA_ServerConfig_new_default failed.");
 	            pobj->v_error = TRUE;
 	            return OV_ERR_GENERIC;
+		    }
+
+		    //Create a new switch and link to config
+		    result = opcua_switch_new(config, &pobj->v_errorText);
+			if(result != OV_ERR_OK){
+		    	UA_ServerConfig_delete(config);
+		    	pobj->v_error = TRUE;
+		    	return result;
 		    }
 
 		    //Create new server
@@ -65,6 +138,8 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 	            pobj->v_error = TRUE;
 	            return OV_ERR_GENERIC;
 		    }
+
+		    //TODO load interfaces, namespaces, ... from connected
 
 		    //Startup server
 			retval = UA_Server_run_startup(server);
@@ -88,10 +163,10 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 			pobj->v_isRunning = FALSE;
 
 			//Delete config
-			//TODO save nodestore switch?
+		    //TODO unload interfaces
 			UA_ServerConfig_delete(pobj->v_uaConfig);
 
-			if(retval != UA_STATUSCODE_GOOD){ //Never gone happen
+			if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
 				ov_string_print(&pobj->v_errorText, "UA_Server_run_shutdown failed: %s" , UA_StatusCode_name(retval));
 				pobj->v_error = TRUE;
 				return OV_ERR_GENERIC; //TODO check wether return is neccessary?
