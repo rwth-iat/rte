@@ -287,7 +287,9 @@ void ksbase_RootComTask_execute(
 		s.tv_nsec = sleepTime.usecs*1000;
 	    nanosleep(&s, NULL);
 #else
-	    Sleep(sleepTime.secs*1000 + sleepTime.usecs / 1000);
+		if(sleepTime.secs==0 && sleepTime.usecs<1000)
+			sleepTime.usecs = 1000;
+		Sleep(sleepTime.secs*1000 + sleepTime.usecs / 1000);
 #if DBG_PRINT_WAIT_TIME
 	   ov_logfile_debug("%s line %u: called Sleep(%u)", __FILE__, __LINE__, sleepTime.secs*1000 + sleepTime.usecs / 1000);
 #endif
