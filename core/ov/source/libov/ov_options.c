@@ -117,7 +117,7 @@ static OV_INLINE void opt_clear_string(char** var){
 }
 
 static OV_INLINE void opt_reassign_string(char** var, char* value){
-	*var = realloc(*var, strlen(value));
+	*var = realloc(*var, strlen(value)+1);
 	if(*var)
 		strcpy(*var, value);
 }

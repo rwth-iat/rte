@@ -178,8 +178,9 @@ int main(int argc, char **argv) {
 		return EXIT_FAILURE;
 	}
 
-	/* disable nomap and nofile options */
+	/* disable nomap and nofile options and force create */
 	opts.dbflags &= ~(OV_DBOPT_NOMAP | OV_DBOPT_NOFILE);
+	opts.dbflags |= OV_DBOPT_FORCECREATE;
 
 	if(!opts.logfile){ // no logfile specified; log to stdout
 		ov_logfile_logtostdout(NULL);
