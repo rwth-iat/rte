@@ -162,7 +162,7 @@ static void ov_server_usage(void)
 				"-x, --exit                       Exit immediately (test if database loads)\n"
 				"--exec IDENTIFIER CLASS LIBRARY  Executes the first event in the schedulers\n"
 				"                                 queue that matches concerning IDENTIFIER,\n"
-				"                                 CLASS and LIBRARY before starting the server."
+				"                                 CLASS and LIBRARY before starting the server.\n"
 				"                                 All parameters are mandatory. Use '/' as wildcard.\n"
 				"--no-map                         Do not map database.\n"
 				"--force-create                   Force to create a new database\n"

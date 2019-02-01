@@ -1463,6 +1463,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 #if TLSF
 	dbpool = pdb->pstart;
 	tlsf_set_pool(ov_database, dbpool);
+	init_memory_pool((size_t)(pdb->pend-pdb->pstart), dbpool);
 #else
 	/*
 	 *	restart the database memory mempool
