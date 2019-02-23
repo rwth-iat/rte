@@ -147,7 +147,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 			retval = UA_Server_run_startup(server);
 			if(retval != UA_STATUSCODE_GOOD){
 				UA_Server_delete(server);
-			    UA_ServerConfig_delete(config);
 				ov_string_print(&pobj->v_errorText, "UA_Server_run_startup failed: %s" , UA_StatusCode_name(retval));
 				pobj->v_error = TRUE;
 				return OV_ERR_GENERIC;
@@ -167,12 +166,10 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 		}else{ //shutdown server
 
 			//Shutdown server
-			UA_ServerConfig* config = UA_Server_getConfig(pobj->v_server);
 			retval = UA_Server_run_shutdown(pobj->v_server); //Always returns good
 
 			//Delete config and server
 		    //TODO unload interfaces
-			UA_ServerConfig_delete(config);
 			UA_Server_delete(pobj->v_server);
 			pobj->v_isRunning = FALSE;
 

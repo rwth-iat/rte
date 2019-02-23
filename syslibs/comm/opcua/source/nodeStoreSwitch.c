@@ -235,14 +235,35 @@ void UA_NodestoreSwitch_releaseNode(void *storeSwitchHandle, const UA_Node *node
 
  void UA_NodestoreSwitch_deleteNodestores(void *storeSwitchHandle)
  {
-
 	UA_NodestoreSwitch *storeSwitch = storeSwitchHandle;
+
+	//Delete default nodestore
+	if(storeSwitch->defaultNodestore){
+		//Check for explicit link to default nodestore and set to NULL
+		for(size_t i=0 ; i < storeSwitch->size ; i++){
+			//check that nodestore is equal by comparision of interfaces
+			if(storeSwitch->nodestoreArray[i] == storeSwitch->defaultNodestore)
+				storeSwitch->nodestoreArray[i]= NULL;
+		}
+		storeSwitch->defaultNodestore->deleteNodestore(storeSwitch->defaultNodestore->context);
+		storeSwitch->defaultNodestore = NULL;
+	}
+
  	for(size_t i=0; i< storeSwitch->size; i++)
  	{
- 		storeSwitch->nodestoreArray[i]->deleteNodestore(storeSwitch->nodestoreArray[i]->context); //TODO check if NULL before
- 		UA_free(&storeSwitch->nodestoreArray[i]); //TODO change to = NULL --> replace in whole document
+ 		//if namespace i has custom nodestore
+ 		if(storeSwitch->nodestoreArray[i]){
+ 			// search forward for other occurances of nodestore and set to null
+ 			for(size_t j=i+1 ; j < storeSwitch->size ; j++){
+ 				//check that nodestore is equal by comparision of interfaces
+ 				if(storeSwitch->nodestoreArray[j] == storeSwitch->nodestoreArray[i])
+ 					storeSwitch->nodestoreArray[j]= NULL;
+ 			}
+ 			//delete the nodestore
+ 			storeSwitch->nodestoreArray[i]->deleteNodestore(storeSwitch->nodestoreArray[i]->context);
+ 			storeSwitch->nodestoreArray[i] = NULL;
+ 		}
  	}
-	//TODO also delete default nodestore
  }
 
 
