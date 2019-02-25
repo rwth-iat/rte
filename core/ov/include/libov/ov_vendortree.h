@@ -38,7 +38,7 @@ extern "C" {
 /*
 *	Number of objects in the vendor tree
 */
-#define	OV_NUM_VENDOROBJECTS	35
+#define	OV_NUM_VENDOROBJECTS	36
 
 /*
 *	Number of configuration bits
@@ -396,6 +396,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMutex(
 	const OV_TICKET	*pticket
 );
 OV_DLLFNCEXPORT OV_BOOL ov_vendortree_checkMutex();
+
+/**
+ *	Get realtime allocator status
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getRTAlloc(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+);
 
 /**
  *	Set serverpassword external

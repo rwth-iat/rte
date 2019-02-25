@@ -82,6 +82,11 @@ endif # ifdef OV_ARCH
 
 OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER -DOV_SYNC_NTMUTEX=1
 
+ifndef NO_LIBML
+NO_LIBML	= 1
+OV_PLATFORM_DEFINES	+= -DNO_LIBML=1
+endif
+
 #	Compiler
 #	--------
 
@@ -162,7 +167,11 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
+ifeq ($(NO_LIBML), 1)
+LIBMPM_LIB			=
+else
 LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libml$(_LIB)
+endif
 
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 
@@ -179,6 +188,15 @@ example: $(EXAMPLE)
 	@
 
 all: targets example
+
+buildtools_install: buildtools
+ifndef OV_BUILDTOOLS_PATH
+	$(error OV_BUILDTOOLS_PATH needs to be defined to install)
+endif
+	cp $(OV_CODEGEN_EXE) $(OV_BUILDTOOLS_PATH)
+	cp $(ACPLT_BUILDER_EXE) $(OV_BUILDTOOLS_PATH)
+	cp $(ACPLT_MAKMAK_EXE) $(OV_BUILDTOOLS_PATH)
+
 
 buildtools: $(OV_CODEGEN_EXE) \
 	$(ACPLT_BUILDER_EXE) \
@@ -203,7 +221,7 @@ buildtools: $(OV_CODEGEN_EXE) \
 	$(BISON) -t -d -o$@ $<
 
 .ovm.c:
-	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_RUN) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 .ovm.h:
 	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
@@ -228,11 +246,11 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_DLL)
 	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
 
 #dllwrap have problems on 64bit, but holger is 2014 not brave enough to change 32 bit build
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
-ifeq ($(OV_ARCH_BITWIDTH),64)
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)
+ifeq ($(OV_ARCH),x86_64)
 	$(LD) -o $@ -Wl,--output-def,$(basename $@).def $^ $(LD_LIB)
 else
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)
 	@echo EXPORTS > $(basename $@).def
 	@$(GCC_BIN_PREFIX)nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
@@ -438,7 +456,7 @@ install : all
 #	--------
 
 clean :
-	-@del *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
+#	-@del *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
 	-@rm *.c *.h *.bak *.map *.def *.s *.exp *$(_LIB) *$(_DLL) *$(_OBJ) *$(_EXE) *$(_RES) *$(_CPL)
 
 #	Include dependencies

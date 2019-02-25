@@ -29,7 +29,7 @@ script:
 - cd ..
 - mkdir logs
 after_success:
-- cp ./build/acplt_build.log ./logs/acplt_build-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__OK__.log
+- cp ./build/acplt_build.log ./logs/acplt_build-${TRAVIS_JOB_NUMBER}-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__OK__.log
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://acplt-rte-bot:$GITHUB_API_KEY@github.com/acplt/rte-www
 - cd ./rte
@@ -37,7 +37,7 @@ after_success:
 - cd ..
 - bash ./rte/tools/travis_pushAndCloseRepo.sh
 after_failure:
-- cp ./build/acplt_build.log ./logs/acplt_build-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__FAIL__.log
+- cp ./build/acplt_build.log ./logs/acplt_build-${TRAVIS_JOB_NUMBER}-${TAG}-${CC}-linux${OV_ARCH_BITWIDTH}__FAIL__.log
 - cd ..
 - git clone -q --depth=5 -b gh-pages https://acplt-rte-bot:$GITHUB_API_KEY@github.com/acplt/rte-www
 - cd ./rte

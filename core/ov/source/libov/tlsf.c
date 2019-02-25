@@ -52,10 +52,9 @@
 /*#define USE_SBRK        (0) */
 /*#define USE_MMAP        (0) */
 
+#define _BSD_SOURCE
 #define _DEFAULT_SOURCE
 #include "libov/ov_config.h"
-
-//#define _DEFAULT_SOURCE
 
 #ifndef USE_PRINTF
 #define USE_PRINTF      (1)
@@ -522,19 +521,21 @@ size_t init_memory_pool(size_t mem_pool_size, void *mem_pool)
         return -1;
     }
 
-    if (((unsigned long) mem_pool & PTR_MASK)) {
+    if (((uintptr_t) mem_pool & PTR_MASK)) {
         ERROR_MSG("init_memory_pool (): mem_pool must be aligned to a word\n");
         return -1;
     }
     tlsf = (tlsf_t *) mem_pool;
     /* Check if already initialised */
     if (tlsf->tlsf_signature == TLSF_SIGNATURE) {
-        //mp = (char *) mem_pool;
+#if TLSF_USE_LOCKS
+        // reset lock
+        memset(&tlsf->lock, 0, sizeof(tlsf->lock));
+        TLSF_CREATE_LOCK(&tlsf->lock);
+#endif
         b = GET_NEXT_BLOCK(mem_pool, ROUNDUP_SIZE(sizeof(tlsf_t)));
         return b->size & BLOCK_SIZE;
     }
-
-    //mp = (char *) mem_pool;
 
     /* Zeroing the memory pool */
     memset(mem_pool, 0, sizeof(tlsf_t));
@@ -585,7 +586,7 @@ size_t add_new_area(void *area, size_t area_size, void *mem_pool)
         lb1 = ptr->end;
 
         /* Merging the new area with the next physically contigous one */
-        if ((unsigned long) ib1 == (unsigned long) lb0 + BHDR_OVERHEAD) {
+        if ((uintptr_t) ib1 == (uintptr_t) lb0 + BHDR_OVERHEAD) {
             if (tlsf->area_head == ptr) {
                 tlsf->area_head = ptr->next;
                 ptr = ptr->next;
@@ -606,7 +607,7 @@ size_t add_new_area(void *area, size_t area_size, void *mem_pool)
 
         /* Merging the new area with the previous physically contigous
            one */
-        if ((unsigned long) lb1->ptr.buffer == (unsigned long) ib0) {
+        if ((uintptr_t) lb1->ptr.buffer == (uintptr_t) ib0) {
             if (tlsf->area_head == ptr) {
                 tlsf->area_head = ptr->next;
                 ptr = ptr->next;
@@ -1312,8 +1313,12 @@ int tlsf_check_pool(void* _tlsf){
 	for(int i = 0; i < n_block; i++){
 		if((blocklist[i]->size & PREV_STATE)==PREV_FREE){
 			// previous block pointer should be set
-			if(blocklist[i]->prev_hdr != blocklist[i-1])
+			if(blocklist[i]->prev_hdr != blocklist[i-1]){
+				free(blocklist);
+				free(blocklist_free);
+				free(check_free);
 				return 3;
+			}
 		}
 	}
 
@@ -1324,6 +1329,9 @@ int tlsf_check_pool(void* _tlsf){
 		if(	(bh->ptr.free_ptr.prev&&(find_block(blocklist_free, n_free, bh->ptr.free_ptr.prev)==-1)) ||
 			(bh->ptr.free_ptr.next&&(find_block(blocklist_free, n_free, bh->ptr.free_ptr.next)==-1)) ){
 			// previous / next points to invalid block
+			free(blocklist);
+			free(blocklist_free);
+			free(check_free);
 			return 4;
 		}
 	}
@@ -1337,6 +1345,9 @@ int tlsf_check_pool(void* _tlsf){
 				pos = find_block(blocklist_free, n_free, bh);
 				if(pos<0){
 					// invalid block in matrix
+					free(blocklist);
+					free(blocklist_free);
+					free(check_free);
 					return 5;
 				}
 				check_free[pos]=1;
@@ -1348,18 +1359,24 @@ int tlsf_check_pool(void* _tlsf){
 	for(int i = 0; i < n_free; i++){
 		if(!check_free[i]){
 			// not all free blocks in matrix
+			free(blocklist);
+			free(blocklist_free);
+			free(check_free);
 			return 6;
 		}
 	}
 
+	free(blocklist);
+	free(blocklist_free);
+	free(check_free);
 	return 0;
 }
 
 void dump_memory_region(unsigned char *mem_ptr, unsigned int size)
 {
 
-    unsigned long begin = (unsigned long) mem_ptr;
-    unsigned long end = (unsigned long) mem_ptr + size;
+	uintptr_t begin = (uintptr_t) mem_ptr;
+	uintptr_t end = (uintptr_t) mem_ptr + size;
     int column = 0;
 
     begin >>= 2;

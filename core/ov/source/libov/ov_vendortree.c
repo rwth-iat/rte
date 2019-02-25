@@ -93,32 +93,14 @@ OV_DLLVAREXPORT OV_BOOL ov_server_run = TRUE;
  *
  */
 OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
-		{ "libraries",				NULL,	ov_vendortree_getlibraries, NULL },
-		{ "classes",				NULL,	ov_vendortree_getclasses, NULL },
-		{ "associations",			NULL,	ov_vendortree_getassociations, NULL },
-		{ "instanceCount",			NULL,	ov_vendortree_getInstanceCount, NULL },
-		{ "database_fragmentation",	"%",	ov_vendortree_getdatabasefrag, NULL },
-		{ "database_free",			"Byte",	ov_vendortree_getdatabasefree, NULL },
-		{ "database_name",			NULL,	ov_vendortree_getdatabasename, NULL },
-		{ "database_size",			"Byte",	ov_vendortree_getdatabasesize, NULL },
-		{ "database_started",		NULL,	ov_vendortree_getdatabasestarted, NULL },
-		{ "database_used",			"Byte",	ov_vendortree_getdatabaseused, NULL },
-		{ "name", 					NULL,	ov_vendortree_getname, NULL },
-		{ "ks_version",				NULL,	ov_vendortree_getksversion, NULL },
-		{ "libov_version",			NULL,	ov_vendortree_getlibovversion, NULL },
-		{ "semantic_flags",			NULL,	ov_vendortree_getsemanticflags, NULL },
 		{ "server_description",		NULL,	ov_vendortree_getserverdescription, NULL },
 		{ "server_name",			NULL,	ov_vendortree_getservername, NULL },
 		{ "server_time",			"UTC",	ov_vendortree_getservertime, NULL },
 		{ "server_version",			NULL,	ov_vendortree_getserverversion, NULL },
-		{ "mutex_on",				NULL,	ov_vendortree_getMutex, NULL },
-		{ "server_configuration",	NULL,	ov_vendortree_getserverconfiguration, ov_vendortree_setserverconfiguration },
+		{ "libov_version",			NULL,	ov_vendortree_getlibovversion, NULL },
 		{ "server_run",				NULL,	ov_vendortree_getserverrun, ov_vendortree_setserverrun },
+		{ "server_configuration",	NULL,	ov_vendortree_getserverconfiguration, ov_vendortree_setserverconfiguration },
 		{ "server_password",		NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
-		{ "serverPID",				NULL,	ov_vendortree_getserverPID, NULL },
-		{ "startup_time",			"UTC",	ov_vendortree_getstartuptime, NULL },
-		{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
-		{ "write_db_backup",		NULL,	ov_vendortree_writebackup, NULL },
 		{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset },
 		{ "ks_maxitemsperrequest",	NULL,	ov_vendortree_getKsMaxItems, ov_vendortree_setKsMaxItems },
 		{ "maxstringlength",		NULL,	ov_vendortree_getMaxStringLength, ov_vendortree_setMaxStringLength },
@@ -126,6 +108,25 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 		{ "maxnamelength",			NULL,	ov_vendortree_getMaxNameLength, ov_vendortree_setMaxNameLength },
 		{ "maxhierarchydepth",		NULL,	ov_vendortree_getMaxHierarchyDepth, ov_vendortree_setMaxHierarchyDepth },
 		{ "ov_scheduler_allowedjitter",	"usecs",	ov_vendortree_getAllowedJitter, ov_vendortree_setAllowedJitter },
+		{ "libraries",				NULL,	ov_vendortree_getlibraries, NULL },
+		{ "classes",				NULL,	ov_vendortree_getclasses, NULL },
+		{ "associations",			NULL,	ov_vendortree_getassociations, NULL },
+		{ "instanceCount",			NULL,	ov_vendortree_getInstanceCount, NULL },
+		{ "database_name",			NULL,	ov_vendortree_getdatabasename, NULL },
+		{ "database_started",		NULL,	ov_vendortree_getdatabasestarted, NULL },
+		{ "database_size",			"Byte",	ov_vendortree_getdatabasesize, NULL },
+		{ "database_used",			"Byte",	ov_vendortree_getdatabaseused, NULL },
+		{ "database_free",			"Byte",	ov_vendortree_getdatabasefree, NULL },
+		{ "database_fragmentation",	"%",	ov_vendortree_getdatabasefrag, NULL },
+		{ "rt_allocator",			NULL,	ov_vendortree_getRTAlloc, NULL},
+		{ "mutex_on",				NULL,	ov_vendortree_getMutex, NULL },
+		{ "name", 					NULL,	ov_vendortree_getname, NULL },
+		{ "ks_version",				NULL,	ov_vendortree_getksversion, NULL },
+		{ "semantic_flags",			NULL,	ov_vendortree_getsemanticflags, NULL },
+		{ "serverPID",				NULL,	ov_vendortree_getserverPID, NULL },
+		{ "startup_time",			"UTC",	ov_vendortree_getstartuptime, NULL },
+		{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
+		{ "write_db_backup",		NULL,	ov_vendortree_writebackup, NULL },
 		{ "ov_scheduler_numexceeds",	NULL,	ov_vendortree_getNumExceeds, NULL },
 		{ "cmdline_options",		NULL,	ov_vendortree_getcmdlineoptions, NULL }
 };
@@ -1022,6 +1023,33 @@ OV_DLLFNCEXPORT OV_BOOL ov_vendortree_checkMutex() {
 #else
 	return FALSE;
 #endif
+}
+
+/*
+ * Get realtime allocator status
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getRTAlloc(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+){
+pvarcurrprops->value.vartype = OV_VT_STRING;
+pvarcurrprops->value.valueunion.val_string = "database: "
+#if TLSF
+		"tlsf"
+#if TLSF_HEAP
+		"; heap: tlsf"
+#if USE_MMAP || USE_SBRK || USE_VIRTALLOC
+		" (dynamic)";
+#else
+		" (static)";
+#endif
+#else
+		"; heap: -";
+#endif
+#else
+		"-; heap: -";
+#endif
+return OV_ERR_OK;
 }
 
 /**

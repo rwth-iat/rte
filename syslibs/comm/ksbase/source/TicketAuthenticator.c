@@ -123,10 +123,10 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_TicketAuthenticator_ACRead_set(
     OV_INSTPTR_ksbase_TicketAuthenticator          pobj,
     const OV_BOOL  value
 ) {
-    if(value)
-    	pobj->v_TicketAccess |= OV_AC_READ;
-    else
-    	pobj->v_TicketAccess &= ~(OV_AC_READ);
+	if(value)
+		pobj->v_TicketAccess |= OV_AC_READ;
+	else
+		pobj->v_TicketAccess &= ~(OV_AC_READ);
 
 	return OV_ERR_OK;
 }

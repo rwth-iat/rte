@@ -87,6 +87,11 @@ OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
 endif
 endif # ifdef OV_ARCH
 
+ifndef NO_LIBML
+NO_LIBML			= 1
+OV_PLATFORM_DEFINES	+= -DNO_LIBML=1
+endif
+
 #	Compiler
 #	--------
 
@@ -160,6 +165,15 @@ example: $(EXAMPLE)
 
 all: targets example
 
+buildtools_install: buildtools
+ifndef OV_BUILDTOOLS_PATH
+	$(error OV_BUILDTOOLS_PATH needs to be defined to install)
+endif
+	cp $(OV_CODEGEN_EXE) $(OV_BUILDTOOLS_PATH)
+	cp $(ACPLT_BUILDER_EXE) $(OV_BUILDTOOLS_PATH)
+	cp $(ACPLT_MAKMAK_EXE) $(OV_BUILDTOOLS_PATH)
+
+
 buildtools: $(OV_CODEGEN_EXE) \
 	$(ACPLT_BUILDER_EXE) \
 	$(ACPLT_MAKMAK_EXE)
@@ -180,10 +194,10 @@ buildtools: $(OV_CODEGEN_EXE) \
 	$(BISON) -t -d -o$@ $<
 
 .ovm.c:
-	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_RUN) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 .ovm.h:
-	$(OV_CODEGEN_DIR)$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
+	$(OV_CODEGEN_DIR)$(OV_CODEGEN_RUN) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 #   Dependencies
 #   ------------
@@ -208,7 +222,7 @@ $(OV_LIBOV_LIB) : $(TLSF_OBJ) $(OV_LIBOV_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
 
-$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(TLSF_OBJ)
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(TLSF_OBJ) $(LIBMPM_LIB)
 	$(LD) -o $@ $^ $(LD_LIB) 
 
 ov.c ov.h : $(OV_CODEGEN_EXE)

@@ -280,11 +280,15 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 
 #LIBMPM_LIB			= $(ACPLT_LIB_DIR)libmpm$(_LIB)
 LIBTLSF = $(LIBTLSF_SOURCE_DIR)libtlsf($_LIB)
+ifeq ($(NO_LIBML), 1)
+LIBMPM_LIB			= 
+else
 ifeq ($(COMPILER), MSVC)
 LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libml_vc$(_LIB)
 else
 LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libml$(_LIB)
 endif
+endif # ifeq NO_LIBML 1
 
 ifeq ($(SYSTEM), NT)
 ifeq ($(COMPILER), MSVC)
@@ -325,6 +329,7 @@ OV_CODEGEN_SRC := ov_ovmparser.c ov_ovmscanner.c \
 OV_CODEGEN_OBJ  = $(foreach source, $(OV_CODEGEN_SRC), \
 	$(basename $(notdir $(source)))$(_OBJ))
 OV_CODEGEN_EXE  = ov_codegen$(_EXE)
+OV_CODEGEN_RUN	= $(OV_CODEGEN_EXE)
 OV_CODEGEN_RES	 = $(basename $(OV_CODEGEN_EXE))$(_RES)
 
 #	ACPLT/OV framework builder

@@ -32,6 +32,10 @@
 
 #define OV_COMPILE_LIBOV
 
+// for getpagesize
+#define _BSD_SOURCE
+#define _DEFAULT_SOURCE
+
 #include "libov/ov_database.h"
 #include "libov/ov_object.h"
 #include "libov/ov_library.h"
@@ -48,6 +52,10 @@
 #include <sys/resource.h>
 #include <sys/mman.h>
 #endif
+#endif
+
+#if NO_LIBML && !TLSF
+#error enable TLSF or define NO_LIBML=0 when calling make
 #endif
 
 #if OV_SYNC_PTHREAD && (!TLSF || !TLSF_USE_LOCKS)
@@ -120,12 +128,14 @@ int flock_solaris (int filedes, int oper)
 #include <starlet.h>
 #endif
 
+#if !TLSF
 #ifndef __STDC__
 #define __STDC__ 1
 #include "ml_malloc.h"
 #undef __STDC__
 #else
 #include "ml_malloc.h"
+#endif
 #endif
 
 #if OV_SYSTEM_MC164
@@ -183,8 +193,19 @@ static OV_VTBL_ov_object nostartupvtable = { ov_object_constructor_nostartup,
  *	Helper macro: Round up the size to the next n*BLOCKSIZE
  *	TODO_ADJUST_WHEN_LARGE_DB
  */
-#define Ov_Roundup(size) (((OV_UINT)(size)+BLOCKSIZE-1)&~(BLOCKSIZE-1))
+#define Ov_Roundup(size, block) (((size_t)(size)+block-1)&~(block-1))
 
+static size_t ov_database_roundupFileSize(size_t size){
+	size_t pagesize = 8192;
+#if OV_SYSTEM_UNIX
+	pagesize = getpagesize();
+#elif OV_SYSTEM_NT
+	SYSTEM_INFO sysInfo;
+	GetSystemInfo(&sysInfo);
+	pagesize = sysInfo.dwPageSize;
+#endif
+	return Ov_Roundup(size, pagesize);
+}
 /*	----------------------------------------------------------------------	*/
 
 #if !TLSF
@@ -194,11 +215,12 @@ static OV_VTBL_ov_object nostartupvtable = { ov_object_constructor_nostartup,
 #define pmpinfo ((ml_info OV_MEMSPEC *)(pdb+1))
 
 /*	----------------------------------------------------------------------	*/
-#endif
+
 
 /*
  *	Get more core memory from the memory mempool (subroutine)
- */__ml_ptr ov_database_morecore(__ml_size_t size) {
+ */
+__ml_ptr ov_database_morecore(__ml_size_t size) {
 	/*
 	 *	local variables
 	 */
@@ -261,6 +283,7 @@ static OV_VTBL_ov_object nostartupvtable = { ov_object_constructor_nostartup,
 	pdb->pcurr = psoon;
 	return (__ml_ptr) pmem;
 }
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
@@ -695,7 +718,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_idListRelease(const OV_UINT idH,
  *
  */
 
-OV_DLLFNCEXPORT OV_RESULT ov_database_create(OV_STRING filename, OV_UINT size, /* TODO_ADJUST_WHEN_LARGE_DB */
+OV_DLLFNCEXPORT OV_RESULT ov_database_create(OV_STRING filename, size_t size, /* TODO_ADJUST_WHEN_LARGE_DB */
 OV_UINT flags) {
 	/*
 	 *	local variables
@@ -727,7 +750,7 @@ OV_UINT flags) {
 	}
 
 	// TODO_ADJUST_WHEN_LARGE_DB
-	if (!size || (size > (OV_UINT) OV_DATABASE_MAXSIZE)
+	if (!size || (size > (size_t) OV_DATABASE_MAXSIZE)
 			|| (!filename && !(dbFlags & (OV_DBOPT_NOFILE | OV_DBOPT_NOMAP)))) {
 		return OV_ERR_BADPARAM;
 	}
@@ -740,8 +763,8 @@ OV_UINT flags) {
 		}
 	}
 
-	/* Rundup file size */
-	size = ml_rundupFileSize(size);
+	/* Roundup file size */
+	size = ov_database_roundupFileSize(size);
 
 	/*
 	 * check if we want to create database in memory
@@ -834,7 +857,7 @@ OV_UINT flags) {
 		/*
 		 *	check file size
 		 */
-		if(size > (OV_UINT) OV_DATABASE_MAXSIZE) {
+		if(size > (size_t) OV_DATABASE_MAXSIZE) {
 			return OV_ERR_CANTCREATEFILE;
 		}
 		/*
@@ -850,7 +873,7 @@ OV_UINT flags) {
 		 *	make the file size approriate (rounded up size)
 		 */
 		if(SetFilePointer(hfile, size, NULL, FILE_BEGIN)
-				== 0xFFFFFFFF
+				== INVALID_SET_FILE_POINTER
 				// TODO_ADJUST_WHEN_LARGE_DB
 		) {
 			CloseHandle(hfile);
@@ -963,7 +986,7 @@ OV_UINT flags) {
 	pdb->size = size;
 #if TLSF
    pdb->pstart = pdb->pcurr = (OV_BYTE*) ((OV_BYTE*) pdb->baseaddr
-			+ BLOCKIFY(sizeof(OV_DATABASE_INFO) ) * BLOCKSIZE);
+			+ Ov_Roundup(sizeof(OV_DATABASE_INFO), 4*sizeof(void*)));
 #else
 	pdb->pstart = pdb->pcurr = (OV_BYTE*) ((OV_BYTE*) pdb->baseaddr
 			+ BLOCKIFY(sizeof(OV_DATABASE_INFO) + sizeof(ml_info)) * BLOCKSIZE);
@@ -1113,7 +1136,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 	 */
 	OV_RESULT result;
 	OV_POINTER baseaddr = NULL;
-	OV_UINT size = 0;
+	size_t size = 0;
 #if OV_SYSTEM_NT
 	DWORD bytesread;
 #endif
@@ -1186,7 +1209,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 	/*
 	 *	read the filemapping size
 	 */
-	if (read(fd, (void*) &size, sizeof(OV_UINT)) == -1) {
+	if (read(fd, (void*) &size, sizeof(size)) == -1) {
 		close(fd);
 		return OV_ERR_CANTREADFROMFILE;
 	}
@@ -1255,7 +1278,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 	/*
 	 *	read the filemapping size
 	 */
-	if(!ReadFile(hfile, (LPVOID)&size, sizeof(OV_UINT),
+	if(!ReadFile(hfile, (LPVOID)&size, sizeof(size),
 					&bytesread, NULL)
 	) {
 		CloseHandle(hfile);
@@ -1271,11 +1294,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 	if(dbFlags&OV_DBOPT_NOMAP) {
 
 		if(SetFilePointer(hfile, 0, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
-		return OV_ERR_CANTREADFROMFILE;
+			return OV_ERR_CANTREADFROMFILE;
 
 		pdb = malloc(size);
 		if(!pdb)
-		return OV_ERR_DBOUTOFMEMORY;
+			return OV_ERR_DBOUTOFMEMORY;
 
 		if(!ReadFile(hfile, (LPVOID)pdb, size, &bytesread, NULL)) {
 			free(pdb);
@@ -1338,7 +1361,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 	/*
 	 *	read the filemapping size
 	 */
-	if(fread((char*)&size, sizeof(OV_UINT), 1, file) != 1) {
+	if(fread((char*)&size, sizeof(size), 1, file) != 1) {
 		fclose(file);
 		return OV_ERR_CANTREADFROMFILE;
 	}
@@ -1440,6 +1463,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 #if TLSF
 	dbpool = pdb->pstart;
 	tlsf_set_pool(ov_database, dbpool);
+	init_memory_pool((size_t)(pdb->pend-pdb->pstart), dbpool);
 #else
 	/*
 	 *	restart the database memory mempool
@@ -1665,7 +1689,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_write(OV_STRING dbname) {
 /*
  *	Load database
  */
-OV_DLLFNCEXPORT OV_RESULT ov_database_load(OV_STRING filename, OV_UINT size,
+OV_DLLFNCEXPORT OV_RESULT ov_database_load(OV_STRING filename, size_t size,
 		OV_UINT flags) {
 	dbFlags = flags;
 	OV_RESULT result;
@@ -1860,7 +1884,7 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 /*
  *	Allocate memory in the database
  */
-OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(OV_UINT size) {
+OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(size_t size) {
 #if !TLSF
 	__ml_ptr ptmp = NULL;
 #endif
@@ -1889,7 +1913,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(OV_UINT size) {
 /*
  *	Reallocate memory in the database
  */
-OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, OV_UINT size) {
+OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, size_t size) {
 #if !TLSF
 	__ml_ptr ptmp = NULL;
 #endif
@@ -2044,7 +2068,8 @@ OV_DLLFNCEXPORT OV_DOUBLE ov_database_getfrag(void) {
 	/*
 	 *	local variables
 	 */
-	OV_UINT i, num, sumsize, avgsize, logavgsize, sum;
+	OV_UINT i, num;
+	size_t sumsize, avgsize, logavgsize, sum;
 	OV_INSTPTR_ov_class pclass;
 	struct __ml_list OV_MEMSPEC *pnext;
 	/*

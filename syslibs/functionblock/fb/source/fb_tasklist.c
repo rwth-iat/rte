@@ -45,6 +45,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 #include "fb_namedef.h"
+#include "fb_database.h"
 
 /*	----------------------------------------------------------------------	*/
 
@@ -52,7 +53,28 @@
 *	Link parent and child in a tasklist association
 */
 
-OV_IMPL_LINK(fb_tasklist)
+OV_DLLFNCEXPORT OV_RESULT fb_tasklist_link(
+	const struct OV_INST_fb_task* pparent,
+	const struct OV_INST_fb_task* pchild,
+	const OV_PLACEMENT_HINT parenthint,
+	const struct OV_INST_fb_task* prelparent,
+	const OV_PLACEMENT_HINT childhint,
+	const struct OV_INST_fb_task* prelchild) {
+
+	OV_INSTPTR_fb_task pTask = (OV_INSTPTR_fb_task)pparent;
+
+	// is pchild task parent of pparent?
+	while(pTask && pTask!=pchild){
+		pTask = Ov_GetParent(fb_tasklist, pTask);
+	}
+	if(pTask)
+		return OV_ERR_BADPLACEMENT;
+
+	return ov_association_link(passoc_fb_tasklist,
+			Ov_PtrUpCast(ov_object, pparent), Ov_PtrUpCast(ov_object, pchild),
+			parenthint, Ov_PtrUpCast(ov_object, prelparent), childhint,
+			Ov_PtrUpCast(ov_object, prelchild));
+}
 
 /*	----------------------------------------------------------------------	*/
 
@@ -72,16 +94,12 @@ OV_DLLFNCEXPORT OV_ACCESS fb_tasklist_getaccess(
 	const OV_CPT_fb_tasklist	pchild,
 	const OV_TICKET				*pticket
 ) {
-    char        help[32];
-	OV_STRING   path;
 	OV_ACCESS   acces;
 	/*
 	*	check parameters
 	*/
-	sprintf(help, "/%s/%s", FB_TASK_CONTAINER, FB_URTASK);
-	ov_memstack_lock();
-	path = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pchild),KS_VERSION);
-	if(!ov_string_compare(path, help)) {
+
+	if(pchild==(OV_CPT_fb_tasklist)fb_database_geturtask()) {
     	/*
     	*	"urtask" as child ?
     	*/
@@ -89,8 +107,7 @@ OV_DLLFNCEXPORT OV_ACCESS fb_tasklist_getaccess(
 	} else {
 	    acces = OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE;
 	}
-	ov_memstack_unlock();
-	
+
 	return acces;
 }
 

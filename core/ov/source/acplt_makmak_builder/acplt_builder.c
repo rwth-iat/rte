@@ -1248,7 +1248,7 @@ HELP:
 	compatiblePath(outputpath);
 
 	/* Check if outputpath */
-	if(stat(outputpath, &st) != 0){
+	if(!acplt_isDir(outputpath)){
 			fprintf(stdout,"Creating directory '%s'... \n", outputpath);
 			acplt_mkdir(outputpath);
 	}

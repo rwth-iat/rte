@@ -30,7 +30,10 @@
 
 #define OV_COMPILE_LIBOV
 
+// for timegm
+#define _BSD_SOURCE
 #define _DEFAULT_SOURCE
+
 #include "libov/ov_time.h"
 #include "libov/ov_database.h"
 #include "libov/ov_ov.h"
@@ -38,8 +41,6 @@
 #if OV_SYSTEM_MC164
 #include "mc164/time.h"
 #else
-//	Set _BSD_SOURCE for timegm
-#define _BSD_SOURCE
 #include <time.h>
 #endif
 

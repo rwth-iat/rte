@@ -20,17 +20,18 @@
 #define OV_COMPILE_LIBRARY_TCPbind
 #endif
 
-#if OV_SYSTEM_UNIX
 #define _POSIX_C_SOURCE	200201L
-#include <time.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#endif
 
 #include "TCPbind.h"
 #include "libov/ov_macros.h"
 #include "ks_logfile.h"
 #include "TCPbind_helper.h"
+
+#if OV_SYSTEM_UNIX
+#include <time.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
 
 #if OV_SYSTEM_NT
 #include <windows.h>
@@ -49,7 +50,6 @@ OV_DLLFNCEXPORT getAddrInfoElem *TCPbind_aresWorker_insertGetAddrInfo(
 		struct addrinfo *hints
 ) {
 	struct getAddrInfoElem *pNewElem;
-
 	if(!host || !port || !(*host) || !(*port) || !hints){
 		return 0;
 	}

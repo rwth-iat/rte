@@ -195,12 +195,14 @@ OV_DLLFNCEXPORT OV_RESULT fb_task_actimode_set(
     switch(actimode) {
         case FB_AM_ON:
             fb_set_proctime(ptask);
-            /* no break */
+            // fall through
+            // no break
         case FB_AM_UNLINK:
         case FB_AM_ONCE:
         case FB_AM_CATCHUP:
-                ptask->v_ErrState = 0;
-                /* no break */
+             ptask->v_ErrState = 0;
+            // fall through
+            // no break
         case FB_AM_OFF:
                 ptask->v_actimode = actimode;
                 return OV_ERR_OK;
