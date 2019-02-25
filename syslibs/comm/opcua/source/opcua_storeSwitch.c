@@ -11,8 +11,23 @@
 #endif
 
 #include "opcua_storeSwitch.h"
-
 //TODO checks for defaultNS != NULL --> Allow defaultNS to be NULL and return error (or NULL)
+
+//TODO move to open62541
+void UA_Nodestore_copy(const UA_Nodestore* src, UA_Nodestore* dst){
+	dst->context = src->context;
+	dst->deleteNode = src->deleteNode;
+	dst->deleteNodestore = src->deleteNodestore;
+	dst->getNode = src->getNode;
+	dst->getNodeCopy = src->getNodeCopy;
+	dst->inPlaceEditAllowed = src->inPlaceEditAllowed; //TODO check
+	dst->insertNode = src->insertNode;
+	dst->iterate = src->iterate;
+	dst->newNode = src->newNode;
+	dst->releaseNode = src->releaseNode;
+	dst->removeNode = src->removeNode;
+    dst->replaceNode = src->replaceNode;
+}
 
 static size_t findNSHandle(UA_NodestoreSwitch *storeSwitch, void *nsHandle)
 {
@@ -53,7 +68,7 @@ void UA_NodestoreSwitch_linkNodestoreSwitchToServer(UA_NodestoreSwitch *storeSwi
 {
 	store->context = storeSwitch;
 	store->deleteNodestore = UA_NodestoreSwitch_deleteNodestores;
-	store->inPlaceEditAllowed = true;
+	store->inPlaceEditAllowed = false; //TODO check whether in place edit is allowed
 	store->newNode = UA_NodestoreSwitch_newNode;
 	store->deleteNode = UA_NodestoreSwitch_deleteNode;
 	store->getNode = UA_NodestoreSwitch_getNode;

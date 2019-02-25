@@ -1395,7 +1395,7 @@ static UA_StatusCode opcua_ovStore_replaceNode(void *context, UA_Node *node){
 
 UA_Nodestore*
 opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context) {
-	UA_Nodestore *nsi = UA_malloc(sizeof(UA_Nodestore));
+	UA_Nodestore* nsi = UA_malloc(sizeof(UA_Nodestore));
 	if(nsi == NULL)
 		return NULL;
     nsi->context =        	context;
@@ -1413,7 +1413,7 @@ opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context) {
 }
 void
 opcua_ovStore_delete(UA_Nodestore * nodestoreInterface){
-	if (nodestoreInterface->context)
-		UA_free(nodestoreInterface->context);
+	nodestoreInterface->context = NULL;
+	UA_free(nodestoreInterface);
 }
 

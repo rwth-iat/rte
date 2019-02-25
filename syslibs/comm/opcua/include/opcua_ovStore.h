@@ -17,5 +17,6 @@
 
 UA_StatusCode opcua_ovStore_addReference(void * context, UA_Node *node);
 UA_Nodestore* opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context);
+void opcua_ovStore_delete(UA_Nodestore * nodestoreInterface);
 
 #endif /* opcua_ovStore_H_ */

@@ -864,4 +864,3 @@ OV_DLLFNCEXPORT OV_BOOL opcua_helpers_nodeClassMaskMatchAndGetAccess(const OV_EL
 		return FALSE;
 	}
 }
-

@@ -71,7 +71,7 @@ static UA_StatusCode addInformationModel(UA_Server * server, OV_UA_InformationMo
 	OV_STRING uri = NULL;
 	opcua_helpers_copyUAStringToOV(model->uri, &uri);
 	model->index = UA_Server_addNamespace(server, uri);
-	ov_database_free(uri);
+	ov_string_setvalue(&uri, NULL);
 
 	// add Datatypes
 	if(model->dataTypes){

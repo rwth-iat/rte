@@ -41,7 +41,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
          return result;
 
     /* do what */
-    pinst->v_trafo = ov_database_malloc(sizeof(OV_PTR_UA_INFORMATIONMODEL));
+    pinst->v_trafo = Ov_HeapAlloc(OV_UA_InformationModel);
     pinst->v_trafo->dataTypes = NULL;
     pinst->v_trafo->index = 0;
     pinst->v_trafo->uri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI); //Will be overwritten by config->applicationDescription.applicationUri
@@ -60,10 +60,13 @@ OV_DLLFNCEXPORT void opcua_ovInterface_destructor(
     OV_INSTPTR_opcua_ovInterface pinst = Ov_StaticPtrCast(opcua_ovInterface, pobj);
 
     /* do what */
+    UA_String_deleteMembers(&pinst->v_trafo->uri);
+    opcua_ovStore_delete(pinst->v_trafo->store);
+    Ov_HeapFree(pinst->v_trafo);
+    pinst->v_trafo = NULL;
 
     /* destroy object */
     ov_object_destructor(pobj);
 
     return;
 }
-

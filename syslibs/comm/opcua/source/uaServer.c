@@ -37,24 +37,12 @@ static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText)
 
     //Save default store from config temporary
     UA_Nodestore* uaDefaultStore = UA_malloc(sizeof(UA_Nodestore));
-	if(uaDefaultStore == NULL){ //Never gone happen based on current implementation
+	if(uaDefaultStore == NULL){
     	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
     	ov_string_setvalue(errorText, "UA_Nodestore malloc failed. Not enough heap memory.");
     	return OV_ERR_GENERIC;
     }
-	//TODO move to own function for reuse (~UA_Nodestore_copy(ns_old, ns_new))
-    uaDefaultStore->context = config->nodestore.context;
-    uaDefaultStore->deleteNode = config->nodestore.deleteNode;
-    uaDefaultStore->deleteNodestore = config->nodestore.deleteNodestore;
-    uaDefaultStore->getNode = config->nodestore.getNode;
-    uaDefaultStore->getNodeCopy = config->nodestore.getNodeCopy;
-    uaDefaultStore->inPlaceEditAllowed = config->nodestore.inPlaceEditAllowed;
-    uaDefaultStore->insertNode = config->nodestore.insertNode;
-    uaDefaultStore->iterate = config->nodestore.iterate;
-    uaDefaultStore->newNode = config->nodestore.newNode;
-    uaDefaultStore->releaseNode = config->nodestore.releaseNode;
-    uaDefaultStore->removeNode = config->nodestore.removeNode;
-    uaDefaultStore->replaceNode = config->nodestore.replaceNode;
+	UA_Nodestore_copy(&config->nodestore, uaDefaultStore);
 
     // add ua default store for namespace 0
     // Not necessary, if default nodestore is set
@@ -163,7 +151,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 			Ov_GetVTablePtr(opcua_uaInterface, pVtblGenericInterface, pGenericInterface);
 			if(pVtblGenericInterface){
 			    UA_String_deleteMembers(&pGenericInterface->v_trafo->uri);
-			    UA_String_copy(&config->applicationDescription.applicationUri, &pGenericInterface->v_trafo->uri); //TODO use servename instead: MANAGER
+			    UA_String_copy(&config->applicationDescription.applicationUri, &pGenericInterface->v_trafo->uri); //TODO use servename instead? ov_vendortree_getservername()
 				pVtblGenericInterface->m_load(pGenericInterface, TRUE);
 			}
 			//Add reference to OV root for generic interface //TODO proper error handling -> write to error output of block ?
