@@ -39,13 +39,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServerConfig_applicationName_set(
     return ov_string_setvalue(&pobj->v_applicationName,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaServerConfig_ns1URI_set(
-    OV_INSTPTR_opcua_uaServerConfig          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_ns1URI,value);
-}
-
 OV_DLLFNCEXPORT OV_RESULT opcua_uaServerConfig_port_set(
     OV_INSTPTR_opcua_uaServerConfig          pobj,
     const OV_UINT  value

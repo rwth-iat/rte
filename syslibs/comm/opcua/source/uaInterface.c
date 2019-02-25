@@ -23,6 +23,7 @@
 
 #include "opcua.h"
 #include "libov/ov_macros.h"
+#include "opcua_storeSwitch.h"
 
 #include "opcua_helpers.h"
 
@@ -57,24 +58,31 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_uaInterface_getaccess(
 	return ov_object_getaccess(pobj, pelem, pticket);
 }
 
-static UA_StatusCode addInformationModel(UA_Server * server, OV_UA_InformationModel * model){
-	size_t index = 0;
-	if(UA_Server_getNamespaceByName(server, model->uri, &index) == UA_STATUSCODE_GOOD){
-		return OV_ERR_ALREADYEXISTS;
+static UA_StatusCode addInformationModel(UA_Server * server, OV_UA_InformationModel * model, OV_BOOL forceLoad){
+	if(!forceLoad){
+		size_t index = 0;
+		if(UA_Server_getNamespaceByName(server, model->uri, &index) == UA_STATUSCODE_GOOD){
+			return OV_ERR_ALREADYEXISTS;
+		}
 	}
+	UA_ServerConfig * config = UA_Server_getConfig(server);
 
 	// add NamespaceUri
 	OV_STRING uri = NULL;
-	copyOPCUAStringToOV(model->uri, &uri);
+	opcua_helpers_copyUAStringToOV(model->uri, &uri);
 	model->index = UA_Server_addNamespace(server, uri);
 	ov_database_free(uri);
 
 	// add Datatypes
-	UA_ServerConfig * config = UA_Server_getConfig(server);
-	model->dataTypes->next = config->customDataTypes;
-	config->customDataTypes = model->dataTypes;
+	if(model->dataTypes){
+		model->dataTypes->next = config->customDataTypes;
+		config->customDataTypes = model->dataTypes;
+	}
 
-	return UA_NodestoreSwitch_linkNodestoreToNamespace((UA_NodestoreSwitch*)config->nodestore.context, model->store, model->index);
+	if(model->store){
+		return UA_NodestoreSwitch_linkNodestoreToNamespace((UA_NodestoreSwitch*)config->nodestore.context, model->store, model->index);
+	}
+	return UA_STATUSCODE_GOOD;
 }
 
 static OV_RESULT removeInformationModel(UA_Server * server, OV_UA_InformationModel * model){
@@ -111,7 +119,7 @@ static OV_RESULT removeInformationModel(UA_Server * server, OV_UA_InformationMod
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaInterface_load(OV_INSTPTR_opcua_uaInterface pinst) {
+OV_DLLFNCEXPORT OV_RESULT opcua_uaInterface_load(OV_INSTPTR_opcua_uaInterface pinst, OV_BOOL forceLoad) {
 
 	OV_INSTPTR_opcua_uaServer uaServer = Ov_GetParent(opcua_uaServerToInterfaces, pinst);
 	if(uaServer == NULL){
@@ -121,21 +129,22 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaInterface_load(OV_INSTPTR_opcua_uaInterface pi
 	//Load all dependent interfaces first
 	OV_INSTPTR_opcua_uaInterface dependentInterface = NULL;
 	Ov_ForEachChild(opcua_uaInterfaceDependency, pinst, dependentInterface){
-		opcua_uaInterface_load(dependentInterface);
+		opcua_uaInterface_load(dependentInterface, FALSE);
 		//TODO error handling
 	}
 
 	// add Types
 	if (pinst->v_types != NULL){
-		addInformationModel(uaServer->v_server, pinst->v_types);
+		addInformationModel(uaServer->v_server, pinst->v_types, forceLoad);
 		//TODO error handling
 	}
 
 	// add Trafo
 	if (pinst->v_trafo != NULL){
-		addInformationModel(uaServer->v_server, pinst->v_trafo);
+		addInformationModel(uaServer->v_server, pinst->v_trafo, forceLoad);
 		//TODO error handling
 	}
+	//TODO add parent reference to first note
     return OV_ERR_OK;
 }
 

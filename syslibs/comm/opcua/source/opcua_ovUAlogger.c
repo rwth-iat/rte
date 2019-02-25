@@ -70,7 +70,7 @@ static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory categor
 
 }
 
-UA_Logger ov_UAlogger_new(void) {
+UA_Logger opcua_ovUAlogger_new(void) {
 	UA_Logger logger;
 	logger.context = NULL;
 	logger.log = ov_UAlogger;

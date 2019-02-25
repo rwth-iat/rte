@@ -10,22 +10,19 @@
 #define OV_COMPILE_LIBRARY_opcua
 #endif
 
-#include "nodeStoreSwitch.h"
-
-// beim intiallisieren config->nodestore = nodestoreSwitch;
+#include "opcua_storeSwitch.h"
 
 //TODO checks for defaultNS != NULL --> Allow defaultNS to be NULL and return error (or NULL)
-
 
 static size_t findNSHandle(UA_NodestoreSwitch *storeSwitch, void *nsHandle)
 {
 	size_t i;
 	for(i=0; i<storeSwitch->size; i++)
 	{
-	 if(storeSwitch->nodestoreArray[i]->context == nsHandle)
-	 {
-	   return i;
-	 }
+		if(storeSwitch->nodestoreArray[i]->context == nsHandle)
+		{
+			return i;
+		}
 	}
 	return i;
 }

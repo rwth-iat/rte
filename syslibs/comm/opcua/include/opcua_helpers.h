@@ -11,10 +11,9 @@
 #include "opcua.h"
 #include "libov/ov_path.h"
 
-#define UA_NODEID_OVROOT		(42 * 42)		//	1764
-#define UA_NODEID_OVREFTYPES	((42 * 42) + 1)	//	1765
-#define UA_NODEID_OVOBJTYPES	((42 * 42) + 2)	//	1766
-
+//#define UA_NODEID_OVROOT		(42 * 42)		//	1764
+//#define UA_NODEID_OVREFTYPES	((42 * 42) + 1)	//	1765
+//#define UA_NODEID_OVOBJTYPES	((42 * 42) + 2)	//	1766
 
 #define UA_NODEID_References					31
 #define UA_NODEID_NonHierarchicalReferences		32
@@ -34,17 +33,17 @@
 //#define UA_NODEID_HasNotifier					48
 //#define UA_NODEID_HasOrderedComponent			49
 
-UA_Logger ov_UAlogger_new(void);
+UA_Logger opcua_ovUAlogger_new(void);
 
-UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result);
-UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant);
-UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type);
-UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny);
-UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess);
-OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess);
+UA_StatusCode opcua_helpers_ovResultToUaStatusCode(OV_RESULT result);
+UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny, UA_Variant* pVariant);
+UA_StatusCode opcua_helpers_UAVariantToOVAny(const UA_Variant* pVariant, OV_ANY* pAny);
+UA_NodeId opcua_helpers_ovVarTypeToNodeId(OV_VAR_TYPE type);
+UA_Int32 opcua_helpers_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access);
+UA_Int32 opcua_helpers_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess);
+OV_BOOL opcua_helpers_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess);
 
-OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst);
-
-UA_StatusCode addReference(UA_Node *node);
+OV_RESULT opcua_helpers_copyUAStringToOV(UA_String src, OV_STRING *dst);
+UA_Int32 opcua_helpers_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath);
 
 #endif /* opcua_HELPERS_H_ */

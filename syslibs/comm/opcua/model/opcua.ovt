@@ -8,7 +8,7 @@
 #endif
 
 #include "open62541.h"
-#include "nodeStoreSwitch.h"
+//#include "opcua_storeSwitch.h"
 
 /*	restore pre-anti-warning state	*/
 #ifndef WIN32
@@ -20,6 +20,9 @@
 	Define your data types here. 
 */
 
+#define OPCUA_DEFAULT_APPLICATIONURI "acplt.org/"
+#define OPCUA_DEFAULT_APPLICATIONNAME "ACPLT/RTE"
+
 typedef struct OV_UA_InformationModel {
     UA_UInt16 index;
     UA_String uri;
@@ -27,10 +30,9 @@ typedef struct OV_UA_InformationModel {
     UA_DataTypeArray* dataTypes;
 } OV_UA_InformationModel;
 
+//TODO rename OV_PTR_ to OPCUA_TYPE_
 typedef UA_Server* OV_PTR_UA_Server;
 typedef UA_ServerConfig* OV_PTR_UA_ServerConfig;
 typedef OV_UA_InformationModel* OV_PTR_UA_INFORMATIONMODEL;
-	
-//typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
 
 #endif

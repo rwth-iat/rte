@@ -25,6 +25,7 @@
 #include "libov/ov_macros.h"
 
 #include "opcua_helpers.h"
+#include "opcua_storeSwitch.h"
 
 static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText){
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
@@ -55,15 +56,9 @@ static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText)
     uaDefaultStore->removeNode = config->nodestore.removeNode;
     uaDefaultStore->replaceNode = config->nodestore.replaceNode;
 
-    // add ua default store for namespace 0 and 1
+    // add ua default store for namespace 0
+    // Not necessary, if default nodestore is set
     retval = UA_NodestoreSwitch_linkNodestoreToNamespace(storeSwitch, uaDefaultStore, 0);
-	if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
-    	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
-    	UA_free(uaDefaultStore);
-		ov_string_print(errorText, "UA_NodestoreSwitch_linkNodestoreToNamespace failed: %s" , UA_StatusCode_name(retval));
-    	return OV_ERR_GENERIC;
-    }
-    retval = UA_NodestoreSwitch_linkNodestoreToNamespace(storeSwitch, uaDefaultStore, 1);
 	if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
     	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
     	UA_free(uaDefaultStore);
@@ -109,11 +104,20 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 		    if(pOvConfig){
 				//Create new config
 			    config = UA_ServerConfig_new_minimal(pOvConfig->v_port, NULL);
-			    //TODO update other config values
+			    UA_LocalizedText_deleteMembers(&config->applicationDescription.applicationName);
+			    config->applicationDescription.applicationName.locale = UA_String_fromChars("EN"); //TODO Check correct locale EN_US, DE ... ?
+			    config->applicationDescription.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
+			    UA_String_deleteMembers(&config->applicationDescription.applicationUri);
+				config->applicationDescription.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
 		    }else{
 		    	config = UA_ServerConfig_new_default();
+			    UA_LocalizedText_deleteMembers(&config->applicationDescription.applicationName);
+			    config->applicationDescription.applicationName.locale = UA_String_fromChars("EN"); //TODO Check correct locale EN_US, DE ... ?
+			    config->applicationDescription.applicationName.text = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONNAME);
+			    UA_String_deleteMembers(&config->applicationDescription.applicationUri);
+				config->applicationDescription.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
 		    }
-		    config->logger = ov_UAlogger_new();
+		    config->logger = opcua_ovUAlogger_new();
 
 		    //Check that config was created
 		    if(!config){
@@ -139,10 +143,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 	            return OV_ERR_GENERIC;
 		    }
 
-			//Link generic ov interface interface to server at first association //TODO move to constructor
-			OV_INSTPTR_opcua_uaInterface pGenericInterface = Ov_PtrUpCast(opcua_uaInterface, Ov_GetPartPtr(genericInterface, pobj));
-			Ov_LinkPlaced(opcua_uaServerToInterfaces, pobj, pGenericInterface, OV_PMH_BEGIN);
-
 		    //Startup server
 			retval = UA_Server_run_startup(server);
 			if(retval != UA_STATUSCODE_GOOD){
@@ -152,16 +152,32 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 				return OV_ERR_GENERIC;
 			}
 
-			//TODO link interfaces
-			//TODO use Call makro?
-			//OV_VTBLPTR_opcua_ovInterface pVtblGenericInterface = NULL;
-			//Ov_GetVTablePtr(opcua_uaInterface, pVtblGenericInterface, pGenericInterface);
-			//if(pVtblGenericInterface){
-			//	pVtblGenericInterface->m_load(pGenericInterface);
-			//}
-
 			pobj->v_server = server;
 			pobj->v_isRunning = TRUE;
+
+			//Link generic ov interface interface to server at first association //TODO move to constructor ?
+			OV_INSTPTR_opcua_uaInterface pGenericInterface = Ov_PtrUpCast(opcua_uaInterface, Ov_GetPartPtr(genericInterface, pobj));
+			Ov_LinkPlaced(opcua_uaServerToInterfaces, pobj, pGenericInterface, OV_PMH_BEGIN);
+			//Load generic interface
+			OV_VTBLPTR_opcua_uaInterface pVtblGenericInterface = NULL; //TODO use Call makro instead?
+			Ov_GetVTablePtr(opcua_uaInterface, pVtblGenericInterface, pGenericInterface);
+			if(pVtblGenericInterface){
+			    UA_String_deleteMembers(&pGenericInterface->v_trafo->uri);
+			    UA_String_copy(&config->applicationDescription.applicationUri, &pGenericInterface->v_trafo->uri); //TODO use servename instead: MANAGER
+				pVtblGenericInterface->m_load(pGenericInterface, TRUE);
+			}
+			//Add reference to OV root for generic interface //TODO proper error handling -> write to error output of block ?
+			if(UA_Server_addReference(server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+					UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(1, pdb->root.v_identifier), true) != UA_STATUSCODE_GOOD){
+				ov_logfile_error("%s - run_set: could not create reference to ov-namespace.", pobj->v_identifier);
+			}
+			//Add reference to ov types
+			if(UA_Server_addReference(server, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
+						UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(1, "/acplt/ov/domain"), true) != UA_STATUSCODE_GOOD){
+				ov_logfile_error("%s - run_set: could not create reference to ov-namespace types.", pobj->v_identifier);
+			}
+
+			//TODO link all interfaces, that are linked with associations
 
 		}else{ //shutdown server
 

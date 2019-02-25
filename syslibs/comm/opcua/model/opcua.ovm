@@ -88,13 +88,10 @@ LIBRARY opcua
     	VARIABLES
     		applicationURI     :    STRING
     		   	FLAGS = "i"
-                INITIALVALUE   =    "urn:acplt:open62541:acplt-iec62541Server";
+                INITIALVALUE   =    "acplt.org/"; // = opcua.ovt OPCUA_DEFAULT_APPLICATIONURI
             applicationName    :    STRING
                	FLAGS = "i"
-                INITIALVALUE   =    "acplt-opcua";
-            ns1URI             :    STRING
-                FLAGS = "i"            
-                INITIALVALUE   =    "iec62541-ov.acplt.org";
+                INITIALVALUE   =    "ACPLT/RTE"; // = opcua.ovt OPCUA_DEFAULT_APPLICATIONNAME
             port               :	UINT
             	HAS_SET_ACCESSOR
             	FLAGS = "i"

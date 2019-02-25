@@ -27,7 +27,7 @@
 #define TOSECONDS				10000000LL
 #define TOMICROSECONDS			10LL
 
-OV_DLLFNCEXPORT UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
+OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovResultToUaStatusCode(OV_RESULT result){
 	switch(result){
 	case OV_ERR_OK:
 		return UA_STATUSCODE_GOOD;
@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
 	}
 }
 
-OV_DLLFNCEXPORT UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type){
+OV_DLLFNCEXPORT UA_NodeId opcua_helpers_ovVarTypeToNodeId(OV_VAR_TYPE type){
 	UA_NodeId varType;
 	UA_NodeId_init(&varType);
 	varType.namespaceIndex = 0;
@@ -118,7 +118,7 @@ OV_DLLFNCEXPORT UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type){
 	return varType;
 }
 
-OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant){
+OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny, UA_Variant* pVariant){
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	const void *value = NULL;
 	UA_Boolean tempBool;	/*	has different byte size in ov and ua hence we need a temp variable	*/
@@ -267,7 +267,7 @@ OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pV
 			break;
 		default:
 			UA_Variant_deleteMembers(pVariant);
-			return ov_resultToUaStatusCode(OV_ERR_BADTYPE);
+			return opcua_helpers_ovResultToUaStatusCode(OV_ERR_BADTYPE);
 		}
 		return result;
 	} else {
@@ -282,7 +282,7 @@ OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pV
 			if(!tempBoolArray){
 				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
-				return ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				return opcua_helpers_ovResultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 			}
 			for(iterator = 0; iterator < arrayLength; iterator++){
 				if(pAny->value.valueunion.val_bool_vec.value[iterator] == TRUE){
@@ -377,7 +377,7 @@ OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pV
 			if(!tempStringArray){
 				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
-				return ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				return opcua_helpers_ovResultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 			}
 			for(iterator = 0; iterator < arrayLength; iterator++){
 				if(!pAny->value.valueunion.val_string_vec.value[iterator]){
@@ -404,7 +404,7 @@ OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pV
 			if(!tempTimeArray){
 				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
-				return ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				return opcua_helpers_ovResultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 			}
 			for(iterator = 0; iterator < arrayLength; iterator++){
 				tempTimeArray[iterator] = ov_ovTimeTo1601nsTime(pAny->value.valueunion.val_time_vec.value[iterator]);
@@ -426,7 +426,7 @@ OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pV
 			if(!tempDoubleArray){
 				ov_memstack_unlock();
 				UA_Variant_deleteMembers(pVariant);
-				return ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				return opcua_helpers_ovResultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 			}
 			for(iterator = 0; iterator < arrayLength; iterator++){
 				Ov_TimeSpanToDouble(pAny->value.valueunion.val_time_span_vec.value[iterator], tempDoubleArray[iterator]);
@@ -458,14 +458,14 @@ OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pV
 		default:
 			ov_memstack_unlock();
 			UA_Variant_deleteMembers(pVariant);
-			return ov_resultToUaStatusCode(OV_ERR_BADTYPE);
+			return opcua_helpers_ovResultToUaStatusCode(OV_ERR_BADTYPE);
 		}
 		ov_memstack_unlock();
 		return result;
 	}
 }
 
-OV_DLLFNCEXPORT UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
+OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_UAVariantToOVAny(const UA_Variant* pVariant, OV_ANY* pAny){
 	OV_UINT iterator = 0;
 	if(pVariant->arrayLength == 0 && pVariant->data > UA_EMPTY_ARRAY_SENTINEL){
 		/*	scalar values	*/
@@ -694,7 +694,7 @@ OV_DLLFNCEXPORT UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst) {
+OV_DLLFNCEXPORT OV_RESULT opcua_helpers_copyUAStringToOV(UA_String src, OV_STRING *dst) {
 	if(src.data == NULL)
 		return OV_ERR_OK;
 	*dst = ov_database_malloc(sizeof(char)*(src.length+1));
@@ -705,7 +705,7 @@ OV_DLLFNCEXPORT OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst) {
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
+OV_DLLFNCEXPORT UA_Int32 opcua_helpers_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
 	OV_STRING tmpString = NULL;
 	OV_RESULT result;
 	switch(nodeId.identifierType){
@@ -718,7 +718,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId 
 		tmpString[nodeId.identifier.string.length] = 0;
 		result = ov_path_resolve(pPath,NULL,tmpString, 2);
 		if(Ov_Fail(result)){
-			return ov_resultToUaStatusCode(result);
+			return opcua_helpers_ovResultToUaStatusCode(result);
 		}
 		break;
 	case UA_NODEIDTYPE_NUMERIC:
@@ -729,7 +729,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId 
 		snprintf(tmpString, 31, "/.%u", nodeId.identifier.numeric);
 		result = ov_path_resolve(pPath,NULL,tmpString, 2);
 		if(Ov_Fail(result)){
-			return ov_resultToUaStatusCode(result);
+			return opcua_helpers_ovResultToUaStatusCode(result);
 		}
 		break;
 	default:
@@ -747,7 +747,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId 
  * call ov_memstack_lock() /_unlock() around this one
  */
 
-OV_DLLFNCEXPORT OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvObject(UA_NodeId *nodeId){
+OV_DLLFNCEXPORT OV_INSTPTR_ov_object opcua_helpers_resolveNodeIdToOvObject(UA_NodeId *nodeId){
 	OV_STRING tmpString = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
 	switch(nodeId->identifierType){
@@ -775,7 +775,7 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_object opcua_nodeStoreFunctions_resolveNodeIdToOvO
 }
 
 
-OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access){
+OV_DLLFNCEXPORT UA_Int32 opcua_helpers_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access){
 	switch(pelem->elemtype){
 	case OV_ET_OBJECT:
 	case OV_ET_OPERATION:
@@ -804,7 +804,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(O
 	return UA_STATUSCODE_GOOD;
 }
 
-OV_DLLFNCEXPORT UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess){
+OV_DLLFNCEXPORT UA_Int32 opcua_helpers_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess){
 	OV_VTBLPTR_ov_object	pVtbl	=	NULL;
 	if(pAccess){
 		if(!pElem->pobj){
@@ -838,8 +838,8 @@ OV_DLLFNCEXPORT UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pEle
 	}
 }
 
-OV_DLLFNCEXPORT OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess){
-	UA_Int32 nodeClass = opcua_nsOv_getNodeClassAndAccess(pElem, pAccess);
+OV_DLLFNCEXPORT OV_BOOL opcua_helpers_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess){
+	UA_Int32 nodeClass = opcua_helpers_getNodeClassAndAccess(pElem, pAccess);
 	if(mask == 0){
 		return TRUE; //if no bit is set, all attributes should be returned
 	}

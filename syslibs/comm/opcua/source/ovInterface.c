@@ -23,6 +23,7 @@
 
 #include "opcua.h"
 #include "libov/ov_macros.h"
+#include "opcua_ovStore.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
@@ -40,8 +41,13 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
          return result;
 
     /* do what */
-
-
+    pinst->v_trafo = ov_database_malloc(sizeof(OV_PTR_UA_INFORMATIONMODEL));
+    pinst->v_trafo->dataTypes = NULL;
+    pinst->v_trafo->index = 0;
+    pinst->v_trafo->uri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI); //Will be overwritten by config->applicationDescription.applicationUri
+    pinst->v_trafo->store = opcua_ovStore_new(pinst);
+	//pinst->v_types
+    pinst->v_types = NULL;
     return OV_ERR_OK;
 }
 
