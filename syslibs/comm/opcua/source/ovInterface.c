@@ -78,3 +78,35 @@ OV_DLLFNCEXPORT void opcua_ovInterface_destructor(
 
     return;
 }
+
+OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_uaInterface pinst, OV_BOOL forceLoad) {
+    /*
+    *   local variables
+    */
+	OV_INSTPTR_opcua_uaServer uaServer = Ov_GetParent(opcua_uaServerToInterfaces, pinst);
+	if(uaServer == NULL){
+		return OV_ERR_GENERIC;
+	}
+	UA_ServerConfig* config = UA_Server_getConfig(uaServer->v_server);
+    UA_String_deleteMembers(&pinst->v_trafo->uri);
+    UA_String_copy(&config->applicationDescription.applicationUri, &pinst->v_trafo->uri);
+
+    //Use generic load method of uaInterface to load the trafos
+	opcua_uaInterface_load(pinst, TRUE);
+
+	//Add reference to OV root for generic interface
+	UA_StatusCode retval = UA_STATUSCODE_GOOD;
+	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(1, pdb->root.v_identifier), true);
+	if(retval != UA_STATUSCODE_GOOD){
+		Ov_Warning(UA_StatusCode_name(retval));
+	}
+	//Add reference to ov types
+	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
+			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(1, "/acplt/ov/domain"), true);
+	if(retval != UA_STATUSCODE_GOOD){
+		Ov_Warning(UA_StatusCode_name(retval));
+	}
+
+    return OV_ERR_OK;
+}

@@ -37,6 +37,7 @@ LIBRARY opcua
     	OPERATIONS
         	constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             destructor         :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
+            load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
         END_OPERATIONS;
     END_CLASS;
 
@@ -91,7 +92,7 @@ LIBRARY opcua
                 INITIALVALUE   =    "acplt.org/"; // = opcua.ovt OPCUA_DEFAULT_APPLICATIONURI
             applicationName    :    STRING
                	FLAGS = "i"
-                INITIALVALUE   =    "ACPLT/RTE"; // = opcua.ovt OPCUA_DEFAULT_APPLICATIONNAME
+                INITIALVALUE   =    "";
             port               :	UINT
             	HAS_SET_ACCESSOR
             	FLAGS = "i"

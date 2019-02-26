@@ -144,7 +144,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaInterface_load(OV_INSTPTR_opcua_uaInterface pi
 		addInformationModel(uaServer->v_server, pinst->v_trafo, forceLoad);
 		//TODO error handling
 	}
-	//TODO add parent reference to first note
     return OV_ERR_OK;
 }
 

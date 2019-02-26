@@ -69,6 +69,48 @@ static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText)
 	return OV_ERR_OK;
 }
 
+static UA_ServerConfig * createServerConfig(OV_INSTPTR_opcua_uaServerConfig pOvConfig){
+    //Create new config with port if pOvConfig is available
+	UA_ServerConfig* config = (pOvConfig) ? UA_ServerConfig_new_minimal(pOvConfig->v_port, NULL) : UA_ServerConfig_new_default();
+	if(config == NULL)
+		return NULL;
+
+    //Delete old application name and uri
+    UA_String_deleteMembers(&config->applicationDescription.applicationName.text);
+    UA_String_deleteMembers(&config->endpoints->endpointDescription.server.applicationName.text);
+    UA_String_deleteMembers(&config->applicationDescription.applicationUri);
+    UA_String_deleteMembers(&config->endpoints->endpointDescription.server.applicationUri);
+
+    //Fill in application name
+    if(pOvConfig != NULL && ov_string_getlength(pOvConfig->v_applicationName)){
+    	config->applicationDescription.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
+    	config->endpoints->endpointDescription.server.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
+    }else{
+    	//Append OPCUA_DEFAULT_APPLICATIONNAME and SERVERNAME
+    	OV_ANY serverName = OV_ANY_INIT;
+    	OV_STRING applicationName = NULL;
+    	ov_vendortree_getservername(&serverName, NULL); //Do not free, points to static servername
+    	ov_string_print(&applicationName,"%s/%s",  OPCUA_DEFAULT_APPLICATIONNAME, serverName.value.valueunion.val_string);
+    	config->applicationDescription.applicationName.text = UA_String_fromChars(applicationName);
+    	config->endpoints->endpointDescription.server.applicationName.text = UA_String_fromChars(applicationName);
+    	ov_string_setvalue(&applicationName, NULL);
+    }
+
+    //Fill in application uri
+    if(pOvConfig != NULL && ov_string_getlength(pOvConfig->v_applicationURI)){
+    	config->applicationDescription.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
+    	config->endpoints->endpointDescription.server.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
+    }else{
+    	config->applicationDescription.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
+    	config->endpoints->endpointDescription.server.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
+    }
+
+    //Set ov logger
+    config->logger = opcua_ovUAlogger_new();
+
+    return config;
+}
+
 
 //TODO move server startup and shutdown to typemethod?
 //TODO write some static functions and proper error clean up (goto error/cleanup)
@@ -85,32 +127,13 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 	if(value != pobj->v_run){
 		if(value){ //start server
 
-			//Create new config
-		    UA_ServerConfig* config = NULL;
-
-		    //Update config from ov object
-		    OV_INSTPTR_opcua_uaServerConfig pOvConfig = Ov_GetFirstChild(opcua_uaConfigToServer, pobj);
-		    if(pOvConfig){
-				//Create new config
-			    config = UA_ServerConfig_new_minimal(pOvConfig->v_port, NULL);
-			    UA_LocalizedText_deleteMembers(&config->applicationDescription.applicationName);
-			    config->applicationDescription.applicationName.locale = UA_String_fromChars("EN"); //TODO Check correct locale EN_US, DE ... ?
-			    config->applicationDescription.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
-			    UA_String_deleteMembers(&config->applicationDescription.applicationUri);
-				config->applicationDescription.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
-		    }else{
-		    	config = UA_ServerConfig_new_default();
-			    UA_LocalizedText_deleteMembers(&config->applicationDescription.applicationName);
-			    config->applicationDescription.applicationName.locale = UA_String_fromChars("EN"); //TODO Check correct locale EN_US, DE ... ?
-			    config->applicationDescription.applicationName.text = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONNAME);
-			    UA_String_deleteMembers(&config->applicationDescription.applicationUri);
-				config->applicationDescription.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
-		    }
-		    config->logger = opcua_ovUAlogger_new();
+			//Create new config and update from linked config in ov
+			OV_INSTPTR_opcua_uaServerConfig pOvConfig = Ov_GetFirstChild(opcua_uaConfigToServer, pobj);
+		    UA_ServerConfig* config = createServerConfig(pOvConfig);
 
 		    //Check that config was created
 		    if(!config){
-	            ov_string_setvalue(&pobj->v_errorText, "UA_ServerConfig_new_default failed.");
+	            ov_string_setvalue(&pobj->v_errorText, "CreateServerConfig failed.");
 	            pobj->v_error = TRUE;
 	            return OV_ERR_GENERIC;
 		    }
@@ -144,39 +167,39 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 			pobj->v_server = server;
 			pobj->v_isRunning = TRUE;
 
+			//Add opc.tcp port and protocol to server representation
+	    	OV_ANY serverName = OV_ANY_INIT;
+	    	ov_vendortree_getservername(&serverName, NULL); //Do not free, points to static servername
+	    	OV_STRING serverPortStr = NULL;
+	    	ov_string_print(&serverPortStr, "%d", (pOvConfig ? pOvConfig->v_port : 4840));
+			ksbase_Manager_register(serverName.value.valueunion.val_string,
+					2, //TODO define constant
+					"OPC.TCP",//TODO get from config : config->endpoints->endpointDescription.... or config->networkLayers-> ...
+					serverPortStr,
+					30); //TODO define constant
+			ov_string_setvalue(&serverPortStr, NULL);
+
 			//Load all interfaces, that are linked with associations
 			OV_INSTPTR_opcua_uaInterface pInterface = NULL;
 			OV_VTBLPTR_opcua_uaInterface pVtblInterface = NULL; //TODO use Call makro instead?
 			Ov_ForEachChild(opcua_uaServerToInterfaces, pobj, pInterface){
 				Ov_GetVTablePtr(opcua_uaInterface, pVtblInterface, pInterface);
 				if(pVtblInterface){
-					if(Ov_CanCastTo(opcua_ovInterface, pInterface)){ //TODO move to specialiced load function of ovInterface: uaServerToInterface --> server --> config
-					    UA_String_deleteMembers(&pInterface->v_trafo->uri);
-					    UA_String_copy(&config->applicationDescription.applicationUri, &pInterface->v_trafo->uri); //TODO use servename instead? ov_vendortree_getservername()
-						pVtblInterface->m_load(pInterface, TRUE);
-					}
-					else{
-						pVtblInterface->m_load(pInterface, FALSE);
-					}
+					pVtblInterface->m_load(pInterface, FALSE);
 				}
 			}
-
-			//Add reference to OV root for generic interface //TODO move to specialized load function of ovInterface
-			if(UA_Server_addReference(server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-					UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(1, pdb->root.v_identifier), true) != UA_STATUSCODE_GOOD){
-				ov_logfile_error("%s - run_set: could not create reference to ov-namespace.", pobj->v_identifier);
-			}
-			//Add reference to ov types
-			if(UA_Server_addReference(server, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
-						UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(1, "/acplt/ov/domain"), true) != UA_STATUSCODE_GOOD){
-				ov_logfile_error("%s - run_set: could not create reference to ov-namespace types.", pobj->v_identifier);
-			}
-
 
 		}else{ //shutdown server
 
 			//Shutdown server
 			retval = UA_Server_run_shutdown(pobj->v_server); //Always returns good
+
+			//Unregister opc.tcp port and protocol to server representation
+	    	OV_ANY serverName = OV_ANY_INIT;
+	    	ov_vendortree_getservername(&serverName, NULL); //Do not free, points to static servername
+			ksbase_Manager_unregister(serverName.value.valueunion.val_string, //TODO check what happens, when multiple servers are registered with OPC.TCP --> adapt unregister function for multiple ports
+					2, //TODO define constant for ov version, as vendortree version is 1.3.1 or 2.0.0
+					"OPC.TCP");//TODO get from config : config->endpoints->endpointDescription.... or config->networkLayers-> ...
 
 			//Delete config and server
 		    //TODO unload interfaces
@@ -188,6 +211,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 				pobj->v_error = TRUE;
 				return OV_ERR_GENERIC; //TODO check wether return is neccessary?
 			}
+
 		}
 	    pobj->v_run = value;
 	}
