@@ -72,6 +72,7 @@ static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText)
 
 //TODO move server startup and shutdown to typemethod?
 //TODO write some static functions and proper error clean up (goto error/cleanup)
+//TODO write errors to log file?
 OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
     OV_INSTPTR_opcua_uaServer          pobj,
     const OV_BOOL  value
@@ -143,18 +144,24 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 			pobj->v_server = server;
 			pobj->v_isRunning = TRUE;
 
-			//Link generic ov interface interface to server at first association //TODO move to constructor ?
-			OV_INSTPTR_opcua_uaInterface pGenericInterface = Ov_PtrUpCast(opcua_uaInterface, Ov_GetPartPtr(genericInterface, pobj));
-			Ov_LinkPlaced(opcua_uaServerToInterfaces, pobj, pGenericInterface, OV_PMH_BEGIN);
-			//Load generic interface
-			OV_VTBLPTR_opcua_uaInterface pVtblGenericInterface = NULL; //TODO use Call makro instead?
-			Ov_GetVTablePtr(opcua_uaInterface, pVtblGenericInterface, pGenericInterface);
-			if(pVtblGenericInterface){
-			    UA_String_deleteMembers(&pGenericInterface->v_trafo->uri);
-			    UA_String_copy(&config->applicationDescription.applicationUri, &pGenericInterface->v_trafo->uri); //TODO use servename instead? ov_vendortree_getservername()
-				pVtblGenericInterface->m_load(pGenericInterface, TRUE);
+			//Load all interfaces, that are linked with associations
+			OV_INSTPTR_opcua_uaInterface pInterface = NULL;
+			OV_VTBLPTR_opcua_uaInterface pVtblInterface = NULL; //TODO use Call makro instead?
+			Ov_ForEachChild(opcua_uaServerToInterfaces, pobj, pInterface){
+				Ov_GetVTablePtr(opcua_uaInterface, pVtblInterface, pInterface);
+				if(pVtblInterface){
+					if(Ov_CanCastTo(opcua_ovInterface, pInterface)){ //TODO move to specialiced load function of ovInterface: uaServerToInterface --> server --> config
+					    UA_String_deleteMembers(&pInterface->v_trafo->uri);
+					    UA_String_copy(&config->applicationDescription.applicationUri, &pInterface->v_trafo->uri); //TODO use servename instead? ov_vendortree_getservername()
+						pVtblInterface->m_load(pInterface, TRUE);
+					}
+					else{
+						pVtblInterface->m_load(pInterface, FALSE);
+					}
+				}
 			}
-			//Add reference to OV root for generic interface //TODO proper error handling -> write to error output of block ?
+
+			//Add reference to OV root for generic interface //TODO move to specialized load function of ovInterface
 			if(UA_Server_addReference(server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
 					UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(1, pdb->root.v_identifier), true) != UA_STATUSCODE_GOOD){
 				ov_logfile_error("%s - run_set: could not create reference to ov-namespace.", pobj->v_identifier);
@@ -165,7 +172,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 				ov_logfile_error("%s - run_set: could not create reference to ov-namespace types.", pobj->v_identifier);
 			}
 
-			//TODO link all interfaces, that are linked with associations
 
 		}else{ //shutdown server
 

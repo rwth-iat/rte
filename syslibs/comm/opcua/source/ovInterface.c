@@ -48,6 +48,14 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
     pinst->v_trafo->store = opcua_ovStore_new(pinst);
 	//pinst->v_types
     pinst->v_types = NULL;
+
+	//Link generic ov interface interface to server as first association if it is a part
+    if(pinst->v_pouterobject != NULL && Ov_CanCastTo(opcua_uaServer, pinst->v_pouterobject)){
+    	Ov_LinkPlaced(opcua_uaServerToInterfaces,
+    			Ov_StaticPtrCast(opcua_uaServer,pinst->v_pouterobject),
+				Ov_PtrUpCast(opcua_uaInterface, pinst),
+				OV_PMH_BEGIN);
+    }
     return OV_ERR_OK;
 }
 

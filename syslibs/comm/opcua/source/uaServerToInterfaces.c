@@ -26,7 +26,56 @@
 
 #include "libov/ov_macros.h"
 
-OV_IMPL_LINK(opcua_uaServerToInterfaces)
-OV_IMPL_UNLINK(opcua_uaServerToInterfaces)
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServerToInterfaces_link(
+	const OV_PPT_opcua_uaServerToInterfaces	pparent,
+	const OV_CPT_opcua_uaServerToInterfaces	pchild,
+	const OV_PLACEMENT_HINT	parenthint,
+	const OV_CPT_opcua_uaServerToInterfaces	prelparent,
+	const OV_PLACEMENT_HINT	childhint,
+	const OV_CPT_opcua_uaServerToInterfaces	prelchild
+){
+	OV_RESULT result = ov_association_link(passoc_opcua_uaServerToInterfaces,
+			Ov_PtrUpCast(ov_object, pparent),
+			Ov_PtrUpCast(ov_object, pchild),
+			parenthint,
+			Ov_PtrUpCast(ov_object, prelparent),
+			childhint,
+			Ov_PtrUpCast(ov_object, prelchild));
+
+	if(Ov_OK(result)){
+	    //Load interface if server is already running
+	    OV_INSTPTR_opcua_uaServer pServer = Ov_StaticPtrCast(opcua_uaServer, pparent);
+	    if(pServer != NULL && pServer->v_isRunning){
+	        OV_INSTPTR_opcua_uaInterface pInterface = Ov_StaticPtrCast(opcua_uaInterface, pchild);
+			OV_VTBLPTR_opcua_uaInterface pVtblInterface = NULL; //TODO use Call makro instead?
+			Ov_GetVTablePtr(opcua_uaInterface, pVtblInterface, pInterface);
+			if(pInterface != NULL && pVtblInterface != NULL){
+			    pVtblInterface->m_load(pInterface, TRUE); //TODO check if force load is ok for linking process --> Better return already exist?
+			}
+	    }
+	}
+	return result;
+}
+
+
+OV_DLLFNCEXPORT void opcua_uaServerToInterfaces_unlink(
+	const OV_PPT_opcua_uaServerToInterfaces	pparent,
+	const OV_CPT_opcua_uaServerToInterfaces	pchild
+){
+	ov_association_unlink(passoc_opcua_uaServerToInterfaces,
+			Ov_PtrUpCast(ov_object, pparent),
+			Ov_PtrUpCast(ov_object, pchild));
+
+	//Unload interface if server is already running
+	OV_INSTPTR_opcua_uaServer pServer = Ov_StaticPtrCast(opcua_uaServer, pparent);
+	if(pServer != NULL && pServer->v_isRunning){
+		OV_INSTPTR_opcua_uaInterface pInterface = Ov_StaticPtrCast(opcua_uaInterface, pchild);
+		OV_VTBLPTR_opcua_uaInterface pVtblInterface = NULL; //TODO use Call makro instead?
+		Ov_GetVTablePtr(opcua_uaInterface, pVtblInterface, pInterface);
+		if(pInterface != NULL && pVtblInterface != NULL){
+			pVtblInterface->m_unload(pInterface);
+		}
+	}
+}
 OV_IMPL_GETACCESS(opcua_uaServerToInterfaces)
 
