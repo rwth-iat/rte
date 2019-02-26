@@ -69,7 +69,7 @@ static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText)
 	return OV_ERR_OK;
 }
 
-static UA_ServerConfig * createServerConfig(OV_INSTPTR_opcua_uaServerConfig pOvConfig){
+static UA_ServerConfig * createServerConfig(OV_INSTPTR_opcua_serverConfig pOvConfig){
     //Create new config with port if pOvConfig is available
 	UA_ServerConfig* config = (pOvConfig) ? UA_ServerConfig_new_minimal(pOvConfig->v_port, NULL) : UA_ServerConfig_new_default();
 	if(config == NULL)
@@ -115,8 +115,8 @@ static UA_ServerConfig * createServerConfig(OV_INSTPTR_opcua_uaServerConfig pOvC
 //TODO move server startup and shutdown to typemethod?
 //TODO write some static functions and proper error clean up (goto error/cleanup)
 //TODO write errors to log file?
-OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
-    OV_INSTPTR_opcua_uaServer          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
+    OV_INSTPTR_opcua_server          pobj,
     const OV_BOOL  value
 ) {
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
@@ -128,7 +128,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 		if(value){ //start server
 
 			//Create new config and update from linked config in ov
-			OV_INSTPTR_opcua_uaServerConfig pOvConfig = Ov_GetFirstChild(opcua_uaConfigToServer, pobj);
+			OV_INSTPTR_opcua_serverConfig pOvConfig = Ov_GetFirstChild(opcua_configToServer, pobj);
 		    UA_ServerConfig* config = createServerConfig(pOvConfig);
 
 		    //Check that config was created
@@ -180,10 +180,10 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
 			ov_string_setvalue(&serverPortStr, NULL);
 
 			//Load all interfaces, that are linked with associations
-			OV_INSTPTR_opcua_uaInterface pInterface = NULL;
-			OV_VTBLPTR_opcua_uaInterface pVtblInterface = NULL; //TODO use Call makro instead?
-			Ov_ForEachChild(opcua_uaServerToInterfaces, pobj, pInterface){
-				Ov_GetVTablePtr(opcua_uaInterface, pVtblInterface, pInterface);
+			OV_INSTPTR_opcua_interface pInterface = NULL;
+			OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+			Ov_ForEachChild(opcua_serverToInterfaces, pobj, pInterface){
+				Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterface);
 				if(pVtblInterface){
 					pVtblInterface->m_load(pInterface, FALSE);
 				}
@@ -218,46 +218,46 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_run_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_reset_set(
-    OV_INSTPTR_opcua_uaServer          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_server_reset_set(
+    OV_INSTPTR_opcua_server          pobj,
     const OV_BOOL  value
 ) {
     if(value){
     	pobj->v_error = FALSE;
-    	opcua_uaServer_run_set(pobj, FALSE);
+    	opcua_server_run_set(pobj, FALSE);
     }
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void opcua_uaServer_startup(
+OV_DLLFNCEXPORT void opcua_server_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
+    OV_INSTPTR_opcua_server pinst = Ov_StaticPtrCast(opcua_server, pobj);
 
     /* do what the base class does first */
     ov_object_startup(pobj);
 
     /* do what */
     //Restore running state from shutdown
-    opcua_uaServer_run_set(pinst, pinst->v_isRunning);
+    opcua_server_run_set(pinst, pinst->v_isRunning);
 
     return;
 }
 
-OV_DLLFNCEXPORT void opcua_uaServer_shutdown(
+OV_DLLFNCEXPORT void opcua_server_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
+    OV_INSTPTR_opcua_server pinst = Ov_StaticPtrCast(opcua_server, pobj);
 
     /* do what */
     OV_BOOL isRunning = pinst->v_isRunning; //Save running state
-    opcua_uaServer_run_set(pinst, FALSE);
+    opcua_server_run_set(pinst, FALSE);
     pinst->v_isRunning = isRunning; //Restore running state
 
     /* set the object's state to "shut down" */
@@ -266,7 +266,7 @@ OV_DLLFNCEXPORT void opcua_uaServer_shutdown(
     return;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS opcua_uaServer_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS opcua_server_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -296,13 +296,13 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_uaServer_getaccess(
 	return ov_object_getaccess(pobj, pelem, pticket);
 }
 
-OV_DLLFNCEXPORT void opcua_uaServer_typemethod (
+OV_DLLFNCEXPORT void opcua_server_typemethod (
 	OV_INSTPTR_ksbase_ComTask	this
 ) {
     /*    
     *   local variables
     */
-	OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, this);
+	OV_INSTPTR_opcua_server pinst = Ov_StaticPtrCast(opcua_server, this);
 	if(pinst->v_isRunning){
 		/* timeout is the maximum possible delay (in millisec) until the next
 		   _iterate call. Otherwise, the server might miss an internal timeout

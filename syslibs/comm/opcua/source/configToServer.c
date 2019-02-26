@@ -23,10 +23,9 @@
 
 #include "opcua.h"
 #include "libov/ov_association.h"
-
 #include "libov/ov_macros.h"
 
-OV_IMPL_LINK(opcua_uaConfigToServer)
-OV_IMPL_UNLINK(opcua_uaConfigToServer)
-OV_IMPL_GETACCESS(opcua_uaConfigToServer)
+OV_IMPL_LINK(opcua_configToServer)
+OV_IMPL_UNLINK(opcua_configToServer)
+OV_IMPL_GETACCESS(opcua_configToServer)
 

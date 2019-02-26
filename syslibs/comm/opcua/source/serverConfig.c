@@ -25,22 +25,22 @@
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaServerConfig_applicationURI_set(
-    OV_INSTPTR_opcua_uaServerConfig          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_serverConfig_applicationURI_set(
+    OV_INSTPTR_opcua_serverConfig          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_applicationURI,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaServerConfig_applicationName_set(
-    OV_INSTPTR_opcua_uaServerConfig          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_serverConfig_applicationName_set(
+    OV_INSTPTR_opcua_serverConfig          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_applicationName,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaServerConfig_port_set(
-    OV_INSTPTR_opcua_uaServerConfig          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_serverConfig_port_set(
+    OV_INSTPTR_opcua_serverConfig          pobj,
     const OV_UINT  value
 ) {
 	if(value > 0 && value < 65535){
@@ -50,7 +50,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaServerConfig_port_set(
 		return OV_ERR_BADPARAM;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS opcua_uaServerConfig_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS opcua_serverConfig_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket

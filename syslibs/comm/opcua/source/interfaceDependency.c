@@ -26,7 +26,7 @@
 
 #include "libov/ov_macros.h"
 
-OV_IMPL_LINK(opcua_uaInterfaceDependency)
-OV_IMPL_UNLINK(opcua_uaInterfaceDependency)
-OV_IMPL_GETACCESS(opcua_uaInterfaceDependency)
+OV_IMPL_LINK(opcua_interfaceDependency)
+OV_IMPL_UNLINK(opcua_interfaceDependency)
+OV_IMPL_GETACCESS(opcua_interfaceDependency)
 

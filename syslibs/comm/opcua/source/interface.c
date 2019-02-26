@@ -28,7 +28,7 @@
 #include "opcua_helpers.h"
 
 
-OV_DLLFNCEXPORT OV_ACCESS opcua_uaInterface_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS opcua_interface_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -119,17 +119,17 @@ static OV_RESULT removeInformationModel(UA_Server * server, OV_UA_InformationMod
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaInterface_load(OV_INSTPTR_opcua_uaInterface pinst, OV_BOOL forceLoad) {
+OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pinst, OV_BOOL forceLoad) {
 
-	OV_INSTPTR_opcua_uaServer uaServer = Ov_GetParent(opcua_uaServerToInterfaces, pinst);
+	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pinst);
 	if(uaServer == NULL){
 		return OV_ERR_GENERIC;
 	}
 
 	//Load all dependent interfaces first
-	OV_INSTPTR_opcua_uaInterface dependentInterface = NULL;
-	Ov_ForEachChild(opcua_uaInterfaceDependency, pinst, dependentInterface){
-		opcua_uaInterface_load(dependentInterface, FALSE);
+	OV_INSTPTR_opcua_interface dependentInterface = NULL;
+	Ov_ForEachChild(opcua_interfaceDependency, pinst, dependentInterface){
+		opcua_interface_load(dependentInterface, FALSE);
 		//TODO error handling
 	}
 
@@ -147,16 +147,16 @@ OV_DLLFNCEXPORT OV_RESULT opcua_uaInterface_load(OV_INSTPTR_opcua_uaInterface pi
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_uaInterface_unload(OV_INSTPTR_opcua_uaInterface pinst) {
-	OV_INSTPTR_opcua_uaServer uaServer = Ov_GetParent(opcua_uaServerToInterfaces, pinst);
+OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pinst) {
+	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pinst);
 	if(uaServer == NULL){
 		return OV_ERR_GENERIC;
 	}
 
 	// unload all dependent interfaces
-	OV_INSTPTR_opcua_uaInterface dependentInterface = Ov_GetParent(opcua_uaInterfaceDependency, pinst);
+	OV_INSTPTR_opcua_interface dependentInterface = Ov_GetParent(opcua_interfaceDependency, pinst);
 	if(dependentInterface != NULL){
-		opcua_uaInterface_unload(dependentInterface);
+		opcua_interface_unload(dependentInterface);
 		//TODO error handling
 	}
 

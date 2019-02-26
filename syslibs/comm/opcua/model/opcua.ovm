@@ -13,8 +13,7 @@ LIBRARY opcua
     COMMENT   = "Implements an OPC UA server with access to the models in the ov system.";
 
 
-//TODO remove ua in front of OV class (already clear by stating the library: opcua/interface, opcua/server ...)
-    CLASS uaInterface	:	CLASS ov/object
+    CLASS interface	:	CLASS ov/object
     	COMMENT = "Abstract class to define interface for an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
     	VARIABLES
             trafo             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
@@ -31,9 +30,9 @@ LIBRARY opcua
         END_OPERATIONS;
     END_CLASS;
     
-    CLASS ovInterface :	CLASS opcua/uaInterface
+    CLASS ovInterface :	CLASS opcua/interface
     	IS_INSTANTIABLE;
-    	COMMENT = "Generic. Holds the corresponding nodestores for UA Types and Transformations.";
+    	COMMENT = "Generic interface for ov. Holds the corresponding nodestores for UA Types and Transformations.";
     	OPERATIONS
         	constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             destructor         :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
@@ -42,7 +41,7 @@ LIBRARY opcua
     END_CLASS;
 
 
-    CLASS uaServer        :    CLASS ksbase/ComTask
+    CLASS server        :    CLASS ksbase/ComTask
         IS_INSTANTIABLE;
         COMMENT = "Represents a UA Server with access to the OV Information model.";
         VARIABLES
@@ -81,22 +80,23 @@ LIBRARY opcua
         END_OPERATIONS;
     END_CLASS;
 
-//TODO comments
 //TODO add reset method, to reset config to default values.
-    CLASS uaServerConfig	:	CLASS ov/object
+    CLASS serverConfig	:	CLASS ov/object
     	IS_INSTANTIABLE;
     	COMMENT = "Holds all configuration data for an OPC UA Server, that are configurable in the OV System. Should be placed beneath uaServer.";
     	VARIABLES
     		applicationURI     :    STRING
     		   	FLAGS = "i"
+    		   	COMMENT = "Namespace 1 (Application) uri. Default is acplt.org/"
                 INITIALVALUE   =    "acplt.org/"; // = opcua.ovt OPCUA_DEFAULT_APPLICATIONURI
             applicationName    :    STRING
                	FLAGS = "i"
+               	COMMENT = "Name of the Appliction. Is replaced with ACPLT/RTE/SERVERNAME if left empty or NULL."
                 INITIALVALUE   =    "";
             port               :	UINT
             	HAS_SET_ACCESSOR
             	FLAGS = "i"
-            	COMMENT = "Has to be unique within the system, otherwise undefined behaviour."
+            	COMMENT = "Has to be unique within the system, otherwise undefined behaviour. Default is 4840."
             	INITIALVALUE   =    4840;
     	END_VARIABLES;
     	OPERATIONS
@@ -108,19 +108,19 @@ LIBRARY opcua
         Add associations and their documentation here.
         Association syntax is:
     */
-    ASSOCIATION uaConfigToServer : ONE_TO_ONE
-        PARENT server    : CLASS opcua/uaServer;
-        CHILD  config    : CLASS opcua/uaServerConfig;
+    ASSOCIATION configToServer : ONE_TO_ONE
+        PARENT server    : CLASS opcua/server;
+        CHILD  config    : CLASS opcua/serverConfig;
     END_ASSOCIATION;
     
-    ASSOCIATION uaServerToInterfaces : ONE_TO_MANY
-        PARENT server    : CLASS opcua/uaServer;
-        CHILD  interfaces: CLASS opcua/uaInterface;
+    ASSOCIATION serverToInterfaces : ONE_TO_MANY
+        PARENT server    : CLASS opcua/server;
+        CHILD  interfaces: CLASS opcua/interface;
     END_ASSOCIATION;
     
-    ASSOCIATION uaInterfaceDependency : MANY_TO_MANY
-        PARENT parent    : CLASS opcua/uaInterface;
-        CHILD  child     : CLASS opcua/uaInterface;
+    ASSOCIATION interfaceDependency : MANY_TO_MANY
+        PARENT parent    : CLASS opcua/interface;
+        CHILD  child     : CLASS opcua/interface;
     END_ASSOCIATION;
 
 END_LIBRARY;

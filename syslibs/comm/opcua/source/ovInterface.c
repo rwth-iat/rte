@@ -50,10 +50,10 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
     pinst->v_types = NULL;
 
 	//Link generic ov interface interface to server as first association if it is a part
-    if(pinst->v_pouterobject != NULL && Ov_CanCastTo(opcua_uaServer, pinst->v_pouterobject)){
-    	Ov_LinkPlaced(opcua_uaServerToInterfaces,
-    			Ov_StaticPtrCast(opcua_uaServer,pinst->v_pouterobject),
-				Ov_PtrUpCast(opcua_uaInterface, pinst),
+    if(pinst->v_pouterobject != NULL && Ov_CanCastTo(opcua_server, pinst->v_pouterobject)){
+    	Ov_LinkPlaced(opcua_serverToInterfaces,
+    			Ov_StaticPtrCast(opcua_server,pinst->v_pouterobject),
+				Ov_PtrUpCast(opcua_interface, pinst),
 				OV_PMH_BEGIN);
     }
     return OV_ERR_OK;
@@ -79,11 +79,11 @@ OV_DLLFNCEXPORT void opcua_ovInterface_destructor(
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_uaInterface pinst, OV_BOOL forceLoad) {
+OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pinst, OV_BOOL forceLoad) {
     /*
     *   local variables
     */
-	OV_INSTPTR_opcua_uaServer uaServer = Ov_GetParent(opcua_uaServerToInterfaces, pinst);
+	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pinst);
 	if(uaServer == NULL){
 		return OV_ERR_GENERIC;
 	}
@@ -92,7 +92,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_uaInterface pi
     UA_String_copy(&config->applicationDescription.applicationUri, &pinst->v_trafo->uri);
 
     //Use generic load method of uaInterface to load the trafos
-	opcua_uaInterface_load(pinst, TRUE);
+	opcua_interface_load(pinst, TRUE);
 
 	//Add reference to OV root for generic interface
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;

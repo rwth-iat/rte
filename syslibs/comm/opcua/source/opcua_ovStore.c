@@ -65,7 +65,7 @@ UA_StatusCode opcua_ovStore_fakeReferenceDescription(
 
 UA_UInt16 opcua_ovStore_searchNamespaceTypeIndex(void * context, OV_INSTPTR_ov_object pobj){
 	//Get ua server connected to this interface
-	OV_INSTPTR_opcua_uaServer server = Ov_GetParent(opcua_uaServerToInterfaces, (OV_INSTPTR_opcua_ovInterface)context);
+	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, (OV_INSTPTR_opcua_ovInterface)context);
 	if(server == NULL)
 		return OPCUA_OVSTORE_DEFAULTNSINDEX;
 
