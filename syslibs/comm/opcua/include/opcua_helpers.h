@@ -44,6 +44,8 @@ UA_Int32 opcua_helpers_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS*
 OV_BOOL opcua_helpers_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess);
 
 OV_RESULT opcua_helpers_copyUAStringToOV(UA_String src, OV_STRING *dst);
-UA_Int32 opcua_helpers_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath);
+UA_Int32 opcua_helpers_resolveNodeIdToPath(const UA_NodeId nodeId, OV_PATH* pPath);
+OV_INSTPTR_ov_object opcua_helpers_resolveNodeIdToOvObject(const UA_NodeId *nodeId);
+
 
 #endif /* opcua_HELPERS_H_ */

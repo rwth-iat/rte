@@ -88,7 +88,7 @@ UA_StatusCode UA_NodestoreSwitch_linkNodestoreToNamespace(UA_NodestoreSwitch *st
 	if(storeSwitch->size <= namespaceindex)
 	{
 		UA_Nodestore **tmpPointer = NULL;
-		tmpPointer = UA_realloc(storeSwitch->nodestoreArray , namespaceindex+1 * sizeof (UA_Nodestore*));
+		tmpPointer = UA_realloc(storeSwitch->nodestoreArray , (namespaceindex + 1) * sizeof (UA_Nodestore*));
 		if(!tmpPointer)
 			return UA_STATUSCODE_BADOUTOFMEMORY;
 		storeSwitch->nodestoreArray = tmpPointer;
