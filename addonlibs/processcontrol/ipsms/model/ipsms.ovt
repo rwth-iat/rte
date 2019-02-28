@@ -1,0 +1,8 @@
+#ifndef ipsms_OVT_INCLUDED
+#define ipsms_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+
+#endif
