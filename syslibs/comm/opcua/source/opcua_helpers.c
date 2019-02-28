@@ -693,7 +693,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_UAVariantToOVAny(const UA_Variant* p
 	return UA_STATUSCODE_GOOD;
 }
 
-
+//TODO use memstack instead
 OV_DLLFNCEXPORT OV_RESULT opcua_helpers_copyUAStringToOV(UA_String src, OV_STRING *dst) {
 	if(src.data == NULL)
 		return OV_ERR_OK;
@@ -705,7 +705,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_helpers_copyUAStringToOV(UA_String src, OV_STRIN
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT UA_Int32 opcua_helpers_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
+OV_DLLFNCEXPORT UA_Int32 opcua_helpers_resolveNodeIdToPath(const UA_NodeId nodeId, OV_PATH* pPath){
 	OV_STRING tmpString = NULL;
 	OV_RESULT result;
 	switch(nodeId.identifierType){
@@ -747,7 +747,7 @@ OV_DLLFNCEXPORT UA_Int32 opcua_helpers_resolveNodeIdToPath(UA_NodeId nodeId, OV_
  * call ov_memstack_lock() /_unlock() around this one
  */
 
-OV_DLLFNCEXPORT OV_INSTPTR_ov_object opcua_helpers_resolveNodeIdToOvObject(UA_NodeId *nodeId){
+OV_DLLFNCEXPORT OV_INSTPTR_ov_object opcua_helpers_resolveNodeIdToOvObject(const UA_NodeId *nodeId){
 	OV_STRING tmpString = NULL;
 	OV_INSTPTR_ov_object ptr = NULL;
 	switch(nodeId->identifierType){
