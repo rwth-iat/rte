@@ -27,7 +27,7 @@
 #include "opcua_helpers.h"
 #include "opcua_storeSwitch.h"
 
-static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText){
+static OV_RESULT opcua_server_createSwitch(UA_ServerConfig* config, OV_STRING* errorText){
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
     UA_NodestoreSwitch * storeSwitch = UA_NodestoreSwitch_new();
     if(storeSwitch == NULL){
@@ -69,7 +69,7 @@ static OV_RESULT opcua_switch_new(UA_ServerConfig* config, OV_STRING* errorText)
 	return OV_ERR_OK;
 }
 
-static UA_ServerConfig * createServerConfig(OV_INSTPTR_opcua_serverConfig pOvConfig){
+static UA_ServerConfig * opcua_server_createConfig(OV_INSTPTR_opcua_serverConfig pOvConfig){
     //Create new config with port if pOvConfig is available
 	UA_ServerConfig* config = (pOvConfig) ? UA_ServerConfig_new_minimal(pOvConfig->v_port, NULL) : UA_ServerConfig_new_default();
 	if(config == NULL)
@@ -129,7 +129,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 
 			//Create new config and update from linked config in ov
 			OV_INSTPTR_opcua_serverConfig pOvConfig = Ov_GetFirstChild(opcua_configToServer, pobj);
-		    UA_ServerConfig* config = createServerConfig(pOvConfig);
+		    UA_ServerConfig* config = opcua_server_createConfig(pOvConfig);
 
 		    //Check that config was created
 		    if(!config){
@@ -139,7 +139,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 		    }
 
 		    //Create a new switch and link to config
-		    result = opcua_switch_new(config, &pobj->v_errorText);
+		    result = opcua_server_createSwitch(config, &pobj->v_errorText);
 			if(result != OV_ERR_OK){
 		    	UA_ServerConfig_delete(config);
 		    	pobj->v_error = TRUE;

@@ -79,20 +79,20 @@ OV_DLLFNCEXPORT void opcua_ovInterface_destructor(
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pinst, OV_BOOL forceLoad) {
+OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
     /*
     *   local variables
     */
-	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pinst);
+	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(uaServer == NULL){
 		return OV_ERR_GENERIC;
 	}
 	UA_ServerConfig* config = UA_Server_getConfig(uaServer->v_server);
-    UA_String_deleteMembers(&pinst->v_trafo->uri);
-    UA_String_copy(&config->applicationDescription.applicationUri, &pinst->v_trafo->uri);
+    UA_String_deleteMembers(&pobj->v_trafo->uri);
+    UA_String_copy(&config->applicationDescription.applicationUri, &pobj->v_trafo->uri);
 
     //Use generic load method of uaInterface to load the trafos
-	opcua_interface_load(pinst, TRUE);
+	opcua_interface_load(pobj, TRUE);
 
 	//Add reference to OV root for generic interface
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;

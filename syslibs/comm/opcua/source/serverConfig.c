@@ -24,7 +24,7 @@
 #include "opcua.h"
 #include "libov/ov_macros.h"
 
-
+//TODO move to interfaces instead --> STRING applicationURI derived, set --> save in trafo / types
 OV_DLLFNCEXPORT OV_RESULT opcua_serverConfig_applicationURI_set(
     OV_INSTPTR_opcua_serverConfig          pobj,
     const OV_STRING  value
