@@ -88,6 +88,8 @@ void ov_options_init(ov_options* opts){
  */
 void ov_options_free(ov_options* opts){
 	int i;
+	free(opts->dbFilename);
+	opts->dbFilename = NULL;
 	free(opts->commandline_options);
 	opts->commandline_options = NULL;
 	free(opts->configBasePath);
