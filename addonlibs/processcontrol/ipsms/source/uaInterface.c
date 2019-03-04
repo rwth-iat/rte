@@ -26,6 +26,47 @@
 
 #include "ipsms_trafo.h"
 
+OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_entryPath_set(
+    OV_INSTPTR_ipsms_uaInterface          pobj,
+    const OV_STRING  value
+) {
+	OV_UINT length = ov_string_getlength(value);
+	if(length == 0)
+		return OV_ERR_BADNAME;
+
+	OV_STRING *plist = NULL;
+	OV_UINT    i,len;
+	plist = ov_string_split(value,"/",&len);
+	for(i=0; i<len; i++) {
+		length = ov_string_getlength(plist[i]);
+		for(int j=0 ; j < length ; j++){
+			if(!ov_path_isvalidchar(plist[i][j]))
+				return OV_ERR_BADNAME;
+		}
+	}
+	ov_string_freelist(plist);
+	//TODO check if path exists?
+
+	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
+	if(server != NULL && server->v_isRunning){
+		UA_StatusCode retval = UA_STATUSCODE_GOOD;
+		//Delete old entry reference
+		retval = UA_Server_deleteReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pobj->v_entryPath), UA_FALSE);
+		if(retval != UA_STATUSCODE_GOOD){
+			Ov_Warning(UA_StatusCode_name(retval));
+		}
+
+		//Add reference to OV root for ipsms interface
+		retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pobj->v_entryPath), true);
+		if(retval != UA_STATUSCODE_GOOD){
+			Ov_Warning(UA_StatusCode_name(retval));
+		}
+	}
+
+    return ov_string_setvalue(&pobj->v_entryPath,value);
+}
 
 OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -79,23 +120,23 @@ OV_DLLFNCEXPORT void ipsms_uaInterface_destructor(
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_load(OV_INSTPTR_opcua_interface pinst, OV_BOOL forceLoad) {
+OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
     /*    
     *   local variables
     */
-	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pinst);
+    OV_INSTPTR_ipsms_uaInterface pinst = Ov_StaticPtrCast(ipsms_uaInterface, pobj);
+	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(server == NULL){
 		return OV_ERR_GENERIC;
 	}
 
     //Use generic load method of uaInterface to load the trafos
-	opcua_interface_load(pinst, forceLoad);
+	opcua_interface_load(pobj, forceLoad);
 
-	//TODO Create String variable for entry path ("/TechUnits/ESE")
-	//Add reference to OV root for generic interface
+	//Add reference to OV root for ipsms interface
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
 	retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pinst->v_trafo->index, "/TechUnits/ESE"), true);
+			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pinst->v_entryPath), true);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}
