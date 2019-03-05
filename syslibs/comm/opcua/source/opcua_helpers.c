@@ -752,7 +752,7 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_object opcua_helpers_resolveNodeIdToOvObject(const
 	OV_INSTPTR_ov_object ptr = NULL;
 	switch(nodeId->identifierType){
 	case UA_NODEIDTYPE_STRING:
-		tmpString = ov_database_malloc(nodeId->identifier.string.length + 1);
+		tmpString = ov_database_malloc(nodeId->identifier.string.length + 1); //TODO use memstack for strings in function, as memstack is already required
 		if(!tmpString){
 			return NULL;
 		}

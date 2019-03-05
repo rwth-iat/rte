@@ -5,8 +5,8 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 
-typedef OV_RESULT OPCUA_FNC_LOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pinst, OV_BOOL forceLoad);
-typedef OV_RESULT OPCUA_FNC_UNLOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pinst);
+typedef OV_RESULT OPCUA_FNC_LOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad);
+typedef OV_RESULT OPCUA_FNC_UNLOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pobj);
 
 	
 #endif

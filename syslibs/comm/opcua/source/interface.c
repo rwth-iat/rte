@@ -119,56 +119,56 @@ static OV_RESULT removeInformationModel(UA_Server * server, OV_UA_InformationMod
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pinst, OV_BOOL forceLoad) {
+OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
 
-	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pinst);
+	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(uaServer == NULL){
 		return OV_ERR_GENERIC;
 	}
 
 	//Load all dependent interfaces first
 	OV_INSTPTR_opcua_interface dependentInterface = NULL;
-	Ov_ForEachChild(opcua_interfaceDependency, pinst, dependentInterface){
+	Ov_ForEachChild(opcua_interfaceDependency, pobj, dependentInterface){
 		opcua_interface_load(dependentInterface, FALSE);
 		//TODO error handling
 	}
 
 	// add Types
-	if (pinst->v_types != NULL){
-		addInformationModel(uaServer->v_server, pinst->v_types, forceLoad);
+	if (pobj->v_types != NULL){
+		addInformationModel(uaServer->v_server, pobj->v_types, forceLoad);
 		//TODO error handling
 	}
 
 	// add Trafo
-	if (pinst->v_trafo != NULL){
-		addInformationModel(uaServer->v_server, pinst->v_trafo, forceLoad);
+	if (pobj->v_trafo != NULL){
+		addInformationModel(uaServer->v_server, pobj->v_trafo, forceLoad);
 		//TODO error handling
 	}
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pinst) {
-	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pinst);
+OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj) {
+	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(uaServer == NULL){
 		return OV_ERR_GENERIC;
 	}
 
 	// unload all dependent interfaces
-	OV_INSTPTR_opcua_interface dependentInterface = Ov_GetParent(opcua_interfaceDependency, pinst);
+	OV_INSTPTR_opcua_interface dependentInterface = Ov_GetParent(opcua_interfaceDependency, pobj);
 	if(dependentInterface != NULL){
 		opcua_interface_unload(dependentInterface);
 		//TODO error handling
 	}
 
 	// unload Types
-	if (pinst->v_types != NULL){
-		removeInformationModel(uaServer->v_server, pinst->v_types);
+	if (pobj->v_types != NULL){
+		removeInformationModel(uaServer->v_server, pobj->v_types);
 		//TODO error handling
 	}
 
 	// unload Trafo
-	if (pinst->v_trafo != NULL){
-		removeInformationModel(uaServer->v_server, pinst->v_trafo);
+	if (pobj->v_trafo != NULL){
+		removeInformationModel(uaServer->v_server, pobj->v_trafo);
 		//TODO error handling
 	}
     return OV_ERR_OK;
