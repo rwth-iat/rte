@@ -40,15 +40,12 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/nt/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/libov/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksbase/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksbase/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/src/server/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/src/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/src_generated/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\Julian.PLT\Documents\playground\rte\open62541\src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ACPLT_GIT}/rte/core/ov/include/libov&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ACPLT_GIT}/rte/core/ov/model/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ACPLT_GIT}/rte/core/ov/include&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.c.compiler.option.preprocessor.def.symbols.1413500453" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__NT__=1"/>
@@ -171,10 +168,14 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.85272097;cdt.managedbuild.config.gnu.so.debug.85272097.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.85272097;cdt.managedbuild.tool.gnu.c.compiler.input.85272097">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.85272097;cdt.managedbuild.config.gnu.so.debug.85272097.;cdt.managedbuild.tool.gnu.c.compiler.base.987063931;cdt.managedbuild.tool.gnu.c.compiler.input.664293768">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.68165169;cdt.managedbuild.config.gnu.so.debug.68165169.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.68165169;cdt.managedbuild.tool.gnu.c.compiler.input.68165169">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
@@ -183,5 +184,4 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

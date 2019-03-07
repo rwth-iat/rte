@@ -13,7 +13,7 @@
 
 #define OPCUA_OVSTORE_DEFAULTNSINDEX 1
 #define OPCUA_OVSTORE_DEFAULTNSURI_PREFIX OPCUA_DEFAULT_APPLICATIONURI
-#define OPCUA_OVSTORE_DEFAULTNSURI_SUFFIX "/Ov"
+#define OPCUA_OVSTORE_DEFAULTNSURI_SUFFIX "/types"
 
 UA_StatusCode opcua_ovStore_addReference(void * context, UA_Node *node);
 UA_Nodestore* opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context);

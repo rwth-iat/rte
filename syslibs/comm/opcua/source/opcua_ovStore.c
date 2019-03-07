@@ -602,7 +602,7 @@ UA_Int32 fillReferenceDescriptions_OvReferences(void * context, const UA_BrowseD
 	return getReferenceDescriptions_OvReferences(context, browseDescription, pNode, flag, passoc, refCount, TRUE, resultMask, dst, statusCode);
 }
 
-
+//TODO add inverse HasSubtype (HasSupertype) reference for classes.
 OV_DLLFNCEXPORT UA_StatusCode opcua_ovStore_addReference(void * context, UA_Node *node){
 	// references
 	UA_ReferenceDescription *references = NULL;

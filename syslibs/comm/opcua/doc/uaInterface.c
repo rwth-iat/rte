@@ -54,7 +54,7 @@ OV_DLLFNCEXPORT OV_RESULT myLibrary_uaInterface_constructor(
     //pinst->v_types = Ov_HeapAlloc(OV_UA_InformationModel);
     //pinst->v_types->dataTypes = NULL;
     //pinst->v_types->index = 0;
-    //pinst->v_types->uri = UA_String_fromChars("acplt.org/myLibrary/Ov");
+    //pinst->v_types->uri = UA_String_fromChars("acplt.org/myLibrary/types");
     //pinst->v_types->store = myLibrary_types_new(pinst);
 
     return OV_ERR_OK;
@@ -76,7 +76,7 @@ OV_DLLFNCEXPORT void myLibrary_uaInterface_destructor(
     return;
 }
 
-//OV_DLLFNCEXPORT OV_RESULT myLibrary_uaInterface_load(OV_INSTPTR_opcua_interface pinst, OV_BOOL forceLoad) {
+//OV_DLLFNCEXPORT OV_RESULT myLibrary_uaInterface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
 //    /*    
 //    *   local variables
 //    */
@@ -85,7 +85,21 @@ OV_DLLFNCEXPORT void myLibrary_uaInterface_destructor(
 //    * Do what the base class does
 //    */
 //    //Use generic load method of uaInterface to load the trafos
-//	  opcua_interface_load(pinst, forceLoad);
+//	  opcua_interface_load(pobj, forceLoad);
+//
+//    return OV_ERR_OK;
+//}
+
+//OV_DLLFNCEXPORT OV_RESULT myLibrary_uaInterface_unload(OV_INSTPTR_opcua_interface pobj) {
+//    /*
+//    *   local variables
+//    */
+//
+//   /*
+//    * Do what the base class does
+//    */
+//    //Use generic unload method of uaInterface to load the trafos
+//	  opcua_interface_unload(pobj);
 //
 //    return OV_ERR_OK;
 //}

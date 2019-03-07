@@ -16,12 +16,17 @@ LIBRARY opcua
     CLASS interface	:	CLASS ov/object
     	COMMENT = "Abstract class to define interface for an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
     	VARIABLES
-            trafo             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
+            trafo	:    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
                 FLAGS = "n"
                 COMMENT = "Information model to transform interface (hence library) specific ov objects to ua nodes.";
-            types             :    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
+            types	:    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
                 FLAGS = "n"
                 COMMENT = "Information model to store interface (hence library) specific ua type nodes.";
+			uri		:    STRING
+    		   	IS_DERIVED
+    		   	HAS_ACCESSORS
+    		   	FLAGS = "i"
+    		   	COMMENT = "Namespace (application) uri of trafo. For types an '/types' is added. For use in generic ov interface: acplt.org/<<LibraryName>>."; // See OPCUA_OVSTORE_DEFAULTNSURI_PREFIX and OPCUA_OVSTORE_DEFAULTNSURI_SUFFIX
     	END_VARIABLES;
     	OPERATIONS
             getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
@@ -33,6 +38,12 @@ LIBRARY opcua
     CLASS ovInterface :	CLASS opcua/interface
     	IS_INSTANTIABLE;
     	COMMENT = "Generic interface for ov. Holds the corresponding nodestores for UA Types and Transformations.";
+    	VARIABLES
+    		entryPath : STRING
+    			HAS_SET_ACCESSOR
+    			COMMENT="Path to ov domain as entry point in UA. Default: '/'. Example: '/TechUnits'"
+    			INITIALVALUE="/";	
+    	END_VARIABLES;
     	OPERATIONS
         	constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             destructor         :    C_FUNCTION <OV_FNC_DESTRUCTOR>;

@@ -62,11 +62,7 @@ OV_DLLFNCEXPORT void opcua_serverToInterfaces_unlink(
 	const OV_PPT_opcua_serverToInterfaces	pparent,
 	const OV_CPT_opcua_serverToInterfaces	pchild
 ){
-	ov_association_unlink(passoc_opcua_serverToInterfaces,
-			Ov_PtrUpCast(ov_object, pparent),
-			Ov_PtrUpCast(ov_object, pchild));
-
-	//Unload interface if server is already running
+	// Unload interface if server is already running
 	OV_INSTPTR_opcua_server pServer = Ov_StaticPtrCast(opcua_server, pparent);
 	if(pServer != NULL && pServer->v_isRunning){
 		OV_INSTPTR_opcua_interface pInterface = Ov_StaticPtrCast(opcua_interface, pchild);
@@ -76,6 +72,12 @@ OV_DLLFNCEXPORT void opcua_serverToInterfaces_unlink(
 			pVtblInterface->m_unload(pInterface);
 		}
 	}
+
+	// remove the link
+	ov_association_unlink(passoc_opcua_serverToInterfaces,
+			Ov_PtrUpCast(ov_object, pparent),
+			Ov_PtrUpCast(ov_object, pchild));
 }
+
 OV_IMPL_GETACCESS(opcua_serverToInterfaces)
 
