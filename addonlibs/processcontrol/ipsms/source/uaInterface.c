@@ -25,47 +25,13 @@
 #include "libov/ov_macros.h"
 
 #include "ipsms_trafo.h"
+#include "opcua_helpers.h"
 
 OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_entryPath_set(
     OV_INSTPTR_ipsms_uaInterface          pobj,
     const OV_STRING  value
 ) {
-	OV_UINT length = ov_string_getlength(value);
-	if(length == 0)
-		return OV_ERR_BADNAME;
-
-	OV_STRING *plist = NULL;
-	OV_UINT    i,len;
-	plist = ov_string_split(value,"/",&len);
-	for(i=0; i<len; i++) {
-		length = ov_string_getlength(plist[i]);
-		for(int j=0 ; j < length ; j++){
-			if(!ov_path_isvalidchar(plist[i][j]))
-				return OV_ERR_BADNAME;
-		}
-	}
-	ov_string_freelist(plist);
-	//TODO check if path exists?
-
-	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
-	if(server != NULL && server->v_isRunning){
-		UA_StatusCode retval = UA_STATUSCODE_GOOD;
-		//Delete old entry reference
-		retval = UA_Server_deleteReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pobj->v_entryPath), UA_FALSE);
-		if(retval != UA_STATUSCODE_GOOD){
-			Ov_Warning(UA_StatusCode_name(retval));
-		}
-
-		//Add reference to OV root for ipsms interface
-		retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pobj->v_entryPath), true);
-		if(retval != UA_STATUSCODE_GOOD){
-			Ov_Warning(UA_StatusCode_name(retval));
-		}
-	}
-
-    return ov_string_setvalue(&pobj->v_entryPath,value);
+	return opcua_helpers_setRootEntryReference(value, Ov_StaticPtrCast(opcua_interface, pobj), &pobj->v_entryPath);
 }
 
 OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_constructor(
@@ -142,4 +108,3 @@ OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_load(OV_INSTPTR_opcua_interface pobj
 	}
     return OV_ERR_OK;
 }
-

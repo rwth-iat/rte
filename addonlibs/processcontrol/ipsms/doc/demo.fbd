@@ -1,0 +1,259 @@
+/************************************************************
+* Sicherung der Datenbasis
+* Erstellt: 2019-02-28 10:50:10
+* 
+* HOST   : LOCALHOST:7509
+* SERVER : MANAGER
+************************************************************/
+
+ INSTANCE  /TechUnits/ESE :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEY :
+    CLASS /acplt/fb/controlchart;
+    VARIABLE_VALUES
+      CMD : INPUT STRING = "";
+      ORDERLIST[0] : INPUT STRING = {};
+      ORDEREXECUTOR[0] : INPUT STRING = {};
+      iexreq : INPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      actimode : INPUT INT = 0;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 636;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEY.intask :
+    CLASS /acplt/fb/task;
+    VARIABLE_VALUES
+      actimode : INPUT INT = 0;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 637;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEY/SERVICES :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEY/OCCST :
+    CLASS /acplt/fb/stringport;
+    VARIABLE_VALUES
+      value : INPUT STRING = "FREE";
+      flags : INPUT UINT = 16384;
+      unit : INPUT STRING = "Enumeration: FREE, OCCUPIED, PRIO, LOCAL";
+      comment : INPUT STRING = "EN: Occupation State. DE: Belegungszustand.";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 648;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEY/EXMODE :
+    CLASS /acplt/fb/stringport;
+    VARIABLE_VALUES
+      value : INPUT STRING = "AUTO";
+      flags : INPUT UINT = 16384;
+      unit : INPUT STRING = "Enumeration: AUTO, SEMIAUTO, MANUAL, SIMULATION";
+      comment : INPUT STRING = "EN: Execution Mode. DE: Betriebsart.";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 653;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEX :
+    CLASS /acplt/fb/controlchart;
+    VARIABLE_VALUES
+      CMD : INPUT STRING = "";
+      ORDERLIST[0] : INPUT STRING = {};
+      ORDEREXECUTOR[0] : INPUT STRING = {};
+      iexreq : INPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      actimode : INPUT INT = 0;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 656;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEX.intask :
+    CLASS /acplt/fb/task;
+    VARIABLE_VALUES
+      actimode : INPUT INT = 0;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 0;
+      Ypos : INPUT INT = 0;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 657;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEX/SERVICES :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEX/OCCST :
+    CLASS /acplt/fb/stringport;
+    VARIABLE_VALUES
+      value : INPUT STRING = "OCCUPIED";
+      flags : INPUT UINT = 16384;
+      unit : INPUT STRING = "Enumeration: FREE, OCCUPIED, PRIO, LOCAL";
+      comment : INPUT STRING = "EN: Occupation State. DE: Belegungszustand.";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 659;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEX/EXMODE :
+    CLASS /acplt/fb/stringport;
+    VARIABLE_VALUES
+      value : INPUT STRING = "MANUAL";
+      flags : INPUT UINT = 16384;
+      unit : INPUT STRING = "Enumeration: AUTO, SEMIAUTO, MANUAL, SIMULATION";
+      comment : INPUT STRING = "EN: Execution Mode. DE: Betriebsart.";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 660;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/uaServer :
+    CLASS /acplt/opcua/server;
+    VARIABLE_VALUES
+      run : INPUT BOOL = TRUE;
+      reset : INPUT BOOL = FALSE;
+      actimode : INPUT INT = 1;
+      cycInterval : INPUT INT = 5;
+      NextExecTime : INPUT TIME = 2019-02-28 10:50:11.183354;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 630;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/uaServer.genericInterface :
+    CLASS /acplt/opcua/ovInterface;
+    VARIABLE_VALUES
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 631;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/uaServer/ipsmsInterface :
+    CLASS /acplt/ipsms/uaInterface;
+    VARIABLE_VALUES
+      entryPath : INPUT STRING = "/TechUnits/ESE";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 633;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEY;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEY/OCCST , /TechUnits/ESE/PEY/EXMODE};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/ESE/PEY};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEY;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEY/OCCST};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEY;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEY/EXMODE};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEX;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEX/OCCST , /TechUnits/ESE/PEX/EXMODE};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/ESE/PEX};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEX;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEX/OCCST};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEX;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEX/EXMODE};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION serverToInterfaces;
+     PARENT server : CLASS unknown
+           = /TechUnits/uaServer;
+     CHILDREN interfaces : CLASS unknown
+           = {/TechUnits/uaServer.genericInterface , /TechUnits/uaServer/ipsmsInterface};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION AssocComTaskList;
+     PARENT RootComTask : CLASS unknown
+           = /communication/RootComTask;
+     CHILDREN comtaskchild : CLASS unknown
+           = {/TechUnits/uaServer};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION serverToInterfaces;
+     PARENT server : CLASS unknown
+           = /TechUnits/uaServer;
+     CHILDREN interfaces : CLASS unknown
+           = {/TechUnits/uaServer.genericInterface};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION serverToInterfaces;
+     PARENT server : CLASS unknown
+           = /TechUnits/uaServer;
+     CHILDREN interfaces : CLASS unknown
+           = {/TechUnits/uaServer/ipsmsInterface};
+ END_LINK;
+
+ LIBRARY
+    /acplt/opcua
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/ipsms
+ END_LIBRARY;
