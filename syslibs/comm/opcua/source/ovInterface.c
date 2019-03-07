@@ -24,7 +24,14 @@
 #include "opcua.h"
 #include "libov/ov_macros.h"
 #include "opcua_ovStore.h"
+#include "opcua_helpers.h"
 
+OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_entryPath_set(
+    OV_INSTPTR_opcua_ovInterface          pobj,
+    const OV_STRING  value
+) {
+    return opcua_helpers_setRootEntryReference(value, Ov_StaticPtrCast(opcua_interface, pobj), &pobj->v_entryPath);
+}
 
 OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -83,6 +90,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj
     /*
     *   local variables
     */
+    OV_INSTPTR_opcua_ovInterface pinst = Ov_StaticPtrCast(opcua_ovInterface, pobj);
 	OV_INSTPTR_opcua_server uaServer = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(uaServer == NULL){
 		return OV_ERR_GENERIC;
@@ -97,16 +105,18 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj
 	//Add reference to OV root for generic interface
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
 	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(1, pdb->root.v_identifier), true);
+			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pinst->v_entryPath), true);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}
 	//Add reference to ov types
 	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(1, "/acplt/ov/domain"), true);
+			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, "/acplt/ov/domain"), true);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}
 
     return OV_ERR_OK;
 }
+
+//TODO add unload function to delete reference

@@ -47,5 +47,8 @@ OV_RESULT opcua_helpers_copyUAStringToOV(UA_String src, OV_STRING *dst);
 UA_Int32 opcua_helpers_resolveNodeIdToPath(const UA_NodeId nodeId, OV_PATH* pPath);
 OV_INSTPTR_ov_object opcua_helpers_resolveNodeIdToOvObject(const UA_NodeId *nodeId);
 
+OV_RESULT opcua_helpers_setRootEntryReference(const OV_STRING newPath, OV_INSTPTR_opcua_interface pobj, OV_STRING * poldPath);
+
+
 
 #endif /* opcua_HELPERS_H_ */

@@ -22889,20 +22889,35 @@ writeNamespaces(UA_Server *server, const UA_NodeId *sessionId, void *sessionCont
 
     UA_String *newNamespaces = (UA_String*)value->value.data;
     size_t newNamespacesSize = value->value.arrayLength;
-
-    /* Test if we append to the existing namespaces */
-    if(newNamespacesSize <= server->namespacesSize)
-        return UA_STATUSCODE_BADTYPEMISMATCH;
-
-    /* Test if the existing namespaces are unchanged */
-    for(size_t i = 0; i < server->namespacesSize; ++i) {
-        if(!UA_String_equal(&server->namespaces[i], &newNamespaces[i]))
-            return UA_STATUSCODE_BADINTERNALERROR;
-    }
-
-    /* Add namespaces */
-    for(size_t i = server->namespacesSize; i < newNamespacesSize; ++i)
-        addNamespace(server, newNamespaces[i]);
+//________________________ACPLT INSERT START______________________
+    UA_String * newNamespacesCopy = NULL;
+    if(UA_Array_copy(newNamespaces, newNamespacesSize,
+    		&newNamespacesCopy, &UA_TYPES[UA_TYPES_STRING]) != UA_STATUSCODE_GOOD)
+    	return UA_STATUSCODE_BADOUTOFMEMORY;
+    //This code block must use a lock
+    UA_String *oldNamespaces = server->namespaces;
+    size_t oldNamespacesSize = newNamespacesSize;
+    server->namespaces = newNamespacesCopy;
+    server->namespacesSize = newNamespacesSize;
+    //End lock zone
+    UA_Array_delete(oldNamespaces, oldNamespacesSize, &UA_TYPES[UA_TYPES_STRING]);
+//________________________ACPLT INSERT END________________________
+//________________________ACPLT DELETE START______________________
+//
+//    /* Test if we append to the existing namespaces */
+//    if(newNamespacesSize <= server->namespacesSize)
+//        return UA_STATUSCODE_BADTYPEMISMATCH;
+//
+//    /* Test if the existing namespaces are unchanged */
+//    for(size_t i = 0; i < server->namespacesSize; ++i) {
+//        if(!UA_String_equal(&server->namespaces[i], &newNamespaces[i]))
+//            return UA_STATUSCODE_BADINTERNALERROR;
+//    }
+//
+//    /* Add namespaces */
+//    for(size_t i = server->namespacesSize; i < newNamespacesSize; ++i)
+//        addNamespace(server, newNamespaces[i]);
+//________________________ACPLT DELETE END________________________
     return UA_STATUSCODE_GOOD;
 }
 

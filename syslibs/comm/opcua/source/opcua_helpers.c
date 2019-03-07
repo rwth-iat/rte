@@ -864,3 +864,46 @@ OV_DLLFNCEXPORT OV_BOOL opcua_helpers_nodeClassMaskMatchAndGetAccess(const OV_EL
 		return FALSE;
 	}
 }
+
+OV_DLLFNCEXPORT OV_RESULT opcua_helpers_setRootEntryReference(const OV_STRING newPath, OV_INSTPTR_opcua_interface pobj, OV_STRING * poldPath){
+	// Check new path for NULL or zero length
+	OV_UINT length = ov_string_getlength(newPath);
+	if(length == 0)
+		return OV_ERR_BADNAME;
+
+	// Check newPath for valid characters
+	OV_STRING *plist = NULL;
+	OV_UINT    i,len;
+	plist = ov_string_split(newPath,"/",&len);
+	for(i = 0 ; i < len ; i++) {
+		length = ov_string_getlength(plist[i]);
+		for(OV_UINT j = 0 ; j < length ; j++){
+			if(!ov_path_isvalidchar(plist[i][j]))
+				return OV_ERR_BADNAME;
+		}
+	}
+	ov_string_freelist(plist);
+
+	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
+	if(server != NULL && server->v_isRunning){
+		UA_StatusCode retval = UA_STATUSCODE_GOOD;
+		//Delete old entry reference
+		retval = UA_Server_deleteReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, *poldPath), UA_FALSE);
+		if(retval != UA_STATUSCODE_GOOD){
+			Ov_Warning(UA_StatusCode_name(retval));
+		}
+
+		//Add reference to OV root for ipsms interface
+		retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, newPath), true);
+		if(retval != UA_STATUSCODE_GOOD){
+			Ov_Warning(UA_StatusCode_name(retval));
+		}
+	}
+
+	if(poldPath)
+		return ov_string_setvalue(poldPath, newPath);
+	else
+		return OV_ERR_OK;
+}

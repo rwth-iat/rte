@@ -8,7 +8,6 @@
 #endif
 
 #include "open62541.h"
-//#include "opcua_storeSwitch.h"
 
 /*	restore pre-anti-warning state	*/
 #ifndef WIN32

@@ -5,7 +5,7 @@ LIBRARY myLibrary
 	VERSION   = "V0.1 (26-02-2019)";
 	AUTHOR    = "Julian Grothoff";
 	COPYRIGHT = "PLT";
-	COMMENT   = "Library to implement the 'Interoperabilit�tsprofil SMS' for the BaSys4.0 SMS Demonstrator.";
+	COMMENT   = "Demo library to implement an OPCUA interface.";
 	
 	/**
 	*	Documentation of uaInterface. 
@@ -14,9 +14,11 @@ LIBRARY myLibrary
     	IS_INSTANTIABLE;
     	COMMENT = "OPCUA interface for the myLibrary profile.";
     	OPERATIONS
-        	constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            destructor         :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
-            //load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>; //Only necessary for advanced transformations. For example: add a reference to a specific node after loading of trafo and types.
+        	constructor	:    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            destructor  :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
+            //Only necessary for advanced transformations. For example: add a reference to a specific node after loading of trafo and types.
+            //load      :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
+        	//unload    :    C_FUNCTION <OPCUA_FNC_UNLOADINFORMATIONMODEL>;
         END_OPERATIONS;
 	END_CLASS;
 	
