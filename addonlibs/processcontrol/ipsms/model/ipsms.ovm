@@ -15,7 +15,9 @@ LIBRARY ipsms
     	IS_INSTANTIABLE;
     	COMMENT = "OPCUA interface for the ipsms profile.";
     	VARIABLES
-    		entryPath : STRING HAS_SET_ACCESSOR COMMENT="Path to the root folder for all control charts a.k.a BaSys4.0 components. Default: /TechUnits" INITIALVALUE="/TechUnits";	
+    		entryPath : STRING HAS_SET_ACCESSOR
+    			COMMENT="Path to the root folder for all control charts a.k.a BaSys4.0 components. Default: /TechUnits"
+    			INITIALVALUE="/TechUnits";
     	END_VARIABLES;
     	OPERATIONS
         	constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;

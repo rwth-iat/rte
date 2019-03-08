@@ -49,18 +49,19 @@ OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_constructor(
          return result;
 
     /* do what */
-    //Create the trafo
-    pinst->v_trafo = Ov_HeapAlloc(OV_UA_InformationModel);
+    // Create the trafo
+    pinst->v_trafo = Ov_HeapAlloc(OPCUA_InformationModel);
     pinst->v_trafo->dataTypes = NULL;
     pinst->v_trafo->index = 0;
     OV_STRING applicationUri = NULL;
     ov_string_setvalue(&applicationUri, OPCUA_DEFAULT_APPLICATIONURI);
-    ov_string_append(&applicationUri, "ipsms"); //TODO move to own STRING input of opcua_interface (derived --> set to v_trafo.uri)
+    ov_string_append(&applicationUri, "ipsms"); //TODO move to own STRING input of opcua_interface (derived --> set to v_trafo->uri)
     pinst->v_trafo->uri = UA_String_fromChars(applicationUri);
     ov_string_setvalue(&applicationUri, NULL);
     pinst->v_trafo->store = ipsms_trafo_new(pinst);
+    pinst->v_trafo->nodeset = NULL;
 
-    //Create the types
+    // Create the types
     pinst->v_types = NULL;
 
     return OV_ERR_OK;
@@ -75,6 +76,7 @@ OV_DLLFNCEXPORT void ipsms_uaInterface_destructor(
     OV_INSTPTR_ipsms_uaInterface pinst = Ov_StaticPtrCast(ipsms_uaInterface, pobj);
 
     /* do what */
+    // Delete trafo
     UA_String_deleteMembers(&pinst->v_trafo->uri);
     ipsms_trafo_delete(pinst->v_trafo->store);
     Ov_HeapFree(pinst->v_trafo);

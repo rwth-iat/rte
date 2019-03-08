@@ -13,20 +13,6 @@
 #include "opcua_ovStore.h"
 //#include "ov_call_macros_10.h"
 
-//TODO move to opcua_helper
-static void UA_String_append(UA_String * string, const char * append){
-	if(string == NULL)
-		return;
-	size_t length = strlen(append);
-	string->data = UA_realloc(string->data, sizeof(UA_Byte) * (length + string->length));
-	if(string->data == NULL){
-		string->length = 0;
-		return;
-	}
-	memcpy(&string->data[string->length], append, length);
-	string->length += length;
-}
-
 static UA_NodeId
 ipsms_trafo_getParentNodeId(OV_INSTPTR_ov_object pobj){
 	OV_INSTPTR_ov_domain pparent = Ov_GetParent(ov_containment, pobj);
@@ -185,13 +171,13 @@ ipsms_trafo_controlchart(
 	UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
 	UA_ExpandedNodeId_init(&ref->targetNodeId);
 	UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
-	UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "|STATUS");
+	opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "|STATUS");
 	UA_Node_addReference(node, ref);
 	// Add SERVICES reference
 	UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
 	UA_ExpandedNodeId_init(&ref->targetNodeId);
 	UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
-	UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "/SERVICES");
+	opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "/SERVICES");
 	UA_Node_addReference(node, ref);
 
 	// Free resources
@@ -408,7 +394,7 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 	OV_INSTPTR_ov_object			pobj = NULL;
 	OV_INSTPTR_ipsms_uaInterface 	pinterface = Ov_StaticPtrCast(ipsms_uaInterface, context);
 	OV_INSTPTR_opcua_server 		server = (pinterface) ? Ov_GetParent(opcua_serverToInterfaces, pinterface) : NULL;
-	OV_PTR_UA_Server 				uaServer = (server) ? server->v_server : NULL;
+	OPCUA_PTR_UA_Server 				uaServer = (server) ? server->v_server : NULL;
 
 	// Check path for virtual node //TODO move to own function
 	if(nodeId->identifierType == UA_NODEIDTYPE_STRING){
