@@ -10,24 +10,21 @@
 
 #include "servicesOPCUAInterface.h"
 #include "libov/ov_macros.h"
-#include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
-#include "libov/ov_path.h"
-#include "libov/ov_memstack.h"
-#include "ks_logfile.h"
 
-OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(void *methodHandle, const UA_NodeId *objectId,
-                     const UA_NodeId *sessionId, void *sessionHandle,
-                     size_t inputSize, const UA_Variant *input,
-                     size_t outputSize, UA_Variant *output) {
+OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(UA_Server *server, const UA_NodeId *sessionId,
+        void *sessionContext, const UA_NodeId *methodId,
+        void *methodContext, const UA_NodeId *objectId,
+        void *objectContext, size_t inputSize,
+        const UA_Variant *input, size_t outputSize,
+        UA_Variant *output){
 
 	UA_String *tmpStringArray = NULL;
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 
 	OV_VTBLPTR_services_Service pvtable;
-	OV_INSTPTR_services_Service pService = (OV_INSTPTR_services_Service)methodHandle;
+	OV_INSTPTR_services_Service pService = (OV_INSTPTR_services_Service)methodContext;
 	Ov_GetVTablePtr(services_Service, pvtable, pService);
 
 	void **inputs = ov_database_malloc(sizeof(void*)*inputSize);
@@ -62,7 +59,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 						goto cleanup;
 					}
 					inputs[i] = ov_database_malloc(sizeof(OV_STRING));
-					copyOPCUAStringToOV(*((UA_String*)(input[i].data)), (OV_STRING*)(inputs[i]));
+					opcua_helpers_copyUAStringToOV(*((UA_String*)(input[i].data)), (OV_STRING*)(inputs[i]));
 					break;
 				default:
 					break;
@@ -128,7 +125,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 							result = UA_STATUSCODE_BADARGUMENTSMISSING;
 							goto cleanup;
 						}
-						copyOPCUAStringToOV(((UA_String*)(input[i].data))[j], &((*(OV_STRING_VEC*)(inputs[i])).value[j]));
+						opcua_helpers_copyUAStringToOV(((UA_String*)(input[i].data))[j], &((*(OV_STRING_VEC*)(inputs[i])).value[j]));
 					}
 					break;
 				default:
@@ -330,28 +327,28 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(vo
 	return result;
 }
 
-static void OV_NodeStore_deleteNodestore(void *handle, UA_UInt16 namespaceIndex){
+static void servicesOPCUAInterface_deleteNodestore(void *context){
 
 }
 
-static void OV_NodeStore_deleteNode(UA_Node *node){
+static void servicesOPCUAInterface_deleteNode(void *context, UA_Node *node){
 	if (node){
-		UA_Node_deleteMembersAnyNodeClass(node);
+		UA_Node_deleteMembers(node);
 	}
 	UA_free(node);
 }
-static void OV_NodeStore_releaseNode(void *handle, const UA_Node *node){
-	OV_NodeStore_deleteNode((UA_Node*)node);
+static void servicesOPCUAInterface_releaseNode(void *context, const UA_Node *node){
+	servicesOPCUAInterface_deleteNode(context, (UA_Node*)node);
 }
 
-static UA_Node * OV_NodeStore_newNode(UA_NodeClass nodeClass){ //TODO add nodestore handle? --> move nodeStore from static context to main
+static UA_Node * servicesOPCUAInterface_newNode(void *context, UA_NodeClass nodeClass){
     //allocate memory for a new node
 	//UA_Node *newNode = NULL;
 	//newNode = (UA_Node*) ov_database_malloc(sizeof(UA_ObjectNode));
 	//newNode->nodeClass = nodeClass;
     return NULL;
 }
-static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeId){
+static const UA_Node * servicesOPCUAInterface_getNode(void *context, const UA_NodeId *nodeId){
 	UA_Node * tmpNode = NULL;
 	UA_Node* opcuaNode = NULL;
 	OV_STRING *plist = NULL;
@@ -364,7 +361,7 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	OV_UINT len3 = 0;
 	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
 		return NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
 	plist2 = ov_string_split(tmpString, "/", &len2);
 	plist3 = ov_string_split(plist2[len2-1], ".", &len3);
@@ -394,7 +391,7 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 		}
 		if (Ov_CanCastTo(services_Service, pobj)){
 			if (ov_string_compare(plist[1], "InputArguments") == OV_STRCMP_EQUAL){
-				if (servicesOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+				if (servicesOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
 					ov_string_freelist(plist);
 					ov_string_freelist(plist2);
 					ov_string_freelist(plist3);
@@ -402,7 +399,7 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 					return (UA_Node*) opcuaNode;
 				}
 			}else if (ov_string_compare(plist[1], "OutputArguments") == OV_STRCMP_EQUAL){
-				if (servicesOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+				if (servicesOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
 					ov_string_freelist(plist);
 					ov_string_freelist(plist2);
 					ov_string_freelist(plist3);
@@ -423,7 +420,7 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	}
 
 	if(Ov_CanCastTo(services_Service, pobj)){
-		if (servicesOPCUAInterface_interface_ovServiceNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+		if (servicesOPCUAInterface_interface_ovServiceNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}
 	ov_string_freelist(plist);
@@ -432,10 +429,14 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	ov_string_setvalue(&tmpString, NULL);
 	return tmpNode;
 }
-static UA_Node * OV_NodeStore_getCopyNode(void *handle, const UA_NodeId *nodeId){
-	return (UA_Node*)OV_NodeStore_getNode(handle, nodeId);
+static UA_StatusCode servicesOPCUAInterface_getCopyNode(void *context, const UA_NodeId *nodeId, UA_Node ** nodeOut){
+	UA_Node* node = (UA_Node*) servicesOPCUAInterface_getNode(context, nodeId);
+	if(node == NULL)
+		return UA_STATUSCODE_BADNODEIDUNKNOWN;
+	*nodeOut = node;
+	return UA_STATUSCODE_GOOD;
 }
-static UA_StatusCode OV_NodeStore_removeNode(void *handle, const UA_NodeId *nodeId){
+static UA_StatusCode servicesOPCUAInterface_removeNode(void *context, const UA_NodeId *nodeId){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 	//OV_INSTPTR_ov_object pobj = opcua_nodeStoreFunctions_resolveNodeIdToOvObject((UA_NodeId*)nodeId);
 	//if (pobj != NULL){
@@ -443,46 +444,44 @@ static UA_StatusCode OV_NodeStore_removeNode(void *handle, const UA_NodeId *node
 	//}
     //return UA_STATUSCODE_GOOD;
 }
-static UA_StatusCode OV_NodeStore_insertNode(void *handle, UA_Node *node, UA_NodeId *parrentNode){
+static UA_StatusCode servicesOPCUAInterface_insertNode(void *context, UA_Node *node, UA_NodeId *parrentNode){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 	//OV_INSTPTR_ov_object pobj = opcua_nodeStoreFunctions_resolveNodeIdToOvObject(&(node->nodeId));
 	//if (pobj != NULL)
 	//	return UA_STATUSCODE_BADNODEIDEXISTS;
 
-	//return OV_NodeStore_insert(handle, node, parrentNode);
+	//return servicesOPCUAInterface_insert(context, node, parrentNode);
 }
-static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
+static UA_StatusCode servicesOPCUAInterface_replaceNode(void *context, UA_Node *node){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
-static void OV_NodeStore_iterate(void *handle, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor){
+static void servicesOPCUAInterface_iterate(void *context, void* visitorHandle, UA_NodestoreVisitor visitor){
 
 }
-static UA_StatusCode OV_NodeStore_linkNamespace(void *handle, UA_UInt16 namespaceIndex){
-	return UA_STATUSCODE_BADNOTIMPLEMENTED;
-}
-static UA_StatusCode OV_NodeStore_unlinkNamespace(void *handle, UA_UInt16 namespaceIndex){
-	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+
+UA_Nodestore* servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(OV_INSTPTR_servicesOPCUAInterface_interface context) {
+	UA_Nodestore* trafo = UA_malloc(sizeof(UA_Nodestore));
+	if(trafo == NULL)
+		return NULL;
+    trafo->context =          context;
+    trafo->newNode =       	  servicesOPCUAInterface_newNode;
+    trafo->deleteNode =    	  servicesOPCUAInterface_deleteNode;
+    trafo->deleteNodestore =  servicesOPCUAInterface_deleteNodestore;
+
+    trafo->getNode =          servicesOPCUAInterface_getNode;
+    trafo->releaseNode =      servicesOPCUAInterface_releaseNode;
+
+    trafo->getNodeCopy =      servicesOPCUAInterface_getCopyNode;
+    trafo->insertNode =       servicesOPCUAInterface_insertNode;
+    trafo->replaceNode =      servicesOPCUAInterface_replaceNode;
+
+    trafo->removeNode =       servicesOPCUAInterface_removeNode;
+
+    trafo->iterate =          servicesOPCUAInterface_iterate;
+    return trafo;
 }
 
-UA_NodestoreInterface* servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(void) {
-	UA_NodestoreInterface *nsi = ov_database_malloc(sizeof(UA_NodestoreInterface));
-    nsi->handle =        	NULL;
-    nsi->deleteNodestore =  (UA_NodestoreInterface_deleteNodeStore) 		OV_NodeStore_deleteNodestore;
-    nsi->newNode =       	(UA_NodestoreInterface_newNode)     OV_NodeStore_newNode;
-    nsi->deleteNode =    	(UA_NodestoreInterface_deleteNode)  OV_NodeStore_deleteNode;
-    nsi->insertNode =       	(UA_NodestoreInterface_insertNode)      OV_NodeStore_insertNode;
-    nsi->getNode =          	(UA_NodestoreInterface_getNode)         OV_NodeStore_getNode;
-    nsi->getNodeCopy =      	(UA_NodestoreInterface_getNodeCopy)     OV_NodeStore_getCopyNode;
-    nsi->replaceNode =      	(UA_NodestoreInterface_replaceNode)     OV_NodeStore_replaceNode;
-    nsi->removeNode =       	(UA_NodestoreInterface_removeNode)      OV_NodeStore_removeNode;
-    nsi->iterate =       (UA_NodestoreInterface_iterate)     OV_NodeStore_iterate;
-    nsi->releaseNode =       	(UA_NodestoreInterface_releaseNode)     OV_NodeStore_releaseNode;
-    nsi->linkNamespace =       (UA_NodestoreInterface_linkNamespace)     OV_NodeStore_linkNamespace;
-	nsi->unlinkNamespace =       	(UA_NodestoreInterface_unlinkNamespace)     OV_NodeStore_unlinkNamespace;
-	return nsi;
-}
-
-void servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesDelete(UA_NodestoreInterface * nsi){
-	if (nsi->handle)
-		UA_free(nsi->handle);
+void servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesDelete(UA_Nodestore * store){
+	store->context = NULL;
+	UA_free(store);
 }

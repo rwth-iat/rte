@@ -37,7 +37,5 @@
 #endif
 #define UA_NSSERVICESID_SERVICESTYPE 1002
 
-  extern UA_StatusCode nodeset(UA_Server *server);
-  extern UA_StatusCode nodeset_returnNamespaces(UA_Server *server,
-          UA_UInt16 *namespacesSize, UA_Namespace **namspaces);
+  extern UA_StatusCode servicesOPCUAInterface_nodeset(UA_Server *server);
 #endif /* NODESET_SERVICES_H_ */
