@@ -48,11 +48,12 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
          return result;
 
     /* do what */
-    pinst->v_trafo = Ov_HeapAlloc(OV_UA_InformationModel);
+    pinst->v_trafo = Ov_HeapAlloc(OPCUA_InformationModel);
     pinst->v_trafo->dataTypes = NULL;
     pinst->v_trafo->index = 0;
     pinst->v_trafo->uri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI); //Will be overwritten by config->applicationDescription.applicationUri
     pinst->v_trafo->store = opcua_ovStore_new(pinst);
+    pinst->v_trafo->nodeset = NULL;
 	//pinst->v_types
     pinst->v_types = NULL;
 

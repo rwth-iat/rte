@@ -16,10 +16,10 @@ LIBRARY opcua
     CLASS interface	:	CLASS ov/object
     	COMMENT = "Abstract class to define interface for an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
     	VARIABLES
-            trafo	:    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
+            trafo	:    C_TYPE <OPCUA_PTR_InformationModel>
                 FLAGS = "n"
                 COMMENT = "Information model to transform interface (hence library) specific ov objects to ua nodes.";
-            types	:    C_TYPE <OV_PTR_UA_INFORMATIONMODEL>
+            types	:    C_TYPE <OPCUA_PTR_InformationModel>
                 FLAGS = "n"
                 COMMENT = "Information model to store interface (hence library) specific ua type nodes.";
 			uri		:    STRING
@@ -76,7 +76,7 @@ LIBRARY opcua
         	    COMMENT = "Text of last error."
         	    INITIALVALUE = "";
         	//privat variables
-            server             :    C_TYPE <OV_PTR_UA_Server>
+            server             :    C_TYPE <OPCUA_PTR_UA_Server>
                 FLAGS = "n"
                 COMMENT = "Stack-specific representation of server data.";
         END_VARIABLES;
