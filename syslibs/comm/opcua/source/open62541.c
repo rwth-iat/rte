@@ -22892,7 +22892,7 @@ writeNamespaces(UA_Server *server, const UA_NodeId *sessionId, void *sessionCont
 //________________________ACPLT INSERT START______________________
     UA_String * newNamespacesCopy = NULL;
     if(UA_Array_copy(newNamespaces, newNamespacesSize,
-    		&newNamespacesCopy, &UA_TYPES[UA_TYPES_STRING]) != UA_STATUSCODE_GOOD)
+    		(void**)&newNamespacesCopy, &UA_TYPES[UA_TYPES_STRING]) != UA_STATUSCODE_GOOD)
     	return UA_STATUSCODE_BADOUTOFMEMORY;
     //This code block must use a lock
     UA_String *oldNamespaces = server->namespaces;

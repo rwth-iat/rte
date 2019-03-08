@@ -14,11 +14,14 @@ typedef UA_StatusCode SERVICES_FNC_OVSERVICEVARIABLESNODETOOPCUA(void *handle, c
 typedef UA_StatusCode SERVICES_FNC_OVSERVICEINPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode SERVICES_FNC_OVSERVICEOUTPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 	
-typedef UA_NodestoreInterface* SERVICES_FNC_OVNODESTOREINTERFACESERVICESNEW(void);
-typedef void SERVICES_FNC_OVNODESTOREINTERFACESERVICESDELETE(UA_NodestoreInterface * nsi);
-typedef UA_StatusCode SERVICES_FNC_METHODCALLBACKSTANDARD(void *methodHandle, const UA_NodeId *objectId,
-                     const UA_NodeId *sessionId, void *sessionHandle,
-                     size_t inputSize, const UA_Variant *input,
-                     size_t outputSize, UA_Variant *output);
+typedef UA_Nodestore* SERVICES_FNC_OVNODESTOREINTERFACESERVICESNEW(OV_INSTPTR_servicesOPCUAInterface_interface context);
+typedef void SERVICES_FNC_OVNODESTOREINTERFACESERVICESDELETE(UA_Nodestore * store);
+typedef UA_StatusCode SERVICES_FNC_METHODCALLBACKSTANDARD(
+		UA_Server *server, const UA_NodeId *sessionId,
+        void *sessionContext, const UA_NodeId *methodId,
+        void *methodContext, const UA_NodeId *objectId,
+        void *objectContext, size_t inputSize,
+        const UA_Variant *input, size_t outputSize,
+        UA_Variant *output);
                      
 #endif                    

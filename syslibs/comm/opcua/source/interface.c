@@ -89,7 +89,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_uri_set(
 		// Append types suffix and convert to UA string
 		UA_String trafoUri = UA_String_fromChars(value);
 		// Set namespace in server namespace array
-		if(server != NULL || server->v_isRunning)
+		if(server != NULL && server->v_isRunning)
 			opcua_interface_setNamespace(server->v_server, pobj->v_trafo->uri, trafoUri, NULL);
 		// Change internal URIs
 		UA_String_deleteMembers(&pobj->v_trafo->uri);
@@ -104,7 +104,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_uri_set(
 		UA_String typesUri = UA_String_fromChars(ovTypesURI);
 		ov_string_setvalue(&ovTypesURI, NULL);
 		// Set namespace in server namespace array
-		if(server != NULL || server->v_isRunning)
+		if(server != NULL && server->v_isRunning)
 			opcua_interface_setNamespace(server->v_server, pobj->v_types->uri, typesUri, NULL);
 		// Change internal URIs
 		UA_String_deleteMembers(&pobj->v_types->uri);
@@ -145,7 +145,7 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_interface_getaccess(
 	return ov_object_getaccess(pobj, pelem, pticket);
 }
 
-static UA_StatusCode addInformationModel(UA_Server * server, OV_UA_InformationModel * model, OV_BOOL forceLoad){
+static UA_StatusCode addInformationModel(UA_Server * server, OPCUA_InformationModel * model, OV_BOOL forceLoad){
 	size_t index = 0;
 	if(!forceLoad){
 		if(UA_Server_getNamespaceByName(server, model->uri, &index) == UA_STATUSCODE_GOOD){
@@ -173,10 +173,16 @@ static UA_StatusCode addInformationModel(UA_Server * server, OV_UA_InformationMo
 	if(model->store){
 		return UA_NodestoreSwitch_linkNodestoreToNamespace((UA_NodestoreSwitch*)config->nodestore.context, model->store, model->index);
 	}
+
+	// Load predefined nodeset
+	if(model->nodeset){
+		return model->nodeset(server);
+	}
 	return UA_STATUSCODE_GOOD;
 }
 
-static OV_RESULT removeInformationModel(UA_Server * server, OV_UA_InformationModel * model){
+//TODO delete all nodes from namespace (and all references)
+static OV_RESULT removeInformationModel(UA_Server * server, OPCUA_InformationModel * model){
 	// Mark namespace uri as deleted
 	opcua_interface_setNamespace(server, model->uri, UA_STRING_NULL, NULL);
 
@@ -216,21 +222,22 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 		//TODO error handling
 	}
 
-	// add Types
-	if (pobj->v_types != NULL){
-		addInformationModel(server->v_server, pobj->v_types, forceLoad);
-		//TODO error handling
-	}
-
 	// add Trafo
 	if (pobj->v_trafo != NULL){
 		addInformationModel(server->v_server, pobj->v_trafo, forceLoad);
+		//TODO error handling
+	}
+
+	// add Types
+	if (pobj->v_types != NULL){
+		addInformationModel(server->v_server, pobj->v_types, forceLoad);
 		//TODO error handling
 	}
     return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj) {
+
 	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(server == NULL){
 		return OV_ERR_GENERIC;

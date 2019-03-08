@@ -27,6 +27,19 @@
 #define TOSECONDS				10000000LL
 #define TOMICROSECONDS			10LL
 
+OV_DLLFNCEXPORT void opcua_helpers_UA_String_append(UA_String * string, const char * append){
+	if(string == NULL)
+		return;
+	size_t length = strlen(append);
+	string->data = UA_realloc(string->data, sizeof(UA_Byte) * (length + string->length));
+	if(string->data == NULL){
+		string->length = 0;
+		return;
+	}
+	memcpy(&string->data[string->length], append, length);
+	string->length += length;
+}
+
 OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovResultToUaStatusCode(OV_RESULT result){
 	switch(result){
 	case OV_ERR_OK:
@@ -804,20 +817,22 @@ OV_DLLFNCEXPORT UA_Int32 opcua_helpers_getVtblPointerAndCheckAccess(OV_ELEMENT *
 	return UA_STATUSCODE_GOOD;
 }
 
-OV_DLLFNCEXPORT UA_Int32 opcua_helpers_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess){
+OV_DLLFNCEXPORT OV_ACCESS opcua_helpers_getAccess(const OV_ELEMENT* pElem){
 	OV_VTBLPTR_ov_object	pVtbl	=	NULL;
-	if(pAccess){
-		if(!pElem->pobj){
-			*pAccess = OV_AC_NONE;
+	if(!pElem->pobj){
+		return OV_AC_NONE;
+	} else {
+		Ov_GetVTablePtr(ov_object, pVtbl, pElem->pobj);
+		if(pVtbl){
+			return pVtbl->m_getaccess(pElem->pobj, pElem, NULL);
 		} else {
-			Ov_GetVTablePtr(ov_object, pVtbl, pElem->pobj);
-			if(pVtbl){
-				*pAccess = pVtbl->m_getaccess(pElem->pobj, pElem, NULL);
-			} else {
-				*pAccess = OV_AC_NONE;
-			}
+			return OV_AC_NONE;
 		}
 	}
+	return OV_AC_NONE;
+}
+
+OV_DLLFNCEXPORT UA_Int32 opcua_helpers_getNodeClass(const OV_ELEMENT* pElem){
 	if(pElem->elemtype == OV_ET_OBJECT){
 		//	check further since all definitions are objects themselves
 		if(!pElem->pobj){
@@ -838,34 +853,8 @@ OV_DLLFNCEXPORT UA_Int32 opcua_helpers_getNodeClassAndAccess(const OV_ELEMENT* p
 	}
 }
 
-OV_DLLFNCEXPORT OV_BOOL opcua_helpers_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess){
-	UA_Int32 nodeClass = opcua_helpers_getNodeClassAndAccess(pElem, pAccess);
-	if(mask == 0){
-		return TRUE; //if no bit is set, all attributes should be returned
-	}
-	switch(nodeClass){
-	case UA_NODECLASS_OBJECT:
-		return ((mask & (1<<0)) ? TRUE : FALSE);
-	case UA_NODECLASS_VARIABLE:
-		return ((mask & (1<<1)) ? TRUE : FALSE);
-	case UA_NODECLASS_METHOD:
-		return ((mask & (1<<2)) ? TRUE : FALSE);
-	case UA_NODECLASS_OBJECTTYPE:
-		return ((mask & (1<<3)) ? TRUE : FALSE);
-	case UA_NODECLASS_VARIABLETYPE:
-		return ((mask & (1<<4)) ? TRUE : FALSE);
-	case UA_NODECLASS_REFERENCETYPE:
-		return ((mask & (1<<5)) ? TRUE : FALSE);
-	case UA_NODECLASS_DATATYPE:
-		return ((mask & (1<<6)) ? TRUE : FALSE);
-	case UA_NODECLASS_VIEW:
-		return ((mask & (1<<7)) ? TRUE : FALSE);
-	default:
-		return FALSE;
-	}
-}
-
-OV_DLLFNCEXPORT OV_RESULT opcua_helpers_setRootEntryReference(const OV_STRING newPath, OV_INSTPTR_opcua_interface pobj, OV_STRING * poldPath){
+OV_DLLFNCEXPORT OV_RESULT
+opcua_helpers_setRootEntryReference(const OV_STRING newPath, OV_INSTPTR_opcua_interface pobj, OV_STRING * poldPath){
 	// Check new path for NULL or zero length
 	OV_UINT length = ov_string_getlength(newPath);
 	if(length == 0)
@@ -906,4 +895,20 @@ OV_DLLFNCEXPORT OV_RESULT opcua_helpers_setRootEntryReference(const OV_STRING ne
 		return ov_string_setvalue(poldPath, newPath);
 	else
 		return OV_ERR_OK;
+}
+
+//Make sure that string node ids are allocated!
+//Make sure that node has correct node id
+OV_DLLFNCEXPORT UA_StatusCode
+opcua_helpers_addReference(
+		UA_Node* node, const UA_NodeId * sourceNodeId, const UA_NodeId referenceTypeId,
+		const UA_ExpandedNodeId targetNodeId, UA_NodeClass targetNodeClass, UA_Boolean isForward){
+	UA_AddReferencesItem ref;
+	ref.isForward = isForward;
+	ref.referenceTypeId = referenceTypeId;
+	UA_NodeId_copy((sourceNodeId) ? sourceNodeId : &node->nodeId, &ref.sourceNodeId);
+	ref.targetNodeClass = targetNodeClass;
+	ref.targetNodeId = targetNodeId;
+	UA_String_init(&ref.targetServerUri);
+	return UA_Node_addReference(node, &ref);
 }

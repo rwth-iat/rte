@@ -42,20 +42,21 @@ OV_DLLFNCEXPORT OV_RESULT myLibrary_uaInterface_constructor(
          return result;
 
     /* do what */
-    //Create the trafo
-    pinst->v_trafo = Ov_HeapAlloc(OV_UA_InformationModel);
+    // Create the trafo
+    pinst->v_trafo = Ov_HeapAlloc(OPCUA_InformationModel);
     pinst->v_trafo->dataTypes = NULL;
     pinst->v_trafo->index = 0;
     pinst->v_trafo->uri = UA_String_fromChars("acplt.org/myLibrary");
     pinst->v_trafo->store = myLibrary_trafo_new(pinst);
+    pinst->v_trafo->nodeset = NULL;
 
-    //Create the types
+    // Create the types
     pinst->v_types = NULL;
-    //pinst->v_types = Ov_HeapAlloc(OV_UA_InformationModel);
     //pinst->v_types->dataTypes = NULL;
     //pinst->v_types->index = 0;
     //pinst->v_types->uri = UA_String_fromChars("acplt.org/myLibrary/types");
     //pinst->v_types->store = myLibrary_types_new(pinst);
+    //pinst->v_types->nodeset = NULL;
 
     return OV_ERR_OK;
 }
@@ -69,6 +70,16 @@ OV_DLLFNCEXPORT void myLibrary_uaInterface_destructor(
     OV_INSTPTR_myLibrary_uaInterface pinst = Ov_StaticPtrCast(myLibrary_uaInterface, pobj);
 
     /* do what */
+    // Delete the trafo
+    UA_String_deleteMembers(&pinst->v_trafo->uri);
+    myLibrary_trafo_delete(pinst->v_trafo->store);
+    Ov_HeapFree(pinst->v_trafo);
+    pinst->v_trafo = NULL;
+    //Delete the types
+    //UA_String_deleteMembers(&pinst->v_types->uri);
+    //opcua_ovStore_delete(pinst->v_types->store);
+    Ov_HeapFree(pinst->v_types);
+    pinst->v_types = NULL;
 
     /* destroy object */
     ov_object_destructor(pobj);

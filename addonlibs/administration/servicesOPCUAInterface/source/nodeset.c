@@ -3,44 +3,20 @@
 
  */
 #include "nodeset_services.h"
-UA_INLINE UA_StatusCode nodeset(UA_Server *server){
-  return nodeset_returnNamespaces(server, NULL, NULL);
-}
-
-UA_INLINE UA_StatusCode nodeset_returnNamespaces(
-        UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces) {
+UA_INLINE UA_StatusCode servicesOPCUAInterface_nodeset(UA_Server *server){
   UA_StatusCode retval = UA_STATUSCODE_GOOD;
-  UA_Namespace* nsArray = UA_malloc(3 * sizeof(UA_Namespace));
-  UA_String tempNsUri;
+  UA_String tempNsUri = UA_STRING_NULL;
 
   //Adding namespace for old namespace index = 0 with uri: http://opcfoundation.org/UA/
   tempNsUri = UA_String_fromChars("http://opcfoundation.org/UA/");
-  UA_Namespace_init(&nsArray[0], &tempNsUri);
+  UA_UInt16 nsIdx_0 = 0;
+  retval |= UA_Server_getNamespaceByName(server, tempNsUri, (size_t*) &nsIdx_0);
   UA_String_deleteMembers(&tempNsUri);
-  retval |= UA_Server_addNamespace_full(server, &nsArray[0]);
-  UA_UInt16 nsIdx_0 = nsArray[0].index;
-  //Adding namespace for old namespace index = 2 with uri: http://acplt.org/identification/
-  tempNsUri = UA_String_fromChars("http://acplt.org/identification/");
-  UA_Namespace_init(&nsArray[1], &tempNsUri);
-  UA_String_deleteMembers(&tempNsUri);
-  retval |= UA_Server_addNamespace_full(server, &nsArray[1]);
-  //UA_UInt16 nsIdx_2 = nsArray[1].index;
   //Adding namespace for old namespace index = 3 with uri: http://acplt.org/services/
-  tempNsUri = UA_String_fromChars("http://acplt.org/services/");
-  UA_Namespace_init(&nsArray[2], &tempNsUri);
+  tempNsUri = UA_String_fromChars("acplt.org/services/types");
+  UA_UInt16 nsIdx_3 = 0;
+  retval |= UA_Server_getNamespaceByName(server, tempNsUri, (size_t*) &nsIdx_3);
   UA_String_deleteMembers(&tempNsUri);
-  retval |= UA_Server_addNamespace_full(server, &nsArray[2]);
-  UA_UInt16 nsIdx_3 = nsArray[2].index;
-
-  //Writing back desired namespace values')
-  if(namespacesSize) {*namespacesSize = 3;};
-  if(namespaces) {namespaces = &nsArray;}
-  else {
-    for(size_t i = 0 ; i < 3 ; ++i){
-      UA_Namespace_deleteMembers(&nsArray[i]);
-    }
-    UA_free(nsArray);
-  }
   if(retval == UA_STATUSCODE_GOOD){retval = UA_STATUSCODE_GOOD;} //ensure that retval is used
   
 
