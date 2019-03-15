@@ -84,3 +84,23 @@ OV_DLLFNCEXPORT void servicesOPCUAInterface_interface_destructor(
 
     return;
 }
+
+OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkNodeId(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
+    /*
+    *   local variables
+    */
+	if(Ov_CanCastTo(services_Service, pNode)){
+		if(parentRef){
+			parentRef->isForward = TRUE;
+			parentRef->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+			//parentRef->sourceNodeId
+			parentRef->targetNodeClass = UA_NODECLASS_METHOD;
+			ov_memstack_lock();
+			parentRef->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(pobj->v_trafo->index, ov_path_getcanonicalpath(pNode,2));
+			ov_memstack_unlock();
+			//parentRef->targetServerUri
+		}
+		return TRUE;
+	}
+    return FALSE;
+}

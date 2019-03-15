@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT OV_STRING opcua_interface_uri_get(
     OV_INSTPTR_opcua_interface          pobj
 ) {
 	OV_STRING uri = NULL;
-	opcua_helpers_copyUAStringToOV(pobj->v_trafo->uri, &uri);//TODO check for memleak
+	opcua_helpers_copyUAStringToOV(pobj->v_trafo->uri, &uri);
     return uri;
 }
 
@@ -208,6 +208,7 @@ static OV_RESULT removeInformationModel(UA_Server * server, OPCUA_InformationMod
 	return OV_ERR_OK;
 }
 
+//TODO subscribe to changes of namespace array and update v_trafo.index and v_types.index
 OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
 
 	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
@@ -262,4 +263,9 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj
 		//TODO error handling
 	}
     return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkNodeId(
+		OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
+    return FALSE;
 }

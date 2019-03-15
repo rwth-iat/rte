@@ -33,6 +33,13 @@ typedef struct UA_DataTypeArray {
     const UA_DataType *types;  
 } UA_DataTypeArray;  
 ```
+
+#### Change editing of nodes to getNodeCopy and replaceNode 
+Add define in open62541.c
+```
+#define UA_ENABLE_IMMUTABLE_NODES
+```
+
 #### Add writeability for namespace array (ua_server_ns0.c)
 ```cpp
 //________________________ACPLT DELETE START______________________
