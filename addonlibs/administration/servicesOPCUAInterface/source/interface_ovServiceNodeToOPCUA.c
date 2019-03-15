@@ -23,6 +23,7 @@
 #include "opcua.h"
 #include "opcua_helpers.h"
 #include "opcua_ovStore.h"
+#include "nodeset_services.h"
 
 OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOPCUA(
 		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
@@ -30,7 +31,6 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
@@ -45,7 +45,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
@@ -53,6 +53,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	nodeClass = UA_NODECLASS_METHOD;
 	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_MethodNode));
 
+	//TODO most code is copied from opcua library --> Move to own function and reuse
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName qName;
@@ -107,35 +108,18 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	((UA_MethodNode*)newNode)->context = pobj;
 
 	// References
-	opcua_ovStore_addReference(context, newNode);
-	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	UA_String Revision = UA_STRING_NULL;
-	UA_String_copy(&nodeId->identifier.string, &Revision);
-	opcua_helpers_UA_String_append(&Revision,".ServiceRevision");
-	UA_String Version = UA_STRING_NULL;
-	UA_String_copy(&nodeId->identifier.string, &Version);
-	opcua_helpers_UA_String_append(&Version,".ServiceVersion");
-	UA_String WSDL = UA_STRING_NULL;
-	UA_String_copy(&nodeId->identifier.string, &WSDL);
-	opcua_helpers_UA_String_append(&WSDL,".WSDL");
+	// HasComponent to parent
+	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	ov_memstack_lock();
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
+			UA_EXPANDEDNODEID_STRING_ALLOC(opcua_ovStore_searchNamespaceIndex(context, pParent, FALSE),
+					ov_path_getcanonicalpath(pParent, 2)), //TODO use checkNodeId function of correct interface instead.
+			UA_NODECLASS_OBJECT, UA_FALSE);
 
-	for (size_t i = 0; i < newNode->referencesSize; i++){
-		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetIds[0] = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_METHODNODE);
-			continue;
-		}
-		for (size_t j = 0; j < newNode->references[i].targetIdsSize ; j++){
-			if (UA_String_equal(&Revision, &newNode->references[i].targetIds[j].nodeId.identifier.string) ||
-				UA_String_equal(&Version, &newNode->references[i].targetIds[j].nodeId.identifier.string) ||
-				UA_String_equal(&WSDL, &newNode->references[i].targetIds[j].nodeId.identifier.string)){
-				newNode->references[i].targetIds[j].nodeId.namespaceIndex = pinterface->v_trafo->index;
-			}
-		}
-	}
-	UA_String_deleteMembers(&Revision);
-	UA_String_deleteMembers(&Version);
-	UA_String_deleteMembers(&WSDL);
-	UA_NodeId_deleteMembers(&tmpNodeId);
+	// HasTypeDefinition to Service
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
+			UA_EXPANDEDNODEID_NUMERIC(pinterface->v_types->index, UA_NSSERVICESID_SERVICESTYPE), UA_NODECLASS_METHOD ,UA_TRUE);
+	ov_memstack_unlock();
 
 	// InputArguments
 	OV_STRING tmpString = NULL;
@@ -157,14 +141,6 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 			UA_TRUE);
 	ov_string_setvalue(&tmpString, NULL);
 
-	// HasComponent to parent
-	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
-			UA_EXPANDEDNODEID_STRING_ALLOC(opcua_ovStore_searchNamespaceIndex(context, pParent, FALSE),
-					ov_path_getcanonicalpath(pParent, 2)),
-			UA_NODECLASS_OBJECT, UA_FALSE);
-
-	ov_string_setvalue(&tmpString, NULL);
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
 }

@@ -17,89 +17,67 @@
 #include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
 
-OV_DLLFNCEXPORT UA_UInt16 opcua_ovStore_searchNamespaceIndex(void * context, OV_INSTPTR_ov_object pobj, OV_BOOL forTypes){
+OV_DLLFNCEXPORT UA_UInt16 opcua_ovStore_searchNamespaceIndex(
+		OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pobj, OV_BOOL forTypes){
 	//Get ua server connected to this interface
-	OV_INSTPTR_opcua_server server = NULL;
-	if(Ov_CanCastTo(opcua_interface, (OV_INSTPTR_opcua_interface)context)){
-		server = Ov_GetParent(opcua_serverToInterfaces, Ov_StaticPtrCast(opcua_interface, (OV_INSTPTR_opcua_interface)context));
-	}
-	if(server == NULL)
+	if(pInterface == NULL)
 		return OPCUA_OVSTORE_DEFAULTNSINDEX;
-
-	//Combine search Uri
-	OV_INSTPTR_ov_class pclass = Ov_GetClassPtr(pobj);
-	OV_INSTPTR_ov_domain plibrary = Ov_GetParent(ov_containment, pclass);
-	UA_String searchUri = UA_String_fromChars(OPCUA_OVSTORE_DEFAULTNSURI_PREFIX);
-	opcua_helpers_UA_String_append(&searchUri, plibrary->v_identifier);
-	if(forTypes) opcua_helpers_UA_String_append(&searchUri, OPCUA_OVSTORE_DEFAULTNSURI_SUFFIX);
-
-	//Search for namespace in UA Server
-	UA_UInt16 index = OPCUA_OVSTORE_DEFAULTNSINDEX;
-	UA_Server_getNamespaceByName(server->v_server, searchUri, (size_t *)&index);
-	//Free Resources from namespace search
-	pclass = NULL;
-	plibrary = NULL;
-	UA_String_deleteMembers(&searchUri);
-
-	return index;
+	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	if(pServer == NULL)
+		return forTypes ? (pInterface->v_types ? pInterface->v_types->index : OPCUA_OVSTORE_DEFAULTNSINDEX ) :
+				(pInterface->v_trafo ? pInterface->v_trafo->index : OPCUA_OVSTORE_DEFAULTNSINDEX );
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		if(pInterface == pInterfaceCheck)
+			continue;
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			if(pVtblInterface->m_checkNodeId(pInterfaceCheck, pobj, NULL)){
+				return forTypes ? (pInterfaceCheck->v_types ? pInterfaceCheck->v_types->index : OPCUA_OVSTORE_DEFAULTNSINDEX ) :
+						(pInterfaceCheck->v_trafo ? pInterfaceCheck->v_trafo->index : OPCUA_OVSTORE_DEFAULTNSINDEX );
+			}
+		}
+	}
+	return OPCUA_OVSTORE_DEFAULTNSINDEX;
 }
 
-/*	only use numeric nodeIDs	*/
-//static UA_StatusCode opcua_ovStore_fakeReferenceDescription(
-//		UA_NodeId refNodeId, OV_STRING browsename, UA_UInt16 browsenameNsIndex, OV_STRING displayname, UA_NodeClass nodeClass, UA_NodeId type,
-//			UA_UInt16 referenceTypeNamespaceIndex, UA_Int32 referenceType, UA_Boolean isForward, UA_ReferenceDescription* dst){
-//	UA_StatusCode			result			=	UA_STATUSCODE_GOOD;
-//	if(!dst){
-//		return UA_STATUSCODE_BADINVALIDARGUMENT;
-//	}
-//
-//	dst->nodeId.nodeId = refNodeId;
-//
-//	dst->browseName.name = UA_String_fromChars(browsename);
-//	dst->browseName.namespaceIndex = browsenameNsIndex;
-//
-//	dst->displayName.text = UA_String_fromChars(displayname);
-//	dst->displayName.locale = UA_String_fromChars("en");
-//
-//	dst->isForward = isForward;
-//
-//	dst->nodeClass = nodeClass;
-//
-//	// in ov-namespace beware that numerical ids may change when the server restarts (but associations can change between /acplt/... and /Libraries/..., too)
-//	dst->referenceTypeId.namespaceIndex = referenceTypeNamespaceIndex;
-//	dst->referenceTypeId.identifierType = UA_NODEIDTYPE_NUMERIC;
-//	dst->referenceTypeId.identifier.numeric = referenceType;
-//
-//	// TODO fixme	This is the type-node: using 0|58 (baseObjectType) for all variables
-//	if(dst->nodeClass == UA_NODECLASS_OBJECT || dst->nodeClass == UA_NODECLASS_VARIABLE){
-//		dst->typeDefinition.nodeId = type;
-//	} else {
-//		dst->typeDefinition.nodeId = UA_NODEID_NULL;
-//	}
-//
-//	return result;
-//}
+OV_DLLFNCEXPORT OV_BOOL opcua_ovStore_addReferenceToSpecificObject(
+		OV_INSTPTR_opcua_server pServer, OV_INSTPTR_ov_object pobj, UA_Node* node){
+	if(!pServer)
+		return FALSE;
+	UA_AddReferencesItem childReferenceItem;
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			UA_AddReferencesItem_init(&childReferenceItem);
+			if(pVtblInterface->m_checkNodeId(pInterfaceCheck, pobj, &childReferenceItem)){
+				UA_Node_addReference(node, &childReferenceItem);
+				UA_AddReferencesItem_deleteMembers(&childReferenceItem);
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
 
-static UA_StatusCode opcua_ovStore_fillReferenceDescription(
-		void * context,
-		OV_ELEMENT* pElement, UA_UInt16 referenceTypeNamespaceIndex, UA_Int32 referenceType, UA_Boolean isForward, UA_ReferenceDescription* dst){
+static UA_StatusCode opcua_ovStore_addReference(
+		OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pElement, UA_NodeId referenceTypeId, UA_Boolean isForward,
+		UA_Node * node){
 	OV_INSTPTR_ov_object	pObject			=	NULL;
 	UA_StatusCode			result			=	UA_STATUSCODE_GOOD;
 	OV_STRING				path			=	NULL;
-	OV_STRING				varPath			=	NULL;
-	OV_UINT					varPathLen		=	0;
-	if(!dst){
-		return UA_STATUSCODE_BADINVALIDARGUMENT;
-	}
 
-	dst->nodeId.nodeId.identifierType = UA_NODEIDTYPE_STRING;
-	dst->nodeId.nodeId.namespaceIndex = opcua_ovStore_searchNamespaceIndex(context, pElement->pobj, FALSE);
-
+	// Check element type
 	if(pElement->elemtype == OV_ET_OBJECT || pElement->elemtype == OV_ET_VARIABLE || pElement->elemtype == OV_ET_MEMBER){
 		pObject = pElement->pobj;
 	} else {
 		return UA_STATUSCODE_BADNOTSUPPORTED;
 	}
+
+	// Concat path for node id of target
 	ov_memstack_lock();
 	path = ov_path_getcanonicalpath(pObject, 2);
 	if(!path){
@@ -107,71 +85,34 @@ static UA_StatusCode opcua_ovStore_fillReferenceDescription(
 		return UA_STATUSCODE_BADOUTOFMEMORY;
 	}
 	if(pElement->elemtype == OV_ET_VARIABLE){
-		varPathLen = ov_string_getlength(path) + ov_string_getlength(pElement->elemunion.pvar->v_identifier) + 2;
-		varPath = ov_memstack_alloc(varPathLen);
-		if(!varPath){
-			ov_memstack_unlock();
-			return UA_STATUSCODE_BADOUTOFMEMORY;
-		}
-		snprintf(varPath, varPathLen, "%s.%s", path, pElement->elemunion.pvar->v_identifier);
-		path = varPath;
-	}
-	dst->nodeId.nodeId.identifier.string = UA_String_fromChars(path);
-	if(dst->nodeId.nodeId.identifier.string.length == 0 && dst->nodeId.nodeId.identifier.string.data != UA_EMPTY_ARRAY_SENTINEL){
-		result = UA_STATUSCODE_BADOUTOFMEMORY;
-	} else {
-		result = UA_STATUSCODE_GOOD;
+		ov_string_stack_print(&path, "%s.%s", path, pElement->elemunion.pvar->v_identifier);
 	}
 
-	if(pElement->elemtype == OV_ET_OBJECT){
-		dst->browseName.name = UA_String_fromChars(pElement->pobj->v_identifier);
-	} else if(pElement->elemtype == OV_ET_VARIABLE){
-		dst->browseName.name = UA_String_fromChars(pElement->elemunion.pvar->v_identifier);
-	}
-	dst->browseName.namespaceIndex = dst->nodeId.nodeId.namespaceIndex;
-
-	if(pElement->elemtype == OV_ET_OBJECT){
-		dst->displayName.text = UA_String_fromChars(pElement->pobj->v_identifier);
-	} else if(pElement->elemtype == OV_ET_VARIABLE){
-		dst->displayName.text = UA_String_fromChars(pElement->elemunion.pvar->v_identifier);
-	}
-
-	dst->isForward = isForward;
-
-	dst->nodeClass = opcua_helpers_getNodeClass(pElement);
-
-	// in ov-namespace beware that numerical ids may change when the server restarts (but associations can change between /acplt/... and /Libraries/..., too)
-	dst->referenceTypeId.namespaceIndex = referenceTypeNamespaceIndex;
-	dst->referenceTypeId.identifierType = UA_NODEIDTYPE_NUMERIC;
-	dst->referenceTypeId.identifier.numeric = referenceType;
-
-	// TODO fixme	This is the type-node: using 0|58 (baseObjectType) for all variables
-	if(dst->nodeClass == UA_NODECLASS_OBJECT){
-		dst->typeDefinition.nodeId.namespaceIndex = OPCUA_OVSTORE_DEFAULTNSINDEX;
-		dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
-		dst->typeDefinition.nodeId.identifier.numeric = pElement->pobj->v_idL; //TODO Use string nodeId from class definition
-	} else if(dst->nodeClass == UA_NODECLASS_VARIABLE){
-		dst->typeDefinition.nodeId.namespaceIndex = 0;
-		dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
-		dst->typeDefinition.nodeId.identifier.numeric = 58;
-	} else {
-		dst->typeDefinition.nodeId = UA_NODEID_NULL;
-	}
+	result = opcua_helpers_addReference(node, NULL, referenceTypeId,
+			UA_EXPANDEDNODEID_STRING_ALLOC(opcua_ovStore_searchNamespaceIndex(pInterface, pObject, FALSE), path),
+			opcua_helpers_getNodeClass(pElement),isForward);
 	ov_memstack_unlock();
 	return result;
 }
+
 /******************************************************************
  * helper for Organizes
  *****************************************************************/
 
-static UA_StatusCode opcua_ovStore_getOrganizes(void * context, OV_ELEMENT* pNode, OV_UINT* refCount,
-		OV_BOOL fillDescription, UA_ReferenceDescription* dst,
-		UA_StatusCode* statusCode){
+//Maps to ov_containment
+static UA_StatusCode opcua_ovStore_addOrganizes(OV_INSTPTR_opcua_interface pInterface,
+		OV_ELEMENT* pNode,
+		UA_Node * node){
+	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ELEMENT	childElement, parentElement;
 	OV_ACCESS access = OV_AC_NONE;
 	if(pNode->elemtype != OV_ET_OBJECT)
 		return UA_STATUSCODE_GOOD;
 
+	OV_INSTPTR_opcua_server pServer = NULL;
+	if(pInterface){
+		pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	}
 	//Forward direction
 	childElement.elemtype = OV_ET_OBJECT;
 	childElement.pobj = NULL;
@@ -179,10 +120,11 @@ static UA_StatusCode opcua_ovStore_getOrganizes(void * context, OV_ELEMENT* pNod
 	childElement.pvar = NULL;
 	Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pNode->pobj), childElement.pobj){
 		childElement.elemunion.pobj = childElement.pobj;
-		if(fillDescription){
-			*statusCode = opcua_ovStore_fillReferenceDescription(context, &childElement, 0, UA_NS0ID_ORGANIZES, UA_TRUE, &(dst[*refCount]));
-		}
-		(*refCount)++;
+		// Check whether child has a specific transformation
+		if(!opcua_ovStore_addReferenceToSpecificObject(pServer, childElement.pobj, node))
+			// Child has no specific transformation --> use generic interface
+			statusCode |= opcua_ovStore_addReference(pInterface, &childElement,
+					UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, node);
 	}
 	// Backward / inverse direction
 	if(pNode->pobj->v_idL || pNode->pobj->v_idH){	// don't do it for ov root object ("/")
@@ -193,31 +135,25 @@ static UA_StatusCode opcua_ovStore_getOrganizes(void * context, OV_ELEMENT* pNod
 		childElement.elemunion.pobj = parentElement.pobj;
 		access = opcua_helpers_getAccess(&parentElement);
 		if(access & OV_AC_READ){
-			if(fillDescription){
-				*statusCode = opcua_ovStore_fillReferenceDescription(context, &parentElement, 0, UA_NS0ID_ORGANIZES, UA_FALSE, &(dst[*refCount]));
-			}
-			(*refCount)++;
+			statusCode |= opcua_ovStore_addReference(pInterface, &parentElement,
+					UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_FALSE, node);
 		}
 	} else {	//	ov root-node --> bridge node in ns0
-		if(fillDescription){
-			*statusCode = UA_STATUSCODE_BADNOTIMPLEMENTED; //TODO implement backward reference to Objects folder
-		}
-		(*refCount)++;
+		statusCode |= UA_STATUSCODE_BADNOTIMPLEMENTED; //TODO implement backward reference to Objects folder
 	}
-	return UA_STATUSCODE_GOOD;
+	return statusCode;
 }
 
 /******************************************************************
  * helper for HasTypeDefinition
  *****************************************************************/
 
-static UA_Int32 opcua_ovStore_getHasTypeDefinition(void * context, OV_ELEMENT* pNode, OV_UINT* refCount,
-		OV_BOOL fillDescription, UA_ReferenceDescription* dst,
-		UA_StatusCode* statusCode){
+//	maps to ov_instantiation
+static UA_StatusCode opcua_ovStore_addHasTypeDefinition(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node* node){
+	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_INSTPTR_ov_object	pChildObject	=	NULL;
 	OV_ELEMENT				parentTypeDefinition, childTypeDefinition;
-	//	maps to ov/instantiation
 	// Forward direction
 	//	source is object target is type --> this direction is an instantiation getparent for objects,
 	//		and analog for links and variables
@@ -225,22 +161,18 @@ static UA_Int32 opcua_ovStore_getHasTypeDefinition(void * context, OV_ELEMENT* p
 			|| pNode->elemtype == OV_ET_MEMBER || pNode->elemtype == OV_ET_CHILDLINK || pNode->elemtype == OV_ET_PARENTLINK){
 		access = opcua_helpers_getAccess(pNode);
 		if(access & OV_AC_READ){
-			if(fillDescription){
-				if(pNode->elemtype == OV_ET_OBJECT){
-					parentTypeDefinition.elemtype = OV_ET_OBJECT;
-					parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_instantiation, pNode->pobj));
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &parentTypeDefinition, 0, UA_NS0ID_HASTYPEDEFINITION, UA_TRUE, &(dst[*refCount]));
-				} else if (pNode->elemtype == OV_ET_VARIABLE || pNode->elemtype == OV_ET_MEMBER){
-					parentTypeDefinition.elemtype = OV_ET_OBJECT;
-					parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.pvar);
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &parentTypeDefinition, 0, UA_NS0ID_HASTYPEDEFINITION, UA_TRUE, &(dst[*refCount]));
-				}else if (pNode->elemtype == OV_ET_PARENTLINK || pNode->elemtype == OV_ET_CHILDLINK){
-					parentTypeDefinition.elemtype = OV_ET_OBJECT;
-					parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.passoc);
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &parentTypeDefinition, 0, UA_NS0ID_HASTYPEDEFINITION, UA_TRUE, &(dst[*refCount]));
-				}
+			if(pNode->elemtype == OV_ET_OBJECT){
+				parentTypeDefinition.elemtype = OV_ET_OBJECT;
+				parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_instantiation, pNode->pobj));
+			} else if (pNode->elemtype == OV_ET_VARIABLE || pNode->elemtype == OV_ET_MEMBER){
+				parentTypeDefinition.elemtype = OV_ET_OBJECT;
+				parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.pvar);
+			}else if (pNode->elemtype == OV_ET_PARENTLINK || pNode->elemtype == OV_ET_CHILDLINK){
+				parentTypeDefinition.elemtype = OV_ET_OBJECT;
+				parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.passoc);
 			}
-			(*refCount)++;
+			statusCode |= opcua_ovStore_addReference(pInterface, &parentTypeDefinition,
+					UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION), UA_TRUE, node);
 		}
 	}
 	// Backward / inverse direction
@@ -251,28 +183,25 @@ static UA_Int32 opcua_ovStore_getHasTypeDefinition(void * context, OV_ELEMENT* p
 			childTypeDefinition.pobj = pChildObject;
 			access = opcua_helpers_getAccess(&childTypeDefinition);
 			if(access & OV_AC_READ){
-				if(fillDescription){
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &childTypeDefinition, 0, UA_NS0ID_HASTYPEDEFINITION, UA_FALSE, &(dst[*refCount]));
-				}
-				(*refCount)++;
+				statusCode |= opcua_ovStore_addReference(pInterface, &childTypeDefinition,
+						UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION), UA_FALSE, node);
 			}
 		}
 	}
-	return UA_STATUSCODE_GOOD;
+	return statusCode;
 }
 
 /******************************************************************
  * helper for HasSubtype
  *****************************************************************/
 
-static UA_Int32 opcua_ovStore_getHasSubtype(void * context, OV_ELEMENT* pNode, OV_UINT* refCount,
-		OV_BOOL fillDescription, UA_ReferenceDescription* dst,
-		UA_StatusCode* statusCode){
+// Maps to ov_inheritance
+static UA_StatusCode opcua_ovStore_addHasSubtype(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node * node){
+	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_INSTPTR_ov_class		pChildClass	=	NULL;
 	OV_INSTPTR_ov_class		pParentClass	=	NULL;
 	OV_ELEMENT				referencedElement;
-	//	maps to ov/inheritance
 	// Forward direction
 	if(pNode->elemtype == OV_ET_OBJECT && Ov_GetClassPtr(pNode->pobj) == pclass_ov_class){
 		Ov_ForEachChild(ov_inheritance, Ov_StaticPtrCast(ov_class, pNode->pobj), pChildClass){
@@ -280,51 +209,66 @@ static UA_Int32 opcua_ovStore_getHasSubtype(void * context, OV_ELEMENT* pNode, O
 			referencedElement.pobj = Ov_PtrUpCast(ov_object, pChildClass);
 			access = opcua_helpers_getAccess(&referencedElement);
 			if(access & OV_AC_READ){
-				if(fillDescription){
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &referencedElement, 0, UA_NS0ID_HASSUBTYPE, UA_TRUE, &(dst[*refCount]));
-				}
-				(*refCount)++;
+				statusCode |= opcua_ovStore_addReference(pInterface, &referencedElement,
+						UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_TRUE, node);
 			}
 		}
 	}
 	// Backward / inverse direction
-	if(pNode->elemtype == OV_ET_OBJECT && pNode->pobj == Ov_PtrUpCast(ov_object, pclass_ov_class)){
+	if(pNode->elemtype == OV_ET_OBJECT &&
+			Ov_GetClassPtr(pNode->pobj) == pclass_ov_class){
+
+		// Set inverse reference to namespace 0 UA types
+		if(ov_string_compare(pNode->pobj->v_identifier, "object") == OV_STRCMP_EQUAL){
+			statusCode |= opcua_helpers_addReference(node, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
+					UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE), UA_NODECLASS_OBJECTTYPE, UA_FALSE);
+		}
+		// Set inverse reference to namespace 0 UA types
+		if(ov_string_compare(pNode->pobj->v_identifier, "domain") == OV_STRCMP_EQUAL){
+			statusCode |= opcua_helpers_addReference(node, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE),
+					UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), UA_NODECLASS_OBJECTTYPE, UA_FALSE);
+		}
+
 		pParentClass = Ov_GetParent(ov_inheritance, Ov_StaticPtrCast(ov_class, pNode->pobj));
 		if(pParentClass){
 			referencedElement.elemtype = OV_ET_OBJECT;
 			referencedElement.pobj = Ov_PtrUpCast(ov_object, pParentClass);
 			access = opcua_helpers_getAccess(&referencedElement);
 			if(access & OV_AC_READ){
-				if(fillDescription){
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &referencedElement, 0, UA_NS0ID_HASSUBTYPE, UA_FALSE, &(dst[*refCount]));
-				}
-				(*refCount)++;
+				statusCode |= opcua_ovStore_addReference(pInterface, &referencedElement,
+						UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_FALSE, node);
 			}
 		}
 	}
-	return UA_STATUSCODE_GOOD;
+	return statusCode;
 }
 
 /******************************************************************
  * helper for HasProperty
  *****************************************************************/
 
-static UA_Int32 opcua_ovStore_getHasProperty(void * context, OV_ELEMENT* pNode, OV_UINT* refCount,
-		OV_BOOL fillDescription, UA_ReferenceDescription* dst, UA_StatusCode* statusCode){
+//	Maps to variables in objects
+static UA_StatusCode opcua_ovStore_addHasProperty(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node* node){
+	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_ELEMENT				referencedElement;
-	//	maps to variables in objects
+
 	// Forward direction
 	if(pNode->elemtype == OV_ET_OBJECT){
 		referencedElement.elemtype = OV_ET_NONE;
 		ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
 		while(referencedElement.elemtype != OV_ET_NONE){
+			// Ignore idH and idL variables
+			if(referencedElement.elemtype == OV_ET_VARIABLE &&
+					(ov_string_compare(referencedElement.elemunion.pvar->v_identifier, "idH") == OV_STRCMP_EQUAL ||
+					 ov_string_compare(referencedElement.elemunion.pvar->v_identifier, "idL") == OV_STRCMP_EQUAL)){
+				ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
+				continue;
+			}
 			access = opcua_helpers_getAccess(&referencedElement);
 			if(access & OV_AC_READ){
-				if(fillDescription){
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &referencedElement, 0, UA_NS0ID_HASPROPERTY, UA_TRUE, &(dst[*refCount]));
-				}
-				(*refCount)++;
+				statusCode |= opcua_ovStore_addReference(pInterface, &referencedElement,
+						UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY), UA_TRUE, node);
 			}
 			ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
 		}
@@ -335,22 +279,19 @@ static UA_Int32 opcua_ovStore_getHasProperty(void * context, OV_ELEMENT* pNode, 
 		referencedElement.pobj = pNode->pobj;
 		access = opcua_helpers_getAccess(&referencedElement);
 		if(access & OV_AC_READ){
-			if(fillDescription){
-				*statusCode = opcua_ovStore_fillReferenceDescription(context, &referencedElement, 0, UA_NS0ID_HASPROPERTY, UA_FALSE, &(dst[*refCount]));
-			}
-			(*refCount)++;
+			statusCode |= opcua_ovStore_addReference(pInterface, &referencedElement,
+					UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY), UA_FALSE, node);
 		}
 	}
-	return UA_STATUSCODE_GOOD;
+	return statusCode;
 }
 
 /******************************************************************
  * helper for HasComponent
  *****************************************************************/
 
-static UA_Int32 opcua_ovStore_getHasComponent(void * context, OV_ELEMENT* pNode, OV_UINT* refCount,
-		OV_BOOL fillDescription, UA_ReferenceDescription* dst,
-		UA_StatusCode* statusCode){
+static UA_StatusCode opcua_ovStore_addHasComponent(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node* node){
+	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_ELEMENT				referencedElement;
 	//	maps to variables in objects
@@ -361,10 +302,8 @@ static UA_Int32 opcua_ovStore_getHasComponent(void * context, OV_ELEMENT* pNode,
 		while(referencedElement.elemtype != OV_ET_NONE){
 			access = opcua_helpers_getAccess(&referencedElement);
 			if(access & OV_AC_READ){
-				if(fillDescription){
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &referencedElement, 0, UA_NS0ID_HASCOMPONENT, UA_TRUE, &(dst[*refCount]));
-				}
-				(*refCount)++;
+				statusCode |= opcua_ovStore_addReference(pInterface, &referencedElement,
+						UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT), UA_TRUE, node);
 			}
 			ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
 		}
@@ -376,21 +315,19 @@ static UA_Int32 opcua_ovStore_getHasComponent(void * context, OV_ELEMENT* pNode,
 			referencedElement.pobj = pNode->pobj->v_pouterobject;
 			access = opcua_helpers_getAccess(&referencedElement);
 			if(access & OV_AC_READ){
-				if(fillDescription){
-					*statusCode = opcua_ovStore_fillReferenceDescription(context, &referencedElement, 0, UA_NS0ID_HASCOMPONENT, UA_FALSE, &(dst[*refCount]));
-				}
-				(*refCount)++;
+				statusCode |= opcua_ovStore_addReference(pInterface, &referencedElement,
+						UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT), UA_FALSE, node);
 			}
 		}
 	}
-	return UA_STATUSCODE_GOOD;
+	return statusCode;
 }
 
 /******************************************************************
  * helper for OVReferences
  *****************************************************************/
 
-//static UA_Int32 opcua_ovStore_getOvReferences(void * context, OV_ELEMENT* pNode, signed char flag, OV_INSTPTR_ov_association passoc,
+//static UA_Int32 opcua_ovStore_getOvReferences(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, signed char flag, OV_INSTPTR_ov_association passoc,
 //		OV_UINT* refCount, OV_BOOL fillDescription, UA_ReferenceDescription* dst, UA_StatusCode* statusCode){
 //	OV_ACCESS				access		=	OV_AC_NONE;
 //	OV_ELEMENT				linkElement;
@@ -468,31 +405,11 @@ static UA_Int32 opcua_ovStore_getHasComponent(void * context, OV_ELEMENT* pNode,
 //TODO add inverse HasSubtype (HasSupertype) reference for classes.
 //TODO variable and port values are NULL, BadNotReadable
 //TODO method propertys are not displayed correctly --> servicesOPCUAInterface
-//TODO use function UA_Node_addReference and AddReferenceItem instead of ReferenceDescription
-OV_DLLFNCEXPORT UA_StatusCode opcua_ovStore_addReference(void * context, UA_Node *node){
+OV_DLLFNCEXPORT UA_StatusCode opcua_ovStore_addReferences(OV_INSTPTR_opcua_interface pInterface, UA_Node *node){
 	// references
-	UA_ReferenceDescription *references = NULL;
-	OV_UINT 				refCount = 0;
 	OV_ELEMENT 				pNode;
 	OV_PATH					nodePath;
-	OV_UINT					refCountBefore	=	0;
 	UA_StatusCode			result = UA_STATUSCODE_GOOD;
-
-	#define UAREFS_LENGTH		12
-	#define OVREFSARRAY_CHUNKSIZE	32
-	signed char				uaReferences [UAREFS_LENGTH];	//array for ua-references: 0: leave out, -1: to do, 1: done; specific for ovReferences: -2 do all
-	//TODO define as enum
-	#define INDEX_References					0
-	#define INDEX_NonHierarchicalReferences		1
-	#define INDEX_HierarchicalReferences		2
-	#define INDEX_HasChild						3
-	#define INDEX_Organizes						4
-	#define INDEX_HasTypeDefinition				5
-	#define INDEX_Aggregates					6
-	#define INDEX_HasSubtype					7
-	#define INDEX_HasProperty					8
-	#define INDEX_HasComponent					9
-	#define INDEX_OvReference					10
 
 	ov_memstack_lock();
 	if(opcua_helpers_resolveNodeIdToPath(node->nodeId, &nodePath) != UA_STATUSCODE_GOOD){
@@ -500,106 +417,24 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_ovStore_addReference(void * context, UA_Node
 	}
 	pNode = nodePath.elements[nodePath.size - 1];
 	ov_memstack_unlock();
-	for(OV_UINT j=1; j<UAREFS_LENGTH; j++){
-		uaReferences[j] = -1;
-	}
-	uaReferences[INDEX_OvReference] = -2;
-/*********************************************************************************************************************************
-* count all reference
-********************************************************************************************************************************/
-	// HasProperty
-	opcua_ovStore_getHasProperty(context, &pNode, &refCount, FALSE, NULL, NULL);
-	if (refCount == refCountBefore){
-		uaReferences[INDEX_HasProperty] = 1;
-	}
-	refCountBefore = refCount;
-	// HasTypeDefinition
-	opcua_ovStore_getHasTypeDefinition(context, &pNode, &refCount, FALSE, NULL, NULL);
-	if (refCount == refCountBefore){
-		uaReferences[INDEX_HasTypeDefinition] = 1;
-	}
-	refCountBefore = refCount;
-	// Organizes
-	opcua_ovStore_getOrganizes(context, &pNode, &refCount, FALSE, NULL, NULL);
-	if (refCount == refCountBefore){
-		uaReferences[INDEX_Organizes] = 1;
-	}
-	refCountBefore = refCount;
-	// HasSubtype
-	opcua_ovStore_getHasSubtype(context, &pNode, &refCount, FALSE, NULL, NULL);
-	if(refCount == refCountBefore){
-		uaReferences[INDEX_HasSubtype] = 1;
-	}
-	refCountBefore = refCount;
-	// HasComponent
-	opcua_ovStore_getHasComponent(context, &pNode, &refCount, FALSE, NULL, NULL);
-	if(refCount == refCountBefore){
-		uaReferences[INDEX_HasComponent] = 1;
-	}
-	refCountBefore = refCount;
-	// OvReferences
-	//TODO OvReferences NOTIMPLEMENTED
-	//  opcua_ovStore_getOvReferences(pNode, uaReferences[INDEX_OvReference], pAssoc, refCount);
-	//  if(*refCount == refCountBefore){
-	//		uaReferences[INDEX_OvReference] = 1;
-	//	}
-	//	refCountBefore = *refCount;
-	references = UA_Array_new(refCount, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
-
-	refCount = 0;
 
 	/*********************************************************************************************************************************
 	 * fill in results for all reference types
 	 ********************************************************************************************************************************/
 	// HasProperty
-	if (uaReferences[INDEX_HasProperty] != 1){
-		opcua_ovStore_getHasProperty(context, &pNode, &refCount,
-				TRUE, references, &result);
-	}
-	// HasTypeDefinition
-	if (uaReferences[INDEX_HasTypeDefinition] != 1){
-		opcua_ovStore_getHasTypeDefinition(context, &pNode, &refCount,
-				TRUE, references, &result);
-	}
-	// Organizes
-	if (uaReferences[INDEX_Organizes] != 1){
-		opcua_ovStore_getOrganizes(context, &pNode, &refCount,
-				TRUE, references, &result);
-	}
-	// HasSubtype
-	if (uaReferences[INDEX_HasSubtype] != 1){
-		opcua_ovStore_getHasSubtype(context, &pNode, &refCount,
-				TRUE, references, &result);
-	}
+	result |= opcua_ovStore_addHasProperty(pInterface, &pNode, node);
 	// HasComponent
-	if (uaReferences[INDEX_HasComponent] != 1){
-		opcua_ovStore_getHasComponent(context, &pNode, &refCount,
-				TRUE, references, &result);
-	}
+	result |= opcua_ovStore_addHasComponent(pInterface, &pNode, node);
+	// Organizes
+	result |= opcua_ovStore_addOrganizes(pInterface, &pNode, node);
+	// HasTypeDefinition
+	result |= opcua_ovStore_addHasTypeDefinition(pInterface, &pNode, node);
+	// HasSubtype
+	result |= opcua_ovStore_addHasSubtype(pInterface, &pNode, node);
 	// OvReferences
 	// NOTIMPLEMENTED
-	//  if (uaReferences[INDEX_OvReference] != 1){
-	//		opcua_ovStore_getOvReferences(pNode, refCount,
-	//  								TRUE, referencesNew, &result);
-	//  }
-
-	node->references = UA_calloc(refCount, sizeof(UA_NodeReferenceKind));
-	if(!references && !node->references && refCount>0){
-		UA_Array_delete(references, refCount, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
-		UA_free(node);
-		return UA_STATUSCODE_BADOUTOFMEMORY;
-	}
-	node->referencesSize = refCount;
-
-	for (size_t i = 0; i < node->referencesSize; i++){
-		UA_NodeId_copy(&(references[i].referenceTypeId), &(node->references[i].referenceTypeId));
-		node->references[i].targetIds = UA_malloc(sizeof(UA_ExpandedNodeId));
-		UA_ExpandedNodeId_copy(&(references[i].nodeId), node->references[i].targetIds);
-		node->references[i].targetIdsSize = 1;
-		node->references[i].isInverse = !references[i].isForward;
-	}
-
-	UA_Array_delete(references, refCount, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION]);
+	//		opcua_ovStore_getOvReferences(context, &pNode,,
+	//  								references, &result);
 	return result;
 }
 
@@ -631,12 +466,12 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
 	OV_INSTPTR_ov_object	pobjtemp = NULL;
-	OV_TICKET 				*pTicket = NULL;
+	OV_INSTPTR_opcua_interface pInterface = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	OV_ELEMENT				element;
-	OV_ANY					value = {.value.vartype = OV_VT_VOID, .value.valueunion.val_string = NULL, .state=OV_ST_UNKNOWN, .time.secs = 0, .time.usecs = 0};
-	OV_ANY					emptyAny = {.value.vartype = OV_VT_VOID, .value.valueunion.val_string = NULL, .state=OV_ST_UNKNOWN, .time.secs = 0, .time.usecs = 0};
+	OV_ANY					value = OV_ANY_INIT;
+	OV_ANY					emptyAny = OV_ANY_INIT;
 
 	ov_memstack_lock();
 	result = opcua_helpers_resolveNodeIdToPath(*nodeId, &path);
@@ -647,7 +482,7 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
 
-	result = opcua_helpers_getVtblPointerAndCheckAccess(&element, pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&element, &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return NULL;
 	}
@@ -683,11 +518,15 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 		return NULL;
 	}
 
+	if(Ov_CanCastTo(opcua_interface, (OV_INSTPTR_opcua_interface)context)){
+		pInterface = Ov_StaticPtrCast(opcua_interface, context);
+	}
+
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName_init(&newNode->browseName);
 	newNode->browseName.name = UA_String_fromChars(pobj->v_identifier);
-	newNode->browseName.namespaceIndex = opcua_ovStore_searchNamespaceIndex(context, pobj, FALSE);
+	newNode->browseName.namespaceIndex = (pInterface && pInterface->v_trafo) ? pInterface->v_trafo->index : OPCUA_OVSTORE_DEFAULTNSINDEX;
 
 	// Description
 	UA_LocalizedText_init(&newNode->description);
@@ -728,16 +567,15 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 	UA_UInt32 writeMask = 0;
 	if(element.elemtype != OV_ET_VARIABLE){
 		if(access & OV_AC_WRITE){
-			writeMask |= (1<<2);	/*	BrowseName	*/
-			writeMask |= (1<<6);	/*	DisplayName	*/
+			writeMask |= UA_WRITEMASK_BROWSENAME;
+			writeMask |= UA_WRITEMASK_DISPLAYNAME;
+
 		}
 		if(access & OV_AC_RENAMEABLE){
 			writeMask |= (1<<14);	/*	NodeId	*/
 		}
 	}
 	newNode->writeMask 	= writeMask;
-
-	UA_Byte accessLevel = 0;
 
 	switch(newNode->nodeClass){
 	case UA_NODECLASS_OBJECT:
@@ -784,13 +622,13 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 				case OV_VT_ANY:
 				case OV_VT_VOID:
 					((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
-					((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
+					((UA_VariableNode*)newNode)->arrayDimensions = NULL; //UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 					break;
 				default:
-					if(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen == 1){
+					if(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen == 1){ //TODO use var type and vector mask
 						/*	scalar	*/
 						((UA_VariableNode*)newNode)->arrayDimensionsSize = 0;
-						((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
+						((UA_VariableNode*)newNode)->arrayDimensions = NULL; //UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
 					} else {
 						/*	vector	*/
 						((UA_VariableNode*)newNode)->arrayDimensionsSize = 1;
@@ -857,15 +695,15 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 			switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
 			case OV_VT_ANY:
 			case OV_VT_VOID:
-				((UA_VariableNode*)newNode)->valueRank = -3;	/*	scalar or one dimension	*/
+				((UA_VariableNode*)newNode)->valueRank = UA_VALUERANK_SCALAR_OR_ONE_DIMENSION;
 				result = UA_STATUSCODE_GOOD;
 				break;
 			default:
 				if((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_ISVECTOR){
-					((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
+					((UA_VariableNode*)newNode)->valueRank = UA_VALUERANK_ONE_DIMENSION;
 					result = UA_STATUSCODE_GOOD;
 				} else {
-					((UA_VariableNode*)newNode)->valueRank = -1;	/*	scalar	*/
+					((UA_VariableNode*)newNode)->valueRank = UA_VALUERANK_SCALAR;
 					result = UA_STATUSCODE_GOOD;
 				}
 				break;
@@ -899,12 +737,12 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 			break;
 		}
 		// accessLevel
-		accessLevel = 0;
+		UA_Byte accessLevel = 0;
 		if(access & OV_AC_READ){
-			accessLevel |= (1<<0);
+			accessLevel |= UA_ACCESSLEVELMASK_READ;
 		}
 		if(access & OV_AC_WRITE){
-			accessLevel |= (1<<1);
+			accessLevel |= UA_ACCESSLEVELMASK_WRITE;
 		}
 		((UA_VariableNode*)newNode)->accessLevel = accessLevel;
 		// minimumSamplingInterval
@@ -1028,7 +866,7 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 		break;
 	}
 
-	opcua_ovStore_addReference(context, newNode);
+	opcua_ovStore_addReferences(context, newNode);
 
 	return newNode;
 }
@@ -1235,6 +1073,7 @@ opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context) {
 	UA_Nodestore* nsi = UA_malloc(sizeof(UA_Nodestore));
 	if(nsi == NULL)
 		return NULL;
+	nsi->inPlaceEditAllowed = UA_FALSE; // Is allowed, but has no effect, as every get node is only temporary
     nsi->context =        	context;
     nsi->deleteNodestore =  opcua_ovStore_deleteNodestore;
     nsi->newNode =       	opcua_ovStore_newNode;

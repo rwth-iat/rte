@@ -106,13 +106,19 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj
 	//Add reference to OV root for generic interface
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
 	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pinst->v_entryPath), true);
+			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pinst->v_entryPath), UA_TRUE);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}
-	//Add reference to ov types
+	//Add reference to ov domain
 	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, "/acplt/ov/domain"), true);
+			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, "/acplt/ov/domain"), UA_TRUE);
+	if(retval != UA_STATUSCODE_GOOD){
+		Ov_Warning(UA_StatusCode_name(retval));
+	}
+	//Add reference to ov object
+	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
+			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, "/acplt/ov/object"), UA_TRUE);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}
@@ -120,4 +126,4 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj
     return OV_ERR_OK;
 }
 
-//TODO add unload function to delete reference
+//TODO add unload function to delete references
