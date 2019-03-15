@@ -89,19 +89,22 @@ OV_DLLFNCEXPORT void ipsms_uaInterface_destructor(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
-    /*    
+    /*
     *   local variables
     */
-    OV_INSTPTR_ipsms_uaInterface pinst = Ov_StaticPtrCast(ipsms_uaInterface, pobj);
+    // Get server and instance pointer
+	OV_INSTPTR_ipsms_uaInterface pinst = Ov_StaticPtrCast(ipsms_uaInterface, pobj);
 	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(server == NULL){
 		return OV_ERR_GENERIC;
 	}
 
-    //Use generic load method of uaInterface to load the trafos
+	//TODO find and link necessary interfaces
+
+    // Use generic load method of uaInterface to load the trafos
 	opcua_interface_load(pobj, forceLoad);
 
-	//Add reference to OV root for ipsms interface
+	// Add reference to OV root for ipsms interface
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
 	retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
 			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pinst->v_entryPath), true);

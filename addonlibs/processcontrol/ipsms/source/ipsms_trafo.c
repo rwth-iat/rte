@@ -5,6 +5,8 @@
  *      Author: julian
  */
 
+//TODO split file up into 2 files: ipsms_trafo, ipsms_store
+
 #include "libov/ov_macros.h"
 #include "ipsms_trafo.h"
 #include "fb_macros.h"
@@ -187,29 +189,32 @@ ipsms_trafo_controlchart(
 }
 static UA_Node *
 ipsms_trafo_domain(
-		OV_INSTPTR_ov_domain pobj, const UA_Server * server,
+		OV_INSTPTR_ov_domain pobj, OV_INSTPTR_opcua_server pServer,
 		const UA_NodeId * nodeId, const UA_NodeId parentNodeId){
 	UA_AddReferencesItem * ref = NULL;
-	UA_Node * node = ipsms_trafo_genericTrafo(server,
+	UA_Node * node = ipsms_trafo_genericTrafo(pServer->v_server,
 			pobj->v_identifier, "OV domain container.",//ipsms_trafo_getDescription(Ov_StaticPtrCast(ov_object, pobj)),
 			UA_NODECLASS_OBJECT, nodeId, parentNodeId, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
 			&ref);
 
 	// Organizes childs
 	OV_INSTPTR_ov_object pchild = NULL;
+	OV_BOOL isServicesDomain = ov_string_compare(pobj->v_identifier, "SERVICES") == OV_STRCMP_EQUAL;
 	ref->isForward = UA_TRUE;
 	UA_NodeId_deleteMembers(&ref->referenceTypeId);
-	ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 	UA_NodeId_deleteMembers(&ref->sourceNodeId);
 	UA_NodeId_copy(nodeId, &ref->sourceNodeId);
 	ref->targetNodeClass = UA_NODECLASS_OBJECT;
-	ov_memstack_lock(); //For ov_path_getcanonicalpath
+	ov_memstack_lock(); // For ov_path_getcanonicalpath
 	Ov_ForEachChild(ov_containment, pobj, pchild){
-		if(Ov_CanCastTo(fb_controlchart, pchild)){
-			//Add organizes reference for every control chart
+		if(isServicesDomain){
+			// Add hasComponent reference for every service
+			opcua_ovStore_addReferenceToSpecificObject(pServer, pchild, node);
+		}else if(Ov_CanCastTo(fb_controlchart, pchild)){
+			// Add organizes reference for every control chart
+			ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 			UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
-			ov_memstack_lock();
-			ref->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(nodeId->namespaceIndex,
+			ref->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(nodeId->namespaceIndex, //TODO get services nsIndex
 					ov_path_getcanonicalpath(pchild, 2));
 			UA_Node_addReference(node, ref);
 		}
@@ -261,7 +266,7 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 	return node;*/
 
 
-	ov_memstack_lock(); //For opcua_helpers_resolveNodeIdToOvObject and ov_string_stack_print
+	ov_memstack_lock();
 	OV_STRING virtualParentPath = NULL;
 	ov_string_stack_print(&virtualParentPath, "%s|STATUS", parentPath);
 	UA_AddReferencesItem * ref = NULL;
@@ -271,12 +276,12 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 			UA_NODEID_STRING(nodeId->namespaceIndex, virtualParentPath),
 			UA_NODEID_NUMERIC(0, UA_NS0ID_BASEVARIABLETYPE),
 			&ref);
+	ov_memstack_unlock();
 
 	// Resolve parent node id and check that it is a controlchart aka BaSys 4.0 component
 	UA_NodeId parentNodeId = UA_NODEID_STRING(nodeId->namespaceIndex, parentPath);
 	OV_INSTPTR_ov_object pobj = opcua_helpers_resolveNodeIdToOvObject(&parentNodeId);
 	if(pobj == NULL || !Ov_CanCastTo(fb_controlchart, pobj)){
-		ov_memstack_unlock();
 		return (UA_Node*)node;
 	}
 	OV_INSTPTR_fb_functionchart pcomponent = Ov_StaticPtrCast(fb_functionchart, pobj);
@@ -325,7 +330,6 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 	node->value.data.callback.onRead = NULL;
 	node->value.data.callback.onWrite = NULL;
 
-	ov_memstack_unlock();
 	return (UA_Node*)node;
 }
 
@@ -343,12 +347,11 @@ ipsms_trafo_status(const UA_Server * server,
 	// Add status variables as organizes references
 	// Resolve parent node id and check that it is a controlchart aka BaSys 4.0 component
 	UA_NodeId parentNodeId = UA_NODEID_STRING(nodeId->namespaceIndex, parentPath);
-	ov_memstack_lock(); //For opcua_helpers_resolveNodeIdToOvObject
 	OV_INSTPTR_ov_object pobj = opcua_helpers_resolveNodeIdToOvObject(&parentNodeId);
 	if(pobj == NULL || !Ov_CanCastTo(fb_controlchart, pobj)){
-		ov_memstack_unlock();
 		return node;
 	}
+
 	// Set default values for all ports
 	ref->isForward = UA_TRUE;
 	UA_NodeId_deleteMembers(&ref->referenceTypeId);
@@ -360,6 +363,7 @@ ipsms_trafo_status(const UA_Server * server,
 	OV_INSTPTR_fb_controlchart pcomponent = Ov_StaticPtrCast(fb_controlchart, pobj);
 	OV_INSTPTR_fb_port pport = NULL;
 	OV_STRING portPath = NULL;
+	ov_memstack_lock();
 	Ov_ForEachChild(fb_variables, pcomponent, pport){
 		//List all outputs
 		if(IsFlagSet(pport->v_flags, 'o')){
@@ -394,7 +398,7 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 	OV_INSTPTR_ov_object			pobj = NULL;
 	OV_INSTPTR_ipsms_uaInterface 	pinterface = Ov_StaticPtrCast(ipsms_uaInterface, context);
 	OV_INSTPTR_opcua_server 		server = (pinterface) ? Ov_GetParent(opcua_serverToInterfaces, pinterface) : NULL;
-	OPCUA_PTR_UA_Server 				uaServer = (server) ? server->v_server : NULL;
+	OPCUA_PTR_UA_Server 			uaServer = (server) ? server->v_server : NULL;
 
 	// Check path for virtual node //TODO move to own function
 	if(nodeId->identifierType == UA_NODEIDTYPE_STRING){
@@ -417,28 +421,26 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 	// Check for none virtual node
 	if(node == NULL){
 		//Resolve nodeId
-		ov_memstack_lock();
 		pobj = opcua_helpers_resolveNodeIdToOvObject(nodeId);
-		ov_memstack_unlock();
 		if(pobj == NULL){
 			return NULL;
 		}
 
-		// Visualize every control chart as ESE
+		// Visualize every control chart as BaSys 4.0 IPSMS component
 		if(Ov_CanCastTo(fb_controlchart, pobj)){
 			node = ipsms_trafo_controlchart(Ov_StaticPtrCast(fb_controlchart, pobj), uaServer, nodeId);
 		}
 		// Visualize a domain
 		else if(Ov_CanCastTo(ov_domain, pobj)){
 			// Check if root domain of uaInterface (entryPath)
-			UA_String rootDomain = UA_String_fromChars(pinterface->v_entryPath);
-			if(UA_String_equal(&nodeId->identifier.string, &rootDomain) == UA_TRUE){ //TODO add own function to check equality of ov and ua string
+			UA_String rootDomain = UA_STRING(pinterface->v_entryPath);
+			if(UA_String_equal(&nodeId->identifier.string, &rootDomain) == UA_TRUE){
 				// Change parent for root domain of interface
-				node = ipsms_trafo_domain(Ov_StaticPtrCast(ov_domain, pobj), uaServer, nodeId, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER));
+				node = ipsms_trafo_domain(Ov_StaticPtrCast(ov_domain, pobj), server, nodeId, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER));
 			}else{
-				node = ipsms_trafo_domain(Ov_StaticPtrCast(ov_domain, pobj), uaServer, nodeId, ipsms_trafo_getParentNodeId(pobj));
+				//TODO allow mulitple folders for ESE / GSEs
+				node = ipsms_trafo_domain(Ov_StaticPtrCast(ov_domain, pobj), server, nodeId, ipsms_trafo_getParentNodeId(pobj));
 			}
-			UA_String_deleteMembers(&rootDomain);
 		}
 	}
 

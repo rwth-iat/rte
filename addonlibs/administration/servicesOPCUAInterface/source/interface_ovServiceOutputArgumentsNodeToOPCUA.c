@@ -34,7 +34,6 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
@@ -65,7 +64,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
@@ -145,7 +144,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 		((UA_VariableNode*)newNode)->arrayDimensionsSize = 1;
 		UA_UInt32 *pOutputDimension = UA_UInt32_new();
 		*pOutputDimension = sizeOutput;
-		((UA_VariableNode*)newNode)->arrayDimensions = pOutputDimension; //UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
+		((UA_VariableNode*)newNode)->arrayDimensions = pOutputDimension;
 		// valuerank
 		((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
 	}else{

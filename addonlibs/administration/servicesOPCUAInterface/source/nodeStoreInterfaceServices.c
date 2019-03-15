@@ -31,12 +31,25 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(UA
 	for (OV_UINT i = 0; i < inputSize; i++){
 		inputs[i] = NULL;
 	}
+
 	OV_UINT inputCounts = 0;
 	for (OV_UINT i = 0; i < inputSize; i++){
 		inputCounts++;
 		inputs[i] = NULL;
-		if (input[i].arrayLength == 0){
-			switch (input[i].type->typeIndex){
+
+		//TODO use type transformation from opcua_helpers to ensure integrity
+//		OV_ANY inputAny = OV_ANY_INIT;
+//		result = opcua_helpers_UAVariantToOVAny(&input[i], &inputAny);
+//		if(result != UA_STATUSCODE_GOOD)
+//			goto cleanup;
+//		inputs[i] = &inputAny.value.valueunion;
+
+		if(input[i].type == NULL){
+			continue;
+		}
+
+		if(input[i].arrayDimensionsSize == 0 && input[i].arrayLength == 0){
+			switch(input[i].type->typeIndex){
 				case UA_TYPES_BOOLEAN:
 				case UA_TYPES_INT32:
 				case UA_TYPES_UINT32:
@@ -54,10 +67,10 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(UA
 						result = UA_STATUSCODE_BADARGUMENTSMISSING;
 						goto cleanup;
 					}
-					if ((*((UA_String*)(input[i].data))).length == 0){
-						result = UA_STATUSCODE_BADARGUMENTSMISSING;
-						goto cleanup;
-					}
+//					if ((*((UA_String*)(input[i].data))).length == 0){
+//						result = UA_STATUSCODE_BADARGUMENTSMISSING;
+//						goto cleanup;
+//					}
 					inputs[i] = ov_database_malloc(sizeof(OV_STRING));
 					opcua_helpers_copyUAStringToOV(*((UA_String*)(input[i].data)), (OV_STRING*)(inputs[i]));
 					break;
@@ -121,10 +134,10 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(UA
 					(*(OV_STRING_VEC*)(inputs[i])).value = malloc(input[i].arrayLength*sizeof(OV_STRING));
 					for (OV_UINT j = 0; j < input[i].arrayLength; j++){
 						(*(OV_STRING_VEC*)(inputs[i])).value[j] = NULL;
-						if (((UA_String*)(input[i].data))[j].length == 0){
-							result = UA_STATUSCODE_BADARGUMENTSMISSING;
-							goto cleanup;
-						}
+//						if (((UA_String*)(input[i].data))[j].length == 0){
+//							result = UA_STATUSCODE_BADARGUMENTSMISSING;
+//							goto cleanup;
+//						}
 						opcua_helpers_copyUAStringToOV(((UA_String*)(input[i].data))[j], &((*(OV_STRING_VEC*)(inputs[i])).value[j]));
 					}
 					break;
@@ -225,7 +238,8 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(UA
 		case OV_VT_STRING_VEC:
 			tmpStringArray = UA_Array_new((*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_STRING]);
 			for (OV_UINT j = 0; j < (*(OV_GENERIC_VEC*)(outputs[i])).veclen; j++){
-				tmpStringArray[j] = UA_String_fromChars((*(OV_STRING_VEC*)outputs[i]).value[j]);
+				if((*(OV_STRING_VEC*)outputs[i]).value[j])
+					tmpStringArray[j] = UA_String_fromChars((*(OV_STRING_VEC*)outputs[i]).value[j]);
 			}
 			UA_Variant_setArrayCopy(&output[i], tmpStringArray, (*(OV_GENERIC_VEC*)(outputs[i])).veclen, &UA_TYPES[UA_TYPES_STRING]);
 			UA_Array_delete(tmpStringArray, (*(OV_GENERIC_VEC*)(outputs[i])).veclen,&UA_TYPES[UA_TYPES_STRING]);
@@ -249,6 +263,9 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_MethodCallback(UA
 
 	cleanup:
     	for (int i = 0; i < inputCounts; i++){
+    		if(input[i].type == NULL){
+    			continue;
+    		}
 			if (input[i].arrayLength == 0){
 				switch (input[i].type->typeIndex){
 					case UA_TYPES_BOOLEAN:
