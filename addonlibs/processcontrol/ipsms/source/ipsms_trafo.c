@@ -15,18 +15,18 @@
 #include "opcua_ovStore.h"
 //#include "ov_call_macros_10.h"
 
-static UA_NodeId
-ipsms_trafo_getParentNodeId(OV_INSTPTR_ov_object pobj){
-	OV_INSTPTR_ov_domain pparent = Ov_GetParent(ov_containment, pobj);
-	if(pparent){
-		ov_memstack_lock();
-		UA_NodeId nodeId = UA_NODEID_STRING_ALLOC(OPCUA_OVSTORE_DEFAULTNSINDEX,
-				ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pparent), 2));
-		ov_memstack_unlock();
-		return nodeId;
-	}
-	return UA_NODEID_NULL;
-}
+//static UA_NodeId
+//ipsms_trafo_getParentNodeId(OV_INSTPTR_ov_object pobj){
+//	OV_INSTPTR_ov_domain pparent = Ov_GetParent(ov_containment, pobj);
+//	if(pparent){
+//		ov_memstack_lock();
+//		UA_NodeId nodeId = UA_NODEID_STRING_ALLOC(OPCUA_OVSTORE_DEFAULTNSINDEX,
+//				ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pparent), 2));
+//		ov_memstack_unlock();
+//		return nodeId;
+//	}
+//	return UA_NODEID_NULL;
+//}
 /*
 static const OV_STRING
 ipsms_trafo_getDescription(OV_INSTPTR_ov_object pobj){
@@ -180,6 +180,7 @@ ipsms_trafo_controlchart(
 	UA_ExpandedNodeId_init(&ref->targetNodeId);
 	UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
 	opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "/SERVICES");
+	ref->targetNodeId.nodeId.namespaceIndex = OPCUA_OVSTORE_DEFAULTNSINDEX;
 	UA_Node_addReference(node, ref);
 
 	// Free resources
@@ -187,84 +188,49 @@ ipsms_trafo_controlchart(
 
 	return node;
 }
-static UA_Node *
-ipsms_trafo_domain(
-		OV_INSTPTR_ov_domain pobj, OV_INSTPTR_opcua_server pServer,
-		const UA_NodeId * nodeId, const UA_NodeId parentNodeId){
-	UA_AddReferencesItem * ref = NULL;
-	UA_Node * node = ipsms_trafo_genericTrafo(pServer->v_server,
-			pobj->v_identifier, "OV domain container.",//ipsms_trafo_getDescription(Ov_StaticPtrCast(ov_object, pobj)),
-			UA_NODECLASS_OBJECT, nodeId, parentNodeId, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
-			&ref);
-
-	// Organizes childs
-	OV_INSTPTR_ov_object pchild = NULL;
-	OV_BOOL isServicesDomain = ov_string_compare(pobj->v_identifier, "SERVICES") == OV_STRCMP_EQUAL;
-	ref->isForward = UA_TRUE;
-	UA_NodeId_deleteMembers(&ref->referenceTypeId);
-	UA_NodeId_deleteMembers(&ref->sourceNodeId);
-	UA_NodeId_copy(nodeId, &ref->sourceNodeId);
-	ref->targetNodeClass = UA_NODECLASS_OBJECT;
-	ov_memstack_lock(); // For ov_path_getcanonicalpath
-	Ov_ForEachChild(ov_containment, pobj, pchild){
-		if(isServicesDomain){
-			// Add hasComponent reference for every service
-			opcua_ovStore_addReferenceToSpecificObject(pServer, pchild, node);
-		}else if(Ov_CanCastTo(fb_controlchart, pchild)){
-			// Add organizes reference for every control chart
-			ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-			UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
-			ref->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(nodeId->namespaceIndex, //TODO get services nsIndex
-					ov_path_getcanonicalpath(pchild, 2));
-			UA_Node_addReference(node, ref);
-		}
-	}
-	ov_memstack_unlock();
-
-	// Free resources
-	UA_AddReferencesItem_delete(ref);
-
-	return (UA_Node*)node;
-}
+//static UA_Node *
+//ipsms_trafo_domain(
+//		OV_INSTPTR_ov_domain pobj, OV_INSTPTR_opcua_server pServer,
+//		const UA_NodeId * nodeId, const UA_NodeId parentNodeId){
+//	UA_AddReferencesItem * ref = NULL;
+//	UA_Node * node = ipsms_trafo_genericTrafo(pServer->v_server,
+//			pobj->v_identifier, "OV domain container.",//ipsms_trafo_getDescription(Ov_StaticPtrCast(ov_object, pobj)),
+//			UA_NODECLASS_OBJECT, nodeId, parentNodeId, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
+//			&ref);
+//
+//	// Organizes childs
+//	OV_INSTPTR_ov_object pchild = NULL;
+//	OV_BOOL isServicesDomain = ov_string_compare(pobj->v_identifier, "SERVICES") == OV_STRCMP_EQUAL;
+//	ref->isForward = UA_TRUE;
+//	UA_NodeId_deleteMembers(&ref->referenceTypeId);
+//	UA_NodeId_deleteMembers(&ref->sourceNodeId);
+//	UA_NodeId_copy(nodeId, &ref->sourceNodeId);
+//	ref->targetNodeClass = UA_NODECLASS_OBJECT;
+//	ov_memstack_lock(); // For ov_path_getcanonicalpath
+//	Ov_ForEachChild(ov_containment, pobj, pchild){
+//		if(isServicesDomain){
+//			// Add hasComponent reference for every service
+//			opcua_ovStore_addReferenceToSpecificObject(pServer, pchild, node);
+//		}else if(Ov_CanCastTo(fb_controlchart, pchild)){
+//			// Add organizes reference for every control chart
+//			ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+//			UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
+//			ref->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(nodeId->namespaceIndex, //TODO get services nsIndex
+//					ov_path_getcanonicalpath(pchild, 2));
+//			UA_Node_addReference(node, ref);
+//		}
+//	}
+//	ov_memstack_unlock();
+//
+//	// Free resources
+//	UA_AddReferencesItem_delete(ref);
+//
+//	return (UA_Node*)node;
+//}
 
 static UA_Node *
 ipsms_trafo_statusVariable(const UA_Server * server,
 		const UA_NodeId * nodeId, OV_STRING identifier, OV_STRING parentPath){
-
-	/* Old implementation, which uses generic interface
-	 * doesnt work for correctly for fb port values. //TODO fix generic interface
-	 *
-	ov_memstack_lock();
-	OV_STRING path = NULL;
-	ov_string_stack_print(&path, "%s/%s.value", parentPath, identifier);
-	UA_NodeId portValueNodeId = UA_NODEID_STRING(OPCUA_OVSTORE_DEFAULTNSINDEX, path);
-	const UA_ServerConfig * config = UA_Server_getConfig((UA_Server*)server);
-	UA_Node * node = (UA_Node*)config->nodestore.getNode(config->nodestore.context, &portValueNodeId);
-	ov_memstack_unlock();
-
-	// BrowseName
-	UA_QualifiedName_deleteMembers(&node->browseName);
-	node->browseName.name = UA_String_fromChars(identifier);
-	node->browseName.namespaceIndex = nodeId->namespaceIndex;
-
-	// DisplayName
-	UA_LocalizedText_deleteMembers(&node->displayName);
-	node->displayName.locale = UA_String_fromChars("en");
-	node->displayName.text = UA_String_fromChars(identifier);
-
-	UA_Node_deleteReferences(node);
-	// Add references
-	ov_memstack_lock();
-	ov_string_stack_print(&path, "%s|STATUS", parentPath);
-	UA_AddReferencesItem *ref = ipsms_trafo_addParentReference(nodeId, UA_NODEID_STRING(nodeId->namespaceIndex, path), node);
-	ov_memstack_unlock();
-	ipsms_trafo_addTypeDefinitionReference(server, nodeId, UA_NODEID_NUMERIC(0, UA_NS0ID_BASEVARIABLETYPE), node, ref);
-
-	// Free nodeId, gets overwritten in getNode function
-	UA_NodeId_deleteMembers(&node->nodeId);
-
-	return node;*/
-
 
 	ov_memstack_lock();
 	OV_STRING virtualParentPath = NULL;
@@ -289,6 +255,7 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 	fb_functionchart_getport(pcomponent, identifier, &value); //TODO get port value directly by path
 	node->accessLevel = UA_ACCESSLEVELMASK_READ;
 
+	//TODO move to own function (for later fbInterface library
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	switch(value.value.vartype & OV_VT_KSMASK){
 		case OV_VT_ANY:
@@ -430,18 +397,18 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 		if(Ov_CanCastTo(fb_controlchart, pobj)){
 			node = ipsms_trafo_controlchart(Ov_StaticPtrCast(fb_controlchart, pobj), uaServer, nodeId);
 		}
-		// Visualize a domain
-		else if(Ov_CanCastTo(ov_domain, pobj)){
-			// Check if root domain of uaInterface (entryPath)
-			UA_String rootDomain = UA_STRING(pinterface->v_entryPath);
-			if(UA_String_equal(&nodeId->identifier.string, &rootDomain) == UA_TRUE){
-				// Change parent for root domain of interface
-				node = ipsms_trafo_domain(Ov_StaticPtrCast(ov_domain, pobj), server, nodeId, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER));
-			}else{
-				//TODO allow mulitple folders for ESE / GSEs
-				node = ipsms_trafo_domain(Ov_StaticPtrCast(ov_domain, pobj), server, nodeId, ipsms_trafo_getParentNodeId(pobj));
-			}
-		}
+//		// Visualize a domain
+//		else if(Ov_CanCastTo(ov_domain, pobj)){
+//			// Check if root domain of uaInterface (entryPath)
+//			UA_String rootDomain = UA_STRING(pinterface->v_entryPath);
+//			if(UA_String_equal(&nodeId->identifier.string, &rootDomain) == UA_TRUE){
+//				// Change parent for root domain of interface
+//				node = ipsms_trafo_domain(Ov_StaticPtrCast(ov_domain, pobj), server, nodeId, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER));
+//			}else{
+//				//TODO allow mulitple folders for ESE / GSEs
+//				node = ipsms_trafo_domain(Ov_StaticPtrCast(ov_domain, pobj), server, nodeId, ipsms_trafo_getParentNodeId(pobj));
+//			}
+//		}
 	}
 
 	// Set nodeId
