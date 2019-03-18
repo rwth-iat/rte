@@ -75,6 +75,11 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceTypeSQLC_executeService(OV
 	OV_BOOL certificateCheckSuccessful = FALSE;
 	OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 	OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
+	if (pinst->v_DBWrapperUsed.veclen == 0){
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not find DBWrapper Object");
+		goto FINALIZE;
+	}
 	for (OV_UINT i = 0; i < pinst->v_DBWrapperUsed.veclen; i++){
 		pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pinst->v_DBWrapperUsed.value[i], 2));
 		if (!pDBWrapper){

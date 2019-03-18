@@ -259,20 +259,21 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			{
 			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
-			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
-			if (!pDBWrapper){
-				KS_logfile_info(("Could not get database Pointer"));
-				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_OK;
-			}
-			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-
-			OV_STRING tmpFields = "Value";
 			OV_STRING_VEC result;
 			result.value = NULL;
 			result.veclen = 0;
+			OV_STRING tmpFields = "Value";
 			OV_STRING table = "CarrierID";
-			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			if (pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.veclen > 0){
+				pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+				if (!pDBWrapper){
+					KS_logfile_info(("Could not get database Pointer"));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					return OV_ERR_OK;
+				}
+				Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+				pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			}
 			ov_string_setvalue(&response->contentString, "{\"CarrierIDList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
@@ -292,20 +293,21 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			{
 			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
-			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
-			if (!pDBWrapper){
-				KS_logfile_info(("Could not get database Pointer"));
-				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_OK;
-			}
-			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-
 			OV_STRING tmpFields = "Value";
 			OV_STRING_VEC result;
 			result.value = NULL;
 			result.veclen = 0;
 			OV_STRING table = "PropertyID";
-			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			if (pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.veclen > 0){
+				pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+				if (!pDBWrapper){
+					KS_logfile_info(("Could not get database Pointer"));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					return OV_ERR_OK;
+				}
+				Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+				pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			}
 			ov_string_setvalue(&response->contentString, "{\"PropertyIDList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
@@ -325,20 +327,21 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			{
 			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
-			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
-			if (!pDBWrapper){
-				KS_logfile_info(("Could not get database Pointer"));
-				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_OK;
-			}
-			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-
 			OV_STRING tmpFields = "Value";
 			OV_STRING_VEC result;
 			result.value = NULL;
 			result.veclen = 0;
 			OV_STRING table = "ExpressionSemantic";
-			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			if (pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.veclen > 0){
+				pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+				if (!pDBWrapper){
+					KS_logfile_info(("Could not get database Pointer"));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					return OV_ERR_OK;
+				}
+				Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+				pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			}
 			ov_string_setvalue(&response->contentString, "{\"ExpressionSemanticList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
@@ -358,20 +361,21 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			{
 			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
-			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
-			if (!pDBWrapper){
-				KS_logfile_info(("Could not get database Pointer"));
-				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_OK;
-			}
-			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-
 			OV_STRING tmpFields = "Value";
 			OV_STRING_VEC result;
 			result.value = NULL;
 			result.veclen = 0;
 			OV_STRING table = "Relation";
-			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			if (pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.veclen > 0){
+				pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+				if (!pDBWrapper){
+					KS_logfile_info(("Could not get database Pointer"));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					return OV_ERR_OK;
+				}
+				Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+				pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			}
 			ov_string_setvalue(&response->contentString, "{\"RelationList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){
@@ -391,20 +395,21 @@ OV_DLLFNCEXPORT OV_RESULT openAASDiscoveryServerHTTP_openAASDiscoveryServerHTTPE
 			{
 			OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 			OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
-			pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
-			if (!pDBWrapper){
-				KS_logfile_info(("Could not get database Pointer"));
-				ov_string_setvalue(&response->contentString, "Internal Error\n");
-				return OV_ERR_OK;
-			}
-			Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-
 			OV_STRING tmpFields = "Value";
 			OV_STRING_VEC result;
 			result.value = NULL;
 			result.veclen = 0;
 			OV_STRING table = "SubModel";
-			pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			if (pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.veclen > 0){
+				pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pExt->v_pDiscoveryServer->p_Registration.v_DBWrapper.value[0], 2));
+				if (!pDBWrapper){
+					KS_logfile_info(("Could not get database Pointer"));
+					ov_string_setvalue(&response->contentString, "Internal Error\n");
+					return OV_ERR_OK;
+				}
+				Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+				pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
+			}
 			ov_string_setvalue(&response->contentString, "{\"SubModelList\":[");
 			for (OV_UINT i = 0; i < result.veclen; i++){
 				if (i != 0){

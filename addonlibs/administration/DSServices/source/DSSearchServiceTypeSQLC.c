@@ -53,6 +53,9 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 	// Parsing Body
 	OV_STRING_VEC componentIDs;
 	OV_STRING_VEC* resultStatements = NULL;
+	OV_STRING_VEC resultStatements2;
+	resultStatements2.veclen = 0;
+	resultStatements2.value = NULL;
 	componentIDs.value = NULL;
 	componentIDs.veclen = 0;
 	OV_STRING_VEC endpointStruct;
@@ -74,7 +77,6 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 	tokenIndex.veclen = 0;
 	Ov_SetDynamicVectorLength(&tokenIndex, 4, UINT);
 	OV_STRING responseMode = NULL;
-
 
 	jsonGetTokenIndexByTags(tags, JsonInput, 1, &tokenIndex);
 
@@ -123,8 +125,10 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 	OV_UINT queryCount = searchStatementSize;
 	struct DB_QUERY * query = NULL;
 	query = malloc(sizeof(struct DB_QUERY) * queryCount);
-	OV_STRING_VEC* table  = NULL;
-	table = malloc(sizeof(OV_STRING_VEC) * queryCount);
+	OV_STRING_VEC table;
+	table.value = NULL;
+	table.veclen = 0;
+	Ov_SetDynamicVectorLength(&table,queryCount, STRING);
 
 	for (OV_UINT i = 0; i < searchStatementSize; i++){
 		query[i].column.veclen = 0;
@@ -145,10 +149,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 		query[i].value_optional_relation.veclen = 0;
 		query[i].value_optional_relation.value = NULL;
 		if (ov_string_compare(searchStatements[i].valueType, "Numeric") == OV_STRCMP_EQUAL){
-			table[i].veclen = 0;
-			table[i].value = NULL;
-			Ov_SetDynamicVectorLength(&table[i], 1, STRING);
-			ov_string_setvalue(&table[i].value[0], "statements_Numeric");
+			ov_string_setvalue(&table.value[i], "statements_Numeric");
 			if (ov_string_compare(searchStatements[i].relation, "==") == OV_STRCMP_EQUAL || ov_string_compare(searchStatements[i].relation, "!=") == OV_STRCMP_EQUAL){
 				Ov_SetDynamicVectorLength(&query[i].value_optional, query[i].value_optional.veclen + 30, STRING);
 				Ov_SetDynamicVectorLength(&query[i].value_optional_relation, query[i].value_optional_relation.veclen + 30, STRING);
@@ -347,10 +348,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 				}
 			}
 		}else{
-			table[i].veclen = 0;
-			table[i].value = NULL;
-			Ov_SetDynamicVectorLength(&table[i], 1, STRING);
-			ov_string_setvalue(&table[i].value[0], "statements_TextBoolean");
+			ov_string_setvalue(&table.value[i], "statements_TextBoolean");
 			Ov_SetDynamicVectorLength(&query[i].value, query[i].value.veclen + 6, STRING);
 			Ov_SetDynamicVectorLength(&query[i].value_relation, query[i].value_relation.veclen + 6, STRING);
 			ov_string_setvalue(&query[i].value.value[query[i].value.veclen-6], searchStatements[i].carrierID);
@@ -376,9 +374,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 			break;
 
 		Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
-
 		pDBWrapperVTable->m_getComponentID(pDBWrapper, table, query, searchStatementSize, &componentIDs);
-
 		if (ov_string_compare(responseMode, "full") == OV_STRCMP_EQUAL){
 			if (componentIDs.veclen > 0){
 				resultStatements = malloc(sizeof(OV_STRING_VEC)*componentIDs.veclen);
@@ -392,16 +388,17 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 		}
 	}
 
+
+
 	for (OV_UINT i = 0; i < searchStatementSize; i++){
 		Ov_SetDynamicVectorLength(&query[i].column, 0, STRING);
 		Ov_SetDynamicVectorLength(&query[i].value, 0, STRING);
 		Ov_SetDynamicVectorLength(&query[i].value_relation, 0, STRING);
 		Ov_SetDynamicVectorLength(&query[i].value_optional, 0, STRING);
 		Ov_SetDynamicVectorLength(&query[i].value_optional_relation, 0, STRING);
-		Ov_SetDynamicVectorLength(&table[i], 0, STRING);
+		Ov_SetDynamicVectorLength(&table, 0, STRING);
 	}
 	free(query);
-	free(table);
 
 	if (componentIDs.veclen == 0){
 		ov_string_setvalue(errorMessage, "no component found by your statements");
@@ -451,42 +448,54 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 		ov_string_setvalue(&whereFields, NULL);
 	}
 	// Generate Response
-	ov_string_setvalue(JsonOutput, "\"body\":{\"components\":[");
+	OV_UINT stringLength = 0;
+	stringLength += strlen("\"body\":{\"components\":[");
 	for (OV_UINT i = 0; i < componentIDs.veclen; i++){
-		OV_STRING tmpString = NULL;
-		ov_string_print(&tmpString, "{\"componentID\":\"%s\", \"endpoints\":[", components[i].componentID);
-		ov_string_append(JsonOutput, tmpString);
-		ov_string_setvalue(&tmpString, NULL);
+		stringLength += strlen("{\"componentID\":\"\", \"endpoints\":[") + strlen(components[i].componentID);
 		for (OV_UINT j = 0; j < components[i].endpointsSize; j++){
-			tmpString = NULL;
-			ov_string_print(&tmpString, "{\"protocolType\":\"%s\", \"endpointString\":\"%s\"}", components[i].endpoints[j].protocolType, components[i].endpoints[j].endpointString);
-			ov_string_append(JsonOutput, tmpString);
-			ov_string_setvalue(&tmpString, NULL);
+			stringLength += strlen("{\"protocolType\":\"\", \"endpointString\":\"\"}") + strlen(components[i].endpoints[j].protocolType) + strlen(components[i].endpoints[j].endpointString);
 			if (j < components[i].endpointsSize - 1)
-				ov_string_append(JsonOutput, ",");
+				stringLength += strlen(",");
 		}
-		ov_string_append(JsonOutput, "]");
-		ov_string_append(JsonOutput, ",\"statements\":[");
-		ov_string_setvalue(&tmpString, NULL);
+		stringLength += strlen("],\"statements\":[");
 		if (ov_string_compare(responseMode, "full") == OV_STRCMP_EQUAL){
 			for (OV_UINT j = 0; j < resultStatements[i].veclen; j++){
-				tmpString = NULL;
-				ov_string_print(&tmpString, "{%s}", resultStatements[i].value[j]);
-				ov_string_append(JsonOutput, tmpString);
-				ov_string_setvalue(&tmpString, NULL);
+				stringLength += strlen("{}") + strlen(resultStatements[i].value[j]);
 				if (j < resultStatements[i].veclen - 1)
-					ov_string_append(JsonOutput, ",");
+					stringLength += strlen(",");
 			}
 		}
-		ov_string_append(JsonOutput, "]}");
+		stringLength += strlen("]}");
 		if (i < componentIDs.veclen - 1)
-			ov_string_append(JsonOutput, ",");
+			stringLength += strlen(",");
 	}
-	ov_string_append(JsonOutput, "]}");
-	FILE *fp;
-	fp = fopen("JsonOutput.txt", "a");
-	fprintf(fp, "Output: %s\n", *JsonOutput);
-	fclose(fp);
+	stringLength += strlen("]}");
+
+	*JsonOutput = ov_database_malloc(stringLength+1);
+	OV_STRING pc = *JsonOutput;
+	pc += sprintf(pc, "\"body\":{\"components\":[");
+	for (OV_UINT i = 0; i < componentIDs.veclen; i++){
+		pc += sprintf(pc, "{\"componentID\":\"%s\", \"endpoints\":[", components[i].componentID);
+		for (OV_UINT j = 0; j < components[i].endpointsSize; j++){
+			pc += sprintf(pc, "{\"protocolType\":\"%s\", \"endpointString\":\"%s\"}", components[i].endpoints[j].protocolType, components[i].endpoints[j].endpointString);
+			if (j < components[i].endpointsSize - 1)
+				pc += sprintf(pc, ",");
+		}
+		pc += sprintf(pc, "]");
+		pc += sprintf(pc, ",\"statements\":[");
+		if (ov_string_compare(responseMode, "full") == OV_STRCMP_EQUAL){
+			for (OV_UINT j = 0; j < resultStatements[i].veclen; j++){
+				pc += sprintf(pc, "{%s}", resultStatements[i].value[j]);
+				if (j < resultStatements[i].veclen - 1)
+					pc += sprintf(pc, ",");
+			}
+		}
+		pc += sprintf(pc, "]}");
+		if (i < componentIDs.veclen - 1)
+			pc += sprintf(pc, ",");
+	}
+	pc += sprintf(pc, "]}");
+
 
 	FINALIZE:
 	Ov_SetDynamicVectorLength(&tokenIndex, 0, UINT);
@@ -515,6 +524,8 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceTypeSQLC_executeService(OV_I
 	if (components)
 		free(components);
 	Ov_SetDynamicVectorLength(&componentIDs, 0, STRING);
+
+	Ov_SetDynamicVectorLength(&resultStatements2, 0, STRING);
 
 	for (OV_UINT i = 0; i < searchStatementSize; i++){
 		ov_string_setvalue(&searchStatements[i].carrierID, NULL);

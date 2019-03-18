@@ -62,8 +62,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 				return OV_ERR_OK;
 			}
 			if(Ov_Fail(result)) return result;
-			// fall through
-			// no break
+			//no break wanted
 		case HTTP_CS_REQUESTHEADERPARSED :
 			result = kshttp_httpclienthandler_analyzeRequestBody(&this->v_ClientRequest, &this->v_ServerResponse, &this->v_CommunicationStatus, pChannel->v_inData.data, pChannel->v_inData.length);
 			if(this->v_CommunicationStatus != HTTP_CS_REQUESTPARSED){
@@ -75,27 +74,23 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 			// the http-part of the message is valid --> we received a service-request --> increment receivedCalls
 			this->v_receivedCalls++;
-			// fall through
-			// no break
+			//no break wanted
 		case HTTP_CS_REQUESTPARSED :
 			result = kshttp_httpclienthandler_generateHttpBody(this->v_ClientRequest, &this->v_ServerResponse, &this->v_CommunicationStatus, pChannel, this);
 			if(this->v_CommunicationStatus == HTTP_CS_CHANNELRESPONSIBILITYRELEASED){
 				//we reject every further work on this channel
 				return OV_ERR_OK;
 			}
-			// fall through
-			// no break
+			//no break wanted
 		case HTTP_CS_RESPONSEBODYGENERATED :
 			result = kshttp_httpclienthandler_generateHttpHeader(this->v_ClientRequest, &this->v_ServerResponse, &this->v_CommunicationStatus, result, NULL);
 
 			if(Ov_Fail(result)) return result;
-			// fall through
-			// no break
+			//no break wanted
 		case HTTP_CS_RESPONSEHEADERGENERATED :
 			result = kshttp_httpclienthandler_sendHttpHeader(this->v_ClientRequest, &this->v_ServerResponse, &this->v_CommunicationStatus, pChannel);
 			if(Ov_Fail(result)) return result;
-			// fall through
-			// no break
+			//no break wanted
 		case HTTP_CS_RESPONSEHEADERSEND :
 			result = kshttp_httpclienthandler_sendHttpBody(this->v_ClientRequest, &this->v_ServerResponse, &this->v_CommunicationStatus, pChannel);
 			Ov_HeapFree(this->v_ClientRequest.messageBody);

@@ -344,5 +344,14 @@ LIBRARY openAASDiscoveryServer
             typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
         END_OPERATIONS;     
     END_CLASS;
+    
+    CLASS AASCrawler : CLASS ov/domain
+		VARIABLES
+			DBWrapperPath               : STRING   HAS_ACCESSORS FLAGS = "i" COMMENT="path to DatabaseWrapper-Object";
+        END_VARIABLES;  
+        OPERATIONS
+            crawlAAS			: C_FUNCTION <DS_FNC_CRAWLAAS> IS_ABSTRACT;  
+        END_OPERATIONS;
+	END_CLASS;
 	
 END_LIBRARY;

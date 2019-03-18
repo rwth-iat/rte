@@ -19,4 +19,5 @@ OV_RESULT serviceValueToOVDataValue(OV_ANY* value, const SRV_extAny_t* serviceVa
 OV_RESULT OVDataValueToserviceValue(OV_ANY value, SRV_extAny_t* serviceValue);
 AASStatusCode checkForEmbeddingAAS(IdentificationType aasId, IdentificationType objectId);
 OV_BOOL getAASIdbyObjectPointer(OV_INSTPTR_openaas_aas pAAS, IdentificationType* pAASId);
+OV_STRING getStatementsInJSON(OV_INSTPTR_openaas_aas paas);
 #endif /* OPENAAS_HELPERS_H_ */

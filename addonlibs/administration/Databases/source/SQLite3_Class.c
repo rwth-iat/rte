@@ -401,7 +401,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_updateData(OV_INSTPTR_openAASDiscove
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getComponentID(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC* table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getComponentID(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
 	// TODO: Check Veclen => Errorhandling
 	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
 	if(querySize == 0) {
@@ -414,48 +414,44 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getComponentID(OV_INSTPTR_openAASDis
 	OV_BOOL valueExist = FALSE;
 	ov_string_setvalue(&query, " ");
     for(OV_UINT i = 0; i < querySize; i++) {
-    	for (OV_UINT l = 0; l < table[i].veclen; l++){
-			ov_string_print(&query, "%s SELECT DISTINCT ComponentID FROM %s", query, table[i].value[l]);
-			for(OV_UINT j = 0; j < db_query[i].value.veclen; j++) {
-				if (db_query[i].value.value[j] == NULL)
+		ov_string_print(&query, "%s SELECT DISTINCT ComponentID FROM %s", query, table.value[i]);
+		for(OV_UINT j = 0; j < db_query[i].value.veclen; j++) {
+			if (db_query[i].value.value[j] == NULL)
+				continue;
+			valueExist = TRUE;
+			if (firstWhere == TRUE){
+				ov_string_print(&query, "%s  WHERE (%s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_relation.value[j], db_query[i].value.value[j]);
+				firstWhere = FALSE;
+			}else{
+				ov_string_print(&query, "%s AND %s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_relation.value[j], db_query[i].value.value[j]);
+			}
+		}
+		if (valueExist == TRUE)
+			ov_string_append(&query, ")");
+		for(OV_UINT k = 0; k < (db_query[i].value_optional.veclen)/(db_query[i].column.veclen); k++) {
+			if (k == 0 && valueExist == FALSE){
+				// Do nothing
+			}else {
+				ov_string_append(&query, " OR ");
+			}
+			for(OV_UINT j = 0; j < db_query[i].column.veclen; j++) {
+				if (db_query[i].value_optional.value[j + k * db_query[i].column.veclen] == NULL)
 					continue;
-				valueExist = TRUE;
 				if (firstWhere == TRUE){
-					ov_string_print(&query, "%s  WHERE (%s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_relation.value[j], db_query[i].value.value[j]);
+					ov_string_print(&query, "%s  WHERE (%s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
 					firstWhere = FALSE;
+				}else if (firstOr == TRUE){
+					ov_string_print(&query, "%s (%s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
+					firstOr = FALSE;
 				}else{
-					ov_string_print(&query, "%s AND %s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_relation.value[j], db_query[i].value.value[j]);
+					ov_string_print(&query, "%s AND %s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
 				}
 			}
-			if (valueExist == TRUE)
-				ov_string_append(&query, ")");
-			for(OV_UINT k = 0; k < (db_query[i].value_optional.veclen)/(db_query[i].column.veclen); k++) {
-				if (k == 0 && valueExist == FALSE){
-					// Do nothing
-				}else {
-					ov_string_append(&query, " OR ");
-				}
-				for(OV_UINT j = 0; j < db_query[i].column.veclen; j++) {
-					if (db_query[i].value_optional.value[j + k * db_query[i].column.veclen] == NULL)
-						continue;
-					if (firstWhere == TRUE){
-						ov_string_print(&query, "%s  WHERE (%s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
-						firstWhere = FALSE;
-					}else if (firstOr == TRUE){
-						ov_string_print(&query, "%s (%s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
-						firstOr = FALSE;
-					}else{
-						ov_string_print(&query, "%s AND %s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
-					}
-				}
-				ov_string_append(&query, ")");
-				firstOr = TRUE;
-			}
-			firstWhere = TRUE;
-			if (l < table[i].veclen - 1)
-				ov_string_append(&query, " UNION ");
-    	}
-    	if (i < querySize - 1)
+			ov_string_append(&query, ")");
+			firstOr = TRUE;
+		}
+		firstWhere = TRUE;
+		if (i < querySize - 1)
     		ov_string_append(&query, " INTERSECT ");
     	firstWhere = TRUE;
     }
@@ -481,7 +477,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getComponentID(OV_INSTPTR_openAASDis
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getFittingStatements(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC* table, const OV_STRING ComponentID, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getFittingStatements(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC table, const OV_STRING ComponentID, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
 	// TODO: Check Veclen => Errorhandling
 	OV_INSTPTR_Databases_SQLite3 pinst = Ov_StaticPtrCast(Databases_SQLite3, this);
 	if(querySize == 0) {
@@ -494,56 +490,51 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLite3_getFittingStatements(OV_INSTPTR_open
 	ov_string_setvalue(&query, "SELECT DISTINCT * FROM (");
 
 	for(OV_UINT i = 0; i < querySize; i++) {
-		for (OV_UINT l = 0; l < table[i].veclen; l++){
-			ov_string_print(&query, "%s SELECT * FROM %s", query, table[i].value[l]);
-			for(OV_UINT j = 0; j < db_query[i].value.veclen; j++) {
-				if (db_query[i].value.value[j] == NULL){
+		ov_string_print(&query, "%s SELECT * FROM %s", query, table.value[i]);
+		for(OV_UINT j = 0; j < db_query[i].value.veclen; j++) {
+			if (db_query[i].value.value[j] == NULL){
+				if (firstWhere == TRUE){
+					ov_string_print(&query, "%s  WHERE (ComponentID='%s'", query, ComponentID);
+					firstWhere = FALSE;
+				}
+				continue;
+			}
+			valueExist = TRUE;
+			if (firstWhere == TRUE){
+				ov_string_print(&query, "%s  WHERE (ComponentID='%s' AND %s %s '%s'", query, ComponentID, db_query[i].column.value[j], db_query[i].value_relation.value[j], db_query[i].value.value[j]);
+				firstWhere = FALSE;
+			}else{
+				ov_string_print(&query, "%s AND %s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_relation.value[j], db_query[i].value.value[j]);
+			}
+		}
+		if (db_query[i].value.veclen > 0)
+			ov_string_append(&query, ")");
+		for(OV_UINT k = 0; k < (db_query[i].value_optional.veclen)/(db_query[i].column.veclen); k++) {
+			if (k == 0 && valueExist == FALSE){
+				// Do nothing
+			}else {
+				ov_string_append(&query, " OR ");
+			}
+			for(OV_UINT j = 0; j < db_query[i].column.veclen; j++) {
+				if (db_query[i].value_optional.value[j + k * db_query[i].column.veclen] == NULL){
 					if (firstWhere == TRUE){
 						ov_string_print(&query, "%s  WHERE (ComponentID='%s'", query, ComponentID);
 						firstWhere = FALSE;
 					}
 					continue;
 				}
-				valueExist = TRUE;
 				if (firstWhere == TRUE){
-					ov_string_print(&query, "%s  WHERE (ComponentID='%s' AND %s %s '%s'", query, ComponentID, db_query[i].column.value[j], db_query[i].value_relation.value[j], db_query[i].value.value[j]);
+					ov_string_print(&query, "%s  WHERE (ComponentID='%s' AND %s %s '%s'", query, ComponentID, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
 					firstWhere = FALSE;
+				}else if (firstOr == TRUE){
+					ov_string_print(&query, "%s (ComponentID='%s' AND %s %s '%s'", query, ComponentID, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
+					firstOr = FALSE;
 				}else{
-					ov_string_print(&query, "%s AND %s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_relation.value[j], db_query[i].value.value[j]);
+					ov_string_print(&query, "%s AND %s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
 				}
 			}
-			if (db_query[i].value.veclen > 0)
-				ov_string_append(&query, ")");
-			for(OV_UINT k = 0; k < (db_query[i].value_optional.veclen)/(db_query[i].column.veclen); k++) {
-				if (k == 0 && valueExist == FALSE){
-					// Do nothing
-				}else {
-					ov_string_append(&query, " OR ");
-				}
-				for(OV_UINT j = 0; j < db_query[i].column.veclen; j++) {
-					if (db_query[i].value_optional.value[j + k * db_query[i].column.veclen] == NULL){
-						if (firstWhere == TRUE){
-							ov_string_print(&query, "%s  WHERE (ComponentID='%s'", query, ComponentID);
-							firstWhere = FALSE;
-						}
-						continue;
-					}
-					if (firstWhere == TRUE){
-						ov_string_print(&query, "%s  WHERE (ComponentID='%s' AND %s %s '%s'", query, ComponentID, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
-						firstWhere = FALSE;
-					}else if (firstOr == TRUE){
-						ov_string_print(&query, "%s (ComponentID='%s' AND %s %s '%s'", query, ComponentID, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
-						firstOr = FALSE;
-					}else{
-						ov_string_print(&query, "%s AND %s %s '%s'", query, db_query[i].column.value[j], db_query[i].value_optional_relation.value[j + k * db_query[i].column.veclen], db_query[i].value_optional.value[j + k * db_query[i].column.veclen]);
-					}
-				}
-				ov_string_append(&query, ")");
-				firstOr = TRUE;
-			}
-			if (l < table[i].veclen - 1)
-				ov_string_append(&query, " UNION ");
-			firstWhere = TRUE;
+			ov_string_append(&query, ")");
+			firstOr = TRUE;
 		}
 		if (i < querySize - 1)
 			ov_string_append(&query, " UNION ");
@@ -640,3 +631,4 @@ OV_DLLFNCEXPORT void Databases_SQLite3_startup(
 
     return;
 }
+

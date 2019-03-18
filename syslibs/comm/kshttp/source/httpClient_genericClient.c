@@ -358,7 +358,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	OV_STRING password = NULL;
 	OV_STRING requestUri = NULL;
 	OV_BOOL usernameProvided = FALSE;
-
 	if(value == FALSE){
 		return OV_ERR_OK;
 	}
@@ -370,6 +369,25 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	}
 
 	return kshttp_generateAndSendHttpMessage("GET", thisCl->v_serverHost, thisCl->v_serverPort, username, password, usernameProvided, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), Ov_PtrUpCast(ov_domain, thisCl), &kshttp_genericHttpClient_Callback);
+}
+
+OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_sendHTTPRequest(OV_INSTPTR_kshttp_genericHttpClient pobj, const OV_STRING uri, void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)) {
+	OV_RESULT result = OV_ERR_OK;
+	OV_STRING username = NULL;
+	OV_STRING password = NULL;
+	OV_STRING requestUri = NULL;
+	OV_BOOL usernameProvided = FALSE;
+
+	kshttp_genericHttpClient_reset(Ov_PtrUpCast(ksbase_ClientBase, pobj));
+
+	result = kshttp_decodeURI(&uri, &pobj->v_serverHost, &pobj->v_serverPort, &username, &password, &requestUri, &usernameProvided);
+	if(Ov_Fail(result)){
+		return result;
+	}
+	pobj->v_tempCallback.callbackFunction = callback;
+	pobj->v_tempCallback.instanceCalled = Ov_PtrUpCast(ov_domain, pobj);
+
+	return kshttp_generateAndSendHttpMessage("GET", pobj->v_serverHost, pobj->v_serverPort, username, password, usernameProvided, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, pobj), Ov_PtrUpCast(ov_domain, pobj), &kshttp_genericHttpClient_Callback);
 }
 
 void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling){
@@ -433,6 +451,8 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 
 	pVtblChannel->m_CloseConnection(pChannel);
 	ksbase_free_KSDATAPACKET(&pChannel->v_inData);
+
+	thisCl->v_tempCallback.callbackFunction(thisCl->v_tempCallback.instanceCalled, instanceCalling);
 
 	return;
 }

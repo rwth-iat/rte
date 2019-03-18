@@ -72,6 +72,11 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSecurityServiceType1_executeService(OV_IN
 	result.value = NULL;
 	result.veclen = 0;
 
+	if (pinst->v_DBWrapperUsed.veclen == 0){
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not find DBWrapper Object");
+		goto FINALIZE;
+	}
 	OV_BOOL certificateCheckSuccessful = FALSE;
 	OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 	OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;

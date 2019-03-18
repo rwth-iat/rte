@@ -48,6 +48,11 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSUnregistrationServiceType1_executeService
 	OV_STRING securityKey = NULL;
 	jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[1]+1], &securityKey);
 
+	if (pinst->v_DBWrapperUsed.veclen == 0){
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not find DBWrapper Object");
+		goto FINALIZE;
+	}
 	// check securityKey
 	OV_RESULT resultOV = checkSecurityKey(pinst->v_DBWrapperUsed, componentID, securityKey);
 	if (resultOV){

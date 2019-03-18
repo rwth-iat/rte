@@ -10,6 +10,8 @@
 #endif
 
 #include "openaas_helpers.h"
+#include "libov/ov_time.h"
+#include "libov/ov_logfile.h"
 
 OV_RESULT decodeMSG(const SRV_String* str, SRV_msgHeader** header, void** srvStruct, SRV_service_t* srvType, SRV_encoding_t *encoding){
 
@@ -193,3 +195,549 @@ AASStatusCode checkForEmbeddingAAS(IdentificationType aasId, IdentificationType 
 	}while (ptr3);
 	return AASSTATUSCODE_BADPARENTID;
 }
+
+OV_DLLFNCEXPORT OV_STRING getStatementsInJSON(OV_INSTPTR_openaas_aas paas){
+	OV_INSTPTR_openaas_SubModel pSubmodel = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pPVSList = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyValueStatement pPVS = NULL;
+	OV_INSTPTR_propertyValueStatement_CarrierId pCarrierID = NULL;
+	OV_INSTPTR_propertyValueStatement_PropertyId pPropertyID = NULL;
+	OV_INSTPTR_propertyValueStatement_ExpressionSemantic pExpressionSemantic = NULL;
+	OV_INSTPTR_propertyValueStatement_ExpressionLogic pExpressionLogic = NULL;
+	OV_INSTPTR_ov_object pObject = NULL;
+	OV_INSTPTR_ov_object pObject2 = NULL;
+	OV_STRING statementString = NULL;
+	OV_STRING tmpString = NULL;
+	OV_UINT stringLength = 0;
+	OV_BOOL first = TRUE;
+	if (!paas){
+		return NULL;
+	}
+
+	OV_UINT stringLengthCarrierID = strlen("{\"CarrierID\":\",\"");
+	OV_UINT stringLengthCarrierID2 = strlen(",{\"CarrierID\":\",\"");
+	OV_UINT stringLengthPropertyID = strlen("{\"PropertyID\":\",\"");
+	OV_UINT stringLengthExpressionSemantic = strlen(",\"ExpressionSemantic\":\"\"");
+	OV_UINT stringLengthExpressionSemanticA = strlen(",\"ExpressionSemantic\":\"Assurance\"");
+	OV_UINT stringLengthExpressionSemanticR = strlen(",\"ExpressionSemantic\":\"Requirement\"");
+	OV_UINT stringLengthExpressionSemanticM = strlen(",\"ExpressionSemantic\":\"Measurement\"");
+	OV_UINT stringLengthExpressionSemanticS = strlen(",\"ExpressionSemantic\":\"Setting\"");
+	OV_UINT stringLengthRelation = strlen("{\"Relation\":\"\"");
+	OV_UINT stringLengthRelationG = strlen("{\"Relation\":\">\"");
+	OV_UINT stringLengthRelationGE = strlen("{\"Relation\":\">=\"");
+	OV_UINT stringLengthRelationEQ = strlen("{\"Relation\":\"==\"");
+	OV_UINT stringLengthRelationNE = strlen("{\"Relation\":\"!=\"");
+	OV_UINT stringLengthRelationLE = strlen("{\"Relation\":\"<=\"");
+	OV_UINT stringLengthRelationL = strlen("{\"Relation\":\"<\"");
+	OV_UINT stringLengthValue = strlen("{\"Value\":\"\"");
+	OV_UINT stringLengthValueType = strlen("{\"ValueType\":\"\"");
+	OV_UINT stringLengthValueTypeB = strlen("{\"Value\":\"Boolean\"");
+	OV_UINT stringLengthValueTypeN = strlen("{\"Value\":\"Numeric\"");
+	OV_UINT stringLengthValueTypeT = strlen("{\"Value\":\"Text\"");
+	OV_UINT stringLengthSubModel = strlen("{\"SubModel\":\"\"");
+	OV_UINT stringLengthStatements = strlen("\"statements\": []");
+
+	stringLength += stringLengthStatements;
+	Ov_ForEachChildEx(ov_containment, &paas->p_Header, pSubmodel, openaas_SubModel){
+		Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
+			Ov_ForEachChild(ov_containment, pPVSList, pObject){
+				if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject)){
+					pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject)){
+					pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject)){
+					pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject)){
+					pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pObject)){
+					pPVS = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pObject);
+					Ov_ForEachChild(ov_containment, pPVS, pObject2){
+						if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject2)){
+							pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject2)){
+							pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject2)){
+							pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject2)){
+							pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject2);
+						}
+					}
+					if (first == TRUE){
+						stringLength += stringLengthCarrierID + 1 + strlen(pCarrierID->v_IdSpec);
+						first = FALSE;
+					}else{
+						stringLength += stringLengthCarrierID2 + 1 + strlen(pCarrierID->v_IdSpec);
+					}
+					stringLength += stringLengthPropertyID + 1 + strlen(pPropertyID->v_IdSpec);
+
+					switch(pExpressionSemantic->v_ExpressionSemanticEnum){
+						case 0:
+							stringLength += stringLengthExpressionSemanticA;
+						break;
+						case 1:
+							stringLength += stringLengthExpressionSemanticS;
+						break;
+						case 2:
+							stringLength += stringLengthExpressionSemanticM;
+						break;
+						case 3:
+							stringLength += stringLengthExpressionSemanticR;
+						break;
+						default:
+							stringLength += stringLengthExpressionSemantic;
+						break;
+					}
+
+					switch(pExpressionLogic->v_ExpressionLogicEnum){
+						case 0:
+							stringLength += stringLengthRelationG;
+						break;
+						case 1:
+							stringLength += stringLengthRelationGE;
+						break;
+						case 2:
+							stringLength += stringLengthRelationEQ;
+						break;
+						case 3:
+							stringLength += stringLengthRelationNE;
+						break;
+						case 4:
+							stringLength += stringLengthRelationLE;
+						break;
+						case 5:
+							stringLength += stringLengthRelationL;
+						break;
+						default:
+							stringLength += stringLengthRelation;
+						break;
+					}
+					switch(pPVS->v_Value.value.vartype & OV_VT_KSMASK){
+						case OV_VT_BOOL:
+							ov_string_print(&tmpString, "%d", pPVS->v_Value.value.valueunion.val_bool);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeB;
+							break;
+						case OV_VT_SINGLE:
+							ov_string_print(&tmpString, "%f", pPVS->v_Value.value.valueunion.val_single);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeN;
+							break;
+						case OV_VT_DOUBLE:
+							ov_string_print(&tmpString, "%lf", pPVS->v_Value.value.valueunion.val_double);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeN;
+							break;
+						case OV_VT_INT:
+							ov_string_print(&tmpString, "%d", pPVS->v_Value.value.valueunion.val_int);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeN;
+							break;
+						case OV_VT_UINT:
+							ov_string_print(&tmpString, "%u", pPVS->v_Value.value.valueunion.val_uint);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeN;
+							break;
+						case OV_VT_STRING:
+							if (pPVS->v_Value.value.valueunion.val_string != NULL){
+								ov_string_print(&tmpString, "%s", pPVS->v_Value.value.valueunion.val_string);
+								stringLength += stringLengthValue + strlen(tmpString);
+							}else
+								stringLength += stringLengthValue;
+
+							stringLength += stringLengthValueTypeT;
+							break;
+						default:
+							stringLength += stringLengthValue;
+							stringLength += stringLengthValueType;
+							break;
+					}
+					ov_string_print(&tmpString, "%s", pSubmodel->v_identifier);
+					stringLength += stringLengthSubModel + strlen(tmpString);
+					ov_string_setvalue(&tmpString, NULL);
+				}
+			}
+		}
+	}
+	Ov_ForEachChildEx(ov_containment, &paas->p_Body, pSubmodel, openaas_SubModel){
+		Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
+			Ov_ForEachChild(ov_containment, pPVSList, pObject){
+				if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject)){
+					pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject)){
+					pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject)){
+					pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject)){
+					pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pObject)){
+					pPVS = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pObject);
+					Ov_ForEachChild(ov_containment, pPVS, pObject2){
+						if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject2)){
+							pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject2)){
+							pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject2)){
+							pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject2)){
+							pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject2);
+						}
+					}
+
+					if (first == TRUE){
+						stringLength += stringLengthCarrierID + 1 + strlen(pCarrierID->v_IdSpec);
+						first = FALSE;
+					}else{
+						stringLength += stringLengthCarrierID2 + 1 + strlen(pCarrierID->v_IdSpec);
+					}
+					stringLength += stringLengthPropertyID + 1 + strlen(pPropertyID->v_IdSpec);
+
+					switch(pExpressionSemantic->v_ExpressionSemanticEnum){
+						case 0:
+							stringLength += stringLengthExpressionSemanticA;
+						break;
+						case 1:
+							stringLength += stringLengthExpressionSemanticS;
+						break;
+						case 2:
+							stringLength += stringLengthExpressionSemanticM;
+						break;
+						case 3:
+							stringLength += stringLengthExpressionSemanticR;
+						break;
+						default:
+							stringLength += stringLengthExpressionSemantic;
+						break;
+					}
+
+					switch(pExpressionLogic->v_ExpressionLogicEnum){
+						case 0:
+							stringLength += stringLengthRelationG;
+						break;
+						case 1:
+							stringLength += stringLengthRelationGE;
+						break;
+						case 2:
+							stringLength += stringLengthRelationEQ;
+						break;
+						case 3:
+							stringLength += stringLengthRelationNE;
+						break;
+						case 4:
+							stringLength += stringLengthRelationLE;
+						break;
+						case 5:
+							stringLength += stringLengthRelationL;
+						break;
+						default:
+							stringLength += stringLengthRelation;
+						break;
+					}
+					switch(pPVS->v_Value.value.vartype & OV_VT_KSMASK){
+						case OV_VT_BOOL:
+							ov_string_print(&tmpString, "%d", pPVS->v_Value.value.valueunion.val_bool);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeB;
+							break;
+						case OV_VT_SINGLE:
+							ov_string_print(&tmpString, "%f", pPVS->v_Value.value.valueunion.val_single);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeN;
+							break;
+						case OV_VT_DOUBLE:
+							ov_string_print(&tmpString, "%lf", pPVS->v_Value.value.valueunion.val_double);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeN;
+							break;
+						case OV_VT_INT:
+							ov_string_print(&tmpString, "%d", pPVS->v_Value.value.valueunion.val_int);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeN;
+							break;
+						case OV_VT_UINT:
+							ov_string_print(&tmpString, "%u", pPVS->v_Value.value.valueunion.val_uint);
+							stringLength += stringLengthValue + strlen(tmpString);
+							stringLength += stringLengthValueTypeN;
+							break;
+						case OV_VT_STRING:
+							if (pPVS->v_Value.value.valueunion.val_string != NULL){
+								ov_string_print(&tmpString, "%s", pPVS->v_Value.value.valueunion.val_string);
+								stringLength += stringLengthValue + strlen(tmpString);
+							}else
+								stringLength += stringLengthValue;
+
+							stringLength += stringLengthValueTypeT;
+							break;
+						default:
+							stringLength += stringLengthValue;
+							stringLength += stringLengthValueType;
+							break;
+					}
+					ov_string_print(&tmpString, "%s", pSubmodel->v_identifier);
+					stringLength += stringLengthSubModel + strlen(tmpString);
+					ov_string_setvalue(&tmpString, NULL);
+				}
+			}
+		}
+	}
+
+	first = TRUE;
+	OV_STRING pc = NULL;
+	statementString = ov_database_malloc(stringLength+1);
+	pc = statementString;
+	pc += sprintf(pc, "\"statements\": [");
+	Ov_ForEachChildEx(ov_containment, &paas->p_Header, pSubmodel, openaas_SubModel){
+		Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
+			Ov_ForEachChild(ov_containment, pPVSList, pObject){
+				if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject)){
+					pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject)){
+					pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject)){
+					pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject)){
+					pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pObject)){
+					pPVS = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pObject);
+					Ov_ForEachChild(ov_containment, pPVS, pObject2){
+						if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject2)){
+							pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject2)){
+							pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject2)){
+							pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject2)){
+							pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject2);
+						}
+					}
+					if (first == TRUE){
+						pc += sprintf(pc, "{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
+						first = FALSE;
+					}else{
+						pc += sprintf(pc, ",{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
+					}
+					pc += sprintf(pc, ",\"PropertyID\":\"%i,%s\"", pPropertyID->v_IdType, pPropertyID->v_IdSpec);
+
+					switch(pExpressionSemantic->v_ExpressionSemanticEnum){
+						case 0:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Assurance\"");
+						break;
+						case 1:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Setting\"");
+						break;
+						case 2:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Measurement\"");
+						break;
+						case 3:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Requirement\"");
+						break;
+						default:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"\"");
+						break;
+					}
+
+					switch(pExpressionLogic->v_ExpressionLogicEnum){
+						case 0:
+							pc += sprintf(pc, ",\"Relation\":\">\"");
+						break;
+						case 1:
+							pc += sprintf(pc, ",\"Relation\":\">=\"");
+						break;
+						case 2:
+							pc += sprintf(pc, ",\"Relation\":\"==\"");
+						break;
+						case 3:
+							pc += sprintf(pc, ",\"Relation\":\"!=\"");
+						break;
+						case 4:
+							pc += sprintf(pc, ",\"Relation\":\"<=\"");
+						break;
+						case 5:
+							pc += sprintf(pc, ",\"Relation\":\"<\"");
+						break;
+						default:
+							pc += sprintf(pc, ",\"Relation\":\"\"");
+						break;
+					}
+					switch(pPVS->v_Value.value.vartype & OV_VT_KSMASK){
+						case OV_VT_BOOL:
+							pc += sprintf(pc, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_bool);
+							pc += sprintf(pc, ",\"ValueType\":\"Boolean\"");
+							break;
+						case OV_VT_SINGLE:
+							pc += sprintf(pc, ",\"Value\":\"%f\"", pPVS->v_Value.value.valueunion.val_single);
+							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
+							break;
+						case OV_VT_DOUBLE:
+							pc += sprintf(pc, ",\"Value\":\"%lf\"", pPVS->v_Value.value.valueunion.val_double);
+							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
+							break;
+						case OV_VT_INT:
+							pc += sprintf(pc, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_int);
+							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
+							break;
+						case OV_VT_UINT:
+							pc += sprintf(pc, ",\"Value\":\"%u\"", pPVS->v_Value.value.valueunion.val_uint);
+							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
+							break;
+						case OV_VT_STRING:
+							if (pPVS->v_Value.value.valueunion.val_string != NULL)
+								pc += sprintf(pc, ",\"Value\":\"%s\"", pPVS->v_Value.value.valueunion.val_string);
+							else
+								pc += sprintf(pc, ",\"Value\":\"\"");
+
+							pc += sprintf(pc, ",\"ValueType\":\"Text\"");
+							break;
+						default:
+							pc += sprintf(pc, ",\"Value\":\"\"");
+							pc += sprintf(pc, ",\"ValueType\":\"\"");
+							break;
+					}
+					pc += sprintf(pc, ",\"SubModel\":\"%s\"}", pSubmodel->v_identifier);
+				}
+			}
+		}
+	}
+	Ov_ForEachChildEx(ov_containment, &paas->p_Body, pSubmodel, openaas_SubModel){
+		Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
+			Ov_ForEachChild(ov_containment, pPVSList, pObject){
+				if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject)){
+					pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject)){
+					pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject)){
+					pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject)){
+					pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject);
+				}
+				if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pObject)){
+					pPVS = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pObject);
+					Ov_ForEachChild(ov_containment, pPVS, pObject2){
+						if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject2)){
+							pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject2)){
+							pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject2)){
+							pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject2);
+						}
+						if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject2)){
+							pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject2);
+						}
+					}
+					if (first == TRUE){
+						pc += sprintf(pc, "{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
+						first = FALSE;
+					}else{
+						pc += sprintf(pc, ",{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
+					}
+					pc += sprintf(pc, ",\"PropertyID\":\"%i,%s\"", pPropertyID->v_IdType, pPropertyID->v_IdSpec);
+
+					switch(pExpressionSemantic->v_ExpressionSemanticEnum){
+						case 0:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Assurance\"");
+						break;
+						case 1:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Setting\"");
+						break;
+						case 2:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Measurement\"");
+						break;
+						case 3:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Requirement\"");
+						break;
+						default:
+							pc += sprintf(pc, ",\"ExpressionSemantic\":\"\"");
+						break;
+					}
+
+					switch(pExpressionLogic->v_ExpressionLogicEnum){
+						case 0:
+							pc += sprintf(pc, ",\"Relation\":\">\"");
+						break;
+						case 1:
+							pc += sprintf(pc, ",\"Relation\":\">=\"");
+						break;
+						case 2:
+							pc += sprintf(pc, ",\"Relation\":\"==\"");
+						break;
+						case 3:
+							pc += sprintf(pc, ",\"Relation\":\"!=\"");
+						break;
+						case 4:
+							pc += sprintf(pc, ",\"Relation\":\"<=\"");
+						break;
+						case 5:
+							pc += sprintf(pc, ",\"Relation\":\"<\"");
+						break;
+						default:
+							pc += sprintf(pc, ",\"Relation\":\"\"");
+						break;
+					}
+					switch(pPVS->v_Value.value.vartype & OV_VT_KSMASK){
+						case OV_VT_BOOL:
+							pc += sprintf(pc, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_bool);
+							pc += sprintf(pc, ",\"ValueType\":\"Boolean\"");
+							break;
+						case OV_VT_SINGLE:
+							pc += sprintf(pc, ",\"Value\":\"%f\"", pPVS->v_Value.value.valueunion.val_single);
+							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
+							break;
+						case OV_VT_DOUBLE:
+							pc += sprintf(pc, ",\"Value\":\"%lf\"", pPVS->v_Value.value.valueunion.val_double);
+							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
+							break;
+						case OV_VT_INT:
+							pc += sprintf(pc, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_int);
+							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
+							break;
+						case OV_VT_UINT:
+							pc += sprintf(pc, ",\"Value\":\"%u\"", pPVS->v_Value.value.valueunion.val_uint);
+							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
+							break;
+						case OV_VT_STRING:
+							if (pPVS->v_Value.value.valueunion.val_string != NULL)
+								pc += sprintf(pc, ",\"Value\":\"%s\"", pPVS->v_Value.value.valueunion.val_string);
+							else
+								pc += sprintf(pc, ",\"Value\":\"\"");
+
+							pc += sprintf(pc, ",\"ValueType\":\"Text\"");
+							break;
+						default:
+							pc += sprintf(pc, ",\"Value\":\"\"");
+							pc += sprintf(pc, ",\"ValueType\":\"\"");
+							break;
+					}
+					pc += sprintf(pc, ",\"SubModel\":\"%s\"}", pSubmodel->v_identifier);
+				}
+			}
+		}
+	}
+	pc += sprintf(pc, "]");
+	return statementString;
+}
+

@@ -24,6 +24,7 @@
 #include "DSServices.h"
 #include "json_helper.h"
 #include "service_helper.h"
+#include "libov/ov_macros.h"
 
 struct endpoint{
 	OV_STRING protocolType;
@@ -68,6 +69,12 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceTypeSQLC_executeServic
 	jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[0]+1], &componentID);
 	OV_STRING securityKey = NULL;
 	jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[1]+1], &securityKey);
+
+	if (pinst->v_DBWrapperUsed.veclen == 0){
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not find DBWrapper Object");
+		goto FINALIZE;
+	}
 
 	// check securityKey
 	OV_RESULT resultOV = checkSecurityKeySQLC(pinst->v_DBWrapperUsed, componentID, securityKey);
@@ -126,6 +133,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceTypeSQLC_executeServic
 		goto FINALIZE;
 	}
 	Ov_GetVTablePtr(openAASDiscoveryServer_DBWrapper,pDBWrapperVTable, pDBWrapper);
+
 	OV_STRING table  = NULL;
 	OV_STRING tmpField = "ComponentID";
 	OV_STRING tmpValue = NULL;
@@ -144,7 +152,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSRegistrationServiceTypeSQLC_executeServic
 	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	table  = "Relation";
 	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
-	table  = "Submodel";
+	table  = "SubModel";
 	resultOV = pDBWrapperVTable->m_deleteData(pDBWrapper, table, &tmpField, 1, &tmpValue, 1);
 	ov_string_setvalue(&tmpValue, NULL);
 

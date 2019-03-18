@@ -83,6 +83,11 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 	OV_STRING securityKey = NULL;
 	jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[1]+1], &securityKey);
 
+	if (pinst->v_DBWrapperUsed.veclen == 0){
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not find DBWrapper Object");
+		goto FINALIZE;
+	}
 	// check SecurityKey in Database
 	OV_RESULT resultOV = checkSecurityKey(pinst->v_DBWrapperUsed, componentID, securityKey);
 	if (resultOV){
@@ -123,8 +128,11 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 	OV_UINT queryCount = searchStatementSize;
 	struct DB_QUERY * query = NULL;
 	query = malloc(sizeof(struct DB_QUERY) * queryCount);
-	OV_STRING_VEC* table  = NULL;
-	table = malloc(sizeof(OV_STRING_VEC) * queryCount);
+	OV_STRING_VEC table;
+	table.value = NULL;
+	table.veclen = 0;
+	Ov_SetDynamicVectorLength(&table,queryCount, STRING);
+
 
 	for (OV_UINT i = 0; i < searchStatementSize; i++){
 		query[i].column.veclen = 0;
@@ -145,10 +153,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 		query[i].value_optional_relation.veclen = 0;
 		query[i].value_optional_relation.value = NULL;
 		if (ov_string_compare(searchStatements[i].valueType, "Numeric") == OV_STRCMP_EQUAL){
-			table[i].veclen = 0;
-			table[i].value = NULL;
-			Ov_SetDynamicVectorLength(&table[i], 1, STRING);
-			ov_string_setvalue(&table[i].value[0], "statements_Numeric");
+			ov_string_setvalue(&table.value[i], "statements_Numeric");
 			if (ov_string_compare(searchStatements[i].relation, "==") == OV_STRCMP_EQUAL || ov_string_compare(searchStatements[i].relation, "!=") == OV_STRCMP_EQUAL){
 				Ov_SetDynamicVectorLength(&query[i].value_optional, query[i].value_optional.veclen + 30, STRING);
 				Ov_SetDynamicVectorLength(&query[i].value_optional_relation, query[i].value_optional_relation.veclen + 30, STRING);
@@ -345,10 +350,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 				}
 			}
 		}else if (ov_string_compare(searchStatements[i].valueType, "Boolean") == OV_STRCMP_EQUAL || ov_string_compare(searchStatements[i].valueType, "Text") == OV_STRCMP_EQUAL){ // Text or boolean
-			table[i].veclen = 0;
-			table[i].value = NULL;
-			Ov_SetDynamicVectorLength(&table[i], 1, STRING);
-			ov_string_setvalue(&table[i].value[0], "statements_TextBoolean");
+			ov_string_setvalue(&table.value[i], "statements_TextBoolean");
 			Ov_SetDynamicVectorLength(&query[i].value, query[i].value.veclen + 6, STRING);
 			Ov_SetDynamicVectorLength(&query[i].value_relation, query[i].value_relation.veclen + 6, STRING);
 			ov_string_setvalue(&query[i].value.value[query[i].value.veclen-6], searchStatements[i].carrierID);
@@ -364,11 +366,7 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 			ov_string_setvalue(&query[i].value.value[query[i].value.veclen-1], searchStatements[i].submodel);
 			ov_string_setvalue(&query[i].value_relation.value[query[i].value_relation.veclen-1], "=");
 		}else{
-			table[i].veclen = 0;
-			table[i].value = NULL;
-			Ov_SetDynamicVectorLength(&table[i], 2, STRING);
-			ov_string_setvalue(&table[i].value[0], "statements_TextBoolean");
-			ov_string_setvalue(&table[i].value[1], "statements_Numeric");
+			ov_string_setvalue(&table.value[i], "statements_TextBoolean");
 			Ov_SetDynamicVectorLength(&query[i].value, query[i].value.veclen + 6, STRING);
 			Ov_SetDynamicVectorLength(&query[i].value_relation, query[i].value_relation.veclen + 6, STRING);
 			ov_string_setvalue(&query[i].value.value[query[i].value.veclen-6], searchStatements[i].carrierID);
@@ -416,10 +414,9 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType2_executeService(OV_INST
 		Ov_SetDynamicVectorLength(&query[i].value_relation, 0, STRING);
 		Ov_SetDynamicVectorLength(&query[i].value_optional, 0, STRING);
 		Ov_SetDynamicVectorLength(&query[i].value_optional_relation, 0, STRING);
-		Ov_SetDynamicVectorLength(&table[i], 0, STRING);
+		Ov_SetDynamicVectorLength(&table, 0, STRING);
 	}
 	free(query);
-	free(table);
 
 	if (componentIDs.veclen == 0){
 		ov_string_setvalue(errorMessage, "no component found by your statements");

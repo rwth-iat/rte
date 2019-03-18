@@ -88,6 +88,12 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType1_executeService(OV_INST
 	OV_STRING securityKey = NULL;
 	jsonGetValueByToken(JsonInput.js, &JsonInput.token[tokenIndex.value[1]+1], &securityKey);
 
+
+	if (pinst->v_DBWrapperUsed.veclen == 0){
+		ov_string_setvalue(errorMessage, "Internal Error");
+		ov_logfile_error("Could not find DBWrapper Object");
+		goto FINALIZE;
+	}
 	// check SecurityKey in Database
 	OV_RESULT resultOV = checkSecurityKey(pinst->v_DBWrapperUsed, componentID, securityKey);
 	if (resultOV){
@@ -126,15 +132,14 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType1_executeService(OV_INST
 
 	struct DB_QUERY * query = NULL;
 	query = malloc(sizeof(struct DB_QUERY) * searchStatementSize);
-	OV_STRING_VEC* table  = NULL;
-	table = malloc(sizeof(OV_STRING_VEC) * searchStatementSize);
+	OV_STRING_VEC table;
+	table.value = NULL;
+	table.veclen = 0;
+	Ov_SetDynamicVectorLength(&table, searchStatementSize, STRING);
 
 
 	for (OV_UINT i = 0; i < searchStatementSize; i++){
-		table[i].value = NULL;
-		table[i].veclen = 0;
-		Ov_SetDynamicVectorLength(&table[i], 1, STRING);
-		ov_string_setvalue(&table[i].value[0], "statements_TextBoolean");
+		ov_string_setvalue(&table.value[i], "statements_TextBoolean");
 		query[i].column.veclen = 0;
 		query[i].column.value = NULL;
 		query[i].value.veclen = 0;
@@ -181,10 +186,9 @@ OV_DLLFNCEXPORT OV_RESULT DSServices_DSSearchServiceType1_executeService(OV_INST
 	for (OV_UINT i = 0; i < searchStatementSize; i++){
 		Ov_SetDynamicVectorLength(&query[i].column, 0, STRING);
 		Ov_SetDynamicVectorLength(&query[i].value, 0, STRING);
-		Ov_SetDynamicVectorLength(&table[i], 0, STRING);
+		Ov_SetDynamicVectorLength(&table, 0, STRING);
 	}
 	free(query);
-	free(table);
 
 	if (componentIDs.veclen == 0){
 		ov_string_setvalue(errorMessage, "no component found by your statements");

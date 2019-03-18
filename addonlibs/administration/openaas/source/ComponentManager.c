@@ -184,6 +184,7 @@ static void cleanupMessageBox(OV_INSTPTR_openaas_AASComponentManager this) {
 	return;
 }
 
+
 // RequestType:
 // 0:SecurityRequest
 // 1:RegistrationRequest
@@ -271,7 +272,8 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		ov_memstack_lock();
 		ov_string_print(&componentContent, "\"endpoints\":[{\"protocolType\":\"acplt_ks\",\"endpointSring\":\"%s\"}", SenderEndpoint);
 		if(ov_library_search("openaasHTTP") != NULL){ // http-Endpoint
-			ov_string_print(&httpEndpoint, "%s:7509%s/aas", pInterfaceDiscoveryServer->v_IPAddressServer, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,paas), 2));
+			OV_INSTPTR_TCPbind_TCPListener tcpListener = Ov_DynamicPtrCast(TCPbind_TCPListener, ov_path_getobjectpointer("/communication/TCPbind/TCPListener", 2));
+			ov_string_print(&httpEndpoint, "%s:%i%s/aas", pInterfaceDiscoveryServer->v_IPAddressServer, tcpListener->v_port, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,paas), 2));
 			tmpString = NULL;
 			ov_string_print(&tmpString, ",{\"protocolType\":\"http\",\"endpointString\":\"%s\"}", httpEndpoint);
 			ov_string_append(&componentContent, tmpString);
@@ -284,273 +286,14 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 			ov_string_append(&componentContent, tmpString);
 			ov_string_setvalue(&tmpString, NULL);
 		}
-		ov_string_append(&componentContent, "],\"statements\": [");
 		ov_memstack_unlock();
-		// Registration of other Tags
-		OV_INSTPTR_openaas_SubModel pSubmodel = NULL;
-		OV_INSTPTR_propertyValueStatement_PropertyValueStatementList pPVSList = NULL;
-		OV_INSTPTR_propertyValueStatement_PropertyValueStatement pPVS = NULL;
-		OV_INSTPTR_propertyValueStatement_CarrierId pCarrierID = NULL;
-		OV_INSTPTR_propertyValueStatement_PropertyId pPropertyID = NULL;
-		OV_INSTPTR_propertyValueStatement_ExpressionSemantic pExpressionSemantic = NULL;
-		OV_INSTPTR_propertyValueStatement_ExpressionLogic pExpressionLogic = NULL;
-		OV_INSTPTR_ov_object pObject = NULL;
-		OV_INSTPTR_ov_object pObject2 = NULL;
-		Ov_ForEachChildEx(ov_containment, &paas->p_Header, pSubmodel, openaas_SubModel){
-			Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
-				Ov_ForEachChild(ov_containment, pPVSList, pObject){
-					if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject)){
-						pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject);
-					}
-					if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject)){
-						pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject);
-					}
-					if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject)){
-						pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject);
-					}
-					if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject)){
-						pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject);
-					}
-					if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pObject)){
-						pPVS = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pObject);
-						Ov_ForEachChild(ov_containment, pPVS, pObject2){
-							if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject2)){
-								pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject2);
-							}
-							if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject2)){
-								pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject2);
-							}
-							if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject2)){
-								pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject2);
-							}
-							if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject2)){
-								pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject2);
-							}
-						}
-						ov_string_print(&tmpString, "{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
-						ov_string_append(&componentContent, tmpString);
-						ov_string_print(&tmpString, ",\"PropertyID\":\"%i,%s\"", pPropertyID->v_IdType, pPropertyID->v_IdSpec);
-						ov_string_append(&componentContent, tmpString);
 
-						switch(pExpressionSemantic->v_ExpressionSemanticEnum){
-							case 0:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Assurance\"");
-							break;
-							case 1:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Setting\"");
-							break;
-							case 2:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Measurement\"");
-							break;
-							case 3:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Requirement\"");
-							break;
-							default:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"\"");
-							break;
-						}
-						ov_string_append(&componentContent, tmpString);
+		ov_string_append(&componentContent, "],");
 
-						switch(pExpressionLogic->v_ExpressionLogicEnum){
-							case 0:
-								ov_string_print(&tmpString, ",\"Relation\":\">\"");
-							break;
-							case 1:
-								ov_string_print(&tmpString, ",\"Relation\":\">=\"");
-							break;
-							case 2:
-								ov_string_print(&tmpString, ",\"Relation\":\"==\"");
-							break;
-							case 3:
-								ov_string_print(&tmpString, ",\"Relation\":\"!=\"");
-							break;
-							case 4:
-								ov_string_print(&tmpString, ",\"Relation\":\"<=\"");
-							break;
-							case 5:
-								ov_string_print(&tmpString, ",\"Relation\":\"<\"");
-							break;
-							default:
-								ov_string_print(&tmpString, ",\"Relation\":\"\"");
-							break;
-						}
-						ov_string_append(&componentContent, tmpString);
-						switch(pPVS->v_Value.value.vartype & OV_VT_KSMASK){
-							case OV_VT_BOOL:
-								ov_string_print(&tmpString, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_bool);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Boolean\"");
-								break;
-							case OV_VT_SINGLE:
-								ov_string_print(&tmpString, ",\"Value\":\"%f\"", pPVS->v_Value.value.valueunion.val_single);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
-								break;
-							case OV_VT_DOUBLE:
-								ov_string_print(&tmpString, ",\"Value\":\"%lf\"", pPVS->v_Value.value.valueunion.val_double);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
-								break;
-							case OV_VT_INT:
-								ov_string_print(&tmpString, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_int);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
-								break;
-							case OV_VT_UINT:
-								ov_string_print(&tmpString, ",\"Value\":\"%u\"", pPVS->v_Value.value.valueunion.val_uint);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
-								break;
-							case OV_VT_STRING:
-								if (pPVS->v_Value.value.valueunion.val_string != NULL)
-									ov_string_print(&tmpString, ",\"Value\":\"%s\"", pPVS->v_Value.value.valueunion.val_string);
-								else
-									ov_string_print(&tmpString, ",\"Value\":\"\"");
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Text\"");
-								break;
-							default:
-								ov_string_setvalue(&tmpString, ",\"Value\":\"\"");
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"\"");
-								break;
-						}
-						ov_string_append(&componentContent, tmpString);
-						ov_string_print(&tmpString, ",\"SubModel\":\"%s\"}", pSubmodel->v_identifier);
-						ov_string_append(&componentContent, tmpString);
-						ov_string_setvalue(&tmpString, NULL);
-					}
-				}
-			}
-		}
-		Ov_ForEachChildEx(ov_containment, &paas->p_Body, pSubmodel, openaas_SubModel){
-			Ov_ForEachChildEx(ov_containment, pSubmodel, pPVSList, propertyValueStatement_PropertyValueStatementList){
-				Ov_ForEachChild(ov_containment, pPVSList, pObject){
-					if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject)){
-						pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject);
-					}
-					if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject)){
-						pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject);
-					}
-					if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject)){
-						pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject);
-					}
-					if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject)){
-						pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject);
-					}
-					if (Ov_CanCastTo(propertyValueStatement_PropertyValueStatement, pObject)){
-						pPVS = Ov_DynamicPtrCast(propertyValueStatement_PropertyValueStatement, pObject);
-						Ov_ForEachChild(ov_containment, pPVS, pObject2){
-							if (Ov_CanCastTo(propertyValueStatement_CarrierId, pObject2)){
-								pCarrierID = Ov_DynamicPtrCast(propertyValueStatement_CarrierId, pObject2);
-							}
-							if (Ov_CanCastTo(propertyValueStatement_PropertyId, pObject2)){
-								pPropertyID = Ov_DynamicPtrCast(propertyValueStatement_PropertyId, pObject2);
-							}
-							if (Ov_CanCastTo(propertyValueStatement_ExpressionSemantic, pObject2)){
-								pExpressionSemantic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionSemantic, pObject2);
-							}
-							if (Ov_CanCastTo(propertyValueStatement_ExpressionLogic, pObject2)){
-								pExpressionLogic = Ov_DynamicPtrCast(propertyValueStatement_ExpressionLogic, pObject2);
-							}
-						}
+		OV_STRING tmpString = getStatementsInJSON(paas);
+		ov_string_append(&componentContent, tmpString);
+		ov_string_setvalue(&tmpString, NULL);
 
-						ov_string_print(&tmpString, "{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
-						ov_string_append(&componentContent, tmpString);
-						ov_string_print(&tmpString, ",\"PropertyID\":\"%i,%s\"", pPropertyID->v_IdType, pPropertyID->v_IdSpec);
-						ov_string_append(&componentContent, tmpString);
-						switch(pExpressionSemantic->v_ExpressionSemanticEnum){
-							case 0:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Assurance\"");
-							break;
-							case 1:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Setting\"");
-							break;
-							case 2:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Measurement\"");
-							break;
-							case 3:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"Requirement\"");
-							break;
-							default:
-								ov_string_print(&tmpString, ",\"ExpressionSemantic\":\"\"");
-							break;
-						}
-						ov_string_append(&componentContent, tmpString);
-
-						switch(pExpressionLogic->v_ExpressionLogicEnum){
-							case 0:
-								ov_string_print(&tmpString, ",\"Relation\":\">\"");
-							break;
-							case 1:
-								ov_string_print(&tmpString, ",\"Relation\":\">=\"");
-							break;
-							case 2:
-								ov_string_print(&tmpString, ",\"Relation\":\"==\"");
-							break;
-							case 3:
-								ov_string_print(&tmpString, ",\"Relation\":\"!=\"");
-							break;
-							case 4:
-								ov_string_print(&tmpString, ",\"Relation\":\"<=\"");
-							break;
-							case 5:
-								ov_string_print(&tmpString, ",\"Relation\":\"<\"");
-							break;
-							default:
-								ov_string_print(&tmpString, ",\"Relation\":\"\"");
-							break;
-						}
-						ov_string_append(&componentContent, tmpString);
-						switch(pPVS->v_Value.value.vartype & OV_VT_KSMASK){
-							case OV_VT_BOOL:
-								ov_string_print(&tmpString, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_bool);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Boolean\"");
-								break;
-							case OV_VT_SINGLE:
-								ov_string_print(&tmpString, ",\"Value\":\"%f\"", pPVS->v_Value.value.valueunion.val_single);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
-								break;
-							case OV_VT_DOUBLE:
-								ov_string_print(&tmpString, ",\"Value\":\"%lf\"", pPVS->v_Value.value.valueunion.val_double);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
-								break;
-							case OV_VT_INT:
-								ov_string_print(&tmpString, ",\"Value\":\"%d\"", pPVS->v_Value.value.valueunion.val_int);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
-								break;
-							case OV_VT_UINT:
-								ov_string_print(&tmpString, ",\"Value\":\"%u\"", pPVS->v_Value.value.valueunion.val_uint);
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Numeric\"");
-								break;
-							case OV_VT_STRING:
-								if (pPVS->v_Value.value.valueunion.val_string != NULL)
-									ov_string_print(&tmpString, ",\"Value\":\"%s\"", pPVS->v_Value.value.valueunion.val_string);
-								else
-									ov_string_print(&tmpString, ",\"Value\":\"\"");
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"Text\"");
-								break;
-							default:
-								ov_string_setvalue(&tmpString, ",\"Value\":\"\"");
-								ov_string_append(&componentContent, tmpString);
-								ov_string_print(&tmpString, ",\"ValueType\":\"\"");
-								break;
-						}
-						ov_string_append(&componentContent, tmpString);
-						ov_string_print(&tmpString, ",\"SubModel\":\"%s\"}", pSubmodel->v_identifier);
-						ov_string_append(&componentContent, tmpString);
-						ov_string_setvalue(&tmpString, NULL);
-					}
-				}
-			}
-		}
-		ov_string_append(&componentContent, "]");
 		ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"3\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", %s}}", SenderEndpoint, ReceiverEndpoint, MessageSys_Message_msgID_get(pRequestMessage), componentID, this->v_securityKey, componentContent);
 		ov_string_setvalue(&componentContent, NULL);
 		ov_string_append(&answerBody, tmpString);

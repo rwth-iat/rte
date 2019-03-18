@@ -376,6 +376,10 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_DiscoveryServer_typemethod(
 
     OV_INSTPTR_openAASDiscoveryServer_DBWrapper pDBWrapper = NULL;
 	OV_VTBLPTR_openAASDiscoveryServer_DBWrapper pDBWrapperVTable = NULL;
+	if (pinst->p_Registration.v_DBWrapper.veclen == 0){
+		ov_logfile_error("Could not find DBWrapper Object");
+		return;
+	}
 	pDBWrapper = Ov_DynamicPtrCast(openAASDiscoveryServer_DBWrapper, ov_path_getobjectpointer(pinst->p_Registration.v_DBWrapper.value[0], 2));
 	if (!pDBWrapper){
 		ov_logfile_error("Could not find DBWrapper Object");
@@ -416,6 +420,13 @@ OV_DLLFNCEXPORT void openAASDiscoveryServer_DiscoveryServer_typemethod(
 	pDBWrapperVTable->m_selectData(pDBWrapper, table, &tmpFields, 1, NULL, 0, NULL, 0, &result);
 	Ov_SetDynamicVectorValue(&pinst->v_SubModelList, result.value, result.veclen, STRING);
 	Ov_SetDynamicVectorLength(&result, 0, STRING);
+
+	OV_INSTPTR_openAASDiscoveryServer_AASCrawler pCrawler = NULL;
+	OV_VTBLPTR_openAASDiscoveryServer_AASCrawler pCrawlerVTable = NULL;
+	Ov_ForEachChildEx(ov_containment, pinst, pCrawler, openAASDiscoveryServer_AASCrawler){
+		Ov_GetVTablePtr(openAASDiscoveryServer_AASCrawler,pCrawlerVTable, pCrawler);
+		pCrawlerVTable->m_crawlAAS(pCrawler);
+	}
 
     return;
 }

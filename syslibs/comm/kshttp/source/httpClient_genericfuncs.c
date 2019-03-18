@@ -403,7 +403,7 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, HTTP_RESP
 						responseStruct->contentLength = (OV_UINT)tempulong;
 					}
 				}
-			}else if(ov_string_match(pallheaderslist[i], "content-type:*") == TRUE){
+			}else if(ov_string_match(pallheaderslist[i], "?ontent-?ype:*") == TRUE){
 				ov_string_freelist(plist);
 				plist = ov_string_split(pallheaderslist[i], "Content-Type: ", &len);
 				if(len == 1){

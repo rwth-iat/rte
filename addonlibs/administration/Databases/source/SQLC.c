@@ -27,11 +27,12 @@
 struct table{
 	OV_STRING tableName;
 	OV_STRING_VEC columnNames;
-	OV_UINT_VEC dataTypes; // 1:STRING / BOOLEAN, 2:INT, 3:DOUBLE
+	OV_UINT_VEC dataTypes; // 1:STRING / BOOLEAN, 2:NUMERIC
 	OV_UINT_VEC unusedRows;
 	OV_UINT_VEC usedRows;
 	void*** table;
 };
+
 
 void* newTable(){
 	struct table* newTable = (struct table*)ov_database_malloc(sizeof(struct table));
@@ -85,10 +86,7 @@ OV_RESULT WriteTableInFile(OV_INSTPTR_Databases_SQLC pinst, OV_STRING tableName,
 					case 1:// STRING / BOOLEAN
 						fprintf(fp, "%s", *(OV_STRING*)(tmpTable->table[i][j]));
 						break;
-					case 2:// INT
-						fprintf(fp, "%i", *(OV_INT*)(tmpTable->table[i][j]));
-						break;
-					case 3:// DOUBLE
+					case 2:// NUMERIC
 						fprintf(fp, "%lf", *(OV_DOUBLE*)(tmpTable->table[i][j]));
 						break;
 				}
@@ -138,8 +136,7 @@ OV_RESULT deleteTableMembers(struct table* table){
 				case 1:// STRING / BOOLEAN
 					ov_string_setvalue((OV_STRING*)table->table[i][j], NULL);
 					break;
-				case 2:// INT
-				case 3:// DOUBLE
+				case 3:// NUMERIC
 					break;
 			}
 			ov_database_free(table->table[i][j]);
@@ -187,13 +184,8 @@ OV_RESULT InsertRowIntoTable(OV_INSTPTR_Databases_SQLC pinst, struct table* tabl
 								return OV_ERR_ALREADYEXISTS;
 							}
 							break;
-						case 2:// INT
-							if (*(OV_INT*)table->table[i][j] == atoi(values.value[j])){
-								return OV_ERR_ALREADYEXISTS;
-							}
-							break;
-						case 3:// DOUBLE
-							if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(values.value[j])) > pinst->v_precision){
+						case 2:// NUMERIC
+							if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(values.value[j])) < pinst->v_precision){
 								return OV_ERR_ALREADYEXISTS;
 							}
 							break;
@@ -213,13 +205,8 @@ OV_RESULT InsertRowIntoTable(OV_INSTPTR_Databases_SQLC pinst, struct table* tabl
 							match = TRUE;
 						}
 						break;
-					case 2:// INT
-						if (*(OV_INT*)table->table[i][j] == atoi(values.value[j])){
-							match = TRUE;
-						}
-						break;
-					case 3:// DOUBLE
-						if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(values.value[j])) > pinst->v_precision){
+					case 2:// NUMERIC
+						if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(values.value[j])) < pinst->v_precision){
 							match = TRUE;
 						}
 						break;
@@ -242,11 +229,7 @@ OV_RESULT InsertRowIntoTable(OV_INSTPTR_Databases_SQLC pinst, struct table* tabl
 					table->table[table->unusedRows.value[table->unusedRows.veclen-1]][i] = ov_database_malloc(sizeof(OV_STRING));
 					ov_string_setvalue((OV_STRING*)table->table[table->unusedRows.value[table->unusedRows.veclen-1]][i], values.value[i]);
 					break;
-				case 2:// INT
-					table->table[table->unusedRows.value[table->unusedRows.veclen-1]][i] = ov_database_malloc(sizeof(OV_INT));
-					*((OV_INT*)table->table[table->unusedRows.value[table->unusedRows.veclen-1]][i]) = atoi(values.value[i]);
-					break;
-				case 3:// DOUBLE
+				case 2:// NUMERIC
 					table->table[table->unusedRows.value[table->unusedRows.veclen-1]][i] = ov_database_malloc(sizeof(OV_DOUBLE));
 					*((OV_DOUBLE*)table->table[table->unusedRows.value[table->unusedRows.veclen-1]][i]) = atof(values.value[i]);
 					break;
@@ -279,11 +262,7 @@ OV_RESULT InsertRowIntoTable(OV_INSTPTR_Databases_SQLC pinst, struct table* tabl
 					tmpTable[table->usedRows.veclen][i] = ov_database_malloc(sizeof(OV_STRING));
 					ov_string_setvalue((OV_STRING*)tmpTable[table->usedRows.veclen][i], values.value[i]);
 					break;
-				case 2:// INT
-					tmpTable[table->usedRows.veclen][i] = ov_database_malloc(sizeof(OV_INT));
-					*((OV_INT*)tmpTable[table->usedRows.veclen][i]) = atoi(values.value[i]);
-					break;
-				case 3:// DOUBLE
+				case 2:// NUMERIC
 					tmpTable[table->usedRows.veclen][i] = ov_database_malloc(sizeof(OV_DOUBLE));
 					*((OV_DOUBLE*)tmpTable[table->usedRows.veclen][i]) = atof(values.value[i]);
 				break;
@@ -336,14 +315,8 @@ OV_RESULT DeleteRowInTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table,
 								numberOfMatchingRows = numberOfMatchingRows + 1;
 							}
 							break;
-						case 2:// INT
-							if (*(OV_INT*)table->table[i][j] == atoi(values.value[j])){
-								matchingRows.value[numberOfMatchingRows] = i;
-								numberOfMatchingRows = numberOfMatchingRows + 1;
-							}
-							break;
-						case 3:// DOUBLE
-							if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(values.value[j])) > pinst->v_precision){
+						case 2:// NUMERIC
+							if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(values.value[j])) < pinst->v_precision){
 								matchingRows.value[numberOfMatchingRows] = i;
 								numberOfMatchingRows = numberOfMatchingRows + 1;
 							}
@@ -364,13 +337,8 @@ OV_RESULT DeleteRowInTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table,
 							match = TRUE;
 						}
 						break;
-					case 2:// INT
-						if (*(OV_INT*)table->table[i][j] == atoi(values.value[j])){
-							match = TRUE;
-						}
-						break;
-					case 3:// DOUBLE
-						if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(values.value[j])) > pinst->v_precision){
+					case 2:// NUMERIC
+						if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(values.value[j])) < pinst->v_precision){
 							match = TRUE;
 						}
 						break;
@@ -399,8 +367,7 @@ OV_RESULT DeleteRowInTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table,
 				case 1:// STRING / BOOLEAN
 					ov_string_setvalue((OV_STRING*)table->table[matchingRows.value[i]][j], NULL);
 					break;
-				case 2:// INT
-				case 3:// DOUBLE
+				case 3:// NUMERIC
 					break;
 			}
 			ov_database_free(table->table[matchingRows.value[i]][j]);
@@ -458,13 +425,7 @@ OV_RESULT UpdateRowInTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table,
 								numberOfMatchingRows = numberOfMatchingRows + 1;
 							}
 							break;
-						case 2:// INT
-							if (*(OV_INT*)table->table[i][j] == atoi(findRowValues.value[j])){
-								matchingRows.value[numberOfMatchingRows] = i;
-								numberOfMatchingRows = numberOfMatchingRows + 1;
-							}
-							break;
-						case 3:// DOUBLE
+						case 2:// NUMERIC
 							if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j])) > pinst->v_precision){
 								matchingRows.value[numberOfMatchingRows] = i;
 								numberOfMatchingRows = numberOfMatchingRows + 1;
@@ -486,13 +447,8 @@ OV_RESULT UpdateRowInTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table,
 							match = TRUE;
 						}
 						break;
-					case 2:// INT
-						if (*(OV_INT*)table->table[i][j] == atoi(findRowValues.value[j])){
-							match = TRUE;
-						}
-						break;
-					case 3:// DOUBLE
-						if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j])) > pinst->v_precision){
+					case 2:// NUMERIC
+						if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j])) < pinst->v_precision){
 							match = TRUE;
 						}
 						break;
@@ -520,13 +476,7 @@ OV_RESULT UpdateRowInTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table,
 							}
 							ov_string_setvalue((OV_STRING*)table->table[matchingRows.value[i]][j], updateValues.value[k]);
 							break;
-						case 2:// INT
-							if (table->table[matchingRows.value[i]][j] == NULL){
-								table->table[matchingRows.value[i]][j] = ov_database_malloc(sizeof(OV_INT));
-							}
-							*((OV_INT*)table->table[matchingRows.value[i]][j]) = atoi(updateValues.value[k]);
-							break;
-						case 3:// DOUBLE
+						case 2:// NUMERIC
 							if (table->table[matchingRows.value[i]][j] == NULL){
 								table->table[matchingRows.value[i]][j] = ov_database_malloc(sizeof(OV_DOUBLE));
 							}
@@ -623,13 +573,7 @@ OV_RESULT SelectTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_S
 								numberOfMatchingRows = numberOfMatchingRows + 1;
 							}
 							break;
-						case 2:// INT
-							if (*(OV_INT*)table->table[i][j] == atoi(findRowValues.value[j])){
-								matchingRows.value[numberOfMatchingRows] = i;
-								numberOfMatchingRows = numberOfMatchingRows + 1;
-							}
-							break;
-						case 3:// DOUBLE
+						case 2:// NUMERIC
 							if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j])) < pinst->v_precision){
 								matchingRows.value[numberOfMatchingRows] = i;
 								numberOfMatchingRows = numberOfMatchingRows + 1;
@@ -637,6 +581,7 @@ OV_RESULT SelectTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_S
 						break;
 					}
 				}
+				break;
 			}else{
 				if (findRowValues.value[j] == NULL){
 					continue;
@@ -651,12 +596,7 @@ OV_RESULT SelectTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_S
 							match = TRUE;
 						}
 						break;
-					case 2:// INT
-						if (*(OV_INT*)table->table[i][j] == atoi(findRowValues.value[j])){
-							match = TRUE;
-						}
-						break;
-					case 3:// DOUBLE
+					case 2:// NUMERIC
 						if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j])) < pinst->v_precision){
 							match = TRUE;
 						}
@@ -684,12 +624,7 @@ OV_RESULT SelectTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_S
 							distinct = TRUE;
 						}
 						break;
-					case 2:// INT
-						if (*(OV_INT*)table->table[matchingRows.value[i]][columnNumbers.value[k]] != *(OV_INT*)table->table[matchingRows.value[j]][columnNumbers.value[k]]){
-							distinct = TRUE;
-						}
-						break;
-					case 3:// DOUBLE
+					case 2:// NUMERIC
 						if (abs(*(OV_DOUBLE*)table->table[matchingRows.value[i]][columnNumbers.value[k]] - *(OV_DOUBLE*)table->table[matchingRows.value[j]][columnNumbers.value[k]]) > pinst->v_precision){
 							distinct = TRUE;
 						}
@@ -718,10 +653,7 @@ OV_RESULT SelectTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_S
 				case 1:// STRING / BOOLEAN
 					ov_string_setvalue(&result->value[result->veclen-(columnNumbers.veclen-j)], *(OV_STRING*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
 					break;
-				case 2:// INT
-					ov_string_print(&result->value[result->veclen-(columnNumbers.veclen-j)], "%i", *(OV_UINT*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
-					break;
-				case 3:// DOUBLE
+				case 2:// NUMERIC
 					ov_string_print(&result->value[result->veclen-(columnNumbers.veclen-j)], "%lf", *(OV_DOUBLE*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
 				break;
 			}
@@ -736,6 +668,16 @@ OV_RESULT SelectTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_S
 
 // findRowRelation: 0:==, 1:<, 2:<=, 3:!=, 4:>=, 5:>
 OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_STRING_VEC findRowValues, OV_UINT_VEC findRowRelation, OV_STRING_VEC selectedColumns, OV_STRING_VEC* result){
+	OV_TIME startTime;
+	startTime.usecs = 0;
+	startTime.secs = 0;
+	OV_TIME endTime;
+	endTime.usecs = 0;
+	endTime.secs = 0;
+	OV_TIME_SPAN timeDiff;
+
+
+
 	if (table == NULL){
 		ov_logfile_error("table not exist");
 		return OV_ERR_GENERIC;
@@ -744,7 +686,10 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 		ov_logfile_error("findRowValues size or findRowRelation size is not a multiple of column size or they have not the same length");
 		return OV_ERR_BADPARAM;
 	}
-
+	if (result->veclen != 0){
+		ov_logfile_error("result veclen is not 0");
+		return OV_ERR_BADPARAM;
+	}
 	OV_UINT_VEC matchingRows;
 	matchingRows.veclen = 0;
 	matchingRows.value = NULL;
@@ -782,6 +727,7 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 	}
 	Ov_SetDynamicVectorLength(&tmpcolumnNumbers, 0, UINT);
 	OV_BOOL noMatching = FALSE;
+	ov_time_gettime(&startTime);
 	// find rows
 	for (i = 0; i < table->usedRows.veclen; i++){
 		if (table->usedRows.value[i] == 0){
@@ -797,12 +743,14 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 			noMatching = FALSE;
 			continue;
 		}
+		OV_BOOL rowMatched = FALSE;
 		for (OV_UINT k = 0; k < findRowValues.veclen / table->columnNames.veclen; k++){
 			for (OV_UINT j = 0; j < table->columnNames.veclen; j++){
 				if (j == table->columnNames.veclen -1){
 					if (findRowValues.value[j+table->columnNames.veclen*k] == NULL){
 						matchingRows.value[numberOfMatchingRows] = i;
 						numberOfMatchingRows = numberOfMatchingRows + 1;
+						rowMatched = TRUE;
 					}else{
 						if (table->table[i][j] == NULL){
 							break;
@@ -814,6 +762,7 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 										if (ov_string_compare(*(OV_STRING*)table->table[i][j], findRowValues.value[j+table->columnNames.veclen*k]) == OV_STRCMP_EQUAL){
 											matchingRows.value[numberOfMatchingRows] = i;
 											numberOfMatchingRows = numberOfMatchingRows + 1;
+											rowMatched = TRUE;
 										}
 									break;
 									case 1:
@@ -824,82 +773,48 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 									break;
 								}
 								break;
-							case 2:// INT
-								switch (findRowRelation.value[j+table->columnNames.veclen*k]){ // 0:==, 1:<, 2:<=, 3:!=, 4:>=, 5:>
-									case 0:
-										if (*(OV_INT*)table->table[i][j] == atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-											matchingRows.value[numberOfMatchingRows] = i;
-											numberOfMatchingRows = numberOfMatchingRows + 1;
-										}
-									break;
-									case 1:
-										if (*(OV_INT*)table->table[i][j] < atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-											matchingRows.value[numberOfMatchingRows] = i;
-											numberOfMatchingRows = numberOfMatchingRows + 1;
-										}
-									break;
-									case 2:
-										if (*(OV_INT*)table->table[i][j] <= atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-											matchingRows.value[numberOfMatchingRows] = i;
-											numberOfMatchingRows = numberOfMatchingRows + 1;
-										}
-									break;
-									case 3:
-										if (*(OV_INT*)table->table[i][j] != atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-											matchingRows.value[numberOfMatchingRows] = i;
-											numberOfMatchingRows = numberOfMatchingRows + 1;
-										}
-									break;
-									case 4:
-										if (*(OV_INT*)table->table[i][j] >= atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-											matchingRows.value[numberOfMatchingRows] = i;
-											numberOfMatchingRows = numberOfMatchingRows + 1;
-										}
-										break;
-									case 5:
-										if (*(OV_INT*)table->table[i][j] > atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-											matchingRows.value[numberOfMatchingRows] = i;
-											numberOfMatchingRows = numberOfMatchingRows + 1;
-										}
-									break;
-								}
-								break;
-							case 3:// DOUBLE
+							case 2:// NUMERIC
 								switch (findRowRelation.value[j+table->columnNames.veclen*k]){ // 0:==, 1:<, 2:<=, 3:!=, 4:>=, 5:>
 									case 0:
 										if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j+table->columnNames.veclen*k])) < pinst->v_precision){
 											matchingRows.value[numberOfMatchingRows] = i;
 											numberOfMatchingRows = numberOfMatchingRows + 1;
+											rowMatched = TRUE;
 										}
 									break;
 									case 1:
 										if (*(OV_DOUBLE*)table->table[i][j] < atof(findRowValues.value[j+table->columnNames.veclen*k])){
 											matchingRows.value[numberOfMatchingRows] = i;
 											numberOfMatchingRows = numberOfMatchingRows + 1;
+											rowMatched = TRUE;
 										}
 									break;
 									case 2:
 										if (*(OV_DOUBLE*)table->table[i][j] < atof(findRowValues.value[j+table->columnNames.veclen*k]) || abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j+table->columnNames.veclen*k])) < pinst->v_precision){
 											matchingRows.value[numberOfMatchingRows] = i;
 											numberOfMatchingRows = numberOfMatchingRows + 1;
+											rowMatched = TRUE;
 										}
 									break;
 									case 3:
 										if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j+table->columnNames.veclen*k])) > pinst->v_precision){
 											matchingRows.value[numberOfMatchingRows] = i;
 											numberOfMatchingRows = numberOfMatchingRows + 1;
+											rowMatched = TRUE;
 										}
 									break;
 									case 4:
 										if (*(OV_DOUBLE*)table->table[i][j] >= atof(findRowValues.value[j+table->columnNames.veclen*k])){
 											matchingRows.value[numberOfMatchingRows] = i;
 											numberOfMatchingRows = numberOfMatchingRows + 1;
+											rowMatched = TRUE;
 										}
 									break;
 									case 5:
 										if (*(OV_DOUBLE*)table->table[i][j] > atof(findRowValues.value[j+table->columnNames.veclen*k]) || abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j+table->columnNames.veclen*k])) < pinst->v_precision){
 											matchingRows.value[numberOfMatchingRows] = i;
 											numberOfMatchingRows = numberOfMatchingRows + 1;
+											rowMatched = TRUE;
 										}
 									break;
 								}
@@ -930,41 +845,7 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 								break;
 							}
 							break;
-						case 2:// INT
-							switch (findRowRelation.value[j+table->columnNames.veclen*k]){ // 0:==, 1:<, 2:<=, 3:!=, 4:>=, 5:>
-								case 0:
-									if (*(OV_INT*)table->table[i][j] == atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-										match = TRUE;
-									}
-								break;
-								case 1:
-									if (*(OV_INT*)table->table[i][j] < atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-										match = TRUE;
-									}
-								break;
-								case 2:
-									if (*(OV_INT*)table->table[i][j] <= atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-										match = TRUE;
-									}
-								break;
-								case 3:
-									if (*(OV_INT*)table->table[i][j] != atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-										match = TRUE;
-									}
-								break;
-								case 4:
-									if (*(OV_INT*)table->table[i][j] >= atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-										match = TRUE;
-									}
-									break;
-								case 5:
-									if (*(OV_INT*)table->table[i][j] > atoi(findRowValues.value[j+table->columnNames.veclen*k])){
-										match = TRUE;
-									}
-								break;
-							}
-							break;
-						case 3:// DOUBLE
+						case 2:// NUMERIC
 							switch (findRowRelation.value[j+table->columnNames.veclen*k]){ // 0:==, 1:<, 2:<=, 3:!=, 4:>=, 5:>
 								case 0:
 									if (abs(*(OV_DOUBLE*)table->table[i][j] - atof(findRowValues.value[j+table->columnNames.veclen*k])) < pinst->v_precision){
@@ -1004,67 +885,113 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 					}
 				}
 			}
+			if (rowMatched == TRUE){
+				break;
+			}
 		}
 	}
-
+	ov_time_gettime(&endTime);
+	ov_time_diff(&timeDiff,&endTime, &startTime);
+	ov_logfile_info("GetTableFindRows: %s", ov_time_timespantoascii(&timeDiff));
+	ov_time_gettime(&startTime);
 	// find distinct elements
 	OV_UINT_VEC matchingRowsDistinct;
 	matchingRowsDistinct.veclen = 0;
 	matchingRowsDistinct.value = NULL;
 	OV_BOOL distinct = FALSE;
-	for (i = 0; i < numberOfMatchingRows; i++){
-		for (j = i+1; j < numberOfMatchingRows; j++){
-			distinct = FALSE;
-			for (OV_UINT k = 0; k < columnNumbers.veclen; k++){
-				switch(table->dataTypes.value[k]){
-					case 1:// STRING / BOOLEAN
-						if (ov_string_compare(*(OV_STRING*)table->table[matchingRows.value[i]][columnNumbers.value[k]], *(OV_STRING*)table->table[matchingRows.value[j]][columnNumbers.value[k]]) != OV_STRCMP_EQUAL){
-							distinct = TRUE;
-						}
+	OV_UINT matchingRowsDistinctLength = numberOfMatchingRows;
+	if (columnNumbers.veclen != table->columnNames.veclen){
+		for (i = 0; i < numberOfMatchingRows; i++){
+			for (j = i+1; j < numberOfMatchingRows; j++){
+				distinct = FALSE;
+				for (OV_UINT k = 0; k < columnNumbers.veclen; k++){
+					switch(table->dataTypes.value[k]){
+						case 1:// STRING / BOOLEAN
+							if (ov_string_compare(*(OV_STRING*)table->table[matchingRows.value[i]][columnNumbers.value[k]], *(OV_STRING*)table->table[matchingRows.value[j]][columnNumbers.value[k]]) != OV_STRCMP_EQUAL){
+								distinct = TRUE;
+							}
+							break;
+						case 2:// INT
+							if (*(OV_INT*)table->table[matchingRows.value[i]][columnNumbers.value[k]] != *(OV_INT*)table->table[matchingRows.value[j]][columnNumbers.value[k]]){
+								distinct = TRUE;
+							}
+							break;
+						case 3:// DOUBLE
+							if (abs(*(OV_DOUBLE*)table->table[matchingRows.value[i]][columnNumbers.value[k]] - *(OV_DOUBLE*)table->table[matchingRows.value[j]][columnNumbers.value[k]]) > pinst->v_precision){
+								distinct = TRUE;
+							}
 						break;
-					case 2:// INT
-						if (*(OV_INT*)table->table[matchingRows.value[i]][columnNumbers.value[k]] != *(OV_INT*)table->table[matchingRows.value[j]][columnNumbers.value[k]]){
-							distinct = TRUE;
-						}
+					}
+					if (distinct == TRUE){
 						break;
-					case 3:// DOUBLE
-						if (abs(*(OV_DOUBLE*)table->table[matchingRows.value[i]][columnNumbers.value[k]] - *(OV_DOUBLE*)table->table[matchingRows.value[j]][columnNumbers.value[k]]) > pinst->v_precision){
-							distinct = TRUE;
-						}
-					break;
+					}
 				}
-				if (distinct == TRUE){
+				if (distinct == FALSE){
 					break;
 				}
 			}
-			if (distinct == FALSE){
-				break;
+			if (j == numberOfMatchingRows){
+				Ov_SetDynamicVectorLength(&matchingRowsDistinct, matchingRowsDistinct.veclen+1, UINT);
+				matchingRowsDistinct.value[matchingRowsDistinct.veclen-1] = matchingRows.value[i];
+				matchingRowsDistinctLength = matchingRowsDistinct.veclen;
 			}
-		}
-		if (j == numberOfMatchingRows){
-			Ov_SetDynamicVectorLength(&matchingRowsDistinct, matchingRowsDistinct.veclen+1, UINT);
-			matchingRowsDistinct.value[matchingRowsDistinct.veclen-1] = matchingRows.value[i];
 		}
 	}
+	ov_time_gettime(&endTime);
+	ov_time_diff(&timeDiff,&endTime, &startTime);
+	ov_logfile_info("GetTableDistinct: %s", ov_time_timespantoascii(&timeDiff));
+	ov_time_gettime(&startTime);
 
+	OV_UINT resultLenght = 0;
+	result->value = Ov_HeapMalloc(columnNumbers.veclen*matchingRowsDistinctLength*sizeof(OV_STRING));
+	result->veclen = columnNumbers.veclen*matchingRowsDistinctLength;
+	for (OV_UINT i = 0; i < result->veclen; i++){
+		result->value[i] = NULL;
+	}
+
+	//Ov_SetDynamicVectorLength(result, result->veclen+columnNumbers.veclen*matchingRowsDistinctLength, STRING);
 
 	// create response
-	for (i = 0; i < matchingRowsDistinct.veclen; i++){
-		Ov_SetDynamicVectorLength(result, result->veclen+columnNumbers.veclen, STRING);
-		for (j = 0; j < columnNumbers.veclen; j++){
-			switch(table->dataTypes.value[j]){
-				case 1:// STRING / BOOLEAN
-					ov_string_setvalue(&result->value[result->veclen-(columnNumbers.veclen-j)], *(OV_STRING*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+	if (columnNumbers.veclen != table->columnNames.veclen){
+		for (i = 0; i < matchingRowsDistinctLength; i++){
+			//Ov_SetDynamicVectorLength(result, result->veclen+columnNumbers.veclen, STRING);
+			for (j = 0; j < columnNumbers.veclen; j++){
+				switch(table->dataTypes.value[j]){
+					case 1:// STRING / BOOLEAN
+						//ov_string_setvalue(&result->value[result->veclen-(columnNumbers.veclen-j)], *(OV_STRING*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+						//ov_string_setvalue(&result->value[resultLenght+j+columnNumbers.veclen*i], *(OV_STRING*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+						Ov_HeapStrSet(&result->value[resultLenght+j+columnNumbers.veclen*i], *(OV_STRING*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+						break;
+					case 2:// NUMERIC
+						// ov_string_print(&result->value[result->veclen-(columnNumbers.veclen-j)], "%lf", *(OV_DOUBLE*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+						//ov_string_print(&result->value[resultLenght+j+columnNumbers.veclen*i], "%lf", *(OV_DOUBLE*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+						ov_string_heap_print(&result->value[resultLenght+j+columnNumbers.veclen*i], "%lf", *(OV_DOUBLE*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
 					break;
-				case 2:// INT
-					ov_string_print(&result->value[result->veclen-(columnNumbers.veclen-j)], "%i", *(OV_UINT*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+				}
+			}
+		}
+	}else{
+		for (i = 0; i < matchingRowsDistinctLength; i++){
+			//Ov_SetDynamicVectorLength(result, result->veclen+columnNumbers.veclen, STRING);
+			for (j = 0; j < columnNumbers.veclen; j++){
+				switch(table->dataTypes.value[j]){
+					case 1:// STRING / BOOLEAN
+						//ov_string_setvalue(&result->value[result->veclen-(columnNumbers.veclen-j)], *(OV_STRING*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+						//ov_string_setvalue(&result->value[resultLenght+j+columnNumbers.veclen*i], *(OV_STRING*)table->table[matchingRows.value[i]][columnNumbers.value[j]]);
+						Ov_HeapStrSet(&result->value[resultLenght+j+columnNumbers.veclen*i], *(OV_STRING*)table->table[matchingRows.value[i]][columnNumbers.value[j]]);
 					break;
-				case 3:// DOUBLE
-					ov_string_print(&result->value[result->veclen-(columnNumbers.veclen-j)], "%lf", *(OV_DOUBLE*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
-				break;
+					case 2:// NUMERIC
+						// ov_string_print(&result->value[result->veclen-(columnNumbers.veclen-j)], "%lf", *(OV_DOUBLE*)table->table[matchingRowsDistinct.value[i]][columnNumbers.value[j]]);
+						// ov_string_print(&result->value[resultLenght+j+columnNumbers.veclen*i], "%lf", *(OV_DOUBLE*)table->table[matchingRows.value[i]][columnNumbers.value[j]]);
+						ov_string_heap_print(&result->value[resultLenght+j+columnNumbers.veclen*i], "%lf", *(OV_DOUBLE*)table->table[matchingRows.value[i]][columnNumbers.value[j]]);
+					break;
+				}
 			}
 		}
 	}
+	ov_time_gettime(&endTime);
+	ov_time_diff(&timeDiff,&endTime, &startTime);
+	ov_logfile_info("GetTableResult: %s", ov_time_timespantoascii(&timeDiff));
 	Ov_SetDynamicVectorLength(&columnNumbers, 0, UINT);
 	Ov_SetDynamicVectorLength(&matchingRows, 0, UINT);
 	Ov_SetDynamicVectorLength(&matchingRowsDistinct, 0, UINT);
@@ -1565,13 +1492,14 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_updateData(OV_INSTPTR_openAASDiscoveryS
 struct compareResult{
 	OV_UINT pointerNumber;
 	OV_UINT componentCount;
+	OV_UINT tableNumber;
 };
 
 int compare( const void* a, const void* b){
 	return (((struct compareResult*)a)->componentCount - ((struct compareResult*)b)->componentCount);
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getComponentID2(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC* table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getComponentID(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
     /*
     *   local variables
     */
@@ -1589,7 +1517,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getComponentID2(OV_INSTPTR_openAASDisco
 
 	for (OV_UINT i = 0; i < querySize; i++){
 		for (OV_UINT j = 0; j < pinst->v_dbNumberOfTables; j ++){
-			if (ov_string_compare(pinst->v_db[j].tableName, table[i].value[0]) == OV_STRCMP_EQUAL){
+			if (ov_string_compare(pinst->v_db[j].tableName, table.value[i]) == OV_STRCMP_EQUAL){
 				tableNumber.value[i] = j;
 				break;
 			}
@@ -1601,7 +1529,58 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getComponentID2(OV_INSTPTR_openAASDisco
 		}
 	}
 
-
+//	// TODO: Easier model
+//	OV_STRING_VEC findRowValues[querySize];
+//	OV_UINT_VEC findRowRelation[querySize];
+//	for (OV_UINT i = 0; i < querySize; i++){
+//		findRowValues[i].veclen = 0;
+//		findRowValues[i].value = NULL;
+//		findRowRelation[i].veclen = 0;
+//		findRowRelation[i].value = NULL;
+//		if (db_query[i].value.veclen > 0){
+//			Ov_SetDynamicVectorLength(&findRowValues[i], pinst->v_db[tableNumber.value[i]].columnNames.veclen, STRING);
+//			Ov_SetDynamicVectorLength(&findRowRelation[i], pinst->v_db[tableNumber.value[i]].columnNames.veclen, UINT);
+//			for (OV_UINT j = 0; j < pinst->v_db[tableNumber.value[i]].columnNames.veclen; j++){
+//				findRowValues[i].value[j] = NULL;
+//				for (OV_UINT k = 0; k < db_query[i].column.veclen; k++){
+//					if (ov_string_compare(pinst->v_db[tableNumber.value[i]].columnNames.value[j], db_query[i].column.value[k]) == OV_STRCMP_EQUAL){
+//						ov_string_setvalue(&(findRowValues[i].value[j]), db_query[i].value.value[k]);
+//						findRowRelation[i].value[j] = 0;
+//						break;
+//					}
+//				}
+//			}
+//		}else if (db_query[i].value_optional.veclen > 0){
+//			Ov_SetDynamicVectorLength(&findRowValues[i], db_query[i].value_optional.veclen / db_query[i].column.veclen * pinst->v_db[tableNumber.value[i]].columnNames.veclen , STRING);
+//			Ov_SetDynamicVectorLength(&findRowRelation[i], db_query[i].value_optional.veclen / db_query[i].column.veclen * pinst->v_db[tableNumber.value[i]].columnNames.veclen, UINT);
+//			for (OV_UINT j = 0; j < findRowValues[i].veclen / pinst->v_db[tableNumber.value[i]].columnNames.veclen; j++){
+//				for (OV_UINT k = 0; k < pinst->v_db[tableNumber.value[i]].columnNames.veclen; k++){
+//					for (OV_UINT l = 0; l < db_query[i].column.veclen; l++){
+//						if (ov_string_compare(pinst->v_db[tableNumber.value[i]].columnNames.value[k], db_query[i].column.value[l]) == OV_STRCMP_EQUAL){
+//							ov_string_setvalue(&(findRowValues[i].value[j*pinst->v_db[tableNumber.value[i]].columnNames.veclen+k]), db_query[i].value_optional.value[j*db_query[i].column.veclen+l]);
+//							// findRowRelation: 0:==, 1:<, 2:<=, 3:!=, 4:>=, 5:>
+//							if (ov_string_compare(db_query[i].value_optional_relation.value[j*db_query[i].column.veclen+l], "==") == OV_STRCMP_EQUAL){
+//								findRowRelation[i].value[j*pinst->v_db[tableNumber.value[i]].columnNames.veclen+k] = 0;
+//							}else if (ov_string_compare(db_query[i].value_optional_relation.value[j*db_query[i].column.veclen+l], "<") == OV_STRCMP_EQUAL){
+//								findRowRelation[i].value[j*pinst->v_db[tableNumber.value[i]].columnNames.veclen+k] = 1;
+//							}else if (ov_string_compare(db_query[i].value_optional_relation.value[j*db_query[i].column.veclen+l], "<=") == OV_STRCMP_EQUAL){
+//								findRowRelation[i].value[j*pinst->v_db[tableNumber.value[i]].columnNames.veclen+k] = 2;
+//							}else if (ov_string_compare(db_query[i].value_optional_relation.value[j*db_query[i].column.veclen+l], "!=") == OV_STRCMP_EQUAL){
+//								findRowRelation[i].value[j*pinst->v_db[tableNumber.value[i]].columnNames.veclen+k] = 3;
+//							}else if (ov_string_compare(db_query[i].value_optional_relation.value[j*db_query[i].column.veclen+l], ">=") == OV_STRCMP_EQUAL){
+//								findRowRelation[i].value[j*pinst->v_db[tableNumber.value[i]].columnNames.veclen+k] = 4;
+//							}else if (ov_string_compare(db_query[i].value_optional_relation.value[j*db_query[i].column.veclen+l], ">") == OV_STRCMP_EQUAL){
+//								findRowRelation[i].value[j*pinst->v_db[tableNumber.value[i]].columnNames.veclen+k] = 5;
+//							}else{
+//								findRowRelation[i].value[j*pinst->v_db[tableNumber.value[i]].columnNames.veclen+k] = 0;
+//							}
+//							break;
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 	// TODO: Easier model
 	OV_STRING_VEC findRowValues[querySize];
 	OV_UINT_VEC findRowRelation[querySize];
@@ -1653,7 +1632,6 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getComponentID2(OV_INSTPTR_openAASDisco
 				}
 			}
 		}
-
 	}
 
 	OV_STRING_VEC selectColumns;
@@ -1661,11 +1639,14 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getComponentID2(OV_INSTPTR_openAASDisco
 	selectColumns.value = NULL;
 	Ov_SetDynamicVectorLength(&selectColumns, 1, STRING);
 	ov_string_setvalue(&selectColumns.value[0], "ComponentID");
-
 	// find matching rows
 	OV_STRING_VEC tmpResults[querySize];
+	for (OV_UINT i = 0; i < querySize; i++){
+		tmpResults[i].value = NULL;
+		tmpResults[i].veclen = 0;
+	}
 	struct compareResult* tmpResultsCount = NULL;
-	tmpResultsCount = (struct compareResult*)ov_database_malloc(sizeof(struct compareResult)*querySize);
+	tmpResultsCount = (struct compareResult*)Ov_HeapMalloc(sizeof(struct compareResult)*querySize);
 	for (OV_UINT i = 0; i < querySize; i++){
 		tmpResults[i].veclen = 0;
 		tmpResults[i].value = NULL;
@@ -1723,143 +1704,19 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getComponentID2(OV_INSTPTR_openAASDisco
 	for (OV_UINT i = 0; i < querySize; i++){
 		Ov_SetDynamicVectorLength(&findRowValues[i], 0, STRING);
 		Ov_SetDynamicVectorLength(&findRowRelation[i], 0, UINT);
-		Ov_SetDynamicVectorLength(&tmpResults[i], 0, STRING);
+		for (OV_UINT j = 0; j < tmpResults[i].veclen; j++){
+			Ov_HeapStrSet(&tmpResults[i].value[j], NULL);
+		}
+		Ov_HeapFree(tmpResults[i].value);
 	}
 
 	Ov_SetDynamicVectorLength(&tableNumber, 0, UINT);
 	Ov_SetDynamicVectorLength(&selectColumns, 0, STRING);
-	ov_database_free(tmpResultsCount);
+	Ov_HeapFree(tmpResultsCount);
     return resultOV;
 }
 
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getComponentID(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC* table, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
-    /*
-    *   local variables
-    */
-	Databases_SQLC_getComponentID2(this, table, db_query, querySize, result);
-	return OV_ERR_OK;
-
-	OV_RESULT resultOV = OV_ERR_OK;
-	OV_INSTPTR_Databases_SQLC pinst = Ov_StaticPtrCast(Databases_SQLC, this);
-
-	OV_UINT_VEC tableNumber;
-	tableNumber.veclen = 0;
-	tableNumber.value = NULL;
-	Ov_SetDynamicVectorLength(&tableNumber, querySize, UINT);
-	for (OV_UINT i = 0; i < querySize; i++){
-		tableNumber.value[i] = 99;
-	}
-
-	for (OV_UINT i = 0; i < querySize; i++){
-		for (OV_UINT j = 0; j < pinst->v_dbNumberOfTables; j ++){
-			if (ov_string_compare(pinst->v_db[j].tableName, table[i].value[0]) == OV_STRCMP_EQUAL){
-				tableNumber.value[i] = j;
-				break;
-			}
-		}
-	}
-	for (OV_UINT i = 0; i < tableNumber.veclen; i++){
-		if (tableNumber.value[i] == 99){
-			return OV_ERR_BADPARAM;
-		}
-	}
-
-
-	// TODO: Easier model
-	OV_STRING_VEC findRowValues[querySize];
-	for (OV_UINT i = 0; i < querySize; i++){
-		findRowValues[i].veclen = 0;
-		findRowValues[i].value = NULL;
-		if (db_query[i].value.veclen > 0){
-			Ov_SetDynamicVectorLength(&findRowValues[i], pinst->v_db[tableNumber.value[i]].columnNames.veclen, STRING);
-			for (OV_UINT j = 0; j < pinst->v_db[tableNumber.value[i]].columnNames.veclen; j++){
-				findRowValues[i].value[j] = NULL;
-				for (OV_UINT k = 0; k < db_query[i].column.veclen; k++){
-					if (ov_string_compare(pinst->v_db[tableNumber.value[i]].columnNames.value[j], db_query[i].column.value[k]) == OV_STRCMP_EQUAL){
-						ov_string_setvalue(&(findRowValues[i].value[j]), db_query[i].value.value[k]);
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	OV_STRING_VEC selectColumns;
-	selectColumns.veclen = 0;
-	selectColumns.value = NULL;
-	Ov_SetDynamicVectorLength(&selectColumns, 1, STRING);
-	ov_string_setvalue(&selectColumns.value[0], "ComponentID");
-
-	// find matching rows
-	OV_STRING_VEC tmpResults[querySize];
-	struct compareResult* tmpResultsCount = NULL;
-	tmpResultsCount = (struct compareResult*)ov_database_malloc(sizeof(struct compareResult)*querySize);
-	for (OV_UINT i = 0; i < querySize; i++){
-		tmpResults[i].veclen = 0;
-		tmpResults[i].value = NULL;
-		resultOV = SelectTable(pinst, &pinst->v_db[tableNumber.value[i]], findRowValues[i], selectColumns, &tmpResults[i]);
-		tmpResultsCount[i].componentCount = tmpResults[i].veclen;
-		tmpResultsCount[i].pointerNumber = i;
-	}
-
-	if (querySize > 1){
-		qsort(tmpResultsCount, querySize, sizeof(struct compareResult), compare);
-
-		OV_UINT_VEC equalResults;
-		equalResults.value = NULL;
-		equalResults.veclen = 0;
-		Ov_SetDynamicVectorLength(&equalResults, tmpResultsCount[0].componentCount, UINT);
-		OV_UINT equalResultsCount = 0;
-		OV_BOOL foundEqualValue = FALSE;
-		for (OV_UINT i = 0; i < tmpResultsCount[0].componentCount; i++){
-			equalResults.value[i] = 0;
-			for (OV_UINT j = 1; j < querySize; j++){
-				foundEqualValue = FALSE;
-				for (OV_UINT k = 0; k < tmpResultsCount[j].componentCount; k++){
-					if (ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[k]) == OV_STRCMP_EQUAL){
-						foundEqualValue = TRUE;
-						break;
-					}
-				}
-				if (foundEqualValue == FALSE){
-					break;
-				}
-				if (j == querySize-1){
-					equalResults.value[i] = 1;
-					equalResultsCount = equalResultsCount + 1;
-				}
-			}
-		}
-		Ov_SetDynamicVectorLength(result, equalResultsCount, STRING);
-		OV_UINT resultCount = 0;
-		for (OV_UINT i = 0; i < tmpResultsCount[0].componentCount; i++){
-			if (equalResults.value[i] == 1){
-				result->value[resultCount] = NULL;
-				ov_string_setvalue(&result->value[resultCount], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i]);
-				resultCount = resultCount + 1;
-			}
-		}
-		Ov_SetDynamicVectorLength(&equalResults, 0, UINT);
-	}else{
-		Ov_SetDynamicVectorLength(result, tmpResults[0].veclen, STRING);
-		for (OV_UINT i = 0; i < tmpResults[0].veclen; i++){
-				result->value[i] = NULL;
-				ov_string_setvalue(&result->value[i], tmpResults[0].value[i]);
-		}
-	}
-
-	for (OV_UINT i = 0; i < querySize; i++){
-		Ov_SetDynamicVectorLength(&findRowValues[i], 0, STRING);
-		Ov_SetDynamicVectorLength(&tmpResults[i], 0, STRING);
-	}
-
-	Ov_SetDynamicVectorLength(&tableNumber, 0, UINT);
-	Ov_SetDynamicVectorLength(&selectColumns, 0, STRING);
-	ov_database_free(tmpResultsCount);
-    return resultOV;
-}
-
-OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getFittingStatements(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC* table, const OV_STRING ComponentID, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
+OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getFittingStatements(OV_INSTPTR_openAASDiscoveryServer_DBWrapper this, const OV_STRING_VEC table, const OV_STRING ComponentID, const DB_QUERY* db_query, OV_UINT querySize, OV_STRING_VEC* result) {
     /*    
     *   local variables
     */
@@ -1877,7 +1734,7 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getFittingStatements(OV_INSTPTR_openAAS
 
 	for (OV_UINT i = 0; i < querySize; i++){
 		for (OV_UINT j = 0; j < pinst->v_dbNumberOfTables; j ++){
-			if (ov_string_compare(pinst->v_db[j].tableName, table[i].value[0]) == OV_STRCMP_EQUAL){
+			if (ov_string_compare(pinst->v_db[j].tableName, table.value[i]) == OV_STRCMP_EQUAL){
 				tableNumber.value[i] = j;
 				break;
 			}
@@ -1888,7 +1745,6 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getFittingStatements(OV_INSTPTR_openAAS
 			return OV_ERR_BADPARAM;
 		}
 	}
-
 
 	// TODO: Easier model
 	OV_STRING_VEC findRowValues[querySize];
@@ -1949,7 +1805,6 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getFittingStatements(OV_INSTPTR_openAAS
 				}
 			}
 		}
-
 	}
 
 	OV_STRING_VEC selectColumns;
@@ -1967,110 +1822,222 @@ OV_DLLFNCEXPORT OV_RESULT Databases_SQLC_getFittingStatements(OV_INSTPTR_openAAS
 	// find matching rows
 	OV_STRING_VEC tmpResults[querySize];
 	struct compareResult* tmpResultsCount = NULL;
-	tmpResultsCount = (struct compareResult*)ov_database_malloc(sizeof(struct compareResult)*querySize);
+	tmpResultsCount = (struct compareResult*)Ov_HeapMalloc(sizeof(struct compareResult)*querySize);
 	for (OV_UINT i = 0; i < querySize; i++){
 		tmpResults[i].veclen = 0;
 		tmpResults[i].value = NULL;
 		resultOV = SelectTable2(pinst, &pinst->v_db[tableNumber.value[i]], findRowValues[i], findRowRelation[i], selectColumns, &tmpResults[i]);
 		tmpResultsCount[i].componentCount = tmpResults[i].veclen;
 		tmpResultsCount[i].pointerNumber = i;
+		tmpResultsCount[i].tableNumber = tableNumber.value[i];
 	}
 
 	if (querySize > 1){
-		qsort(tmpResultsCount, querySize, sizeof(struct compareResult), compare);
+		OV_UINT_VEC tables;
+		tables.value = NULL;
+		tables.veclen = 0;
+		Ov_SetDynamicVectorLength(&tables, pinst->v_dbNumberOfTables, UINT);
 
-		OV_UINT_VEC equalResults;
-		equalResults.value = NULL;
-		equalResults.veclen = 0;
-		Ov_SetDynamicVectorLength(&equalResults, tmpResultsCount[0].componentCount/7, UINT);
-		OV_UINT equalResultsCount = 0;
-		OV_BOOL foundEqualValue = FALSE;
-		for (OV_UINT i = 0; i < tmpResultsCount[0].componentCount/7; i++){
-			equalResults.value[i] = 0;
-			foundEqualValue = TRUE;
-			for (OV_UINT j = 1; j < querySize; j++){
-				for (OV_UINT k = 0; k < tmpResultsCount[j].componentCount/7; k++){
-					foundEqualValue = TRUE;
-					if (ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i*7+0], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[k*7+0]) != OV_STRCMP_EQUAL ||
-					ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i*7+1], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[k*7+1]) != OV_STRCMP_EQUAL ||
-					ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i*7+2], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[k*7+2]) != OV_STRCMP_EQUAL ||
-					ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i*7+3], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[k*7+3]) != OV_STRCMP_EQUAL ||
-					ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i*7+4], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[k*7+4]) != OV_STRCMP_EQUAL ||
-					ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i*7+5], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[k*7+5]) != OV_STRCMP_EQUAL ||
-					ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[i*7+6], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[k*7+6]) != OV_STRCMP_EQUAL){
-						foundEqualValue = FALSE;
-					}
-					if (foundEqualValue == TRUE){
+		for (OV_UINT i = 0; i < querySize; i++){
+			tables.value[tmpResultsCount[i].tableNumber]++;
+		}
+
+		for (OV_UINT i = 0; i < tables.veclen; i++){
+			if (tables.value[i] == 0){
+				continue;
+			}else if (tables.value[i] == 1){
+				OV_UINT j = 0;
+				do {
+					if (tmpResultsCount[j].tableNumber == i)
 						break;
+					j++;
+				}while (j < querySize);
+
+				OV_UINT resultLength = result->veclen;
+				Ov_SetDynamicVectorLength(result, resultLength + tmpResultsCount[j].componentCount/7, STRING);
+				OV_STRING tmpString = NULL;
+				OV_UINT stringLength = 0;
+				OV_UINT resultCount = 0;
+				for (OV_UINT i = 0; i < tmpResultsCount[j].componentCount/7; i++){
+					result->value[resultLength + i] = NULL;
+					stringLength += strlen("\"CarrierID\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[1+resultCount*7]);
+					stringLength += strlen("\", \"PropertyID\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[2+resultCount*7]);
+					stringLength += strlen("\", \"ExpressionSemantic\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[3+resultCount*7]);
+					stringLength += strlen("\", \"Relation\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[4+resultCount*7]);
+					stringLength += strlen("\", \"Value\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[5+resultCount*7]);
+					stringLength += strlen("\", \"SubModel\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[6+resultCount*7]);
+					stringLength += strlen("\"");
+					tmpString = Ov_HeapMalloc(stringLength+1);
+					OV_STRING pc = tmpString;
+					pc += sprintf(pc, "\"CarrierID\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[1+resultCount*7]);
+					pc += sprintf(pc, "\", \"PropertyID\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[2+resultCount*7]);
+					pc += sprintf(pc, "\", \"ExpressionSemantic\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[3+resultCount*7]);
+					pc += sprintf(pc, "\", \"Relation\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[4+resultCount*7]);
+					pc += sprintf(pc, "\", \"Value\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[5+resultCount*7]);
+					pc += sprintf(pc, "\", \"SubModel\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[j].pointerNumber].value[6+resultCount*7]);
+					pc += sprintf(pc, "\"");
+					ov_string_setvalue(&result->value[resultLength + i], tmpString);
+					Ov_HeapStrSet(&tmpString, NULL);
+					resultCount = resultCount + 1;
+				}
+			}else{
+				OV_UINT count = 0;
+				for (OV_UINT j = 0; j < querySize; j++) {
+					if (tmpResultsCount[j].tableNumber == i)
+						count++;
+				}
+				struct compareResult* tmpResultsCount2 = NULL;
+				tmpResultsCount2 = (struct compareResult*)Ov_HeapMalloc(sizeof(struct compareResult)*count);
+				OV_UINT k = 0;
+				for (OV_UINT j = 0; j < querySize; j++) {
+					if (tmpResultsCount[j].tableNumber == i){
+						tmpResultsCount2[k] = tmpResultsCount[j];
+						k++;
 					}
 				}
-				if (foundEqualValue == FALSE){
-					break;
-				}
-				if (j == querySize-1){
-					equalResults.value[i] = 1;
-					equalResultsCount = equalResultsCount + 1;
-				}
-			}
-		}
-		Ov_SetDynamicVectorLength(result, equalResultsCount, STRING);
-		OV_UINT resultCount = 0;
-		OV_STRING tmpString = NULL;
-		for (OV_UINT i = 0; i < tmpResultsCount[0].componentCount/7; i++){
-			if (equalResults.value[i] == 1){
+				qsort(tmpResultsCount2, count, sizeof(struct compareResult), compare);
 
-				result->value[resultCount] = NULL;
-				tmpString = NULL;
-				ov_string_setvalue(&tmpString, "\"CarrierID\":\"");
-				ov_string_append(&tmpString, ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[1+resultCount*7]);
-				ov_string_append(&tmpString, "\", \"PropertyID\":\"");
-				ov_string_append(&tmpString, ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[2+resultCount*7]);
-				ov_string_append(&tmpString, "\", \"ExpressionSemantic\":\"");
-				ov_string_append(&tmpString, ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[3+resultCount*7]);
-				ov_string_append(&tmpString, "\", \"Relation\":\"");
-				ov_string_append(&tmpString, ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[4+resultCount*7]);
-				ov_string_append(&tmpString, "\", \"Value\":\"");
-				ov_string_append(&tmpString, ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[5+resultCount*7]);
-				ov_string_append(&tmpString, "\", \"SubModel\":\"");
-				ov_string_append(&tmpString, ((OV_STRING_VEC*)tmpResults)[tmpResultsCount[0].pointerNumber].value[6+resultCount*7]);
-				ov_string_append(&tmpString, "\"");
-				ov_string_setvalue(&result->value[resultCount], tmpString);
-				ov_string_setvalue(&tmpString, NULL);
-				resultCount = resultCount + 1;
+				OV_UINT_VEC equalResults;
+				equalResults.value = NULL;
+				equalResults.veclen = 0;
+				Ov_SetDynamicVectorLength(&equalResults, tmpResultsCount2[0].componentCount/7, UINT);
+				OV_UINT equalResultsCount = 0;
+				OV_BOOL foundEqualValue = FALSE;
+				for (OV_UINT i = 0; i < tmpResultsCount2[0].componentCount/7; i++){
+					equalResults.value[i] = 0;
+					foundEqualValue = TRUE;
+					for (OV_UINT j = 1; j < count; j++){
+						for (OV_UINT k = 0; k < tmpResultsCount2[j].componentCount/7; k++){
+							foundEqualValue = TRUE;
+							if (ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[i*7+0], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[j].pointerNumber].value[k*7+0]) != OV_STRCMP_EQUAL ||
+							ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[i*7+1], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[j].pointerNumber].value[k*7+1]) != OV_STRCMP_EQUAL ||
+							ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[i*7+2], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[j].pointerNumber].value[k*7+2]) != OV_STRCMP_EQUAL ||
+							ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[i*7+3], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[j].pointerNumber].value[k*7+3]) != OV_STRCMP_EQUAL ||
+							ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[i*7+4], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[j].pointerNumber].value[k*7+4]) != OV_STRCMP_EQUAL ||
+							ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[i*7+5], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[j].pointerNumber].value[k*7+5]) != OV_STRCMP_EQUAL ||
+							ov_string_compare(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[i*7+6], ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[j].pointerNumber].value[k*7+6]) != OV_STRCMP_EQUAL){
+								foundEqualValue = FALSE;
+							}
+							if (foundEqualValue == TRUE){
+								break;
+							}
+						}
+						if (foundEqualValue == FALSE){
+							break;
+						}
+						if (j == querySize-1){
+							equalResults.value[i] = 1;
+							equalResultsCount = equalResultsCount + 1;
+						}
+					}
+				}
+				OV_UINT resultLength = result->veclen;
+				Ov_SetDynamicVectorLength(result, resultLength + tmpResultsCount2[0].componentCount/7, STRING);
+				OV_STRING tmpString = NULL;
+				OV_UINT stringLength = 0;
+				OV_UINT resultCount = 0;
+				for (OV_UINT i = 0; i < tmpResultsCount2[0].componentCount/7; i++){
+					result->value[resultLength + i] = NULL;
+					stringLength += strlen("\"CarrierID\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[1+resultCount*7]);
+					stringLength += strlen("\", \"PropertyID\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[2+resultCount*7]);
+					stringLength += strlen("\", \"ExpressionSemantic\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[3+resultCount*7]);
+					stringLength += strlen("\", \"Relation\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[4+resultCount*7]);
+					stringLength += strlen("\", \"Value\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[5+resultCount*7]);
+					stringLength += strlen("\", \"SubModel\":\"");
+					stringLength += strlen(((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[6+resultCount*7]);
+					stringLength += strlen("\"");
+					tmpString = Ov_HeapMalloc(stringLength+1);
+					OV_STRING pc = tmpString;
+					pc += sprintf(pc, "\"CarrierID\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[1+resultCount*7]);
+					pc += sprintf(pc, "\", \"PropertyID\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[2+resultCount*7]);
+					pc += sprintf(pc, "\", \"ExpressionSemantic\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[3+resultCount*7]);
+					pc += sprintf(pc, "\", \"Relation\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[4+resultCount*7]);
+					pc += sprintf(pc, "\", \"Value\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[5+resultCount*7]);
+					pc += sprintf(pc, "\", \"SubModel\":\"");
+					pc += sprintf(pc, "%s", ((OV_STRING_VEC*)tmpResults)[tmpResultsCount2[0].pointerNumber].value[6+resultCount*7]);
+					pc += sprintf(pc, "\"");
+					ov_string_setvalue(&result->value[resultLength + i], tmpString);
+					Ov_HeapStrSet(&tmpString, NULL);
+					resultCount = resultCount + 1;
+				}
+				Ov_HeapFree(tmpResultsCount2);
 			}
 		}
-		Ov_SetDynamicVectorLength(&equalResults, 0, UINT);
+
 	}else{
 		Ov_SetDynamicVectorLength(result, tmpResults[0].veclen/7, STRING);
 		OV_UINT tmpCount = 0;
 		OV_STRING tmpString = NULL;
 		for (OV_UINT j = 0; j < tmpResults[0].veclen/7; j++){
 			tmpString = NULL;
-			ov_string_setvalue(&tmpString, "\"CarrierID\":\"");
-			ov_string_append(&tmpString, tmpResults[0].value[1+j*7]);
-			ov_string_append(&tmpString, "\", \"PropertyID\":\"");
-			ov_string_append(&tmpString, tmpResults[0].value[2+j*7]);
-			ov_string_append(&tmpString, "\", \"ExpressionSemantic\":\"");
-			ov_string_append(&tmpString, tmpResults[0].value[3+j*7]);
-			ov_string_append(&tmpString, "\", \"Relation\":\"");
-			ov_string_append(&tmpString, tmpResults[0].value[4+j*7]);
-			ov_string_append(&tmpString, "\", \"Value\":\"");
-			ov_string_append(&tmpString, tmpResults[0].value[5+j*7]);
-			ov_string_append(&tmpString, "\", \"SubModel\":\"");
-			ov_string_append(&tmpString, tmpResults[0].value[6+j*7]);
-			ov_string_append(&tmpString, "\"");
+			OV_UINT stringLength = 0;
+			stringLength += strlen("\"CarrierID\":\"");
+			stringLength += strlen(tmpResults[0].value[1+j*7]);
+			stringLength += strlen("\", \"PropertyID\":\"");
+			stringLength += strlen(tmpResults[0].value[2+j*7]);
+			stringLength += strlen("\", \"ExpressionSemantic\":\"");
+			stringLength += strlen(tmpResults[0].value[3+j*7]);
+			stringLength += strlen("\", \"Relation\":\"");
+			stringLength += strlen(tmpResults[0].value[4+j*7]);
+			stringLength += strlen("\", \"Value\":\"");
+			stringLength += strlen(tmpResults[0].value[5+j*7]);
+			stringLength += strlen("\", \"SubModel\":\"");
+			stringLength += strlen(tmpResults[0].value[6+j*7]);
+			stringLength += strlen("\"");
+
+			tmpString = Ov_HeapMalloc(stringLength+1);
+			OV_STRING pc = tmpString;
+
+			pc += sprintf(pc, "\"CarrierID\":\"");
+			pc += sprintf(pc, "%s", tmpResults[0].value[1+j*7]);
+			pc += sprintf(pc, "\", \"PropertyID\":\"");
+			pc += sprintf(pc, "%s", tmpResults[0].value[2+j*7]);
+			pc += sprintf(pc, "\", \"ExpressionSemantic\":\"");
+			pc += sprintf(pc, "%s", tmpResults[0].value[3+j*7]);
+			pc += sprintf(pc, "\", \"Relation\":\"");
+			pc += sprintf(pc, "%s", tmpResults[0].value[4+j*7]);
+			pc += sprintf(pc, "\", \"Value\":\"");
+			pc += sprintf(pc, "%s", tmpResults[0].value[5+j*7]);
+			pc += sprintf(pc, "\", \"SubModel\":\"");
+			pc += sprintf(pc, "%s", tmpResults[0].value[6+j*7]);
+			pc += sprintf(pc, "\"");
+
 			ov_string_setvalue(&result->value[tmpCount], tmpString);
 			tmpCount = tmpCount + 1;
-			ov_string_setvalue(&tmpString, NULL);
+			Ov_HeapStrSet(&tmpString, NULL);
 		}
 	}
-
 	for (OV_UINT i = 0; i < querySize; i++){
 		Ov_SetDynamicVectorLength(&findRowValues[i], 0, STRING);
 		Ov_SetDynamicVectorLength(&findRowRelation[i], 0, UINT);
-		Ov_SetDynamicVectorLength(&tmpResults[i], 0, STRING);
+		for (OV_UINT j = 0; j < tmpResults[i].veclen; j++){
+			Ov_HeapStrSet(&tmpResults[i].value[j], NULL);
+		}
+		Ov_HeapFree(tmpResults[i].value);
 	}
-
+	Ov_HeapFree(tmpResultsCount);
 	Ov_SetDynamicVectorLength(&tableNumber, 0, UINT);
 	Ov_SetDynamicVectorLength(&selectColumns, 0, STRING);
 	return resultOV;

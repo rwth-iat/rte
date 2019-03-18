@@ -1,5 +1,6 @@
 #include "ov.ovm"
 #include "openAASDiscoveryServer.ovm"
+#include "kshttp.ovm"
 
 LIBRARY DSServices
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
