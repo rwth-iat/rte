@@ -1,0 +1,43 @@
+#include "ov.ovm"
+#include "kshttp.ovm"
+#include "MessageSys.ovm"
+#include "openaas.ovm"
+#include "identification.ovm"
+
+LIBRARY openaasHTTP
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = ""; 
+	COMMENT   = "";
+	
+	/**
+		Documentation of openaasHTTPExt.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS openaasHTTPExt : CLASS kshttp/httpClientHandlerExtension
+		IS_INSTANTIABLE;
+		VARIABLES
+			queryType : UINT INITIALVALUE = 0;
+			pAAS : C_TYPE<OV_INSTPTR_openaas_aas>;
+			pSubModel : C_TYPE<OV_INSTPTR_openaas_SubModel>;
+			pStatement : C_TYPE<OV_INSTPTR_propertyValueStatement_PropertyValueStatement>;
+			pInterfaceDiscoveryServer : C_TYPE<OV_INSTPTR_openaas_InterfaceDiscoveryServer>;
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			CheckCommand			:	C_FUNCTION	<KSHTTP_FNC_CHECKCOMMAND>;
+			HandleExtendedRequest	:	C_FUNCTION	<KSHTTP_FNC_HANDLEEXTREQUEST>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

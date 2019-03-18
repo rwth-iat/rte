@@ -1,0 +1,36 @@
+#include "ov.ovm"
+#include "openAASDiscoveryServer.ovm"
+#include "kshttp.ovm"
+
+LIBRARY AASCrawler
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of AASCrawlerC.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	CLASS AASCrawlerC : CLASS openAASDiscoveryServer/AASCrawler
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES; 
+		OPERATIONS 
+			crawlAAS			: C_FUNCTION <DS_FNC_CRAWLAAS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS AASHttpClient : CLASS kshttp/genericHttpClient
+		IS_INSTANTIABLE;
+		VARIABLES
+			ComponentID : STRING INITIALVALUE = "";
+			isInUse		: BOOL;
+		END_VARIABLES; 
+		OPERATIONS 
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+END_LIBRARY;
