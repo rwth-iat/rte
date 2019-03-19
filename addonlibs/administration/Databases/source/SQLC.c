@@ -668,13 +668,13 @@ OV_RESULT SelectTable(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_S
 
 // findRowRelation: 0:==, 1:<, 2:<=, 3:!=, 4:>=, 5:>
 OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_STRING_VEC findRowValues, OV_UINT_VEC findRowRelation, OV_STRING_VEC selectedColumns, OV_STRING_VEC* result){
-	OV_TIME startTime;
-	startTime.usecs = 0;
-	startTime.secs = 0;
-	OV_TIME endTime;
-	endTime.usecs = 0;
-	endTime.secs = 0;
-	OV_TIME_SPAN timeDiff;
+//	OV_TIME startTime;
+//	startTime.usecs = 0;
+//	startTime.secs = 0;
+//	OV_TIME endTime;
+//	endTime.usecs = 0;
+//	endTime.secs = 0;
+//	OV_TIME_SPAN timeDiff;
 
 
 
@@ -727,7 +727,7 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 	}
 	Ov_SetDynamicVectorLength(&tmpcolumnNumbers, 0, UINT);
 	OV_BOOL noMatching = FALSE;
-	ov_time_gettime(&startTime);
+//	ov_time_gettime(&startTime);
 	// find rows
 	for (i = 0; i < table->usedRows.veclen; i++){
 		if (table->usedRows.value[i] == 0){
@@ -890,10 +890,10 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 			}
 		}
 	}
-	ov_time_gettime(&endTime);
-	ov_time_diff(&timeDiff,&endTime, &startTime);
-	ov_logfile_info("GetTableFindRows: %s", ov_time_timespantoascii(&timeDiff));
-	ov_time_gettime(&startTime);
+//	ov_time_gettime(&endTime);
+//	ov_time_diff(&timeDiff,&endTime, &startTime);
+//	ov_logfile_info("GetTableFindRows: %s", ov_time_timespantoascii(&timeDiff));
+//	ov_time_gettime(&startTime);
 	// find distinct elements
 	OV_UINT_VEC matchingRowsDistinct;
 	matchingRowsDistinct.veclen = 0;
@@ -937,10 +937,10 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 			}
 		}
 	}
-	ov_time_gettime(&endTime);
-	ov_time_diff(&timeDiff,&endTime, &startTime);
-	ov_logfile_info("GetTableDistinct: %s", ov_time_timespantoascii(&timeDiff));
-	ov_time_gettime(&startTime);
+//	ov_time_gettime(&endTime);
+//	ov_time_diff(&timeDiff,&endTime, &startTime);
+//	ov_logfile_info("GetTableDistinct: %s", ov_time_timespantoascii(&timeDiff));
+//	ov_time_gettime(&startTime);
 
 	OV_UINT resultLenght = 0;
 	result->value = Ov_HeapMalloc(columnNumbers.veclen*matchingRowsDistinctLength*sizeof(OV_STRING));
@@ -989,9 +989,9 @@ OV_RESULT SelectTable2(OV_INSTPTR_Databases_SQLC pinst, struct table* table, OV_
 			}
 		}
 	}
-	ov_time_gettime(&endTime);
-	ov_time_diff(&timeDiff,&endTime, &startTime);
-	ov_logfile_info("GetTableResult: %s", ov_time_timespantoascii(&timeDiff));
+//	ov_time_gettime(&endTime);
+//	ov_time_diff(&timeDiff,&endTime, &startTime);
+//	ov_logfile_info("GetTableResult: %s", ov_time_timespantoascii(&timeDiff));
 	Ov_SetDynamicVectorLength(&columnNumbers, 0, UINT);
 	Ov_SetDynamicVectorLength(&matchingRows, 0, UINT);
 	Ov_SetDynamicVectorLength(&matchingRowsDistinct, 0, UINT);

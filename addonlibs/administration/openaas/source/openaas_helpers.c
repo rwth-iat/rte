@@ -216,25 +216,25 @@ OV_DLLFNCEXPORT OV_STRING getStatementsInJSON(OV_INSTPTR_openaas_aas paas){
 
 	OV_UINT stringLengthCarrierID = strlen("{\"CarrierID\":\",\"");
 	OV_UINT stringLengthCarrierID2 = strlen(",{\"CarrierID\":\",\"");
-	OV_UINT stringLengthPropertyID = strlen("{\"PropertyID\":\",\"");
+	OV_UINT stringLengthPropertyID = strlen(",\"PropertyID\":\",\"");
 	OV_UINT stringLengthExpressionSemantic = strlen(",\"ExpressionSemantic\":\"\"");
 	OV_UINT stringLengthExpressionSemanticA = strlen(",\"ExpressionSemantic\":\"Assurance\"");
 	OV_UINT stringLengthExpressionSemanticR = strlen(",\"ExpressionSemantic\":\"Requirement\"");
 	OV_UINT stringLengthExpressionSemanticM = strlen(",\"ExpressionSemantic\":\"Measurement\"");
 	OV_UINT stringLengthExpressionSemanticS = strlen(",\"ExpressionSemantic\":\"Setting\"");
-	OV_UINT stringLengthRelation = strlen("{\"Relation\":\"\"");
-	OV_UINT stringLengthRelationG = strlen("{\"Relation\":\">\"");
-	OV_UINT stringLengthRelationGE = strlen("{\"Relation\":\">=\"");
-	OV_UINT stringLengthRelationEQ = strlen("{\"Relation\":\"==\"");
-	OV_UINT stringLengthRelationNE = strlen("{\"Relation\":\"!=\"");
-	OV_UINT stringLengthRelationLE = strlen("{\"Relation\":\"<=\"");
-	OV_UINT stringLengthRelationL = strlen("{\"Relation\":\"<\"");
-	OV_UINT stringLengthValue = strlen("{\"Value\":\"\"");
-	OV_UINT stringLengthValueType = strlen("{\"ValueType\":\"\"");
-	OV_UINT stringLengthValueTypeB = strlen("{\"Value\":\"Boolean\"");
-	OV_UINT stringLengthValueTypeN = strlen("{\"Value\":\"Numeric\"");
-	OV_UINT stringLengthValueTypeT = strlen("{\"Value\":\"Text\"");
-	OV_UINT stringLengthSubModel = strlen("{\"SubModel\":\"\"");
+	OV_UINT stringLengthRelation = strlen(",\"Relation\":\"\"");
+	OV_UINT stringLengthRelationG = strlen(",\"Relation\":\">\"");
+	OV_UINT stringLengthRelationGE = strlen(",\"Relation\":\">=\"");
+	OV_UINT stringLengthRelationEQ = strlen(",\"Relation\":\"==\"");
+	OV_UINT stringLengthRelationNE = strlen(",\"Relation\":\"!=\"");
+	OV_UINT stringLengthRelationLE = strlen(",\"Relation\":\"<=\"");
+	OV_UINT stringLengthRelationL = strlen(",\"Relation\":\"<\"");
+	OV_UINT stringLengthValue = strlen(",\"Value\":\"\"");
+	OV_UINT stringLengthValueType = strlen(",\"ValueType\":\"\"");
+	OV_UINT stringLengthValueTypeB = strlen(",\"ValueType\":\"Boolean\"");
+	OV_UINT stringLengthValueTypeN = strlen(",\"ValueType\":\"Numeric\"");
+	OV_UINT stringLengthValueTypeT = strlen(",\"ValueType\":\"Text\"");
+	OV_UINT stringLengthSubModel = strlen(",\"SubModel\":\"\"}");
 	OV_UINT stringLengthStatements = strlen("\"statements\": []");
 
 	stringLength += stringLengthStatements;
@@ -358,9 +358,7 @@ OV_DLLFNCEXPORT OV_STRING getStatementsInJSON(OV_INSTPTR_openaas_aas paas){
 							stringLength += stringLengthValueType;
 							break;
 					}
-					ov_string_print(&tmpString, "%s", pSubmodel->v_identifier);
-					stringLength += stringLengthSubModel + strlen(tmpString);
-					ov_string_setvalue(&tmpString, NULL);
+					stringLength += stringLengthSubModel + strlen(pSubmodel->v_identifier);
 				}
 			}
 		}
@@ -486,9 +484,7 @@ OV_DLLFNCEXPORT OV_STRING getStatementsInJSON(OV_INSTPTR_openaas_aas paas){
 							stringLength += stringLengthValueType;
 							break;
 					}
-					ov_string_print(&tmpString, "%s", pSubmodel->v_identifier);
-					stringLength += stringLengthSubModel + strlen(tmpString);
-					ov_string_setvalue(&tmpString, NULL);
+					stringLength += stringLengthSubModel + strlen(pSubmodel->v_identifier);
 				}
 			}
 		}
@@ -537,7 +533,6 @@ OV_DLLFNCEXPORT OV_STRING getStatementsInJSON(OV_INSTPTR_openaas_aas paas){
 						pc += sprintf(pc, ",{\"CarrierID\":\"%i,%s\"", pCarrierID->v_IdType, pCarrierID->v_IdSpec);
 					}
 					pc += sprintf(pc, ",\"PropertyID\":\"%i,%s\"", pPropertyID->v_IdType, pPropertyID->v_IdSpec);
-
 					switch(pExpressionSemantic->v_ExpressionSemanticEnum){
 						case 0:
 							pc += sprintf(pc, ",\"ExpressionSemantic\":\"Assurance\"");
@@ -601,11 +596,11 @@ OV_DLLFNCEXPORT OV_STRING getStatementsInJSON(OV_INSTPTR_openaas_aas paas){
 							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
 							break;
 						case OV_VT_STRING:
-							if (pPVS->v_Value.value.valueunion.val_string != NULL)
+							if (pPVS->v_Value.value.valueunion.val_string != NULL){
 								pc += sprintf(pc, ",\"Value\":\"%s\"", pPVS->v_Value.value.valueunion.val_string);
-							else
+							}else{
 								pc += sprintf(pc, ",\"Value\":\"\"");
-
+							}
 							pc += sprintf(pc, ",\"ValueType\":\"Text\"");
 							break;
 						default:
@@ -720,11 +715,11 @@ OV_DLLFNCEXPORT OV_STRING getStatementsInJSON(OV_INSTPTR_openaas_aas paas){
 							pc += sprintf(pc, ",\"ValueType\":\"Numeric\"");
 							break;
 						case OV_VT_STRING:
-							if (pPVS->v_Value.value.valueunion.val_string != NULL)
+							if (pPVS->v_Value.value.valueunion.val_string != NULL){
 								pc += sprintf(pc, ",\"Value\":\"%s\"", pPVS->v_Value.value.valueunion.val_string);
-							else
+							}else{
 								pc += sprintf(pc, ",\"Value\":\"\"");
-
+							}
 							pc += sprintf(pc, ",\"ValueType\":\"Text\"");
 							break;
 						default:

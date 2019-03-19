@@ -274,7 +274,6 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 		if(ov_library_search("openaasHTTP") != NULL){ // http-Endpoint
 			OV_INSTPTR_TCPbind_TCPListener tcpListener = Ov_DynamicPtrCast(TCPbind_TCPListener, ov_path_getobjectpointer("/communication/TCPbind/TCPListener", 2));
 			ov_string_print(&httpEndpoint, "%s:%i%s/aas", pInterfaceDiscoveryServer->v_IPAddressServer, tcpListener->v_port, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,paas), 2));
-			tmpString = NULL;
 			ov_string_print(&tmpString, ",{\"protocolType\":\"http\",\"endpointString\":\"%s\"}", httpEndpoint);
 			ov_string_append(&componentContent, tmpString);
 			ov_string_setvalue(&tmpString, NULL);
@@ -290,10 +289,9 @@ static OV_STRING sendingRequestToDiscoveryServer(OV_INSTPTR_openaas_AASComponent
 
 		ov_string_append(&componentContent, "],");
 
-		OV_STRING tmpString = getStatementsInJSON(paas);
+		tmpString = getStatementsInJSON(paas);
 		ov_string_append(&componentContent, tmpString);
 		ov_string_setvalue(&tmpString, NULL);
-
 		ov_string_print(&tmpString, "{ \"header\":{\"endpointSender\":\"%s\", \"endpointReceiver\":\"%s\", \"messageID\":\"%i\", \"messageType\":\"3\", \"protocolType\":\"1\"},\"body\":{\"componentID\":\"%s\", \"securityKey\":\"%s\", %s}}", SenderEndpoint, ReceiverEndpoint, MessageSys_Message_msgID_get(pRequestMessage), componentID, this->v_securityKey, componentContent);
 		ov_string_setvalue(&componentContent, NULL);
 		ov_string_append(&answerBody, tmpString);
