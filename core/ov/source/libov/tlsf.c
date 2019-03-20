@@ -56,21 +56,14 @@
 #define _DEFAULT_SOURCE
 #include "libov/ov_config.h"
 
+
+#define OV_VALGRIND 1
+
 #ifndef USE_PRINTF
 #define USE_PRINTF      (1)
 #endif
 
 #include <string.h>
-//#include "valg_dummy.h"
-#include <valgrind/memcheck.h>
-
-#undef VALGRIND_MEMPOOL_ALLOC
-#undef VALGRIND_MEMPOOL_FREE
-#undef VALGRIND_CREATE_MEMPOOL
-
-#define VALGRIND_MEMPOOL_ALLOC(a,b,c)
-#define VALGRIND_MEMPOOL_FREE(a,b)
-#define VALGRIND_CREATE_MEMPOOL(a,b,c)
 
 #ifndef TLSF_USE_LOCKS
 #define	TLSF_USE_LOCKS 	(0)
@@ -202,6 +195,31 @@
 #define VIRTALLOC_RESERVE (1024*1024*32)	/* reserved continuous memory */
 static LPTSTR lpNextPage = NULL;
 static DWORD dpagesize = 0; /* doubled pagesize */
+#endif
+
+#if OV_VALGRIND
+#include <valgrind/memcheck.h>
+#define TLSF_VG_UNLOCK_BHDR(_b) VALGRIND_MAKE_MEM_DEFINED((_b), BHDR_OVERHEAD)
+#define TLSF_VG_UNLOCK_FBLOCK(_b) VALGRIND_MAKE_MEM_DEFINED((_b), FREE_BLOCK_SIZE)
+#define TLSF_VG_LOCK_BHDR(_b) VALGRIND_MAKE_MEM_NOACCESS((_b), BHDR_OVERHEAD)
+#define TLSF_VG_LOCK_FBLOCK(_b) VALGRIND_MAKE_MEM_NOACCESS((_b), FREE_BLOCK_SIZE)
+void tlsf_valgrind_reinit_access(void* pool);
+#else
+#include <valgrind/memcheck.h>
+#define TLSF_VG_UNLOCK_BHDR(_b)
+#define TLSF_VG_UNLOCK_FBLOCK(_b)
+#define TLSF_VG_LOCK_BHDR(_b)
+#define TLSF_VG_LOCK_FBLOCK(_b)
+
+#define VALGRIND_CREATE_MEMPOOL(a,b,c)
+#define VALGRIND_MEMPOOL_ALLOC(a,b,c)
+#define VALGRIND_MEMPOOL_FREE(a,b)
+
+#define VALGRIND_MAKE_MEM_DEFINED(a,b)
+#define VALGRIND_MAKE_MEM_UNDEFINED(a,b)
+#define VALGRIND_MAKE_MEM_NOACCESS(a,b)
+
+#define tlfs_valgrind_reinit_access(pool)
 #endif
 
 #ifdef USE_PRINTF
@@ -404,9 +422,9 @@ static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl
 #define EXTRACT_BLOCK_HDR(_b, _tlsf, _fl, _sl) do {					\
 		_tlsf -> matrix [_fl] [_sl] = _b -> ptr.free_ptr.next;		\
 		if (_tlsf -> matrix[_fl][_sl]) {							\
-			VALGRIND_MAKE_MEM_DEFINED(_tlsf->matrix[_fl][_sl], FREE_BLOCK_SIZE); \
+			TLSF_VG_UNLOCK_FBLOCK(_tlsf->matrix[_fl][_sl]);			\
 			_tlsf -> matrix[_fl][_sl] -> ptr.free_ptr.prev = NULL;	\
-			VALGRIND_MAKE_MEM_NOACCESS(_tlsf->matrix[_fl][_sl], FREE_BLOCK_SIZE); \
+			TLSF_VG_LOCK_FBLOCK(_tlsf->matrix[_fl][_sl]);			 \
 		} else {													\
 			clear_bit (_sl, &_tlsf -> sl_bitmap [_fl]);				\
 			if (!_tlsf -> sl_bitmap [_fl])							\
@@ -419,14 +437,14 @@ static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl
 
 #define EXTRACT_BLOCK(_b, _tlsf, _fl, _sl) do {							\
 		if (_b -> ptr.free_ptr.next){									\
-			VALGRIND_MAKE_MEM_DEFINED(_b->ptr.free_ptr.next, FREE_BLOCK_SIZE); \
+			TLSF_VG_UNLOCK_FBLOCK(_b->ptr.free_ptr.next);				\
 			_b -> ptr.free_ptr.next -> ptr.free_ptr.prev = _b -> ptr.free_ptr.prev; \
-			VALGRIND_MAKE_MEM_NOACCESS(_b->ptr.free_ptr.next, FREE_BLOCK_SIZE); \
+			TLSF_VG_LOCK_FBLOCK(_b->ptr.free_ptr.next);					\
 		} 																\
 		if (_b -> ptr.free_ptr.prev){									\
-			VALGRIND_MAKE_MEM_DEFINED(_b->ptr.free_ptr.prev, FREE_BLOCK_SIZE); \
+			TLSF_VG_UNLOCK_FBLOCK(_b->ptr.free_ptr.prev);				\
 			_b -> ptr.free_ptr.prev -> ptr.free_ptr.next = _b -> ptr.free_ptr.next; \
-			VALGRIND_MAKE_MEM_NOACCESS(_b->ptr.free_ptr.prev, FREE_BLOCK_SIZE); \
+			TLSF_VG_LOCK_FBLOCK(_b->ptr.free_ptr.prev);					\
 		}																\
 		if (_tlsf -> matrix [_fl][_sl] == _b) {							\
 			_tlsf -> matrix [_fl][_sl] = _b -> ptr.free_ptr.next;		\
@@ -441,12 +459,12 @@ static __inline__ bhdr_t *FIND_SUITABLE_BLOCK(tlsf_t * _tlsf, int *_fl, int *_sl
 	} while(0)
 
 #define INSERT_BLOCK(_b, _tlsf, _fl, _sl) do {							\
-		_b -> ptr.free_ptr.prev = NULL; \
-		_b -> ptr.free_ptr.next = _tlsf -> matrix [_fl][_sl]; \
-		if (_tlsf -> matrix [_fl][_sl]){									\
-			VALGRIND_MAKE_MEM_DEFINED(_tlsf->matrix[_fl][_sl], FREE_BLOCK_SIZE); \
+		_b -> ptr.free_ptr.prev = NULL;									\
+		_b -> ptr.free_ptr.next = _tlsf -> matrix [_fl][_sl]; 			\
+		if (_tlsf -> matrix [_fl][_sl]){								\
+			TLSF_VG_UNLOCK_FBLOCK(_tlsf->matrix[_fl][_sl]);				\
 			_tlsf -> matrix [_fl][_sl] -> ptr.free_ptr.prev = _b;		\
-			VALGRIND_MAKE_MEM_NOACCESS(_tlsf->matrix[_fl][_sl], FREE_BLOCK_SIZE); \
+			TLSF_VG_LOCK_FBLOCK(_tlsf->matrix[_fl][_sl]);				\
 		}																\
 		_tlsf -> matrix [_fl][_sl] = _b;								\
 		set_bit (_sl, &_tlsf -> sl_bitmap [_fl]);						\
@@ -523,7 +541,7 @@ static __inline__ bhdr_t *process_area(void *area, size_t size)
     ai->next = 0;
     ai->end = lb;
     VALGRIND_MAKE_MEM_NOACCESS(b, (b->size&BLOCK_SIZE) + BHDR_OVERHEAD);
-    VALGRIND_MAKE_MEM_NOACCESS(lb, BHDR_OVERHEAD);
+    TLSF_VG_LOCK_BHDR(lb);
     return ib;
 }
 
@@ -561,7 +579,9 @@ size_t init_memory_pool(size_t mem_pool_size, void *mem_pool)
 #endif
         VALGRIND_MAKE_MEM_DEFINED(tlsf, sizeof(tlsf_t));
         b = GET_NEXT_BLOCK(mem_pool, ROUNDUP_SIZE(sizeof(tlsf_t)));
-        return b->size & BLOCK_SIZE;
+        size = b->size & BLOCK_SIZE;
+        tlsf_valgrind_reinit_access(mem_pool);
+        return size;
     }
 
     /* Zeroing the memory pool */
@@ -582,7 +602,7 @@ size_t init_memory_pool(size_t mem_pool_size, void *mem_pool)
     VALGRIND_MAKE_MEM_NOACCESS(ib, BHDR_OVERHEAD+sizeof(area_info_t));
 
 #if TLSF_STATISTIC
-    VALGRIND_MAKE_MEM_DEFINED(b, BHDR_OVERHEAD);
+    TLSF_VG_UNLOCK_BHDR(b);
     tlsf->pool_size = mem_pool_size;
     tlsf->free_size = (b->size & BLOCK_SIZE);
     tlsf->free_fragment = tlsf->free_size;
@@ -591,7 +611,7 @@ size_t init_memory_pool(size_t mem_pool_size, void *mem_pool)
 #endif
 
     size = (b->size & BLOCK_SIZE);
-    VALGRIND_MAKE_MEM_NOACCESS(b, BHDR_OVERHEAD);
+    TLSF_VG_LOCK_BHDR(b);
     return size;
 }
 
@@ -610,23 +630,23 @@ size_t add_new_area(void *area, size_t area_size, void *mem_pool)
 
     ib0 = process_area(area, area_size);
     b0 = GET_NEXT_BLOCK(ib0->ptr.buffer, ib0->size & BLOCK_SIZE);
-    VALGRIND_MAKE_MEM_DEFINED(b0, BHDR_OVERHEAD);
-    lb0 = GET_NEXT_BLOCK(b0->ptr.buffer, b0->size & BLOCK_SIZE);
-    VALGRIND_MAKE_MEM_DEFINED(lb0, BHDR_OVERHEAD);
 
+    TLSF_VG_UNLOCK_BHDR(b0);
+    lb0 = GET_NEXT_BLOCK(b0->ptr.buffer, b0->size & BLOCK_SIZE);
+    TLSF_VG_UNLOCK_BHDR(lb0);
 
     /* Before inserting the new area, we have to merge this area with the
        already existing ones */
 
     while (ptr) {
-        VALGRIND_MAKE_MEM_DEFINED(ptr, BHDR_OVERHEAD);
+        TLSF_VG_UNLOCK_BHDR(ptr);
 
         ib1 = (bhdr_t *) ((char *) ptr - BHDR_OVERHEAD);
-        VALGRIND_MAKE_MEM_DEFINED(ib1, BHDR_OVERHEAD);
+        TLSF_VG_UNLOCK_BHDR(ib1);
         b1 = GET_NEXT_BLOCK(ib1->ptr.buffer, ib1->size & BLOCK_SIZE);
-        VALGRIND_MAKE_MEM_DEFINED(b1, BHDR_OVERHEAD);
+        TLSF_VG_UNLOCK_BHDR(b1);
         lb1 = ptr->end;
-        VALGRIND_MAKE_MEM_DEFINED(lb1, BHDR_OVERHEAD);
+        TLSF_VG_UNLOCK_BHDR(lb1);
 
         /* Merging the new area with the next physically contigous one */
         if ((uintptr_t) ib1 == (uintptr_t) lb0 + BHDR_OVERHEAD) {
@@ -648,8 +668,8 @@ size_t add_new_area(void *area, size_t area_size, void *mem_pool)
 
             b1->prev_hdr = b0;
             lb0 = lb1;
-            VALGRIND_MAKE_MEM_NOACCESS(ib1, BHDR_OVERHEAD);
-            VALGRIND_MAKE_MEM_NOACCESS(b1, BHDR_OVERHEAD);
+            TLSF_VG_LOCK_BHDR(ib1);
+            TLSF_VG_LOCK_BHDR(b1);
             //old lb1 is in b0
             continue;
         }
@@ -669,12 +689,12 @@ size_t add_new_area(void *area, size_t area_size, void *mem_pool)
                 ROUNDDOWN_SIZE((b0->size & BLOCK_SIZE) +
                                (ib0->size & BLOCK_SIZE) + 2 * BHDR_OVERHEAD) | USED_BLOCK | (lb1->size & PREV_STATE);
             next_b = GET_NEXT_BLOCK(lb1->ptr.buffer, lb1->size & BLOCK_SIZE);
-            VALGRIND_MAKE_MEM_DEFINED(next_b, BHDR_OVERHEAD);
+            TLSF_VG_UNLOCK_BHDR(next_b);
             next_b->prev_hdr = lb1;
-            VALGRIND_MAKE_MEM_NOACCESS(next_b, BHDR_OVERHEAD);
+            TLSF_VG_LOCK_BHDR(next_b);
             b0 = lb1;
             ib0 = ib1;
-            VALGRIND_MAKE_MEM_NOACCESS(b1, BHDR_OVERHEAD);
+            TLSF_VG_LOCK_BHDR(b1);
             // lb1 and ib1 need not be changed to no access
             continue;
         }
@@ -697,11 +717,11 @@ size_t add_new_area(void *area, size_t area_size, void *mem_pool)
     // adjust used size changed free_ex
     tlsf->used_size += area_size;
 #endif
-    VALGRIND_MAKE_MEM_DEFINED(b0, BHDR_OVERHEAD);
+    TLSF_VG_UNLOCK_BHDR(b0);
     size = (b0->size & BLOCK_SIZE);
     VALGRIND_MAKE_MEM_NOACCESS(ib0, BHDR_OVERHEAD+sizeof(area_info_t));
-    VALGRIND_MAKE_MEM_NOACCESS(b0, BHDR_OVERHEAD);
-    VALGRIND_MAKE_MEM_NOACCESS(lb0, BHDR_OVERHEAD);
+    TLSF_VG_LOCK_BHDR(b0);
+    TLSF_VG_LOCK_BHDR(lb0);
     return size;
 }
 
@@ -755,17 +775,17 @@ double get_fragmentation(void *mem_pool)
 
 	bh = tlsf->matrix[fl][sl];
 	while(bh){
-		VALGRIND_MAKE_MEM_DEFINED(bh, FREE_BLOCK_SIZE);
+		TLSF_VG_UNLOCK_FBLOCK(bh);
 		if(fragment_size<(bh->size&BLOCK_SIZE))
 			fragment_size = (bh->size&BLOCK_SIZE);
 #if OV_RT
 		// break loop to maintain real time
 		// fragmentation may not be exact
 		bh = NULL;
-		VALGRIND_MAKE_MEM_NOACCESS(bh, FREE_BLOCK_SIZE);
+		TLSF_VG_LOCK_FBLOCK(bh);
 #else
 		bhnext = bh->ptr.free_ptr.next;
-		VALGRIND_MAKE_MEM_NOACCESS(bh, FREE_BLOCK_SIZE);
+		TLSF_VG_LOCK_FBLOCK(bh);
 		bh = bhnext;
 #endif
 	}
@@ -1013,12 +1033,12 @@ void *malloc_ex(size_t size, void *mem_pool)
     if (!b)
         return NULL;            /* Not found */
 
-    VALGRIND_MAKE_MEM_DEFINED(b, FREE_BLOCK_SIZE);
+    TLSF_VG_UNLOCK_FBLOCK(b);
     EXTRACT_BLOCK_HDR(b, tlsf, fl, sl);
 
     /*-- found: */
     next_b = GET_NEXT_BLOCK(b->ptr.buffer, b->size & BLOCK_SIZE);
-    VALGRIND_MAKE_MEM_DEFINED(next_b, BHDR_OVERHEAD);
+    TLSF_VG_UNLOCK_BHDR(next_b);
     /* Should the block be split? */
     tmp_size = (b->size & BLOCK_SIZE) - size;
     if (tmp_size >= sizeof(bhdr_t)) {
@@ -1300,7 +1320,10 @@ int tlsf_move_pool(void* _tlsf, ptrdiff_t diff){
 	return 0;
 }
 
-void tlfs_valgrind_reinit_access(void* pool){
+
+#if OV_VALGRIND
+
+void tlsf_valgrind_reinit_access(void* pool){
 	tlsf_t* tlsf = (tlsf_t*) pool;
 	area_info_t* ai = NULL;
 	area_info_t* ainext = NULL;
@@ -1397,7 +1420,7 @@ int tlsf_valgrind_check_access(void* mem_pool) {
 
 	return 0;
 }
-
+#endif
 
 #if _DEBUG_TLSF_
 
