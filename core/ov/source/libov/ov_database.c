@@ -115,6 +115,12 @@ int flock_solaris (int filedes, int oper)
 #include <unistd.h>
 #endif
 
+#if OV_VALGRIND
+static void ov_freelist_free();
+#else
+#define ov_freelist_free()
+#endif
+
 #if OV_SYSTEM_NT || OV_SYSTEM_RMOS
 #include <fcntl.h>
 #include <io.h>
@@ -1534,6 +1540,9 @@ OV_DLLFNCEXPORT void ov_database_unload(void) {
 	if (pdb)
 		ov_database_shutdown();
 
+	// mark reachable pointer as freed
+	ov_freelist_free();
+
 	if (dbFlags & (OV_DBOPT_NOMAP | OV_DBOPT_NOFILE)) {
 #if TLSF
 		destroy_memory_pool(dbpool);
@@ -2303,6 +2312,237 @@ OV_RESULT ov_database_move(const OV_PTRDIFF distance) {
 }
 
 /*	----------------------------------------------------------------------	*/
+
+#if OV_VALGRIND
+
+#include <valgrind/memcheck.h>
+
+#define OV_FREELIST_SIZE 512
+#define OV_FL_DESCBUFFER 255
+
+typedef struct freelist{
+	OV_UINT				count;
+	struct freelist*	pnext;
+	OV_POINTER			pfree[OV_FREELIST_SIZE];
+	char*				desc[OV_FREELIST_SIZE];
+} ov_freelist;
+
+static OV_INLINE void ov_freelist_add(ov_freelist** ppfree, OV_POINTER ptr, char* desc){
+	char* temp;
+
+	// add next chunk
+	if((*ppfree)->count>=OV_FREELIST_SIZE){
+		(*ppfree)->pnext = ov_malloc(sizeof(ov_freelist));
+		(*ppfree) = (*ppfree)->pnext;
+		memset(*ppfree, 0, sizeof(ov_freelist));
+	}
+
+	// add pointer to list
+	(*ppfree)->pfree[(*ppfree)->count] = ptr;
+	if(desc){
+		temp = malloc(strlen(desc)+1);
+		strcpy(temp, desc);
+		(*ppfree)->desc[(*ppfree)->count] = temp;
+	}
+	(*ppfree)->count++;
+}
+
+static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj, OV_INT mode){
+	OV_ELEMENT				part;
+	OV_UINT					iter;
+	OV_ANY*					pAny;
+	char					pathbuf[255] = {0};
+	char					descbuf[OV_FL_DESCBUFFER] = {0};
+
+	part.elemtype = OV_ET_NONE;
+
+	ov_memstack_lock();
+	snprintf(pathbuf, 255, "(%u,%u)%s", pobj->v_idH, pobj->v_idL, ov_path_getcanonicalpath(pobj, 2));
+	ov_memstack_unlock();
+
+	snprintf(descbuf, OV_FL_DESCBUFFER, "%s.linktbl", pathbuf);
+	ov_freelist_add(ppfree, pobj->v_linktable, descbuf);
+
+	if(	pobj==(OV_INSTPTR)(&pdb->root) ||
+		pobj==(OV_INSTPTR)(&pdb->vendordom) ||
+		pobj==(OV_INSTPTR)(&pdb->acplt) ||
+		pobj==(OV_INSTPTR)(&pdb->containment) ||
+		pobj==(OV_INSTPTR)(&pdb->instantiation) ||
+		pobj==(OV_INSTPTR)(&pdb->ov)){
+		mode = 0x0;
+	}
+
+	ov_element_getnextpart_object(pobj, &part, OV_ET_ANY);
+	while(part.elemtype!=OV_ET_NONE){
+		switch(part.elemtype){
+		case OV_ET_VARIABLE:
+			if(part.elemunion.pvar->v_varprops&OV_VP_DERIVED){
+				break;
+			}
+
+			if(Ov_CanCastTo(ov_variable, pobj) && !strcmp(part.elemunion.pvar->v_identifier, "initialvalue")){
+				// initial values are not allocated
+				break;
+			}
+
+			switch(part.elemunion.pvar->v_veclen){
+			case 1:
+				switch(part.elemunion.pvar->v_vartype){
+				case OV_VT_STRING:
+					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (str)", pathbuf, part.elemunion.pvar->v_identifier);
+					ov_freelist_add(ppfree, *((OV_STRING*)part.pvalue), descbuf);
+					break;
+
+				case OV_VT_ANY:
+					pAny = (OV_ANY*)part.pvalue;
+					if((pAny->value.vartype&OV_VT_KSMASK)==OV_VT_STRING){
+						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any str)", pathbuf, part.elemunion.pvar->v_identifier);
+						ov_freelist_add(ppfree, pAny->value.valueunion.val_string, descbuf);
+					}
+					if(pAny->value.vartype&OV_VT_ISVECTOR){
+						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any vec base)", pathbuf, part.elemunion.pvar->v_identifier);
+						ov_freelist_add(ppfree, pAny->value.valueunion.val_generic_vec.value, descbuf);
+						if((pAny->value.vartype&OV_VT_KSMASK)==OV_VT_STRING_VEC){
+							for(iter=0; iter<pAny->value.valueunion.val_string_vec.veclen; iter++){
+								snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any vec str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+								ov_freelist_add(ppfree, pAny->value.valueunion.val_string_vec.value[iter], descbuf);
+							}
+						}
+					}
+				}
+				break;
+
+			case 0:
+				// dynamic vector
+				snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (vec)", pathbuf, part.elemunion.pvar->v_identifier);
+				ov_freelist_add(ppfree, ((OV_GENERIC_VEC*)part.pvalue)->value, descbuf);
+				if((part.elemunion.pvar->v_vartype&OV_VT_KSMASK&(~OV_VT_ISVECTOR))==OV_VT_STRING){
+					for(iter=0; iter<((OV_STRING_VEC*)part.pvalue)->veclen; iter++){
+						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (vec str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+						ov_freelist_add(ppfree, ((OV_STRING_VEC*)part.pvalue)->value[iter], descbuf);
+					}
+				}
+				break;
+
+			default:
+				switch(part.elemunion.pvar->v_vartype&OV_VT_KSMASK){
+				case OV_VT_STRING:
+				case OV_VT_STRING_VEC:
+					for(iter=0; iter<part.elemunion.pvar->v_veclen; iter++){
+						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (static str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+						ov_freelist_add(ppfree, ((OV_STRING_VEC*)part.pvalue)->value[iter], descbuf);
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+			break;
+		case OV_ET_OBJECT:
+			ov_freelist_collect_object(ppfree, part.elemunion.pobj, 0x1);
+			break;
+		}
+
+		ov_element_getnextpart_object(pobj, &part, OV_ET_ANY);
+	}
+
+	if(mode&0x1){ // free object pointer
+		snprintf(descbuf, OV_FL_DESCBUFFER, "%s (objptr)", pathbuf);
+		ov_freelist_add(ppfree, pobj, descbuf);
+	}
+
+	return OV_ERR_OK;
+}
+
+static OV_RESULT ov_freelist_collect(ov_freelist* freeFirst){
+	ov_freelist*	pFreeCur = freeFirst;
+	OV_IDLIST_NODE* pNodeCur = NULL;
+	OV_INSTPTR		pobj = NULL;
+	OV_UINT			iterator = 0;
+	OV_UINT			nodecount = 0;
+	char			descbuf[50] = {0};
+
+	ov_freelist_add(&pFreeCur, pdb->idList, "idList");
+	ov_freelist_add(&pFreeCur, pdb->idList->pNodes, "pNodes");
+
+	pNodeCur = pdb->idList->pFirst;
+
+	while(pNodeCur){
+		for(iterator = 0; iterator<pNodeCur->relationCount; iterator++){
+			if(!pNodeCur->relations[iterator].pobj)
+				continue;
+
+			ov_freelist_collect_object(&pFreeCur, pNodeCur->relations[iterator].pobj, 0x1);
+
+		}
+		snprintf(descbuf, 50, "idNode %u", nodecount);
+		ov_freelist_add(&pFreeCur, pNodeCur, descbuf);
+		pNodeCur = pNodeCur->pNext;
+		nodecount++;
+	}
+
+	// vendor objects are not in idList
+	Ov_ForEachChild(ov_containment, &pdb->vendordom, pobj){
+		ov_freelist_collect_object(&pFreeCur, pobj, 0x0);
+	}
+
+	return OV_ERR_OK;
+}
+
+static void ov_freelist_free(){
+	ov_freelist		freelist = {0};
+	ov_freelist*	freelistCur = NULL;
+	ov_freelist*	freelistNext;
+	OV_UINT64		iter = 0;
+	OV_POINTER		ptr = NULL;
+	OV_BOOL			mallocActive = FALSE;
+	int 			count = -1;
+
+	if (ov_path_getobjectpointer("/acplt/malloc", 2))
+		mallocActive = TRUE;
+
+	ov_freelist_collect(&freelist);
+
+	for(freelistCur=&freelist; freelistCur; freelistCur=freelistCur->pnext){
+		for(iter=0; iter<freelistCur->count; iter++){
+			count++;
+			ptr = freelistCur->pfree[iter];
+			if(!ptr){
+//				ov_logfile_debug("NULL    %p -> %s", ptr, freelistCur->desc[iter]);
+				continue;
+			}
+
+			if(ptr>=(OV_POINTER)pdb->pstart && ptr<=(OV_POINTER)pdb->pend){
+//				ov_logfile_debug("inside  %p -> %s", ptr, freelistCur->desc[iter]);
+#if TLSF
+				// set pointer as freed
+				VALGRIND_MEMPOOL_FREE(dbpool, ptr);
+#endif
+			} else {
+				// free pointer outside of database
+				ov_logfile_debug("outside %p -> %s", ptr, freelistCur->desc[iter]);
+				if(mallocActive)
+					free(ptr);
+			}
+		}
+	}
+
+	// free freelists
+	freelistCur = &freelist;
+	while(freelistCur){
+		freelistNext = freelistCur->pnext;
+		for(iter=0; iter<freelistCur->count; iter++){
+			free(freelistCur->desc[iter]);
+		}
+		if(freelistCur!=&freelist)
+			ov_free(freelistCur);
+		freelistCur = freelistNext;
+	}
+}
+
+#endif
+
 
 /*
  *	End of file
