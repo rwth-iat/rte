@@ -4,6 +4,7 @@ source set_cpath.tcl
 set_cpath "/usr/x86_64-w64-mingw32/include/"
 
 set ov_arch_bitwidth_int 64
+set ov_arch x86_64
 #DBCommands are build in 32bit since legacy ks c++ doesnt build on 64 bit win.
 
 # set targetOS to "nt" for windows or "linux" for linux targets. Others are currently not supported

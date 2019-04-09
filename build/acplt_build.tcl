@@ -116,7 +116,11 @@ if {$cross==1} {
 	set targetOS $os
 }
 
-set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=$ov_arch_bitwidth_int"
+if { $ov_arch != "" } {
+	set ov_arch_bitwidth_str "OV_ARCH=$ov_arch"
+} else {
+	set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=$ov_arch_bitwidth_int"
+}
 
 ####################### PROCEDURES #######################
 

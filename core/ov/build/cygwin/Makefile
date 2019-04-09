@@ -58,9 +58,11 @@ endif
 
 ifdef OV_ARCH
 ifeq "$(OV_ARCH)" "x86"
+OV_ARCH_BITWIDTH			=	32
 OV_ARCH_BITWIDTH_CFLAGS		=	-m32
 OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
 else ifeq "$(OV_ARCH)" "x86_64"
+OV_ARCH_BITWIDTH			=	64
 OV_ARCH_BITWIDTH_CFLAGS		=	-m64
 OV_ARCH_BITWIDTH_LDFLAGS	=	-m64
 else ifeq "$(OV_ARCH)" "arm"
@@ -247,7 +249,7 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_DLL)
 
 #dllwrap have problems on 64bit, but holger is 2014 not brave enough to change 32 bit build
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)
-ifeq ($(OV_ARCH),x86_64)
+ifeq ($(OV_ARCH_BITWIDTH),64)
 	$(LD) -o $@ -Wl,--output-def,$(basename $@).def $^ $(LD_LIB)
 else
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)
