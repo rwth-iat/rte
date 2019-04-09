@@ -258,6 +258,8 @@ $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(OV_LIBOV_RES) $(LIBMPM_LIB)
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 endif
 
+$(OV_LIBOV_OBJ) $(OV_DBUTIL_OBJ) $(OV_RUNTIMESERVER_OBJ) : ov.h
+
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
 #	oncrpc library for ACPLT/KS integration
@@ -292,6 +294,11 @@ ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ) $(OV_CODEGEN_RES)
 	$(LINK) -o $@ $^ $(C_LIBS)
+ifndef OV_DEBUG
+	$(GCC_BIN_PREFIX)strip --strip-debug $(OV_CODEGEN_EXE)
+endif
+
+ov_ovmparser.h : ov_ovmparser.y
 
 #	ACPLT/OV framework builder
 
@@ -402,8 +409,8 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 #	acplt_builder
 #	------------------------
-$(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ)
+$(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
 ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(ACPLT_BUILDER_EXE)
 endif

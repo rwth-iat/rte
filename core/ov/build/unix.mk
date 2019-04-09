@@ -225,6 +225,8 @@ $(OV_LIBOV_LIB) : $(TLSF_OBJ) $(OV_LIBOV_OBJ)
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(TLSF_OBJ) $(LIBMPM_LIB)
 	$(LD) -o $@ $^ $(LD_LIB) 
 
+$(OV_LIBOV_OBJ) $(OV_DBUTIL_OBJ) $(OV_RUNTIMESERVER_OBJ) : ov.h
+
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV library for ACPLT/KS integration
@@ -252,6 +254,8 @@ $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
 ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(OV_CODEGEN_EXE)
 endif
+
+ov_ovmparser.h : ov_ovmparser.y
 
 #	ACPLT/OV framework builder
 
@@ -383,8 +387,8 @@ example.c example.h : $(OV_CODEGEN_EXE)
 
 #	acplt_builder
 #	------------------------
-$(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ) $(LD_LIB)
+$(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
 ifndef OV_DEBUG
 	$(GCC_BIN_PREFIX)strip --strip-debug $(ACPLT_BUILDER_EXE)
 endif
