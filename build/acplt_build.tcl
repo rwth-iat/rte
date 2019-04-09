@@ -21,6 +21,7 @@ if {$tcl_platform(pointerSize) == 8} then {
 } else {
 	set ov_arch_bitwidth_int 32
 }
+set ov_arch ""
 set cross 0
 set crossFilename ""
 set targetOS ""
