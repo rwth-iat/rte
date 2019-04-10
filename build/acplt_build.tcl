@@ -24,12 +24,20 @@ if {$tcl_platform(pointerSize) == 8} then {
 set ov_arch ""
 set cross 0
 set crossFilename ""
+set make_jobs "-j1"
+set jobsarg 0
 set targetOS ""
 set crossArch ""
 set gitRepo "https://github.com/acplt/rte/trunk/"
 
 
 foreach arg $argv {
+	if {$crossFilename == 1} {
+		set crossFilename $arg
+	}
+	if {$jobsarg == 1} {
+		set make_jobs "-j$arg"
+	}
 	if {$arg == "checkout"} {
 		set release 0
 		set checkout 1
@@ -50,9 +58,6 @@ foreach arg $argv {
 	if {$arg == "64"} {
 		set ov_arch_bitwidth_int 64
 	}
-	if {$crossFilename == 1} {
-		set crossFilename $arg
-	}
 	if {$arg=="cross"} {
 		set cross 1
 		set crossFilename 1
@@ -60,8 +65,11 @@ foreach arg $argv {
 	if {$gitRepo == 1} {
 		set gitRepo $arg
 	}
-	if {$arg=="repo"} {
+	if {$arg == "repo"} {
 		set gitRepo 1
+	}
+	if {$arg == "jobs"} {
+		set jobsarg 1
 	}
 }
 
@@ -402,6 +410,7 @@ proc build_acplt_mingw {} {
 	global base
 	global os
 	global make
+	global make_jobs
 	global basedir
 	global builddir
 	global build_dbcommands
@@ -413,21 +422,21 @@ proc build_acplt_mingw {} {
 		execute makemingw.bat
 	}
 	cd $builddir/base/ov/source/libml
-	build_cygwin libml $make -f mingw.mk
+	build_cygwin libml $make $make_jobs -f mingw.mk
 	#cd $builddir/base/libmpm 
 	#build_cygwin libmpm make -f Makefile
 	cd $builddir/base/ov/build/cygwin
-	build_cygwin ov $make -f makefile
+	build_cygwin ov $make $make_jobs -f makefile
 	#cd $builddir/base/acplt_makmak/build/cygwin
 	#build_cygwin acplt_makmak make -f makefile
 	#enabling plt and ks just for fb_dbcommands	
 	if {$build_dbcommands == 1} {
 		cd $builddir/base/plt/build/cygwin
-		build_cygwin plt $make -f makefile
+		build_cygwin plt $make $make_jobs -f makefile
 		cd $builddir/base/ks/build/cygwin
-		build_cygwin ks $make -f makefile
+		build_cygwin ks $make $make_jobs -f makefile
 		cd $builddir/base/fbs_dienste/build/cygwin
-		build_cygwin fb_dbcommands $make -f makefile
+		build_cygwin fb_dbcommands $make $make_jobs -f makefile
 	}
 }
 
@@ -437,6 +446,7 @@ proc build_acplt {} {
 	global base
 	global os
 	global make
+	global make_jobs
 	global basedir
 	global build_dbcommands
 	global cross
@@ -451,12 +461,12 @@ proc build_acplt {} {
 	if {$cross==1} then { 
 		set crossArgs "GCC_BIN_PREFIX=$CrossPrefix"
 		if {$crossArch == "ARM"} {
-			build_package libml $make -C $builddir/base/ov/source/libml -f $makefile $crossArgs OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
+			build_package libml $make $make_jobs -C $builddir/base/ov/source/libml -f $makefile $crossArgs OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
 		} else {
-			build_package libml $make -C $builddir/base/ov/source/libml -f $makefile $crossArgs
+			build_package libml $make $make_jobs -C $builddir/base/ov/source/libml -f $makefile $crossArgs
 		}
 	} else {
-		build_package libml $make -C $builddir/base/ov/source/libml -f $makefile
+		build_package libml $make $make_jobs -C $builddir/base/ov/source/libml -f $makefile
 	}
 	# build libmpm make -C $builddir/base/libmpm -f $makefile
 	
@@ -475,10 +485,10 @@ proc build_acplt {} {
 			cd $builddir/base/ks/build/ntvc
 			build_package ks nmake /f $makefile
 			cd $builddir/base/fb_dbcommands/build/ntvc
-			build_package fb_dbcommands $make -f $makefile -k
+			build_package fb_dbcommands $make $make_jobs -f $makefile -k
 		}
 		cd $builddir/base/ov/build/ntvc
-		build_package ov $make -f $makefile -k
+		build_package ov $make $make_jobs -f $makefile -k
 		cd $basedir
 	} else {
 		if {$build_dbcommands == 1} then {
@@ -496,15 +506,15 @@ proc build_acplt {} {
 					}
 					set crossArgsPrefix "GCC_BIN_PREFIX=$CrossPrefix"
 					#enabling plt and ks just for fb_dbcommands
-					build_package plt $make -C $builddir/base/plt/build/$makedir $crossArgsPrefix 
-					build_package ks $make -C $builddir/base/ks/build/$makedir $crossArgsPrefix 
-					build_package fbs_dienste $make -C $builddir/base/fbs_dienste/build/$makedir $crossArgsPrefix
+					build_package plt $make $make_jobs -C $builddir/base/plt/build/$makedir $crossArgsPrefix 
+					build_package ks $make $make_jobs -C $builddir/base/ks/build/$makedir $crossArgsPrefix 
+					build_package fbs_dienste $make $make_jobs -C $builddir/base/fbs_dienste/build/$makedir $crossArgsPrefix
 				}
 			} else {
 				#enabling plt and ks just for fb_dbcommands
-				build_package plt $make -C $builddir/base/plt/build/$os
-				build_package ks $make -C $builddir/base/ks/build/$os
-				build_package fbs_dienste $make -C $builddir/base/fbs_dienste/build/$os
+				build_package plt $make $make_jobs -C $builddir/base/plt/build/$os
+				build_package ks $make $make_jobs -C $builddir/base/ks/build/$os
+				build_package fbs_dienste $make $make_jobs -C $builddir/base/fbs_dienste/build/$os
 			}
 			
 		}
@@ -517,20 +527,20 @@ proc build_acplt {} {
 			set crossArgsCG	"OV_CODEGEN_EXE=ov_codegen"
 			if {$targetOS=="nt"} {
 				set crossWindresDefs "WINDRESDEFS=--define _WIN32"
-				build_package ov $make -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs
+				build_package ov $make $make_jobs -C $builddir/base/ov/build/cygwin $crossArgsPrefix $crossArgsCGDir $crossArgsCG $crossWindresDefs
 				#Rename ov_codegen to ov_codegen.exe , because OV_CODEGEN_EXE is used for executing codegen(linux executable) and for building codegen.exe
 				if { [file exists $builddir/base/ov/build/cygwin/ov_codegen] } {
 					file rename -force $builddir/base/ov/build/cygwin/ov_codegen $builddir/base/ov/build/cygwin/ov_codegen.exe
 				}
 			} else {
 				if {$crossArch == "ARM"} {
-					build_package ov $make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
+					build_package ov $make $make_jobs -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= 
 				} else {
-					build_package ov $make -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
+					build_package ov $make $make_jobs -C $builddir/base/ov/build/$os $crossArgsPrefix $crossArgsCGDir $crossArgsCG
 				}
 			}
 		} else {
-			build_package ov $make -C $builddir/base/ov/build/$os
+			build_package ov $make $make_jobs -C $builddir/base/ov/build/$os
 		}
    }
    #if { $os == "nt" } then {
@@ -588,6 +598,7 @@ proc release_lib_better {libname option} {
 	global releasedir
 	global os
 	global make
+	global make_jobs
 	global compileonly
 	global cross	
 	global targetOS
@@ -649,9 +660,9 @@ proc release_lib_better {libname option} {
 					set MAKMAKTEMP "${MAKMAKOPTION} -mARM"
 					set MAKMAKOPTION $MAKMAKTEMP
 				}
-				set success [build_package $libname $make $option GCC_BIN_PREFIX=$CrossPrefix BIN_DIR= $MAKMAKOPTION]
+				set success [build_package $libname $make $make_jobs $option GCC_BIN_PREFIX=$CrossPrefix BIN_DIR= $MAKMAKOPTION]
 			} else {			
-				set success [build_package $libname $make $option]
+				set success [build_package $libname $make $make_jobs $option]
 			}
 			
 			if { $success == 0 } {
