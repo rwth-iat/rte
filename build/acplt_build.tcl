@@ -36,6 +36,7 @@ foreach arg $argv {
 		set crossFilename $arg
 	}
 	if {$jobsarg == 1} {
+		set jobsarg 0
 		set make_jobs "-j$arg"
 	}
 	if {$arg == "checkout"} {
