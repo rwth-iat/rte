@@ -20,25 +20,17 @@
 
 #include "servicesOPCUAInterface.h"
 #include "libov/ov_macros.h"
-#include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
-#include "libov/ov_path.h"
-#include "libov/ov_memstack.h"
-#include "ks_logfile.h"
+#include "opcua_ovStore.h"
 #include "nodeset_services.h"
 
-extern OV_INSTPTR_servicesOPCUAInterface_interface pinterface;
-
-
 OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariablesNodeToOPCUA(
-		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
+		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
@@ -46,18 +38,15 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	OV_INSTPTR_ov_object	pobjtemp = NULL;
 	OV_ANY					value = {.value.vartype = OV_VT_VOID, .value.valueunion.val_string = NULL, .state=OV_ST_UNKNOWN, .time.secs = 0, .time.usecs = 0};
 
-	if (pinterface == NULL)
-		return UA_STATUSCODE_BADOUTOFSERVICE;
-
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(*nodeId, &path);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
@@ -184,11 +173,12 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 
 	// References
-	addReference(newNode);
+	opcua_ovStore_addReferences(context, newNode);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
+			UA_ExpandedNodeId_deleteMembers(&newNode->references[i].targetIds[0]);
+			newNode->references[i].targetIds[0] = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
 			break;
 		}
 	}

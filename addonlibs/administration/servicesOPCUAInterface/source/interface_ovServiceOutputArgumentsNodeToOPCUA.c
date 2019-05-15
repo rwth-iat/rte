@@ -28,18 +28,12 @@
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 
-extern OV_INSTPTR_servicesOPCUAInterface_interface pinterface;
-
-
-
-
 OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(
-		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
+		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
@@ -47,8 +41,10 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	OV_STRING 				tmpString = NULL;
 	OV_UINT 				len = 0;
 	OV_STRING 				*plist = NULL;
+	OV_INSTPTR_servicesOPCUAInterface_interface 	pinterface = Ov_StaticPtrCast(servicesOPCUAInterface_interface, context);
 
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
 	ov_string_setvalue(&tmpString, NULL);
 
@@ -60,7 +56,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	ov_string_freelist(plist);
 
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(tmpNodeId, &path);
 	UA_NodeId_deleteMembers(&tmpNodeId);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
@@ -68,7 +64,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
@@ -148,7 +144,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 		((UA_VariableNode*)newNode)->arrayDimensionsSize = 1;
 		UA_UInt32 *pOutputDimension = UA_UInt32_new();
 		*pOutputDimension = sizeOutput;
-		((UA_VariableNode*)newNode)->arrayDimensions = pOutputDimension; //UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
+		((UA_VariableNode*)newNode)->arrayDimensions = pOutputDimension;
 		// valuerank
 		((UA_VariableNode*)newNode)->valueRank = 1;	/*	one dimension	*/
 	}else{
@@ -269,34 +265,24 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	// dataType
 	((UA_VariableNode*)newNode)->dataType = UA_NODEID_NUMERIC(0, 0);
 
-	// References have to do manual because it is an virtual node
-	size_t size_references = 0;
+	// References have to be done manual because it is an virtual node
 
-	size_references = size_references + 2;// For Parent&TypeNode
-	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
-	if (!newNode->references){
-		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		UA_free(newNode);
-		return result;
-	}
-	newNode->referencesSize = size_references;
 	// ParentNode
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-	newNode->references[0].isInverse = UA_TRUE;
 	len = 0;
 	plist = NULL;
 	tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, plist[0]);
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+			UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_trafo->index, plist[0]), UA_NODECLASS_METHOD,
+			UA_FALSE);
 	ov_string_freelist(plist);
 	ov_string_setvalue(&tmpString, NULL);
 
 	// TypeNode
-	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	newNode->references[1].isInverse = UA_FALSE;
-	newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
-
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
+			 UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE), UA_NODECLASS_VARIABLETYPE,
+			 UA_TRUE);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

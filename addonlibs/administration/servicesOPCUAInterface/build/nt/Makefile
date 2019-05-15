@@ -9,7 +9,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 SERVERSTARTKEYS = -w servicesOPCUAInterface
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = 
-EXTRA_CC_FLAGS = 
+EXTRA_CC_FLAGS = -DPLT_USE_WINSOCK2=1
 EXTRA_LIBS = 
 LD_FLAGS = 
 COMPILER = GCC

@@ -14,22 +14,23 @@
 #define WIN32
 #endif
 
-#define OV_UA_NAMESPACEURI "iec62541-ov.acplt.org"
+
 /* 
 	Define your data types here. 
 */
-struct UA_NodeStore {
-    struct nodeEntry **entries;
-    UA_UInt32          size;
-    UA_UInt32          count;
-    UA_UInt32          sizePrimeIndex;
-};
 
+#define OPCUA_DEFAULT_APPLICATIONURI "acplt.org/"
+#define OPCUA_DEFAULT_APPLICATIONNAME "ACPLT/RTE" // is filled with /SERVERNAME in uaServer startup via ov_vendortree_getServer
 
-typedef UA_Connection* UA_ConnectionPTR;       
-typedef UA_Connection** UA_ConnectionPTRPTR;
-typedef UA_Server* OV_PTR_UA_Server;
-	
-typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
+typedef struct OPCUA_InformationModel {
+    UA_UInt16 index;
+    UA_String uri;
+    UA_Nodestore* store;
+    UA_StatusCode (*nodeset)(UA_Server* server);
+    UA_DataTypeArray* dataTypes;
+} OPCUA_InformationModel;
+
+typedef UA_Server* OPCUA_PTR_UA_Server;
+typedef OPCUA_InformationModel * OPCUA_PTR_InformationModel;
 
 #endif
