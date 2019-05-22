@@ -25,7 +25,7 @@
 typedef struct OPCUA_InformationModel {
     UA_UInt16 index;
     UA_String uri;
-    UA_Nodestore* store;
+    UA_NodestoreInterface* store;
     UA_StatusCode (*nodeset)(UA_Server* server);
     UA_DataTypeArray* dataTypes;
 } OPCUA_InformationModel;

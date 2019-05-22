@@ -454,7 +454,7 @@ static UA_StatusCode opcua_ovStore_insert(void *context, UA_Node *node, UA_NodeI
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 
-static void opcua_ovStore_iterate(void *context, void* visitorHandle, UA_NodestoreVisitor visitor){
+static void opcua_ovStore_iterate(void *context, UA_NodestoreVisitor visitor, void* visitorHandle){
 }
 static UA_Node * opcua_ovStore_newNode(void * context, UA_NodeClass nodeClass){
     return NULL;
@@ -1068,12 +1068,11 @@ static UA_StatusCode opcua_ovStore_replaceNode(void *context, UA_Node *node){
 	return UA_STATUSCODE_GOOD;
 }
 
-UA_Nodestore*
+UA_NodestoreInterface*
 opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context) {
-	UA_Nodestore* nsi = UA_malloc(sizeof(UA_Nodestore));
+	UA_NodestoreInterface* nsi = (UA_NodestoreInterface*)UA_malloc(sizeof(UA_NodestoreInterface));
 	if(nsi == NULL)
 		return NULL;
-	nsi->inPlaceEditAllowed = UA_FALSE; // Is allowed, but has no effect, as every get node is only temporary
     nsi->context =        	context;
     nsi->deleteNodestore =  opcua_ovStore_deleteNodestore;
     nsi->newNode =       	opcua_ovStore_newNode;
@@ -1088,7 +1087,7 @@ opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context) {
     return nsi;
 }
 void
-opcua_ovStore_delete(UA_Nodestore * nodestoreInterface){
+opcua_ovStore_delete(UA_NodestoreInterface * nodestoreInterface){
 	nodestoreInterface->context = NULL;
 	UA_free(nodestoreInterface);
 }

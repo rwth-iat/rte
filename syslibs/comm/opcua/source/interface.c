@@ -23,49 +23,10 @@
 
 #include "opcua.h"
 #include "libov/ov_macros.h"
-#include "opcua_storeSwitch.h"
 #include "opcua_ovStore.h"
 #include "opcua_helpers.h"
 
-static UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String uriOld, const UA_String uriNew, size_t * indexOut){
-	size_t index = 0;
-	// Get the namespace index of the old uri
-	UA_StatusCode result = UA_STATUSCODE_GOOD;
-	result = UA_Server_getNamespaceByName(server, uriOld, &index);
-	if(result == UA_STATUSCODE_BADNOTFOUND){
-		return result;
-	}
-	if(indexOut)
-		*indexOut = index;
 
-	// Read namespace array from server
-	UA_Variant namespaceArray;
-	result = UA_Server_readValue(server, UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY), &namespaceArray);
-	if(result != UA_STATUSCODE_GOOD){
-		return result;
-	}
-
-	// Replace namespace URI
-	UA_String_deleteMembers(&(((UA_String*)namespaceArray.data)[index]));
-	if(uriNew.data == NULL)
-		UA_String_init(&(((UA_String*)namespaceArray.data)[index]));
-	else{
-		result = UA_String_copy(&uriNew, &(((UA_String*)namespaceArray.data)[index]));
-		if(result != UA_STATUSCODE_GOOD){
-			return result;
-		}
-	}
-
-	// Write back new namespace array
-	result = UA_Server_writeValue(server, UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY), namespaceArray);
-	if(result != UA_STATUSCODE_GOOD){
-		return result;
-	}
-
-	// Free resources
-	UA_Variant_deleteMembers(&namespaceArray);
-	return result;
-}
 
 OV_DLLFNCEXPORT OV_STRING opcua_interface_uri_get(
     OV_INSTPTR_opcua_interface          pobj
@@ -169,9 +130,10 @@ static UA_StatusCode addInformationModel(UA_Server * server, OPCUA_InformationMo
 		config->customDataTypes = model->dataTypes;
 	}
 
+	UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server);
 	// Link the nodestore (transformation) to the namespace in the switch
 	if(model->store){
-		return UA_NodestoreSwitch_linkNodestoreToNamespace((UA_NodestoreSwitch*)config->nodestore.context, model->store, model->index);
+		return UA_Nodestore_Switch_linkNodestoreToNamespace(nsSwitch, model->store, model->index);
 	}
 
 	// Load predefined nodeset
@@ -184,7 +146,7 @@ static UA_StatusCode addInformationModel(UA_Server * server, OPCUA_InformationMo
 //TODO delete all nodes from namespace (and all references)
 static OV_RESULT removeInformationModel(UA_Server * server, OPCUA_InformationModel * model){
 	// Mark namespace uri as deleted
-	opcua_interface_setNamespace(server, model->uri, UA_STRING_NULL, NULL);
+	//opcua_interface_setNamespace(server, model->uri, UA_STRING_NULL, NULL);
 
 	// Remove Datatypes
 	UA_ServerConfig * config = UA_Server_getConfig(server);
@@ -203,8 +165,9 @@ static OV_RESULT removeInformationModel(UA_Server * server, OPCUA_InformationMod
 		dataTypes = dataTypes->next;
 	}
 
+	UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server);
 	// Unlink the nodestore from the namespace
-	UA_NodestoreSwitch_unlinkNodestoreFromNamespace((UA_NodestoreSwitch*)config->nodestore.context, model->store);
+	UA_Nodestore_Switch_unlinkNodestoreFromNamespace(nsSwitch, model->store);
 	return OV_ERR_OK;
 }
 

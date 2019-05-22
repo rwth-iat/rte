@@ -47,5 +47,6 @@ UA_StatusCode opcua_helpers_addReference(
 		UA_Node* node, const UA_NodeId * sourceNodeId , const UA_NodeId referenceTypeId,
 		const UA_ExpandedNodeId targetNodeId, UA_NodeClass targetNodeClass, UA_Boolean isForward);
 
+UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String uriOld, const UA_String uriNew, size_t * indexOut);
 
 #endif /* opcua_HELPERS_H_ */
