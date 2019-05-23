@@ -1,53 +1,46 @@
-/* Generated from Opc.Ua.Types.bsd, aas.bsd with script ../tools/generate_datatypes.py
- * on host ubuntu-VirtualBox by user ubuntu at 2017-07-05 12:52:11 */
+/* Generated from identification.bsd with script generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2019-05-20 02:51:10 */
 
-#ifndef UA_IDENTIFICATION_GENERATED_H_
-#define UA_IDENTIFICATION_GENERATED_H_
+#ifndef IDENTIFICATION_GENERATED_H_
+#define IDENTIFICATION_GENERATED_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "open62541.h"
 
-#ifdef UA_NO_AMALGAMATION
-#include "ua_types.h"
- #include "ua_types_generated.h"
+_UA_BEGIN_DECLS
 
-#else
- #include "open62541.h"
-#endif
 
-//
-///**
-// * Every type is assigned an index in an array containing the type descriptions.
-// * These descriptions are used during type handling (copying, deletion,
-// * binary encoding, ...). */
-//#define UA_IDENTIFICATION_COUNT 2
-//extern UA_EXPORT UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT];
-//
-///**
-// * IdEnum
-// * ^^^^^^
-// * Determines which kind of Id is specified */
-//typedef enum {
-//    UA_IDENUM_URI = 0,
-//    UA_IDENUM_ISO = 1
-//} UA_IdEnum;
-//
-//#define UA_IDENTIFICATION_IDENUM 0
-//
-///**
-// * Identification
-// * ^^^^^^^^^^^^^^
-// * Identification */
-//typedef struct {
-//    UA_String idSpec;
-//    UA_IdEnum idType;
-//} UA_Identification;
-//
-//#define UA_IDENTIFICATION_IDENTIFICATION 1
+/**
+ * Every type is assigned an index in an array containing the type descriptions.
+ * These descriptions are used during type handling (copying, deletion,
+ * binary encoding, ...). */
+#define UA_IDENTIFICATION_COUNT 2
+extern UA_EXPORT const UA_DataType UA_IDENTIFICATION[UA_IDENTIFICATION_COUNT];
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+/**
+ * IdEnum
+ * ^^^^^^
+ */
+typedef enum {
+    UA_IDENUM_URI = 0,
+    UA_IDENUM_ISO = 1,
+    __UA_IDENUM_FORCE32BIT = 0x7fffffff
+} UA_IdEnum;
+UA_STATIC_ASSERT(sizeof(UA_IdEnum) == sizeof(UA_Int32), enum_must_be_32bit);
 
-#endif /* UA_IDENTIFICATION_GENERATED_H_ */
+#define UA_IDENTIFICATION_IDENUM 0
+
+/**
+ * Identification
+ * ^^^^^^^^^^^^^^
+ */
+typedef struct {
+    UA_String idSpec;
+    UA_IdEnum idType;
+} UA_Identification;
+
+#define UA_IDENTIFICATION_IDENTIFICATION 1
+
+
+_UA_END_DECLS
+
+#endif /* IDENTIFICATION_GENERATED_H_ */
