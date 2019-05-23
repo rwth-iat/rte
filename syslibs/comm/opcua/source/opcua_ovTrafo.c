@@ -32,7 +32,7 @@ OV_DLLFNCEXPORT UA_UInt16 opcua_ovTrafo_searchNamespaceIndex(
 			continue;
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
-			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, NULL, NULL)){
+			if(pVtblInterface->m_checkReference(pInterfaceCheck, pobj, NULL)){
 				return forTypes ? pInterfaceCheck->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
 			}
 		}
