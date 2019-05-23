@@ -11,6 +11,8 @@
 #include "opcua.h"
 #include "libov/ov_path.h"
 
+#define OV_OPCUA_VIRTUALNODESEPERATOR "||"
+
 //TODO move OV_DLLFNCEXPORT to header
 UA_Logger opcua_ovUAlogger_new(void);
 

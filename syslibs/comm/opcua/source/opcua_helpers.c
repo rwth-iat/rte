@@ -854,14 +854,14 @@ opcua_helpers_setRootEntryReference(const OV_STRING newPath, OV_INSTPTR_opcua_in
 		UA_StatusCode retval = UA_STATUSCODE_GOOD;
 		//Delete old entry reference
 		retval = UA_Server_deleteReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, *poldPath), UA_FALSE);
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, UA_EXPANDEDNODEID_STRING(pobj->v_index, *poldPath), UA_FALSE);
 		if(retval != UA_STATUSCODE_GOOD){
 			Ov_Warning(UA_StatusCode_name(retval));
 		}
 
 		//Add reference to OV root for ipsms interface
 		retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, newPath), true);
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_index, newPath), true);
 		if(retval != UA_STATUSCODE_GOOD){
 			Ov_Warning(UA_StatusCode_name(retval));
 		}

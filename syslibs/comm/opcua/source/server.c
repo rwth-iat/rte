@@ -63,9 +63,6 @@ UA_StatusCode opcua_server_createConfig(UA_Server* server, OV_INSTPTR_opcua_serv
     	config->applicationDescription.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
     }
 
-    // Change name of ns1
-    opcua_interface_setNamespace(server, UA_STRING_NULL, config->applicationDescription.applicationUri, NULL);
-
     //Set ov logger
     config->logger = opcua_ovUAlogger_new();
 
