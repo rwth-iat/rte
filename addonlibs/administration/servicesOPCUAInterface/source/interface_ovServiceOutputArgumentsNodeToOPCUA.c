@@ -23,10 +23,11 @@
 #include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
-#include "libov/ov_path.h"
-#include "libov/ov_memstack.h"
-#include "ks_logfile.h"
+#include "interface_helpers.h"
+//#include "NoneTicketAuthenticator.h"
+//#include "libov/ov_path.h"
+//#include "libov/ov_memstack.h"
+//#include "ks_logfile.h"
 
 OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputArgumentsNodeToOPCUA(
 		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
@@ -120,24 +121,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 
 	// Variable specific attributes
 	// value
-	OV_ELEMENT tmpPart;
-	tmpPart.elemtype = OV_ET_NONE;
-	tmpPart.pobj = NULL;
-	OV_ELEMENT tmpParrent;
-	tmpParrent.pobj = pobj;
-	tmpParrent.elemtype = OV_ET_OBJECT;
-	OV_UINT sizeOutput = 0;
-	do {
-		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
-		if (tmpPart.elemtype == OV_ET_NONE)
-			break;
-
-		if (tmpPart.elemunion.pvar->v_flags == 16384){ // OutputFlag is set
-			sizeOutput++;
-			continue;
-		}
-	} while(TRUE);
-
+	OV_UINT sizeOutput = countArguments(pobj, FALSE);
 
 	// arrayDemensions
 	if (sizeOutput > 1){
@@ -170,8 +154,12 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
 
+	OV_ELEMENT tmpPart;
 	tmpPart.elemtype = OV_ET_NONE;
 	tmpPart.pobj = NULL;
+	OV_ELEMENT tmpParrent;
+	tmpParrent.pobj = pobj;
+	tmpParrent.elemtype = OV_ET_OBJECT;
 	OV_UINT count = 0;
 	do {
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);

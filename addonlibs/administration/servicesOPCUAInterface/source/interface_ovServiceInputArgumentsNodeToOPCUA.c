@@ -22,6 +22,7 @@
 #include "libov/ov_macros.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
+#include "interface_helpers.h"
 
 OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceInputArgumentsNodeToOPCUA(
 		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
@@ -116,23 +117,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceInputArg
 	newNode->writeMask 	= writeMask;
 
 	// value
-	OV_ELEMENT tmpPart;
-	tmpPart.elemtype = OV_ET_NONE;
-	tmpPart.pobj = NULL;
-	OV_ELEMENT tmpParrent;
-	tmpParrent.pobj = pobj;
-	tmpParrent.elemtype = OV_ET_OBJECT;
-	OV_UINT sizeInput = 0;
-	do {
-		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
-		if (tmpPart.elemtype == OV_ET_NONE)
-			break;
-
-		if (tmpPart.elemunion.pvar->v_flags == 256){ // InputFlag is set
-			sizeInput++;
-			continue;
-		}
-	} while(TRUE);
+	OV_UINT sizeInput = countArguments(pobj, TRUE);
 
 	// Variable specific attributes
 	// arrayDimensions
@@ -167,8 +152,12 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceInputArg
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
 	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
 
+	OV_ELEMENT tmpPart;
 	tmpPart.elemtype = OV_ET_NONE;
 	tmpPart.pobj = NULL;
+	OV_ELEMENT tmpParrent;
+	tmpParrent.pobj = pobj;
+	tmpParrent.elemtype = OV_ET_OBJECT;
 	OV_UINT count = 0;
 	do {
 		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
