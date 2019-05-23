@@ -13,6 +13,8 @@ typedef OV_RESULT OPCUA_FNC_UNLOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface po
 // Is used by generic interface to determine whether a specialices transformation is used.
 // If parentRef is filled, all values (strings) have to be alloced
 // parentRef->sourceNodeId and parentRef->targetServerUri don't need to be filled.
-typedef OV_BOOL OPCUA_FNC_CHECKNODEID(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef);
+typedef OV_BOOL OPCUA_FNC_CHECKREFERENCE(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef);
+typedef OV_BOOL OPCUA_FNC_CHECKNODE(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context);
+typedef UA_StatusCode OPCUA_FNC_NODESET(UA_Server* server);
 
 #endif

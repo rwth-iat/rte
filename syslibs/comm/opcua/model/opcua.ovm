@@ -16,26 +16,33 @@ LIBRARY opcua
     CLASS interface	:	CLASS ov/object
     	COMMENT = "Abstract class to define interface for an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
     	VARIABLES
-            trafo	:    C_TYPE <OPCUA_PTR_InformationModel>
+            store	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
                 FLAGS = "n"
-                COMMENT = "Information model to transform interface (hence library) specific ov objects to ua nodes.";
-            types	:    C_TYPE <OPCUA_PTR_InformationModel>
+                COMMENT = "Default store for interface specific types";
+            trafo	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
                 FLAGS = "n"
-                COMMENT = "Information model to store interface (hence library) specific ua type nodes.";
-			uri		:    STRING
-    		   	IS_DERIVED
-    		   	HAS_ACCESSORS
+                COMMENT = "Interface for transformation of instances";
+            dataTypes	:    C_TYPE <OPCUA_PTR_DATATYPEARRAY>
+                FLAGS = "n"
+                COMMENT = "Interface specific OPCUA data types for opcua internal handling";
+			uri		:    STRING 
+    		   	HAS_SET_ACCESSOR
     		   	FLAGS = "i"
-    		   	COMMENT = "Namespace (application) uri of trafo. For types an '/types' is added. For use in generic ov interface: acplt.org/<<LibraryName>>."; // See OPCUA_OVSTORE_DEFAULTNSURI_PREFIX and OPCUA_OVSTORE_DEFAULTNSURI_SUFFIX
+    		   	COMMENT = "Namespace (application) uri.";
+			index	:    UINT
+    		   	FLAGS = "i"
+    		   	COMMENT = "Namespace index for instances and types";    		   	
     	END_VARIABLES;
     	OPERATIONS
             getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
             load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
             unload             :    C_FUNCTION <OPCUA_FNC_UNLOADINFORMATIONMODEL>;
-            checkNodeId        :    C_FUNCTION <OPCUA_FNC_CHECKNODEID>;
-        END_OPERATIONS;
+            checkNode          :    C_FUNCTION <OPCUA_FNC_CHECKNODE>;
+            checkReference     :    C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>;
+            nodeset			   :    C_FUNCTION <OPCUA_FNC_NODESET>;
+        END_OPERATIONS; 
     END_CLASS;
-    
+     
     CLASS ovInterface :	CLASS opcua/interface
     	IS_INSTANTIABLE;
     	COMMENT = "Generic interface for ov. Holds the corresponding nodestores for UA Types and Transformations.";

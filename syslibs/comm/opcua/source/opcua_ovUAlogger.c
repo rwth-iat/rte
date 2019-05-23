@@ -18,7 +18,7 @@ static char			logMsg2[1096];
 #if !LOG_UA_TO_OV
 static const char *LogLevelNames[6] = {"trace", "debug", "info", "warning", "error", "fatal"};
 #endif
-static const char *LogCategoryNames[6] = {"network", "securechannel", "session", "server", "client", "userland"};
+static const char *LogCategoryNames[7] = {"network", "securechannel", "session", "server", "client", "userland", "securityPolicy"};
 #endif
 
 static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory category, const char *msg, va_list args) {

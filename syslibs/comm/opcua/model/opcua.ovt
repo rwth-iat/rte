@@ -22,15 +22,9 @@
 #define OPCUA_DEFAULT_APPLICATIONURI "acplt.org/"
 #define OPCUA_DEFAULT_APPLICATIONNAME "ACPLT/RTE" // is filled with /SERVERNAME in uaServer startup via ov_vendortree_getServer
 
-typedef struct OPCUA_InformationModel {
-    UA_UInt16 index;
-    UA_String uri;
-    UA_Nodestore* store;
-    UA_StatusCode (*nodeset)(UA_Server* server);
-    UA_DataTypeArray* dataTypes;
-} OPCUA_InformationModel;
 
 typedef UA_Server* OPCUA_PTR_UA_Server;
-typedef OPCUA_InformationModel * OPCUA_PTR_InformationModel;
+typedef UA_NodestoreInterface* OPCUA_PTR_NODESTOREINTERFACE;
+typedef UA_DataTypeArray* OPCUA_PTR_DATATYPEARRAY; 
 
 #endif

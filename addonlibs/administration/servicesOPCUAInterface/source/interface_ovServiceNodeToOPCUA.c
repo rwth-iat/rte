@@ -25,6 +25,28 @@
 #include "opcua_ovStore.h"
 #include "nodeset_services.h"
 
+OV_UINT countArguments(OV_INSTPTR pobj, OV_BOOL input){
+	OV_ELEMENT child;
+	child.elemtype = OV_ET_NONE;
+	child.pobj = NULL;
+	OV_ELEMENT parent;
+	parent.pobj = pobj;
+	parent.elemtype = OV_ET_OBJECT;
+	OV_UINT count = 0;
+	int flag = (1L << ((input ? 'i' : 'o')-'a'));
+	do {
+		ov_element_getnextpart(&parent, &child, OV_ET_VARIABLE);
+		if(child.elemtype == OV_ET_NONE)
+			break;
+
+		if(child.elemunion.pvar->v_flags & flag) {
+			count++;
+			continue;
+		}
+	} while(TRUE);
+	return count;
+}
+
 OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOPCUA(
 		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
@@ -121,25 +143,28 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 			UA_EXPANDEDNODEID_NUMERIC(pinterface->v_types->index, UA_NSSERVICESID_SERVICESTYPE), UA_NODECLASS_METHOD ,UA_TRUE);
 	ov_memstack_unlock();
 
+	//TODO use memstack instead
 	// InputArguments
 	OV_STRING tmpString = NULL;
-	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "InputArguments");
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-			UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_trafo->index, tmpString), UA_NODECLASS_VARIABLE,
-			UA_TRUE);
-	ov_string_setvalue(&tmpString, NULL);
+	if(countArguments(pobj, TRUE) > 0 ){
+		opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
+		ov_string_append(&tmpString, "||InputArguments"); //TODO define virtual seperator in opcua
+		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+				UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_trafo->index, tmpString), UA_NODECLASS_VARIABLE,
+				UA_TRUE);
+		ov_string_setvalue(&tmpString, NULL);
+	}
 
 	// OutputArguments
 	tmpString = NULL;
-	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "||");
-	ov_string_append(&tmpString, "OutputArguments");
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-			UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_trafo->index, tmpString), UA_NODECLASS_VARIABLE,
-			UA_TRUE);
-	ov_string_setvalue(&tmpString, NULL);
+	if(countArguments(pobj, FALSE) > 0 ){
+		opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
+		ov_string_append(&tmpString, "||OutputArguments");
+		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+				UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_trafo->index, tmpString), UA_NODECLASS_VARIABLE,
+				UA_TRUE);
+		ov_string_setvalue(&tmpString, NULL);
+	}
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;
