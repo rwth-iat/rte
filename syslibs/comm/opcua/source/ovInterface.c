@@ -25,6 +25,7 @@
 #include "libov/ov_macros.h"
 #include "opcua_ovStore.h"
 #include "opcua_helpers.h"
+#include "opcua_ovTrafo.h"
 
 OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_entryPath_set(
     OV_INSTPTR_opcua_ovInterface          pobj,
@@ -48,14 +49,15 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
          return result;
 
     /* do what */
-    pinst->v_trafo = Ov_HeapAlloc(OPCUA_InformationModel);
-    pinst->v_trafo->dataTypes = NULL;
-    pinst->v_trafo->index = 0;
-    pinst->v_trafo->uri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI); //Will be overwritten by config->applicationDescription.applicationUri
-    pinst->v_trafo->store = opcua_ovStore_new(pinst);
-    pinst->v_trafo->nodeset = NULL;
-	//pinst->v_types
-    pinst->v_types = NULL;
+    pinst->v_index = 0;
+    ov_string_setvalue(&pinst->v_uri, OPCUA_DEFAULT_APPLICATIONURI); //Will be overwritten by config->applicationDescription.applicationUri
+    pinst->v_store = opcua_ovStore_new(pinst);;
+    pinst->v_dataTypes = NULL;
+    pinst->v_trafo = opcua_ovTrafo_new(pinst);
+
+
+
+
 
 	//Link generic ov interface interface to server as first association if it is a part
     if(pinst->v_pouterobject != NULL && Ov_CanCastTo(opcua_server, pinst->v_pouterobject)){
@@ -76,10 +78,9 @@ OV_DLLFNCEXPORT void opcua_ovInterface_destructor(
     OV_INSTPTR_opcua_ovInterface pinst = Ov_StaticPtrCast(opcua_ovInterface, pobj);
 
     /* do what */
-    UA_String_deleteMembers(&pinst->v_trafo->uri);
-    opcua_ovStore_delete(pinst->v_trafo->store);
-    Ov_HeapFree(pinst->v_trafo);
-    pinst->v_trafo = NULL;
+    ov_string_setvalue(&pinst->v_uri, NULL);
+    opcua_ovStore_delete(pinst->v_store);
+    opcua_ovStore_delete(pinst->v_trafo);
 
     /* destroy object */
     ov_object_destructor(pobj);
@@ -97,8 +98,8 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj
 		return OV_ERR_GENERIC;
 	}
 	UA_ServerConfig* config = UA_Server_getConfig(uaServer->v_server);
-    UA_String_deleteMembers(&pobj->v_trafo->uri);
-    UA_String_copy(&config->applicationDescription.applicationUri, &pobj->v_trafo->uri);
+	ov_string_setvalue(&pinst->v_uri, NULL);
+	opcua_helpers_copyUAStringToOV(config->applicationDescription.applicationUri, &pobj->v_uri);
 
     //Use generic load method of uaInterface to load the trafos
 	opcua_interface_load(pobj, TRUE);
@@ -106,19 +107,19 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj
 	//Add reference to OV root for generic interface
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
 	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pinst->v_entryPath), UA_TRUE);
+			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_index, pinst->v_entryPath), UA_TRUE);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}
 	//Add reference to ov domain
 	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, "/acplt/ov/domain"), UA_TRUE);
+			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_index, "/acplt/ov/domain"), UA_TRUE);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}
 	//Add reference to ov object
 	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, "/acplt/ov/object"), UA_TRUE);
+			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_index, "/acplt/ov/object"), UA_TRUE);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}

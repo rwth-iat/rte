@@ -854,14 +854,14 @@ opcua_helpers_setRootEntryReference(const OV_STRING newPath, OV_INSTPTR_opcua_in
 		UA_StatusCode retval = UA_STATUSCODE_GOOD;
 		//Delete old entry reference
 		retval = UA_Server_deleteReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, *poldPath), UA_FALSE);
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, UA_EXPANDEDNODEID_STRING(pobj->v_index, *poldPath), UA_FALSE);
 		if(retval != UA_STATUSCODE_GOOD){
 			Ov_Warning(UA_StatusCode_name(retval));
 		}
 
 		//Add reference to OV root for ipsms interface
 		retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, newPath), true);
+				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_index, newPath), true);
 		if(retval != UA_STATUSCODE_GOOD){
 			Ov_Warning(UA_StatusCode_name(retval));
 		}
@@ -887,4 +887,45 @@ opcua_helpers_addReference(
 	ref.targetNodeId = targetNodeId;
 	UA_String_init(&ref.targetServerUri);
 	return UA_Node_addReference(node, &ref);
+}
+
+// Needed for setting namespace 1
+UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String uriOld, const UA_String uriNew, size_t * indexOut){
+	size_t index = 0;
+	// Get the namespace index of the old uri
+	UA_StatusCode result = UA_STATUSCODE_GOOD;
+	result = UA_Server_getNamespaceByName(server, uriOld, &index);
+	if(result == UA_STATUSCODE_BADNOTFOUND){
+		return result;
+	}
+	if(indexOut)
+		*indexOut = index;
+
+	// Read namespace array from server
+	UA_Variant namespaceArray;
+	result = UA_Server_readValue(server, UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY), &namespaceArray);
+	if(result != UA_STATUSCODE_GOOD){
+		return result;
+	}
+
+	// Replace namespace URI
+	UA_String_deleteMembers(&(((UA_String*)namespaceArray.data)[index]));
+	if(uriNew.data == NULL)
+		UA_String_init(&(((UA_String*)namespaceArray.data)[index]));
+	else{
+		result = UA_String_copy(&uriNew, &(((UA_String*)namespaceArray.data)[index]));
+		if(result != UA_STATUSCODE_GOOD){
+			return result;
+		}
+	}
+
+	// Write back new namespace array
+	result = UA_Server_writeValue(server, UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY), namespaceArray);
+	if(result != UA_STATUSCODE_GOOD){
+		return result;
+	}
+
+	// Free resources
+	UA_Variant_deleteMembers(&namespaceArray);
+	return result;
 }

@@ -23,68 +23,29 @@
 
 #include "opcua.h"
 #include "libov/ov_macros.h"
-
 #include "opcua_helpers.h"
-#include "opcua_storeSwitch.h"
 
-static OV_RESULT opcua_server_createSwitch(UA_ServerConfig* config, OV_STRING* errorText){
-	UA_StatusCode retval = UA_STATUSCODE_GOOD;
-    UA_NodestoreSwitch * storeSwitch = UA_NodestoreSwitch_new();
-    if(storeSwitch == NULL){
-    	ov_string_setvalue(errorText, "UA_NodestoreSwitch_new failed. Not enough heap memory.");
-    	return OV_ERR_HEAPOUTOFMEMORY;
-    }
-
-    //Save default store from config temporary
-    UA_Nodestore* uaDefaultStore = UA_malloc(sizeof(UA_Nodestore));
-	if(uaDefaultStore == NULL){
-    	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
-    	ov_string_setvalue(errorText, "UA_Nodestore malloc failed. Not enough heap memory.");
-    	return OV_ERR_GENERIC;
-    }
-	UA_Nodestore_copy(&config->nodestore, uaDefaultStore);
-
-    // add ua default store for namespace 0
-    // Not necessary, if default nodestore is set
-    retval = UA_NodestoreSwitch_linkNodestoreToNamespace(storeSwitch, uaDefaultStore, 0);
-	if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
-    	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
-    	UA_free(uaDefaultStore);
-		ov_string_print(errorText, "UA_NodestoreSwitch_linkNodestoreToNamespace failed: %s" , UA_StatusCode_name(retval));
-    	return OV_ERR_GENERIC;
-    }
-
-    //link default to switch
-	//TODO change due to newNode problem
-    retval = UA_NodestoreSwitch_linkDefaultNodestore(storeSwitch, uaDefaultStore);
-	if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation
-    	UA_NodestoreSwitch_deleteSwitch(storeSwitch);
-    	UA_free(uaDefaultStore);
-		ov_string_print(errorText, "UA_NodestoreSwitch_linkDefaultNodestore failed: %s" , UA_StatusCode_name(retval));
-    	return OV_ERR_GENERIC;
-    }
-
-	//link switch to config
-	UA_NodestoreSwitch_linkNodestoreSwitchToServer(storeSwitch, &config->nodestore);
-	return OV_ERR_OK;
-}
-
-static UA_ServerConfig * opcua_server_createConfig(OV_INSTPTR_opcua_serverConfig pOvConfig){
+UA_StatusCode opcua_server_createConfig(UA_Server* server, OV_INSTPTR_opcua_serverConfig pOvConfig){
     //Create new config with port if pOvConfig is available
-	UA_ServerConfig* config = (pOvConfig) ? UA_ServerConfig_new_minimal(pOvConfig->v_port, NULL) : UA_ServerConfig_new_default();
-	if(config == NULL)
-		return NULL;
+
+	UA_StatusCode result = UA_STATUSCODE_GOOD;
+	UA_ServerConfig* config = UA_Server_getConfig(server);
+	if (pOvConfig){
+		result = UA_ServerConfig_setMinimal(config, pOvConfig->v_port, NULL);
+	}else{
+		result = UA_ServerConfig_setDefault(config);
+	}
+
+	if (result != UA_STATUSCODE_GOOD)
+		return result;
 
     //Delete old application name and uri
     UA_String_deleteMembers(&config->applicationDescription.applicationName.text);
-    UA_String_deleteMembers(&config->endpoints->endpointDescription.server.applicationName.text);
     UA_String_deleteMembers(&config->applicationDescription.applicationUri);
-    UA_String_deleteMembers(&config->endpoints->endpointDescription.server.applicationUri);
 
     //Fill in application name
     if(pOvConfig != NULL && ov_string_getlength(pOvConfig->v_applicationName)){
     	config->applicationDescription.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
-    	config->endpoints->endpointDescription.server.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
     }else{
     	//Append OPCUA_DEFAULT_APPLICATIONNAME and SERVERNAME
     	OV_ANY serverName = OV_ANY_INIT;
@@ -92,23 +53,20 @@ static UA_ServerConfig * opcua_server_createConfig(OV_INSTPTR_opcua_serverConfig
     	ov_vendortree_getservername(&serverName, NULL); //Do not free, points to static servername
     	ov_string_print(&applicationName,"%s/%s",  OPCUA_DEFAULT_APPLICATIONNAME, serverName.value.valueunion.val_string);
     	config->applicationDescription.applicationName.text = UA_String_fromChars(applicationName);
-    	config->endpoints->endpointDescription.server.applicationName.text = UA_String_fromChars(applicationName);
     	ov_string_setvalue(&applicationName, NULL);
     }
 
     //Fill in application uri
     if(pOvConfig != NULL && ov_string_getlength(pOvConfig->v_applicationURI)){
     	config->applicationDescription.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
-    	config->endpoints->endpointDescription.server.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
     }else{
     	config->applicationDescription.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
-    	config->endpoints->endpointDescription.server.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
     }
 
     //Set ov logger
     config->logger = opcua_ovUAlogger_new();
 
-    return config;
+    return UA_STATUSCODE_GOOD;
 }
 
 
@@ -120,40 +78,29 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
     const OV_BOOL  value
 ) {
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
-	OV_RESULT result = OV_ERR_OK;
 	if(pobj->v_error)
 		return OV_ERR_GENERIC;
 
 	if(value != pobj->v_run){
 		if(value){ //start server
-
-			//Create new config and update from linked config in ov
-			OV_INSTPTR_opcua_serverConfig pOvConfig = Ov_GetFirstChild(opcua_configToServer, pobj);
-		    UA_ServerConfig* config = opcua_server_createConfig(pOvConfig);
-
-		    //Check that config was created
-		    if(!config){
-	            ov_string_setvalue(&pobj->v_errorText, "CreateServerConfig failed.");
-	            pobj->v_error = TRUE;
-	            return OV_ERR_GENERIC;
-		    }
-
-		    //Create a new switch and link to config
-		    result = opcua_server_createSwitch(config, &pobj->v_errorText);
-			if(result != OV_ERR_OK){
-		    	UA_ServerConfig_delete(config);
-		    	pobj->v_error = TRUE;
-		    	return result;
-		    }
-
 		    //Create new server
-		    UA_Server *server = UA_Server_new(config);
+		    UA_Server *server = UA_Server_new();
 		    if(!server){
-		        UA_ServerConfig_delete(config);
 	            ov_string_setvalue(&pobj->v_errorText, "UA_Server_new failed.");
 	            pobj->v_error = TRUE;
 	            return OV_ERR_GENERIC;
 		    }
+
+		    //Create new config and update from linked config in ov
+			OV_INSTPTR_opcua_serverConfig pOvConfig = Ov_GetFirstChild(opcua_configToServer, pobj);
+			retval = opcua_server_createConfig(server, pOvConfig);
+			if(retval != UA_STATUSCODE_GOOD){
+				UA_Server_delete(server);
+				ov_string_print(&pobj->v_errorText, "UA_Server_run_startup failed: %s" , UA_StatusCode_name(retval));
+				pobj->v_error = TRUE;
+				return OV_ERR_GENERIC;
+			}
+
 
 		    //Startup server
 			retval = UA_Server_run_startup(server);
