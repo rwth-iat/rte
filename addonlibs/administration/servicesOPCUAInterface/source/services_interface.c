@@ -24,7 +24,7 @@
 #include "servicesOPCUAInterface.h"
 #include "libov/ov_macros.h"
 #include "nodeset_services.h"
-
+#include "opcua_ovTrafo.h";
 
 OV_DLLFNCEXPORT OV_RESULT servicesOPCUAInterface_interface_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -41,21 +41,11 @@ OV_DLLFNCEXPORT OV_RESULT servicesOPCUAInterface_interface_constructor(
          return result;
 
     /* do what */
-    // Create the trafo
-    pinst->v_trafo = Ov_HeapAlloc(OPCUA_InformationModel);
-    pinst->v_trafo->dataTypes = NULL;
-    pinst->v_trafo->index = 0;
-    pinst->v_trafo->uri = UA_String_fromChars("acplt.org/services");
-    pinst->v_trafo->store = servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(pinst);
-    pinst->v_trafo->nodeset = NULL;
-
-    // Create the types
-    pinst->v_types = Ov_HeapAlloc(OPCUA_InformationModel);
-    pinst->v_types->dataTypes = NULL;
-    pinst->v_types->index = 0;
-    pinst->v_types->uri = UA_String_fromChars("acplt.org/services/types");
-    pinst->v_types->store = NULL;
-    pinst->v_types->nodeset = servicesOPCUAInterface_nodeset;
+    pinst->v_index = 0;
+	ov_string_setvalue(&pinst->v_uri, "acplt.org/services/"); //Will be overwritten by config->applicationDescription.applicationUri
+	UA_Nodestore_Default_Interface_new(&pinst->v_store);
+	pinst->v_dataTypes = NULL;
+	pinst->v_trafo = servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(pinst);
 
     return OV_ERR_OK;
 }
@@ -66,18 +56,8 @@ OV_DLLFNCEXPORT void servicesOPCUAInterface_interface_destructor(
     /*
     *   local variables
     */
-    OV_INSTPTR_servicesOPCUAInterface_interface pinst = Ov_StaticPtrCast(servicesOPCUAInterface_interface, pobj);
 
     /* do what */
-    // Delete trafo
-    UA_String_deleteMembers(&pinst->v_trafo->uri);
-    servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesDelete(pinst->v_trafo->store);
-    Ov_HeapFree(pinst->v_trafo);
-    pinst->v_trafo = NULL;
-    // Delete types
-    UA_String_deleteMembers(&pinst->v_types->uri);
-    Ov_HeapFree(pinst->v_types);
-    pinst->v_types = NULL;
 
     /* destroy object */
     ov_object_destructor(pobj);
@@ -85,7 +65,18 @@ OV_DLLFNCEXPORT void servicesOPCUAInterface_interface_destructor(
     return;
 }
 
-OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkNodeId(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
+OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkNode(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context) {
+    /*
+    *   local variables
+    */
+	if(Ov_CanCastTo(services_Service, pNode)){
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
     /*
     *   local variables
     */
@@ -96,11 +87,19 @@ OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkNodeId(OV_INSTPTR_
 			//parentRef->sourceNodeId
 			parentRef->targetNodeClass = UA_NODECLASS_METHOD;
 			ov_memstack_lock();
-			parentRef->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(pobj->v_trafo->index, ov_path_getcanonicalpath(pNode,2));
+			parentRef->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, ov_path_getcanonicalpath(pNode,2));
 			ov_memstack_unlock();
 			//parentRef->targetServerUri
 		}
 		return TRUE;
 	}
-    return FALSE;
+	return FALSE;
 }
+
+OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_nodeset(UA_Server* server) {
+    /*
+    *   local variables
+    */
+	return nodeset_services(server);
+}
+

@@ -45,7 +45,7 @@ OV_DLLFNCEXPORT OV_RESULT identificationOPCUAInterface_interface_constructor(
 
     /* do what */
     pinst->v_index = 0;
-	ov_string_setvalue(&pinst->v_uri, "acplt.org/identification"); //Will be overwritten by config->applicationDescription.applicationUri
+	ov_string_setvalue(&pinst->v_uri, "acplt.org/identification/"); //Will be overwritten by config->applicationDescription.applicationUri
 	UA_Nodestore_Default_Interface_new(&pinst->v_store);
 	UA_DataTypeArray identificationTypes = {NULL, UA_IDENTIFICATION_COUNT, UA_IDENTIFICATION};
 	pinst->v_dataTypes = &identificationTypes;

@@ -97,9 +97,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj
 	if(uaServer == NULL){
 		return OV_ERR_GENERIC;
 	}
-	UA_ServerConfig* config = UA_Server_getConfig(uaServer->v_server);
-	ov_string_setvalue(&pinst->v_uri, NULL);
-	opcua_helpers_copyUAStringToOV(config->applicationDescription.applicationUri, &pobj->v_uri);
 
     //Use generic load method of uaInterface to load the trafos
 	opcua_interface_load(pobj, TRUE);

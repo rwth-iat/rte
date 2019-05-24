@@ -23,6 +23,7 @@
 #include "opcua.h"
 #include "opcua_helpers.h"
 #include "opcua_ovStore.h"
+#include "opcua_ovTrafo.h"
 #include "nodeset_services.h"
 
 OV_UINT countArguments(OV_INSTPTR pobj, OV_BOOL input){
@@ -134,13 +135,13 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	ov_memstack_lock();
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
-			UA_EXPANDEDNODEID_STRING_ALLOC(opcua_ovStore_searchNamespaceIndex(context, pParent, FALSE),
+			UA_EXPANDEDNODEID_STRING_ALLOC(opcua_ovTrafo_searchNamespaceIndex(context, pParent, FALSE),
 					ov_path_getcanonicalpath(pParent, 2)), //TODO use checkNodeId function of correct interface instead.
 			UA_NODECLASS_OBJECT, UA_FALSE);
 
 	// HasTypeDefinition to Service
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
-			UA_EXPANDEDNODEID_NUMERIC(pinterface->v_types->index, UA_NSSERVICESID_SERVICESTYPE), UA_NODECLASS_METHOD ,UA_TRUE);
+			UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSSERVICESID_SERVICESTYPE), UA_NODECLASS_METHOD ,UA_TRUE);
 	ov_memstack_unlock();
 
 	//TODO use memstack instead
@@ -150,7 +151,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 		opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 		ov_string_append(&tmpString, "||InputArguments"); //TODO define virtual seperator in opcua
 		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-				UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_trafo->index, tmpString), UA_NODECLASS_VARIABLE,
+				UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_index, tmpString), UA_NODECLASS_VARIABLE,
 				UA_TRUE);
 		ov_string_setvalue(&tmpString, NULL);
 	}
@@ -161,7 +162,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 		opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 		ov_string_append(&tmpString, "||OutputArguments");
 		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-				UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_trafo->index, tmpString), UA_NODECLASS_VARIABLE,
+				UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_index, tmpString), UA_NODECLASS_VARIABLE,
 				UA_TRUE);
 		ov_string_setvalue(&tmpString, NULL);
 	}

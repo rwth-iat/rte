@@ -36932,7 +36932,6 @@ UA_StatusCode UA_Nodestore_Default_Interface_new(UA_NodestoreInterface** nsInter
 void UA_Nodestore_copy(const UA_NodestoreInterface* src, UA_NodestoreInterface* dst);
 void UA_Nodestore_Switch_deleteNodestores(void *storeSwitchHandle);
 
-
 /*
  * Changes of namespace to nodestore mapping.
  */

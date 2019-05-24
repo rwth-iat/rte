@@ -14,8 +14,8 @@ typedef UA_StatusCode SERVICES_FNC_OVSERVICEVARIABLESNODETOOPCUA(void *handle, c
 typedef UA_StatusCode SERVICES_FNC_OVSERVICEINPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode SERVICES_FNC_OVSERVICEOUTPUTARGUMENTSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 	
-typedef UA_Nodestore* SERVICES_FNC_OVNODESTOREINTERFACESERVICESNEW(OV_INSTPTR_servicesOPCUAInterface_interface context);
-typedef void SERVICES_FNC_OVNODESTOREINTERFACESERVICESDELETE(UA_Nodestore * store);
+typedef UA_NodestoreInterface* SERVICES_FNC_OVNODESTOREINTERFACESERVICESNEW(OV_INSTPTR_servicesOPCUAInterface_interface context);
+typedef void SERVICES_FNC_OVNODESTOREINTERFACESERVICESDELETE(UA_NodestoreInterface * store);
 typedef UA_StatusCode SERVICES_FNC_METHODCALLBACKSTANDARD(
 		UA_Server *server, const UA_NodeId *sessionId,
         void *sessionContext, const UA_NodeId *methodId,

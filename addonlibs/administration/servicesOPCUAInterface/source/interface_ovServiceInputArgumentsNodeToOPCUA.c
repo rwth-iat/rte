@@ -270,7 +270,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceInputArg
 	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-			UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_trafo->index, plist[0]), UA_NODECLASS_METHOD,
+			UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_index, plist[0]), UA_NODECLASS_METHOD,
 			UA_FALSE);
 	ov_string_freelist(plist);
 	ov_string_setvalue(&tmpString, NULL);
