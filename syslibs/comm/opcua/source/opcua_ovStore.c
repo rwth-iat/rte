@@ -18,6 +18,25 @@
 #include "NoneTicketAuthenticator.h"
 #include "opcua_ovTrafo.h"
 
+static void opcua_ovStore_getObjData(const UA_NodeId *nodeId, OV_INSTPTR_ov_object *pobj, OV_STRING *virtualPath){
+	OV_STRING *plist = NULL;
+	OV_STRING tmpString = NULL;
+	OV_UINT len = 0;
+
+	*pobj = NULL;
+	*virtualPath = NULL;
+	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
+		return ;
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
+	plist = ov_string_split(tmpString, OV_OPCUA_VIRTUALNODESEPERATOR, &len);
+	*pobj = ov_path_getobjectpointer(plist[0], 2);
+	if (len>1)
+		ov_string_setvalue(virtualPath, plist[1]);
+	ov_string_setvalue(&tmpString, NULL);
+	ov_string_freelist(plist);
+	return;
+}
+
 
 static void opcua_ovStore_deleteNodestore(void *context){
 }
@@ -25,17 +44,67 @@ static void opcua_ovStore_deleteNodestore(void *context){
 static void opcua_ovStore_deleteNode(void * context, UA_Node *node){
 	OV_INSTPTR_opcua_interface pInterface = (OV_INSTPTR_opcua_interface)context;
 
+	if(pInterface == NULL)
+		return ;
+
+
+	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	if(pServer == NULL)
+		return ;
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_STRING virtualPath = NULL;
+
+	opcua_ovStore_getObjData((const UA_NodeId*)&node->nodeId, &pobj, &virtualPath);
+
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		if(pInterface == pInterfaceCheck)
+			continue;
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				return pInterfaceCheck->v_trafo->deleteNode(context, node);
+			}
+		}
+	}
+
 	pInterface->v_trafo->deleteNode(context, node);
 }
 static void opcua_ovStore_releaseNode(void *context, const UA_Node *node){
 	OV_INSTPTR_opcua_interface pInterface = (OV_INSTPTR_opcua_interface)context;
+
+	if(pInterface == NULL)
+		return ;
+
+
+	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	if(pServer == NULL)
+		return ;
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_STRING virtualPath = NULL;
+
+	opcua_ovStore_getObjData((const UA_NodeId*)&node->nodeId, &pobj, &virtualPath);
+
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		if(pInterface == pInterfaceCheck)
+			continue;
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				return pInterfaceCheck->v_trafo->releaseNode(context, node);
+			}
+		}
+	}
 
 	pInterface->v_trafo->releaseNode(context, node);
 }
 
 static void opcua_ovStore_iterate(void *context, UA_NodestoreVisitor visitor, void* visitorHandle){
 }
-static UA_Node * opcua_ovStore_newNode(void * context, UA_NodeClass nodeClass){
+static UA_Node * opcua_ovStore_newNode(void * context, UA_NodeClass nodeClass){ // TODO: No NodeId
 	OV_INSTPTR_opcua_interface pInterface = (OV_INSTPTR_opcua_interface)context;
 
 	return pInterface->v_trafo->newNode(context, nodeClass);
@@ -44,25 +113,150 @@ static UA_Node * opcua_ovStore_newNode(void * context, UA_NodeClass nodeClass){
 static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *nodeId){
 	OV_INSTPTR_opcua_interface pInterface = (OV_INSTPTR_opcua_interface)context;
 
+	if(pInterface == NULL)
+		return NULL;
+
+
+	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	if(pServer == NULL)
+		return NULL;
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_STRING virtualPath = NULL;
+
+	opcua_ovStore_getObjData(nodeId, &pobj, &virtualPath);
+
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		if(pInterface == pInterfaceCheck)
+			continue;
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				return pInterfaceCheck->v_trafo->getNode(context, nodeId);
+			}
+		}
+	}
+
 	return pInterface->v_trafo->getNode(context, nodeId);
 }
 static UA_StatusCode opcua_ovStore_getNodeCopy(void *context, const UA_NodeId *nodeId, UA_Node ** nodeOut){
 	OV_INSTPTR_opcua_interface pInterface = (OV_INSTPTR_opcua_interface)context;
+
+	if(pInterface == NULL)
+		return UA_STATUSCODE_BADNODEIDEXISTS;
+
+
+	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	if(pServer == NULL)
+		return UA_STATUSCODE_BADNODEIDEXISTS;
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_STRING virtualPath = NULL;
+
+	opcua_ovStore_getObjData(nodeId, &pobj, &virtualPath);
+
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		if(pInterface == pInterfaceCheck)
+			continue;
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				return pInterfaceCheck->v_trafo->getNodeCopy(context, nodeId, nodeOut);
+			}
+		}
+	}
 
 	return pInterface->v_trafo->getNodeCopy(context, nodeId, nodeOut);
 }
 static UA_StatusCode opcua_ovStore_removeNode(void *context, const UA_NodeId *nodeId){
 	OV_INSTPTR_opcua_interface pInterface = (OV_INSTPTR_opcua_interface)context;
 
+	if(pInterface == NULL)
+		return UA_STATUSCODE_BADNODEIDEXISTS;
+
+
+	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	if(pServer == NULL)
+		return UA_STATUSCODE_BADNODEIDEXISTS;
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_STRING virtualPath = NULL;
+
+	opcua_ovStore_getObjData(nodeId, &pobj, &virtualPath);
+
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		if(pInterface == pInterfaceCheck)
+			continue;
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				return pInterfaceCheck->v_trafo->removeNode(context, nodeId);
+			}
+		}
+	}
+
 	return pInterface->v_trafo->removeNode(context, nodeId);
 }
 static UA_StatusCode opcua_ovStore_insertNode(void *context, UA_Node *node, UA_NodeId *parrentNode){
 	OV_INSTPTR_opcua_interface pInterface = (OV_INSTPTR_opcua_interface)context;
 
+	if(pInterface == NULL)
+		return UA_STATUSCODE_BADNODEIDEXISTS;
+
+
+	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	if(pServer == NULL)
+		return UA_STATUSCODE_BADNODEIDEXISTS;
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_STRING virtualPath = NULL;
+
+	opcua_ovStore_getObjData((const UA_NodeId*)&node->nodeId, &pobj, &virtualPath);
+
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		if(pInterface == pInterfaceCheck)
+			continue;
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				return pInterfaceCheck->v_trafo->insertNode(context, node, parrentNode);
+			}
+		}
+	}
+
 	return pInterface->v_trafo->insertNode(context, node, parrentNode);
 }
 static UA_StatusCode opcua_ovStore_replaceNode(void *context, UA_Node *node){
 	OV_INSTPTR_opcua_interface pInterface = (OV_INSTPTR_opcua_interface)context;
+
+	if(pInterface == NULL)
+		return UA_STATUSCODE_BADNODEIDEXISTS;
+
+
+	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+	if(pServer == NULL)
+		return UA_STATUSCODE_BADNODEIDEXISTS;
+	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_STRING virtualPath = NULL;
+
+	opcua_ovStore_getObjData((const UA_NodeId*)&node->nodeId, &pobj, &virtualPath);
+
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+		if(pInterface == pInterfaceCheck)
+			continue;
+		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+		if(pVtblInterface){
+			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				return pInterfaceCheck->v_trafo->replaceNode(context, node);
+			}
+		}
+	}
 
 	return pInterface->v_trafo->replaceNode(context, node);
 }

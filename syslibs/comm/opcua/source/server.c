@@ -84,6 +84,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 	if(value != pobj->v_run){
 		if(value){ //start server
 		    //Create new server
+			ov_logfile_info("Starting Server");
 		    UA_Server *server = UA_Server_new();
 		    if(!server){
 	            ov_string_setvalue(&pobj->v_errorText, "UA_Server_new failed.");
@@ -91,6 +92,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 	            return OV_ERR_GENERIC;
 		    }
 
+		    ov_logfile_info("Created Server");
 		    //Create new config and update from linked config in ov
 			OV_INSTPTR_opcua_serverConfig pOvConfig = Ov_GetFirstChild(opcua_configToServer, pobj);
 			retval = opcua_server_createConfig(server, pOvConfig);
@@ -101,6 +103,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 				return OV_ERR_GENERIC;
 			}
 
+			ov_logfile_info("New Config");
 
 		    //Startup server
 			retval = UA_Server_run_startup(server);
@@ -110,6 +113,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 				pobj->v_error = TRUE;
 				return OV_ERR_GENERIC;
 			}
+			ov_logfile_info("Startup Server");
 
 			pobj->v_server = server;
 			pobj->v_isRunning = TRUE;
@@ -135,6 +139,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 					pVtblInterface->m_load(pInterface, FALSE);
 				}
 			}
+			ov_logfile_info("Loaded Interfaces");
 
 		}else{ //shutdown server
 

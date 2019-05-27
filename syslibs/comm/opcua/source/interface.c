@@ -158,17 +158,19 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj
 	UA_ServerConfig * config = UA_Server_getConfig(server->v_server);
 	UA_DataTypeArray * dataTypes = config->customDataTypes;
 	UA_DataTypeArray * lastDataTypes = NULL;
-	while(dataTypes != NULL){
-		if(dataTypes == pobj->v_dataTypes){
-			if(lastDataTypes == NULL){
-				config->customDataTypes = dataTypes->next;
-			}else{
-				lastDataTypes->next = dataTypes->next;
+	if (pobj->v_dataTypes){
+		while(dataTypes != NULL){
+			if(dataTypes == pobj->v_dataTypes){
+				if(lastDataTypes == NULL){
+					config->customDataTypes = dataTypes->next;
+				}else{
+					lastDataTypes->next = dataTypes->next;
+				}
+				break;
 			}
-			break;
+			lastDataTypes = dataTypes;
+			dataTypes = dataTypes->next;
 		}
-		lastDataTypes = dataTypes;
-		dataTypes = dataTypes->next;
 	}
 
 	UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server->v_server);

@@ -22,6 +22,7 @@
 #include "libov/ov_macros.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
+#include "opcua_ovTrafo.h"
 #include "opcua_ovStore.h"
 #include "nodeset_services.h"
 
@@ -173,7 +174,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 
 	// References
-	opcua_ovStore_addReferences(context, newNode);
+	opcua_ovTrafo_addReferences(context, newNode);
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){

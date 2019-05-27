@@ -32,7 +32,7 @@ OV_DLLFNCEXPORT UA_UInt16 opcua_ovTrafo_searchNamespaceIndex(
 			continue;
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
-			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, NULL, NULL)){
+			if(pVtblInterface->m_checkReference(pInterfaceCheck, pobj, NULL)){
 				return forTypes ? pInterfaceCheck->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
 			}
 		}
@@ -87,7 +87,7 @@ static UA_StatusCode opcua_ovTrafo_addReference(
 	}
 
 	result = opcua_helpers_addReference(node, NULL, referenceTypeId,
-			UA_EXPANDEDNODEID_STRING_ALLOC(opcua_ovTrafo_searchNamespaceIndex(pInterface, pObject, FALSE), path),
+			UA_EXPANDEDNODEID_STRING(opcua_ovTrafo_searchNamespaceIndex(pInterface, pObject, FALSE), path),
 			opcua_helpers_getNodeClass(pElement),isForward);
 	ov_memstack_unlock();
 	return result;

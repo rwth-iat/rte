@@ -1,6 +1,8 @@
 #include "ov.ovm"
 #include "opcua.ovm"
+#include "identification.ovm"
 #include "services.ovm"
+#include "identificationOPCUAInterface.ovm"
 
 LIBRARY servicesOPCUAInterface
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -28,7 +30,9 @@ LIBRARY servicesOPCUAInterface
             
             constructor 	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             destructor		: C_FUNCTION <OV_FNC_DESTRUCTOR>;
-            checkNodeId		: C_FUNCTION <OPCUA_FNC_CHECKNODEID>;
+            checkNode       : C_FUNCTION <OPCUA_FNC_CHECKNODE>;
+            checkReference  : C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>;
+            nodeset			: C_FUNCTION <OPCUA_FNC_NODESET>;
         END_OPERATIONS;
 	END_CLASS;
 	

@@ -379,7 +379,7 @@ static const UA_Node * servicesOPCUAInterface_getNode(void *context, const UA_No
 	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
 		return NULL;
 	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
-	plist = ov_string_split(tmpString, "||", &len);
+	plist = ov_string_split(tmpString, OV_OPCUA_VIRTUALNODESEPERATOR, &len);
 	plist2 = ov_string_split(tmpString, "/", &len2);
 	plist3 = ov_string_split(plist2[len2-1], ".", &len3);
 
@@ -472,12 +472,12 @@ static UA_StatusCode servicesOPCUAInterface_insertNode(void *context, UA_Node *n
 static UA_StatusCode servicesOPCUAInterface_replaceNode(void *context, UA_Node *node){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
-static void servicesOPCUAInterface_iterate(void *context, void* visitorHandle, UA_NodestoreVisitor visitor){
+static void servicesOPCUAInterface_iterate(void *context, UA_NodestoreVisitor visitor, void* visitorHandle){
 
 }
 
-UA_Nodestore* servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(OV_INSTPTR_servicesOPCUAInterface_interface context) {
-	UA_Nodestore* trafo = UA_malloc(sizeof(UA_Nodestore));
+UA_NodestoreInterface* servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(OV_INSTPTR_servicesOPCUAInterface_interface context) {
+	UA_NodestoreInterface* trafo = UA_malloc(sizeof(UA_NodestoreInterface));
 	if(trafo == NULL)
 		return NULL;
     trafo->context =          context;
@@ -498,7 +498,7 @@ UA_Nodestore* servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(O
     return trafo;
 }
 
-void servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesDelete(UA_Nodestore * store){
+void servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesDelete(UA_NodestoreInterface * store){
 	store->context = NULL;
 	UA_free(store);
 }
