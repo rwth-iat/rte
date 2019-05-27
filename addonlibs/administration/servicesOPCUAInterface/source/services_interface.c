@@ -56,8 +56,13 @@ OV_DLLFNCEXPORT void servicesOPCUAInterface_interface_destructor(
     /*
     *   local variables
     */
-
+	OV_INSTPTR_servicesOPCUAInterface_interface pinst = Ov_StaticPtrCast(servicesOPCUAInterface_interface, pobj);
     /* do what */
+	if (pinst->v_store){
+		pinst->v_store->deleteNodestore(pinst->v_store->context);
+		UA_free(pinst->v_store);
+	}
+	servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesDelete(pinst->v_trafo);
 
     /* destroy object */
     ov_object_destructor(pobj);

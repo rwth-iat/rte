@@ -61,6 +61,12 @@ OV_DLLFNCEXPORT void identificationOPCUAInterface_interface_destructor(
     *   local variables
     *
     */
+	OV_INSTPTR_identificationOPCUAInterface_interface pinst = Ov_StaticPtrCast(identificationOPCUAInterface_interface, pobj);
+	/* do what */
+	if (pinst->v_store){
+		pinst->v_store->deleteNodestore(pinst->v_store->context);
+		UA_free(pinst->v_store);
+	}
 
     /* do what */
 

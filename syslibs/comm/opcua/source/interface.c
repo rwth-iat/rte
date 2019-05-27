@@ -176,7 +176,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj
 	UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server->v_server);
 	// Unlink the nodestore from the namespace
 	UA_Nodestore_Switch_unlinkNodestoreFromNamespace(nsSwitch, pobj->v_store);
-	pobj->v_store = NULL;
 	return OV_ERR_OK;
 }
 
