@@ -4,7 +4,7 @@
 
 
 LIBRARY ipsms
-	VERSION   = "V0.1 (26-02-2019)";
+	VERSION   = "V0.2 (27-05-2019)";
 	AUTHOR    = "Julian Grothoff";
 	COPYRIGHT = "PLT";
 	COMMENT   = "Library to implement the 'Interoperabilitätsprofil SMS' for the BaSys4.0 SMS Demonstrator.";
@@ -14,17 +14,13 @@ LIBRARY ipsms
 	*/
 	CLASS uaInterface : CLASS opcua/interface
     	IS_INSTANTIABLE;
-    	COMMENT = "OPCUA interface for the ipsms profile.";
-    	VARIABLES
-//    		entryPath : STRING HAS_SET_ACCESSOR
-//    			COMMENT="Path to the root folder for all control charts a.k.a BaSys4.0 components. Default: /TechUnits"
-//    			INITIALVALUE="/TechUnits";
-    	END_VARIABLES;
+    	COMMENT = "OPCUA interface for the Basys4.0 IPSMS profile.";
     	OPERATIONS
         	constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
-//            load		: C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
-            checkNodeId	: C_FUNCTION <OPCUA_FNC_CHECKNODEID>;
+            checkNode       : C_FUNCTION <OPCUA_FNC_CHECKNODE>;
+            checkReference  : C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>;
+            nodeset			: C_FUNCTION <OPCUA_FNC_NODESET>;
         END_OPERATIONS;
 	END_CLASS;
 	

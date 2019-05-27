@@ -10,7 +10,7 @@
 
 #include "ipsms.h"
 
-UA_Nodestore * ipsms_trafo_new(OV_INSTPTR_ipsms_uaInterface context);
-void ipsms_trafo_delete(UA_Nodestore * nodestoreInterface);
+UA_NodestoreInterface * ipsms_trafo_new(OV_INSTPTR_ipsms_uaInterface context);
+void ipsms_trafo_delete(UA_NodestoreInterface * nodestoreInterface);
 
 #endif /* IPSMS_TRAFO_H_ */

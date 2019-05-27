@@ -88,15 +88,40 @@ ipsms_trafo_addTypeDefinitionReference(const UA_Server * server,
 	UA_ExpandedNodeId_init(&ref->targetNodeId);
 	UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
 	// Get the node from nodestore edit and replace
-	UA_ServerConfig * config  = UA_Server_getConfig((UA_Server*) server);
+	//TODO export functions from UA_Nodestore_Switch or recreate nodestore interface
+	//TODO or use interface -->server-->.genericInterface-->trafo?
 	UA_Node * targetNode = NULL;
-	if(config->nodestore.getNodeCopy(config->nodestore.context, &targetNodeId, &targetNode) == UA_STATUSCODE_GOOD){
-		if(UA_Node_addReference(targetNode, ref) == UA_STATUSCODE_GOOD){
-			config->nodestore.replaceNode(config->nodestore.context, targetNode);
-		}else{
-			config->nodestore.deleteNode(config->nodestore.context, targetNode);
+	UA_Nodestore_Switch * storeSwitch = UA_Server_getNodestore((UA_Server*) server);
+	if (targetNodeId.namespaceIndex < storeSwitch->size){
+		if (storeSwitch->nodestoreArray[targetNodeId.namespaceIndex] != NULL){
+			storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->getNodeCopy(storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->context, &targetNodeId, &targetNode);
+			if(targetNode){
+				if(UA_Node_addReference(targetNode, ref) == UA_STATUSCODE_GOOD){
+					storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->replaceNode(storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->context, targetNode);
+				}else{
+					storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->deleteNode(storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->context, targetNode);
+				}
+			}
 		}
 	}
+	if(storeSwitch->defaultNodestore != NULL){
+		storeSwitch->defaultNodestore->getNodeCopy(storeSwitch->defaultNodestore->context, &targetNodeId, &targetNode);
+		if(targetNode){
+			if(UA_Node_addReference(targetNode, ref) == UA_STATUSCODE_GOOD){
+				storeSwitch->defaultNodestore->replaceNode(storeSwitch->defaultNodestore->context, targetNode);
+			}else{
+				storeSwitch->defaultNodestore->deleteNode(storeSwitch->defaultNodestore->context, targetNode);
+			}
+		}
+	}
+//Old implementation: with getConfig --> nodestore
+//	if(nodestore->getNodeCopy(nodestore->context, &targetNodeId, &targetNode) == UA_STATUSCODE_GOOD){
+//		if(UA_Node_addReference(targetNode, ref) == UA_STATUSCODE_GOOD){
+//			nodestore->replaceNode(nodestore->context, targetNode);
+//		}else{
+//			nodestore->deleteNode(nodestore->context, targetNode);
+//		}
+//	}
 }
 
 static UA_Node *
@@ -173,7 +198,7 @@ ipsms_trafo_controlchart(
 	UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
 	UA_ExpandedNodeId_init(&ref->targetNodeId);
 	UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
-	opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "|STATUS");
+	opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "||STATUS");
 	UA_Node_addReference(node, ref);
 	// Add SERVICES reference
 	UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
@@ -234,7 +259,7 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 
 	ov_memstack_lock();
 	OV_STRING virtualParentPath = NULL;
-	ov_string_stack_print(&virtualParentPath, "%s|STATUS", parentPath);
+	ov_string_stack_print(&virtualParentPath, "%s||STATUS", parentPath);
 	UA_AddReferencesItem * ref = NULL;
 	UA_VariableNode * node = (UA_VariableNode*) ipsms_trafo_genericTrafo(server,
 			identifier, "Description",
@@ -336,7 +361,7 @@ ipsms_trafo_status(const UA_Server * server,
 		if(IsFlagSet(pport->v_flags, 'o')){
 			//Add organizes reference for every output port
 			UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
-			ov_string_stack_print(&portPath, "%s|STATUS|%s", parentPath, pport->v_identifier);
+			ov_string_stack_print(&portPath, "%s||STATUS||%s", parentPath, pport->v_identifier);
 			ref->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(nodeId->namespaceIndex,
 					portPath);
 			UA_Node_addReference(node, ref);
@@ -372,7 +397,7 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 		OV_STRING path = NULL;
 		OV_UINT length = 0;
 		opcua_helpers_copyUAStringToOV(nodeId->identifier.string , &path);
-		OV_STRING* pathList = ov_string_split(path, "|", &length);
+		OV_STRING* pathList = ov_string_split(path, "||", &length);
 		if(length > 1){
 			if(ov_string_compare(pathList[1], "STATUS") == OV_STRCMP_EQUAL){
 				if(length == 2){
@@ -447,11 +472,12 @@ static UA_StatusCode ipsms_trafo_removeNode(void *context, const UA_NodeId *node
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 
-static void ipsms_trafo_iterate(void *context, void* visitorHandle, UA_NodestoreVisitor visitor){
+static void ipsms_trafo_iterate(void *context, UA_NodestoreVisitor visitor, void* visitorHandle){
+	//TODO define default not implemented functions in UA_Nodestore_Switch
 }
 
-UA_Nodestore* ipsms_trafo_new(OV_INSTPTR_ipsms_uaInterface context) {
-	UA_Nodestore* trafo = UA_malloc(sizeof(UA_Nodestore));
+UA_NodestoreInterface* ipsms_trafo_new(OV_INSTPTR_ipsms_uaInterface context) {
+	UA_NodestoreInterface* trafo = UA_malloc(sizeof(UA_NodestoreInterface));
 	if(trafo == NULL)
 		return NULL;
     trafo->context =          context;
@@ -472,7 +498,7 @@ UA_Nodestore* ipsms_trafo_new(OV_INSTPTR_ipsms_uaInterface context) {
     return trafo;
 }
 
-void ipsms_trafo_delete(UA_Nodestore * trafo){
+void ipsms_trafo_delete(UA_NodestoreInterface * trafo){
 	trafo->context = NULL;
 	UA_free(trafo);
 }

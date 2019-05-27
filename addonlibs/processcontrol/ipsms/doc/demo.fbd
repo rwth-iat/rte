@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2019-02-28 10:50:10
+* Erstellt: 2019-04-02 08:42:22
 * 
 * HOST   : LOCALHOST:7509
 * SERVER : MANAGER
@@ -23,7 +23,7 @@
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 636;
+      idL : INPUT UINT = 751;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -35,12 +35,37 @@
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 637;
+      idL : INPUT UINT = 752;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/ESE/PEY/SERVICES :
     CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEY/SERVICES/TEST :
+    CLASS /acplt/services/ExampleService;
+    VARIABLE_VALUES
+      Input1 : INPUT BOOL = FALSE;
+      Input2 : INPUT INT = 0;
+      Input3 : INPUT UINT = 0;
+      Input4 : INPUT SINGLE = 0.000000;
+      Input5 : INPUT DOUBLE = 0.000000;
+      Input6 : INPUT STRING = "";
+      Input7[0] : INPUT BOOL = {};
+      Input8[0] : INPUT INT = {};
+      Input9[0] : INPUT UINT = {};
+      Input10[0] : INPUT SINGLE = {};
+      Input11[0] : INPUT DOUBLE = {};
+      Input12[0] : INPUT STRING = {};
+      Input13 : INPUT VOID = ;
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 787;
+    END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/ESE/PEY/OCCST :
@@ -51,7 +76,7 @@
       unit : INPUT STRING = "Enumeration: FREE, OCCUPIED, PRIO, LOCAL";
       comment : INPUT STRING = "EN: Occupation State. DE: Belegungszustand.";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 648;
+      idL : INPUT UINT = 754;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -63,7 +88,7 @@
       unit : INPUT STRING = "Enumeration: AUTO, SEMIAUTO, MANUAL, SIMULATION";
       comment : INPUT STRING = "EN: Execution Mode. DE: Betriebsart.";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 653;
+      idL : INPUT UINT = 755;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -80,7 +105,7 @@
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 656;
+      idL : INPUT UINT = 756;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -92,12 +117,62 @@
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 657;
+      idL : INPUT UINT = 757;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/ESE/PEX/SERVICES :
     CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEX/SERVICES/TEST1 :
+    CLASS /acplt/services/ExampleService;
+    VARIABLE_VALUES
+      Input1 : INPUT BOOL = FALSE;
+      Input2 : INPUT INT = 0;
+      Input3 : INPUT UINT = 0;
+      Input4 : INPUT SINGLE = 0.000000;
+      Input5 : INPUT DOUBLE = 0.000000;
+      Input6 : INPUT STRING = "";
+      Input7[0] : INPUT BOOL = {};
+      Input8[0] : INPUT INT = {};
+      Input9[0] : INPUT UINT = {};
+      Input10[0] : INPUT SINGLE = {};
+      Input11[0] : INPUT DOUBLE = {};
+      Input12[0] : INPUT STRING = {};
+      Input13 : INPUT VOID = ;
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 783;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/PEX/SERVICES/TEST2 :
+    CLASS /acplt/services/ExampleService;
+    VARIABLE_VALUES
+      Input1 : INPUT BOOL = FALSE;
+      Input2 : INPUT INT = 0;
+      Input3 : INPUT UINT = 0;
+      Input4 : INPUT SINGLE = 0.000000;
+      Input5 : INPUT DOUBLE = 0.000000;
+      Input6 : INPUT STRING = "";
+      Input7[0] : INPUT BOOL = {};
+      Input8[0] : INPUT INT = {};
+      Input9[0] : INPUT UINT = {};
+      Input10[0] : INPUT SINGLE = {};
+      Input11[0] : INPUT DOUBLE = {};
+      Input12[0] : INPUT STRING = {};
+      Input13 : INPUT VOID = ;
+      ServiceVersion : INPUT UINT = 0;
+      ServiceRevision : INPUT UINT = 0;
+      WSDL : INPUT STRING = "";
+      execute : INPUT BOOL = FALSE;
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 784;
+    END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/ESE/PEX/OCCST :
@@ -108,7 +183,7 @@
       unit : INPUT STRING = "Enumeration: FREE, OCCUPIED, PRIO, LOCAL";
       comment : INPUT STRING = "EN: Occupation State. DE: Belegungszustand.";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 659;
+      idL : INPUT UINT = 759;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -120,7 +195,7 @@
       unit : INPUT STRING = "Enumeration: AUTO, SEMIAUTO, MANUAL, SIMULATION";
       comment : INPUT STRING = "EN: Execution Mode. DE: Betriebsart.";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 660;
+      idL : INPUT UINT = 760;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -131,26 +206,37 @@
       reset : INPUT BOOL = FALSE;
       actimode : INPUT INT = 1;
       cycInterval : INPUT INT = 5;
-      NextExecTime : INPUT TIME = 2019-02-28 10:50:11.183354;
+      NextExecTime : INPUT TIME = 2019-04-02 08:42:24.278752;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 630;
+      idL : INPUT UINT = 761;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/uaServer.genericInterface :
     CLASS /acplt/opcua/ovInterface;
     VARIABLE_VALUES
+      entryPath : INPUT STRING = "/TechUnits/ESE";
+      uri : INPUT STRING = "acplt.org/";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 631;
+      idL : INPUT UINT = 762;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/uaServer/ipsmsInterface :
+ INSTANCE  /TechUnits/uaServer/ipsms :
     CLASS /acplt/ipsms/uaInterface;
     VARIABLE_VALUES
-      entryPath : INPUT STRING = "/TechUnits/ESE";
+      uri : INPUT STRING = "acplt.org/ipsms";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 633;
+      idL : INPUT UINT = 764;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/uaServer/services :
+    CLASS /acplt/servicesOPCUAInterface/interface;
+    VARIABLE_VALUES
+      uri : INPUT STRING = "acplt.org/services";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 765;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -223,7 +309,7 @@
      PARENT server : CLASS unknown
            = /TechUnits/uaServer;
      CHILDREN interfaces : CLASS unknown
-           = {/TechUnits/uaServer.genericInterface , /TechUnits/uaServer/ipsmsInterface};
+           = {/TechUnits/uaServer.genericInterface , /TechUnits/uaServer/services , /TechUnits/uaServer/ipsms};
  END_LINK;
 
  LINK
@@ -247,8 +333,20 @@
      PARENT server : CLASS unknown
            = /TechUnits/uaServer;
      CHILDREN interfaces : CLASS unknown
-           = {/TechUnits/uaServer/ipsmsInterface};
+           = {/TechUnits/uaServer/ipsms};
  END_LINK;
+
+ LINK
+     OF_ASSOCIATION serverToInterfaces;
+     PARENT server : CLASS unknown
+           = /TechUnits/uaServer;
+     CHILDREN interfaces : CLASS unknown
+           = {/TechUnits/uaServer/services};
+ END_LINK;
+
+ LIBRARY
+    /acplt/services
+ END_LIBRARY;
 
  LIBRARY
     /acplt/opcua
@@ -256,4 +354,8 @@
 
  LIBRARY
     /acplt/ipsms
+ END_LIBRARY;
+
+ LIBRARY
+    /acplt/servicesOPCUAInterface
  END_LIBRARY;

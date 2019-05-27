@@ -27,13 +27,6 @@
 #include "ipsms_trafo.h"
 #include "opcua_helpers.h"
 
-//OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_entryPath_set(
-//    OV_INSTPTR_ipsms_uaInterface          pobj,
-//    const OV_STRING  value
-//) {
-//	return opcua_helpers_setRootEntryReference(value, Ov_StaticPtrCast(opcua_interface, pobj), &pobj->v_entryPath);
-//}
-
 OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -49,21 +42,12 @@ OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_constructor(
          return result;
 
     /* do what */
-    // Create the trafo
-    pinst->v_trafo = Ov_HeapAlloc(OPCUA_InformationModel);
-    pinst->v_trafo->dataTypes = NULL;
-    pinst->v_trafo->index = 0;
-    OV_STRING applicationUri = NULL;
-    ov_string_setvalue(&applicationUri, OPCUA_DEFAULT_APPLICATIONURI);
-    ov_string_append(&applicationUri, "ipsms"); //TODO move to own STRING input of opcua_interface (derived --> set to v_trafo->uri)
-    pinst->v_trafo->uri = UA_String_fromChars(applicationUri);
-    ov_string_setvalue(&applicationUri, NULL);
-    pinst->v_trafo->store = ipsms_trafo_new(pinst);
-    pinst->v_trafo->nodeset = NULL;
-
-    // Create the types
-    pinst->v_types = NULL;
-
+    pinst->v_index = 0;
+    pinst->v_dataTypes = NULL;
+    pinst->v_store = NULL;
+    pinst->v_trafo = ipsms_trafo_new(pinst);
+    ov_string_setvalue(&pinst->v_uri, OPCUA_DEFAULT_APPLICATIONURI);
+    ov_string_append(&pinst->v_uri, "ipsms"); //TODO move to own STRING input of opcua_interface (derived --> set to v_trafo->uri)
     return OV_ERR_OK;
 }
 
@@ -76,10 +60,7 @@ OV_DLLFNCEXPORT void ipsms_uaInterface_destructor(
     OV_INSTPTR_ipsms_uaInterface pinst = Ov_StaticPtrCast(ipsms_uaInterface, pobj);
 
     /* do what */
-    // Delete trafo
-    UA_String_deleteMembers(&pinst->v_trafo->uri);
-    ipsms_trafo_delete(pinst->v_trafo->store);
-    Ov_HeapFree(pinst->v_trafo);
+    ipsms_trafo_delete(pinst->v_trafo);
     pinst->v_trafo = NULL;
 
     /* destroy object */
@@ -88,36 +69,14 @@ OV_DLLFNCEXPORT void ipsms_uaInterface_destructor(
     return;
 }
 
-//OV_DLLFNCEXPORT OV_RESULT ipsms_uaInterface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
-//    /*
-//    *   local variables
-//    */
-//    // Get server and instance pointer
-//	OV_INSTPTR_ipsms_uaInterface pinst = Ov_StaticPtrCast(ipsms_uaInterface, pobj);
-//	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
-//	if(server == NULL){
-//		return OV_ERR_GENERIC;
-//	}
-//
-//	//TODO find and link necessary interfaces
-//
-//    // Use generic load method of uaInterface to load the trafos
-//	opcua_interface_load(pobj, forceLoad);
-//
-////	// Add reference to OV root for ipsms interface
-////	UA_StatusCode retval = UA_STATUSCODE_GOOD;
-////	retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-////			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(pobj->v_trafo->index, pinst->v_entryPath), true);
-////	if(retval != UA_STATUSCODE_GOOD){
-////		Ov_Warning(UA_StatusCode_name(retval));
-////	}
-//    return OV_ERR_OK;
-//}
+OV_DLLFNCEXPORT OV_BOOL ipsms_uaInterface_checkNode(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context) {
+	if(Ov_CanCastTo(fb_controlchart, pNode)){
+		return TRUE;
+	}
+	return FALSE;
+}
 
-OV_DLLFNCEXPORT OV_BOOL ipsms_uaInterface_checkNodeId(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
-    /*
-    *   local variables
-    */
+OV_DLLFNCEXPORT OV_BOOL ipsms_uaInterface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
 	if(Ov_CanCastTo(fb_controlchart, pNode)){
 		if(parentRef){
 			parentRef->isForward = TRUE; //TODO make default
@@ -125,11 +84,15 @@ OV_DLLFNCEXPORT OV_BOOL ipsms_uaInterface_checkNodeId(OV_INSTPTR_opcua_interface
 			//parentRef->sourceNodeId
 			parentRef->targetNodeClass = UA_NODECLASS_OBJECT;
 			ov_memstack_lock();
-			parentRef->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(pobj->v_trafo->index, ov_path_getcanonicalpath(pNode,2));
+			parentRef->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(1, ov_path_getcanonicalpath(pNode,2)); //TODO get 1 from a Define
 			ov_memstack_unlock();
 			//parentRef->targetServerUri
 		}
 		return TRUE;
 	}
     return FALSE;
+}
+
+OV_DLLFNCEXPORT UA_StatusCode ipsms_uaInterface_nodeset(UA_Server* server) {
+    return UA_STATUSCODE_GOOD;
 }
