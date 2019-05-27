@@ -24,7 +24,7 @@
 #include "servicesOPCUAInterface.h"
 #include "libov/ov_macros.h"
 #include "nodeset_services.h"
-#include "opcua_ovTrafo.h";
+#include "opcua_ovTrafo.h"
 
 OV_DLLFNCEXPORT OV_RESULT servicesOPCUAInterface_interface_constructor(
 	OV_INSTPTR_ov_object 	pobj
