@@ -32,6 +32,8 @@ static void opcua_ovStore_getObjData(const UA_NodeId *nodeId, OV_INSTPTR_ov_obje
 	*pobj = ov_path_getobjectpointer(plist[0], 2);
 	if (len>1)
 		ov_string_setvalue(virtualPath, plist[1]);
+	ov_string_setvalue(&tmpString, NULL);
+	ov_string_freelist(plist);
 	return;
 }
 

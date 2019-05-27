@@ -729,16 +729,13 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_resolveNodeIdToPath(const UA_NodeId 
 		}
 		break;
 	case UA_NODEIDTYPE_NUMERIC:
-		path = ov_memstack_alloc(32);
-		if(!path){
-			return UA_STATUSCODE_BADOUTOFMEMORY;
-		}
-		snprintf(path, 31, "/.%u", nodeId.identifier.numeric);
+		ov_string_print(&path, "/.%u", nodeId.identifier.numeric);
 		break;
 	default:
 		return UA_STATUSCODE_BADNODEIDREJECTED;
 	}
 	result = ov_path_resolve(pPath,NULL,path, 2);
+	ov_string_setvalue(&path, NULL);
 	if(Ov_Fail(result)){
 		return opcua_helpers_ovResultToUaStatusCode(result);
 	}
@@ -880,13 +877,16 @@ opcua_helpers_addReference(
 		UA_Node* node, const UA_NodeId * sourceNodeId, const UA_NodeId referenceTypeId,
 		const UA_ExpandedNodeId targetNodeId, UA_NodeClass targetNodeClass, UA_Boolean isForward){
 	UA_AddReferencesItem ref;
+	UA_AddReferencesItem_init(&ref);
 	ref.isForward = isForward;
-	ref.referenceTypeId = referenceTypeId;
+	UA_NodeId_copy(&referenceTypeId, &ref.referenceTypeId);
 	UA_NodeId_copy((sourceNodeId) ? sourceNodeId : &node->nodeId, &ref.sourceNodeId);
 	ref.targetNodeClass = targetNodeClass;
-	ref.targetNodeId = targetNodeId;
+	UA_ExpandedNodeId_copy(&targetNodeId, &ref.targetNodeId);
 	UA_String_init(&ref.targetServerUri);
-	return UA_Node_addReference(node, &ref);
+	UA_StatusCode result = UA_Node_addReference(node, &ref);
+	UA_AddReferencesItem_deleteMembers(&ref);
+	return result;
 }
 
 // Needed for setting namespace 1
