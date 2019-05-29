@@ -117,11 +117,8 @@ int flock_solaris (int filedes, int oper)
 
 #if OV_DEBUG || OV_VALGRIND
 static void ov_freelist_free();
-void ov_freelist_print();
 #else
 #define ov_freelist_free()
-#undef ov_freelist_print
-#define ov_freelist_print()
 #endif
 
 #if OV_SYSTEM_NT || OV_SYSTEM_RMOS
@@ -2668,6 +2665,12 @@ static void ov_freelist_free(){
 			ov_free(freelistCur);
 		freelistCur = freelistNext;
 	}
+}
+
+#else
+
+OV_DLLFNCEXPORT void ov_freelist_print(){
+	fprintf(stderr, "print pointer is not available if not compiled with OV_DEBUG\n");
 }
 
 #endif

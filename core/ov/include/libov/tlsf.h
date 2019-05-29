@@ -59,6 +59,7 @@ extern void tlsf_free(void *ptr, ov_tlsf_pool pool);
 extern void *tlsf_realloc(void *ptr, size_t size, ov_tlsf_pool pool);
 extern void *tlsf_calloc(size_t nelem, size_t elem_size, ov_tlsf_pool pool);
 
+#ifdef OV_COMPILE_LIBOV
 #if OV_DEBUG || OV_VALGRIND
 void tlsf_getPointerList(void* mem_pool, void*** list, size_t** sizes);
 #else
@@ -73,6 +74,7 @@ int tlsf_valgrind_check_access(void* mem_pool);
 #define tlfs_valgrind_reinit_access(mem_pool)
 #define tlsf_valgrind_reinit_alloc(mem_pool)
 #define tlsf_valgrind_check_access(mem_pool)
+#endif
 #endif
 
 #endif
