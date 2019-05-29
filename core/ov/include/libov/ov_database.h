@@ -314,6 +314,12 @@ OV_RESULT ov_database_move(
 	const OV_PTRDIFF	distance
 );
 
+#if OV_DEBUG || OV_VALGRIND
+OV_DLLFNCEXPORT void ov_freelist_print();
+#else
+#define ov_freelist_print() fprintf(stderr, "print pointer is not available if not compiled with OV_DEBUG\n")
+#endif
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif

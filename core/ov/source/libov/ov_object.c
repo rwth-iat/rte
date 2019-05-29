@@ -26,7 +26,7 @@
 *	--------
 *	13-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
-*	06-Dez-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: macro Ov_VarAddress for object_move changed.
+*	06-Dez-2001 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: macro Ov_VarAddress for object_move changed.
 */
 /*
 *	Description:
@@ -1501,6 +1501,7 @@ OV_RESULT ov_object_move(
 			if(Ov_IsVar(pelem)) {
 				Ov_UndoCopyAdjust(OV_ATBLPTR, pelem->v_linktable);
 				pvar = Ov_StaticPtrCast(ov_variable, pelem);
+				//fixme ignore initial value
 				if(!(pvar->v_varprops & OV_VP_DERIVED)) {
 					if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
 						/*
@@ -1552,8 +1553,6 @@ OV_RESULT ov_object_move(
 									if(pvector) {
 										if(pvector->value && (((OV_BYTE*) pvector->value + distance) < pdb->pstart || ((OV_BYTE*) pvector->value + distance) > pdb->pend))
 										{
-											//fixme ignore initial value?
-
 											#ifdef OV_DEBUG
 												ov_logfile_error("moving pointers: string vector variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));
 											#endif

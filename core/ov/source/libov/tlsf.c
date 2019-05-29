@@ -219,6 +219,10 @@ static DWORD dpagesize = 0; /* doubled pagesize */
 #define VALGRIND_MAKE_MEM_DEFINED(a,b)
 #define VALGRIND_MAKE_MEM_UNDEFINED(a,b)
 #define VALGRIND_MAKE_MEM_NOACCESS(a,b)
+
+#define VALGRIND_DISABLE_ERROR_REPORTING
+#define VALGRIND_ENABLE_ERROR_REPORTING
+
 #endif
 
 #ifdef USE_PRINTF
@@ -597,8 +601,8 @@ size_t init_memory_pool(size_t mem_pool_size, void *mem_pool)
         VALGRIND_MAKE_MEM_DEFINED(tlsf, sizeof(tlsf_t));
         b = GET_NEXT_BLOCK(mem_pool, ROUNDUP_SIZE(sizeof(tlsf_t)));
         size = b->size & BLOCK_SIZE;
+        tlsf_valgrind_reinit_alloc(mem_pool);
         tlsf_valgrind_reinit_access(mem_pool);
-        VALGRIND_CREATE_MEMPOOL(tlsf, 0, FALSE);
         return size;
     }
 
@@ -923,6 +927,7 @@ void *tlsf_malloc(size_t size, ov_tlsf_pool pool)
 #endif
     )
     	return NULL;
+
 
     tlsf_activate();
 
@@ -1281,7 +1286,8 @@ void *realloc_ex(void *ptr, size_t new_size, void *mem_pool)
         TLSF_VG_LOCK_BHDR(b);
         return NULL;
     }
-    
+    TLSF_VG_UNLOCK_BHDR(b); // may have been locked by malloc_ex
+
     cpsize = ((b->size & BLOCK_SIZE) > new_size) ? new_size : (b->size & BLOCK_SIZE);
 #if OV_VALGRIND
     if(alloced_size<cpsize){
@@ -1367,6 +1373,49 @@ int tlsf_move_pool(void* _tlsf, ptrdiff_t diff){
 	return 0;
 }
 
+#if OV_DEBUG || OV_VALGRIND
+
+void tlsf_getPointerList(void* mem_pool, void*** list, size_t** sizes){
+	tlsf_t* tlsf = (tlsf_t*) mem_pool;
+
+	bhdr_t* b;
+
+	unsigned int count = 0;
+	unsigned int size = 1000;
+	void**  ptrList = malloc(size*sizeof(void*));
+	*sizes = malloc(size*sizeof(size_t));
+
+	VALGRIND_DISABLE_ERROR_REPORTING;
+
+	b = GET_BLOCK_HEADER(tlsf->area_head);
+	b = GET_NEXT_BLOCK(b->ptr.buffer, b->size&BLOCK_SIZE);
+
+	while(b){
+
+		if(count>=size){
+			size += 1000;
+			ptrList = realloc(ptrList, size*sizeof(void*));
+			*sizes = realloc(*sizes, size*sizeof(size_t));
+		}
+
+		if((b->size&BLOCK_STATE)==USED_BLOCK){
+			ptrList[count] = b->ptr.buffer;
+			(*sizes)[count] = b->size&BLOCK_SIZE;
+			count++;
+		}
+
+		b = GET_NEXT_BLOCK(b->ptr.buffer, b->size&BLOCK_SIZE);
+		if(!(b->size&BLOCK_SIZE))
+			b = NULL;
+	}
+
+	memset(ptrList+count, 0, (size-count)*sizeof(void*));
+
+	VALGRIND_ENABLE_ERROR_REPORTING;
+
+	*list = ptrList;
+}
+#endif
 
 #if OV_VALGRIND
 
@@ -1397,16 +1446,16 @@ void tlsf_valgrind_reinit_alloc(void* mem_pool) {
 
 	while(ai){
 		b = GET_BLOCK_HEADER(ai);
+		// skip area info block
+		b = GET_NEXT_BLOCK(b->ptr.buffer, b->size&BLOCK_SIZE);
 		while(b){
 			if ((b->size&BLOCK_STATE)==USED_BLOCK) {
 				VALGRIND_MEMPOOL_ALLOC(tlsf, b->ptr.buffer, b->size&BLOCK_SIZE);
 			}
 
-			if((b->size&BLOCK_SIZE)){
-				b = GET_NEXT_BLOCK(b->ptr.buffer, b->size&BLOCK_SIZE);
-			} else {
+			b = GET_NEXT_BLOCK(b->ptr.buffer, b->size&BLOCK_SIZE);
+			if(!(b->size&BLOCK_SIZE))
 				b = NULL;
-			}
 		}
 		ai = ai->next;
 	}
@@ -1460,9 +1509,7 @@ void tlsf_valgrind_reinit_access(void* mem_pool){
 int tlsf_valgrind_check_access(void* mem_pool) {
 	tlsf_t* tlsf = (tlsf_t*) mem_pool;
 	area_info_t* ai = NULL;
-	area_info_t* ainext = NULL;
 	bhdr_t* b = NULL;
-	bhdr_t* bnext = NULL;
 	uint8_t* pNA = NULL;
 	int iarea = 0;
 	int iblock = 0;
@@ -1482,7 +1529,6 @@ int tlsf_valgrind_check_access(void* mem_pool) {
 			res |= 0x2;
 		}
 
-		VALGRIND_MAKE_MEM_DEFINED(ai, sizeof(area_info_t));
 		b = GET_BLOCK_HEADER(ai);
 		iblock = 0;
 		while(b){
@@ -1490,15 +1536,7 @@ int tlsf_valgrind_check_access(void* mem_pool) {
 				fprintf(stderr, "block head at %p not protected (%i, %i)\n", b, iarea, iblock);
 				res |= 0x4;
 			}
-			TLSF_VG_UNLOCK_BHDR(b);
 
-			if(!(b->size&BLOCK_SIZE)){
-				TLSF_VG_LOCK_BHDR(b);
-				b = NULL;
-				continue;
-			}
-
-			bnext = GET_NEXT_BLOCK(b->ptr.buffer, b->size&BLOCK_SIZE);
 
 			if((b->size&BLOCK_STATE)==FREE_BLOCK &&
 					!VALGRIND_CHECK_MEM_IS_ADDRESSABLE(b->ptr.buffer, (b->size&BLOCK_SIZE))){
@@ -1513,13 +1551,14 @@ int tlsf_valgrind_check_access(void* mem_pool) {
 
 			}
 
-			TLSF_VG_LOCK_BHDR(b);
-			b = bnext;
+			b = GET_NEXT_BLOCK(b->ptr.buffer, b->size&BLOCK_SIZE);
+			if(!(b->size&BLOCK_SIZE)){
+				b = NULL;
+				continue;
+			}
 			iblock++;
 		}
-		ainext = ai->next;
-		VALGRIND_MAKE_MEM_NOACCESS(ai, sizeof(area_info_t));
-		ai = ainext;
+		ai = ai->next;
 		iarea++;
 	}
 
@@ -1527,6 +1566,7 @@ int tlsf_valgrind_check_access(void* mem_pool) {
 
 	return res;
 }
+
 #endif
 
 #if _DEBUG_TLSF_
