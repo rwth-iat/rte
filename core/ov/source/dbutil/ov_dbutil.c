@@ -121,6 +121,7 @@ static void ov_dbutil_usage(void){
 			"--fbd [STARTNODE]               Dump as fbd. optionally STARTNODE can be specified\n"
 			"--dump-expert                   Include /communication and /data folder in fbd dump\n"
 			"-e, --extended                  Display extended database information\n"
+			"--print-pointer                 Print pointer in database\n"
 			"-v, --version                   Display version information\n"
 			"-h, --help                      Display this help message\n");
 }
@@ -178,9 +179,8 @@ int main(int argc, char **argv) {
 		return EXIT_FAILURE;
 	}
 
-	/* disable nomap and nofile options and force create */
+	/* disable nomap and nofile options */
 	opts.dbflags &= ~(OV_DBOPT_NOMAP | OV_DBOPT_NOFILE);
-	opts.dbflags |= OV_DBOPT_FORCECREATE;
 
 	if(!opts.logfile){ // no logfile specified; log to stdout
 		ov_logfile_logtostdout(NULL);
@@ -288,6 +288,9 @@ int main(int argc, char **argv) {
 				}
 				pobj = Ov_GetNextChild(ov_containment, pobj);
 			}
+		}
+		if (opts.printPtr) {
+			ov_freelist_print();
 		}
 		if (opts.dumpfilename) {
 			/* Adding database path prefix */

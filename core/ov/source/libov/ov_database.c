@@ -115,7 +115,7 @@ int flock_solaris (int filedes, int oper)
 #include <unistd.h>
 #endif
 
-#if OV_VALGRIND
+#if OV_DEBUG || OV_VALGRIND
 static void ov_freelist_free();
 #else
 #define ov_freelist_free()
@@ -2313,9 +2313,11 @@ OV_RESULT ov_database_move(const OV_PTRDIFF distance) {
 
 /*	----------------------------------------------------------------------	*/
 
-#if OV_VALGRIND
+#if OV_DEBUG || OV_VALGRIND
 
+#if OV_VALGRIND
 #include <valgrind/memcheck.h>
+#endif
 
 #define OV_FREELIST_SIZE 512
 #define OV_FL_DESCBUFFER 255
@@ -2353,6 +2355,7 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 	OV_ANY*					pAny;
 	char					pathbuf[255] = {0};
 	char					descbuf[OV_FL_DESCBUFFER] = {0};
+	Ov_DefineIteratorNM(NULL, pit);
 
 	part.elemtype = OV_ET_NONE;
 
@@ -2360,7 +2363,7 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 	snprintf(pathbuf, 255, "(%u,%u)%s", pobj->v_idH, pobj->v_idL, ov_path_getcanonicalpath(pobj, 2));
 	ov_memstack_unlock();
 
-	snprintf(descbuf, OV_FL_DESCBUFFER, "%s.linktbl", pathbuf);
+	snprintf(descbuf, OV_FL_DESCBUFFER, "%s.linktable", pathbuf);
 	ov_freelist_add(ppfree, pobj->v_linktable, descbuf);
 
 	if(	pobj==(OV_INSTPTR)(&pdb->root) ||
@@ -2440,7 +2443,27 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 			}
 			break;
 		case OV_ET_OBJECT:
-			ov_freelist_collect_object(ppfree, part.elemunion.pobj, 0x1);
+			ov_freelist_collect_object(ppfree, part.elemunion.pobj, 0x0);
+			break;
+			// fixme N:M associations not thoroughly tested
+		case OV_ET_PARENTLINK:
+			if(part.elemunion.passoc->v_assoctype == OV_AT_MANY_TO_MANY){
+				for(Ov_Association_GetFirstChildNM(part.elemunion.passoc, pit, pobj); pit; pit = pit->parent.pnext){
+					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (OV_NMLINK)", pathbuf, part.elemunion.passoc->v_identifier);
+					ov_freelist_add(ppfree, pit, descbuf);
+				}
+			}
+			break;
+		case OV_ET_CHILDLINK:
+			if(part.elemunion.passoc->v_assoctype == OV_AT_MANY_TO_MANY){
+				for(Ov_Association_GetFirstParentNM(part.elemunion.passoc, pit, pobj); pit; pit = pit->child.pnext ){
+					// skip if linked to itself to avoid double free
+					if(pit->parent.pparent==pobj)
+						continue;
+					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (OV_NMLINK)", pathbuf, part.elemunion.passoc->v_identifier);
+					ov_freelist_add(ppfree, pit, descbuf);
+				}
+			}
 			break;
 		}
 
@@ -2463,8 +2486,14 @@ static OV_RESULT ov_freelist_collect(ov_freelist* freeFirst){
 	OV_UINT			nodecount = 0;
 	char			descbuf[50] = {0};
 
-	ov_freelist_add(&pFreeCur, pdb->idList, "idList");
-	ov_freelist_add(&pFreeCur, pdb->idList->pNodes, "pNodes");
+	ov_freelist_add(&pFreeCur, pdb->idList, "pdb.idList");
+	ov_freelist_add(&pFreeCur, pdb->idList->pNodes, "pdb.idList.pNodes");
+
+
+	// vendor objects are not in idList
+	Ov_ForEachChild(ov_containment, &pdb->vendordom, pobj){
+		ov_freelist_collect_object(&pFreeCur, pobj, 0x0);
+	}
 
 	pNodeCur = pdb->idList->pFirst;
 
@@ -2476,28 +2505,97 @@ static OV_RESULT ov_freelist_collect(ov_freelist* freeFirst){
 			ov_freelist_collect_object(&pFreeCur, pNodeCur->relations[iterator].pobj, 0x1);
 
 		}
-		snprintf(descbuf, 50, "idNode %u", nodecount);
+		snprintf(descbuf, 50, "pdb.idList.pNodes[%u]", nodecount);
 		ov_freelist_add(&pFreeCur, pNodeCur, descbuf);
 		pNodeCur = pNodeCur->pNext;
 		nodecount++;
 	}
 
-	// vendor objects are not in idList
-	Ov_ForEachChild(ov_containment, &pdb->vendordom, pobj){
-		ov_freelist_collect_object(&pFreeCur, pobj, 0x0);
-	}
-
 	return OV_ERR_OK;
 }
 
-static void ov_freelist_free(){
+OV_DLLFNCEXPORT void ov_freelist_print(){
 	ov_freelist		freelist = {0};
 	ov_freelist*	freelistCur = NULL;
 	ov_freelist*	freelistNext;
 	OV_UINT64		iter = 0;
 	OV_POINTER		ptr = NULL;
+#if TLSF
+	void**			poolPtrs = NULL;
+	void**			pc = NULL;
+	size_t*			sizes = NULL;
+	size_t			tmpSize;
+	OV_BOOL			found = FALSE;
+#endif
+
+	ov_freelist_collect(&freelist);
+
+	// print allocated pointers found via ov meta model
+	for(freelistCur=&freelist; freelistCur; freelistCur=freelistCur->pnext){
+		for(iter=0; iter<freelistCur->count; iter++){
+			ptr = freelistCur->pfree[iter];
+			if(!ptr){
+				continue;
+			}
+
+			if(ptr>=(OV_POINTER)pdb->pstart && ptr<=(OV_POINTER)pdb->pend){
+				ov_logfile_debug("pointer inside db  %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+			} else {
+				ov_logfile_debug("pointer outside db %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+
+			}
+		}
+	}
+
+	// look in tlsf pool for blocks that are not reachable via ov meta model
+#if TLSF
+	tlsf_getPointerList(dbpool, &poolPtrs, &sizes);
+	pc = poolPtrs;
+
+	while(*pc){
+		found = FALSE;
+		freelistCur = &freelist;
+		while(freelistCur&&!found){
+			for(iter=0; iter<freelistCur->count && !found; iter++){
+				if(freelistCur->pfree[iter]==*pc)
+					found = TRUE;
+			}
+			freelistCur = freelistCur->pnext;
+		}
+
+		if(!found){
+			tmpSize = sizes[pc - poolPtrs];
+			ov_logfile_debug(
+					"block pointer %p not found in pointer list (content: %*.*s; length: %u; block nr. %u)",
+					*pc - (void*) pdb, tmpSize, tmpSize, *pc, tmpSize, pc - poolPtrs);
+		}
+
+		pc++;
+	}
+
+	free(poolPtrs);
+	free(sizes);
+#endif
+
+	freelistCur = &freelist;
+	while(freelistCur){
+		freelistNext = freelistCur->pnext;
+		for(iter=0; iter<freelistCur->count; iter++){
+			free(freelistCur->desc[iter]);
+		}
+		if(freelistCur!=&freelist)
+			ov_free(freelistCur);
+		freelistCur = freelistNext;
+	}
+}
+
+static void ov_freelist_free(){
+	ov_freelist		freelist = {0};
+	ov_freelist*	freelistCur = NULL;
+	ov_freelist*	freelistNext = NULL;
+	OV_UINT64		iter = 0;
+	OV_POINTER		ptr = NULL;
 	OV_BOOL			mallocActive = FALSE;
-	int 			count = -1;
 
 	if (ov_path_getobjectpointer("/acplt/malloc", 2))
 		mallocActive = TRUE;
@@ -2506,27 +2604,55 @@ static void ov_freelist_free(){
 
 	for(freelistCur=&freelist; freelistCur; freelistCur=freelistCur->pnext){
 		for(iter=0; iter<freelistCur->count; iter++){
-			count++;
 			ptr = freelistCur->pfree[iter];
 			if(!ptr){
-//				ov_logfile_debug("NULL    %p -> %s", ptr, freelistCur->desc[iter]);
 				continue;
 			}
 
 			if(ptr>=(OV_POINTER)pdb->pstart && ptr<=(OV_POINTER)pdb->pend){
-//				ov_logfile_debug("inside  %p -> %s", ptr, freelistCur->desc[iter]);
-#if TLSF
+//				ov_logfile_debug("pointer inside db  %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+#if TLSF && OV_VALGRIND
 				// set pointer as freed
 				VALGRIND_MEMPOOL_FREE(dbpool, ptr);
 #endif
 			} else {
 				// free pointer outside of database
-				ov_logfile_debug("outside %p -> %s", ptr, freelistCur->desc[iter]);
 				if(mallocActive)
 					free(ptr);
+				else
+					ov_logfile_warning("pointer outside db %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
 			}
 		}
 	}
+
+	size_t* sizes;
+	void** poolPtrs = NULL;
+	tlsf_getPointerList(dbpool, &poolPtrs, &sizes);
+	void** pc = poolPtrs;
+	OV_BOOL found = FALSE;
+
+	while(*pc){
+		found = FALSE;
+		freelistCur = &freelist;
+		while(freelistCur&&!found){
+			for(iter=0; iter<freelistCur->count && !found; iter++){
+				if(freelistCur->pfree[iter]==*pc)
+					found = TRUE;
+			}
+			freelistCur = freelistCur->pnext;
+		}
+
+		if(!found){
+			ov_logfile_warning(
+					"block pointer %p not found in pointer list (content: %s; length: %u; block nr. %u)",
+					*pc - (void*) pdb, *pc, sizes[pc - poolPtrs], pc - poolPtrs);
+		}
+
+		pc++;
+	}
+
+	free(poolPtrs);
+	free(sizes);
 
 	// free freelists
 	freelistCur = &freelist;
@@ -2539,6 +2665,12 @@ static void ov_freelist_free(){
 			ov_free(freelistCur);
 		freelistCur = freelistNext;
 	}
+}
+
+#else
+
+OV_DLLFNCEXPORT void ov_freelist_print(){
+	fprintf(stderr, "print pointer is not available if not compiled with OV_DEBUG\n");
 }
 
 #endif

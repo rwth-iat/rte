@@ -55,6 +55,7 @@ typedef struct struct_ov_options {
 	 */
 	char*		dumpfilename; // not malloced
 	OV_BOOL		extended;
+	OV_BOOL		printPtr;
 	OV_BOOL		fbdDump;
 	char*		fbdStart;	// not malloced
 	int			fbdDumpMode; // 1 = expert
