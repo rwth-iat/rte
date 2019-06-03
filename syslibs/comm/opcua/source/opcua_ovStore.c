@@ -25,7 +25,7 @@ static void opcua_ovStore_getObjData(const UA_NodeId *nodeId, OV_INSTPTR_ov_obje
 
 	*pobj = NULL;
 	*virtualPath = NULL;
-	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
+	if (nodeId->identifierType != UA_NODEIDTYPE_STRING || nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0)
 		return ;
 	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, OV_OPCUA_VIRTUALNODESEPERATOR, &len);
@@ -64,11 +64,12 @@ static void opcua_ovStore_deleteNode(void * context, UA_Node *node){
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
 			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				ov_string_setvalue(&virtualPath, NULL);
 				return pInterfaceCheck->v_trafo->deleteNode(context, node);
 			}
 		}
 	}
-
+	ov_string_setvalue(&virtualPath, NULL);
 	pInterface->v_trafo->deleteNode(context, node);
 }
 static void opcua_ovStore_releaseNode(void *context, const UA_Node *node){
@@ -94,11 +95,12 @@ static void opcua_ovStore_releaseNode(void *context, const UA_Node *node){
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
 			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				ov_string_setvalue(&virtualPath, NULL);
 				return pInterfaceCheck->v_trafo->releaseNode(context, node);
 			}
 		}
 	}
-
+	ov_string_setvalue(&virtualPath, NULL);
 	pInterface->v_trafo->releaseNode(context, node);
 }
 
@@ -133,11 +135,12 @@ static const UA_Node * opcua_ovStore_getNode(void * context, const UA_NodeId *no
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
 			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				ov_string_setvalue(&virtualPath, NULL);
 				return pInterfaceCheck->v_trafo->getNode(context, nodeId);
 			}
 		}
 	}
-
+	ov_string_setvalue(&virtualPath, NULL);
 	return pInterface->v_trafo->getNode(context, nodeId);
 }
 static UA_StatusCode opcua_ovStore_getNodeCopy(void *context, const UA_NodeId *nodeId, UA_Node ** nodeOut){
@@ -163,11 +166,12 @@ static UA_StatusCode opcua_ovStore_getNodeCopy(void *context, const UA_NodeId *n
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
 			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				ov_string_setvalue(&virtualPath, NULL);
 				return pInterfaceCheck->v_trafo->getNodeCopy(context, nodeId, nodeOut);
 			}
 		}
 	}
-
+	ov_string_setvalue(&virtualPath, NULL);
 	return pInterface->v_trafo->getNodeCopy(context, nodeId, nodeOut);
 }
 static UA_StatusCode opcua_ovStore_removeNode(void *context, const UA_NodeId *nodeId){
@@ -193,10 +197,12 @@ static UA_StatusCode opcua_ovStore_removeNode(void *context, const UA_NodeId *no
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
 			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				ov_string_setvalue(&virtualPath, NULL);
 				return pInterfaceCheck->v_trafo->removeNode(context, nodeId);
 			}
 		}
 	}
+	ov_string_setvalue(&virtualPath, NULL);
 
 	return pInterface->v_trafo->removeNode(context, nodeId);
 }
@@ -223,11 +229,12 @@ static UA_StatusCode opcua_ovStore_insertNode(void *context, UA_Node *node, UA_N
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
 			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				ov_string_setvalue(&virtualPath, NULL);
 				return pInterfaceCheck->v_trafo->insertNode(context, node, parrentNode);
 			}
 		}
 	}
-
+	ov_string_setvalue(&virtualPath, NULL);
 	return pInterface->v_trafo->insertNode(context, node, parrentNode);
 }
 static UA_StatusCode opcua_ovStore_replaceNode(void *context, UA_Node *node){
@@ -253,11 +260,12 @@ static UA_StatusCode opcua_ovStore_replaceNode(void *context, UA_Node *node){
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
 			if(pVtblInterface->m_checkNode(pInterfaceCheck, pobj, virtualPath, context)){
+				ov_string_setvalue(&virtualPath, NULL);
 				return pInterfaceCheck->v_trafo->replaceNode(context, node);
 			}
 		}
 	}
-
+	ov_string_setvalue(&virtualPath, NULL);
 	return pInterface->v_trafo->replaceNode(context, node);
 }
 
@@ -281,6 +289,10 @@ opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context) {
 }
 void
 opcua_ovStore_delete(UA_NodestoreInterface * nodestoreInterface){
-	nodestoreInterface->context = NULL;
-	UA_free(nodestoreInterface);
+	if (nodestoreInterface){
+		if (nodestoreInterface->context)
+			nodestoreInterface->context = NULL;
+		UA_free(nodestoreInterface);
+		nodestoreInterface = NULL;
+	}
 }

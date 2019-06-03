@@ -24,6 +24,7 @@
 #include "opcua.h"
 #include "opcua_helpers.h"
 #include "interface_helpers.h"
+#include "opcua_ovTrafo.h"
 //#include "NoneTicketAuthenticator.h"
 //#include "libov/ov_path.h"
 //#include "libov/ov_memstack.h"
@@ -42,8 +43,6 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	OV_STRING 				tmpString = NULL;
 	OV_UINT 				len = 0;
 	OV_STRING 				*plist = NULL;
-	OV_INSTPTR_servicesOPCUAInterface_interface 	pinterface = Ov_StaticPtrCast(servicesOPCUAInterface_interface, context);
-
 
 	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
@@ -261,9 +260,11 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceOutputAr
 	tmpString = NULL;
 	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
+	UA_ExpandedNodeId NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, plist[0]);
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-			UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_index, plist[0]), UA_NODECLASS_METHOD,
+			NodeId, UA_NODECLASS_METHOD,
 			UA_FALSE);
+	UA_ExpandedNodeId_deleteMembers(&NodeId);
 	ov_string_freelist(plist);
 	ov_string_setvalue(&tmpString, NULL);
 

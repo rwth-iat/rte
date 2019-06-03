@@ -15,7 +15,6 @@
 #define OPCUA_OVSTORE_DEFAULTNSURI_PREFIX OPCUA_DEFAULT_APPLICATIONURI
 #define OPCUA_OVSTORE_DEFAULTNSURI_SUFFIX "/types"
 
-UA_UInt16 opcua_ovStore_searchNamespaceIndex(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pobj, OV_BOOL forTypes); //TODO move to helpers ?
 OV_BOOL opcua_ovStore_addReferenceToSpecificObject(OV_INSTPTR_opcua_server pServer, OV_INSTPTR_ov_object pobj, UA_Node* node);
 UA_StatusCode opcua_ovStore_addReferences(OV_INSTPTR_opcua_interface pInterface, UA_Node *node);
 UA_NodestoreInterface* opcua_ovStore_new(OV_INSTPTR_opcua_ovInterface context);
