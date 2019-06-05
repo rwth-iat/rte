@@ -23,40 +23,33 @@
 #include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "nodeset_lifeCycleEntry.h"
-
-extern OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface pinterface;
-
-
-
+#include "opcua_ovTrafo.h"
+#include "opcua_ovStore.h"
 
 OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycleEntriesNodeToOPCUA(
-		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
+		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
 	OV_STRING 				tmpString = NULL;
 	OV_UINT 				len = 0;
-	OV_UINT 				len2 = 0;
 	OV_STRING 				*plist = NULL;
-	OV_STRING 				*plist2 = NULL;
 	OV_ELEMENT				element;
+	OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface 	pinterface = Ov_StaticPtrCast(lifeCycleEntryOPCUAInterface_interface, context);
 
 	if (pinterface == NULL)
 		return UA_STATUSCODE_BADOUTOFSERVICE;
 
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "|||", &len);
-	plist2 = ov_string_split(plist[1], ".", &len2);
 	ov_string_setvalue(&tmpString, NULL);
 
 	UA_NodeId tmpNodeId;
@@ -68,18 +61,17 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 
 	ov_string_freelist(plist);
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(tmpNodeId, &path);
+	UA_NodeId_deleteMembers(&tmpNodeId);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
-		ov_string_freelist(plist2);
 		return result;
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
 
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&element, pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&element, &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
-		ov_string_freelist(plist2);
 		return result;
 	}
 
@@ -139,49 +131,43 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 
 
 	// References
-	UA_Node tmpNode;
-	UA_NodeId_copy(&tmpNodeId, &tmpNode.nodeId);
-
-
-	addReference(&tmpNode);
-	UA_NodeId_deleteMembers(&tmpNodeId);
-	tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	OV_UINT inverseCount = 0;
-	for (size_t i = 0; i < tmpNode.referencesSize; i++){
-		if (UA_NodeId_equal(&tmpNode.references[i].referenceTypeId, &tmpNodeId)){
-			tmpNode.references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE);
-		}
-		if (tmpNode.references[i].isInverse == TRUE){
-			inverseCount = inverseCount + 1;
-		}
-	}
-
-	newNode->referencesSize = tmpNode.referencesSize + 1 - inverseCount; // Parent
-	newNode->references = UA_calloc(newNode->referencesSize, sizeof(UA_ReferenceNode));
-
-	OV_UINT newReferenceCount = 0;
-	for (size_t i = 0; i < tmpNode.referencesSize; i++){
-		if (tmpNode.references[i].isInverse == FALSE){
-			UA_NodeId_copy(&(tmpNode.references[i].referenceTypeId), &(newNode->references[newReferenceCount].referenceTypeId));
-			UA_ExpandedNodeId_copy(&(tmpNode.references[i].targetId), &(newNode->references[newReferenceCount].targetId));
-			newNode->references[newReferenceCount].isInverse = tmpNode.references[i].isInverse;
-			newReferenceCount = newReferenceCount + 1;
-		}
-	}
-	UA_Array_delete(tmpNode.references, tmpNode.referencesSize, &UA_TYPES[UA_TYPES_REFERENCENODE]);
-
 	// ParentNode
-	newNode->references[newReferenceCount].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-	newNode->references[newReferenceCount].isInverse = UA_TRUE;
 	len = 0;
 	plist = NULL;
 	tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "|||", &len);
-	newNode->references[newReferenceCount].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, plist[0]);
-	ov_string_freelist(plist);
+	UA_ExpandedNodeId NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, plist[0]);
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
+					NodeId, UA_NODECLASS_OBJECT,
+					UA_FALSE);
 	ov_string_setvalue(&tmpString, NULL);
+	UA_ExpandedNodeId_deleteMembers(&NodeId);
 
+
+	// Type
+	NodeId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE);
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
+			NodeId, UA_NODECLASS_OBJECTTYPE,
+			UA_TRUE);
+
+	// LifeCycleEntries
+	OV_INSTPTR_ov_object pChild = NULL;
+	Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pobj), pChild){
+		if(Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pChild)){
+			tmpString = NULL;
+			ov_string_setvalue(&tmpString, plist[0]);
+			ov_string_append(&tmpString, "/");
+			ov_string_append(&tmpString, pChild->v_identifier);
+			UA_ExpandedNodeId NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
+			opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+							NodeId, UA_NODECLASS_OBJECT,
+							UA_TRUE);
+			ov_string_setvalue(&tmpString, NULL);
+			UA_ExpandedNodeId_deleteMembers(&NodeId);
+		}
+	}
+	ov_string_freelist(plist);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

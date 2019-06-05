@@ -86,9 +86,11 @@ static UA_StatusCode opcua_ovTrafo_addReference(
 		ov_string_stack_print(&path, "%s.%s", path, pElement->elemunion.pvar->v_identifier);
 	}
 
+	UA_ExpandedNodeId tmpNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(pInterface->v_index, path);
 	result = opcua_helpers_addReference(node, NULL, referenceTypeId,
-			UA_EXPANDEDNODEID_STRING(pInterface->v_index, path),
+			tmpNodeId,
 			opcua_helpers_getNodeClass(pElement),isForward);
+	UA_ExpandedNodeId_deleteMembers(&tmpNodeId);
 	ov_memstack_unlock();
 	return result;
 }

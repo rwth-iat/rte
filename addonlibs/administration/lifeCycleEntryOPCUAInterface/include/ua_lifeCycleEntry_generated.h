@@ -1,29 +1,44 @@
-/* Generated from Opc.Ua.Types.bsd, identification.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/opcuaParser/tools/generate_datatypes.py
- * on host ubuntu-VirtualBox by user ubuntu at 2017-09-29 03:11:03 */
+/* Generated from identification.bsd, lce.bsd with script generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2019-06-03 05:49:28 */
 
-#ifndef UA_LIFECYCLEENTRY_GENERATED_H_
-#define UA_LIFECYCLEENTRY_GENERATED_H_
+#ifndef LIFECYCLEENTRY_GENERATED_H_
+#define LIFECYCLEENTRY_GENERATED_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "open62541.h"
 
-#ifdef UA_NO_AMALGAMATION
-#include "ua_types.h"
- #include "ua_types_generated.h"
+_UA_BEGIN_DECLS
 
-#else
- #include "open62541.h"
-#endif
-
-#include "ua_identification_generated.h"
 
 /**
  * Every type is assigned an index in an array containing the type descriptions.
  * These descriptions are used during type handling (copying, deletion,
  * binary encoding, ...). */
-#define UA_LIFECYCLEENTRY_COUNT 1
-extern UA_EXPORT UA_DataType UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_COUNT];
+#define UA_LIFECYCLEENTRY_COUNT 3
+extern UA_EXPORT const UA_DataType UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_COUNT];
+
+/**
+ * IdEnum
+ * ^^^^^^
+ */
+typedef enum {
+    UA_IDENUM_URI = 0,
+    UA_IDENUM_ISO = 1,
+    __UA_IDENUM_FORCE32BIT = 0x7fffffff
+} UA_IdEnum;
+UA_STATIC_ASSERT(sizeof(UA_IdEnum) == sizeof(UA_Int32), enum_must_be_32bit);
+
+#define UA_LIFECYCLEENTRY_IDENUM 0
+
+/**
+ * Identification
+ * ^^^^^^^^^^^^^^
+ */
+typedef struct {
+    UA_String idSpec;
+    UA_IdEnum idType;
+} UA_Identification;
+
+#define UA_LIFECYCLEENTRY_IDENTIFICATION 1
 
 /**
  * LifeCycleEntry
@@ -38,10 +53,9 @@ typedef struct {
     UA_UInt64 id;
 } UA_LifeCycleEntry;
 
-#define UA_LIFECYCLEENTRY_LIFECYCLEENTRY 0
+#define UA_LIFECYCLEENTRY_LIFECYCLEENTRY 2
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
-#endif /* UA_LIFECYCLEENTRY_GENERATED_H_ */
+_UA_END_DECLS
+
+#endif /* LIFECYCLEENTRY_GENERATED_H_ */

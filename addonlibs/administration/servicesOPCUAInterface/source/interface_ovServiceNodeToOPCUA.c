@@ -58,6 +58,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
 	OV_ELEMENT				element;
+	OV_INSTPTR_servicesOPCUAInterface_interface 	pinterface = Ov_StaticPtrCast(servicesOPCUAInterface_interface, context);
 
 	ov_memstack_lock();
 	result = opcua_helpers_resolveNodeIdToPath(*nodeId, &path);
@@ -141,7 +142,7 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 
 	// HasTypeDefinition to Service
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
-			UA_EXPANDEDNODEID_NUMERIC(OPCUA_OVTRAFO_DEFAULTNSINDEX, UA_NSSERVICESID_SERVICESTYPE), UA_NODECLASS_METHOD ,UA_TRUE);
+			UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSSERVICESID_SERVICESTYPE), UA_NODECLASS_METHOD ,UA_TRUE);
 	ov_memstack_unlock();
 
 	//TODO use memstack instead
