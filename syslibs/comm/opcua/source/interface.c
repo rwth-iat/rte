@@ -26,7 +26,11 @@
 #include "opcua_ovStore.h"
 #include "opcua_helpers.h"
 
-
+//TODO maybe its better to make a list of all nodeIds and remove them afterwards
+static void removeAllNodes(void *visitorCtx, const UA_Node *node){
+	UA_NodestoreInterface* nsi = (UA_NodestoreInterface*)visitorCtx;
+	nsi->removeNode(nsi->context, &node->nodeId);
+}
 
 OV_DLLFNCEXPORT OV_RESULT opcua_interface_uri_set(
     OV_INSTPTR_opcua_interface          pobj,
@@ -82,7 +86,6 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_interface_getaccess(
 }
 
 
-//TODO subscribe to changes of namespace array and update v_trafo.index and v_types.index
 OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
 
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
@@ -178,24 +181,21 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj
 	// Unlink the nodestore from the namespace
 	UA_Nodestore_Switch_changeNodestore(nsSwitch, pobj->v_store, NULL);
 
-
-	pobj->v_store->iterate(pobj->v_store->context, (UA_NodestoreVisitor)pobj->v_store->removeNode, pobj->v_store->context);
+	// Remove all nodes from nodestore
+	pobj->v_store->iterate(pobj->v_store->context, (UA_NodestoreVisitor)removeAllNodes, pobj->v_store);
 
 	return OV_ERR_OK;
 }
 
 
 OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkNode(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context) {
-
     return TRUE;
 }
 
 OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_UINT applicationIndex, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
-
     return FALSE;
 }
 
 OV_DLLFNCEXPORT UA_StatusCode opcua_interface_nodeset(UA_Server* server) {
-
     return (UA_StatusCode)0;
 }
