@@ -10,7 +10,7 @@
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEY :
+ INSTANCE  /TechUnits/ESE/PEX :
     CLASS /acplt/fb/controlchart;
     VARIABLE_VALUES
       CMD : INPUT STRING = "";
@@ -27,7 +27,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEY.intask :
+ INSTANCE  /TechUnits/ESE/PEX.intask :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 0;
@@ -39,11 +39,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEY/SERVICES :
+ INSTANCE  /TechUnits/ESE/PEX/SERVICES :
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEY/SERVICES/TEST :
+ INSTANCE  /TechUnits/ESE/PEX/SERVICES/TEST :
     CLASS /acplt/services/ExampleService;
     VARIABLE_VALUES
       Input1 : INPUT BOOL = FALSE;
@@ -68,7 +68,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEY/OCCST :
+ INSTANCE  /TechUnits/ESE/PEX/OCCST :
     CLASS /acplt/fb/stringport;
     VARIABLE_VALUES
       value : INPUT STRING = "FREE";
@@ -80,7 +80,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEY/EXMODE :
+ INSTANCE  /TechUnits/ESE/PEX/EXMODE :
     CLASS /acplt/fb/stringport;
     VARIABLE_VALUES
       value : INPUT STRING = "AUTO";
@@ -92,7 +92,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEX :
+ INSTANCE  /TechUnits/ESE/PEY :
     CLASS /acplt/fb/controlchart;
     VARIABLE_VALUES
       CMD : INPUT STRING = "";
@@ -109,7 +109,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEX.intask :
+ INSTANCE  /TechUnits/ESE/PEY.intask :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 0;
@@ -121,11 +121,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEX/SERVICES :
+ INSTANCE  /TechUnits/ESE/PEY/SERVICES :
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEX/SERVICES/TEST1 :
+ INSTANCE  /TechUnits/ESE/PEY/SERVICES/TEST1 :
     CLASS /acplt/services/ExampleService;
     VARIABLE_VALUES
       Input1 : INPUT BOOL = FALSE;
@@ -150,7 +150,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEX/SERVICES/TEST2 :
+ INSTANCE  /TechUnits/ESE/PEY/SERVICES/TEST2 :
     CLASS /acplt/services/ExampleService;
     VARIABLE_VALUES
       Input1 : INPUT BOOL = FALSE;
@@ -175,7 +175,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEX/OCCST :
+ INSTANCE  /TechUnits/ESE/PEY/OCCST :
     CLASS /acplt/fb/stringport;
     VARIABLE_VALUES
       value : INPUT STRING = "OCCUPIED";
@@ -187,7 +187,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/ESE/PEX/EXMODE :
+ INSTANCE  /TechUnits/ESE/PEY/EXMODE :
     CLASS /acplt/fb/stringport;
     VARIABLE_VALUES
       value : INPUT STRING = "MANUAL";
@@ -223,7 +223,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/uaServer/ipsms :
-    CLASS /acplt/ipsms/uaInterface;
+    CLASS /acplt/ipsms/interface;
     VARIABLE_VALUES
       uri : INPUT STRING = "acplt.org/ipsms";
       idH : INPUT UINT = 0;
@@ -239,38 +239,6 @@
       idL : INPUT UINT = 765;
     END_VARIABLE_VALUES;
  END_INSTANCE;
-
- LINK
-     OF_ASSOCIATION variables;
-     PARENT funchart : CLASS unknown
-           = /TechUnits/ESE/PEY;
-     CHILDREN ports : CLASS unknown
-           = {/TechUnits/ESE/PEY/OCCST , /TechUnits/ESE/PEY/EXMODE};
- END_LINK;
-
- LINK
-     OF_ASSOCIATION tasklist;
-     PARENT taskparent : CLASS unknown
-           = /Tasks/UrTask;
-     CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/ESE/PEY};
- END_LINK;
-
- LINK
-     OF_ASSOCIATION variables;
-     PARENT funchart : CLASS unknown
-           = /TechUnits/ESE/PEY;
-     CHILDREN ports : CLASS unknown
-           = {/TechUnits/ESE/PEY/OCCST};
- END_LINK;
-
- LINK
-     OF_ASSOCIATION variables;
-     PARENT funchart : CLASS unknown
-           = /TechUnits/ESE/PEY;
-     CHILDREN ports : CLASS unknown
-           = {/TechUnits/ESE/PEY/EXMODE};
- END_LINK;
 
  LINK
      OF_ASSOCIATION variables;
@@ -302,6 +270,38 @@
            = /TechUnits/ESE/PEX;
      CHILDREN ports : CLASS unknown
            = {/TechUnits/ESE/PEX/EXMODE};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEY;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEY/OCCST , /TechUnits/ESE/PEY/EXMODE};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/ESE/PEY};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEY;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEY/OCCST};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/PEY;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/PEY/EXMODE};
  END_LINK;
 
  LINK

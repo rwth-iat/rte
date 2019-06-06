@@ -15,30 +15,6 @@
 #include "opcua_ovStore.h"
 //#include "ov_call_macros_10.h"
 
-//static UA_NodeId
-//ipsms_trafo_getParentNodeId(OV_INSTPTR_ov_object pobj){
-//	OV_INSTPTR_ov_domain pparent = Ov_GetParent(ov_containment, pobj);
-//	if(pparent){
-//		ov_memstack_lock();
-//		UA_NodeId nodeId = UA_NODEID_STRING_ALLOC(OPCUA_OVSTORE_DEFAULTNSINDEX,
-//				ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pparent), 2));
-//		ov_memstack_unlock();
-//		return nodeId;
-//	}
-//	return UA_NODEID_NULL;
-//}
-/*
-static const OV_STRING
-ipsms_trafo_getDescription(OV_INSTPTR_ov_object pobj){
-	OV_INSTPTR_ov_class ovClass = Ov_GetParent(ov_instantiation, pobj);
-	if(ovClass != NULL && ovClass->v_comment != NULL){
-		return ovClass->v_comment;
-	}else{
-		return "";
-	}
-}
-*/
-
 // Has to be the first reference for correct memory allocation/freeing
 static UA_AddReferencesItem *
 ipsms_trafo_addParentReference(
@@ -88,40 +64,16 @@ ipsms_trafo_addTypeDefinitionReference(const UA_Server * server,
 	UA_ExpandedNodeId_init(&ref->targetNodeId);
 	UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
 	// Get the node from nodestore edit and replace
-	//TODO export functions from UA_Nodestore_Switch or recreate nodestore interface
-	//TODO or use interface -->server-->.genericInterface-->trafo?
+	UA_NodestoreInterface* nsi =  UA_Nodestore_Switch_Interface_get(UA_Server_getNodestore((UA_Server*) server));
 	UA_Node * targetNode = NULL;
-	UA_Nodestore_Switch * storeSwitch = UA_Server_getNodestore((UA_Server*) server);
-	if (targetNodeId.namespaceIndex < storeSwitch->size){
-		if (storeSwitch->nodestoreArray[targetNodeId.namespaceIndex] != NULL){
-			storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->getNodeCopy(storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->context, &targetNodeId, &targetNode);
-			if(targetNode){
-				if(UA_Node_addReference(targetNode, ref) == UA_STATUSCODE_GOOD){
-					storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->replaceNode(storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->context, targetNode);
-				}else{
-					storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->deleteNode(storeSwitch->nodestoreArray[targetNodeId.namespaceIndex]->context, targetNode);
-				}
-			}
+	nsi->getNodeCopy(nsi->context, &targetNodeId, &targetNode);
+	if(targetNode){
+		if(UA_Node_addReference(targetNode, ref) == UA_STATUSCODE_GOOD){
+			nsi->replaceNode(nsi->context, targetNode);
+		}else{
+			nsi->deleteNode(nsi->context, targetNode);
 		}
 	}
-	if(storeSwitch->defaultNodestore != NULL){
-		storeSwitch->defaultNodestore->getNodeCopy(storeSwitch->defaultNodestore->context, &targetNodeId, &targetNode);
-		if(targetNode){
-			if(UA_Node_addReference(targetNode, ref) == UA_STATUSCODE_GOOD){
-				storeSwitch->defaultNodestore->replaceNode(storeSwitch->defaultNodestore->context, targetNode);
-			}else{
-				storeSwitch->defaultNodestore->deleteNode(storeSwitch->defaultNodestore->context, targetNode);
-			}
-		}
-	}
-//Old implementation: with getConfig --> nodestore
-//	if(nodestore->getNodeCopy(nodestore->context, &targetNodeId, &targetNode) == UA_STATUSCODE_GOOD){
-//		if(UA_Node_addReference(targetNode, ref) == UA_STATUSCODE_GOOD){
-//			nodestore->replaceNode(nodestore->context, targetNode);
-//		}else{
-//			nodestore->deleteNode(nodestore->context, targetNode);
-//		}
-//	}
 }
 
 static UA_Node *
@@ -265,7 +217,7 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 			identifier, "Description",
 			UA_NODECLASS_VARIABLE, nodeId,
 			UA_NODEID_STRING(nodeId->namespaceIndex, virtualParentPath),
-			UA_NODEID_NUMERIC(0, UA_NS0ID_BASEVARIABLETYPE),
+			UA_NODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE),
 			&ref);
 	ov_memstack_unlock();
 
@@ -388,7 +340,7 @@ static void ipsms_trafo_deleteNode(void * context, UA_Node *node){
 static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *nodeId){
 	UA_Node * 						node = NULL;
 	OV_INSTPTR_ov_object			pobj = NULL;
-	OV_INSTPTR_ipsms_uaInterface 	pinterface = Ov_StaticPtrCast(ipsms_uaInterface, context);
+	OV_INSTPTR_ipsms_interface 	pinterface = Ov_StaticPtrCast(ipsms_interface, context);
 	OV_INSTPTR_opcua_server 		server = (pinterface) ? Ov_GetParent(opcua_serverToInterfaces, pinterface) : NULL;
 	OPCUA_PTR_UA_Server 			uaServer = (server) ? server->v_server : NULL;
 
@@ -476,7 +428,7 @@ static void ipsms_trafo_iterate(void *context, UA_NodestoreVisitor visitor, void
 	//TODO define default not implemented functions in UA_Nodestore_Switch
 }
 
-UA_NodestoreInterface* ipsms_trafo_new(OV_INSTPTR_ipsms_uaInterface context) {
+UA_NodestoreInterface* ipsms_trafo_new(OV_INSTPTR_ipsms_interface context) {
 	UA_NodestoreInterface* trafo = UA_malloc(sizeof(UA_NodestoreInterface));
 	if(trafo == NULL)
 		return NULL;

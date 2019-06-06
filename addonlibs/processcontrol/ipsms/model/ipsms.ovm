@@ -12,7 +12,7 @@ LIBRARY ipsms
 	/**
 	*	Documentation of uaInterface. 
 	*/
-	CLASS uaInterface : CLASS opcua/interface
+	CLASS interface : CLASS opcua/interface
     	IS_INSTANTIABLE;
     	COMMENT = "OPCUA interface for the Basys4.0 IPSMS profile.";
     	OPERATIONS
@@ -20,7 +20,6 @@ LIBRARY ipsms
             destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
             checkNode       : C_FUNCTION <OPCUA_FNC_CHECKNODE>;
             checkReference  : C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>;
-            nodeset			: C_FUNCTION <OPCUA_FNC_NODESET>;
         END_OPERATIONS;
 	END_CLASS;
 	
