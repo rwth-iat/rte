@@ -44,6 +44,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_path.h"
+#include "libov/ov_vendortree.h"
 #if TLSF
 #include "libov/tlsf.h"
 #include <sys/time.h>
@@ -1898,8 +1899,8 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(size_t size) {
 	__ml_ptr ptmp = NULL;
 #endif
 
-#ifdef OV_VALGRIND
-	if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+#if OV_VALGRIND
+	if (ov_vendortree_checkUseMalloc()) {
 		return malloc(size);
 	}
 #endif
@@ -1928,12 +1929,12 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, size_t size) {
 #endif
 
 #ifdef OV_VALGRIND
-	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL) {
+	if(pdb && ptr != 0 && ov_vendortree_checkUseMalloc()==FALSE) {
 		if(!((uintptr_t)ptr >= (uintptr_t)pdb->baseaddr && (uintptr_t)ptr <= (uintptr_t)pdb->baseaddr+(uintptr_t)pdb->size)) {
 			printf("realloc missed database, install a breakpoint here\n");
 		}
 	}
-	if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+	if (ov_vendortree_checkUseMalloc()) {
 		if(ptr == 0 || !pdb || ptr < pdb->baseaddr || ptr > pdb->baseaddr+pdb->size) {
 			return realloc(ptr, size);
 		}
@@ -1960,12 +1961,12 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, size_t size) {
  */
 OV_DLLFNCEXPORT void ov_database_free(OV_POINTER ptr) {
 #ifdef OV_VALGRIND
-	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL) {
+	if(pdb && ptr != 0 && ov_vendortree_checkUseMalloc()==FALSE) {
 		if(!((uintptr_t)ptr >= (uintptr_t)pdb->baseaddr && (uintptr_t)ptr <= (uintptr_t)pdb->baseaddr+(uintptr_t)pdb->size)) {
 			printf("free missed database, install a breakpoint here\n");
 		}
 	}
-	if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+	if (ov_vendortree_checkUseMalloc()) {
 		if(ptr == NULL || !pdb || ptr < pdb->baseaddr || ptr > pdb->baseaddr+pdb->size) {
 			free(ptr);
 			return;
@@ -2443,7 +2444,6 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 			}
 			break;
 		case OV_ET_OBJECT:
-			ov_freelist_collect_object(ppfree, part.elemunion.pobj, 0x0);
 			break;
 			// fixme N:M associations not thoroughly tested
 		case OV_ET_PARENTLINK:
@@ -2470,7 +2470,7 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 		ov_element_getnextpart_object(pobj, &part, OV_ET_ANY);
 	}
 
-	if(mode&0x1){ // free object pointer
+	if((mode&0x1) && !pobj->v_pouterobject){ // free object pointer unless part object
 		snprintf(descbuf, OV_FL_DESCBUFFER, "%s (objptr)", pathbuf);
 		ov_freelist_add(ppfree, pobj, descbuf);
 	}
@@ -2597,7 +2597,7 @@ static void ov_freelist_free(){
 	OV_POINTER		ptr = NULL;
 	OV_BOOL			mallocActive = FALSE;
 
-	if (ov_path_getobjectpointer("/acplt/malloc", 2))
+	if (ov_vendortree_checkUseMalloc())
 		mallocActive = TRUE;
 
 	ov_freelist_collect(&freelist);

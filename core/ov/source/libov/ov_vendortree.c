@@ -74,6 +74,7 @@ static OV_UINT		maxHierarchyDepth = 64;
 static OV_UINT		ov_scheduler_allowedJitter = 0;
 static OV_UINT		ov_scheduler_numberOfExceeds = 0;
 static OV_UINT		ov_serverPID = 0;
+static OV_BOOL		use_malloc = FALSE;
 
 
 
@@ -108,6 +109,9 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 		{ "maxnamelength",			NULL,	ov_vendortree_getMaxNameLength, ov_vendortree_setMaxNameLength },
 		{ "maxhierarchydepth",		NULL,	ov_vendortree_getMaxHierarchyDepth, ov_vendortree_setMaxHierarchyDepth },
 		{ "ov_scheduler_allowedjitter",	"usecs",	ov_vendortree_getAllowedJitter, ov_vendortree_setAllowedJitter },
+#if OV_VALGRIND
+		{ "use_malloc",				NULL,	ov_vendortree_getUseMalloc, ov_vendortree_setUseMalloc },
+#endif
 		{ "libraries",				NULL,	ov_vendortree_getlibraries, NULL },
 		{ "classes",				NULL,	ov_vendortree_getclasses, NULL },
 		{ "associations",			NULL,	ov_vendortree_getassociations, NULL },
@@ -1585,6 +1589,45 @@ OV_DLLFNCEXPORT OV_UINT ov_vendortree_schedulerNumExceeds()
 OV_DLLFNCEXPORT void ov_vendortree_incrementNumExceeds() {
 	ov_scheduler_numberOfExceeds++;
 	return;
+}
+
+/*
+ * get use malloc value
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getUseMalloc(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_BOOL;
+	pvarcurrprops->value.valueunion.val_bool = use_malloc;
+	return OV_ERR_OK;
+}
+
+/*
+ * set use malloc value
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setUseMalloc(
+		const OV_ANY	*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+#if OV_VALGRIND
+	if (pvarcurrprops->value.vartype == OV_VT_BOOL) {
+		if(pvarcurrprops->value.valueunion.val_bool)
+			use_malloc = TRUE;
+		else if(use_malloc)
+			return OV_ERR_NOACCESS;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+#else
+	return OV_ERR_NOACCESS;
+#endif
+}
+/*
+ * check use malloc value
+ */
+OV_DLLFNCEXPORT OV_BOOL ov_vendortree_checkUseMalloc(){
+	return use_malloc;
 }
 
 
