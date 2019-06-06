@@ -424,6 +424,532 @@ extern void * (*UA_globalRealloc)(void *ptr, size_t size);
 
 #endif /* UA_ARCHITECTURE_POSIX */
 
+/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/arch/win32/ua_architecture.h" ***********************************/
+
+/* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
+ * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
+ *
+ *    Copyright 2016-2017 (c) Julius Pfrommer, Fraunhofer IOSB
+ *    Copyright 2017 (c) Stefan Profanter, fortiss GmbH
+ */
+
+#ifdef UA_ARCHITECTURE_WIN32
+
+#ifndef PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_
+#define PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_
+
+
+#ifndef _BSD_SOURCE
+# define _BSD_SOURCE
+#endif
+
+/* Disable some security warnings on MSVC */
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+# define _CRT_SECURE_NO_WARNINGS
+#endif
+
+/* Assume that Windows versions are newer than Windows XP */
+#if defined(__MINGW32__) && (!defined(WINVER) || WINVER < 0x501)
+# undef WINVER
+# undef _WIN32_WINDOWS
+# undef _WIN32_WINNT
+# define WINVER 0x0600
+# define _WIN32_WINDOWS 0x0600
+# define _WIN32_WINNT 0x0600 //windows vista version, which included InepPton
+#endif
+
+#include <stdlib.h>
+#if defined(_WIN32) && !defined(__clang__)
+# include <malloc.h>
+#endif
+
+#include <stdio.h>
+#include <errno.h>
+#include <winsock2.h>
+#include <windows.h>
+#include <ws2tcpip.h>
+
+#if defined (_MSC_VER) || defined(__clang__)
+# ifndef UNDER_CE
+#  include <io.h> //access
+#  define UA_access _access
+# endif
+#else
+# include <unistd.h> //access and tests
+# define UA_access access
+#endif
+
+#define ssize_t int
+#define OPTVAL_TYPE char
+#ifndef UA_sleep_ms
+# define UA_sleep_ms(X) Sleep(X)
+#endif
+
+// Windows does not support ansi colors
+// #define UA_ENABLE_LOG_COLORS
+
+#define UA_IPV6 1
+
+#if defined(__MINGW32__) && !defined(__clang__) //mingw defines SOCKET as long long unsigned int, giving errors in logging and when comparing with UA_Int32
+# define UA_SOCKET int
+# define UA_INVALID_SOCKET -1
+#else
+# define UA_SOCKET SOCKET
+# define UA_INVALID_SOCKET INVALID_SOCKET
+#endif
+#define UA_ERRNO WSAGetLastError()
+#define UA_INTERRUPTED WSAEINTR
+#define UA_AGAIN WSAEWOULDBLOCK
+#define UA_EAGAIN EAGAIN
+#define UA_WOULDBLOCK WSAEWOULDBLOCK
+#define UA_ERR_CONNECTION_PROGRESS WSAEWOULDBLOCK
+
+#define UA_fd_set(fd, fds) FD_SET((UA_SOCKET)fd, fds)
+#define UA_fd_isset(fd, fds) FD_ISSET((UA_SOCKET)fd, fds)
+
+#ifdef UNDER_CE
+# define errno
+#endif
+
+#define UA_getnameinfo getnameinfo
+#define UA_send(sockfd, buf, len, flags) send(sockfd, buf, (int)(len), flags)
+#define UA_recv(sockfd, buf, len, flags) recv(sockfd, buf, (int)(len), flags)
+#define UA_sendto(sockfd, buf, len, flags, dest_addr, addrlen) sendto(sockfd, (const char*)(buf), (int)(len), flags, dest_addr, (int) (addrlen))
+#define UA_recvfrom(sockfd, buf, len, flags, src_addr, addrlen) recvfrom(sockfd, (char*)(buf), (int)(len), flags, src_addr, addrlen)
+#define UA_htonl htonl
+#define UA_ntohl ntohl
+#define UA_close closesocket
+#define UA_select(nfds, readfds, writefds, exceptfds, timeout) select((int)(nfds), readfds, writefds, exceptfds, timeout)
+#define UA_shutdown shutdown
+#define UA_socket socket
+#define UA_bind bind
+#define UA_listen listen
+#define UA_accept accept
+#define UA_connect(sockfd, addr, addrlen) connect(sockfd, addr, (int)(addrlen))
+#define UA_getaddrinfo getaddrinfo
+#define UA_getsockopt getsockopt
+#define UA_setsockopt(sockfd, level, optname, optval, optlen) setsockopt(sockfd, level, optname, (const char*) (optval), optlen)
+#define UA_freeaddrinfo freeaddrinfo
+#define UA_gethostname gethostname
+#define UA_getsockname getsockname
+#define UA_inet_pton InetPton
+
+#if UA_IPV6
+# include <iphlpapi.h>
+# define UA_if_nametoindex if_nametoindex
+#endif
+
+#ifdef maxStringLength //defined in mingw64
+# undef maxStringLength
+#endif
+
+#ifndef UA_free
+#define UA_free free
+#endif
+#ifndef UA_malloc
+#define UA_malloc malloc
+#endif
+#ifndef UA_calloc
+#define UA_calloc calloc
+#endif
+#ifndef UA_realloc
+#define UA_realloc realloc
+#endif
+
+/* 3rd Argument is the string */
+#define UA_snprintf(source, size, ...) _snprintf_s(source, size, _TRUNCATE, __VA_ARGS__)
+
+#define UA_LOG_SOCKET_ERRNO_WRAP(LOG) { \
+    char *errno_str = NULL; \
+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, \
+    NULL, WSAGetLastError(), \
+    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), \
+    (LPSTR)&errno_str, 0, NULL); \
+    LOG; \
+    LocalFree(errno_str); \
+}
+#define UA_LOG_SOCKET_ERRNO_GAI_WRAP UA_LOG_SOCKET_ERRNO_WRAP
+
+
+/* Fix redefinition of SLIST_ENTRY on mingw winnt.h */
+#if !defined(_SYS_QUEUE_H_) && defined(SLIST_ENTRY)
+# undef SLIST_ENTRY
+#endif
+
+#endif /* PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_ */
+
+#endif /* UA_ARCHITECTURE_WIN32 */
+
+/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/arch/vxworks/ua_architecture.h" ***********************************/
+
+/* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
+ * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
+ *
+ *    Copyright 2016-2017 (c) Julius Pfrommer, Fraunhofer IOSB
+ *    Copyright 2017 (c) Stefan Profanter, fortiss GmbH
+ */
+
+#ifdef UA_ARCHITECTURE_VXWORKS
+
+
+
+#include <errno.h>
+#include <time.h>
+
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <sys/ioctl.h>
+
+#include <hostLib.h>
+#include <selectLib.h>
+
+#define UA_sleep_ms(X)                            \
+ {                                                \
+ struct timespec timeToSleep;                     \
+   timeToSleep.tv_sec = X / 1000;                 \
+   timeToSleep.tv_nsec = 1000000 * (X % 1000);    \
+   nanosleep(&timeToSleep, NULL);                 \
+ }
+
+#ifdef UINT32_C
+# undef UINT32_C
+#endif
+
+#define UINT32_C(x) ((x) + (UINT32_MAX - UINT32_MAX))
+
+#ifdef UA_BINARY_OVERLAYABLE_FLOAT
+# undef UA_BINARY_OVERLAYABLE_FLOAT
+#endif
+#define UA_BINARY_OVERLAYABLE_FLOAT 1
+
+#define OPTVAL_TYPE int
+
+#include <fcntl.h>
+#include <unistd.h> // read, write, close
+#include <netinet/tcp.h>
+
+#define UA_fd_set(fd, fds) FD_SET((unsigned int)fd, fds)
+#define UA_fd_isset(fd, fds) FD_ISSET((unsigned int)fd, fds)
+
+#define UA_access access
+
+#define UA_IPV6 1
+#define UA_SOCKET int
+#define UA_INVALID_SOCKET -1
+#define UA_ERRNO errno
+#define UA_INTERRUPTED EINTR
+#define UA_AGAIN EAGAIN
+#define UA_EAGAIN EAGAIN
+#define UA_WOULDBLOCK EWOULDBLOCK
+#define UA_ERR_CONNECTION_PROGRESS EINPROGRESS
+
+#define UA_ENABLE_LOG_COLORS
+
+#define UA_getnameinfo getnameinfo
+#define UA_send send
+#define UA_recv recv
+#define UA_sendto sendto
+#define UA_recvfrom recvfrom
+#define UA_htonl htonl
+#define UA_ntohl ntohl
+#define UA_close close
+#define UA_select select
+#define UA_shutdown shutdown
+#define UA_socket socket
+#define UA_bind bind
+#define UA_listen listen
+#define UA_accept accept
+#define UA_connect connect
+#define UA_getaddrinfo getaddrinfo
+#define UA_getsockopt getsockopt
+#define UA_setsockopt setsockopt
+#define UA_freeaddrinfo freeaddrinfo
+#define UA_gethostname gethostname
+#define UA_getsockname getsockname
+#define UA_inet_pton inet_pton
+#if UA_IPV6
+# define UA_if_nametoindex if_nametoindex
+#endif
+
+#include <stdlib.h>
+#define UA_free free
+#define UA_malloc malloc
+#define UA_calloc calloc
+#define UA_realloc realloc
+
+#include <stdio.h>
+#define UA_snprintf snprintf
+
+#define UA_LOG_SOCKET_ERRNO_WRAP(LOG) { \
+    char *errno_str = strerror(errno); \
+    LOG; \
+}
+#define UA_LOG_SOCKET_ERRNO_GAI_WRAP(LOG) { \
+    char *errno_str = gai_strerror(errno); \
+    LOG; \
+}
+
+
+
+#endif /* UA_ARCHITECTURE_VXWORKS */
+
+/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/arch/wec7/ua_architecture.h" ***********************************/
+
+/* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
+ * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
+ *
+ *    Copyright 2018 (c) Stephan Kantelberg
+ */
+
+#ifdef UA_ARCHITECTURE_WEC7
+
+#ifndef PLUGINS_ARCH_WEC7_UA_ARCHITECTURE_H_
+#define PLUGINS_ARCH_WEC7_UA_ARCHITECTURE_H_
+
+
+#ifndef _BSD_SOURCE
+# define _BSD_SOURCE
+#endif
+
+/* Disable some security warnings on MSVC */
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+# define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#ifdef UNDER_CE
+#define MAX_STRERROR 31
+static char *errorStrings[]= {"Error 0","","No such file or directory","","","","","Arg list too long",
+                              "Exec format error","Bad file number","","","Not enough core","Permission denied","","",
+                              "","File exists","Cross-device link","","","","Invalid argument","","Too many open files",
+                              "","","","No space left on device","","","","","Math argument","Result too large","",
+                              "Resource deadlock would occur", "Unknown error under wince"};
+
+char *strerror(int errnum);
+#endif
+
+#include <stdlib.h>
+#if defined(_WIN32)
+# include <malloc.h>
+#endif
+
+#include <stdio.h>
+#include <errno.h>
+#include <winsock2.h>
+#include <windows.h>
+#include <ws2tcpip.h>
+
+#ifdef _MSC_VER
+# ifndef UNDER_CE
+#  include <io.h> //access
+#  define UA_access _access
+# endif
+#else
+# include <unistd.h> //access and tests
+# define UA_access access
+#endif
+
+#define ssize_t int
+#define OPTVAL_TYPE char
+#ifndef UA_sleep_ms
+# define UA_sleep_ms(X) Sleep(X)
+#endif
+
+// Windows does not support ansi colors
+// #define UA_ENABLE_LOG_COLORS
+
+#if defined(__MINGW32__) //mingw defines SOCKET as long long unsigned int, giving errors in logging and when comparing with UA_Int32
+# define UA_SOCKET int
+# define UA_INVALID_SOCKET -1
+#else
+# define UA_SOCKET SOCKET
+# define UA_INVALID_SOCKET INVALID_SOCKET
+#endif
+#define UA_ERRNO WSAGetLastError()
+#define UA_INTERRUPTED WSAEINTR
+#define UA_AGAIN WSAEWOULDBLOCK
+#define UA_EAGAIN EAGAIN
+#define UA_WOULDBLOCK WSAEWOULDBLOCK
+#define UA_ERR_CONNECTION_PROGRESS WSAEWOULDBLOCK
+
+#define UA_fd_set(fd, fds) FD_SET((UA_SOCKET)fd, fds)
+#define UA_fd_isset(fd, fds) FD_ISSET((UA_SOCKET)fd, fds)
+
+#ifdef UNDER_CE
+#define UA_ERRNO WSAGetLastError()
+#endif
+
+#define UA_getnameinfo getnameinfo
+#define UA_send(sockfd, buf, len, flags) send(sockfd, buf, (int)(len), flags)
+#define UA_recv recv
+#define UA_sendto(sockfd, buf, len, flags, dest_addr, addrlen) sendto(sockfd, (const char*)(buf), (int)(len), flags, dest_addr, (int) (addrlen))
+#define UA_recvfrom(sockfd, buf, len, flags, src_addr, addrlen) recvfrom(sockfd, (char*)(buf), (int)(len), flags, src_addr, addrlen)
+#define UA_htonl htonl
+#define UA_ntohl ntohl
+#define UA_close closesocket
+#define UA_select(nfds, readfds, writefds, exceptfds, timeout) select((int)(nfds), readfds, writefds, exceptfds, timeout)
+#define UA_shutdown shutdown
+#define UA_socket socket
+#define UA_bind bind
+#define UA_listen listen
+#define UA_accept accept
+#define UA_connect(sockfd, addr, addrlen) connect(sockfd, addr, (int)(addrlen))
+#define UA_getaddrinfo getaddrinfo
+#define UA_getsockopt getsockopt
+#define UA_setsockopt(sockfd, level, optname, optval, optlen) setsockopt(sockfd, level, optname, (const char*) (optval), optlen)
+#define UA_freeaddrinfo freeaddrinfo
+#define UA_gethostname gethostname
+#define UA_getsockname getsockname
+#define UA_inet_pton InetPton
+
+#ifdef maxStringLength //defined in mingw64
+# undef maxStringLength
+#endif
+
+#ifndef UA_free
+#define UA_free free
+#endif
+#ifndef UA_malloc
+#define UA_malloc malloc
+#endif
+#ifndef UA_calloc
+#define UA_calloc calloc
+#endif
+#ifndef UA_realloc
+#define UA_realloc realloc
+#endif
+
+#define UA_snprintf(source, size, string, ...) _snprintf_s(source, size, _TRUNCATE, string, __VA_ARGS__)
+
+#define UA_LOG_SOCKET_ERRNO_WRAP(LOG) { \
+    LPVOID errno_str = NULL; \
+    FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, \
+    NULL, WSAGetLastError(), \
+    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), \
+    (LPWSTR)&errno_str, \
+    0, NULL); \
+    LOG; \
+    LocalFree(errno_str); \
+}
+#define UA_LOG_SOCKET_ERRNO_GAI_WRAP UA_LOG_SOCKET_ERRNO_WRAP
+
+
+/* Fix redefinition of SLIST_ENTRY on mingw winnt.h */
+#if !defined(_SYS_QUEUE_H_) && defined(SLIST_ENTRY)
+# undef SLIST_ENTRY
+#endif
+
+#endif /* PLUGINS_ARCH_WEC7_UA_ARCHITECTURE_H_ */
+
+#endif /* UA_ARCHITECTURE_WEC7 */
+
+/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/arch/eCos/ua_architecture.h" ***********************************/
+
+/* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
+ * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
+ *
+ *    Copyright 2016-2017 (c) Julius Pfrommer, Fraunhofer IOSB
+ *    Copyright 2017 (c) Stefan Profanter, fortiss GmbH
+ */
+#ifdef UA_ARCHITECTURE_ECOS
+
+
+#include <pkgconf/system.h>
+#include <cyg/kernel/kapi.h>
+#include <cyg/io/io.h>
+
+#include <network.h>
+
+#include <stdio.h>
+#include <string.h>
+#include <netinet/tcp.h>
+#include <stdlib.h>
+
+#define UA_sleep_ms(X) cyg_thread_delay(1 + ((1000 * X * CYGNUM_HAL_RTC_DENOMINATOR) / (CYGNUM_HAL_RTC_NUMERATOR / 1000)));
+
+#define OPTVAL_TYPE int
+
+#define UA_fd_set(fd, fds) FD_SET((unsigned int)fd, fds)
+#define UA_fd_isset(fd, fds) FD_ISSET((unsigned int)fd, fds)
+
+#define UA_access(x,y) 0
+
+#define UA_IPV6 1
+#define UA_SOCKET int
+#define UA_INVALID_SOCKET -1
+#define UA_ERRNO errno
+#define UA_INTERRUPTED EINTR
+#define UA_AGAIN EAGAIN
+#define UA_EAGAIN EAGAIN
+#define UA_WOULDBLOCK EWOULDBLOCK
+#define UA_ERR_CONNECTION_PROGRESS EINPROGRESS
+
+#define UA_getnameinfo getnameinfo
+#define UA_send send
+#define UA_recv recv
+#define UA_sendto sendto
+#define UA_recvfrom recvfrom
+#define UA_htonl htonl
+#define UA_ntohl ntohl
+#define UA_close close
+#define UA_select select
+#define UA_shutdown shutdown
+#define UA_socket socket
+#define UA_bind bind
+#define UA_listen listen
+#define UA_accept accept
+#define UA_connect connect
+#define UA_getaddrinfo getaddrinfo
+#define UA_getsockopt getsockopt
+#define UA_setsockopt setsockopt
+#define UA_freeaddrinfo freeaddrinfo
+#define UA_gethostname gethostname_ecos
+#define UA_getsockname getsockname
+#define UA_inet_pton(af,src,dst) inet_pton(af, src, (char*) dst)
+#if UA_IPV6
+# define UA_if_nametoindex if_nametoindex
+#endif
+
+int gethostname_ecos(char* name, size_t len);
+
+#define UA_free free
+#define UA_malloc malloc
+#define UA_calloc calloc
+#define UA_realloc realloc
+
+#define UA_snprintf snprintf
+
+#define UA_LOG_SOCKET_ERRNO_WRAP(LOG) { \
+    char *errno_str = strerror(errno); \
+    LOG; \
+}
+#define UA_LOG_SOCKET_ERRNO_GAI_WRAP(LOG) { \
+    const char *errno_str = gai_strerror(errno); \
+    LOG; \
+}
+
+
+
+#endif /* UA_ARCHITECTURE_ECOS */
+
+/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/arch/freertosLWIP/ua_architecture.h" ***********************************/
+
+/* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
+ * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
+ *
+ *    Copyright 2016-2017 (c) Julius Pfrommer, Fraunhofer IOSB
+ *    Copyright 2017-2018 (c) Stefan Profanter, fortiss GmbH
+ *    Copyright 2018 (c) Jose Cabral, fortiss GmbH
+ */
+
+#ifdef UA_ARCHITECTURE_FREERTOSLWIP
+
+
+
+
+
+#endif /* UA_ARCHITECTURE_FREERTOSLWIP */
+
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/deps/ms_stdint.h" ***********************************/
 
 // ISO C9x  compliant stdint.h for Microsoft Visual Studio
@@ -13787,7 +14313,7 @@ _UA_END_DECLS
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/build/src_generated/open62541/types_generated.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/tools/generate_datatypes.py
- * on host altair-lubuntu64 by user julian at 2019-06-02 05:18:22 */
+ * on host altair-lubuntu64 by user julian at 2019-06-06 08:48:43 */
 
 
 #ifdef UA_ENABLE_AMALGAMATION
@@ -18693,7 +19219,7 @@ _UA_END_DECLS
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/build/src_generated/open62541/types_generated_handling.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/tools/generate_datatypes.py
- * on host altair-lubuntu64 by user julian at 2019-06-02 05:18:22 */
+ * on host altair-lubuntu64 by user julian at 2019-06-06 08:48:43 */
 
 
 
