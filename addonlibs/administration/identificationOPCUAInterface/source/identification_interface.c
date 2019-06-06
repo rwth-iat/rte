@@ -47,8 +47,10 @@ OV_DLLFNCEXPORT OV_RESULT identificationOPCUAInterface_interface_constructor(
     pinst->v_index = 0;
 	ov_string_setvalue(&pinst->v_uri, "acplt.org/identification/"); //Will be overwritten by config->applicationDescription.applicationUri
 	UA_Nodestore_Default_Interface_new(&pinst->v_store);
+	UA_DataTypeArray *pidentificationTypes = (UA_DataTypeArray*)UA_malloc(sizeof(UA_DataTypeArray));
 	UA_DataTypeArray identificationTypes = {NULL, UA_IDENTIFICATION_COUNT, UA_IDENTIFICATION};
-	pinst->v_dataTypes = &identificationTypes;
+	memcpy(pidentificationTypes, &identificationTypes, sizeof(identificationTypes));
+	pinst->v_dataTypes = pidentificationTypes;
 	pinst->v_trafo = NULL;
 
     return OV_ERR_OK;
@@ -67,6 +69,8 @@ OV_DLLFNCEXPORT void identificationOPCUAInterface_interface_destructor(
 		pinst->v_store->deleteNodestore(pinst->v_store->context);
 		UA_free(pinst->v_store);
 	}
+	UA_free(pinst->v_dataTypes);
+
 
     /* do what */
 
@@ -84,7 +88,7 @@ OV_DLLFNCEXPORT OV_BOOL identificationOPCUAInterface_interface_checkNode(OV_INST
     return (OV_BOOL)0;
 }
 
-OV_DLLFNCEXPORT OV_BOOL identificationOPCUAInterface_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
+OV_DLLFNCEXPORT OV_BOOL identificationOPCUAInterface_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_UINT applicationIndex, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
     /*
     *   local variables
     */

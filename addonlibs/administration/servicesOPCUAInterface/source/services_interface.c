@@ -24,7 +24,6 @@
 #include "servicesOPCUAInterface.h"
 #include "libov/ov_macros.h"
 #include "nodeset_services.h"
-#include "opcua_ovTrafo.h"
 
 OV_DLLFNCEXPORT OV_RESULT servicesOPCUAInterface_interface_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -81,7 +80,7 @@ OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkNode(OV_INSTPTR_op
 	return FALSE;
 }
 
-OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
+OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_UINT applicationIndex, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
     /*
     *   local variables
     */
@@ -92,7 +91,7 @@ OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkReference(OV_INSTP
 			//parentRef->sourceNodeId
 			parentRef->targetNodeClass = UA_NODECLASS_METHOD;
 			ov_memstack_lock();
-			parentRef->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, ov_path_getcanonicalpath(pNode,2));
+			parentRef->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(applicationIndex, ov_path_getcanonicalpath(pNode,2));
 			ov_memstack_unlock();
 			//parentRef->targetServerUri
 		}

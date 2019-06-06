@@ -10,43 +10,35 @@
 
 #include "lifeCycleEntryOPCUAInterface.h"
 #include "libov/ov_macros.h"
-#include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
-#include "libov/ov_path.h"
-#include "libov/ov_memstack.h"
-#include "ks_logfile.h"
-#include "ua_identification_generated.h"
-#include "ua_identification_generated_handling.h"
 #include "ua_lifeCycleEntry_generated.h"
 #include "ua_lifeCycleEntry_generated_handling.h"
-#include "lifeCycleEntry_helpers.h"
 
-
-OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallbackArchiv(void *methodHandle, const UA_NodeId *objectId,
-                     const UA_NodeId *sessionId, void *sessionHandle,
+OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallbackArchiv(UA_Server *server,
+                     const UA_NodeId *sessionId, void *sessionContext,
+					 const UA_NodeId *methodId, void *methodContext,
+					 const UA_NodeId *objectId, void *objectContext,
                      size_t inputSize, const UA_Variant *input,
                      size_t outputSize, UA_Variant *output) {
 	OV_RESULT resultOV = OV_ERR_OK;
 	LCEStatusCode result = LCESTATUSCODE_GOOD;
-	OV_STRING funcName = (OV_STRING)methodHandle;
+	OV_STRING funcName = (OV_STRING)methodContext;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	OV_ELEMENT				element;
 
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*objectId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(*objectId, &path);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
@@ -65,17 +57,17 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		LifeCycleEntry lce;
 		LifeCycleEntry_init(&lce);
 
-		copyOPCUAStringToOV(tmpUALCE->creatingInstance.idSpec, &(lce.creatingInstance.IdSpec));
+		opcua_helpers_copyUAStringToOV(tmpUALCE->creatingInstance.idSpec, &(lce.creatingInstance.IdSpec));
 		lce.creatingInstance.IdType = tmpUALCE->creatingInstance.idType;
 
-		copyOPCUAStringToOV(tmpUALCE->eventClass, &lce.eventClass);
+		opcua_helpers_copyUAStringToOV(tmpUALCE->eventClass, &lce.eventClass);
 
-		copyOPCUAStringToOV(tmpUALCE->subject, &lce.subject);
+		opcua_helpers_copyUAStringToOV(tmpUALCE->subject, &lce.subject);
 
-		copyOPCUAStringToOV(tmpUALCE->writingInstance.idSpec, &(lce.writingInstance.IdSpec));
+		opcua_helpers_copyUAStringToOV(tmpUALCE->writingInstance.idSpec, &(lce.writingInstance.IdSpec));
 		lce.writingInstance.IdType = tmpUALCE->writingInstance.idType;
 
-		ov_VariantToAny(&(tmpUALCE->data.value), &lce.data);
+		opcua_helpers_UAVariantToOVAny(&(tmpUALCE->data.value), &lce.data);
 		lce.data.time = ov_1601nsTimeToOvTime(tmpUALCE->data.sourceTimestamp);
 
 		result = lifeCycleEntry_LifeCycleArchive_createLCE(pLCEArchiv, lce);
@@ -121,17 +113,17 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		LifeCycleEntry lce;
 		LifeCycleEntry_init(&lce);
 
-		copyOPCUAStringToOV(*tmpUACreatingInstanceIdSpec, &(lce.creatingInstance.IdSpec));
+		opcua_helpers_copyUAStringToOV(*tmpUACreatingInstanceIdSpec, &(lce.creatingInstance.IdSpec));
 		lce.creatingInstance.IdType = *tmpUACreatingInstanceIdType;
 
-		copyOPCUAStringToOV(*tmpUAEventClass, &lce.eventClass);
+		opcua_helpers_copyUAStringToOV(*tmpUAEventClass, &lce.eventClass);
 
-		copyOPCUAStringToOV(*tmpUASubject, &lce.subject);
+		opcua_helpers_copyUAStringToOV(*tmpUASubject, &lce.subject);
 
-		copyOPCUAStringToOV(*tmpUAWritingInstanceIdSpec, &(lce.writingInstance.IdSpec));
+		opcua_helpers_copyUAStringToOV(*tmpUAWritingInstanceIdSpec, &(lce.writingInstance.IdSpec));
 		lce.writingInstance.IdType = *tmpUAWritingInstanceIdType;
 
-		ov_VariantToAny(&(tmpUAValue->value), &lce.data);
+		opcua_helpers_UAVariantToOVAny(&(tmpUAValue->value), &lce.data);
 		lce.data.time = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
 
 		result = lifeCycleEntry_LifeCycleArchive_createLCE(pLCEArchiv, lce);
@@ -167,7 +159,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 
 			tmpUALCE.subject = UA_String_fromChars(lce.subject);
 
-			ov_AnyToVariant(&lce.data, &tmpUALCE.data.value);
+			opcua_helpers_ovAnyToUAVariant(&lce.data, &tmpUALCE.data.value);
 			tmpUALCE.data.hasValue = TRUE;
 			tmpUALCE.data.sourceTimestamp = ov_ovTimeTo1601nsTime(lce.data.time);
 			tmpUALCE.data.hasSourceTimestamp = TRUE;
@@ -247,7 +239,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 
 			tmpUASubject = UA_String_fromChars(lce.subject);
 
-			ov_AnyToVariant(&lce.data, &tmpUAValue.value);
+			opcua_helpers_ovAnyToUAVariant(&lce.data, &tmpUAValue.value);
 			tmpUAValue.hasValue = TRUE;
 			tmpUAValue.sourceTimestamp = ov_ovTimeTo1601nsTime(lce.data.time);
 			tmpUAValue.hasSourceTimestamp = TRUE;
@@ -303,7 +295,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 				tmpUALifeCycleEntry[i].writingInstance.idType = lce[i].writingInstance.IdType;
 				tmpUALifeCycleEntry[i].eventClass = UA_String_fromChars(lce[i].eventClass);
 				tmpUALifeCycleEntry[i].subject = UA_String_fromChars(lce[i].subject);
-				ov_AnyToVariant(&lce[i].data, &tmpUALifeCycleEntry[i].data.value);
+				opcua_helpers_ovAnyToUAVariant(&lce[i].data, &tmpUALifeCycleEntry[i].data.value);
 				tmpUALifeCycleEntry[i].data.hasValue = TRUE;
 				tmpUALifeCycleEntry[i].data.sourceTimestamp = ov_ovTimeTo1601nsTime(lce[i].data.time);
 				tmpUALifeCycleEntry[i].data.hasSourceTimestamp = TRUE;
@@ -338,17 +330,17 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 		LifeCycleEntry lce;
 		LifeCycleEntry_init(&lce);
 
-		copyOPCUAStringToOV(tmpUALCEData->creatingInstance.idSpec, &(lce.creatingInstance.IdSpec));
+		opcua_helpers_copyUAStringToOV(tmpUALCEData->creatingInstance.idSpec, &(lce.creatingInstance.IdSpec));
 		lce.creatingInstance.IdType = tmpUALCEData->creatingInstance.idType;
 
-		copyOPCUAStringToOV(tmpUALCEData->eventClass, &lce.eventClass);
+		opcua_helpers_copyUAStringToOV(tmpUALCEData->eventClass, &lce.eventClass);
 
-		copyOPCUAStringToOV(tmpUALCEData->subject, &lce.subject);
+		opcua_helpers_copyUAStringToOV(tmpUALCEData->subject, &lce.subject);
 
-		copyOPCUAStringToOV(tmpUALCEData->writingInstance.idSpec, &(lce.writingInstance.IdSpec));
+		opcua_helpers_copyUAStringToOV(tmpUALCEData->writingInstance.idSpec, &(lce.writingInstance.IdSpec));
 		lce.writingInstance.IdType = tmpUALCEData->writingInstance.idType;
 
-		ov_VariantToAny(&(tmpUALCEData->data.value), &lce.data);
+		opcua_helpers_UAVariantToOVAny(&(tmpUALCEData->data.value), &lce.data);
 		lce.data.time = ov_1601nsTimeToOvTime(tmpUALCEData->data.sourceTimestamp);
 
 		lce.lceId = *tmpUALCEId;
@@ -385,17 +377,17 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
 
 		lce.lceId = *tmpUALCEId;
 
-		copyOPCUAStringToOV(*tmpUACreatingInstanceIdSpec, &(lce.creatingInstance.IdSpec));
+		opcua_helpers_copyUAStringToOV(*tmpUACreatingInstanceIdSpec, &(lce.creatingInstance.IdSpec));
 		lce.creatingInstance.IdType = *tmpUACreatingInstanceIdType;
 
-		copyOPCUAStringToOV(*tmpUAEventClass, &lce.eventClass);
+		opcua_helpers_copyUAStringToOV(*tmpUAEventClass, &lce.eventClass);
 
-		copyOPCUAStringToOV(*tmpUASubject, &lce.subject);
+		opcua_helpers_copyUAStringToOV(*tmpUASubject, &lce.subject);
 
-		copyOPCUAStringToOV(*tmpUAWritingInstanceIdSpec, &(lce.writingInstance.IdSpec));
+		opcua_helpers_copyUAStringToOV(*tmpUAWritingInstanceIdSpec, &(lce.writingInstance.IdSpec));
 		lce.writingInstance.IdType = *tmpUAWritingInstanceIdType;
 
-		ov_VariantToAny(&(tmpUAValue->value), &lce.data);
+		opcua_helpers_UAVariantToOVAny(&(tmpUAValue->value), &lce.data);
 		lce.data.time = ov_1601nsTimeToOvTime(tmpUAValue->sourceTimestamp);
 
 		result = lifeCycleEntry_LifeCycleArchive_setLCE(pLCEArchiv, lce);
@@ -410,32 +402,30 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallb
     return resultOV;
 }
 
-
-static void OV_NodeStore_deleteNodestore(void *handle, UA_UInt16 namespaceIndex){
+static void lifeCycleEntryOPCUAInterface_deleteNodestore(void *context){
 
 }
 
-static void OV_NodeStore_deleteNode(UA_Node *node){
+static void lifeCycleEntryOPCUAInterface_deleteNode(void *context, UA_Node *node){
 	if (node){
-		if (node->nodeClass == UA_NODECLASS_METHOD){
-			ov_string_setvalue((OV_STRING*) (&(((UA_MethodNode*) node)->methodHandle)),	NULL);
-		}
-		UA_Node_deleteMembersAnyNodeClass(node);
+		if (node->context)
+			ov_string_setvalue((OV_STRING*)&(node->context), NULL);
+		UA_Node_deleteMembers(node);
 	}
 	UA_free(node);
 }
-static void OV_NodeStore_releaseNode(void *handle, const UA_Node *node){
-	OV_NodeStore_deleteNode((UA_Node*)node);
+static void lifeCycleEntryOPCUAInterface_releaseNode(void *context, const UA_Node *node){
+	lifeCycleEntryOPCUAInterface_deleteNode(context, (UA_Node*)node);
 }
 
-static UA_Node * OV_NodeStore_newNode(UA_NodeClass nodeClass){ //TODO add nodestore handle? --> move nodeStore from static context to main
+static UA_Node * lifeCycleEntryOPCUAInterface_newNode(void *context, UA_NodeClass nodeClass){
     //allocate memory for a new node
 	//UA_Node *newNode = NULL;
 	//newNode = (UA_Node*) ov_database_malloc(sizeof(UA_ObjectNode));
 	//newNode->nodeClass = nodeClass;
     return NULL;
 }
-static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeId){
+static const UA_Node * lifeCycleEntryOPCUAInterface_getNode(void *context, const UA_NodeId *nodeId){
 	UA_Node * tmpNode = NULL;
 	UA_Node* opcuaNode = NULL;
 	OV_STRING tmpString = NULL;
@@ -446,69 +436,77 @@ static const UA_Node * OV_NodeStore_getNode(void *handle, const UA_NodeId *nodeI
 	OV_UINT len2 = 0;
 	if (nodeId->identifier.string.data == NULL || nodeId->identifier.string.length == 0 || nodeId->identifierType != UA_NODEIDTYPE_STRING)
 		return NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 
 	plist = ov_string_split(tmpString, "||", &len);
 	plist2 = ov_string_split(tmpString, "|||", &len2);
 
+	ov_memstack_lock();
 	if (len2 > 1){
 		pobj = ov_path_getobjectpointer(plist2[0], 2);
+		ov_string_freelist(plist2);
 		if (pobj == NULL){
 			ov_string_freelist(plist);
-			ov_string_freelist(plist2);
 			ov_string_setvalue(&tmpString, NULL);
+			ov_memstack_unlock();
 			return NULL;
 		}
+
 		if (Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pobj)){
-			if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleEntriesNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+			if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleEntriesNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
 				ov_string_freelist(plist);
 				ov_string_setvalue(&tmpString, NULL);
+				ov_memstack_unlock();
 				return (UA_Node*) opcuaNode;
 			}
 		}
 	}
-
+	ov_string_freelist(plist2);
 	if (len > 1){
 		pobj = ov_path_getobjectpointer(plist[0], 2);
 		if (pobj == NULL){
 			ov_string_freelist(plist);
-			ov_string_freelist(plist2);
 			ov_string_setvalue(&tmpString, NULL);
+			ov_memstack_unlock();
 			return NULL;
 		}
 		if (Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pobj)){
-			if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveMethodNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
+			if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveMethodNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD){
 				ov_string_freelist(plist);
-				ov_string_freelist(plist2);
 				ov_string_setvalue(&tmpString, NULL);
+				ov_memstack_unlock();
 				return (UA_Node*) opcuaNode;
 			}
 		}
 	}
 
 	ov_string_freelist(plist);
-	ov_string_freelist(plist2);
 	pobj = ov_path_getobjectpointer(tmpString, 2);
 	if (pobj == NULL){
 		ov_string_setvalue(&tmpString, NULL);
+		ov_memstack_unlock();
 		return NULL;
 	}
 
 	if(Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pobj)){
-		if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+		if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}else if(Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pobj)){
-		if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleEntryNodeToOPCUA(NULL, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
+		if (lifeCycleEntryOPCUAInterface_interface_ovLifeCycleEntryNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 			tmpNode = opcuaNode;
 	}
-
+	ov_memstack_unlock();
 	ov_string_setvalue(&tmpString, NULL);
 	return tmpNode;
 }
-static UA_Node * OV_NodeStore_getCopyNode(void *handle, const UA_NodeId *nodeId){
-	return (UA_Node*)OV_NodeStore_getNode(handle, nodeId);
+static UA_StatusCode lifeCycleEntryOPCUAInterface_getCopyNode(void *context, const UA_NodeId *nodeId, UA_Node ** nodeOut){
+	UA_Node* node = (UA_Node*) lifeCycleEntryOPCUAInterface_getNode(context, nodeId);
+	if(node == NULL)
+		return UA_STATUSCODE_BADNODEIDUNKNOWN;
+	*nodeOut = node;
+	return UA_STATUSCODE_GOOD;
 }
-static UA_StatusCode OV_NodeStore_removeNode(void *handle, const UA_NodeId *nodeId){
+static UA_StatusCode lifeCycleEntryOPCUAInterface_removeNode(void *context, const UA_NodeId *nodeId){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 	//OV_INSTPTR_ov_object pobj = opcua_nodeStoreFunctions_resolveNodeIdToOvObject((UA_NodeId*)nodeId);
 	//if (pobj != NULL){
@@ -516,97 +514,44 @@ static UA_StatusCode OV_NodeStore_removeNode(void *handle, const UA_NodeId *node
 	//}
     //return UA_STATUSCODE_GOOD;
 }
-static UA_StatusCode OV_NodeStore_insertNode(void *handle, UA_Node *node, UA_NodeId *parrentNode){
+static UA_StatusCode lifeCycleEntryOPCUAInterface_insertNode(void *context, UA_Node *node, UA_NodeId *parrentNode){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 	//OV_INSTPTR_ov_object pobj = opcua_nodeStoreFunctions_resolveNodeIdToOvObject(&(node->nodeId));
 	//if (pobj != NULL)
 	//	return UA_STATUSCODE_BADNODEIDEXISTS;
 
-	//return OV_NodeStore_insert(handle, node, parrentNode);
+	//return lifeCycleEntryOPCUAInterface_insert(context, node, parrentNode);
 }
-static UA_StatusCode OV_NodeStore_replaceNode(void *handle, UA_Node *node){
-	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
-	OV_PATH 				path;
-	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
-	OV_VTBLPTR_ov_object	pVtblObj = NULL;
-	OV_ACCESS				access;
-
-	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(node->nodeId, &path);
-	if(result != UA_STATUSCODE_GOOD){
-		ov_memstack_unlock();
-		return result;
-	}
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
-	ov_memstack_unlock();
-	if(result != UA_STATUSCODE_GOOD){
-		return result;
-	}
-
-	if (!pobj){
-		if (Ov_CanCastTo(lifeCycleEntry_LifeCycleEntry, pobj)){ // LCE
-			OV_ELEMENT tmpPart;
-			tmpPart.elemtype = OV_ET_NONE;
-			OV_ELEMENT tmpParrent;
-			tmpParrent.pobj = pobj;
-			tmpParrent.elemtype = OV_ET_OBJECT;
-			UA_LifeCycleEntry *tmpLifeCycleEntry = ((UA_LifeCycleEntry*)(((UA_Variant*)&((UA_VariableNode*)node)->value.data.value.value)->data));
-			do {
-				ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
-				if (tmpPart.elemtype == OV_ET_NONE)
-					break;
-				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceString") == OV_STRCMP_EQUAL)
-					copyOPCUAStringToOV(tmpLifeCycleEntry->creatingInstance.idSpec, (OV_STRING*)tmpPart.pvalue);
-				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceType") == OV_STRCMP_EQUAL)
-					*(UA_UInt32*)tmpPart.pvalue = tmpLifeCycleEntry->creatingInstance.idType;
-				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceString") == OV_STRCMP_EQUAL)
-					copyOPCUAStringToOV(tmpLifeCycleEntry->writingInstance.idSpec, (OV_STRING*)tmpPart.pvalue);
-				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceType") == OV_STRCMP_EQUAL)
-					*(UA_UInt32*)tmpPart.pvalue = tmpLifeCycleEntry->writingInstance.idType;
-				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Data") == OV_STRCMP_EQUAL)
-					ov_VariantToAny(&tmpLifeCycleEntry->data.value, (OV_ANY*)tmpPart.pvalue);
-				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "TimeStamp") == OV_STRCMP_EQUAL)
-					*(UA_DateTime*)tmpPart.pvalue = tmpLifeCycleEntry->data.sourceTimestamp;
-				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Subject") == OV_STRCMP_EQUAL)
-					copyOPCUAStringToOV(tmpLifeCycleEntry->subject, (OV_STRING*)tmpPart.pvalue);
-				if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "EventClass") == OV_STRCMP_EQUAL)
-					copyOPCUAStringToOV(tmpLifeCycleEntry->eventClass, (OV_STRING*)tmpPart.pvalue);
-			} while(TRUE);
-		}
-	}
-
-	return UA_STATUSCODE_GOOD;
-}
-static void OV_NodeStore_iterate(void *handle, void* visitorHandle, UA_NodestoreInterface_nodeVisitor visitor){
-
-}
-static UA_StatusCode OV_NodeStore_linkNamespace(void *handle, UA_UInt16 namespaceIndex){
+static UA_StatusCode lifeCycleEntryOPCUAInterface_replaceNode(void *context, UA_Node *node){
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
-static UA_StatusCode OV_NodeStore_unlinkNamespace(void *handle, UA_UInt16 namespaceIndex){
-	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+static void lifeCycleEntryOPCUAInterface_iterate(void *context, UA_NodestoreVisitor visitor, void* visitorHandle){
+
 }
 
-UA_NodestoreInterface* lifeCycleEntryOPCUAInterface_interface_ovNodeStoreInterfaceLifeCycleEntryNew(void) {
-	UA_NodestoreInterface *nsi = ov_database_malloc(sizeof(UA_NodestoreInterface));
-    nsi->handle =        	NULL;
-    nsi->deleteNodestore =  (UA_NodestoreInterface_deleteNodeStore) 		OV_NodeStore_deleteNodestore;
-    nsi->newNode =       	(UA_NodestoreInterface_newNode)     OV_NodeStore_newNode;
-    nsi->deleteNode =    	(UA_NodestoreInterface_deleteNode)  OV_NodeStore_deleteNode;
-    nsi->insertNode =       	(UA_NodestoreInterface_insertNode)      OV_NodeStore_insertNode;
-    nsi->getNode =          	(UA_NodestoreInterface_getNode)         OV_NodeStore_getNode;
-    nsi->getNodeCopy =      	(UA_NodestoreInterface_getNodeCopy)     OV_NodeStore_getCopyNode;
-    nsi->replaceNode =      	(UA_NodestoreInterface_replaceNode)     OV_NodeStore_replaceNode;
-    nsi->removeNode =       	(UA_NodestoreInterface_removeNode)      OV_NodeStore_removeNode;
-    nsi->iterate =       (UA_NodestoreInterface_iterate)     OV_NodeStore_iterate;
-    nsi->releaseNode =       	(UA_NodestoreInterface_releaseNode)     OV_NodeStore_releaseNode;
-    nsi->linkNamespace =       (UA_NodestoreInterface_linkNamespace)     OV_NodeStore_linkNamespace;
-	nsi->unlinkNamespace =       	(UA_NodestoreInterface_unlinkNamespace)     OV_NodeStore_unlinkNamespace;
-	return nsi;
+UA_NodestoreInterface* lifeCycleEntryOPCUAInterface_interface_ovNodeStoreInterfaceLifeCycleEntryNew(OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface context) {
+	UA_NodestoreInterface* trafo = UA_malloc(sizeof(UA_NodestoreInterface));
+	if(trafo == NULL)
+		return NULL;
+    trafo->context =          context;
+    trafo->newNode =       	  lifeCycleEntryOPCUAInterface_newNode;
+    trafo->deleteNode =    	  lifeCycleEntryOPCUAInterface_deleteNode;
+    trafo->deleteNodestore =  lifeCycleEntryOPCUAInterface_deleteNodestore;
+
+    trafo->getNode =          lifeCycleEntryOPCUAInterface_getNode;
+    trafo->releaseNode =      lifeCycleEntryOPCUAInterface_releaseNode;
+
+    trafo->getNodeCopy =      lifeCycleEntryOPCUAInterface_getCopyNode;
+    trafo->insertNode =       lifeCycleEntryOPCUAInterface_insertNode;
+    trafo->replaceNode =      lifeCycleEntryOPCUAInterface_replaceNode;
+
+    trafo->removeNode =       lifeCycleEntryOPCUAInterface_removeNode;
+
+    trafo->iterate =          lifeCycleEntryOPCUAInterface_iterate;
+    return trafo;
 }
 
-void lifeCycleEntryOPCUAInterface_interface_ovNodeStoreInterfaceLifeCycleEntryDelete(UA_NodestoreInterface * nsi){
-	if (nsi->handle)
-		UA_free(nsi->handle);
+void lifeCycleEntryOPCUAInterface_interface_ovNodeStoreInterfaceLifeCycleEntryDelete(UA_NodestoreInterface * store){
+	store->context = NULL;
+	UA_free(store);
 }

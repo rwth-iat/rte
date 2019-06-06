@@ -134,10 +134,11 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	// HasComponent to parent
 	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	ov_memstack_lock();
+	UA_ExpandedNodeId NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, ov_path_getcanonicalpath(pParent, 2));
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
-			UA_EXPANDEDNODEID_STRING_ALLOC(opcua_ovTrafo_searchNamespaceIndex(context, pParent, FALSE),
-					ov_path_getcanonicalpath(pParent, 2)), //TODO use checkNodeId function of correct interface instead.
+			NodeId, //TODO use checkNodeId function of correct interface instead.
 			UA_NODECLASS_OBJECT, UA_FALSE);
+	UA_ExpandedNodeId_deleteMembers(&NodeId);
 
 	// HasTypeDefinition to Service
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
@@ -150,9 +151,11 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	if(countArguments(pobj, TRUE) > 0 ){
 		opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 		ov_string_append(&tmpString, "||InputArguments"); //TODO define virtual seperator in opcua
+		NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
 		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-				UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_index, tmpString), UA_NODECLASS_VARIABLE,
+				NodeId, UA_NODECLASS_VARIABLE,
 				UA_TRUE);
+		UA_ExpandedNodeId_deleteMembers(&NodeId);
 		ov_string_setvalue(&tmpString, NULL);
 	}
 
@@ -161,9 +164,11 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 	if(countArguments(pobj, FALSE) > 0 ){
 		opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 		ov_string_append(&tmpString, "||OutputArguments");
+		NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
 		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-				UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_index, tmpString), UA_NODECLASS_VARIABLE,
+				NodeId, UA_NODECLASS_VARIABLE,
 				UA_TRUE);
+		UA_ExpandedNodeId_deleteMembers(&NodeId);
 		ov_string_setvalue(&tmpString, NULL);
 	}
 

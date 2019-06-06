@@ -23,23 +23,20 @@
 #include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "nodeset_lifeCycleEntry.h"
+#include "opcua_ovTrafo.h"
 
-
-extern OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface pinterface;
 
 
 OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveMethodNodeToOPCUA(
-		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
+		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
@@ -50,10 +47,12 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	OV_STRING 				*plist2 = NULL;
 	OV_ELEMENT				element;
 
+	OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface 	pinterface = Ov_StaticPtrCast(lifeCycleEntryOPCUAInterface_interface, context);
+
 	if (pinterface == NULL)
 		return UA_STATUSCODE_BADOUTOFSERVICE;
 
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
 	plist2 = ov_string_split(plist[1], ".", &len2);
 	ov_string_setvalue(&tmpString, NULL);
@@ -67,7 +66,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 
 	ov_string_freelist(plist);
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(tmpNodeId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(tmpNodeId, &path);
 	UA_NodeId_deleteMembers(&tmpNodeId);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
@@ -77,7 +76,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
 
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&element, pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&element, &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_string_freelist(plist2);
 		return result;
@@ -135,86 +134,81 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	newNode->writeMask 	= writeMask;
 
 	((UA_MethodNode*)newNode)->executable = TRUE;
-	((UA_MethodNode*)newNode)->attachedMethod = lifeCycleEntryOPCUAInterface_interface_MethodCallbackArchiv;
-	ov_string_setvalue((OV_STRING*)(&(((UA_MethodNode*)newNode)->methodHandle)), plist2[0]);
+	((UA_MethodNode*)newNode)->method = lifeCycleEntryOPCUAInterface_interface_MethodCallbackArchiv;
+	ov_string_setvalue((OV_STRING*)(&(((UA_MethodNode*)newNode)->context)), plist2[0]);
 	ov_string_freelist(plist2);
 
-	// References
-	size_t size_references = 0;
 
-	// Input/OutputArgument
-	size_references = size_references + 2;
-
-	size_references = size_references + 2;// For Parent&Type
-	newNode->references = UA_calloc(size_references, sizeof(UA_ReferenceNode));
-	if (!newNode->references){
-		result = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-		UA_free(newNode);
-		return result;
-	}
-	newNode->referencesSize = size_references;
-
+	// Add References
 	// ParentNode
-	newNode->references[0].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
-	newNode->references[0].isInverse = UA_TRUE;
 	len = 0;
 	plist = NULL;
 	tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
-	newNode->references[0].targetId = UA_EXPANDEDNODEID_STRING_ALLOC(pinterface->v_interfacenamespace.index, plist[0]);
+	UA_ExpandedNodeId NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, plist[0]);
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
+					NodeId, UA_NODECLASS_OBJECT,
+					UA_FALSE);
 	ov_string_setvalue(&tmpString, NULL);
+	UA_ExpandedNodeId_deleteMembers(&NodeId);
 
-	// Type
-	newNode->references[1].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	newNode->references[1].isInverse = UA_FALSE;
-
-	// InputArguments
-	newNode->references[2].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-	newNode->references[2].isInverse = UA_FALSE;
-
-	// OutputArguments
-	newNode->references[3].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-	newNode->references[3].isInverse = UA_FALSE;
-
+	// Type, InputArguments and OutputArguments
+	UA_ExpandedNodeId NodeId2;
+	UA_ExpandedNodeId NodeId3;
 
 	if (ov_string_compare(plist[1], "createLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE_INPUTARGUMENTS);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "deleteLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_DELETELCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_DELETELCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_DELETELCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE_INPUTARGUMENTS);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "createLCESimple") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_INPUTARGUMENTS);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "setLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE_INPUTARGUMENTS);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getLCE") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE_INPUTARGUMENTS);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "setLCESimple") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_INPUTARGUMENTS);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getLCESimple") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_INPUTARGUMENTS);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_OUTPUTARGUMENTS);
 	}else if (ov_string_compare(plist[1], "getLastLCEs") == OV_STRCMP_EQUAL){
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLASTLCES);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_INPUTARGUMENTS);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_INPUTARGUMENTS);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_OUTPUTARGUMENTS);
 	}else{
-		newNode->references[1].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
-		newNode->references[2].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
-		newNode->references[3].targetId = UA_EXPANDEDNODEID_NUMERIC(0,0);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(0,0);
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(0,0);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(0,0);
 	}
+
+	// Type
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
+						NodeId, UA_NODECLASS_METHOD,
+						UA_TRUE);
+	// InputArguments
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+						NodeId2, UA_NODECLASS_VARIABLE,
+						UA_TRUE);
+	// OutputArguments
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+						NodeId3, UA_NODECLASS_VARIABLE,
+						UA_TRUE);
+
+
 	ov_string_freelist(plist);
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

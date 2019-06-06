@@ -1,6 +1,6 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
- * Git-Revision: 0.3-rc2-995-g8da336de
+ * Git-Revision: 0.3-rc2-1014-g26b2f133
  */
 
 /*
@@ -32,7 +32,7 @@
 #define UA_OPEN62541_VER_MINOR 4
 #define UA_OPEN62541_VER_PATCH 0
 #define UA_OPEN62541_VER_LABEL "-dev" /* Release candidate label, etc. */
-#define UA_OPEN62541_VER_COMMIT "0.3-rc2-995-g8da336de"
+#define UA_OPEN62541_VER_COMMIT "0.3-rc2-1014-g26b2f133"
 
 /**
  * Feature Options
@@ -60,7 +60,7 @@
 
 /* Multithreading */
 /* #undef UA_ENABLE_MULTITHREADING */
-#define UA_ENABLE_IMMUTABLE_NODES
+/* #undef UA_ENABLE_IMMUTABLE_NODES */
 #if defined(UA_ENABLE_MULTITHREADING) && !defined(UA_ENABLE_IMMUTABLE_NODES)
 #error "The multithreading feature requires nodes to be immutable"
 #endif
@@ -162,162 +162,6 @@ void UA_free(void* ptr); //de-allocate memory previously allocated with UA_mallo
 #endif
 
 #endif //ARCH_UA_ARCHITECTURE_BASE_H
-
-/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/arch/win32/ua_architecture.h" ***********************************/
-
-/* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
- * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
- *
- *    Copyright 2016-2017 (c) Julius Pfrommer, Fraunhofer IOSB
- *    Copyright 2017 (c) Stefan Profanter, fortiss GmbH
- */
-
-#ifdef UA_ARCHITECTURE_WIN32
-
-#ifndef PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_
-#define PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_
-
-
-#ifndef _BSD_SOURCE
-# define _BSD_SOURCE
-#endif
-
-/* Disable some security warnings on MSVC */
-#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-# define _CRT_SECURE_NO_WARNINGS
-#endif
-
-/* Assume that Windows versions are newer than Windows XP */
-#if defined(__MINGW32__) && (!defined(WINVER) || WINVER < 0x501)
-# undef WINVER
-# undef _WIN32_WINDOWS
-# undef _WIN32_WINNT
-# define WINVER 0x0600
-# define _WIN32_WINDOWS 0x0600
-# define _WIN32_WINNT 0x0600 //windows vista version, which included InepPton
-#endif
-
-#include <stdlib.h>
-#if defined(_WIN32) && !defined(__clang__)
-# include <malloc.h>
-#endif
-
-#include <stdio.h>
-#include <errno.h>
-#include <winsock2.h>
-#include <windows.h>
-#include <ws2tcpip.h>
-
-#if defined (_MSC_VER) || defined(__clang__)
-# ifndef UNDER_CE
-#  include <io.h> //access
-#  define UA_access _access
-# endif
-#else
-# include <unistd.h> //access and tests
-# define UA_access access
-#endif
-
-#define ssize_t int
-#define OPTVAL_TYPE char
-#ifndef UA_sleep_ms
-# define UA_sleep_ms(X) Sleep(X)
-#endif
-
-// Windows does not support ansi colors
-// #define UA_ENABLE_LOG_COLORS
-
-#define UA_IPV6 1
-
-#if defined(__MINGW32__) && !defined(__clang__) //mingw defines SOCKET as long long unsigned int, giving errors in logging and when comparing with UA_Int32
-# define UA_SOCKET int
-# define UA_INVALID_SOCKET -1
-#else
-# define UA_SOCKET SOCKET
-# define UA_INVALID_SOCKET INVALID_SOCKET
-#endif
-#define UA_ERRNO WSAGetLastError()
-#define UA_INTERRUPTED WSAEINTR
-#define UA_AGAIN WSAEWOULDBLOCK
-#define UA_EAGAIN EAGAIN
-#define UA_WOULDBLOCK WSAEWOULDBLOCK
-#define UA_ERR_CONNECTION_PROGRESS WSAEWOULDBLOCK
-
-#define UA_fd_set(fd, fds) FD_SET((UA_SOCKET)fd, fds)
-#define UA_fd_isset(fd, fds) FD_ISSET((UA_SOCKET)fd, fds)
-
-#ifdef UNDER_CE
-# define errno
-#endif
-
-#define UA_getnameinfo getnameinfo
-#define UA_send(sockfd, buf, len, flags) send(sockfd, buf, (int)(len), flags)
-#define UA_recv(sockfd, buf, len, flags) recv(sockfd, buf, (int)(len), flags)
-#define UA_sendto(sockfd, buf, len, flags, dest_addr, addrlen) sendto(sockfd, (const char*)(buf), (int)(len), flags, dest_addr, (int) (addrlen))
-#define UA_recvfrom(sockfd, buf, len, flags, src_addr, addrlen) recvfrom(sockfd, (char*)(buf), (int)(len), flags, src_addr, addrlen)
-#define UA_htonl htonl
-#define UA_ntohl ntohl
-#define UA_close closesocket
-#define UA_select(nfds, readfds, writefds, exceptfds, timeout) select((int)(nfds), readfds, writefds, exceptfds, timeout)
-#define UA_shutdown shutdown
-#define UA_socket socket
-#define UA_bind bind
-#define UA_listen listen
-#define UA_accept accept
-#define UA_connect(sockfd, addr, addrlen) connect(sockfd, addr, (int)(addrlen))
-#define UA_getaddrinfo getaddrinfo
-#define UA_getsockopt getsockopt
-#define UA_setsockopt(sockfd, level, optname, optval, optlen) setsockopt(sockfd, level, optname, (const char*) (optval), optlen)
-#define UA_freeaddrinfo freeaddrinfo
-#define UA_gethostname gethostname
-#define UA_getsockname getsockname
-#define UA_inet_pton InetPton
-
-#if UA_IPV6
-# include <iphlpapi.h>
-# define UA_if_nametoindex if_nametoindex
-#endif
-
-#ifdef maxStringLength //defined in mingw64
-# undef maxStringLength
-#endif
-
-#ifndef UA_free
-#define UA_free free
-#endif
-#ifndef UA_malloc
-#define UA_malloc malloc
-#endif
-#ifndef UA_calloc
-#define UA_calloc calloc
-#endif
-#ifndef UA_realloc
-#define UA_realloc realloc
-#endif
-
-/* 3rd Argument is the string */
-#define UA_snprintf(source, size, ...) _snprintf_s(source, size, _TRUNCATE, __VA_ARGS__)
-
-#define UA_LOG_SOCKET_ERRNO_WRAP(LOG) { \
-    char *errno_str = NULL; \
-    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, \
-    NULL, WSAGetLastError(), \
-    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), \
-    (LPSTR)&errno_str, 0, NULL); \
-    LOG; \
-    LocalFree(errno_str); \
-}
-#define UA_LOG_SOCKET_ERRNO_GAI_WRAP UA_LOG_SOCKET_ERRNO_WRAP
-
-
-/* Fix redefinition of SLIST_ENTRY on mingw winnt.h */
-#if !defined(_SYS_QUEUE_H_) && defined(SLIST_ENTRY)
-# undef SLIST_ENTRY
-#endif
-
-#endif /* PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_ */
-
-#endif /* UA_ARCHITECTURE_WIN32 */
 
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/arch/posix/ua_architecture.h" ***********************************/
 
@@ -13943,7 +13787,7 @@ _UA_END_DECLS
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/build/src_generated/open62541/types_generated.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/tools/generate_datatypes.py
- * on host altair-lubuntu64 by user julian at 2019-05-22 03:33:35 */
+ * on host altair-lubuntu64 by user julian at 2019-06-02 05:18:22 */
 
 
 #ifdef UA_ENABLE_AMALGAMATION
@@ -18849,7 +18693,7 @@ _UA_END_DECLS
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/build/src_generated/open62541/types_generated_handling.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/tools/generate_datatypes.py
- * on host altair-lubuntu64 by user julian at 2019-05-22 03:33:35 */
+ * on host altair-lubuntu64 by user julian at 2019-06-02 05:18:22 */
 
 
 
@@ -32490,7 +32334,7 @@ _UA_END_DECLS
 
 _UA_BEGIN_DECLS
 
-extern const UA_ByteString UA_SECURITY_POLICY_NONE_URI;
+extern UA_EXPORT const UA_ByteString UA_SECURITY_POLICY_NONE_URI;
 
 struct UA_SecurityPolicy;
 typedef struct UA_SecurityPolicy UA_SecurityPolicy;
@@ -33945,19 +33789,19 @@ typedef struct {
 #ifdef UA_ENABLE_DISCOVERY
 typedef struct {
 
-	/* Timeout in seconds when to automatically remove a registered server from
-	 * the list, if it doesn't re-register within the given time frame. A value
-	 * of 0 disables automatic removal. Default is 60 Minutes (60*60). Must be
-	 * bigger than 10 seconds, because cleanup is only triggered approximately
-	 * every 10 seconds. The server will still be removed depending on the
-	 * state of the semaphore file. */
-	UA_UInt32 cleanupTimeout;
+    /* Timeout in seconds when to automatically remove a registered server from
+     * the list, if it doesn't re-register within the given time frame. A value
+     * of 0 disables automatic removal. Default is 60 Minutes (60*60). Must be
+     * bigger than 10 seconds, because cleanup is only triggered approximately
+     * every 10 seconds. The server will still be removed depending on the
+     * state of the semaphore file. */
+    UA_UInt32 cleanupTimeout;
 
-	/* Enable mDNS announce and response to queries */
-	bool mdnsEnable;
+    /* Enable mDNS announce and response to queries */
+    bool mdnsEnable;
 
 #ifdef UA_ENABLE_DISCOVERY_MULTICAST
-	UA_MdnsDiscoveryConfiguration mdns;
+    UA_MdnsDiscoveryConfiguration mdns;
 #endif
 
 } UA_ServerConfig_Discovery;
@@ -34070,7 +33914,7 @@ struct UA_ServerConfig {
 
     /* Discovery */
 #ifdef UA_ENABLE_DISCOVERY
-	UA_ServerConfig_Discovery discovery;
+    UA_ServerConfig_Discovery discovery;
 #endif
 
 #ifdef UA_ENABLE_SUBSCRIPTIONS
@@ -36872,74 +36716,119 @@ _UA_END_DECLS
 #define UA_Nodestore_Switch_removeNode UA_Nodestore_removeNode
 #define UA_Nodestore_Switch_iterate UA_Nodestore_iterate
 
-/**
- * Nodestore interface and switch definition
+/*
+ * Nodestore interface
+ * Holds function pointers to the necessary nodestore functions
  */
 typedef struct {
-    /* Nodestore context and lifecycle */
-    void *context;
-    void (*deleteNodestore)(void *nodestoreContext);
+	/* Nodestore context and lifecycle */
+	void *context;
+	void (*deleteNodestore)(void *nsCtxt);
 
-    /* The following definitions are used to create empty nodes of the different
-     * node types. The memory is managed by the nodestore. Therefore, the node
-     * has to be removed via a special deleteNode function. (If the new node is
-     * not added to the nodestore.) */
-    UA_Node * (*newNode)(void *nodestoreContext, UA_NodeClass nodeClass);
+	/* The following definitions are used to create empty nodes of the different
+	 * node types. The memory is managed by the nodestore. Therefore, the node
+	 * has to be removed via a special deleteNode function. (If the new node is
+	 * not added to the nodestore.) */
+	UA_Node * (*newNode)(void *nsCtxt, UA_NodeClass nodeClass);
 
-    void (*deleteNode)(void *nodestoreContext, UA_Node *node);
+	void (*deleteNode)(void *nsCtxt, UA_Node *node);
 
-    /* ``Get`` returns a pointer to an immutable node. ``Release`` indicates
-     * that the pointer is no longer accessed afterwards. */
+	/* ``Get`` returns a pointer to an immutable node. ``Release`` indicates
+	 * that the pointer is no longer accessed afterwards. */
+	const UA_Node * (*getNode)(void *nsCtxt, const UA_NodeId *nodeId);
 
-    const UA_Node * (*getNode)(void *nodestoreContext, const UA_NodeId *nodeId);
+	void (*releaseNode)(void *nsCtxt, const UA_Node *node);
 
-    void (*releaseNode)(void *nodestoreContext, const UA_Node *node);
+	/* Returns an editable copy of a node (needs to be deleted with the
+	 * deleteNode function or inserted / replaced into the nodestore). */
+	UA_StatusCode (*getNodeCopy)(void *nsCtxt, const UA_NodeId *nodeId,
+			UA_Node **outNode);
 
-    /* Returns an editable copy of a node (needs to be deleted with the
-     * deleteNode function or inserted / replaced into the nodestore). */
-    UA_StatusCode (*getNodeCopy)(void *nodestoreContext, const UA_NodeId *nodeId,
-                                 UA_Node **outNode);
+	/* Inserts a new node into the nodestore. If the NodeId is zero, then a
+	 * fresh numeric NodeId is assigned. If insertion fails, the node is
+	 * deleted. */
+	UA_StatusCode (*insertNode)(void *nsCtxt, UA_Node *node,
+			UA_NodeId *addedNodeId);
 
-    /* Inserts a new node into the nodestore. If the NodeId is zero, then a
-     * fresh numeric NodeId is assigned. If insertion fails, the node is
-     * deleted. */
-    UA_StatusCode (*insertNode)(void *nodestoreContext, UA_Node *node,
-                                UA_NodeId *addedNodeId);
+	/* To replace a node, get an editable copy of the node, edit and replace
+	 * with this function. If the node was already replaced since the copy was
+	 * made, UA_STATUSCODE_BADINTERNALERROR is returned. If the NodeId is not
+	 * found, UA_STATUSCODE_BADNODEIDUNKNOWN is returned. In both error cases,
+	 * the editable node is deleted. */
+	UA_StatusCode (*replaceNode)(void *nsCtxt, UA_Node *node);
 
-    /* To replace a node, get an editable copy of the node, edit and replace
-     * with this function. If the node was already replaced since the copy was
-     * made, UA_STATUSCODE_BADINTERNALERROR is returned. If the NodeId is not
-     * found, UA_STATUSCODE_BADNODEIDUNKNOWN is returned. In both error cases,
-     * the editable node is deleted. */
-    UA_StatusCode (*replaceNode)(void *nodestoreContext, UA_Node *node);
+	/* Removes a node from the nodestore. */
+	UA_StatusCode (*removeNode)(void *nsCtxt, const UA_NodeId *nodeId);
 
-    /* Removes a node from the nodestore. */
-    UA_StatusCode (*removeNode)(void *nodestoreContext, const UA_NodeId *nodeId);
-
-    /* Execute a callback for every node in the nodestore. */
-    void (*iterate)(void *nsCtx, UA_NodestoreVisitor visitor,
-            void *visitorCtx);
+	/* Execute a callback for every node in the nodestore. */
+	void (*iterate)(void *nsCtx, UA_NodestoreVisitor visitor, void *visitorCtx);
 } UA_NodestoreInterface;
 
-typedef struct UA_Nodestore_Switch {
-	UA_UInt16 size;
-	UA_NodestoreInterface *defaultNodestore;
-	UA_NodestoreInterface **nodestoreArray;
-}UA_Nodestore_Switch;
-
-UA_StatusCode UA_Nodestore_Switch_newEmpty(void **nsCtx);
-UA_StatusCode UA_Nodestore_Default_Interface_new(UA_NodestoreInterface** nsInterface);
-void UA_Nodestore_copy(const UA_NodestoreInterface* src, UA_NodestoreInterface* dst);
-void UA_Nodestore_Switch_deleteNodestores(void *storeSwitchHandle);
+/*
+ * Forward declaration of nodestore switch
+ */
+struct UA_Nodestore_Switch;
+typedef struct UA_Nodestore_Switch UA_Nodestore_Switch;
 
 /*
- * Changes of namespace to nodestore mapping.
+ * Creates a Nodestore_Switch (like UA_Nodestore_new) but without a default nodestore inside
+ * Allocates memory for the switch
  */
-UA_StatusCode UA_Nodestore_Switch_linkDefaultNodestore(UA_Nodestore_Switch *pSwitch, UA_NodestoreInterface *ns);
-UA_StatusCode UA_Nodestore_Switch_changeNodestore(UA_Nodestore_Switch *pSwitch, void *nodestoreHandleOut, UA_NodestoreInterface *nsIn);
-UA_StatusCode UA_Nodestore_Switch_linkNodestoreToNamespace(UA_Nodestore_Switch *storeSwitch, UA_NodestoreInterface *ns, UA_UInt16 namespaceindex);
-UA_StatusCode UA_Nodestore_Switch_unlinkNodestoreFromNamespace(UA_Nodestore_Switch *storeSwitch, UA_NodestoreInterface *ns);
-void UA_Nodestore_Switch_linkSwitchToStore(UA_Nodestore_Switch *storeSwitch ,UA_NodestoreInterface *store);
+UA_StatusCode UA_EXPORT
+UA_Nodestore_Switch_newEmpty(void **nsCtx);
+/*
+ * Creates a new default nodestore and an interface to it
+ * Allocates memory for nodestore and the interface
+ * The handle to the default nodestore is placed inside the interface context (nsCtx)
+ */
+UA_StatusCode UA_EXPORT
+UA_Nodestore_Default_Interface_new(UA_NodestoreInterface** store);
+/*
+ * Gets the nodestore interface to an existing switch, which can be created via UA_Nodestore_new or UA_Nodestore_newEmpty
+ */
+UA_EXPORT UA_NodestoreInterface*
+UA_Nodestore_Switch_Interface_get(UA_Nodestore_Switch *storeSwitch);
+
+/*
+ * Returns the nodestore interface that is linked to the specified index
+ * If useDefault is true, the default nodestore is used if no custom nodestore was linked to the index
+ */
+UA_EXPORT UA_NodestoreInterface*
+UA_Nodestore_Switch_getNodestore(UA_Nodestore_Switch* storeSwitch,
+		UA_UInt16 index, UA_Boolean useDefault);
+/*
+ * Links a nodestore via its nodestore interface to the nodestore switch at the specified namespace index
+ * Set with store=NULL is equal to an unlink of the nodestore at the specified index
+ * The old store is only unlinked and not deleted
+ */
+UA_StatusCode UA_EXPORT
+UA_Nodestore_Switch_setNodestore(UA_Nodestore_Switch* storeSwitch,
+		UA_UInt16 index, UA_NodestoreInterface* store);
+/*
+ * Links the default nodestore via its nodestore interface to the nodestore switch
+ * Set with store=NULL is equal to an unlink of the default nodestore
+ * The old store is only unlinked and not deleted
+ * The default nodestore is used for every namespace, that has no custom nodestore set
+ */
+UA_StatusCode UA_EXPORT
+UA_Nodestore_Switch_setNodestoreDefault(UA_Nodestore_Switch* storeSwitch,
+		UA_NodestoreInterface* store);
+/*
+ * Replaces a nodestore in all occurances based on the same interface
+ * StoreNew=NULL is equal to a complete unlink of the oldNodestore
+ */
+UA_StatusCode UA_EXPORT
+UA_Nodestore_Switch_changeNodestore(UA_Nodestore_Switch* storeSwitch,
+		UA_NodestoreInterface *storeOld, UA_NodestoreInterface *storeNew);
+/*
+ * Gets all namespace indices linked to a nodestore interface in the switch
+ * Comparision of nodestores is based on the nodestore interface
+ * Returns count of occurances
+ * If indices parameter is not NULL an array of namespace indices is returned
+ */
+UA_StatusCode UA_EXPORT
+UA_Nodestore_Switch_getIndices(UA_Nodestore_Switch* storeSwitch,
+		UA_NodestoreInterface* store, UA_UInt16* count, UA_UInt16** indices);
 
 
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/include/open62541/network_tcp.h" ***********************************/

@@ -17,31 +17,31 @@
 #include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
 
-OV_DLLFNCEXPORT UA_UInt16 opcua_ovTrafo_searchNamespaceIndex(
-		OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pobj, OV_BOOL forTypes){
-	//Get ua server connected to this interface
-	if(pInterface == NULL)
-		return OPCUA_OVTRAFO_DEFAULTNSINDEX;
-	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
-	if(pServer == NULL)
-		return forTypes ? pInterface->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
-	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
-	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
-	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
-		if(pInterface == pInterfaceCheck)
-			continue;
-		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
-		if(pVtblInterface){
-			if(pVtblInterface->m_checkReference(pInterfaceCheck, pobj, NULL)){
-				return forTypes ? pInterfaceCheck->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
-			}
-		}
-	}
-	return OPCUA_OVTRAFO_DEFAULTNSINDEX;
-}
+//OV_DLLFNCEXPORT UA_UInt16 opcua_ovTrafo_searchNamespaceIndex(
+//		OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pobj, OV_BOOL forTypes){
+//	//Get ua server connected to this interface
+//	if(pInterface == NULL)
+//		return OPCUA_OVTRAFO_DEFAULTNSINDEX;
+//	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
+//	if(pServer == NULL)
+//		return forTypes ? pInterface->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
+//	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
+//	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+//	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
+//		if(pInterface == pInterfaceCheck)
+//			continue;
+//		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
+//		if(pVtblInterface){
+//			if(pVtblInterface->m_checkReference(pInterfaceCheck, pobj, NULL)){
+//				return forTypes ? pInterfaceCheck->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
+//			}
+//		}
+//	}
+//	return OPCUA_OVTRAFO_DEFAULTNSINDEX;
+//}
 
 OV_DLLFNCEXPORT OV_BOOL opcua_ovTrafo_addReferenceToSpecificObject(
-		OV_INSTPTR_opcua_server pServer, OV_INSTPTR_ov_object pobj, UA_Node* node){
+		OV_INSTPTR_opcua_server pServer, OV_UINT applicationIndex, OV_INSTPTR_ov_object pobj, UA_Node* node){
 	if(!pServer)
 		return FALSE;
 	UA_AddReferencesItem childReferenceItem;
@@ -51,7 +51,7 @@ OV_DLLFNCEXPORT OV_BOOL opcua_ovTrafo_addReferenceToSpecificObject(
 		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
 		if(pVtblInterface){
 			UA_AddReferencesItem_init(&childReferenceItem);
-			if(pVtblInterface->m_checkReference(pInterfaceCheck, pobj, &childReferenceItem)){
+			if(pVtblInterface->m_checkReference(pInterfaceCheck, applicationIndex, pobj, &childReferenceItem)){
 				UA_Node_addReference(node, &childReferenceItem);
 				UA_AddReferencesItem_deleteMembers(&childReferenceItem);
 				return TRUE;
@@ -86,9 +86,11 @@ static UA_StatusCode opcua_ovTrafo_addReference(
 		ov_string_stack_print(&path, "%s.%s", path, pElement->elemunion.pvar->v_identifier);
 	}
 
+	UA_ExpandedNodeId tmpNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(pInterface->v_index, path);
 	result = opcua_helpers_addReference(node, NULL, referenceTypeId,
-			UA_EXPANDEDNODEID_STRING(opcua_ovTrafo_searchNamespaceIndex(pInterface, pObject, FALSE), path),
+			tmpNodeId,
 			opcua_helpers_getNodeClass(pElement),isForward);
+	UA_ExpandedNodeId_deleteMembers(&tmpNodeId);
 	ov_memstack_unlock();
 	return result;
 }
@@ -116,13 +118,15 @@ static UA_StatusCode opcua_ovTrafo_addOrganizes(OV_INSTPTR_opcua_interface pInte
 	childElement.pobj = NULL;
 	childElement.pvalue = NULL;
 	childElement.pvar = NULL;
-	Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pNode->pobj), childElement.pobj){
-		childElement.elemunion.pobj = childElement.pobj;
-		// Check whether child has a specific transformation
-		if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, childElement.pobj, node))
-			// Child has no specific transformation --> use generic interface
-			statusCode |= opcua_ovTrafo_addReference(pInterface, &childElement,
-					UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, node);
+	if (Ov_CanCastTo(ov_domain, pNode->pobj)){
+		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pNode->pobj), childElement.pobj){
+			childElement.elemunion.pobj = childElement.pobj;
+			// Check whether child has a specific transformation
+			if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, pInterface->v_index, childElement.pobj, node))
+				// Child has no specific transformation --> use generic interface
+				statusCode |= opcua_ovTrafo_addReference(pInterface, &childElement,
+						UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, node);
+		}
 	}
 	// Backward / inverse direction
 	if(pNode->pobj->v_idL || pNode->pobj->v_idH){	// don't do it for ov root object ("/")
@@ -521,7 +525,7 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 	// BrowseName
 	UA_QualifiedName_init(&newNode->browseName);
 	newNode->browseName.name = UA_String_fromChars(pobj->v_identifier);
-	newNode->browseName.namespaceIndex = (pInterface->v_trafo) ? pInterface->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
+	newNode->browseName.namespaceIndex = pInterface->v_index;
 
 	// Description
 	UA_LocalizedText_init(&newNode->description);
@@ -627,13 +631,6 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 					} else {
 						/*	vector	*/
 						((UA_VariableNode*)newNode)->arrayDimensionsSize = 1;
-						((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new( ((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
-						if(!((UA_VariableNode*)newNode)->arrayDimensions){
-							result = UA_STATUSCODE_BADOUTOFMEMORY;
-							break;
-						} else {
-							result = UA_STATUSCODE_GOOD;
-						}
 						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
 						break;
 					}
@@ -657,13 +654,6 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 					} else {
 						/*	vector	*/
 						((UA_VariableNode*)newNode)->arrayDimensionsSize = 1;
-						((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
-						if(!((UA_VariableTypeNode*)newNode)->arrayDimensions){
-							result = UA_STATUSCODE_BADOUTOFMEMORY;
-							break;
-						} else {
-							result = UA_STATUSCODE_GOOD;
-						}
 						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
 						break;
 					}
@@ -766,13 +756,6 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 					} else {
 						/*	vector	*/
 						((UA_VariableNode*)newNode)->arrayDimensionsSize = 1;
-						((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new( ((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
-						if(!((UA_VariableNode*)newNode)->arrayDimensions){
-							result = UA_STATUSCODE_BADOUTOFMEMORY;
-							break;
-						} else {
-							result = UA_STATUSCODE_GOOD;
-						}
 						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
 						break;
 					}
@@ -796,13 +779,6 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 					} else {
 						/*	vector	*/
 						((UA_VariableNode*)newNode)->arrayDimensionsSize = 1;
-						((UA_VariableNode*)newNode)->arrayDimensions = UA_Array_new(((UA_VariableNode*)newNode)->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	/*	scalar or one dimension	*/
-						if(!((UA_VariableTypeNode*)newNode)->arrayDimensions){
-							result = UA_STATUSCODE_BADOUTOFMEMORY;
-							break;
-						} else {
-							result = UA_STATUSCODE_GOOD;
-						}
 						result = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobjtemp)->v_veclen), ((UA_VariableNode*)newNode)->arrayDimensionsSize, (void**)&(((UA_VariableNode*)newNode)->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
 						break;
 					}

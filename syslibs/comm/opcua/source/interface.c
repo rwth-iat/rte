@@ -123,7 +123,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 	UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server->v_server);
 	// Link the nodestore (transformation) to the namespace in the switch
 	if(pobj->v_store){
-		result = UA_Nodestore_Switch_linkNodestoreToNamespace(nsSwitch, pobj->v_store, pobj->v_index);
+		result = UA_Nodestore_Switch_setNodestore(nsSwitch, pobj->v_index, pobj->v_store);
 		if (result != UA_STATUSCODE_GOOD){
 			return OV_ERR_GENERIC;
 		}
@@ -136,6 +136,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 	if (result != UA_STATUSCODE_GOOD){
 		return OV_ERR_GENERIC;
 	}
+
     return OV_ERR_OK;
 }
 
@@ -175,7 +176,11 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj
 
 	UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server->v_server);
 	// Unlink the nodestore from the namespace
-	UA_Nodestore_Switch_unlinkNodestoreFromNamespace(nsSwitch, pobj->v_store);
+	UA_Nodestore_Switch_changeNodestore(nsSwitch, pobj->v_store, NULL);
+
+
+	pobj->v_store->iterate(pobj->v_store->context, (UA_NodestoreVisitor)pobj->v_store->removeNode, pobj->v_store->context);
+
 	return OV_ERR_OK;
 }
 
@@ -185,7 +190,7 @@ OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkNode(OV_INSTPTR_opcua_interface pob
     return TRUE;
 }
 
-OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
+OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_UINT applicationIndex, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
 
     return FALSE;
 }

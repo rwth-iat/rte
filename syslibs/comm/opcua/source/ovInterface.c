@@ -79,8 +79,10 @@ OV_DLLFNCEXPORT void opcua_ovInterface_destructor(
 
     /* do what */
     ov_string_setvalue(&pinst->v_uri, NULL);
-    opcua_ovStore_delete(pinst->v_store);
-    opcua_ovStore_delete(pinst->v_trafo);
+    if (pinst->v_store)
+    	opcua_ovStore_delete(pinst->v_store);
+    if (pinst->v_trafo)
+    	opcua_ovTrafo_delete(pinst->v_trafo);
 
     /* destroy object */
     ov_object_destructor(pobj);

@@ -25,6 +25,59 @@
 #include "libov/ov_macros.h"
 #include "opcua_helpers.h"
 
+
+OV_DLLFNCEXPORT OV_RESULT opcua_server_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_opcua_server pinst = Ov_StaticPtrCast(opcua_server, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = ksbase_ComTask_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    //Create new server
+	UA_Server *server = UA_Server_new();
+	if(!server){
+		ov_string_setvalue(&pinst->v_errorText, "UA_Server_new failed.");
+		pinst->v_error = TRUE;
+		return OV_ERR_GENERIC;
+	}
+	pinst->v_server = server;
+
+
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT void opcua_server_destructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_opcua_server pinst = Ov_StaticPtrCast(opcua_server, pobj);
+
+    /* do what */
+    //Delete config and server
+	//TODO unload interfaces
+	UA_Server_delete(pinst->v_server);
+
+
+    /* destroy object */
+    ksbase_ComTask_destructor(pobj);
+
+    return;
+}
+
+
+
+
+
 UA_StatusCode opcua_server_createConfig(UA_Server* server, OV_INSTPTR_opcua_serverConfig pOvConfig){
     //Create new config with port if pOvConfig is available
 
@@ -83,39 +136,23 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 
 	if(value != pobj->v_run){
 		if(value){ //start server
-		    //Create new server
-			ov_logfile_info("Starting Server");
-		    UA_Server *server = UA_Server_new();
-		    if(!server){
-	            ov_string_setvalue(&pobj->v_errorText, "UA_Server_new failed.");
-	            pobj->v_error = TRUE;
-	            return OV_ERR_GENERIC;
-		    }
-
-		    ov_logfile_info("Created Server");
 		    //Create new config and update from linked config in ov
 			OV_INSTPTR_opcua_serverConfig pOvConfig = Ov_GetFirstChild(opcua_configToServer, pobj);
-			retval = opcua_server_createConfig(server, pOvConfig);
+			retval = opcua_server_createConfig(pobj->v_server, pOvConfig);
 			if(retval != UA_STATUSCODE_GOOD){
-				UA_Server_delete(server);
 				ov_string_print(&pobj->v_errorText, "UA_Server_run_startup failed: %s" , UA_StatusCode_name(retval));
 				pobj->v_error = TRUE;
 				return OV_ERR_GENERIC;
 			}
-
-			ov_logfile_info("New Config");
 
 		    //Startup server
-			retval = UA_Server_run_startup(server);
+			retval = UA_Server_run_startup(pobj->v_server);
 			if(retval != UA_STATUSCODE_GOOD){
-				UA_Server_delete(server);
 				ov_string_print(&pobj->v_errorText, "UA_Server_run_startup failed: %s" , UA_StatusCode_name(retval));
 				pobj->v_error = TRUE;
 				return OV_ERR_GENERIC;
 			}
-			ov_logfile_info("Startup Server");
 
-			pobj->v_server = server;
 			pobj->v_isRunning = TRUE;
 
 			//Add opc.tcp port and protocol to server representation
@@ -139,9 +176,18 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 					pVtblInterface->m_load(pInterface, FALSE);
 				}
 			}
-			ov_logfile_info("Loaded Interfaces");
 
 		}else{ //shutdown server
+
+			//Unload all interfaces, that are linked with associations
+			OV_INSTPTR_opcua_interface pInterface = NULL;
+			OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
+			Ov_ForEachChild(opcua_serverToInterfaces, pobj, pInterface){
+				Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterface);
+				if(pVtblInterface){
+					pVtblInterface->m_unload(pInterface);
+				}
+			}
 
 			//Shutdown server
 			retval = UA_Server_run_shutdown(pobj->v_server); //Always returns good
@@ -153,9 +199,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 					2, //TODO define constant for ov version, as vendortree version is 1.3.1 or 2.0.0
 					"OPC.TCP");//TODO get from config : config->endpoints->endpointDescription.... or config->networkLayers-> ...
 
-			//Delete config and server
-		    //TODO unload interfaces
-			UA_Server_delete(pobj->v_server);
 			pobj->v_isRunning = FALSE;
 
 			if(retval != UA_STATUSCODE_GOOD){ //Never gone happen based on current implementation

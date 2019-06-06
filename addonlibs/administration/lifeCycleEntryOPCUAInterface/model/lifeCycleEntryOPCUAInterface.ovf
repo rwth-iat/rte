@@ -14,12 +14,14 @@ typedef UA_StatusCode LCE_FNC_OVLIFECYCLEENTRIESNODETOOPCUA(void *handle, const 
 typedef UA_StatusCode LCE_FNC_OVLIFECYCLEARCHIVEMETHODNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode LCE_FNC_OVLIFECYCLEENTRYNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 
-typedef UA_NodestoreInterface* LCE_FNC_OVNODESTOREINTERFACELIFECYCLEENTRYNEW(void);
-typedef void LCE_FNC_OVNODESTOREINTERFACELIFECYCLEENTRYDELETE(UA_NodestoreInterface * nsi);
+typedef UA_NodestoreInterface* LCE_FNC_OVNODESTOREINTERFACELIFECYCLEENTRYNEW(OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface context);
+typedef void LCE_FNC_OVNODESTOREINTERFACELIFECYCLEENTRYDELETE(UA_NodestoreInterface * store);
 	
-typedef UA_StatusCode LCE_FNC_METHODCALLBACKARCHIV(void *methodHandle, const UA_NodeId *objectId,
-                 const UA_NodeId *sessionId, void *sessionHandle,
-                 size_t inputSize, const UA_Variant *input,
-                 size_t outputSize, UA_Variant *output);
+typedef UA_StatusCode LCE_FNC_METHODCALLBACKARCHIV(UA_Server *server,
+                     const UA_NodeId *sessionId, void *sessionContext,
+					 const UA_NodeId *methodId, void *methodContext,
+					 const UA_NodeId *objectId, void *objectContext,
+                     size_t inputSize, const UA_Variant *input,
+                     size_t outputSize, UA_Variant *output);
 
 #endif
