@@ -23,37 +23,35 @@
 #include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "nodeset_openaas.h"
-
-extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
-
+#include "opcua_ovTrafo.h"
 
 
 OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
-		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
+		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
 	OV_ELEMENT				element;
 
+	OV_INSTPTR_openaasOPCUAInterface_interface 	pInterface = Ov_StaticPtrCast(openaasOPCUAInterface_interface, context);
+
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(*nodeId, &path);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
@@ -112,40 +110,29 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovAASNodeToOPCUA(
 
 	((UA_ObjectNode*)newNode)->eventNotifier = 0;
 
-	addReference(newNode);
-	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	OV_STRING tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".Header");
-	UA_String tmpStringHeader = UA_String_fromChars(tmpString);
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".Body");
-	UA_String tmpStringBody = UA_String_fromChars(tmpString);
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".AASID");
-	UA_String tmpStringAASID = UA_String_fromChars(tmpString);
-	ov_string_setvalue(&tmpString, NULL);
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".AssetID");
-	UA_String tmpStringAssetID = UA_String_fromChars(tmpString);
-	ov_string_setvalue(&tmpString, NULL);
-	for (size_t i = 0; i < newNode->referencesSize; i++){
-		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSOPENAASID_ASSETADMINITRATIONSHELLTYPE);
-			continue;
-		}else if(UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringHeader) ||
-				 UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringBody) ||
-				 UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringAASID) ||
-				 UA_String_equal(&newNode->references[i].targetId.nodeId.identifier.string, &tmpStringAssetID)){
-			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;
-			continue;
-		}
-	}
-	UA_NodeId_deleteMembers(&tmpNodeId);
-	UA_String_deleteMembers(&tmpStringHeader);
-	UA_String_deleteMembers(&tmpStringBody);
-	UA_String_deleteMembers(&tmpStringAASID);
-	UA_String_deleteMembers(&tmpStringAssetID);
+	// References
+	OV_UINT direction = OPCUA_OVTRAFO_ADDHASPROPERTY_FORWARD
+								|	OPCUA_OVTRAFO_ADDHASCOMPONENT_FORWARD
+								|	OPCUA_OVTRAFO_ADDORGANIZES_FORWARD
+								|	OPCUA_OVTRAFO_ADDHASSUBTYPE_FORWARD;
+
+	opcua_ovTrafo_addReferences(Ov_StaticPtrCast(opcua_interface, context), newNode, direction);
+
+	// Parrent
+	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	ov_memstack_lock();
+	UA_ExpandedNodeId NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, ov_path_getcanonicalpath(pParent, 2));
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
+			NodeId, //TODO use checkNodeId function of correct interface instead.
+			UA_NODECLASS_OBJECT, UA_FALSE);
+	UA_ExpandedNodeId_deleteMembers(&NodeId);
+	ov_memstack_unlock();
+
+	// Type
+	NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSOPENAASID_ASSETADMINITRATIONSHELLTYPE);
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
+			NodeId, UA_NODECLASS_OBJECTTYPE,
+			UA_TRUE);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

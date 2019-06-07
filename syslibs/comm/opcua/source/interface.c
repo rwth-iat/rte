@@ -105,12 +105,13 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 		}
 	}
 
-	// Load all dependent interfaces first
+	//Load all dependent interfaces first
 	OV_INSTPTR_opcua_interface dependentInterface = NULL;
 	Ov_ForEachChild(opcua_interfaceDependency, pobj, dependentInterface){
 		opcua_interface_load(dependentInterface, FALSE);
 		//TODO error handling
 	}
+
 
 	// Add NamespaceUri
 	// Get the namespace index if already added, otherwise add to the end
@@ -124,7 +125,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 	}
 
 	UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server->v_server);
-	// Link the nodestore to the namespace in the switch
+	// Link the nodestore (transformation) to the namespace in the switch
 	if(pobj->v_store){
 		result = UA_Nodestore_Switch_setNodestore(nsSwitch, pobj->v_index, pobj->v_store);
 		if (result != UA_STATUSCODE_GOOD){

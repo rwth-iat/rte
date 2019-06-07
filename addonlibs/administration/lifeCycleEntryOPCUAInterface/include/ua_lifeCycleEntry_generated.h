@@ -5,6 +5,7 @@
 #define LIFECYCLEENTRY_GENERATED_H_
 
 #include "open62541.h"
+#include "ua_identification_generated.h"
 
 _UA_BEGIN_DECLS
 
@@ -13,32 +14,8 @@ _UA_BEGIN_DECLS
  * Every type is assigned an index in an array containing the type descriptions.
  * These descriptions are used during type handling (copying, deletion,
  * binary encoding, ...). */
-#define UA_LIFECYCLEENTRY_COUNT 3
+#define UA_LIFECYCLEENTRY_COUNT 1
 extern UA_EXPORT const UA_DataType UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_COUNT];
-
-/**
- * IdEnum
- * ^^^^^^
- */
-typedef enum {
-    UA_IDENUM_URI = 0,
-    UA_IDENUM_ISO = 1,
-    __UA_IDENUM_FORCE32BIT = 0x7fffffff
-} UA_IdEnum;
-UA_STATIC_ASSERT(sizeof(UA_IdEnum) == sizeof(UA_Int32), enum_must_be_32bit);
-
-#define UA_LIFECYCLEENTRY_IDENUM 0
-
-/**
- * Identification
- * ^^^^^^^^^^^^^^
- */
-typedef struct {
-    UA_String idSpec;
-    UA_IdEnum idType;
-} UA_Identification;
-
-#define UA_LIFECYCLEENTRY_IDENTIFICATION 1
 
 /**
  * LifeCycleEntry
@@ -53,7 +30,7 @@ typedef struct {
     UA_UInt64 id;
 } UA_LifeCycleEntry;
 
-#define UA_LIFECYCLEENTRY_LIFECYCLEENTRY 2
+#define UA_LIFECYCLEENTRY_LIFECYCLEENTRY 1
 
 
 _UA_END_DECLS

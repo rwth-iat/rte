@@ -174,7 +174,19 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceVariable
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 
 	// References
-	opcua_ovTrafo_addReferences(context, newNode);
+	OV_UINT direction = OPCUA_OVTRAFO_ADDHASPROPERTY_FORWARD
+							|	OPCUA_OVTRAFO_ADDHASPROPERTY_BACKWARD
+							|	OPCUA_OVTRAFO_ADDHASCOMPONENT_FORWARD
+							|	OPCUA_OVTRAFO_ADDHASCOMPONENT_BACKWARD
+							|	OPCUA_OVTRAFO_ADDORGANIZES_FORWARD
+							|	OPCUA_OVTRAFO_ADDORGANIZES_BACKWARD
+							|	OPCUA_OVTRAFO_ADDHASTYPEDEFINITION_FORWARD
+							|	OPCUA_OVTRAFO_ADDHASTYPEDEFINITION_BACKWARD
+							|	OPCUA_OVTRAFO_ADDHASSUBTYPE_FORWARD
+							|	OPCUA_OVTRAFO_ADDHASSUBTYPE_BACKWARD;
+
+	opcua_ovTrafo_addReferences(Ov_StaticPtrCast(opcua_interface, context), newNode, direction);
+
 	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
 	for (size_t i = 0; i < newNode->referencesSize; i++){
 		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){

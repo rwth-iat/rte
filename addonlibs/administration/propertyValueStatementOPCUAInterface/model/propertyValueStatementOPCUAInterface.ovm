@@ -1,6 +1,7 @@
 #include "ov.ovm"
 #include "propertyValueStatement.ovm" 
 #include "identificationOPCUAInterface.ovm"
+#include "opcua.ovm"
 
 LIBRARY propertyValueStatementOPCUAInterface
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -13,13 +14,10 @@ LIBRARY propertyValueStatementOPCUAInterface
 		@note Javadoc syntax is allowed here.
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/
-	CLASS interface : CLASS ov/object
+	CLASS interface : CLASS opcua/interface
 		IS_INSTANTIABLE;
         COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
-        VARIABLES
-            modelnamespace : C_TYPE <UA_Namespace>;
-            interfacenamespace : C_TYPE <UA_Namespace>;
-            modelnamespaceIndexIdentification : UINT;
+        VARIABLES  
         END_VARIABLES;
         OPERATIONS
             ovNodeStoreInterfacePropertyValueStatementNew : C_FUNCTION <PVS_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTNEW>;
@@ -28,16 +26,16 @@ LIBRARY propertyValueStatementOPCUAInterface
             ovPropertyValueStatementListNodeToOPCUA : C_FUNCTION <PVS_FNC_OVPROPERTYVALUESTATEMENTLISTNODETOOPCUA>;
             ovPropertyValueStatementNodeToOPCUA : C_FUNCTION <PVS_FNC_OVPROPERTYVALUESTATEMENTNODETOOPCUA>;
             ovPropertyValueStatementValueNodeToOPCUA : C_FUNCTION <PVS_FNC_OVPROPERTYVALUESTATEMENTVALUENODETOOPCUA>;
-            ovPropertyIdCarrierIdNodeToOPCUA : C_FUNCTION <PVS_FNC_OVPROPERTYIDCARRIERIDNODETOOPCUA>;
             ovExpressionLogicNodeToOPCUA : C_FUNCTION <PVS_FNC_OVEXPRESSIONLOGICNODETOOPCUA>;
             ovExpressionSemanticNodeToOPCUA : C_FUNCTION <PVS_FNC_OVEXPRESSIONSEMANTICNODETOOPCUA>;
             ovViewNodeToOPCUA : C_FUNCTION <PVS_FNC_OVVIEWNODETOOPCUA>;
             ovVisibilityNodeToOPCUA : C_FUNCTION <PVS_FNC_OVVISIBILITYNODETOOPCUA>;    
             
-            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            startup: C_FUNCTION <OV_FNC_STARTUP>;
-            destructor: C_FUNCTION <OV_FNC_DESTRUCTOR>;
-            getaccess        :    C_FUNCTION    <OV_FNC_GETACCESS>;
+            constructor 	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            destructor		: C_FUNCTION <OV_FNC_DESTRUCTOR>;
+            checkNode       : C_FUNCTION <OPCUA_FNC_CHECKNODE>;
+            checkReference  : C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>; 
+            nodeset			: C_FUNCTION <OPCUA_FNC_NODESET>;   
         END_OPERATIONS;
 	END_CLASS;
 	

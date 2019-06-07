@@ -65,6 +65,9 @@ OV_DLLFNCEXPORT void opcua_server_destructor(
     /* do what */
     //Delete config and server
 	//TODO unload interfaces
+    if (pinst->v_run == TRUE){
+    	opcua_server_run_set(pinst, FALSE);
+    }
 	UA_Server_delete(pinst->v_server);
 
 

@@ -12,7 +12,6 @@
 typedef UA_StatusCode PVS_FNC_OVPROPERTYVALUESTATEMENTLISTNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode PVS_FNC_OVPROPERTYVALUESTATEMENTNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode PVS_FNC_OVPROPERTYVALUESTATEMENTVALUENODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode PVS_FNC_OVPROPERTYIDCARRIERIDNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode PVS_FNC_OVEXPRESSIONLOGICNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode PVS_FNC_OVEXPRESSIONSEMANTICNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode PVS_FNC_OVVIEWNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
@@ -21,7 +20,7 @@ typedef UA_StatusCode PVS_FNC_OVVISIBILITYNODETOOPCUA(void *handle, const UA_Nod
     
 
 /* nodestore interfacing functions */
-typedef UA_NodestoreInterface* PVS_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTNEW(void);
-typedef void PVS_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTDELETE(UA_NodestoreInterface * nsi);
+typedef UA_NodestoreInterface* PVS_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTNEW(OV_INSTPTR_propertyValueStatementOPCUAInterface_interface context);
+typedef void PVS_FNC_OVNODESTOREINTERFACEPROPERTYVALUESTATEMENTDELETE(UA_NodestoreInterface * context);
 
 #endif

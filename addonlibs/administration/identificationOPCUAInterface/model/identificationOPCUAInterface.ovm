@@ -19,7 +19,11 @@ LIBRARY identificationOPCUAInterface
 		IS_INSTANTIABLE;
         COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
         OPERATIONS
-        	//TODO move functions to own header.            
+        	//TODO move functions to own header.     
+        	ovNodeStoreInterfaceIdentificationNew : C_FUNCTION <IDENTIFCATION_FNC_OVNODESTOREINTERFACEIDENTIFCATIONNEW>;
+            ovNodeStoreInterfaceIdentificationDelete : C_FUNCTION <IDENTIFCATION_FNC_OVNODESTOREINTERFACEIDENTIFCATIONDELETE>; 
+        	ovIdentificationNodeToOPCUA : C_FUNCTION <IDENTIFCATION_FNC_OVIDENTIFICATIONNODETOOPCUA>;
+        	      
             constructor 	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             destructor		: C_FUNCTION <OV_FNC_DESTRUCTOR>;
             checkNode       : C_FUNCTION <OPCUA_FNC_CHECKNODE>;

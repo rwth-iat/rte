@@ -2,7 +2,7 @@
  *
  *   FILE
  *   ----
- *   nodeStoreFunctions.c
+ *   helpers.c
  *
  *   History
  *   -------
@@ -28,14 +28,11 @@
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "nodeset_propertyValueStatement.h"
-
-extern OV_INSTPTR_propertyValueStatementOPCUAInterface_interface pinterface;
-
-
+#include "opcua_ovTrafo.h"
 
 
 OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovPropertyValueStatementValueNodeToOPCUA(
-		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
+		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
@@ -45,12 +42,12 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	OV_STRING 				*plist = NULL;
 	OV_ELEMENT				element;
 
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
+	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, ".", &len);
 
 	ov_memstack_lock();
 
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(*nodeId, &path);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
@@ -294,17 +291,24 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 	// historizing
 	((UA_VariableNode*)newNode)->historizing = UA_FALSE;
 
-
 	// References
-	addReference(newNode);
-	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	for (size_t i = 0; i < newNode->referencesSize; i++){
-		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
-			break;
-		}
-	}
-	UA_NodeId_deleteMembers(&tmpNodeId);
+	// ParentNode
+	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, ov_path_getobjectpointer(tmpString, 2)));
+	ov_memstack_lock();
+	UA_ExpandedNodeId NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, ov_path_getcanonicalpath(pParent, 2));
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE),
+			NodeId, UA_NODECLASS_OBJECT, UA_FALSE);
+	UA_ExpandedNodeId_deleteMembers(&NodeId);
+	ov_memstack_unlock();
+
+
+	// Type
+	NodeId = UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE);
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
+			NodeId, UA_NODECLASS_OBJECTTYPE,
+			UA_TRUE);
+
+	ov_string_setvalue(&tmpString, NULL);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

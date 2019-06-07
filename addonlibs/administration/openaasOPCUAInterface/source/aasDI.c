@@ -135,7 +135,7 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_aasDI_typemethod(
     ov_string_append(&ipAddress, pinst->v_AssetIPAddress);
     ov_string_append(&ipAddress, ":16664");
 
-    UA_Client *client = UA_Client_new(UA_ClientConfig_standard);
+    UA_Client *client = UA_Client_new();
 	UA_StatusCode retval = UA_Client_connect(client, ipAddress);
 	if (retval != UA_STATUSCODE_GOOD) {
 		UA_Client_delete(client);
@@ -194,17 +194,17 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_aasDI_typemethod(
 				UA_LifeCycleEntry_decodeBinary(&ext.content.encoded.body, &offset,
 						&tmpUALifeCycleEntry);
 
-				copyOPCUAStringToOV(tmpUALifeCycleEntry.creatingInstance.idSpec, &lce.creatingInstance.IdSpec);
+				opcua_helpers_copyUAStringToOV(tmpUALifeCycleEntry.creatingInstance.idSpec, &lce.creatingInstance.IdSpec);
 				lce.creatingInstance.IdType = tmpUALifeCycleEntry.creatingInstance.idType;
 
-				copyOPCUAStringToOV(tmpUALifeCycleEntry.writingInstance.idSpec, &lce.writingInstance.IdSpec);
+				opcua_helpers_copyUAStringToOV(tmpUALifeCycleEntry.writingInstance.idSpec, &lce.writingInstance.IdSpec);
 				lce.writingInstance.IdType = tmpUALifeCycleEntry.writingInstance.idType;
 
-				copyOPCUAStringToOV(tmpUALifeCycleEntry.eventClass, &lce.eventClass);
+				opcua_helpers_copyUAStringToOV(tmpUALifeCycleEntry.eventClass, &lce.eventClass);
 
-				copyOPCUAStringToOV(tmpUALifeCycleEntry.subject, &lce.subject);
+				opcua_helpers_copyUAStringToOV(tmpUALifeCycleEntry.subject, &lce.subject);
 
-				ov_VariantToAny(&tmpUALifeCycleEntry.data.value, &lce.data);
+				opcua_helpers_UAVariantToOVAny(&tmpUALifeCycleEntry.data.value, &lce.data);
 				lce.data.time = ov_1601nsTimeToOvTime(tmpUALifeCycleEntry.data.sourceTimestamp);
 
 				//openaas_modelmanager_createLCE(aasId, lce);
