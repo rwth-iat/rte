@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT OV_RESULT lifeCycleEntryOPCUAInterface_interface_constructor(
 
     /* do what */
     pinst->v_index = 0;
-	ov_string_setvalue(&pinst->v_uri, "acplt.org/lifeCycleEntry/"); //Will be overwritten by config->applicationDescription.applicationUri
+	ov_string_setvalue(&pinst->v_uri, "acplt.org/lifeCycleEntry/");
 	UA_Nodestore_Default_Interface_new(&pinst->v_store);
 	UA_DataTypeArray *plifeCycleEntryTypes = (UA_DataTypeArray*)UA_malloc(sizeof(UA_DataTypeArray));
 	UA_DataTypeArray lifeCycleEntryTypes = {NULL, UA_LIFECYCLEENTRY_COUNT, UA_LIFECYCLEENTRY};

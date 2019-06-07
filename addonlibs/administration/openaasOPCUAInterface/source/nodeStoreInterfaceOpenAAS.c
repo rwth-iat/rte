@@ -13,7 +13,6 @@
 #include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
@@ -24,7 +23,6 @@
 #include "ua_propertyValueStatement_generated.h"
 #include "ua_propertyValueStatement_generated_handling.h"
 #include "openaas_helpers.h"
-#include "servicesOPCUAInterface.h"
 
 
 OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_MethodCallbackModelmanager(UA_Server *server, const UA_NodeId *sessionId,
@@ -756,15 +754,6 @@ static const UA_Node * openaasOPCUAInterface_getNode(void *context, const UA_Nod
 				tmpNode = opcuaNode;
 		}else if (ov_string_compare(plist2[len2-1], "Body") == OV_STRCMP_EQUAL){
 			if (openaasOPCUAInterface_interface_ovFolderNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-				tmpNode = opcuaNode;
-		}else if (ov_string_compare(plist2[len2-1], "Revision") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-				tmpNode = opcuaNode;
-		}else if (ov_string_compare(plist2[len2-1], "ModelId") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
-				tmpNode = opcuaNode;
-		}else if (ov_string_compare(plist2[len2-1], "Version") == OV_STRCMP_EQUAL){
-			if (openaasOPCUAInterface_interface_ovSubModelVariablesNodeToOPCUA(context, nodeId, &opcuaNode) == UA_STATUSCODE_GOOD)
 				tmpNode = opcuaNode;
 		}
 	}else{

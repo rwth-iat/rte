@@ -32,27 +32,6 @@ static void removeAllNodes(void *visitorCtx, const UA_Node *node){
 	nsi->removeNode(nsi->context, &node->nodeId);
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_interface_uri_set(
-    OV_INSTPTR_opcua_interface          pobj,
-    const OV_STRING  value
-) {
-	// Check for valid namespace uri
-	if(ov_string_getlength(value) == 0){
-		return OV_ERR_BADNAME;
-	}
-	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
-	// Change trafo
-
-	if(server != NULL && server->v_isRunning){
-		UA_String trafoUri = UA_String_fromChars(value);
-		UA_String oldUri = UA_String_fromChars(pobj->v_uri);
-		opcua_interface_setNamespace(server->v_server, oldUri, trafoUri, NULL);
-		// Change internal URIs
-		ov_string_setvalue(&pobj->v_uri, value);
-	}
-    return OV_ERR_OK;
-}
-
 
 //TODO use macro
 OV_DLLFNCEXPORT OV_ACCESS opcua_interface_getaccess(

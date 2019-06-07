@@ -26,12 +26,14 @@ LIBRARY opcua
                 FLAGS = "n"
                 COMMENT = "Interface specific OPCUA data types for opcua internal handling";
 			uri		:    STRING 
-    		   	HAS_SET_ACCESSOR
-    		   	FLAGS = "i"
+    		   	FLAGS = "o"
     		   	COMMENT = "Namespace (application) uri.";
 			index	:    UINT
-    		   	FLAGS = "i"
-    		   	COMMENT = "Namespace index for instances and types";   
+    		   	FLAGS = "o"
+    		   	COMMENT = "Namespace index for instances and types";  
+    		dependentUri[]		:    STRING 
+    		   	FLAGS = "o"
+    		   	COMMENT = "Dependent Namespace uris.";
     	END_VARIABLES;
     	OPERATIONS
             getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;

@@ -43,7 +43,7 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatementOPCUAInterface_interface_constru
 
     /* do what */
     pinst->v_index = 0;
-	ov_string_setvalue(&pinst->v_uri, "acplt.org/propertyValueStatement/"); //Will be overwritten by config->applicationDescription.applicationUri
+	ov_string_setvalue(&pinst->v_uri, "acplt.org/propertyValueStatement/");
 	UA_Nodestore_Default_Interface_new(&pinst->v_store);
 	UA_DataTypeArray *pPropertyValueStatmentTypes = (UA_DataTypeArray*)UA_malloc(sizeof(UA_DataTypeArray));
 	UA_DataTypeArray propertyValueStatmentTypes = {NULL, UA_PROPERTYVALUESTATEMENT_COUNT, UA_PROPERTYVALUESTATEMENT};

@@ -1,6 +1,5 @@
 #include "ov.ovm"
 #include "propertyValueStatement.ovm" 
-#include "identificationOPCUAInterface.ovm"
 #include "opcua.ovm"
 
 LIBRARY propertyValueStatementOPCUAInterface

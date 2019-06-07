@@ -42,7 +42,9 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
 
     /* do what */
     pinst->v_index = 0;
-	ov_string_setvalue(&pinst->v_uri, "acplt.org/openaas/"); //Will be overwritten by config->applicationDescription.applicationUri
+	ov_string_setvalue(&pinst->v_uri, "acplt.org/openaas/");
+	Ov_SetDynamicVectorLength(&pinst->v_dependentUri, 1, STRING);
+	ov_string_setvalue(&pinst->v_dependentUri.value[0], "acplt.org/identification/");
 	UA_Nodestore_Default_Interface_new(&pinst->v_store);
 	pinst->v_dataTypes = NULL;
 	pinst->v_trafo = openaasOPCUAInterface_interface_ovNodeStoreInterfaceOpenAASNew(pinst);

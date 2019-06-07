@@ -5,7 +5,6 @@
 #include "identificationOPCUAInterface.ovm"
 #include "propertyValueStatementOPCUAInterface.ovm"
 #include "lifeCycleEntryOPCUAInterface.ovm"
-#include "servicesOPCUAInterface.ovm"
 
 LIBRARY openaasOPCUAInterface
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -22,16 +21,12 @@ LIBRARY openaasOPCUAInterface
 		IS_INSTANTIABLE;
 		COMMENT    =    "Implementations of nodestore functions to build up the interface between stack an ov-data";
 		VARIABLES
-			identificationInterface	:    C_TYPE <OV_INSTPTR_opcua_interface> 
-    		   	FLAGS = "i"
-    		   	COMMENT = "Namespace index for instances and types of identification";
 		END_VARIABLES;
 		OPERATIONS
 			ovModelManagerNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERNODETOOPCUA>;
 	        ovModelManagerMethodNodeToOPCUA : C_FUNCTION <UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA>;
 	        ovAASNodeToOPCUA : C_FUNCTION <UA_FNC_OVAASNODETOOPCUA>;
 	        ovSubModelNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSUBMODELNODETOOPCUA>;
-	        ovSubModelVariablesNodeToOPCUA  : C_FUNCTION <UA_FNC_OVSUBMODELVARIABLESNODETOOPCUA>;
         	ovFolderNodeToOPCUA : C_FUNCTION <UA_FNC_OVFOLDERNODETOOPCUA>;
 	         
 	        ovNodeStoreInterfaceOpenAASNew : C_FUNCTION <UA_FNC_OVNODESTOREINTERFACEOPENAASNEW>;

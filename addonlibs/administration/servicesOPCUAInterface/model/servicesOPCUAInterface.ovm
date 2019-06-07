@@ -1,8 +1,6 @@
 #include "ov.ovm"
 #include "opcua.ovm"
-#include "identification.ovm"
 #include "services.ovm"
-#include "identificationOPCUAInterface.ovm"
 
 LIBRARY servicesOPCUAInterface
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
