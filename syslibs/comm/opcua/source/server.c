@@ -43,10 +43,13 @@ UA_StatusCode opcua_server_createConfig(UA_Server* server, OV_INSTPTR_opcua_serv
     //Delete old application name and uri
     UA_String_deleteMembers(&config->applicationDescription.applicationName.text);
     UA_String_deleteMembers(&config->applicationDescription.applicationUri);
+    UA_String_deleteMembers(&config->endpoints[0].server.applicationName.text); //TODO issue in open62541
+    UA_String_deleteMembers(&config->endpoints[0].server.applicationUri);
 
     //Fill in application name
     if(pOvConfig != NULL && ov_string_getlength(pOvConfig->v_applicationName)){
     	config->applicationDescription.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
+    	config->endpoints[0].server.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
     }else{
     	//Append OPCUA_DEFAULT_APPLICATIONNAME and SERVERNAME
     	OV_ANY serverName = OV_ANY_INIT;
@@ -54,14 +57,17 @@ UA_StatusCode opcua_server_createConfig(UA_Server* server, OV_INSTPTR_opcua_serv
     	ov_vendortree_getservername(&serverName, NULL); //Do not free, points to static servername
     	ov_string_print(&applicationName,"%s/%s",  OPCUA_DEFAULT_APPLICATIONNAME, serverName.value.valueunion.val_string);
     	config->applicationDescription.applicationName.text = UA_String_fromChars(applicationName);
+    	config->endpoints[0].server.applicationName.text = UA_String_fromChars(applicationName);
     	ov_string_setvalue(&applicationName, NULL);
     }
 
     //Fill in application uri
     if(pOvConfig != NULL && ov_string_getlength(pOvConfig->v_applicationURI)){
     	config->applicationDescription.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
+    	config->endpoints[0].server.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
     }else{
     	config->applicationDescription.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
+    	config->endpoints[0].server.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
     }
 
     //Set ov logger

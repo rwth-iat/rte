@@ -1,6 +1,6 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES
  * visit http://open62541.org/ for information about this software
- * Git-Revision: 0.3-rc2-1014-g26b2f133
+ * Git-Revision: 0.3-rc2-1045-g6570d0ee
  */
 
 /*
@@ -32,7 +32,7 @@
 #define UA_OPEN62541_VER_MINOR 4
 #define UA_OPEN62541_VER_PATCH 0
 #define UA_OPEN62541_VER_LABEL "-dev" /* Release candidate label, etc. */
-#define UA_OPEN62541_VER_COMMIT "0.3-rc2-1014-g26b2f133"
+#define UA_OPEN62541_VER_COMMIT "0.3-rc2-1045-g6570d0ee"
 
 /**
  * Feature Options
@@ -60,7 +60,7 @@
 
 /* Multithreading */
 /* #undef UA_ENABLE_MULTITHREADING */
-/* #undef UA_ENABLE_IMMUTABLE_NODES */
+#define UA_ENABLE_IMMUTABLE_NODES
 #if defined(UA_ENABLE_MULTITHREADING) && !defined(UA_ENABLE_IMMUTABLE_NODES)
 #error "The multithreading feature requires nodes to be immutable"
 #endif
@@ -423,6 +423,162 @@ extern void * (*UA_globalRealloc)(void *ptr, size_t size);
 
 
 #endif /* UA_ARCHITECTURE_POSIX */
+
+/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/arch/win32/ua_architecture.h" ***********************************/
+
+/* This work is licensed under a Creative Commons CCZero 1.0 Universal License.
+ * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
+ *
+ *    Copyright 2016-2017 (c) Julius Pfrommer, Fraunhofer IOSB
+ *    Copyright 2017 (c) Stefan Profanter, fortiss GmbH
+ */
+
+#ifdef UA_ARCHITECTURE_WIN32
+
+#ifndef PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_
+#define PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_
+
+
+#ifndef _BSD_SOURCE
+# define _BSD_SOURCE
+#endif
+
+/* Disable some security warnings on MSVC */
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+# define _CRT_SECURE_NO_WARNINGS
+#endif
+
+/* Assume that Windows versions are newer than Windows XP */
+#if defined(__MINGW32__) && (!defined(WINVER) || WINVER < 0x501)
+# undef WINVER
+# undef _WIN32_WINDOWS
+# undef _WIN32_WINNT
+# define WINVER 0x0600
+# define _WIN32_WINDOWS 0x0600
+# define _WIN32_WINNT 0x0600 //windows vista version, which included InepPton
+#endif
+
+#include <stdlib.h>
+#if defined(_WIN32) && !defined(__clang__)
+# include <malloc.h>
+#endif
+
+#include <stdio.h>
+#include <errno.h>
+#include <winsock2.h>
+#include <windows.h>
+#include <ws2tcpip.h>
+
+#if defined (_MSC_VER) || defined(__clang__)
+# ifndef UNDER_CE
+#  include <io.h> //access
+#  define UA_access _access
+# endif
+#else
+# include <unistd.h> //access and tests
+# define UA_access access
+#endif
+
+#define ssize_t int
+#define OPTVAL_TYPE char
+#ifndef UA_sleep_ms
+# define UA_sleep_ms(X) Sleep(X)
+#endif
+
+// Windows does not support ansi colors
+// #define UA_ENABLE_LOG_COLORS
+
+#define UA_IPV6 1
+
+#if defined(__MINGW32__) && !defined(__clang__) //mingw defines SOCKET as long long unsigned int, giving errors in logging and when comparing with UA_Int32
+# define UA_SOCKET int
+# define UA_INVALID_SOCKET -1
+#else
+# define UA_SOCKET SOCKET
+# define UA_INVALID_SOCKET INVALID_SOCKET
+#endif
+#define UA_ERRNO WSAGetLastError()
+#define UA_INTERRUPTED WSAEINTR
+#define UA_AGAIN WSAEWOULDBLOCK
+#define UA_EAGAIN EAGAIN
+#define UA_WOULDBLOCK WSAEWOULDBLOCK
+#define UA_ERR_CONNECTION_PROGRESS WSAEWOULDBLOCK
+
+#define UA_fd_set(fd, fds) FD_SET((UA_SOCKET)fd, fds)
+#define UA_fd_isset(fd, fds) FD_ISSET((UA_SOCKET)fd, fds)
+
+#ifdef UNDER_CE
+# define errno
+#endif
+
+#define UA_getnameinfo getnameinfo
+#define UA_send(sockfd, buf, len, flags) send(sockfd, buf, (int)(len), flags)
+#define UA_recv(sockfd, buf, len, flags) recv(sockfd, buf, (int)(len), flags)
+#define UA_sendto(sockfd, buf, len, flags, dest_addr, addrlen) sendto(sockfd, (const char*)(buf), (int)(len), flags, dest_addr, (int) (addrlen))
+#define UA_recvfrom(sockfd, buf, len, flags, src_addr, addrlen) recvfrom(sockfd, (char*)(buf), (int)(len), flags, src_addr, addrlen)
+#define UA_htonl htonl
+#define UA_ntohl ntohl
+#define UA_close closesocket
+#define UA_select(nfds, readfds, writefds, exceptfds, timeout) select((int)(nfds), readfds, writefds, exceptfds, timeout)
+#define UA_shutdown shutdown
+#define UA_socket socket
+#define UA_bind bind
+#define UA_listen listen
+#define UA_accept accept
+#define UA_connect(sockfd, addr, addrlen) connect(sockfd, addr, (int)(addrlen))
+#define UA_getaddrinfo getaddrinfo
+#define UA_getsockopt getsockopt
+#define UA_setsockopt(sockfd, level, optname, optval, optlen) setsockopt(sockfd, level, optname, (const char*) (optval), optlen)
+#define UA_freeaddrinfo freeaddrinfo
+#define UA_gethostname gethostname
+#define UA_getsockname getsockname
+#define UA_inet_pton InetPton
+
+#if UA_IPV6
+# include <iphlpapi.h>
+# define UA_if_nametoindex if_nametoindex
+#endif
+
+#ifdef maxStringLength //defined in mingw64
+# undef maxStringLength
+#endif
+
+#ifndef UA_free
+#define UA_free free
+#endif
+#ifndef UA_malloc
+#define UA_malloc malloc
+#endif
+#ifndef UA_calloc
+#define UA_calloc calloc
+#endif
+#ifndef UA_realloc
+#define UA_realloc realloc
+#endif
+
+/* 3rd Argument is the string */
+#define UA_snprintf(source, size, ...) _snprintf_s(source, size, _TRUNCATE, __VA_ARGS__)
+
+#define UA_LOG_SOCKET_ERRNO_WRAP(LOG) { \
+    char *errno_str = NULL; \
+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, \
+    NULL, WSAGetLastError(), \
+    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), \
+    (LPSTR)&errno_str, 0, NULL); \
+    LOG; \
+    LocalFree(errno_str); \
+}
+#define UA_LOG_SOCKET_ERRNO_GAI_WRAP UA_LOG_SOCKET_ERRNO_WRAP
+
+
+/* Fix redefinition of SLIST_ENTRY on mingw winnt.h */
+#if !defined(_SYS_QUEUE_H_) && defined(SLIST_ENTRY)
+# undef SLIST_ENTRY
+#endif
+
+#endif /* PLUGINS_ARCH_WIN32_UA_ARCHITECTURE_H_ */
+
+#endif /* UA_ARCHITECTURE_WIN32 */
 
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/deps/ms_stdint.h" ***********************************/
 
@@ -12756,11 +12912,8 @@ typedef enum {
 #define UA_VALUERANK_THREE_DIMENSIONS          3
 
 /**
- * General Configuration Constants
- * ===============================
- *
- * This section defines constants that are used for the configuration of both
- * clients and servers.
+ * Internal Constants
+ * ==================
  *
  * Rule Handling
  * -------------
@@ -12776,6 +12929,19 @@ typedef enum {
     UA_RULEHANDLING_WARN,   /* Print a message in the logs and continue */
     UA_RULEHANDLING_ACCEPT, /* Continue and disregard the broken rule */
 } UA_RuleHandling;
+
+/**
+ * Order
+ * -----
+ *
+ * The Order enum is used to establish an absolute ordering between elements.
+ */
+
+typedef enum {
+    UA_ORDER_LESS = -1,
+    UA_ORDER_EQ = 0,
+    UA_ORDER_MORE = 1
+} UA_Order;
 
 _UA_END_DECLS
 
@@ -13104,7 +13270,12 @@ UA_EXPORT extern const UA_NodeId UA_NODEID_NULL;
 
 UA_Boolean UA_EXPORT UA_NodeId_isNull(const UA_NodeId *p);
 
-UA_Boolean UA_EXPORT UA_NodeId_equal(const UA_NodeId *n1, const UA_NodeId *n2);
+UA_Order UA_EXPORT UA_NodeId_order(const UA_NodeId *n1, const UA_NodeId *n2);
+
+static UA_INLINE UA_Boolean
+UA_NodeId_equal(const UA_NodeId *n1, const UA_NodeId *n2) {
+    return (UA_NodeId_order(n1, n2) == UA_ORDER_EQ);
+}
 
 /* Returns a non-cryptographic hash for the NodeId */
 UA_UInt32 UA_EXPORT UA_NodeId_hash(const UA_NodeId *n);
@@ -13787,7 +13958,7 @@ _UA_END_DECLS
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/build/src_generated/open62541/types_generated.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/tools/generate_datatypes.py
- * on host altair-lubuntu64 by user julian at 2019-06-02 05:18:22 */
+ * on host altair-lubuntu64 by user julian at 2019-06-11 04:01:02 */
 
 
 #ifdef UA_ENABLE_AMALGAMATION
@@ -18693,7 +18864,7 @@ _UA_END_DECLS
 /*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/build/src_generated/open62541/types_generated_handling.h" ***********************************/
 
 /* Generated from Opc.Ua.Types.bsd with script /home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/tools/generate_datatypes.py
- * on host altair-lubuntu64 by user julian at 2019-06-02 05:18:22 */
+ * on host altair-lubuntu64 by user julian at 2019-06-11 04:01:02 */
 
 
 
@@ -30957,9 +31128,21 @@ UA_Server_writeExecutable(UA_Server *server, const UA_NodeId nodeId,
 /**
  * Browsing
  * -------- */
+
+/* Browse the references of a particular node. See the definition of
+ * BrowseDescription structure for details. */
 UA_BrowseResult UA_EXPORT
-UA_Server_browse(UA_Server *server, UA_UInt32 maxrefs,
-                 const UA_BrowseDescription *descr);
+UA_Server_browse(UA_Server *server, UA_UInt32 maxReferences,
+                 const UA_BrowseDescription *bd);
+
+/* Nonstandard version of the browse service that recurses into child nodes.
+ * Possible loops (that can occur for non-hierarchical references) are handled
+ * by adding every target node at most once to the result array. The returned
+ * ReferenceDescription refers has the `ReferenceTypeId` and `IsForward` fields
+ * set according to the last reference in the (recursive) chain. */
+UA_BrowseResult UA_EXPORT
+UA_Server_browseRecursive(UA_Server *server, UA_UInt32 maxReferences,
+                          const UA_BrowseDescription *bd);
 
 UA_BrowseResult UA_EXPORT
 UA_Server_browseNext(UA_Server *server, UA_Boolean releaseContinuationPoint,
@@ -32713,6 +32896,7 @@ _UA_END_DECLS
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * Copyright (c) 2017-2018 Fraunhofer IOSB (Author: Andreas Ebner)
+ * Copyright (c) 2019 Kalycito Infotech Private Limited
  */
 
 #ifndef UA_SERVER_PUBSUB_H
@@ -32947,8 +33131,8 @@ typedef enum {
 typedef struct {
     UA_DataSetFieldType dataSetFieldType;
     union {
+        /* events need other config later */
         UA_DataSetVariableConfig variable;
-        //events need other config later
     } field;
 } UA_DataSetFieldConfig;
 
@@ -33074,6 +33258,100 @@ UA_Server_getDataSetWriterConfig(UA_Server *server, const UA_NodeId dsw,
 
 UA_StatusCode UA_EXPORT
 UA_Server_removeDataSetWriter(UA_Server *server, const UA_NodeId dsw);
+
+/**
+ * DataSetReader
+ * -------------
+ * DataSetReader can receive NetworkMessages with the DataSet
+ * of interest sent by the Publisher. DataSetReaders represent
+ * the configuration necessary to receive and process DataSetMessages
+ * on the Subscriber side */
+
+/* Parameters for PubSubSecurity */
+typedef struct {
+    UA_Int32 securityMode;          /* placeholder datatype 'MessageSecurityMode' */
+    UA_String securityGroupId;
+    size_t keyServersSize;
+    UA_Int32 *keyServers;
+} UA_PubSubSecurityParameters;
+
+/* Parameters for PubSub DataSetReader Configuration */
+typedef struct {
+    UA_String name;
+    UA_Variant publisherId;
+    UA_UInt16 writerGroupId;
+    UA_UInt16 dataSetWriterId;
+    UA_DataSetMetaDataType dataSetMetaData;
+    UA_DataSetFieldContentMask dataSetFieldContentMask;
+    UA_Double messageReceiveTimeout;
+    UA_PubSubSecurityParameters securityParameters;
+    UA_UadpDataSetReaderMessageDataType messageSettings;
+    UA_TargetVariablesDataType subscribedDataSetTarget;
+} UA_DataSetReaderConfig;
+
+/* Update configuration to the dataSetReader */
+UA_StatusCode
+UA_Server_DataSetReader_updateConfig(UA_Server *server, UA_NodeId dataSetReaderIdentifier,
+                                   UA_NodeId readerGroupIdentifier, const UA_DataSetReaderConfig *config);
+
+/* Get configuration of the dataSetReader */
+UA_StatusCode
+UA_Server_DataSetReader_getConfig(UA_Server *server, UA_NodeId dataSetReaderIdentifier,
+                                 UA_DataSetReaderConfig *config);
+
+/* Return Status Code after creating TargetVariables in Subscriber AddressSpace
+ * TargetVariables define a list of variable mappings between received DataSet fields
+ * and the TargetVariables in the Subscriber AddressSpace */
+UA_StatusCode
+UA_Server_DataSetReader_createTargetVariables(UA_Server *server, UA_NodeId dataSetReaderIdentifier,
+                                             UA_TargetVariablesDataType* targetVariables);
+
+/* To Do:Implementation of SubscribedDataSetMirrorType
+ * UA_StatusCode
+ * A_PubSubDataSetReader_createDataSetMirror(UA_Server *server, UA_NodeId dataSetReaderIdentifier,
+ * UA_SubscribedDataSetMirrorDataType* mirror) */
+
+/**
+ * ReaderGroup
+ * -----------
+ * All ReaderGroups are created within a PubSubConnection and automatically
+ * deleted if the connection is removed. */
+
+/* ReaderGroup configuration */
+typedef struct {
+    UA_String name;
+    UA_PubSubSecurityParameters securityParameters;
+} UA_ReaderGroupConfig;
+
+/* Add DataSetReader to the ReaderGroup */
+UA_StatusCode
+UA_Server_addDataSetReader(UA_Server *server, UA_NodeId readerGroupIdentifier,
+                                      const UA_DataSetReaderConfig *dataSetReaderConfig,
+                                      UA_NodeId *readerIdentifier);
+
+/* Remove DataSetReader from ReaderGroup */
+UA_StatusCode
+UA_Server_removeDataSetReader(UA_Server *server, UA_NodeId readerIdentifier);
+
+/* To Do: Update Configuration of ReaderGroup */
+UA_StatusCode
+UA_Server_ReaderGroup_updateConfig(UA_Server *server, UA_NodeId readerGroupIdentifier,
+                                  const UA_ReaderGroupConfig *config);
+
+/* Get configuraiton of ReaderGroup */
+UA_StatusCode
+UA_Server_ReaderGroup_getConfig(UA_Server *server, UA_NodeId readerGroupIdentifier,
+                               UA_ReaderGroupConfig *config);
+
+/* Add ReaderGroup to the created connection */
+UA_StatusCode
+UA_Server_addReaderGroup(UA_Server *server, UA_NodeId connectionIdentifier,
+                                   const UA_ReaderGroupConfig *readerGroupConfig,
+                                   UA_NodeId *readerGroupIdentifier);
+
+/* Remove ReaderGroup from connection */
+UA_StatusCode
+UA_Server_removeReaderGroup(UA_Server *server, UA_NodeId groupIdentifier);
 
 #endif /* UA_ENABLE_PUBSUB */
 
@@ -33427,14 +33705,6 @@ typedef struct {
     UA_MethodCallback method;
 } UA_MethodNode;
 
-
-/** Attributes for nodes which are capable of generating events */
-#ifdef UA_ENABLE_SUBSCRIPTIONS_EVENTS
-/* Store active monitoredItems on this node */
-# define UA_EVENT_ATTRIBUTES                                         \
-    struct UA_MonitoredItem *monitoredItemQueue;
-#endif
-
 /**
  * ObjectNode
  * ----------
@@ -33447,7 +33717,7 @@ typedef struct {
 typedef struct {
     UA_NODE_BASEATTRIBUTES
 #ifdef UA_ENABLE_SUBSCRIPTIONS_EVENTS
-    UA_EVENT_ATTRIBUTES
+    struct UA_MonitoredItem *monitoredItemQueue;
 #endif
     UA_Byte eventNotifier;
 } UA_ObjectNode;
@@ -35391,8 +35661,8 @@ UA_Client_Subscriptions_setPublishingMode(UA_Client *client,
  * forward Event notifications from that node.
  *
  * During the creation of a MonitoredItem, the server may return changed
- * adjusted parameters. Use ``UA_Client_MonitoredItem_getParameters`` to get the
- * current parameters. */
+ * adjusted parameters. Check the returned ``UA_CreateMonitoredItemsResponse``
+ * to get the current parameters. */
 
 /* Provides default values for a new monitored item. */
 static UA_INLINE UA_MonitoredItemCreateRequest
@@ -35407,6 +35677,10 @@ UA_MonitoredItemCreateRequest_default(UA_NodeId nodeId) {
     request.requestedParameters.queueSize = 1;
     return request;
 }
+
+/**
+ * The clientHandle parameter can't be set by the user, any value will be replaced
+ * by the client before sending the request to the server. */
 
 /* Callback for the deletion of a MonitoredItem */
 typedef void (*UA_Client_DeleteMonitoredItemCallback)
@@ -35457,19 +35731,14 @@ UA_Client_MonitoredItems_delete(UA_Client *client, const UA_DeleteMonitoredItems
 UA_StatusCode UA_EXPORT
 UA_Client_MonitoredItems_deleteSingle(UA_Client *client, UA_UInt32 subscriptionId, UA_UInt32 monitoredItemId);
 
+/* The clientHandle parameter will be filled automatically */
+UA_ModifyMonitoredItemsResponse UA_EXPORT
+UA_Client_MonitoredItems_modify(UA_Client *client,
+                                const UA_ModifyMonitoredItemsRequest request);
+
 /**
  * The following service calls go directly to the server. The MonitoredItem settings are
  * not stored in the client. */
-
-static UA_INLINE UA_ModifyMonitoredItemsResponse
-UA_Client_MonitoredItems_modify(UA_Client *client,
-                                const UA_ModifyMonitoredItemsRequest request) {
-    UA_ModifyMonitoredItemsResponse response;
-    __UA_Client_Service(client,
-                        &request, &UA_TYPES[UA_TYPES_MODIFYMONITOREDITEMSREQUEST],
-                        &response, &UA_TYPES[UA_TYPES_MODIFYMONITOREDITEMSRESPONSE]);
-    return response;
-}
 
 static UA_INLINE UA_SetMonitoringModeResponse
 UA_Client_MonitoredItems_setMonitoringMode(UA_Client *client,
@@ -36213,6 +36482,100 @@ UA_Cient_translateBrowsePathsToNodeIds_async(UA_Client *client, char **paths,
         client, paths, ids, pathSize, (UA_ClientAsyncServiceCallback)callback, userdata,
         reqId);
 }
+
+_UA_END_DECLS
+
+
+/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/src/ua_types_encoding_binary.h" ***********************************/
+
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ *    Copyright 2014-2017 (c) Fraunhofer IOSB (Author: Julius Pfrommer)
+ *    Copyright 2015 (c) Sten Grüner
+ *    Copyright 2014, 2017 (c) Florian Palm
+ *    Copyright 2017 (c) Stefan Profanter, fortiss GmbH
+ *    Copyright 2017 (c) Mark Giraud, Fraunhofer IOSB
+ */
+
+
+
+_UA_BEGIN_DECLS
+
+typedef UA_StatusCode (*UA_exchangeEncodeBuffer)(void *handle, UA_Byte **bufPos,
+                                                 const UA_Byte **bufEnd);
+
+/* Encodes the scalar value described by type in the binary encoding. Encoding
+ * is thread-safe if thread-local variables are enabled. Encoding is also
+ * reentrant and can be safely called from signal handlers or interrupts.
+ *
+ * @param src The value. Must not be NULL.
+ * @param type The value type. Must not be NULL.
+ * @param bufPos Points to a pointer to the current position in the encoding
+ *        buffer. Must not be NULL. The pointer is advanced by the number of
+ *        encoded bytes, or, if the buffer is exchanged, to the position in the
+ *        new buffer.
+ * @param bufEnd Points to a pointer to the end of the encoding buffer (encoding
+ *        always stops before *buf_end). Must not be NULL. The pointer is
+ *        changed when the buffer is exchanged.
+ * @param exchangeCallback Called when the end of the buffer is reached. This is
+          used to send out a message chunk before continuing with the encoding.
+          Is ignored if NULL.
+ * @param exchangeHandle Custom data passed into the exchangeCallback.
+ * @return Returns a statuscode whether encoding succeeded. */
+#ifdef UA_ENABLE_NODESTORE_SWITCH
+UA_StatusCode UA_EXPORT
+#else
+UA_StatusCode
+#endif
+UA_encodeBinary(const void *src, const UA_DataType *type,
+                UA_Byte **bufPos, const UA_Byte **bufEnd,
+                UA_exchangeEncodeBuffer exchangeCallback,
+                void *exchangeHandle) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
+
+/* Decodes a scalar value described by type from binary encoding. Decoding
+ * is thread-safe if thread-local variables are enabled. Decoding is also
+ * reentrant and can be safely called from signal handlers or interrupts.
+ *
+ * @param src The buffer with the binary encoded value. Must not be NULL.
+ * @param offset The current position in the buffer. Must not be NULL. The value
+ *        is advanced as decoding progresses.
+ * @param dst The target value. Must not be NULL. The target is assumed to have
+ *        size type->memSize. The value is reset to zero before decoding. If
+ *        decoding fails, members are deleted and the value is reset (zeroed)
+ *        again.
+ * @param type The value type. Must not be NULL.
+ * @param customTypesSize The number of non-standard datatypes contained in the
+ *        customTypes array.
+ * @param customTypes An array of non-standard datatypes (not included in
+ *        UA_TYPES). Can be NULL if customTypesSize is zero.
+ * @return Returns a statuscode whether decoding succeeded. */
+#ifdef UA_ENABLE_NODESTORE_SWITCH
+UA_StatusCode UA_EXPORT
+#else
+UA_StatusCode
+#endif
+UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst,
+                const UA_DataType *type, const UA_DataTypeArray *customTypes)
+    UA_FUNC_ATTR_WARN_UNUSED_RESULT;
+
+/* Returns the number of bytes the value p takes in binary encoding. Returns
+ * zero if an error occurs. UA_calcSizeBinary is thread-safe and reentrant since
+ * it does not access global (thread-local) variables. */
+#ifdef UA_ENABLE_NODESTORE_SWITCH
+size_t UA_EXPORT
+#else
+size_t
+#endif
+UA_calcSizeBinary(const void *p, const UA_DataType *type);
+
+#ifdef UA_ENABLE_NODESTORE_SWITCH
+const UA_DataType UA_EXPORT *
+#else
+const UA_DataType *
+#endif
+UA_findDataTypeByBinary(const UA_NodeId *typeId);
 
 _UA_END_DECLS
 
@@ -37064,84 +37427,6 @@ int UA_access(const char *pathname, int mode); //equivalent implementation of ht
 #ifndef UA_fileExists
 #define UA_fileExists(X) ( UA_access(X, 0) == 0)
 #endif
-
-
-/*********************************** amalgamated original file "/home/julian/Desktop/AcpltDevelopmentKit/acplt/git/open62541/src/ua_types_encoding_binary.h" ***********************************/
-
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- *    Copyright 2014-2017 (c) Fraunhofer IOSB (Author: Julius Pfrommer)
- *    Copyright 2015 (c) Sten Grüner
- *    Copyright 2014, 2017 (c) Florian Palm
- *    Copyright 2017 (c) Stefan Profanter, fortiss GmbH
- *    Copyright 2017 (c) Mark Giraud, Fraunhofer IOSB
- */
-
-
-
-_UA_BEGIN_DECLS
-
-typedef UA_StatusCode UA_EXPORT (*UA_exchangeEncodeBuffer)(void *handle, UA_Byte **bufPos,
-                                                 const UA_Byte **bufEnd);
-
-/* Encodes the scalar value described by type in the binary encoding. Encoding
- * is thread-safe if thread-local variables are enabled. Encoding is also
- * reentrant and can be safely called from signal handlers or interrupts.
- *
- * @param src The value. Must not be NULL.
- * @param type The value type. Must not be NULL.
- * @param bufPos Points to a pointer to the current position in the encoding
- *        buffer. Must not be NULL. The pointer is advanced by the number of
- *        encoded bytes, or, if the buffer is exchanged, to the position in the
- *        new buffer.
- * @param bufEnd Points to a pointer to the end of the encoding buffer (encoding
- *        always stops before *buf_end). Must not be NULL. The pointer is
- *        changed when the buffer is exchanged.
- * @param exchangeCallback Called when the end of the buffer is reached. This is
-          used to send out a message chunk before continuing with the encoding.
-          Is ignored if NULL.
- * @param exchangeHandle Custom data passed into the exchangeCallback.
- * @return Returns a statuscode whether encoding succeeded. */
-UA_StatusCode UA_EXPORT
-UA_encodeBinary(const void *src, const UA_DataType *type,
-                UA_Byte **bufPos, const UA_Byte **bufEnd,
-                UA_exchangeEncodeBuffer exchangeCallback,
-                void *exchangeHandle) UA_FUNC_ATTR_WARN_UNUSED_RESULT;
-
-/* Decodes a scalar value described by type from binary encoding. Decoding
- * is thread-safe if thread-local variables are enabled. Decoding is also
- * reentrant and can be safely called from signal handlers or interrupts.
- *
- * @param src The buffer with the binary encoded value. Must not be NULL.
- * @param offset The current position in the buffer. Must not be NULL. The value
- *        is advanced as decoding progresses.
- * @param dst The target value. Must not be NULL. The target is assumed to have
- *        size type->memSize. The value is reset to zero before decoding. If
- *        decoding fails, members are deleted and the value is reset (zeroed)
- *        again.
- * @param type The value type. Must not be NULL.
- * @param customTypesSize The number of non-standard datatypes contained in the
- *        customTypes array.
- * @param customTypes An array of non-standard datatypes (not included in
- *        UA_TYPES). Can be NULL if customTypesSize is zero.
- * @return Returns a statuscode whether decoding succeeded. */
-UA_StatusCode UA_EXPORT
-UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst,
-                const UA_DataType *type, const UA_DataTypeArray *customTypes)
-    UA_FUNC_ATTR_WARN_UNUSED_RESULT;
-
-/* Returns the number of bytes the value p takes in binary encoding. Returns
- * zero if an error occurs. UA_calcSizeBinary is thread-safe and reentrant since
- * it does not access global (thread-local) variables. */
-size_t UA_EXPORT
-UA_calcSizeBinary(const void *p, const UA_DataType *type);
-
-const UA_DataType * UA_EXPORT
-UA_findDataTypeByBinary(const UA_NodeId *typeId);
-
-_UA_END_DECLS
 
 
 _UA_END_DECLS
