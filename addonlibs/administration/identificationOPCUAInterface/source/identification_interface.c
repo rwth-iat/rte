@@ -46,40 +46,55 @@ OV_DLLFNCEXPORT OV_RESULT identificationOPCUAInterface_interface_constructor(
     /* do what */
     pinst->v_index = 0;
 	ov_string_setvalue(&pinst->v_uri, "acplt.org/identification/"); //Will be overwritten by config->applicationDescription.applicationUri
-	UA_Nodestore_Default_Interface_new(&pinst->v_store);
+
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT void identificationOPCUAInterface_interface_startup(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_identificationOPCUAInterface_interface pinst = Ov_StaticPtrCast(identificationOPCUAInterface_interface, pobj);
+
+    /* do what the base class does first */
+    ov_object_startup(pobj);
+
+    /* do what */
+    UA_Nodestore_Default_Interface_new(&pinst->v_store);
 	UA_DataTypeArray *pidentificationTypes = (UA_DataTypeArray*)UA_malloc(sizeof(UA_DataTypeArray));
 	UA_DataTypeArray identificationTypes = {NULL, UA_IDENTIFICATION_COUNT, UA_IDENTIFICATION};
 	memcpy(pidentificationTypes, &identificationTypes, sizeof(identificationTypes));
 	pinst->v_dataTypes = pidentificationTypes;
 	pinst->v_trafo = identificationOPCUAInterface_interface_ovNodeStoreInterfaceIdentificationNew(pinst);
 
-    return OV_ERR_OK;
+
+    return;
 }
 
-OV_DLLFNCEXPORT void identificationOPCUAInterface_interface_destructor(
+OV_DLLFNCEXPORT void identificationOPCUAInterface_interface_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
-    *
     */
-	OV_INSTPTR_identificationOPCUAInterface_interface pinst = Ov_StaticPtrCast(identificationOPCUAInterface_interface, pobj);
-	/* do what */
-	if (pinst->v_store){
+    OV_INSTPTR_identificationOPCUAInterface_interface pinst = Ov_StaticPtrCast(identificationOPCUAInterface_interface, pobj);
+
+    /* do what */
+    if (pinst->v_store){
 		pinst->v_store->deleteNodestore(pinst->v_store->context);
 		UA_free(pinst->v_store);
 	}
 	UA_free(pinst->v_dataTypes);
 	identificationOPCUAInterface_interface_ovNodeStoreInterfaceIdentificationDelete(pinst->v_trafo);
 
-
-    /* do what */
-
-    /* destroy object */
-    ov_object_destructor(pobj);
+    /* set the object's state to "shut down" */
+    ov_object_shutdown(pobj);
 
     return;
 }
+
 
 OV_DLLFNCEXPORT OV_BOOL identificationOPCUAInterface_interface_checkNode(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context) {
     /*

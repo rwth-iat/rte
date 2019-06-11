@@ -45,19 +45,34 @@ OV_DLLFNCEXPORT OV_RESULT lifeCycleEntryOPCUAInterface_interface_constructor(
     /* do what */
     pinst->v_index = 0;
 	ov_string_setvalue(&pinst->v_uri, "acplt.org/lifeCycleEntry/");
-	UA_Nodestore_Default_Interface_new(&pinst->v_store);
+
+	return OV_ERR_OK;
+}
+
+
+OV_DLLFNCEXPORT void lifeCycleEntryOPCUAInterface_interface_startup(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface pinst = Ov_StaticPtrCast(lifeCycleEntryOPCUAInterface_interface, pobj);
+
+    /* do what the base class does first */
+    ov_object_startup(pobj);
+
+    /* do what */
+    UA_Nodestore_Default_Interface_new(&pinst->v_store);
 	UA_DataTypeArray *plifeCycleEntryTypes = (UA_DataTypeArray*)UA_malloc(sizeof(UA_DataTypeArray));
 	UA_DataTypeArray lifeCycleEntryTypes = {NULL, UA_LIFECYCLEENTRY_COUNT, UA_LIFECYCLEENTRY};
 	memcpy(plifeCycleEntryTypes, &lifeCycleEntryTypes, sizeof(lifeCycleEntryTypes));
 	pinst->v_dataTypes = plifeCycleEntryTypes;
 	pinst->v_trafo = lifeCycleEntryOPCUAInterface_interface_ovNodeStoreInterfaceLifeCycleEntryNew(pinst);
 
-
-    return OV_ERR_OK;
+    return;
 }
 
-
-OV_DLLFNCEXPORT void lifeCycleEntryOPCUAInterface_interface_destructor(
+OV_DLLFNCEXPORT void lifeCycleEntryOPCUAInterface_interface_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
@@ -66,14 +81,14 @@ OV_DLLFNCEXPORT void lifeCycleEntryOPCUAInterface_interface_destructor(
     OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface pinst = Ov_StaticPtrCast(lifeCycleEntryOPCUAInterface_interface, pobj);
 
     /* do what */
-	if (pinst->v_store){
+    if (pinst->v_store){
 		pinst->v_store->deleteNodestore(pinst->v_store->context);
 		UA_free(pinst->v_store);
 	}
 	UA_free(pinst->v_dataTypes);
 	lifeCycleEntryOPCUAInterface_interface_ovNodeStoreInterfaceLifeCycleEntryDelete(pinst->v_trafo);
-    /* destroy object */
-    ov_object_destructor(pobj);
+    /* set the object's state to "shut down" */
+    ov_object_shutdown(pobj);
 
     return;
 }

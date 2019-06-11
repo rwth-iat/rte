@@ -38,10 +38,11 @@ LIBRARY openaasOPCUAInterface
             stopGetAssetLCEData : C_FUNCTION <UA_FNC_STOPGETASSETLCEDATA>;
 			
 			constructor 	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            destructor		: C_FUNCTION <OV_FNC_DESTRUCTOR>;
             checkNode       : C_FUNCTION <OPCUA_FNC_CHECKNODE>;
             checkReference  : C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>; 
-            nodeset			: C_FUNCTION <OPCUA_FNC_NODESET>;   
+            nodeset			: C_FUNCTION <OPCUA_FNC_NODESET>;      
+        	startup         : C_FUNCTION <OV_FNC_STARTUP>;
+            shutdown        : C_FUNCTION <OV_FNC_SHUTDOWN>;
 		END_OPERATIONS;
 	END_CLASS; 
 	

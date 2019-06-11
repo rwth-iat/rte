@@ -41,21 +41,39 @@ OV_DLLFNCEXPORT OV_RESULT servicesOPCUAInterface_interface_constructor(
 
     /* do what */
     pinst->v_index = 0;
-	ov_string_setvalue(&pinst->v_uri, "acplt.org/services/"); //Will be overwritten by config->applicationDescription.applicationUri
-	UA_Nodestore_Default_Interface_new(&pinst->v_store);
-	pinst->v_dataTypes = NULL;
-	pinst->v_trafo = servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(pinst);
+	ov_string_setvalue(&pinst->v_uri, "acplt.org/services/");
 
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void servicesOPCUAInterface_interface_destructor(
+
+OV_DLLFNCEXPORT void servicesOPCUAInterface_interface_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-	OV_INSTPTR_servicesOPCUAInterface_interface pinst = Ov_StaticPtrCast(servicesOPCUAInterface_interface, pobj);
+    OV_INSTPTR_servicesOPCUAInterface_interface pinst = Ov_StaticPtrCast(servicesOPCUAInterface_interface, pobj);
+
+    /* do what the base class does first */
+    ov_object_startup(pobj);
+
+    /* do what */
+	UA_Nodestore_Default_Interface_new(&pinst->v_store);
+	pinst->v_dataTypes = NULL;
+	pinst->v_trafo = servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesNew(pinst);
+
+    return;
+}
+
+OV_DLLFNCEXPORT void servicesOPCUAInterface_interface_shutdown(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_servicesOPCUAInterface_interface pinst = Ov_StaticPtrCast(servicesOPCUAInterface_interface, pobj);
+
     /* do what */
 	if (pinst->v_store){
 		pinst->v_store->deleteNodestore(pinst->v_store->context);
@@ -63,11 +81,12 @@ OV_DLLFNCEXPORT void servicesOPCUAInterface_interface_destructor(
 	}
 	servicesOPCUAInterface_interface_ovNodeStoreInterfaceServicesDelete(pinst->v_trafo);
 
-    /* destroy object */
-    ov_object_destructor(pobj);
+    /* set the object's state to "shut down" */
+    ov_object_shutdown(pobj);
 
     return;
 }
+
 
 OV_DLLFNCEXPORT OV_BOOL servicesOPCUAInterface_interface_checkNode(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context) {
     /*

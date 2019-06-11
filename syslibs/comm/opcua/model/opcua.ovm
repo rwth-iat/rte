@@ -55,9 +55,10 @@ LIBRARY opcua
     			INITIALVALUE="/";	
     	END_VARIABLES;
     	OPERATIONS
-        	constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            destructor         :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
-            load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
+        	constructor     : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            load            : C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;                     
+        	startup         : C_FUNCTION <OV_FNC_STARTUP>;
+            shutdown        : C_FUNCTION <OV_FNC_SHUTDOWN>;
         END_OPERATIONS;
     END_CLASS;
 
@@ -98,8 +99,6 @@ LIBRARY opcua
             shutdown           :    C_FUNCTION <OV_FNC_SHUTDOWN>;
             getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
             typemethod         :    C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
-            constructor        :    C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            destructor         :    C_FUNCTION <OV_FNC_DESTRUCTOR>;
         END_OPERATIONS;
     END_CLASS;
 

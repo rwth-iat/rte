@@ -44,6 +44,22 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatementOPCUAInterface_interface_constru
     /* do what */
     pinst->v_index = 0;
 	ov_string_setvalue(&pinst->v_uri, "acplt.org/propertyValueStatement/");
+
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT void propertyValueStatementOPCUAInterface_interface_startup(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_propertyValueStatementOPCUAInterface_interface pinst = Ov_StaticPtrCast(propertyValueStatementOPCUAInterface_interface, pobj);
+
+    /* do what the base class does first */
+    ov_object_startup(pobj);
+
+    /* do what */
 	UA_Nodestore_Default_Interface_new(&pinst->v_store);
 	UA_DataTypeArray *pPropertyValueStatmentTypes = (UA_DataTypeArray*)UA_malloc(sizeof(UA_DataTypeArray));
 	UA_DataTypeArray propertyValueStatmentTypes = {NULL, UA_PROPERTYVALUESTATEMENT_COUNT, UA_PROPERTYVALUESTATEMENT};
@@ -51,10 +67,10 @@ OV_DLLFNCEXPORT OV_RESULT propertyValueStatementOPCUAInterface_interface_constru
 	pinst->v_dataTypes = pPropertyValueStatmentTypes;
 	pinst->v_trafo = propertyValueStatementOPCUAInterface_interface_ovNodeStoreInterfacePropertyValueStatementNew(pinst);
 
-    return OV_ERR_OK;
+    return;
 }
 
-OV_DLLFNCEXPORT void propertyValueStatementOPCUAInterface_interface_destructor(
+OV_DLLFNCEXPORT void propertyValueStatementOPCUAInterface_interface_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
@@ -69,11 +85,13 @@ OV_DLLFNCEXPORT void propertyValueStatementOPCUAInterface_interface_destructor(
 	}
 	UA_free(pinst->v_dataTypes);
 	propertyValueStatementOPCUAInterface_interface_ovNodeStoreInterfacePropertyValueStatementDelete(pinst->v_trafo);
-    /* destroy object */
-    ov_object_destructor(pobj);
+
+    /* set the object's state to "shut down" */
+    ov_object_shutdown(pobj);
 
     return;
 }
+
 
 OV_DLLFNCEXPORT OV_BOOL propertyValueStatementOPCUAInterface_interface_checkNode(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context) {
     /*    

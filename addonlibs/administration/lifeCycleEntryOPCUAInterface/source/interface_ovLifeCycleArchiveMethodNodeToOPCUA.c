@@ -30,7 +30,6 @@
 #include "opcua_ovTrafo.h"
 
 
-
 OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveMethodNodeToOPCUA(
 		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
@@ -46,11 +45,15 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	OV_STRING 				*plist = NULL;
 	OV_STRING 				*plist2 = NULL;
 	OV_ELEMENT				element;
+	OV_INSTPTR_opcua_server uaserver = NULL;
 
-	OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface 	pinterface = Ov_StaticPtrCast(lifeCycleEntryOPCUAInterface_interface, context);
+	OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface 	pInterface = Ov_StaticPtrCast(lifeCycleEntryOPCUAInterface_interface, context);
 
-	if (pinterface == NULL)
+	if (pInterface == NULL)
 		return UA_STATUSCODE_BADOUTOFSERVICE;
+
+	// findServer
+	uaserver =	Ov_StaticPtrCast(opcua_server, Ov_GetParent(opcua_serverToInterfaces, pInterface));
 
 	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
@@ -158,56 +161,51 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	UA_ExpandedNodeId NodeId3;
 
 	if (ov_string_compare(plist[1], "createLCE") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE);
 	}else if (ov_string_compare(plist[1], "deleteLCE") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE);
 	}else if (ov_string_compare(plist[1], "createLCESimple") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE);
 	}else if (ov_string_compare(plist[1], "setLCE") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE);
 	}else if (ov_string_compare(plist[1], "getLCE") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE);
 	}else if (ov_string_compare(plist[1], "setLCESimple") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE);
 	}else if (ov_string_compare(plist[1], "getLCESimple") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE);
 	}else if (ov_string_compare(plist[1], "getLastLCEs") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES);
 	}else{
 		NodeId = UA_EXPANDEDNODEID_NUMERIC(0,0);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(0,0);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(0,0);
+	}
+
+	// InputArguments & OutputArguments
+	if (NodeId.nodeId.identifier.numeric != 0){
+		UA_NodeId inArgId;
+		UA_NodeId_init(&inArgId);
+		UA_NodeId outArgId;
+		UA_NodeId_init(&outArgId);
+
+		opcua_helpers_getNumericalNodeIdForInputOutputArgs(uaserver->v_server, UA_NODEID_NUMERIC(pInterface->v_index, NodeId.nodeId.identifier.numeric), &inArgId, &outArgId);
+
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, inArgId.identifier.numeric);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, outArgId.identifier.numeric);
+
+		// InputArguments
+		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+							NodeId2, UA_NODECLASS_VARIABLE,
+							UA_TRUE);
+		// OutputArguments
+		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+							NodeId3, UA_NODECLASS_VARIABLE,
+							UA_TRUE);
 	}
 
 	// Type
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
 						NodeId, UA_NODECLASS_METHOD,
 						UA_TRUE);
-	// InputArguments
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-						NodeId2, UA_NODECLASS_VARIABLE,
-						UA_TRUE);
-	// OutputArguments
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-						NodeId3, UA_NODECLASS_VARIABLE,
-						UA_TRUE);
-
 
 	ov_string_freelist(plist);
 	*opcuaNode = newNode;
