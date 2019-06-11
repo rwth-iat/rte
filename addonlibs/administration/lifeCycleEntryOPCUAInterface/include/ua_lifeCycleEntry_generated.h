@@ -30,7 +30,7 @@ typedef struct {
     UA_UInt64 id;
 } UA_LifeCycleEntry;
 
-#define UA_LIFECYCLEENTRY_LIFECYCLEENTRY 1
+#define UA_LIFECYCLEENTRY_LIFECYCLEENTRY 0
 
 
 _UA_END_DECLS
