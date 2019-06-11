@@ -51,13 +51,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
     /* do what */
     pinst->v_index = 0;
     ov_string_setvalue(&pinst->v_uri, OPCUA_DEFAULT_APPLICATIONURI); //Will be overwritten by config->applicationDescription.applicationUri
-    pinst->v_store = opcua_ovStore_new(pinst);;
-    pinst->v_dataTypes = NULL;
-    pinst->v_trafo = opcua_ovTrafo_new(pinst);
-
-
-
-
 
 	//Link generic ov interface interface to server as first association if it is a part
     if(pinst->v_pouterobject != NULL && Ov_CanCastTo(opcua_server, pinst->v_pouterobject)){
@@ -69,7 +62,28 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_constructor(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void opcua_ovInterface_destructor(
+
+OV_DLLFNCEXPORT void opcua_ovInterface_startup(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_opcua_ovInterface pinst = Ov_StaticPtrCast(opcua_ovInterface, pobj);
+
+    /* do what the base class does first */
+    ov_object_startup(pobj);
+
+    /* do what */
+    pinst->v_store = opcua_ovStore_new(pinst);
+    pinst->v_dataTypes = NULL;
+    pinst->v_trafo = opcua_ovTrafo_new(pinst);
+
+
+    return;
+}
+
+OV_DLLFNCEXPORT void opcua_ovInterface_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
@@ -84,11 +98,13 @@ OV_DLLFNCEXPORT void opcua_ovInterface_destructor(
     if (pinst->v_trafo)
     	opcua_ovTrafo_delete(pinst->v_trafo);
 
-    /* destroy object */
-    ov_object_destructor(pobj);
+    /* set the object's state to "shut down" */
+    ov_object_shutdown(pobj);
 
     return;
 }
+
+
 
 OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
     /*

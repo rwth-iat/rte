@@ -29,6 +29,50 @@
 #include "nodeset_lifeCycleEntry.h"
 #include "opcua_ovTrafo.h"
 
+UA_StatusCode getNumericalNodeIdForInputOutputArgs(UA_Server *server,
+		UA_NodeId methodId, UA_NodeId* inArgsId, UA_NodeId* outArgsId) {
+	UA_BrowseDescription bD;
+	UA_BrowseDescription_init(&bD);
+	bD.browseDirection = UA_BROWSEDIRECTION_FORWARD;
+	bD.nodeId = methodId;
+	bD.referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	bD.includeSubtypes = false;
+	UA_Boolean found1 = false;
+	UA_Boolean found2 = false;
+
+	UA_BrowseResult bR = UA_Server_browse(server, 2, &bD);
+	for (size_t i = 0; i < bR.referencesSize; i++) {
+		UA_QualifiedName bN;
+		UA_QualifiedName_init(&bN);
+		UA_Server_readBrowseName(server, bR.references[i].nodeId.nodeId, &bN);
+		UA_String tmpBN = UA_String_fromChars("InputArguments");
+		if (UA_String_equal(&bN.name, &tmpBN)) {
+			*inArgsId = bR.references[i].nodeId.nodeId;
+			found1 = true;
+			//UA_NodeId_copy(&bR.references[i].nodeId.nodeId,&inArgsId);
+			UA_String_deleteMembers(&tmpBN);
+			UA_QualifiedName_deleteMembers(&bN);
+			continue;
+		}
+		UA_String_deleteMembers(&tmpBN);
+		tmpBN = UA_String_fromChars("OutputArguments");
+		if (UA_String_equal(&bN.name, &tmpBN)) {
+			*outArgsId = bR.references[i].nodeId.nodeId;
+			found2 = true;
+			//UA_NodeId_copy(&bR.references[i].nodeId.nodeId,&outArgsId);
+			UA_String_deleteMembers(&tmpBN);
+			UA_QualifiedName_deleteMembers(&bN);
+			continue;
+		}
+		UA_String_deleteMembers(&tmpBN);
+		UA_QualifiedName_deleteMembers(&bN);
+	}
+	UA_BrowseDescription_deleteMembers(&bD);
+	UA_BrowseResult_deleteMembers(&bR);
+	if (found1 && found2)
+		return UA_STATUSCODE_GOOD;
+	return UA_STATUSCODE_BADNOTFOUND;
+}
 
 
 OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycleArchiveMethodNodeToOPCUA(
@@ -46,11 +90,15 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	OV_STRING 				*plist = NULL;
 	OV_STRING 				*plist2 = NULL;
 	OV_ELEMENT				element;
+	OV_INSTPTR_opcua_server uaserver = NULL;
 
-	OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface 	pinterface = Ov_StaticPtrCast(lifeCycleEntryOPCUAInterface_interface, context);
+	OV_INSTPTR_lifeCycleEntryOPCUAInterface_interface 	pInterface = Ov_StaticPtrCast(lifeCycleEntryOPCUAInterface_interface, context);
 
-	if (pinterface == NULL)
+	if (pInterface == NULL)
 		return UA_STATUSCODE_BADOUTOFSERVICE;
+
+	// findServer
+	uaserver =	Ov_StaticPtrCast(opcua_server, Ov_GetParent(opcua_serverToInterfaces, pInterface));
 
 	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
 	plist = ov_string_split(tmpString, "||", &len);
@@ -158,56 +206,51 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	UA_ExpandedNodeId NodeId3;
 
 	if (ov_string_compare(plist[1], "createLCE") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCE);
 	}else if (ov_string_compare(plist[1], "deleteLCE") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_DELETELCE);
 	}else if (ov_string_compare(plist[1], "createLCESimple") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_CREATELCESIMPLE);
 	}else if (ov_string_compare(plist[1], "setLCE") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCE);
 	}else if (ov_string_compare(plist[1], "getLCE") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCE);
 	}else if (ov_string_compare(plist[1], "setLCESimple") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_SETLCESIMPLE);
 	}else if (ov_string_compare(plist[1], "getLCESimple") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_GETLCESIMPLE);
 	}else if (ov_string_compare(plist[1], "getLastLCEs") == OV_STRCMP_EQUAL){
-		NodeId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_INPUTARGUMENTS);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES_OUTPUTARGUMENTS);
+		NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSLIFECYCLEENTRYID_GETLASTLCES);
 	}else{
 		NodeId = UA_EXPANDEDNODEID_NUMERIC(0,0);
-		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(0,0);
-		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(0,0);
+	}
+
+	// InputArguments & OutputArguments
+	if (NodeId.nodeId.identifier.numeric != 0){
+		UA_NodeId inArgId;
+		UA_NodeId_init(&inArgId);
+		UA_NodeId outArgId;
+		UA_NodeId_init(&outArgId);
+
+		getNumericalNodeIdForInputOutputArgs(uaserver->v_server, UA_NODEID_NUMERIC(pInterface->v_index, NodeId.nodeId.identifier.numeric), &inArgId, &outArgId);
+
+		NodeId2 = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, inArgId.identifier.numeric);
+		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, outArgId.identifier.numeric);
+
+		// InputArguments
+		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+							NodeId2, UA_NODECLASS_VARIABLE,
+							UA_TRUE);
+		// OutputArguments
+		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+							NodeId3, UA_NODECLASS_VARIABLE,
+							UA_TRUE);
 	}
 
 	// Type
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
 						NodeId, UA_NODECLASS_METHOD,
 						UA_TRUE);
-	// InputArguments
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-						NodeId2, UA_NODECLASS_VARIABLE,
-						UA_TRUE);
-	// OutputArguments
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-						NodeId3, UA_NODECLASS_VARIABLE,
-						UA_TRUE);
-
 
 	ov_string_freelist(plist);
 	*opcuaNode = newNode;

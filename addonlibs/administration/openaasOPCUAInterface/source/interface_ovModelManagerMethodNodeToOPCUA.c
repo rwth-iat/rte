@@ -245,11 +245,6 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 		NodeId3 = UA_EXPANDEDNODEID_NUMERIC(0,0);
 	}
 
-	// Type
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
-				NodeId, UA_NODECLASS_METHOD,
-				UA_TRUE);
-
 	if (NodeId.nodeId.identifier.numeric != 0){
 		UA_NodeId inArgId;
 		UA_NodeId_init(&inArgId);
@@ -270,6 +265,13 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovModelManagerMeth
 							NodeId3, UA_NODECLASS_VARIABLE,
 							UA_TRUE);
 	}
+
+	// Type
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
+				NodeId, UA_NODECLASS_METHOD,
+				UA_TRUE);
+
+
 
 	ov_string_freelist(plist);
 

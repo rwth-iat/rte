@@ -110,6 +110,13 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	((UA_ObjectNode*)newNode)->eventNotifier = 0;
 
 
+	// References
+	OV_UINT direction = OPCUA_OVTRAFO_ADDHASPROPERTY_FORWARD
+								|	OPCUA_OVTRAFO_ADDHASCOMPONENT_FORWARD
+								|	OPCUA_OVTRAFO_ADDORGANIZES_FORWARD
+								|	OPCUA_OVTRAFO_ADDHASSUBTYPE_FORWARD;
+
+	opcua_ovTrafo_addReferences(Ov_StaticPtrCast(opcua_interface, context), newNode, direction);
 
 	// References
 	OV_STRING	tmpString = NULL;
@@ -226,17 +233,17 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	ov_string_setvalue(&tmpString, NULL);
 	UA_ExpandedNodeId_deleteMembers(&NodeId);
 
-	// LifeCycleEntries
-	tmpString = NULL;
-	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, "|||");
-	ov_string_append(&tmpString, "LifeCycleEntries");
-	NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
-	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
-					NodeId, UA_NODECLASS_OBJECT,
-					UA_TRUE);
-	ov_string_setvalue(&tmpString, NULL);
-	UA_ExpandedNodeId_deleteMembers(&NodeId);
+//	// LifeCycleEntries
+//	tmpString = NULL;
+//	opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
+//	ov_string_append(&tmpString, "|||");
+//	ov_string_append(&tmpString, "LifeCycleEntries");
+//	NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
+//	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
+//					NodeId, UA_NODECLASS_OBJECT,
+//					UA_TRUE);
+//	ov_string_setvalue(&tmpString, NULL);
+//	UA_ExpandedNodeId_deleteMembers(&NodeId);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

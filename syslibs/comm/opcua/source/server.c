@@ -26,61 +26,6 @@
 #include "opcua_helpers.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT opcua_server_constructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_opcua_server pinst = Ov_StaticPtrCast(opcua_server, pobj);
-    OV_RESULT    result;
-
-    /* do what the base class does first */
-    result = ksbase_ComTask_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-    //Create new server
-	UA_Server *server = UA_Server_new();
-	if(!server){
-		ov_string_setvalue(&pinst->v_errorText, "UA_Server_new failed.");
-		pinst->v_error = TRUE;
-		return OV_ERR_GENERIC;
-	}
-	pinst->v_server = server;
-
-
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT void opcua_server_destructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_opcua_server pinst = Ov_StaticPtrCast(opcua_server, pobj);
-
-    /* do what */
-    //Delete config and server
-	//TODO unload interfaces
-    if (pinst->v_run == TRUE){
-    	opcua_server_run_set(pinst, FALSE);
-    }
-	UA_Server_delete(pinst->v_server);
-
-
-    /* destroy object */
-    ksbase_ComTask_destructor(pobj);
-
-    return;
-}
-
-
-
-
-
 UA_StatusCode opcua_server_createConfig(UA_Server* server, OV_INSTPTR_opcua_serverConfig pOvConfig){
     //Create new config with port if pOvConfig is available
 
@@ -239,6 +184,15 @@ OV_DLLFNCEXPORT void opcua_server_startup(
     ov_object_startup(pobj);
 
     /* do what */
+    //Create new server
+	UA_Server *server = UA_Server_new();
+	if(!server){
+		ov_string_setvalue(&pinst->v_errorText, "UA_Server_new failed.");
+		pinst->v_error = TRUE;
+		return;
+	}
+	pinst->v_server = server;
+
     //Restore running state from shutdown
     opcua_server_run_set(pinst, pinst->v_isRunning);
 
@@ -255,7 +209,10 @@ OV_DLLFNCEXPORT void opcua_server_shutdown(
 
     /* do what */
     OV_BOOL isRunning = pinst->v_isRunning; //Save running state
-    opcua_server_run_set(pinst, FALSE);
+	if (pinst->v_run == TRUE){
+		opcua_server_run_set(pinst, FALSE);
+	}
+	UA_Server_delete(pinst->v_server);
     pinst->v_isRunning = isRunning; //Restore running state
 
     /* set the object's state to "shut down" */

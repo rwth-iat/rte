@@ -118,70 +118,70 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 
 
 	// value
-	OV_ELEMENT tmpPart;
-	tmpPart.elemtype = OV_ET_NONE;
-	OV_ELEMENT tmpParrent;
-	tmpParrent.pobj = pobj;
-	tmpParrent.elemtype = OV_ET_OBJECT;
-	UA_LifeCycleEntry tmpLifeCycleEntry;
-	UA_LifeCycleEntry_init(&tmpLifeCycleEntry);
-	do {
-		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
-		if (tmpPart.elemtype == OV_ET_NONE)
-			break;
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceIdString") == OV_STRCMP_EQUAL){
-			if (*(OV_STRING*)tmpPart.pvalue != NULL)
-				tmpLifeCycleEntry.creatingInstance.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceIdType") == OV_STRCMP_EQUAL){
-			tmpLifeCycleEntry.creatingInstance.idType = *(UA_UInt32*)tmpPart.pvalue;
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceIdString") == OV_STRCMP_EQUAL){
-			if (*(OV_STRING*)tmpPart.pvalue != NULL)
-				tmpLifeCycleEntry.writingInstance.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceIdType") == OV_STRCMP_EQUAL){
-			tmpLifeCycleEntry.writingInstance.idType = *(UA_UInt32*)tmpPart.pvalue;
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Data") == OV_STRCMP_EQUAL){
-			opcua_helpers_ovAnyToUAVariant((OV_ANY*)tmpPart.pvalue, &tmpLifeCycleEntry.data.value);
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "TimeStamp") == OV_STRCMP_EQUAL){
-			tmpLifeCycleEntry.data.sourceTimestamp = ov_ovTimeTo1601nsTime(*(OV_TIME*)tmpPart.pvalue);
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Subject") == OV_STRCMP_EQUAL){
-			if (*(OV_STRING*)tmpPart.pvalue != NULL)
-				tmpLifeCycleEntry.subject = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
-			continue;
-		}
-		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "EventClass") == OV_STRCMP_EQUAL){
-			if (*(OV_STRING*)tmpPart.pvalue != NULL)
-				tmpLifeCycleEntry.eventClass = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
-			continue;
-		}else{
-			tmpLifeCycleEntry.id =  atoi(tmpPart.pobj->v_identifier);
-			break;
-		}
-	} while(TRUE);
-
-
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY];
-	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_LifeCycleEntry_new();
-	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
-		result = UA_STATUSCODE_BADOUTOFMEMORY;
-		UA_LifeCycleEntry_deleteMembers(&tmpLifeCycleEntry);
-		return result;
-	}
-	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
-	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
-	UA_LifeCycleEntry_copy(&tmpLifeCycleEntry, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
-	UA_LifeCycleEntry_deleteMembers(&tmpLifeCycleEntry);
+//	OV_ELEMENT tmpPart;
+//	tmpPart.elemtype = OV_ET_NONE;
+//	OV_ELEMENT tmpParrent;
+//	tmpParrent.pobj = pobj;
+//	tmpParrent.elemtype = OV_ET_OBJECT;
+//	UA_LifeCycleEntry tmpLifeCycleEntry;
+//	UA_LifeCycleEntry_init(&tmpLifeCycleEntry);
+//	do {
+//		ov_element_getnextpart(&tmpParrent, &tmpPart, OV_ET_VARIABLE);
+//		if (tmpPart.elemtype == OV_ET_NONE)
+//			break;
+//		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceIdString") == OV_STRCMP_EQUAL){
+//			if (*(OV_STRING*)tmpPart.pvalue != NULL)
+//				tmpLifeCycleEntry.creatingInstance.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
+//			continue;
+//		}
+//		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "CreatingInstanceIdType") == OV_STRCMP_EQUAL){
+//			tmpLifeCycleEntry.creatingInstance.idType = *(UA_UInt32*)tmpPart.pvalue;
+//			continue;
+//		}
+//		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceIdString") == OV_STRCMP_EQUAL){
+//			if (*(OV_STRING*)tmpPart.pvalue != NULL)
+//				tmpLifeCycleEntry.writingInstance.idSpec = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
+//			continue;
+//		}
+//		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "WritingInstanceIdType") == OV_STRCMP_EQUAL){
+//			tmpLifeCycleEntry.writingInstance.idType = *(UA_UInt32*)tmpPart.pvalue;
+//			continue;
+//		}
+//		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Data") == OV_STRCMP_EQUAL){
+//			opcua_helpers_ovAnyToUAVariant((OV_ANY*)tmpPart.pvalue, &tmpLifeCycleEntry.data.value);
+//			continue;
+//		}
+//		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "TimeStamp") == OV_STRCMP_EQUAL){
+//			tmpLifeCycleEntry.data.sourceTimestamp = ov_ovTimeTo1601nsTime(*(OV_TIME*)tmpPart.pvalue);
+//			continue;
+//		}
+//		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "Subject") == OV_STRCMP_EQUAL){
+//			if (*(OV_STRING*)tmpPart.pvalue != NULL)
+//				tmpLifeCycleEntry.subject = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
+//			continue;
+//		}
+//		if (ov_string_compare(tmpPart.elemunion.pvar->v_identifier, "EventClass") == OV_STRCMP_EQUAL){
+//			if (*(OV_STRING*)tmpPart.pvalue != NULL)
+//				tmpLifeCycleEntry.eventClass = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
+//			continue;
+//		}else{
+//			tmpLifeCycleEntry.id =  atoi(tmpPart.pobj->v_identifier);
+//			break;
+//		}
+//	} while(TRUE);
+//
+//
+//	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_LIFECYCLEENTRY[UA_LIFECYCLEENTRY_LIFECYCLEENTRY];
+//	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_LifeCycleEntry_new();
+//	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
+//		result = UA_STATUSCODE_BADOUTOFMEMORY;
+//		UA_LifeCycleEntry_deleteMembers(&tmpLifeCycleEntry);
+//		return result;
+//	}
+//	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;
+//	((UA_VariableNode*)newNode)->valueSource = UA_VALUESOURCE_DATA;
+//	UA_LifeCycleEntry_copy(&tmpLifeCycleEntry, ((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
+//	UA_LifeCycleEntry_deleteMembers(&tmpLifeCycleEntry);
 
 
 	// accessLevel
@@ -202,27 +202,38 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 
 
 	// References
-	OV_STRING	tmpString = NULL;
+	OV_UINT direction = OPCUA_OVTRAFO_ADDHASPROPERTY_FORWARD
+						|	OPCUA_OVTRAFO_ADDHASPROPERTY_BACKWARD
+						|	OPCUA_OVTRAFO_ADDHASCOMPONENT_FORWARD
+						|	OPCUA_OVTRAFO_ADDHASCOMPONENT_BACKWARD
+						|	OPCUA_OVTRAFO_ADDORGANIZES_FORWARD
+						|	OPCUA_OVTRAFO_ADDORGANIZES_BACKWARD
+						|	OPCUA_OVTRAFO_ADDHASSUBTYPE_FORWARD
+						|	OPCUA_OVTRAFO_ADDHASSUBTYPE_BACKWARD;
+	opcua_ovTrafo_addReferences(Ov_StaticPtrCast(opcua_interface, context), newNode, direction);
+
+//	// References
+//	OV_STRING	tmpString = NULL;
 	UA_ExpandedNodeId NodeId;
-	// Parent
-	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
-	ov_memstack_lock();
-	if (Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pParent)){
-		ov_string_setvalue(&tmpString, ov_path_getcanonicalpath(pParent, 2));
-		ov_string_append(&tmpString, "|||LifeCyleEntries");
-		NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
-		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
-					NodeId, UA_NODECLASS_OBJECT, UA_FALSE);
-		UA_ExpandedNodeId_deleteMembers(&NodeId);
-		ov_string_setvalue(&tmpString, NULL);
-	}else{
-		tmpString = ov_path_getcanonicalpath(pParent, 2);
-		NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
-		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
-					NodeId, UA_NODECLASS_OBJECT, UA_FALSE);
-		UA_ExpandedNodeId_deleteMembers(&NodeId);
-	}
-	ov_memstack_unlock();
+//	// Parent
+//	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+//	ov_memstack_lock();
+//	if (Ov_CanCastTo(lifeCycleEntry_LifeCycleArchive, pParent)){
+//		ov_string_setvalue(&tmpString, ov_path_getcanonicalpath(pParent, 2));
+//		ov_string_append(&tmpString, "|||LifeCyleEntries");
+//		NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
+//		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY),
+//					NodeId, UA_NODECLASS_OBJECT, UA_FALSE);
+//		UA_ExpandedNodeId_deleteMembers(&NodeId);
+//		ov_string_setvalue(&tmpString, NULL);
+//	}else{
+//		tmpString = ov_path_getcanonicalpath(pParent, 2);
+//		NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, tmpString);
+//		opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
+//					NodeId, UA_NODECLASS_OBJECT, UA_FALSE);
+//		UA_ExpandedNodeId_deleteMembers(&NodeId);
+//	}
+//	ov_memstack_unlock();
 
 
 

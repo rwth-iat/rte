@@ -43,6 +43,26 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
     /* do what */
     pinst->v_index = 0;
 	ov_string_setvalue(&pinst->v_uri, "acplt.org/openaas/");
+
+
+    return OV_ERR_OK;
+}
+
+
+
+
+OV_DLLFNCEXPORT void openaasOPCUAInterface_interface_startup(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_openaasOPCUAInterface_interface pinst = Ov_StaticPtrCast(openaasOPCUAInterface_interface, pobj);
+
+    /* do what the base class does first */
+    ov_object_startup(pobj);
+
+    /* do what */
 	Ov_SetDynamicVectorLength(&pinst->v_dependentUri, 1, STRING);
 	ov_string_setvalue(&pinst->v_dependentUri.value[0], "acplt.org/identification/");
 	UA_Nodestore_Default_Interface_new(&pinst->v_store);
@@ -50,10 +70,10 @@ OV_DLLFNCEXPORT OV_RESULT openaasOPCUAInterface_interface_constructor(
 	pinst->v_trafo = openaasOPCUAInterface_interface_ovNodeStoreInterfaceOpenAASNew(pinst);
 
 
-    return OV_ERR_OK;
+    return;
 }
 
-OV_DLLFNCEXPORT void openaasOPCUAInterface_interface_destructor(
+OV_DLLFNCEXPORT void openaasOPCUAInterface_interface_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
@@ -67,8 +87,9 @@ OV_DLLFNCEXPORT void openaasOPCUAInterface_interface_destructor(
 		UA_free(pinst->v_store);
 	}
     openaasOPCUAInterface_interface_ovNodeStoreInterfaceOpenAASDelete(pinst->v_trafo);
-    /* destroy object */
-    ov_object_destructor(pobj);
+
+    /* set the object's state to "shut down" */
+    ov_object_shutdown(pobj);
 
     return;
 }

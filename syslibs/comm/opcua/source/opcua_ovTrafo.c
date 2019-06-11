@@ -211,18 +211,6 @@ static UA_StatusCode opcua_ovTrafo_addHasTypeDefinition(OV_INSTPTR_opcua_interfa
 				}
 			}
 		}
-		// if variable node add hasTypedefinition to PropertyType
-		if (pNode->elemtype == OV_ET_VARIABLE || pNode->elemtype == OV_ET_MEMBER){
-			Ov_ForEachChild(ov_instantiation, Ov_StaticPtrCast(ov_class, pNode->pobj), pChildObject){
-				childTypeDefinition.elemtype = OV_ET_OBJECT;
-				childTypeDefinition.pobj = pChildObject;
-				access = opcua_helpers_getAccess(&childTypeDefinition);
-				if(access & OV_AC_READ){
-					statusCode |= opcua_ovTrafo_addReference(pInterface, &childTypeDefinition,
-							UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION), UA_FALSE, node);
-				}
-			}
-		}
 	}
 	return statusCode;
 }
