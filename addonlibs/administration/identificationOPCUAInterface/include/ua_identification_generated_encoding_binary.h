@@ -3,6 +3,7 @@
 
 
 # include "open62541.h"
+#include "ua_identification_generated.h"
 
 
 

@@ -2,7 +2,7 @@
  *
  *   FILE
  *   ----
- *   nodeStoreFunctions.c
+ *   helpers.c
  *
  *   History
  *   -------
@@ -28,33 +28,31 @@
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "nodeset_propertyValueStatement.h"
-
-extern OV_INSTPTR_propertyValueStatementOPCUAInterface_interface pinterface;
-
-
+#include "opcua_ovTrafo.h"
 
 
 OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovPropertyValueStatementListNodeToOPCUA(
-		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
+		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
 	OV_ELEMENT				element;
 
+	OV_INSTPTR_propertyValueStatementOPCUAInterface_interface 	pInterface = Ov_StaticPtrCast(propertyValueStatementOPCUAInterface_interface, context);
+
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(*nodeId, &path);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
@@ -115,18 +113,26 @@ OV_DLLFNCEXPORT UA_StatusCode propertyValueStatementOPCUAInterface_interface_ovP
 
 
 	// References
-	addReference(newNode);
-	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	for (size_t i = 0; i < newNode->referencesSize; i++){
-		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSPROPERTYVALUESTATEMENTID_PROPERTYVALUESTATEMENTLISTTYPE);
-			continue;
-		}
-		if (newNode->references[i].targetId.nodeId.namespaceIndex == pinterface->v_interfacenamespace.index && newNode->references[i].referenceTypeId.identifier.numeric == UA_NS0ID_HASCOMPONENT){
-			newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-		}
-	}
-	UA_NodeId_deleteMembers(&tmpNodeId);
+	OV_UINT direction = OPCUA_OVTRAFO_ADDHASPROPERTY_FORWARD
+							|	OPCUA_OVTRAFO_ADDHASCOMPONENT_FORWARD
+							|	OPCUA_OVTRAFO_ADDORGANIZES_FORWARD
+							|	OPCUA_OVTRAFO_ADDHASSUBTYPE_FORWARD;
+	opcua_ovTrafo_addReferences(Ov_StaticPtrCast(opcua_interface, context), newNode, direction);
+	// ParentNode
+	OV_INSTPTR_ov_object pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	ov_memstack_lock();
+	UA_ExpandedNodeId NodeId = UA_EXPANDEDNODEID_STRING_ALLOC(OPCUA_OVTRAFO_DEFAULTNSINDEX, ov_path_getcanonicalpath(pParent, 2));
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
+			NodeId, UA_NODECLASS_OBJECT, UA_FALSE);
+	UA_ExpandedNodeId_deleteMembers(&NodeId);
+	ov_memstack_unlock();
+
+
+	// Type
+	NodeId = UA_EXPANDEDNODEID_NUMERIC(pInterface->v_index, UA_NSPROPERTYVALUESTATEMENTID_PROPERTYVALUESTATEMENTLISTTYPE);
+	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
+			NodeId, UA_NODECLASS_OBJECTTYPE,
+			UA_TRUE);
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

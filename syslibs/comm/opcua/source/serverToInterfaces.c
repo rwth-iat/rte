@@ -34,6 +34,25 @@ OV_DLLFNCEXPORT OV_RESULT opcua_serverToInterfaces_link(
 	const OV_PLACEMENT_HINT	childhint,
 	const OV_CPT_opcua_serverToInterfaces	prelchild
 ){
+	OV_INSTPTR_opcua_server pServer = Ov_StaticPtrCast(opcua_server, pparent);
+	OV_INSTPTR_opcua_interface pInterface = Ov_StaticPtrCast(opcua_interface, pchild);
+	OV_INSTPTR_opcua_interface pDependentInterface = NULL;
+	// check if interfaces for dependent namespaces are already linked
+	if (pInterface->v_dependentUri.veclen != 0){
+		for (OV_UINT i = 0; i < pInterface->v_dependentUri.veclen; i++){
+			OV_BOOL foundDependentUri = FALSE;
+			Ov_ForEachChild(opcua_serverToInterfaces, pServer, pDependentInterface){
+				if (ov_string_compare(pInterface->v_dependentUri.value[i], pDependentInterface->v_uri) == OV_STRCMP_EQUAL){
+					foundDependentUri = TRUE;
+					break;
+				}
+			}
+			if (foundDependentUri == FALSE)
+				return OV_ERR_GENERIC;
+		}
+	}
+
+
 	OV_RESULT result = ov_association_link(passoc_opcua_serverToInterfaces,
 			Ov_PtrUpCast(ov_object, pparent),
 			Ov_PtrUpCast(ov_object, pchild),
@@ -44,7 +63,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_serverToInterfaces_link(
 
 	if(Ov_OK(result)){
 	    //Load interface if server is already running
-	    OV_INSTPTR_opcua_server pServer = Ov_StaticPtrCast(opcua_server, pparent);
 	    if(pServer != NULL && pServer->v_isRunning){
 	        OV_INSTPTR_opcua_interface pInterface = Ov_StaticPtrCast(opcua_interface, pchild);
 			OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
@@ -62,8 +80,19 @@ OV_DLLFNCEXPORT void opcua_serverToInterfaces_unlink(
 	const OV_PPT_opcua_serverToInterfaces	pparent,
 	const OV_CPT_opcua_serverToInterfaces	pchild
 ){
-	// Unload interface if server is already running
+
 	OV_INSTPTR_opcua_server pServer = Ov_StaticPtrCast(opcua_server, pparent);
+	OV_INSTPTR_opcua_interface pInterface = Ov_StaticPtrCast(opcua_interface, pchild);
+	OV_INSTPTR_opcua_interface pDependentInterface = NULL;
+	// unlink first all interfaces which have the interface namespace in the interface dependent namespaces list
+	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pDependentInterface){
+		for (OV_UINT i = 0; i < pDependentInterface->v_dependentUri.veclen; i++){
+			if (ov_string_compare(pDependentInterface->v_dependentUri.value[i], pInterface->v_uri) == OV_STRCMP_EQUAL)
+				opcua_serverToInterfaces_unlink(pparent, pDependentInterface);
+		}
+	}
+
+	// Unload interface if server is already running
 	if(pServer != NULL && pServer->v_isRunning){
 		OV_INSTPTR_opcua_interface pInterface = Ov_StaticPtrCast(opcua_interface, pchild);
 		OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?

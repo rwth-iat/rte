@@ -23,36 +23,32 @@
 #include "ksbase.h"
 #include "opcua.h"
 #include "opcua_helpers.h"
-#include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 #include "nodeset_openaas.h"
-
-extern OV_INSTPTR_openaasOPCUAInterface_interface pinterface;
-
+#include "opcua_ovTrafo.h"
 
 OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOPCUA(
-		void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
+		void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode) {
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
-	OV_TICKET 				*pTicket = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	UA_NodeClass 			nodeClass;
 	OV_ELEMENT				element;
 
 	ov_memstack_lock();
-	result = opcua_nodeStoreFunctions_resolveNodeIdToPath(*nodeId, &path);
+	result = opcua_helpers_resolveNodeIdToPath(*nodeId, &path);
 	if(result != UA_STATUSCODE_GOOD){
 		ov_memstack_unlock();
 		return result;
 	}
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
-	result = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(element), pTicket, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointerAndCheckAccess(&(element), &pobj, &pVtblObj, &access);
 	if(result != UA_STATUSCODE_GOOD){
 		return result;
 	}
@@ -108,40 +104,19 @@ OV_DLLFNCEXPORT UA_StatusCode openaasOPCUAInterface_interface_ovSubModelNodeToOP
 
 	((UA_ObjectNode*)newNode)->eventNotifier = 0;
 
-	// References
-	addReference(newNode);
-	UA_NodeId tmpNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION);
-	OV_STRING tmpString = NULL;
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".ModelId");
-	UA_String ModelId = UA_String_fromChars(tmpString);
-	ov_string_setvalue(&tmpString, NULL);
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".Revision");
-	UA_String Revision = UA_String_fromChars(tmpString);
-	ov_string_setvalue(&tmpString, NULL);
-	copyOPCUAStringToOV(nodeId->identifier.string, &tmpString);
-	ov_string_append(&tmpString, ".Version");
-	UA_String Version = UA_String_fromChars(tmpString);
-	ov_string_setvalue(&tmpString, NULL);
-	for (size_t i = 0; i < newNode->referencesSize; i++){
-		if (UA_NodeId_equal(&newNode->references[i].referenceTypeId, &tmpNodeId)){
-			newNode->references[i].targetId = UA_EXPANDEDNODEID_NUMERIC(pinterface->v_modelnamespace.index, UA_NSOPENAASID_SUBMODELTYPE);
-			continue;
-		}
-		if (UA_String_equal(&ModelId, &newNode->references[i].targetId.nodeId.identifier.string) ||
-			UA_String_equal(&Revision, &newNode->references[i].targetId.nodeId.identifier.string) ||
-			UA_String_equal(&Version, &newNode->references[i].targetId.nodeId.identifier.string)){
-			newNode->references[i].targetId.nodeId.namespaceIndex = pinterface->v_interfacenamespace.index;
-			if (UA_String_equal(&ModelId, &newNode->references[i].targetId.nodeId.identifier.string) && newNode->references[i].referenceTypeId.identifier.numeric == UA_NS0ID_HASCOMPONENT){
-				newNode->references[i].referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
-			}
-		}
-	}
-	UA_NodeId_deleteMembers(&tmpNodeId);
-	UA_String_deleteMembers(&ModelId);
-	UA_String_deleteMembers(&Revision);
-	UA_String_deleteMembers(&Version);
+	//	// References
+	OV_UINT direction = OPCUA_OVTRAFO_ADDHASPROPERTY_FORWARD
+						|	OPCUA_OVTRAFO_ADDHASPROPERTY_BACKWARD
+						|	OPCUA_OVTRAFO_ADDHASCOMPONENT_FORWARD
+						|	OPCUA_OVTRAFO_ADDHASCOMPONENT_BACKWARD
+						|	OPCUA_OVTRAFO_ADDORGANIZES_FORWARD
+						|	OPCUA_OVTRAFO_ADDORGANIZES_BACKWARD
+						|	OPCUA_OVTRAFO_ADDHASTYPEDEFINITION_FORWARD
+						|	OPCUA_OVTRAFO_ADDHASTYPEDEFINITION_BACKWARD
+						|	OPCUA_OVTRAFO_ADDHASSUBTYPE_FORWARD
+						|	OPCUA_OVTRAFO_ADDHASSUBTYPE_BACKWARD;
+	opcua_ovTrafo_addReferences(Ov_StaticPtrCast(opcua_interface, context), newNode, direction);
+
 
 	*opcuaNode = newNode;
 	return UA_STATUSCODE_GOOD;

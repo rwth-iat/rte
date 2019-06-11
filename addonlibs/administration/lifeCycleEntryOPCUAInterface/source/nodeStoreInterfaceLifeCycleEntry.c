@@ -14,6 +14,7 @@
 #include "opcua_helpers.h"
 #include "ua_lifeCycleEntry_generated.h"
 #include "ua_lifeCycleEntry_generated_handling.h"
+#include "ua_identification_generated_handling.h"
 
 OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_MethodCallbackArchiv(UA_Server *server,
                      const UA_NodeId *sessionId, void *sessionContext,

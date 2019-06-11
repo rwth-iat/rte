@@ -51,7 +51,7 @@ OV_DLLFNCEXPORT OV_RESULT identificationOPCUAInterface_interface_constructor(
 	UA_DataTypeArray identificationTypes = {NULL, UA_IDENTIFICATION_COUNT, UA_IDENTIFICATION};
 	memcpy(pidentificationTypes, &identificationTypes, sizeof(identificationTypes));
 	pinst->v_dataTypes = pidentificationTypes;
-	pinst->v_trafo = NULL;
+	pinst->v_trafo = identificationOPCUAInterface_interface_ovNodeStoreInterfaceIdentificationNew(pinst);
 
     return OV_ERR_OK;
 }
@@ -70,6 +70,7 @@ OV_DLLFNCEXPORT void identificationOPCUAInterface_interface_destructor(
 		UA_free(pinst->v_store);
 	}
 	UA_free(pinst->v_dataTypes);
+	identificationOPCUAInterface_interface_ovNodeStoreInterfaceIdentificationDelete(pinst->v_trafo);
 
 
     /* do what */
@@ -84,16 +85,30 @@ OV_DLLFNCEXPORT OV_BOOL identificationOPCUAInterface_interface_checkNode(OV_INST
     /*
     *   local variables
     */
-
-    return (OV_BOOL)0;
+	if(Ov_CanCastTo(identification_Identification, pNode)){
+		return TRUE;
+	}
+	return FALSE;
 }
 
 OV_DLLFNCEXPORT OV_BOOL identificationOPCUAInterface_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_UINT applicationIndex, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {
     /*
     *   local variables
     */
-
-    return (OV_BOOL)0;
+	if(Ov_CanCastTo(identification_Identification, pNode)){
+		if(parentRef){
+			parentRef->isForward = TRUE;
+			parentRef->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+			//parentRef->sourceNodeId
+			parentRef->targetNodeClass = UA_NODECLASS_OBJECT;
+			ov_memstack_lock();
+			parentRef->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(applicationIndex, ov_path_getcanonicalpath(pNode,2));
+			ov_memstack_unlock();
+			//parentRef->targetServerUri
+		}
+		return TRUE;
+	}
+	return FALSE;
 }
 
 OV_DLLFNCEXPORT UA_StatusCode identificationOPCUAInterface_interface_nodeset(UA_Server* server) {

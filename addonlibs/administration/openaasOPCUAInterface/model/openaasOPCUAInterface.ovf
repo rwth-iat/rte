@@ -17,22 +17,22 @@ typedef UA_StatusCode UA_FNC_OVMODELMANAGERNODETOOPCUA(void *handle, const UA_No
 typedef UA_StatusCode UA_FNC_OVMODELMANAGERMETHODNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVAASNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVSUBMODELNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVSUBMODELVARIABLESNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 typedef UA_StatusCode UA_FNC_OVFOLDERNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
-typedef UA_StatusCode UA_FNC_OVIDSNODETOOPCUA(void *handle, const UA_NodeId *nodeId, UA_Node** opcuaNode);
 
 	
 
 /* nodestore interfacing functions */
-typedef UA_NodestoreInterface* UA_FNC_OVNODESTOREINTERFACEOPENAASNEW(void);
-typedef void UA_FNC_OVNODESTOREINTERFACEOPENAASDELETE(UA_NodestoreInterface * nsi);
-typedef UA_StatusCode UA_FNC_METHODCALLBACKSTANDARD(void *methodHandle, const UA_NodeId *objectId,
-                     const UA_NodeId *sessionId, void *sessionHandle,
-                     size_t inputSize, const UA_Variant *input,
-                     size_t outputSize, UA_Variant *output);
+typedef UA_NodestoreInterface* UA_FNC_OVNODESTOREINTERFACEOPENAASNEW(OV_INSTPTR_openaasOPCUAInterface_interface context);
+typedef void UA_FNC_OVNODESTOREINTERFACEOPENAASDELETE(UA_NodestoreInterface * context);
+typedef UA_StatusCode UA_FNC_METHODCALLBACKSTANDARD(UA_Server *server, const UA_NodeId *sessionId,
+        void *sessionContext, const UA_NodeId *methodId,
+        void *methodContext, const UA_NodeId *objectId,
+        void *objectContext, size_t inputSize,
+        const UA_Variant *input, size_t outputSize,
+        UA_Variant *output);
                      
 typedef AASStatusCode UA_FNC_STARTGETASSETLCEDATA(IdentificationType aasId, OV_STRING ipaddress, IdentificationType assetAASId);
 typedef AASStatusCode UA_FNC_STOPGETASSETLCEDATA(IdentificationType aasId);
-typedef UA_NodeId UA_FNC_GETAASNODEID(IdentificationType aasId);
+typedef UA_NodeId UA_FNC_GETAASNODEID(OV_INSTPTR_openaasOPCUAInterface_interface context, IdentificationType aasId);
 	
 #endif

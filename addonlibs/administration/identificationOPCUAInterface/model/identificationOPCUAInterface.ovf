@@ -10,4 +10,11 @@
 */
 
 #include "open62541.h"
+
+typedef UA_StatusCode IDENTIFCATION_FNC_OVIDENTIFICATIONNODETOOPCUA(void *context, const UA_NodeId *nodeId, UA_Node** opcuaNode);
+
+/* nodestore interfacing functions */
+typedef UA_NodestoreInterface* IDENTIFCATION_FNC_OVNODESTOREINTERFACEIDENTIFCATIONNEW(OV_INSTPTR_identificationOPCUAInterface_interface context);
+typedef void IDENTIFCATION_FNC_OVNODESTOREINTERFACEIDENTIFCATIONDELETE(UA_NodestoreInterface * context);
+
 #endif

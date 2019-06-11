@@ -1,116 +1,71 @@
-/* Generated from Opc.Ua.Types.bsd, identification.bsd, Custom.Opc.Ua.AssetAdministrationShell.bsd with script /home/ubuntu/opcuaParser/tools/generate_datatypes.py
- * on host ubuntu-VirtualBox by user ubuntu at 2017-08-24 05:02:32 */
+/* Generated from pvs.bsd with script generate_datatypes.py
+ * on host ubuntu-VirtualBox by user ubuntu at 2019-06-05 03:06:38 */
 
-#include "stddef.h"
 #include "ua_propertyValueStatement_generated.h"
 
 /* ViewEnum */
-static UA_DataTypeMember ViewEnum_members[1] = {
-{
-#ifdef UA_ENABLE_TYPENAMES
-    "", /* .memberName */
-#endif
-    UA_TYPES_INT32, /* .memberTypeIndex */
-    0, /* .padding */
-    true, /* .namespaceZero */
-    false /* .isArray */
-},};
+#define ViewEnum_members NULL
 
 /* ExpressionLogicEnum */
-static UA_DataTypeMember ExpressionLogicEnum_members[1] = {
-{
-#ifdef UA_ENABLE_TYPENAMES
-    "", /* .memberName */
-#endif
-    UA_TYPES_INT32, /* .memberTypeIndex */
-    0, /* .padding */
-    true, /* .namespaceZero */
-    false /* .isArray */
-},};
+#define ExpressionLogicEnum_members NULL
 
 /* VisibilityEnum */
-static UA_DataTypeMember VisibilityEnum_members[1] = {
-{
-#ifdef UA_ENABLE_TYPENAMES
-    "", /* .memberName */
-#endif
-    UA_TYPES_INT32, /* .memberTypeIndex */
-    0, /* .padding */
-    true, /* .namespaceZero */
-    false /* .isArray */
-},};
+#define VisibilityEnum_members NULL
 
 /* ExpressionSemanticEnum */
-static UA_DataTypeMember ExpressionSemanticEnum_members[1] = {
-{
-#ifdef UA_ENABLE_TYPENAMES
-    "", /* .memberName */
-#endif
-    UA_TYPES_INT32, /* .memberTypeIndex */
-    0, /* .padding */
-    true, /* .namespaceZero */
-    false /* .isArray */
-},};
-UA_DataType UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_COUNT] = {
-
+#define ExpressionSemanticEnum_members NULL
+const UA_DataType UA_PROPERTYVALUESTATEMENT[UA_PROPERTYVALUESTATEMENT_COUNT] = {
 /* ViewEnum */
 {
-#ifdef UA_ENABLE_TYPENAMES
-    "ViewEnum", /* .typeName */
-#endif
-    {3, UA_NODEIDTYPE_NUMERIC, {3004}}, /* .typeId */
+    UA_TYPENAME("ViewEnum") /* .typeName */
+    {2, UA_NODEIDTYPE_NUMERIC, {3004}}, /* .typeId */
     sizeof(UA_ViewEnum), /* .memSize */
     UA_TYPES_INT32, /* .typeIndex */
-    1, /* .membersSize */
-    true, /* .builtin */
+    UA_DATATYPEKIND_ENUM, /* .typeKind */
     true, /* .pointerFree */
-    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */
+    0, /* .membersSize */
     0, /* .binaryEncodingId */
-    ViewEnum_members /* .members */ },
-
+    ViewEnum_members /* .members */
+},
 /* ExpressionLogicEnum */
 {
-#ifdef UA_ENABLE_TYPENAMES
-    "ExpressionLogicEnum", /* .typeName */
-#endif
-    {3, UA_NODEIDTYPE_NUMERIC, {3002}}, /* .typeId */
+    UA_TYPENAME("ExpressionLogicEnum") /* .typeName */
+    {2, UA_NODEIDTYPE_NUMERIC, {3002}}, /* .typeId */
     sizeof(UA_ExpressionLogicEnum), /* .memSize */
     UA_TYPES_INT32, /* .typeIndex */
-    1, /* .membersSize */
-    true, /* .builtin */
+    UA_DATATYPEKIND_ENUM, /* .typeKind */
     true, /* .pointerFree */
-    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */
+    0, /* .membersSize */
     0, /* .binaryEncodingId */
-    ExpressionLogicEnum_members /* .members */ },
-
+    ExpressionLogicEnum_members /* .members */
+},
 /* VisibilityEnum */
 {
-#ifdef UA_ENABLE_TYPENAMES
-    "VisibilityEnum", /* .typeName */
-#endif
-    {3, UA_NODEIDTYPE_NUMERIC, {3005}}, /* .typeId */
+    UA_TYPENAME("VisibilityEnum") /* .typeName */
+    {2, UA_NODEIDTYPE_NUMERIC, {3005}}, /* .typeId */
     sizeof(UA_VisibilityEnum), /* .memSize */
     UA_TYPES_INT32, /* .typeIndex */
-    1, /* .membersSize */
-    true, /* .builtin */
+    UA_DATATYPEKIND_ENUM, /* .typeKind */
     true, /* .pointerFree */
-    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */
+    0, /* .membersSize */
     0, /* .binaryEncodingId */
-    VisibilityEnum_members /* .members */ },
-
+    VisibilityEnum_members /* .members */
+},
 /* ExpressionSemanticEnum */
 {
-#ifdef UA_ENABLE_TYPENAMES
-    "ExpressionSemanticEnum", /* .typeName */
-#endif
-    {3, UA_NODEIDTYPE_NUMERIC, {3003}}, /* .typeId */
+    UA_TYPENAME("ExpressionSemanticEnum") /* .typeName */
+    {2, UA_NODEIDTYPE_NUMERIC, {3003}}, /* .typeId */
     sizeof(UA_ExpressionSemanticEnum), /* .memSize */
     UA_TYPES_INT32, /* .typeIndex */
-    1, /* .membersSize */
-    true, /* .builtin */
+    UA_DATATYPEKIND_ENUM, /* .typeKind */
     true, /* .pointerFree */
-    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */ 
+    UA_BINARY_OVERLAYABLE_INTEGER, /* .overlayable */
+    0, /* .membersSize */
     0, /* .binaryEncodingId */
-    ExpressionSemanticEnum_members /* .members */ },
+    ExpressionSemanticEnum_members /* .members */
+},
 };
 

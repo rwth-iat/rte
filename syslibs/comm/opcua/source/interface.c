@@ -32,27 +32,6 @@ static void removeAllNodes(void *visitorCtx, const UA_Node *node){
 	nsi->removeNode(nsi->context, &node->nodeId);
 }
 
-OV_DLLFNCEXPORT OV_RESULT opcua_interface_uri_set(
-    OV_INSTPTR_opcua_interface          pobj,
-    const OV_STRING  value
-) {
-	// Check for valid namespace uri
-	if(ov_string_getlength(value) == 0){
-		return OV_ERR_BADNAME;
-	}
-	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
-	// Change trafo
-
-	if(server != NULL && server->v_isRunning){
-		UA_String trafoUri = UA_String_fromChars(value);
-		UA_String oldUri = UA_String_fromChars(pobj->v_uri);
-		opcua_interface_setNamespace(server->v_server, oldUri, trafoUri, NULL);
-		// Change internal URIs
-		ov_string_setvalue(&pobj->v_uri, value);
-	}
-    return OV_ERR_OK;
-}
-
 
 //TODO use macro
 OV_DLLFNCEXPORT OV_ACCESS opcua_interface_getaccess(
@@ -94,6 +73,17 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 		return OV_ERR_GENERIC;
 	}
 
+	// Check whether an interface with same uri is already linked
+	if(!forceLoad){
+		OV_INSTPTR_opcua_interface pInterfaceTemp = NULL;
+		Ov_ForEachChild(opcua_serverToInterfaces, server, pInterfaceTemp){
+			if(pobj != pInterfaceTemp &&
+					ov_string_compare(pobj->v_uri, pInterfaceTemp->v_uri) == OV_STRCMP_EQUAL){
+				return OV_ERR_ALREADYEXISTS;
+			}
+		}
+	}
+
 	//Load all dependent interfaces first
 	OV_INSTPTR_opcua_interface dependentInterface = NULL;
 	Ov_ForEachChild(opcua_interfaceDependency, pobj, dependentInterface){
@@ -101,23 +91,13 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 		//TODO error handling
 	}
 
-	size_t index = 0;
-	UA_String uri = UA_String_fromChars(pobj->v_uri);
-	if(!forceLoad){
-		if(UA_Server_getNamespaceByName(server->v_server, uri, &index) == UA_STATUSCODE_GOOD){
-			UA_String_deleteMembers(&uri);
-			return OV_ERR_ALREADYEXISTS;
-		}
-	}
-	UA_ServerConfig * config = UA_Server_getConfig(server->v_server);
 
 	// Add NamespaceUri
-	// Try to replace empty namespace otherwise add to the end
+	// Get the namespace index if already added, otherwise add to the end
 	pobj->v_index = UA_Server_addNamespace(server->v_server, pobj->v_uri);
 
-	UA_String_deleteMembers(&uri);
-
 	// Add Datatypes
+	UA_ServerConfig * config = UA_Server_getConfig(server->v_server);
 	if(pobj->v_dataTypes){
 		pobj->v_dataTypes->next = config->customDataTypes;
 		config->customDataTypes = pobj->v_dataTypes;
@@ -189,7 +169,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj
 
 
 OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkNode(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context) {
-    return TRUE;
+    return FALSE;
 }
 
 OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_UINT applicationIndex, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef) {

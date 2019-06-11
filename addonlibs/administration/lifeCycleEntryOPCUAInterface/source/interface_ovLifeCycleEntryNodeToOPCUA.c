@@ -164,8 +164,10 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 			if (*(OV_STRING*)tmpPart.pvalue != NULL)
 				tmpLifeCycleEntry.eventClass = UA_String_fromChars(*(OV_STRING*)tmpPart.pvalue);
 			continue;
+		}else{
+			tmpLifeCycleEntry.id =  atoi(tmpPart.pobj->v_identifier);
+			break;
 		}
-		tmpLifeCycleEntry.id =  atoi(tmpPart.elemunion.pvar->v_identifier);
 	} while(TRUE);
 
 
@@ -173,6 +175,7 @@ OV_DLLFNCEXPORT UA_StatusCode lifeCycleEntryOPCUAInterface_interface_ovLifeCycle
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_LifeCycleEntry_new();
 	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
+		UA_LifeCycleEntry_deleteMembers(&tmpLifeCycleEntry);
 		return result;
 	}
 	((UA_VariableNode*)newNode)->value.data.value.hasValue = TRUE;

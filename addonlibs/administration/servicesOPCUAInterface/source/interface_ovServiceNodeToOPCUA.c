@@ -139,11 +139,12 @@ OV_DLLFNCEXPORT UA_StatusCode servicesOPCUAInterface_interface_ovServiceNodeToOP
 			NodeId, //TODO use checkNodeId function of correct interface instead.
 			UA_NODECLASS_OBJECT, UA_FALSE);
 	UA_ExpandedNodeId_deleteMembers(&NodeId);
+	ov_memstack_unlock();
 
 	// HasTypeDefinition to Service
 	opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION),
 			UA_EXPANDEDNODEID_NUMERIC(pinterface->v_index, UA_NSSERVICESID_SERVICESTYPE), UA_NODECLASS_METHOD ,UA_TRUE);
-	ov_memstack_unlock();
+
 
 	//TODO use memstack instead
 	// InputArguments
