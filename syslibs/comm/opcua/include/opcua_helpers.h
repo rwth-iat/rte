@@ -50,5 +50,5 @@ UA_StatusCode opcua_helpers_addReference(
 		const UA_ExpandedNodeId targetNodeId, UA_NodeClass targetNodeClass, UA_Boolean isForward);
 
 UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String uriOld, const UA_String uriNew, size_t * indexOut);
-
+UA_StatusCode opcua_helpers_getNumericalNodeIdForInputOutputArgs(UA_Server *server, UA_NodeId methodId, UA_NodeId* inArgsId, UA_NodeId* outArgsId);
 #endif /* opcua_HELPERS_H_ */

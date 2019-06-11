@@ -26,6 +26,8 @@
 #define TOSECONDS				10000000LL
 #define TOMICROSECONDS			10LL
 
+
+
 OV_DLLFNCEXPORT void opcua_helpers_UA_String_append(UA_String * string, const char * append){
 	if(string == NULL)
 		return;
@@ -927,4 +929,50 @@ UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String ur
 	// Free resources
 	UA_Variant_deleteMembers(&namespaceArray);
 	return result;
+}
+
+OV_DLLFNCEXPORT
+UA_StatusCode opcua_helpers_getNumericalNodeIdForInputOutputArgs(UA_Server *server,
+		UA_NodeId methodId, UA_NodeId* inArgsId, UA_NodeId* outArgsId) {
+	UA_BrowseDescription bD;
+	UA_BrowseDescription_init(&bD);
+	bD.browseDirection = UA_BROWSEDIRECTION_FORWARD;
+	bD.nodeId = methodId;
+	bD.referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+	bD.includeSubtypes = false;
+	UA_Boolean found1 = false;
+	UA_Boolean found2 = false;
+
+	UA_BrowseResult bR = UA_Server_browse(server, 2, &bD);
+	for (size_t i = 0; i < bR.referencesSize; i++) {
+		UA_QualifiedName bN;
+		UA_QualifiedName_init(&bN);
+		UA_Server_readBrowseName(server, bR.references[i].nodeId.nodeId, &bN);
+		UA_String tmpBN = UA_String_fromChars("InputArguments");
+		if (UA_String_equal(&bN.name, &tmpBN)) {
+			*inArgsId = bR.references[i].nodeId.nodeId;
+			found1 = true;
+			//UA_NodeId_copy(&bR.references[i].nodeId.nodeId,&inArgsId);
+			UA_String_deleteMembers(&tmpBN);
+			UA_QualifiedName_deleteMembers(&bN);
+			continue;
+		}
+		UA_String_deleteMembers(&tmpBN);
+		tmpBN = UA_String_fromChars("OutputArguments");
+		if (UA_String_equal(&bN.name, &tmpBN)) {
+			*outArgsId = bR.references[i].nodeId.nodeId;
+			found2 = true;
+			//UA_NodeId_copy(&bR.references[i].nodeId.nodeId,&outArgsId);
+			UA_String_deleteMembers(&tmpBN);
+			UA_QualifiedName_deleteMembers(&bN);
+			continue;
+		}
+		UA_String_deleteMembers(&tmpBN);
+		UA_QualifiedName_deleteMembers(&bN);
+	}
+	UA_BrowseDescription_deleteMembers(&bD);
+	UA_BrowseResult_deleteMembers(&bR);
+	if (found1 && found2)
+		return UA_STATUSCODE_GOOD;
+	return UA_STATUSCODE_BADNOTFOUND;
 }
