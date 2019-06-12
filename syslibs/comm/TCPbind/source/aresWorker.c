@@ -234,7 +234,6 @@ void* workerThread( void* lpParam ){
 		Sleep(10);
 #endif
 	}
-	// TODO free GetAddrInfoElem's
 #if OV_SYSTEM_UNIX
 	pthread_cleanup_pop(1);
 #endif
@@ -261,6 +260,9 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_startup(
 	ov_object_startup(pobj);
 
 	/* do what */
+	/* check if already started */
+	if(pinst->v_handleValid)
+		return;
 	pinst->v_cycInterval = 50;	/*	just checks if the thread is running -> not needed so often	*/
 	/*	create a dummy element	*/
 	pNewElem = calloc(1, sizeof(getAddrInfoElem));
@@ -329,17 +331,12 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_shutdown(
 			while(pCurrElem){
 				/*	get the next element	*/
 				pNextElem = pCurrElem->pNext;
-				if(pCurrElem->pNext){
-					if(pCurrElem->pPrevious){
-						pCurrElem->pPrevious->pNext = pCurrElem->pNext;
-					}else{
-						elemList.pFirstElem = pCurrElem->pNext;
-					}
-					pCurrElem->pNext->pPrevious = pCurrElem->pPrevious;
-					free(pCurrElem->host);
-					free(pCurrElem->port);
-					free(pCurrElem);
+				free(pCurrElem->host);
+				free(pCurrElem->port);
+				if(pCurrElem->addrInfo){
+					freeaddrinfo(pCurrElem->addrInfo);
 				}
+				free(pCurrElem);
 				/*	go to the next element	*/
 				pCurrElem = pNextElem;
 			}
