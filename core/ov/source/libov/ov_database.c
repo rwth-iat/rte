@@ -52,6 +52,9 @@
 #if OV_SYSTEM_UNIX
 #include <sys/resource.h>
 #include <sys/mman.h>
+#if OV_VALGRIND
+#include <valgrind/valgrind.h>
+#endif
 #endif
 #endif
 
@@ -1642,7 +1645,13 @@ OV_DLLFNCEXPORT void ov_database_flush(void) {
 		}
 #endif
 #if OV_SYSTEM_UNIX
+#if OV_VALGRIND
+		VALGRIND_DISABLE_ERROR_REPORTING;
 		msync((void*) pdb, pdb->size, MS_SYNC);
+		VALGRIND_ENABLE_ERROR_REPORTING;
+#else
+		msync((void*) pdb, pdb->size, MS_SYNC);
+#endif
 #endif
 #if OV_SYSTEM_NT
 		FlushViewOfFile((LPCVOID)pdb, 0);
