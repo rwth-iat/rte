@@ -100,10 +100,12 @@ static OV_RESULT extract_response_format(const OV_STRING_VEC* urlQuery, HTTP_RES
 	return OV_ERR_OK;
 }
 
-#define PARSE_HTTP_HEADER_RETURN if(clientRequest->response_format == FORMATUNDEFINED){\
+#define PARSE_HTTP_HEADER_RETURN \
+		if(clientRequest->response_format == FORMATUNDEFINED){\
 			clientRequest->response_format = FORMATDEFAULT;\
 		}\
 		ov_string_setvalue(&RequestLine, NULL);\
+		ov_string_freelist(pallheaderslist);\
 		ov_string_freelist(plist);\
 		ov_string_freelist(pKeyValuepair);\
 		return
@@ -131,7 +133,7 @@ OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP
 	//initialize return vector properly
 	Ov_SetDynamicVectorLength(&clientRequest->urlQuery, 0, STRING);
 
-	pallheaderslist = ov_string_split(clientRequest->requestHeader, "\r\n", &allheaderscount);
+	pallheaderslist = ov_string_split(clientRequest->requestHeader, "\r\n", &allheaderscount); // fixme possible leak
 	if(allheaderscount<=0){
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
@@ -260,7 +262,7 @@ OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP
 			//as we do not support this binary protocol we do not really test for the header
 		}
 	}
-	ov_string_freelist(pallheaderslist);
+//	ov_string_freelist(pallheaderslist);
 
 	if(ov_string_compare(clientRequest->httpVersion, "1.1") == OV_STRCMP_EQUAL && httphostsend == FALSE){
 		/* RFC 7230 Section 5.4: "A server MUST respond with a 400 (Bad Request) status

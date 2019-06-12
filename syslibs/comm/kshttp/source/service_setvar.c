@@ -580,6 +580,11 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	/*	delete Ticket	*/
 	pticket->vtbl->deleteticket(pticket);
 
+	/* free params struct */
+	for(i=0;i<params.items_len;i++){
+		Ov_SetAnyValue(&params.items_val[i].var_current_props, NULL);
+	}
+
 	/**
 	 * Parse result from KS function
 	 */

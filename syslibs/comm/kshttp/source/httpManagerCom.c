@@ -61,7 +61,6 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_startup(
 	pinst->v_cycInterval = 5000; /*	cycle every 5 seconds at first	*/
 	pinst->v_actimode = 1;
 	pinst->v_Tries = 0;
-	pinst->v_OwnPort = 0;
 
 
 	return;
@@ -121,6 +120,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_shutdown(
 			kshttp_httpClient_requestUnRegister(Ov_StaticPtrCast(ksbase_ClientBase, httpClient), NULL, servername.value.valueunion.val_string, 2, NULL, NULL);
 
 	}
+	ov_string_setvalue(&thisMngCom->v_OwnPort, NULL);
 	thisMngCom->v_RegisterState = HTTP_MNGRCOM_REGISTERSTATE_NOTREGISTERED;	/*	set state to unregistered	*/
 	thisMngCom->v_cycInterval = 5000;	/*	5 seconds cyctime for next start up	*/
 	thisMngCom->v_Tries = 0;
