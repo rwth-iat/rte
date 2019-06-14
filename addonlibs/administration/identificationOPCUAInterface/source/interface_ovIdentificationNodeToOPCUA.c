@@ -145,6 +145,7 @@ OV_DLLFNCEXPORT UA_StatusCode identificationOPCUAInterface_interface_ovIdentific
 
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->type = &UA_IDENTIFICATION[UA_IDENTIFICATION_IDENTIFICATION];
 	((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data = UA_Identification_new();
+	UA_Identification_init(((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data);
 	if (!((UA_Variant*)&((UA_VariableNode*)newNode)->value.data.value.value)->data){
 		result = UA_STATUSCODE_BADOUTOFMEMORY;
 		return result;
