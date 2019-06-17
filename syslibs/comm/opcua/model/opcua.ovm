@@ -139,10 +139,5 @@ LIBRARY opcua
         PARENT server    : CLASS opcua/server;
         CHILD  interfaces: CLASS opcua/interface;
     END_ASSOCIATION;
-    
-    ASSOCIATION interfaceDependency : MANY_TO_MANY
-        PARENT parent    : CLASS opcua/interface;
-        CHILD  child     : CLASS opcua/interface;
-    END_ASSOCIATION;
 
 END_LIBRARY;
