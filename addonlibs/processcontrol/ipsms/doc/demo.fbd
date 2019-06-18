@@ -22,8 +22,6 @@
       cyctime : INPUT TIME_SPAN = 0.000000;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 751;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -34,8 +32,6 @@
       cyctime : INPUT TIME_SPAN = 0.000000;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 752;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -63,8 +59,6 @@
       ServiceRevision : INPUT UINT = 0;
       WSDL : INPUT STRING = "";
       execute : INPUT BOOL = FALSE;
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 787;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -75,8 +69,6 @@
       flags : INPUT UINT = 16384;
       unit : INPUT STRING = "Enumeration: FREE, OCCUPIED, PRIO, LOCAL";
       comment : INPUT STRING = "EN: Occupation State. DE: Belegungszustand.";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 754;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -87,8 +79,6 @@
       flags : INPUT UINT = 16384;
       unit : INPUT STRING = "Enumeration: AUTO, SEMIAUTO, MANUAL, SIMULATION";
       comment : INPUT STRING = "EN: Execution Mode. DE: Betriebsart.";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 755;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -104,8 +94,6 @@
       cyctime : INPUT TIME_SPAN = 0.000000;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 756;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -116,8 +104,6 @@
       cyctime : INPUT TIME_SPAN = 0.000000;
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 757;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -145,8 +131,6 @@
       ServiceRevision : INPUT UINT = 0;
       WSDL : INPUT STRING = "";
       execute : INPUT BOOL = FALSE;
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 783;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -170,8 +154,6 @@
       ServiceRevision : INPUT UINT = 0;
       WSDL : INPUT STRING = "";
       execute : INPUT BOOL = FALSE;
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 784;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -182,8 +164,6 @@
       flags : INPUT UINT = 16384;
       unit : INPUT STRING = "Enumeration: FREE, OCCUPIED, PRIO, LOCAL";
       comment : INPUT STRING = "EN: Occupation State. DE: Belegungszustand.";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 759;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -194,21 +174,14 @@
       flags : INPUT UINT = 16384;
       unit : INPUT STRING = "Enumeration: AUTO, SEMIAUTO, MANUAL, SIMULATION";
       comment : INPUT STRING = "EN: Execution Mode. DE: Betriebsart.";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 760;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/uaServer :
     CLASS /acplt/opcua/server;
     VARIABLE_VALUES
-      run : INPUT BOOL = TRUE;
+      run : INPUT BOOL = FALSE;
       reset : INPUT BOOL = FALSE;
-      actimode : INPUT INT = 1;
-      cycInterval : INPUT INT = 5;
-      NextExecTime : INPUT TIME = 2019-04-02 08:42:24.278752;
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 761;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -216,28 +189,15 @@
     CLASS /acplt/opcua/ovInterface;
     VARIABLE_VALUES
       entryPath : INPUT STRING = "/TechUnits/ESE";
-      uri : INPUT STRING = "acplt.org/";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 762;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/uaServer/ipsms :
     CLASS /acplt/ipsms/interface;
-    VARIABLE_VALUES
-      uri : INPUT STRING = "acplt.org/ipsms";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 764;
-    END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/uaServer/services :
     CLASS /acplt/servicesOPCUAInterface/interface;
-    VARIABLE_VALUES
-      uri : INPUT STRING = "acplt.org/services";
-      idH : INPUT UINT = 0;
-      idL : INPUT UINT = 765;
-    END_VARIABLE_VALUES;
  END_INSTANCE;
 
  LINK

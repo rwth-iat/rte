@@ -23,6 +23,7 @@
 
 #include "opcua.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_object.h"
 
 //TODO move to interfaces instead --> STRING applicationURI derived, set --> save in trafo / types
 OV_DLLFNCEXPORT OV_RESULT opcua_serverConfig_applicationURI_set(
@@ -55,27 +56,6 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_serverConfig_getaccess(
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
 ) {
-    switch(pelem->elemtype) {
-	case OV_ET_VARIABLE:
-		if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-			if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-				return OV_AC_NONE;
-			else{
-				if((pelem->elemunion.pvar->v_varprops & OV_VP_DERIVED)){
-					if((pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR)){
-						return OV_AC_READWRITE;
-					} else {
-						return OV_AC_READ;
-					}
-				} else {
-					return OV_AC_READWRITE;
-				}
-			}
-		}
-		break;
-	default:
-		break;
-	}
-	return ov_object_getaccess(pobj, pelem, pticket);
+	return ov_object_getaccessEx(pobj, pelem, pticket);
 }
 

@@ -23,6 +23,7 @@
 
 #include "opcua.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_object.h" //for ov_object_getaccessEx
 #include "opcua_helpers.h"
 
 
@@ -43,13 +44,10 @@ UA_StatusCode opcua_server_createConfig(UA_Server* server, OV_INSTPTR_opcua_serv
     //Delete old application name and uri
     UA_String_deleteMembers(&config->applicationDescription.applicationName.text);
     UA_String_deleteMembers(&config->applicationDescription.applicationUri);
-    UA_String_deleteMembers(&config->endpoints[0].server.applicationName.text); //TODO issue in open62541
-    UA_String_deleteMembers(&config->endpoints[0].server.applicationUri);
 
     //Fill in application name
     if(pOvConfig != NULL && ov_string_getlength(pOvConfig->v_applicationName)){
     	config->applicationDescription.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
-    	config->endpoints[0].server.applicationName.text = UA_String_fromChars(pOvConfig->v_applicationName);
     }else{
     	//Append OPCUA_DEFAULT_APPLICATIONNAME and SERVERNAME
     	OV_ANY serverName = OV_ANY_INIT;
@@ -57,18 +55,23 @@ UA_StatusCode opcua_server_createConfig(UA_Server* server, OV_INSTPTR_opcua_serv
     	ov_vendortree_getservername(&serverName, NULL); //Do not free, points to static servername
     	ov_string_print(&applicationName,"%s/%s",  OPCUA_DEFAULT_APPLICATIONNAME, serverName.value.valueunion.val_string);
     	config->applicationDescription.applicationName.text = UA_String_fromChars(applicationName);
-    	config->endpoints[0].server.applicationName.text = UA_String_fromChars(applicationName);
     	ov_string_setvalue(&applicationName, NULL);
     }
 
     //Fill in application uri
     if(pOvConfig != NULL && ov_string_getlength(pOvConfig->v_applicationURI)){
     	config->applicationDescription.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
-    	config->endpoints[0].server.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
     }else{
     	config->applicationDescription.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
-    	config->endpoints[0].server.applicationUri = UA_String_fromChars(pOvConfig->v_applicationURI);
     }
+
+    //Copy application name and uri to endpoint spec //TODO issue in open62541
+	for(size_t i=0 ; i < config->endpointsSize ; i++){
+	    UA_String_deleteMembers(&config->endpoints[i].server.applicationName.text);
+	    UA_String_deleteMembers(&config->endpoints[i].server.applicationUri);
+		UA_String_copy(&config->applicationDescription.applicationName.text, &config->endpoints[i].server.applicationName.text);
+		UA_String_copy(&config->applicationDescription.applicationUri, &config->endpoints[i].server.applicationUri);
+	}
 
     //Set ov logger
     config->logger = opcua_ovUAlogger_new();
@@ -232,29 +235,7 @@ OV_DLLFNCEXPORT OV_ACCESS opcua_server_getaccess(
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
 ) {
-	switch(pelem->elemtype) {
-	case OV_ET_VARIABLE:
-		if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-			if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-				return OV_AC_NONE;
-			else{
-				if((pelem->elemunion.pvar->v_varprops & OV_VP_DERIVED)){
-					if((pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR)){
-						return OV_AC_READWRITE;
-					} else {
-						return OV_AC_READ;
-					}
-				} else {
-					return OV_AC_READWRITE;
-				}
-			}
-		}
-		break;
-	default:
-		break;
-	}
-
-	return ov_object_getaccess(pobj, pelem, pticket);
+	return ov_object_getaccessEx(pobj, pelem, pticket);
 }
 
 OV_DLLFNCEXPORT void opcua_server_typemethod (

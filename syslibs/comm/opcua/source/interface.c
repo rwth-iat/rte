@@ -23,6 +23,7 @@
 
 #include "opcua.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_object.h"
 #include "opcua_ovStore.h"
 #include "opcua_helpers.h"
 
@@ -32,45 +33,20 @@ static void removeAllNodes(void *visitorCtx, const UA_Node *node){
 	nsi->removeNode(nsi->context, &node->nodeId);
 }
 
-
-//TODO use macro
 OV_DLLFNCEXPORT OV_ACCESS opcua_interface_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
 ) {
-	switch(pelem->elemtype) {
-	case OV_ET_VARIABLE:
-		if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-			if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-				return OV_AC_NONE;
-			else{
-				if((pelem->elemunion.pvar->v_varprops & OV_VP_DERIVED)){
-					if((pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR)){
-						return OV_AC_READWRITE;
-					} else {
-						return OV_AC_READ;
-					}
-				} else {
-					return OV_AC_READWRITE;
-				}
-			}
-		}
-		break;
-	default:
-		break;
-	}
-
-	return ov_object_getaccess(pobj, pelem, pticket);
+	return ov_object_getaccessEx(pobj, pelem, pticket);
 }
 
-
 OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad) {
-
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(server == NULL){
-		return OV_ERR_GENERIC;
+		pobj->v_index = OV_OPCUA_NSINDEX_UNDEFINED;
+		return OV_ERR_NOACCESS;
 	}
 
 	// Check whether an interface with same uri is already linked
@@ -84,13 +60,25 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 		}
 	}
 
-	//Load all dependent interfaces first
-	OV_INSTPTR_opcua_interface dependentInterface = NULL;
-	Ov_ForEachChild(opcua_interfaceDependency, pobj, dependentInterface){
-		opcua_interface_load(dependentInterface, FALSE);
-		//TODO error handling
+	// Check that dependent interfaces are loaded
+	// TODO check circular dependencies
+	// or alternative: Dependend interfaces have to be in serverToInterfaces list before this interface and are loaded in exact this sequence
+	OV_INSTPTR_opcua_interface pDependentInterface = NULL;
+	OV_RESULT retVal = OV_ERR_OK;
+	for (OV_UINT i = 0; i < pobj->v_dependentUri.veclen ; i++){
+		pDependentInterface = NULL;
+		retVal = OV_ERR_BADPLACEMENT;
+		Ov_ForEachChild(opcua_serverToInterfaces, server, pDependentInterface){
+			if(pobj != pDependentInterface &&
+					ov_string_compare(pobj->v_dependentUri.value[i], pDependentInterface->v_uri) == OV_STRCMP_EQUAL){
+				retVal = opcua_interface_load(pDependentInterface, FALSE);
+			}
+		}
+		if(retVal != OV_ERR_OK || retVal != OV_ERR_ALREADYEXISTS){
+			pobj->v_index = OV_OPCUA_NSINDEX_UNDEFINED;
+			return retVal;
+		}
 	}
-
 
 	// Add NamespaceUri
 	// Get the namespace index if already added, otherwise add to the end
@@ -124,20 +112,25 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj, 
 }
 
 OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj) {
-
+	// Get server pointer
 	OV_INSTPTR_opcua_server server = Ov_GetParent(opcua_serverToInterfaces, pobj);
 	if(server == NULL){
-		return OV_ERR_GENERIC;
+		return OV_ERR_NOACCESS;
 	}
 
-	// unload all dependent interfaces
-	OV_INSTPTR_opcua_interface dependentInterface = Ov_GetParent(opcua_interfaceDependency, pobj);
-	if(dependentInterface != NULL){
-		opcua_interface_unload(dependentInterface);
-		//TODO error handling
+	// Check that dependend interfaces are unloaded
+	OV_INSTPTR_opcua_interface pDependentInterface = NULL;
+	Ov_ForEachChild(opcua_serverToInterfaces, server, pDependentInterface){
+		if(pobj != pDependentInterface){
+			for (OV_UINT i = 0; i < pDependentInterface->v_dependentUri.veclen ; i++){
+				// Check if interface uri occures in any dependentUri vector of linked interfaces
+				if(ov_string_compare(pDependentInterface->v_dependentUri.value[i], pobj->v_uri) == OV_STRCMP_EQUAL){
+					return OV_ERR_BADSELECTOR;
+				}
+			}
+		}
 	}
 
-	// unload Types
 	// Remove Datatypes
 	UA_ServerConfig * config = UA_Server_getConfig(server->v_server);
 	UA_DataTypeArray * dataTypes = config->customDataTypes;
@@ -157,13 +150,16 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_unload(OV_INSTPTR_opcua_interface pobj
 		}
 	}
 
-	UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server->v_server);
-	// Unlink the nodestore from the namespace
-	UA_Nodestore_Switch_changeNodestore(nsSwitch, pobj->v_store, NULL);
+	// Unlink the store and delete nodes from it
+	if(pobj->v_store != NULL){
+		UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(server->v_server);
+		// Unlink the nodestore from the namespace
+		UA_Nodestore_Switch_changeNodestore(nsSwitch, pobj->v_store, NULL);
+		// Remove all nodes from nodestore
+		pobj->v_store->iterate(pobj->v_store->context, (UA_NodestoreVisitor)removeAllNodes, pobj->v_store);
+	}
 
-	// Remove all nodes from nodestore
-	pobj->v_store->iterate(pobj->v_store->context, (UA_NodestoreVisitor)removeAllNodes, pobj->v_store);
-
+	pobj->v_index = OV_OPCUA_NSINDEX_UNDEFINED;
 	return OV_ERR_OK;
 }
 

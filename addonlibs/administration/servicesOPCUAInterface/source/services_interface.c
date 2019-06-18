@@ -42,6 +42,7 @@ OV_DLLFNCEXPORT OV_RESULT servicesOPCUAInterface_interface_constructor(
     /* do what */
     pinst->v_index = 0;
 	ov_string_setvalue(&pinst->v_uri, "acplt.org/services/");
+	//TODO add dependent interface acplt.org/identification/
 
     return OV_ERR_OK;
 }
