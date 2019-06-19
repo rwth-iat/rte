@@ -9,12 +9,12 @@ cd ..
 
 echo "Moving everything to rte-www"
 if [ ${OV_ARCH_BITWIDTH} == "32" ]; then
-  cp ./rte/acpltRTE-linux32.tar.gz ./rte-www/releases/`date +%F-%R`-${TAG}_acpltRTE-linux32.tar.gz
-  cp ./rte/acpltRTE-win32.zip ./rte-www/releases/`date +%F-%R`-${TAG}_acpltRTE-win32.zip
-  cp ./rte/acpltRTE-RPi.tar.gz ./rte-www/releases/`date +%F-%R`-${TAG}_acpltRTE-RPi.tar.gz
+  cp ./rte/acpltRTE-linux32.tar.gz ./rte-www/releases/`date +%F-%R`-${TRAVIS_BRANCH}-${TAG}_acpltRTE-linux32.tar.gz
+  cp ./rte/acpltRTE-win32.zip ./rte-www/releases/`date +%F-%R`-${TRAVIS_BRANCH}-${TAG}_acpltRTE-win32.zip
+  cp ./rte/acpltRTE-RPi.tar.gz ./rte-www/releases/`date +%F-%R`-${TRAVIS_BRANCH}-${TAG}_acpltRTE-RPi.tar.gz
 fi
 if [ ${OV_ARCH_BITWIDTH} == "64" ]; then
-  cp ./rte/acpltRTE-linux64.tar.gz ./rte-www/releases/`date +%F-%R`-${TAG}_acpltRTE-linux64.tar.gz
+  cp ./rte/acpltRTE-linux64.tar.gz ./rte-www/releases/`date +%F-%R`-${TRAVIS_BRANCH}-${TAG}_acpltRTE-linux64.tar.gz
 fi
 
 if [ ${OV_ARCH_BITWIDTH} == "32" ]; then
