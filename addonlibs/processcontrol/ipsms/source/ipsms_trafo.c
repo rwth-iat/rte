@@ -219,6 +219,7 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 			UA_NODEID_STRING(nodeId->namespaceIndex, virtualParentPath),
 			UA_NODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE),
 			&ref);
+	UA_AddReferencesItem_delete(ref);
 	ov_memstack_unlock();
 
 	// Resolve parent node id and check that it is a controlchart aka BaSys 4.0 component
@@ -320,6 +321,7 @@ ipsms_trafo_status(const UA_Server * server,
 		}
 	}
 	ov_memstack_unlock();
+	UA_AddReferencesItem_delete(ref);
 	return node;
 }
 
@@ -359,6 +361,7 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 				}
 			}
 		}
+		ov_string_setvalue(&path, NULL);
 		ov_string_freelist(pathList);
 	}
 
