@@ -39,31 +39,50 @@ OV_DLLFNCEXPORT OV_RESULT ipsms_interface_constructor(
 		return result;
 
 	/* do what */
-	pinst->v_index = 0;
-	pinst->v_dataTypes = NULL;
 	pinst->v_store = NULL;
-	pinst->v_trafo = ipsms_trafo_new(pinst);
+	pinst->v_dataTypes = NULL;
+	pinst->v_index = 0;
 	ov_string_setvalue(&pinst->v_uri, OPCUA_DEFAULT_APPLICATIONURI);
 	ov_string_append(&pinst->v_uri, "ipsms/");
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void ipsms_interface_destructor(OV_INSTPTR_ov_object pobj) {
+OV_DLLFNCEXPORT void ipsms_interface_startup(
+		OV_INSTPTR_ov_object 	pobj) {
 	/*
-	 *   local variables
-	 */
-	OV_INSTPTR_ipsms_interface pinst = Ov_StaticPtrCast(ipsms_interface,
-			pobj);
+	*   local variables
+	*/
+	OV_INSTPTR_ipsms_interface pinst = Ov_StaticPtrCast(ipsms_interface, pobj);
+
+	/* do what the base class does first */
+	ov_object_startup(pobj);
 
 	/* do what */
-	ipsms_trafo_delete(pinst->v_trafo);
-	pinst->v_trafo = NULL;
-
-	/* destroy object */
-	ov_object_destructor(pobj);
+	pinst->v_trafo = ipsms_trafo_new(pinst);
 
 	return;
 }
+
+OV_DLLFNCEXPORT void ipsms_interface_shutdown(
+		OV_INSTPTR_ov_object 	pobj) {
+	/*
+	*   local variables
+	*/
+	OV_INSTPTR_ipsms_interface pinst = Ov_StaticPtrCast(ipsms_interface, pobj);
+
+	/* do what */
+	ov_string_setvalue(&pinst->v_uri, NULL);
+	if (pinst->v_trafo) {
+		ipsms_trafo_delete(pinst->v_trafo);
+		pinst->v_trafo = NULL;
+	}
+
+	/* set the object's state to "shut down" */
+	ov_object_shutdown(pobj);
+
+	return;
+}
+
 
 OV_DLLFNCEXPORT OV_BOOL ipsms_interface_checkNode(
 		OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode,
