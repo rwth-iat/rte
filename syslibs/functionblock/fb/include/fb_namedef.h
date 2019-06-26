@@ -83,10 +83,15 @@
 #define  ACPLT_HOME_ENVPATH     "ACPLT_HOME"
 
 /* fb/task: actimode */
-#define FB_AM_OFF       0
+/* turns task off */
+#define FB_AM_OFF       0 
+/* turns task on */
 #define FB_AM_ON        1
-#define FB_AM_UNLINK    2
+/* unlinks from parent task */
+#define FB_AM_UNLINK    2#
+/* runs just once */
 #define FB_AM_ONCE      3
+/* after deactivation (FB_AM_OFF) it will run as fast as the parent task to catch up the missed executions while it was deactivated */
 #define FB_AM_CATCHUP   10
 
 
