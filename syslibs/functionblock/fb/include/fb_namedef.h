@@ -88,7 +88,7 @@
 /* turns task on */
 #define FB_AM_ON        1
 /* unlinks from parent task */
-#define FB_AM_UNLINK    2#
+#define FB_AM_UNLINK    2
 /* runs just once */
 #define FB_AM_ONCE      3
 /* after deactivation (FB_AM_OFF) it will run as fast as the parent task to catch up the missed executions while it was deactivated */
