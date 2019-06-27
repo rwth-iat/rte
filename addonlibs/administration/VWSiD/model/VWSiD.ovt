@@ -1,0 +1,81 @@
+#ifndef VWSiD_OVT_INCLUDED
+#define VWSiD_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+
+typedef enum {
+	IRDI 	= 0x00,
+	URI 	= 0x01,
+	Custom 	= 0x02
+}VWSiD_IdentifierType;
+
+typedef enum {
+	IdShort 	= 0x00
+}VWSiD_LocalKeyType;
+
+typedef enum {
+	IRDI 	= 0x00,
+	URI 	= 0x01,
+	Custom 	= 0x02,
+	IdShort = 0x03
+}VWSiD_KeyType;
+
+
+typedef enum {
+	Instance 	= 0x00,
+	Type	 	= 0x01
+}VWSiD_Kind;
+
+typedef enum {
+	Asset						= 0x00,
+	AssetAdministrationShell 	= 0x01,
+	ConceptDescription			= 0x02,
+	Submodel					= 0x03
+}VWSiD_IdentifiableElements;
+
+typedef enum {
+	Asset						= 0x00,
+	AssetAdministrationShell 	= 0x01,
+	ConceptDescription			= 0x02,
+	Submodel					= 0x03,
+	AccessPermissionRule		= 0x04,
+	Blob						= 0x05,
+	ConceptDictionary			= 0x06,
+	DataElement					= 0x07,
+	File						= 0x08,
+	Event						= 0x09,
+	Operation					= 0x0A,
+	OperationVariable			= 0x0B,
+	Property					= 0x0C,
+	ReferenceElement			= 0x0D,
+	RelationshipElement			= 0x0E,
+	SubmodelElement				= 0x0F,
+	SubmodelElementCollection	= 0x10,
+	View						= 0x11	
+}VWSiD_IdentifiableElements;
+
+typedef enum {
+	Asset						= 0x00,
+	AssetAdministrationShell 	= 0x01,
+	ConceptDescription			= 0x02,
+	Submodel					= 0x03,
+	AccessPermissionRule		= 0x04,
+	Blob						= 0x05,
+	ConceptDictionary			= 0x06,
+	DataElement					= 0x07,
+	File						= 0x08,
+	Event						= 0x09,
+	Operation					= 0x0A,
+	OperationVariable			= 0x0B,
+	Property					= 0x0C,
+	ReferenceElement			= 0x0D,
+	RelationshipElement			= 0x0E,
+	SubmodelElement				= 0x0F,
+	SubmodelElementCollection	= 0x10,
+	View						= 0x11,
+	GlobalReference				= 0x12
+}VWSiD_KeyElements;
+
+#endif 

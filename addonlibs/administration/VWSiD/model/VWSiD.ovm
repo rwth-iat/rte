@@ -1,0 +1,355 @@
+#include "ov.ovm"
+
+LIBRARY VWSiD
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+		Documentation of AAS.
+		@note Javadoc syntax is allowed here.
+		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
+	*/
+	
+	// Key
+	CLASS Key : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			type	: C_TYPE <VWSid_KeyElements> FLAGS = "i" COMMENT = "";
+			local	: BOOL FLAGS = "i" COMMENT = "" INITIALVALUE = FALSE;
+			value	: STRING FLAGS = "i" COMMENT = "" INITIALVALUE = "";
+			idType	: C_TYPE <VWSiD_KeyType> FLAGS = "i" COMMENT = "";
+		END_VARIABLES;
+		PARTS
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Reference
+	CLASS Reference : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			keyList : CLASS ov/domain;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Referable
+	CLASS Referable : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			idShort		: STRING FLAGS = "i" COMMENT = "" INITIALVALUE = "";
+			category	: STRING FLAGS = "i" COMMENT = "" INITIALVALUE = "";
+			description	: STRING FLAGS = "i" COMMENT = "" INITIALVALUE = "";
+			parent	   	: STRING HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "" INITIALVALUE ="";
+			parentPtr 	: C_TYPE <OV_INSTPTR>  FLAGS = "i" COMMENT = "";
+		END_VARIABLES; 
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+
+
+	// Identifier
+	CLASS Identifier : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			id 		: STRING FLAGS = "i" COMMENT ="" INITIALVALUE = "";
+			idType 	: C_TYPE <VWSiD_IdentifierType> FLAGS = "i" COMMENT = "";
+		END_VARIABLES;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// HasDataSpecification
+	CLASS HasDataSpecification : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			hasDataSpecificationList : CLASS ov/domain;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	// AdministrativeInformation
+	CLASS AdministrativeInformation : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			version 		: STRING FLAGS = "i" COMMENT ="" INITIALVALUE = "";
+			revision 		: STRING FLAGS = "i" COMMENT ="" INITIALVALUE = "";
+		END_VARIABLES;
+		PARTS 
+			HasDataSpecification : CLASS VWSiD/HasDataSpecification;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Identifiable
+	CLASS Identifiable : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			identification 	: CLASS VWSiD/Identifier;
+			administration 	: CLASS VWSiD/AdministrativeInformation;
+			referable 		: CLASS VWSiD/Referable;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	// HasSemantics
+	CLASS HasSemantics : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			semanticId : CLASS VWSiD/Reference;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// HasKind
+	CLASS HasKind : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+			kind	: C_TYPE <VWSiD_Kind> FLAGS = "i" COMMENT = "";
+		END_VARIABLES;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Qualifiable
+	CLASS Qualifiable : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			qualifierList : CLASS ov/domain;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Constraint
+	CLASS Constraint : CLASS ov/object
+		VARIABLES
+		END_VARIABLES;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Qualifier
+	CLASS Qualifier : CLASS VWSiD/Constraint
+		VARIABLES
+			qualifierType    : STRING FLAGS = "i" COMMENT = "" INITIALVALUE = "";
+			qualifierValue 	 : STRING FLAGS = "i" COMMENT = "" INITIALVALUE = "";			
+		END_VARIABLES;
+		PARTS
+			hasSemantics 	 : CLASS VWSiD/HasSemantics;
+			qualifierValueId : CLASS VWSiD/Reference;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Formula
+	CLASS Formula : CLASS VWSiD/Constraint
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			dependsOnList : CLASS ov/domain;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// ConceptDictionary
+	CLASS ConceptDictionary : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			referable : CLASS VWSiD/Referable;
+			conceptDescriptionList : CLASS ov/domain;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// ConceptDescription
+	CLASS ConceptDescription : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			hasDataSpecification 	: CLASS VWSiD/HasDataSpecification;
+			identifiable 			: CLASS VWSiD/Identifiable;
+			isCaseOfList			: CLASS ov/domain;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// SubmodelElement
+	CLASS SubmodelElement : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			hasDataSpecification 	: CLASS VWSiD/HasDataSpecification;
+			hasSemantics 			: CLASS VWSiD/HasSemantics;			
+			referable	 			: CLASS VWSiD/Referable;
+			qualifiable 			: CLASS VWSiD/Qualifiable;
+			hasKind		 			: CLASS VWSiD/HasKind;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	// Submodel
+	CLASS Submodel : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			hasDataSpecification 	: CLASS VWSiD/HasDataSpecification;
+			hasSemantics 			: CLASS VWSiD/HasSemantics;			
+			identifiable 			: CLASS VWSiD/Identifiable;
+			qualifiable 			: CLASS VWSiD/Qualifiable;
+			hasKind		 			: CLASS VWSiD/HasKind;
+			submodelElementList		: CLASS ov/domain;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Asset
+	CLASS Asset : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			assetIdentificationModel 	: CLASS VWSiD/Reference;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// Security
+	CLASS Security : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// View
+	CLASS View : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			hasDataSpecification 	: CLASS VWSiD/HasDataSpecification;
+			referable	 			: CLASS VWSiD/Referable;
+			hasSemantics		 	: CLASS VWSiD/HasSemantics;
+			containedElementList	: CLASS ov/domain;
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	// AssetAdministrationShell
+	CLASS AssetAdministrationShell : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		END_VARIABLES;
+		PARTS
+			hasDataSpecification 	: CLASS VWSiD/HasDataSpecification;
+			identifiable 			: CLASS VWSiD/Identifiable;
+			derivedFrom				: CLASS VWSiD/Reference;
+			security				: CLASS VWSiD/Security;
+			asset					: CLASS VWSiD/Asset;
+			submodelList			: CLASS ov/domain;
+			conceptDictionaryList	: CLASS ov/domain;
+			viewList				: CLASS ov/domain;			
+		END_PARTS;
+		OPERATIONS
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	
+	
+	
+	ASSOCIATION HasConceptDescription : ONE_TO_MANY
+		PARENT conceptDictionary  : CLASS VWSiD/ConceptDictionary;
+		CHILD  conceptDescription : CLASS VWSiD/ConceptDescription;
+	END_ASSOCIATION;
+
+	ASSOCIATION IsCaseOf : ONE_TO_MANY
+		PARENT conceptDescription   : CLASS VWSiD/ConceptDescription;
+		CHILD  reference 			: CLASS VWSiD/Reference;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HasHasDataSpecification : ONE_TO_MANY
+		PARENT hasDataSpecification   : CLASS VWSiD/HasDataSpecification;
+		CHILD  reference 			: CLASS VWSiD/Reference;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HasQualifier : ONE_TO_MANY
+		PARENT qualifiable   : CLASS VWSiD/Qualifiable;
+		CHILD  constraint 			: CLASS VWSiD/Constraint;
+	END_ASSOCIATION;
+	
+	ASSOCIATION DependsOn : ONE_TO_MANY
+		PARENT formula   : CLASS VWSiD/Formula;
+		CHILD  reference : CLASS VWSiD/Reference;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HasKey : ONE_TO_MANY
+		PARENT reference   : CLASS VWSiD/Reference;
+		CHILD  key 			: CLASS VWSiD/Key;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HasSubmodel : ONE_TO_MANY
+		PARENT assetAdministrationShell   		: CLASS VWSiD/AssetAdministrationShell;
+		CHILD  submodel 	: CLASS VWSiD/Reference;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HasConceptDictionary : ONE_TO_MANY
+		PARENT assetAdministrationShell   		: CLASS VWSiD/AssetAdministrationShell;
+		CHILD  conceptDictionary 	: CLASS VWSiD/ConceptDictionary;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HasView : ONE_TO_MANY
+		PARENT assetAdministrationShell   		: CLASS VWSiD/AssetAdministrationShell;
+		CHILD  view 	: CLASS VWSiD/View;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HasSubmodelElement : ONE_TO_MANY
+		PARENT submodel   		: CLASS VWSiD/Submodel;
+		CHILD  submodelElement 	: CLASS VWSiD/SubmodelElement;
+	END_ASSOCIATION;
+	
+	ASSOCIATION HasContainedElement : ONE_TO_MANY
+		PARENT view   				: CLASS VWSiD/View;
+		CHILD  containedElement 	: CLASS VWSiD/Reference;
+	END_ASSOCIATION;
+	
+	
+END_LIBRARY;
