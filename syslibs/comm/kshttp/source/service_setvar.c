@@ -90,6 +90,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	OV_GETVAR_ITEM	one_resultGet;
 
 	OV_UINT i = 0;
+	OV_UINT j = 0;
 	OV_UINT len = 0;
 	OV_STRING *pArgumentList = NULL;
 	OV_STRING Temp = NULL;
@@ -410,14 +411,14 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				addrp->var_current_props.value.valueunion.val_bool_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_bool_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_bool_vec, len, BOOL);
-				for(i = 0; i < len; i++){
-					if (CHECK_BOOLTRUE(pArgumentList[i])){
-						addrp->var_current_props.value.valueunion.val_bool_vec.value[i] = TRUE;
-					}else if (CHECK_BOOLFALSE(pArgumentList[i])){
-						addrp->var_current_props.value.valueunion.val_bool_vec.value[i] = FALSE;
+				for(j = 0; j < len; j++){
+					if (CHECK_BOOLTRUE(pArgumentList[j])){
+						addrp->var_current_props.value.valueunion.val_bool_vec.value[j] = TRUE;
+					}else if (CHECK_BOOLFALSE(pArgumentList[j])){
+						addrp->var_current_props.value.valueunion.val_bool_vec.value[j] = FALSE;
 					}else{
 						//default
-						addrp->var_current_props.value.valueunion.val_bool_vec.value[i] = FALSE;
+						addrp->var_current_props.value.valueunion.val_bool_vec.value[j] = FALSE;
 					}
 				}
 				break;
@@ -433,9 +434,9 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				addrp->var_current_props.value.valueunion.val_int_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_int_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_int_vec, len, INT);
-				for(i = 0; i < len; i++){
-					tempLong = strtol(pArgumentList[i],&endPtr,10);
-					if (endPtr == pArgumentList[i]) {
+				for(j = 0; j < len; j++){
+					tempLong = strtol(pArgumentList[j],&endPtr,10);
+					if (endPtr == pArgumentList[j]) {
 						//not a number
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
@@ -448,7 +449,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 						ov_memstack_unlock();
 						EXEC_SETVAR_RETURN fr;
 					}
-					addrp->var_current_props.value.valueunion.val_int_vec.value[i] = (OV_INT) tempLong;
+					addrp->var_current_props.value.valueunion.val_int_vec.value[j] = (OV_INT) tempLong;
 				}
 				break;
 
@@ -463,9 +464,9 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				addrp->var_current_props.value.valueunion.val_uint_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_uint_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_uint_vec, len, UINT);
-				for(i = 0; i < len; i++){
-					tempUlong = strtoul(pArgumentList[i],&endPtr,10);
-					if (endPtr == pArgumentList[i]) {
+				for(j = 0; j < len; j++){
+					tempUlong = strtoul(pArgumentList[j],&endPtr,10);
+					if (endPtr == pArgumentList[j]) {
 						//not a number
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
@@ -478,7 +479,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 						ov_memstack_unlock();
 						EXEC_SETVAR_RETURN fr;
 					}
-					addrp->var_current_props.value.valueunion.val_uint_vec.value[i] = (OV_UINT) tempUlong;
+					addrp->var_current_props.value.valueunion.val_uint_vec.value[j] = (OV_UINT) tempUlong;
 				}
 				break;
 
@@ -491,9 +492,9 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
 				}
-				for(i = 0; i < len; i++){
-					tempDouble = strtod(pArgumentList[i], &endPtr);
-					if (endPtr == pArgumentList[i]) {
+				for(j = 0; j < len; j++){
+					tempDouble = strtod(pArgumentList[j], &endPtr);
+					if (endPtr == pArgumentList[j]) {
 						//not a number
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
@@ -508,20 +509,20 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					}
 					switch (addrp->var_current_props.value.vartype & OV_VT_KSMASK){
 						case OV_VT_SINGLE_VEC:
-							if(i==0){
+							if(j==0){
 								addrp->var_current_props.value.valueunion.val_single_vec.veclen = 0;
 								addrp->var_current_props.value.valueunion.val_single_vec.value = NULL;
 								Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_single_vec, len, SINGLE);
 							}
-							addrp->var_current_props.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) tempDouble;
+							addrp->var_current_props.value.valueunion.val_single_vec.value[j] = (OV_SINGLE) tempDouble;
 							break;
 						default:
-							if(i==0){
+							if(j==0){
 								addrp->var_current_props.value.valueunion.val_double_vec.veclen = 0;
 								addrp->var_current_props.value.valueunion.val_double_vec.value = NULL;
 								Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_double_vec, len, DOUBLE);
 							}
-							addrp->var_current_props.value.valueunion.val_double_vec.value[i] = (OV_DOUBLE) tempDouble;
+							addrp->var_current_props.value.valueunion.val_double_vec.value[j] = (OV_DOUBLE) tempDouble;
 							break;
 					}
 				}
@@ -540,8 +541,8 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				addrp->var_current_props.value.valueunion.val_string_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_string_vec, len, STRING);
 
-				for(i = 0; i < len; i++){
-					fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[i], pArgumentList[i]);
+				for(j = 0; j < len; j++){
+					fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[j], pArgumentList[j]);
 				}
 				break;
 
