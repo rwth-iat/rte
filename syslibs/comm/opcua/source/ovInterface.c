@@ -135,6 +135,10 @@ OV_DLLFNCEXPORT OV_RESULT opcua_ovInterface_load(OV_INSTPTR_opcua_interface pobj
 	//Add reference to ov object
 	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
 			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_index, "/acplt/ov/object"), UA_TRUE);
+
+	//Add references to virtual ovReferences object for browsing References in Ov
+	retval = UA_Server_addReference(uaServer->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_NONHIERARCHICALREFERENCES),
+				UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(pobj->v_index, OPCUA_OVTRAFO_OVREFERENCES), UA_TRUE);
 	if(retval != UA_STATUSCODE_GOOD){
 		Ov_Warning(UA_StatusCode_name(retval));
 	}

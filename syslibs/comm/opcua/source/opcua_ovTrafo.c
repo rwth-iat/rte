@@ -267,7 +267,17 @@ static UA_StatusCode opcua_ovTrafo_addHasSubtype(OV_INSTPTR_opcua_interface pInt
 				}
 			}
 		}
+		// if object is an association add hasSubType Reference to UA_NS0ID_NONHIERARCHICALREFERENCES
+		if (Ov_GetClassPtr(pNode->pobj) == pclass_ov_association){
+			referencedElement.elemtype = OV_ET_OBJECT;
+			referencedElement.pobj = pNode->pobj;
+			access = opcua_helpers_getAccess(&referencedElement);
+			if(access & OV_AC_READ){
+				statusCode |= opcua_helpers_addReference(node, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(OPCUA_OVTRAFO_DEFAULTNSINDEX, OPCUA_OVTRAFO_OVREFERENCES), UA_NODECLASS_REFERENCETYPE, UA_FALSE);
+			}
+		}
 	}
+
 	return statusCode;
 }
 
@@ -379,80 +389,74 @@ static UA_StatusCode opcua_ovTrafo_addHasComponent(OV_INSTPTR_opcua_interface pI
  * helper for OVReferences
  *****************************************************************/
 
-//static UA_Int32 opcua_ovTrafo_getOvReferences(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, signed char flag, OV_INSTPTR_ov_association passoc,
-//		OV_UINT* refCount, OV_BOOL fillDescription, UA_ReferenceDescription* dst, UA_StatusCode* statusCode){
-//	OV_ACCESS				access		=	OV_AC_NONE;
-//	OV_ELEMENT				linkElement;
-//	OV_ELEMENT				referencedElement;
-//
-//	if(flag < 0){	// -1: association definde by passoc; -2 all associations
-//		// Forward direction
-//		if(pNode->elemtype == OV_ET_OBJECT){
-//			linkElement.elemtype = OV_ET_NONE;
-//			ov_element_getnextpart(pNode, &linkElement, OV_ET_PARENTLINK);
-//			while(linkElement.elemtype != OV_ET_NONE){
-//				if(flag == -2 || linkElement.elemunion.passoc == passoc){
-//					if(linkElement.elemunion.passoc->v_assoctype == OV_AT_ONE_TO_MANY){
-//						referencedElement.elemtype = OV_ET_OBJECT;
-//						Ov_Association_ForEachChild(linkElement.elemunion.passoc, pNode->pobj, referencedElement.pobj){
-//							access = opcua_helpers_getAccess(&referencedElement);
-//							if(access & OV_AC_READ){
-//								if(fillDescription){
-//									*statusCode = opcua_ovTrafo_fillReferenceDescription(context, &referencedElement, OPCUA_OVTRAFO_DEFAULTNSINDEX,
-//											linkElement.elemunion.passoc->v_idL, UA_TRUE, &(dst[*refCount]));
-//								}
-//								(*refCount)++;
-//							}
-//						}
-//					} else if(linkElement.elemunion.passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
-//						referencedElement.elemtype = OV_ET_OBJECT;
-//						referencedElement.pobj = Ov_Association_GetChild(linkElement.elemunion.passoc, pNode->pobj);
-//						if(referencedElement.pobj){
-//							access = opcua_helpers_getAccess(&referencedElement);
-//							if(access & OV_AC_READ){
-//								if(fillDescription){
-//									*statusCode = opcua_ovTrafo_fillReferenceDescription(context, &referencedElement, OPCUA_OVTRAFO_DEFAULTNSINDEX,
-//											linkElement.elemunion.passoc->v_idL, UA_TRUE, &(dst[*refCount]));
-//								}
-//								(*refCount)++;
-//							}
-//						}
-//					}
-//					if(flag == -1){
-//						break;
-//					}
-//				}
-//				ov_element_getnextpart(pNode, &linkElement, OV_ET_PARENTLINK);
-//			}
-//		}
-//		// Backward / inverse direction
-//		if(pNode->elemtype == OV_ET_OBJECT){
-//			linkElement.elemtype = OV_ET_NONE;
-//			ov_element_getnextpart(pNode, &linkElement, OV_ET_CHILDLINK);
-//			while(linkElement.elemtype != OV_ET_NONE){
-//				if(flag == -2 || linkElement.elemunion.passoc == passoc){
-//					referencedElement.elemtype = OV_ET_OBJECT;
-//					referencedElement.pobj = Ov_Association_GetParent(linkElement.elemunion.passoc, pNode->pobj);
-//					if(referencedElement.pobj){
-//						access = opcua_helpers_getAccess(&referencedElement);
-//						if(access & OV_AC_READ){
-//							if(fillDescription){
-//								*statusCode = opcua_ovTrafo_fillReferenceDescription(context, &referencedElement, OPCUA_OVTRAFO_DEFAULTNSINDEX,
-//										linkElement.elemunion.passoc->v_idL, UA_FALSE, &(dst[*refCount]));
-//							}
-//							(*refCount)++;
-//						}
-//					}
-//					if(flag == -1){
-//						break;
-//					}
-//				}
-//				ov_element_getnextpart(pNode, &linkElement, OV_ET_CHILDLINK);
-//			}
-//		}
-//	}
-//	return UA_STATUSCODE_GOOD;
-//}
+static UA_StatusCode opcua_ovTrafo_getOvReferences(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
+	OV_ACCESS				access		=	OV_AC_NONE;
+	OV_ELEMENT				linkElement;
+	OV_ELEMENT				referencedElement;
+	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
+	OV_STRING path = NULL;
+
+	// Forward direction
+	if (direction & OPCUA_OVTRAFO_ADDOVREFERENCES_FORWARD){
+		if(pNode->elemtype == OV_ET_OBJECT){
+			linkElement.elemtype = OV_ET_NONE;
+			ov_element_getnextpart(pNode, &linkElement, OV_ET_PARENTLINK);
+			while(linkElement.elemtype != OV_ET_NONE){
+				if(linkElement.elemunion.passoc->v_assoctype == OV_AT_ONE_TO_MANY){
+					referencedElement.elemtype = OV_ET_OBJECT;
+					Ov_Association_ForEachChild(linkElement.elemunion.passoc, pNode->pobj, referencedElement.pobj){
+						access = opcua_helpers_getAccess(&referencedElement);
+						if(access & OV_AC_READ){
+							ov_memstack_lock();
+							path = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, linkElement.elemunion.passoc), 2);
+							statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+										UA_NODEID_STRING(OPCUA_OVTRAFO_DEFAULTNSINDEX, path), UA_TRUE, node);
+							ov_memstack_unlock();
+						}
+					}
+				} else if(linkElement.elemunion.passoc->v_assoctype == OV_AT_ONE_TO_ONE) {
+					referencedElement.elemtype = OV_ET_OBJECT;
+					referencedElement.pobj = Ov_Association_GetChild(linkElement.elemunion.passoc, pNode->pobj);
+					if(referencedElement.pobj){
+						access = opcua_helpers_getAccess(&referencedElement);
+						if(access & OV_AC_READ){
+							ov_memstack_lock();
+							path = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, linkElement.elemunion.passoc), 2);
+							statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+										UA_NODEID_STRING(OPCUA_OVTRAFO_DEFAULTNSINDEX, path), UA_TRUE, node);
+							ov_memstack_unlock();
+						}
+					}
+				}
+				ov_element_getnextpart(pNode, &linkElement, OV_ET_PARENTLINK);
+			}
+		}
+	}
+	// Backward / inverse direction
+	if (direction & OPCUA_OVTRAFO_ADDOVREFERENCES_BACKWARD){
+		if(pNode->elemtype == OV_ET_OBJECT){
+			linkElement.elemtype = OV_ET_NONE;
+			ov_element_getnextpart(pNode, &linkElement, OV_ET_CHILDLINK);
+			while(linkElement.elemtype != OV_ET_NONE){
+				referencedElement.elemtype = OV_ET_OBJECT;
+				referencedElement.pobj = Ov_Association_GetParent(linkElement.elemunion.passoc, pNode->pobj);
+				if(referencedElement.pobj){
+					access = opcua_helpers_getAccess(&referencedElement);
+					if(access & OV_AC_READ){
+						ov_memstack_lock();
+						path = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, linkElement.elemunion.passoc), 2);
+						statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+									UA_NODEID_STRING(OPCUA_OVTRAFO_DEFAULTNSINDEX, path), UA_FALSE, node);
+						ov_memstack_unlock();
+					}
+				}
+			ov_element_getnextpart(pNode, &linkElement, OV_ET_CHILDLINK);
+			}
+		}
+	}
+
+	return UA_STATUSCODE_GOOD;
+}
 
 //TODO add inverse HasSubtype (HasSupertype) reference for classes.
 //TODO variable and port values are NULL, BadNotReadable
@@ -484,9 +488,8 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_ovTrafo_addReferences(OV_INSTPTR_opcua_inter
 	// HasSubtype
 	result |= opcua_ovTrafo_addHasSubtype(pInterface, &pNode, node, direction);
 	// OvReferences
-	// NOTIMPLEMENTED
-	//		opcua_ovTrafo_getOvReferences(context, &pNode,,
-	//  								references, &result);
+	result |= opcua_ovTrafo_getOvReferences(pInterface, &pNode, node, direction);
+
 	return result;
 }
 
@@ -509,6 +512,78 @@ static UA_Node * opcua_ovTrafo_newNode(void * context, UA_NodeClass nodeClass){
     return NULL;
 }
 
+
+static const UA_Node * opcua_ovTrafo_getOvReferenceNode(void * context, const UA_NodeId *nodeId){
+	UA_Node 				*newNode = NULL;
+	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
+
+
+	newNode = (UA_Node*)UA_calloc(1, sizeof(UA_ReferenceTypeNode));
+	newNode->nodeClass = UA_NODECLASS_REFERENCETYPE;
+
+	// Basic Attribute
+	// BrowseName
+	UA_QualifiedName_init(&newNode->browseName);
+	newNode->browseName.name = UA_String_fromChars("||ovReferences");
+	newNode->browseName.namespaceIndex = nodeId->namespaceIndex;
+
+	// Description
+	UA_LocalizedText_init(&newNode->description);
+	newNode->description.locale = UA_String_fromChars("en");
+	newNode->description.text = UA_String_fromChars("||ovReferences");
+
+	// DisplayName
+	UA_LocalizedText_init(&newNode->displayName);
+	newNode->displayName.locale = UA_String_fromChars("en");
+	newNode->displayName.text = UA_String_fromChars("||ovReferences");
+
+	// NodeId
+	UA_NodeId_init(&newNode->nodeId);
+	newNode->nodeId.identifierType = nodeId->identifierType;
+	newNode->nodeId.namespaceIndex = newNode->browseName.namespaceIndex;
+
+	UA_String_copy(&nodeId->identifier.string, &newNode->nodeId.identifier.string);
+
+	// WriteMask
+	UA_UInt32 writeMask = 0;
+	newNode->writeMask 	= writeMask;
+
+
+	// isAbstract
+	((UA_ReferenceTypeNode*)newNode)->isAbstract = UA_FALSE;
+	// symmetric
+	((UA_ReferenceTypeNode*)newNode)->symmetric = UA_FALSE;
+	// inverseName
+	//NOTIMPLEMENTED
+
+
+	// addReferences
+	OV_INSTPTR_ov_object pParent = ov_path_getobjectpointer("/acplt/ov/association",2);
+	OV_INSTPTR_ov_class pParentClass = Ov_StaticPtrCast(ov_class, pParent);
+	OV_INSTPTR_ov_object pChild = NULL;
+	OV_ACCESS				access		=	OV_AC_NONE;
+	OV_ELEMENT				referencedElement;
+	Ov_ForEachChild(ov_instantiation, pParentClass, pChild){
+		referencedElement.elemtype = OV_ET_OBJECT;
+		referencedElement.pobj = pChild;
+		access = opcua_helpers_getAccess(&referencedElement);
+		if(access & OV_AC_READ){
+			result |= opcua_ovTrafo_addReference(context, &referencedElement,
+					UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_TRUE, newNode);
+		}
+	}
+	// addParentReference
+	referencedElement.elemtype = OV_ET_OBJECT;
+	referencedElement.pobj = pParent;
+	access = opcua_helpers_getAccess(&referencedElement);
+	if(access & OV_AC_READ){
+		result |= opcua_helpers_addReference(newNode, NULL, UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_NONHIERARCHICALREFERENCES), UA_NODECLASS_REFERENCETYPE, UA_FALSE);
+	}
+
+	return newNode;
+}
+
+
 static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *nodeId){
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
@@ -521,6 +596,18 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 	OV_ELEMENT				element;
 	OV_ANY					value = OV_ANY_INIT;
 	OV_ANY					emptyAny = OV_ANY_INIT;
+
+
+	// check for ovReference Node
+	if (nodeId->identifierType == UA_NODEIDTYPE_STRING){
+		OV_STRING tmpString = NULL;
+		opcua_helpers_copyUAStringToOV(nodeId->identifier.string, &tmpString);
+		if (ov_string_compare(tmpString, OPCUA_OVTRAFO_OVREFERENCES) == OV_STRCMP_EQUAL){
+			// Transformation ovReferenceNode
+			return opcua_ovTrafo_getOvReferenceNode(context, nodeId);
+		}
+	}
+
 
 	ov_memstack_lock();
 	result = opcua_helpers_resolveNodeIdToPath(*nodeId, &path);
@@ -896,7 +983,9 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 					|	OPCUA_OVTRAFO_ADDHASTYPEDEFINITION_FORWARD
 					|	OPCUA_OVTRAFO_ADDHASTYPEDEFINITION_BACKWARD
 					|	OPCUA_OVTRAFO_ADDHASSUBTYPE_FORWARD
-					|	OPCUA_OVTRAFO_ADDHASSUBTYPE_BACKWARD;
+					|	OPCUA_OVTRAFO_ADDHASSUBTYPE_BACKWARD
+					| 	OPCUA_OVTRAFO_ADDOVREFERENCES_FORWARD
+					|	OPCUA_OVTRAFO_ADDOVREFERENCES_BACKWARD;
 
 	opcua_ovTrafo_addReferences(context, newNode, direction);
 
