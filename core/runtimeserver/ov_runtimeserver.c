@@ -127,10 +127,10 @@ static void ov_server_usage(void)
 {	
 #if OV_SERVER_HELP
 		fprintf( stderr,
-				"Usage: ov_runtimeserver (-f DATABASE -s SERVERNAME):(-c CONFIGFILE) [arguments]\n"
+				"Usage: ov_runtimeserver (-f DATABASE -s SERVERNAME):(-cf CONFIGFILE) [arguments]\n"
 				"\n"
 				"Database file and servername must be set. This can be done either with\n"
-				"\tthe -f and -s options or inside a config file (-c option)\n"
+				"\tthe -f and -s options or inside a config file (-cf option)\n"
 				"\tAbsolute paths are recommended. Relative paths may leed to\n"
 				"\tunwanted results since the base path is not specified.\n"
 				"\n"

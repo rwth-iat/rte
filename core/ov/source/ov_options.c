@@ -781,9 +781,7 @@ OV_RESULT ov_readConfigFromArgs(ov_options* opts, int argc, char** argv){
 	int i;
 
 	for(i = 1; i < argc; i++){
-		if(!strcmp(argv[i], "-cf") || !strcmp(argv[i], "--config") ||
-				(opts->ctx==ov_runtimeserver && !strcmp(argv[i], "-c"))){
-				/*	-c for legacy compatibility	*/
+		if(!strcmp(argv[i], "-cf") || !strcmp(argv[i], "--config")) {
 			i++;
 			if(i<argc)
 				opts->configFile = argv[i];
@@ -867,15 +865,9 @@ OV_RESULT ov_readArgs(ov_options* opts, int argc, char** argv){
 		 * set config file
 		 * parsing of configfile should be done beforehand
 		 */
-		else if(!strcmp(argv[i], "-cf") || !strcmp(argv[i], "--config") ||
-				(opts->ctx==ov_runtimeserver && !strcmp(argv[i], "-c"))) {
-				/*	-c for legacy compatibility	*/
+		else if(!strcmp(argv[i], "-cf") || !strcmp(argv[i], "--config")) {
 			i++;
-			if(i<argc){
-				opts->configFile = argv[i];
-			}
-			else
-				goto HELP;
+			/* Setting (and parsing) the config file is done by ov_readConfigFromArgs() before */
 		}
 		/*
 		 *	set port number option
@@ -1098,7 +1090,6 @@ OV_RESULT ov_readArgs(ov_options* opts, int argc, char** argv){
 		 *	create database option
 		 */
 		else if(!strcmp(argv[i], "-c") || !strcmp(argv[i], "--create")) {
-			if(opts->ctx!=ov_dbutil) goto HELP;
 			i++;
 			if(i<argc) {
 				opts->dbSize = strtoul(argv[i], NULL, 0);
