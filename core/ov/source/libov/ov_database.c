@@ -762,6 +762,7 @@ OV_UINT flags) {
 	// TODO_ADJUST_WHEN_LARGE_DB
 	if (!size || (size > (size_t) OV_DATABASE_MAXSIZE)
 			|| (!filename && !(dbFlags & (OV_DBOPT_NOFILE | OV_DBOPT_NOMAP)))) {
+		ov_logfile_error("ov_database_create: No or invalid database size given.");
 		return OV_ERR_BADPARAM;
 	}
 
