@@ -1,5 +1,13 @@
+# Tcl Script to generate an FBD template file from HTTP files
+#
+# Usage:
+#   generateStaticFBD.tcl STATIC_DIR OUTPUT_FILE
+#
+# where STATIC_DIR is the path of the staticfiles directory and OUTPUT_FILE is the .fbd file to generated (typicall
+# "StaticDisplayComponent.fbd")
+
 puts "== Begin processing js files ==" 
-#cd "../../staticfiles"
+cd [lindex $argv 0]
 
 set contentname "content"
 set mimetypename "mimetype"
@@ -9,7 +17,7 @@ set staticfileclassname "staticfile"
 set basehttppath "/hmi"
 set baseovpath "/data/${webserverlib}${basehttppath}"
 set staticfileclass "/acplt/${webserverlib}/${staticfileclassname}"
-set fbdfilename "StaticDisplayComponent.fbd"
+set fbdfilename [lindex $argv 1]
 
 proc stripLineComments {inputString {commentChars ";#"}} {
 	# Switch the RE engine into line-respecting mode instead of the default whole-string mode
@@ -158,16 +166,5 @@ processDir $baseovpath
 close $out
 puts ""
 puts "File $fbdfilename written."
-
-if {[info exists ::env(FBDmovetarget)] && $::env(FBDmovetarget) != "" && [file isdirectory $::env(FBDmovetarget)]} {
-	set targetname "$::env(FBDmovetarget)/$fbdfilename"
-	if {[file exists $targetname] == 1} {
-		file delete $targetname
-	}
-	file copy $fbdfilename $targetname
-	puts "Copied to $::env(FBDmovetarget)/$fbdfilename"
-} else {
-	puts "hint: setting a env variable FBDmovetarget will trigger an copy to that position."
-}
 
 puts "== End processing static files =="

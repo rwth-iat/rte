@@ -1,5 +1,11 @@
-puts "== Begin processing static files ==" 
-cd "../../staticfiles"
+# Tcl Script to generate C source files from a directory of static HTTP files
+#
+# Usage:
+#   prebuild.tcl STATIC_DIR OUTPUT_FILE
+#
+# where STATIC_DIR is the path of the staticfiles directory and OUTPUT_FILE is the .c file to generated (typicall
+# "generated_static_index.c")
+
 set contentname "content"
 set mimetypename "mimetype"
 set encodingname "encoding"
@@ -125,8 +131,10 @@ proc processDir {dirname} {
 	}
 }
 
+puts "== Begin processing static files ==" 
+cd [lindex $argv 0]
 puts -nonewline "Building c header..."
-set out [open "../source/generated_static_index.c" w]
+set out [open [lindex $argv 1] w]
 puts $out "//this is an included index of static files"
 puts -nonewline $out "//generated: "
 puts $out [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]
