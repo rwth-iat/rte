@@ -1,56 +1,74 @@
-This is the source code of a runtime environment for the process control domain. It is developed since around 1999 at the [Chair of Process Control Engineering](http://www.plt.rwth-aachen.de) at the RWTH Aachen University.
+# ACPLT/RTE Runtime Environment
+
+This is the source code of a runtime environment for the process control domain.
+It is developed since around 1999 at the [Chair of Process Control Engineering](http://www.plt.rwth-aachen.de) at the RWTH Aachen University.
 It is well known in the German process control community under the name of the core technology ACPLT/OV.
 
-# Compiling
-To compile the ACPLT/RTE yourself you need to follow the steps presented here. Otherwise you can use the [Releases](http://acplt.github.io/rte-www/releases/).  
-On Linux you need tcl, bison and flex:
+The runtime environment is used at industry scale in the petro chemical plants at INEOS in Cologne.
+
+## Compiling
+To compile the ACPLT/RTE yourself you need to follow the steps presented here.
+Currently, ACPLT/RTE can be compiled on GNU/Linux and MinGW on Windows.
+Cross-compiling on Linux for Windows, using MinGW, is also possible, but more sophisticated.
+
+On any platform, you'll need a C compiler, make, cmake, tclsh, bison and flex.
+
+Debian/Untuntu command line:
 ```sh
-sudo apt-get install tcl bison flex
+sudo apt install build-essential tcl bison flex cmake
 
 ```
-You also need a C/C++ compiler. For example:
-```sh
-sudo apt-get install gcc g++
-```
-Clone the acplt/rte project from github. You only need the "acplt" folder for building. So, navigate to build folder and start the build process:
+
+On Windows, you can setup a Cygwin or MSys environment or download the required tools separatly:
+* http://mingw-w64.org/doku.php/download/mingw-builds
+* https://cmake.org/download/
+* https://www.magicsplat.com/tcl-installer/index.html
+* https://github.com/lexxmark/winflexbison/releases
+Make sure, that the binary dirctories of those tools are listed in your `%PATH%` variable.
+
+
+Clone the acplt/rte project from github. Create a build directory, run cmake configuration and build:
 ```sh
 git clone https://github.com/acplt/rte.git
-cd rte/build && make
+mkdir build
+cd build
+cmake ..
+make -j 4
 ```
-Your architecture is detected automatically via a tcl script. Otherwise you can specify it by calling the buildscript in the build directory yourself:
-```sh
-tclsh acplt_build.tcl 64 no_dbcommands
-```
-The runtime environment runs on Linux (x86, x64, ARM) and Windows (x86, x64).
-For cross compilation see [README_CROSSCOMPILATION.md](https://github.com/acplt/rte/blob/master/build/README_CROSSCOMPILATION.md).
 
-# Documentation
+On Windows with MinGW (without Cygwin), use `mingw32-make.exe` instead of `make`.
+
+
+### Packaging
+
+TODO
+
+
+### Cross Compiling
+
+TODO
+
+
+## Documentation
 * An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
 * Link to technological overview (german): [ACPLT-Technologiekonzept](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/ACPLT-Technologiekonzept.pdf)  
 * Link to functionblock and sequencial-state-chart overview (german): [ACPLT-Funktionsbausteine_und_SSCs](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/Funktionsbausteine_und_SSCs.pdf)
 * Old but useful documentations can be found at: [ACPLT-OV Doc old](https://github.com/acplt/rte-www/blob/gh-pages/doc/old)
 
-## Releases
-Here you'll find the latest 10 releases (of the 10 latest building commits) for linux (32 and 64 bit), windows 32 and Raspberry Pi: 
-[Releases](http://acplt.github.io/rte-www/releases/)
 
-# Using the environment
+## Usage
 
-## start the Runtime Environment:
-build a new database file:
+Starting the runtime environment from the build tree:
 ```sh
-cd &&./build/acplt/servers/MANAGER/build_database.sh
+core/runtimeserver/ov_runtimeserver -f test.ovd -s MANAGER -l stdout -c 10000000 --force-create -w ksbase -w kshttp -w TCPbind -w fb
 ```
-start up:
-```sh
-./build/acplt/servers/MANAGER/start_server.sh
-```
-further settings(e.g., which libs should be loaded at start up) of the RTE can be made within the configuration file that can be found here
-```sh
-/build/acplt/servers/MANAGER/ov_server.conf
-```
+TODO explain command
 
-The runtime environment is used at industry scale in the petro chemical plants at INEOS in Cologne.
+TODO starting from *installed* package
 
-[![Build Status](https://travis-ci.org/acplt/rte.svg?branch=master)](https://travis-ci.org/acplt/rte)
+TODO create and document a ready to use config file ("servers/MANAGER directory")
 
+
+## Creating and building custom libraries
+
+TODO
