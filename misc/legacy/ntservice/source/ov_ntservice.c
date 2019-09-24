@@ -78,9 +78,9 @@
 #include <ctype.h>
 
 #include "libovks/ov_ksserver.h"
-#include "libov/ov_database.h"
-#include "libov/ov_result.h"
-#include "libov/ov_logfile.h"
+#include "ov_database.h"
+#include "ov_result.h"
+#include "ov_logfile.h"
 
 /*
 *	Currently, Cygwin does not have the "shellapi" header file

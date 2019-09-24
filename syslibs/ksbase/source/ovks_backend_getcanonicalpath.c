@@ -28,10 +28,10 @@
 
 #include "ov_ksserver_backend.h"
 
-#include "libov/ov_path.h"
-#include "libov/ov_string.h"
-#include "libov/ov_time.h"
-#include "libov/ov_macros.h"
+#include "ov_path.h"
+#include "ov_string.h"
+#include "ov_time.h"
+#include "ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
 

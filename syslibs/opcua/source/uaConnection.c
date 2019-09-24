@@ -22,8 +22,8 @@
 
 #include <stddef.h>
 #include "opcua.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
+#include "ov_macros.h"
+#include "ov_result.h"
 #include "ks_logfile.h"
 #include "opcua_helpers.h"
 #include "ksbase_helper.h"

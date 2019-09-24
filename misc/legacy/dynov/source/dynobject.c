@@ -11,8 +11,8 @@
 
 
 #include "dynov.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_object.h"
+#include "ov_macros.h"
+#include "ov_object.h"
 
 OV_DLLFNCEXPORT OV_ACCESS dynov_dynobject_getaccess(
 	OV_INSTPTR_ov_object	pobj,

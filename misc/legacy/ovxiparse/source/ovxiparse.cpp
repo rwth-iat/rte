@@ -34,7 +34,7 @@
 
 #include <time.h>
 #include "dbparse.h"
-#include "libov/ov_version.h"
+#include "ov_version.h"
 
 #include "db_y.h"
 

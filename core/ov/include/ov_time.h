@@ -32,6 +32,7 @@
 #define OV_TIME_H_INCLUDED
 
 #include "ov.h"
+#include "ov_debug.h"
 
 #ifdef __cplusplus
 extern "C" {

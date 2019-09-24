@@ -30,7 +30,7 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_result.h"
+#include "ov_result.h"
 
 /*	----------------------------------------------------------------------	*/
 

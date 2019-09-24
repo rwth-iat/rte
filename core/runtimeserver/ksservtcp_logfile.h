@@ -7,8 +7,8 @@
  * This is a intermediate solution until Log4ACPLT exists,
  * which will use this to create Log-Message objects inside the OV Server
 */
-#include "libov/ov_ov.h"
-#include "libov/ov_logfile.h"
+#include "ov_ov.h"
+#include "ov_logfile.h"
 /**
 *	Print info to logfile
 */

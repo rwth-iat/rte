@@ -29,13 +29,13 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_vendortree.h"
-#include "libov/ov_association.h"
-#include "libov/ov_string.h"
-#include "libov/ov_time.h"
-#include "libov/ov_database.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_path.h"
+#include "ov_vendortree.h"
+#include "ov_association.h"
+#include "ov_string.h"
+#include "ov_time.h"
+#include "ov_database.h"
+#include "ov_macros.h"
+#include "ov_path.h"
 
 #if OV_SYSTEM_UNIX
 #include <sys/types.h>

@@ -31,7 +31,8 @@
 #ifndef OV_STRUCTURE_H_INCLUDED1
 #define OV_STRUCTURE_H_INCLUDED1
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
+#include "ov_debug.h"
 
 /*
 *	OV_STRUCTURE_DEF:

@@ -29,7 +29,8 @@
 #ifndef OV_ELEMENT_H_INCLUDED
 #define OV_ELEMENT_H_INCLUDED
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
+#include "ov_debug.h"
 
 #ifdef __cplusplus
 extern "C" {

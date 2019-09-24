@@ -54,7 +54,7 @@
 
 #define _BSD_SOURCE
 #define _DEFAULT_SOURCE
-#include "libov/ov_config.h"
+#include "ov_config.h"
 
 #ifndef USE_PRINTF
 #define USE_PRINTF      (1)
@@ -87,7 +87,7 @@
 #endif
 
 #if TLSF_USE_LOCKS
-#include <libov/tlsf_target.h>
+#include <tlsf_target.h>
 #else
 #define TLSF_CREATE_LOCK(_unused_)   do{}while(0)
 #define TLSF_DESTROY_LOCK(_unused_)  do{}while(0) 
@@ -124,7 +124,7 @@
 #include <windows.h>
 #endif
 
-#include "libov/tlsf.h"
+#include "tlsf.h"
 
 #undef tlsf_t
 

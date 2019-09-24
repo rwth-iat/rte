@@ -297,13 +297,13 @@ int ov_codegen_createheaderfile(
 	/*
 	*	insert include files
 	*/
-	fprintf(fp, "#include \"libov/ov_library.h\"\n");
-	fprintf(fp, "#include \"libov/ov_structure.h\"\n");
-	fprintf(fp, "#include \"libov/ov_class.h\"\n");
-	fprintf(fp, "#include \"libov/ov_association.h\"\n");
-	fprintf(fp, "#include \"libov/ov_variable.h\"\n");
-	fprintf(fp, "#include \"libov/ov_part.h\"\n");
-	fprintf(fp, "#include \"libov/ov_operation.h\"\n");
+	fprintf(fp, "#include \"ov_library.h\"\n");
+	fprintf(fp, "#include \"ov_structure.h\"\n");
+	fprintf(fp, "#include \"ov_class.h\"\n");
+	fprintf(fp, "#include \"ov_association.h\"\n");
+	fprintf(fp, "#include \"ov_variable.h\"\n");
+	fprintf(fp, "#include \"ov_part.h\"\n");
+	fprintf(fp, "#include \"ov_operation.h\"\n");
 	for(plib2=libraries; plib2!=plib; plib2=plib2->pnext) {
 		fprintf(fp, "#include \"%s.h\"\n", plib2->identifier);
 	}
@@ -630,7 +630,7 @@ int ov_codegen_createsourcefile(
 	fprintf(fp, "#endif\n");
 	fprintf(fp, "\n");
 	fprintf(fp, "#include \"%s.h\"\n", plib->identifier);
-	fprintf(fp, "#include \"libov/ov_macros.h\"\n");
+	fprintf(fp, "#include \"ov_macros.h\"\n");
 	fprintf(fp, "\n");
 	/*
 	*	print global variable definitions associated with all structures
@@ -724,7 +724,7 @@ int ov_codegen_createsourcefile(
 	/*
 	*	insert include
 	*/
-	fprintf(fp, "#include \"libov/ov_macros.h\"\n");
+	fprintf(fp, "#include \"ov_macros.h\"\n");
 	fprintf(fp, "\n");
 	/*
 	*	print implementation of function setting global variables

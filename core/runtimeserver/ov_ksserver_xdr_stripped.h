@@ -45,7 +45,7 @@
 #ifndef OV_KSSERVER_XDR_H_INCLUDED
 #define OV_KSSERVER_XDR_H_INCLUDED
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 
 #ifdef __cplusplus
 extern "C" {

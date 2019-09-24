@@ -8,8 +8,8 @@
  */
 
 #include "ksxdr.h"
-#include "libov/ov_malloc.h"
-#include "libov/ov_memstack.h"
+#include "ov_malloc.h"
+#include "ov_memstack.h"
 #include "ksbase_helper.h"
 #include <string.h>
 #include <stdint.h>

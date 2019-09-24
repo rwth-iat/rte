@@ -22,9 +22,9 @@
 
 
 #include "UDPbind.h"
-#include "libov/ov_association.h"
+#include "ov_association.h"
 
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 OV_IMPL_LINK(UDPbind_AssocSpecificClientHandler)
 OV_IMPL_UNLINK(UDPbind_AssocSpecificClientHandler)

@@ -36,17 +36,17 @@
 #define _BSD_SOURCE
 #define _DEFAULT_SOURCE
 
-#include "libov/ov_database.h"
-#include "libov/ov_object.h"
-#include "libov/ov_library.h"
-#include "libov/ov_string.h"
-#include "libov/ov_time.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_path.h"
-#include "libov/ov_vendortree.h"
+#include "ov_database.h"
+#include "ov_object.h"
+#include "ov_library.h"
+#include "ov_string.h"
+#include "ov_time.h"
+#include "ov_macros.h"
+#include "ov_logfile.h"
+#include "ov_path.h"
+#include "ov_vendortree.h"
 #if TLSF
-#include "libov/tlsf.h"
+#include "tlsf.h"
 #include <sys/time.h>
 #include <unistd.h>
 #if OV_SYSTEM_UNIX

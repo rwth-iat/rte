@@ -48,13 +48,13 @@
 #define OV_COMPILE_LIBOV
 
 
-#include "libov/ov_object.h"
-#include "libov/ov_time.h"
-#include "libov/ov_string.h"
-#include "libov/ov_scheduler.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_library.h"
-#include "libov/ov_variable.h"
+#include "ov_object.h"
+#include "ov_time.h"
+#include "ov_string.h"
+#include "ov_scheduler.h"
+#include "ov_macros.h"
+#include "ov_library.h"
+#include "ov_variable.h"
 
 #if OV_SYSTEM_MC164
 #define memcpy xmemcpy

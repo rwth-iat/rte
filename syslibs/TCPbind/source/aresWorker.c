@@ -23,7 +23,7 @@
 #define _POSIX_C_SOURCE	200201L
 
 #include "TCPbind.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 #include "ks_logfile.h"
 #include "TCPbind_helper.h"
 

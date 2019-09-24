@@ -20,11 +20,11 @@
 #endif
 
 #include "ksxdr.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_memstack.h"
-#include "libov/ov_result.h"
+#include "ov_macros.h"
+#include "ov_result.h"
+#include "ov_logfile.h"
+#include "ov_memstack.h"
+#include "ov_result.h"
 #include "ks_logfile.h"
 #include "ksbase_helper.h"
 

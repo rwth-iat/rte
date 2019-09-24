@@ -39,7 +39,7 @@
 *                                                                             *
 ******************************************************************************/
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 
 #ifdef __cplusplus
 extern "C" {

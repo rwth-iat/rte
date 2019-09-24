@@ -9,7 +9,7 @@
 #define opcua_HELPERS_H_
 
 #include "opcua.h"
-#include "libov/ov_path.h"
+#include "ov_path.h"
 
 #define UA_NODEID_OVROOT		(42 * 42)		//	1764
 #define UA_NODEID_OVREFTYPES	((42 * 42) + 1)	//	1765

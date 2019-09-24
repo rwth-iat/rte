@@ -22,9 +22,9 @@
 
 
 #include "ksxdr.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_vendortree.h"
-#include "libov/ov_result.h"
+#include "ov_macros.h"
+#include "ov_vendortree.h"
+#include "ov_result.h"
 #include "ks_logfile.h"
 #include "ksxdr_config.h"
 #include "ksbase_helper.h"

@@ -29,9 +29,9 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_part.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_macros.h"
+#include "ov_part.h"
+#include "ov_logfile.h"
+#include "ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
 

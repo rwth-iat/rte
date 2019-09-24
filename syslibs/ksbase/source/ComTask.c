@@ -22,7 +22,7 @@
 
 
 #include "ksbase.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 #include "ks_logfile.h"
 
 

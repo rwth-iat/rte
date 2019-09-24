@@ -30,7 +30,7 @@
 #ifndef OV_DEBUG_H_INCLUDED
 #define OV_DEBUG_H_INCLUDED
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,7 +45,7 @@ OV_DLLFNCEXPORT OV_STRING ov_debug_filename(
 
 #ifdef OV_DEBUG
 
-#include "libov/ov_logfile.h"
+#include "ov_logfile.h"
 
 #include <stdlib.h>
 #include <stdio.h>

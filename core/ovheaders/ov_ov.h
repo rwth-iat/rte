@@ -33,8 +33,8 @@
 #ifndef OV_OV_H_INCLUDED
 #define OV_OV_H_INCLUDED
 
-#include "libov/ov_config.h"
-#include "libov/ov_version.h"
+#include "ov_config.h"
+#include "ov_version.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -860,11 +860,6 @@ typedef OV_ENUM OV_MSG_TYPE;
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif
-
-/*
-*	Include debugging stuff
-*/
-#include "libov/ov_debug.h"
 
 #endif
 /*

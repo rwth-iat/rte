@@ -11,9 +11,9 @@
 
 
 #include "dynov.h"
-#include "libov/ov_association.h"
+#include "ov_association.h"
 
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 OV_DLLFNCEXPORT OV_RESULT dynov_isgetaccessor_link(
         const OV_PPT_dynov_isgetaccessor                 pparent,

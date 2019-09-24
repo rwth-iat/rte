@@ -22,7 +22,7 @@
 
 
 #include "ssclib.h"
-#include "libov/ov_association.h"
+#include "ov_association.h"
 
 OV_DLLFNCEXPORT OV_RESULT ssc_previousTransitions_link
 (

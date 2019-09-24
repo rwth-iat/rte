@@ -12,9 +12,9 @@
 
 
 #include "ksapi.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_vendortree.h"
-#include "libov/ov_class.h"
+#include "ov_macros.h"
+#include "ov_vendortree.h"
+#include "ov_class.h"
 
 OV_RESULT ksapi_getClientPointers(OV_INSTPTR_ksapi_KSApiCommon pCommon,
 				OV_INSTPTR_ksbase_ClientBase* pClient, OV_VTBLPTR_ksbase_ClientBase* pVtblClient)

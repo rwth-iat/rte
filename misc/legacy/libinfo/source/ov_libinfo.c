@@ -25,8 +25,8 @@
 *	07-Oct-2004 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: File created.
 */
 
-#include "libov/ov_library.h"
-#include "libov/ov_macros.h"
+#include "ov_library.h"
+#include "ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
 

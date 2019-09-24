@@ -32,7 +32,7 @@
 #define OV_PATH_H_INCLUDED
 
 #include "ov.h"
-#include "libov/ov_element.h"
+#include "ov_element.h"
 
 #ifdef __cplusplus
 extern "C" {

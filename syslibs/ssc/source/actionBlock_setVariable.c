@@ -10,7 +10,7 @@
 #endif
 
 #include "ssclib.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 #include"fb.h"
 #include"fb_namedef.h"
 

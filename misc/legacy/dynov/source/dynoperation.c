@@ -11,7 +11,7 @@
 
 
 #include "dynov.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 
 OV_DLLFNCEXPORT OV_BOOL dynov_dynoperation_check(

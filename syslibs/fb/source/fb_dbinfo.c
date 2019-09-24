@@ -45,10 +45,10 @@
 #include "fb_namedef.h"
 #include "fb_macros.h"
 #include "fb_database.h"
-#include "libov/ov_string.h"
-#include "libov/ov_path.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_vendortree.h"
+#include "ov_string.h"
+#include "ov_path.h"
+#include "ov_macros.h"
+#include "ov_vendortree.h"
 #include "fb_av.h"
 
 /* Deklarationen */

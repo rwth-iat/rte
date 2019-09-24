@@ -40,9 +40,9 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_malloc.h"
-#include "libov/ov_logfile.h"
-#include "libov/tlsf.h"
+#include "ov_malloc.h"
+#include "ov_logfile.h"
+#include "tlsf.h"
 
 #if TLSF_HEAP
 #include <sys/time.h>

@@ -11,7 +11,7 @@
 
 
 #include "dynov.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 OV_DLLFNCEXPORT void dynov_dynvariable_uncheck(
         OV_INSTPTR_ov_object          pobj

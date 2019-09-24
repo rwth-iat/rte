@@ -9,12 +9,12 @@
 
 #include "ov_ksserver_backend.h"
 #include "ks_logfile.h"
-#include "libov/ov_ov.h"
-#include "libov/ov_object.h"
-#include "libov/ov_scheduler.h"
-#include "libov/ov_database.h"
-#include "libov/ov_vendortree.h"
-#include "libov/ov_macros.h"
+#include "ov_ov.h"
+#include "ov_object.h"
+#include "ov_scheduler.h"
+#include "ov_database.h"
+#include "ov_vendortree.h"
+#include "ov_macros.h"
 
 
 

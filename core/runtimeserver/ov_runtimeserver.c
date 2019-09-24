@@ -11,15 +11,15 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "libov/ov_ov.h"
-#include "libov/ov_database.h"
-#include "libov/ov_object.h"
-#include "libov/ov_result.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_scheduler.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_malloc.h"
-#include "libov/ov_options.h"
+#include "ov_ov.h"
+#include "ov_database.h"
+#include "ov_object.h"
+#include "ov_result.h"
+#include "ov_logfile.h"
+#include "ov_scheduler.h"
+#include "ov_macros.h"
+#include "ov_malloc.h"
+#include "ov_options.h"
 
 /*	----------------------------------------------------------------------	*/
 /*

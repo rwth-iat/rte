@@ -29,10 +29,10 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_operation.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_string.h"
-#include "libov/ov_macros.h"
+#include "ov_operation.h"
+#include "ov_logfile.h"
+#include "ov_string.h"
+#include "ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
 

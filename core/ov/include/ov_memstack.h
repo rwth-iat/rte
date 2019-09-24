@@ -52,7 +52,8 @@
 
 #include <stdlib.h>
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
+#include "ov_debug.h"
 
 #ifdef __cplusplus
 extern "C" {

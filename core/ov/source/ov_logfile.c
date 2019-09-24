@@ -30,9 +30,9 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_logfile.h"
-#include "libov/ov_time.h"
-#include "libov/ov_macros.h"
+#include "ov_logfile.h"
+#include "ov_time.h"
+#include "ov_macros.h"
 
 #include <stdarg.h>
 

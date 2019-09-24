@@ -22,7 +22,7 @@
 
 
 #include "cshmi.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Vibrate_pattern_set(

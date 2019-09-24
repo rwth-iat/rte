@@ -30,7 +30,8 @@
 #ifndef OV_LIBRARY_H_INCLUDED1
 #define OV_LIBRARY_H_INCLUDED1
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
+#include "ov_debug.h"
 
 #if OV_DYNAMIC_LIBRARIES
 #include <stdio.h>

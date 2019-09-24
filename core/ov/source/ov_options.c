@@ -27,12 +27,12 @@
  *	12-Dec-2018 Lars Nothdurft <l.nothdurft@plt.rwth-aachen.de>: File created.
  */
 
-#include "libov/ov_database.h"
-#include "libov/ov_ov.h"
-#include "libov/ov_result.h"
-#include "libov/ov_logfile.h"
+#include "ov_database.h"
+#include "ov_ov.h"
+#include "ov_result.h"
+#include "ov_logfile.h"
 
-#include "libov/ov_options.h"
+#include "ov_options.h"
 
 /*
  * Initializes options struct with default values

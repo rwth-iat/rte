@@ -35,7 +35,7 @@
 ******************************************************************************/
 
 #ifndef IFBS_INC_NAMES_ONLY
-#include "libov/ov_config.h"
+#include "ov_config.h"
 #endif
 
 #ifndef _FB_NAMEDEF_H_

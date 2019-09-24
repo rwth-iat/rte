@@ -48,8 +48,8 @@
 	#define putenv _putenv
 #endif
 
-#include "libov/ov_database.h"
-#include "libov/ov_logfile.h"
+#include "ov_database.h"
+#include "ov_logfile.h"
 
 #if OV_SYSTEM_LINUX
 	#include <unistd.h>

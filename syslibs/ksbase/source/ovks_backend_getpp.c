@@ -30,10 +30,10 @@
 
 #include "ov_ksserver_backend.h"
 
-#include "libov/ov_path.h"
-#include "libov/ov_string.h"
-#include "libov/ov_vendortree.h"
-#include "libov/ov_macros.h"
+#include "ov_path.h"
+#include "ov_string.h"
+#include "ov_vendortree.h"
+#include "ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
 

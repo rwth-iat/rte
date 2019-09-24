@@ -202,7 +202,7 @@ symbols are defined:
 @end format
 
 These symbols are automatically defined in the configuration header file 
-@code{libov/ov_config.h}.
+@code{ov_config.h}.
 
 Available Symbols:
 @format
@@ -243,7 +243,7 @@ calling the compiler, e.g.
 
 All @code{OV_SYSTEM_@emph{SYSTEM}} symbols not defined are automatically
 defined as @code{0} in the configuration header file 
-@code{libov/ov_config.h}.
+@code{ov_config.h}.
 
 Available Symbols:
 @format
@@ -263,7 +263,7 @@ OV_SYSTEM_RMOS}
 
 The preprocessor sysmbol @code{OV_DEBUG} defines if you want to use the 
 ACPLT/OV debugging features defined in the header file 
-@code{libov/ov_debug.h}. If you define this symbol, the debugging macros 
+@code{ov_debug.h}. If you define this symbol, the debugging macros 
 log debugging information to the logfile. If you do not define this symbol, 
 the debugging macros are ignored during compilation. 
 
@@ -282,7 +282,7 @@ You may also define @code{OV_DEBUG} in your source file:
 
 #define OV_DEBUG
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 #include <stdio.h>
 
 void foo(
@@ -312,7 +312,7 @@ the libraries available for the application at link time but can load them
 at run time.
 
 This symbol is automatically defined in the configuration header file 
-@code{libov/ov_config.h}.
+@code{ov_config.h}.
 
 @c	--------------------------------
 
@@ -325,7 +325,7 @@ as @code{1}) or not (symbol is defined as @code{0}).
 
 This symbol can only be defined as @code{1} if the target operating 
 supports dynamic linking or you are unable to compile the file 
-@code{libov/ov_library.c}.
+@code{ov_library.c}.
 
 Usually if the target operating system supports dynamic linking (DLLs on
 Windows NT, shared libraries on Unix systems), this symbol is defined as
@@ -334,7 +334,7 @@ the libraries available for the application at link time but can load them
 at run time.
 
 This symbol is automatically defined in the configuration header file 
-@code{libov/ov_config.h}.
+@code{ov_config.h}.
 
 @node OV_DYNAMIC_DATABASE, , OV_DYNAMIC_LIBRARIES, Preprocessor symbols
 @section Definition whether dynamically growing databases are used
@@ -371,7 +371,7 @@ need a module definition file (@code{.def}-file) listing all functions to be
 exported from a DLL.
 
 This symbol is automatically defined in the configuration header file 
-@code{libov/ov_config.h}.
+@code{ov_config.h}.
 
 @strong{Example}
 
@@ -383,7 +383,7 @@ other modules linking to the import library of the DLL:
 *   hello.c
 */
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 #include <stdio.h>
 
 OV_DLLFNCEXPORT void hello(
@@ -407,7 +407,7 @@ The preprocessor symbol @code{OV_DLLVAREXPORT} is used to tell the compiler,
 that a global variable is exported from a DLL.
 
 This symbol is automatically defined in the configuration header file 
-@code{libov/ov_config.h}.
+@code{ov_config.h}.
 
 @strong{Example}
 
@@ -418,7 +418,7 @@ The following piece of code defines a global variable which is exported from a D
 *   foo.c
 */
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 #include <stdio.h>
 
 /*
@@ -447,7 +447,7 @@ The preprocessor symbol @code{OV_DLLVARIMPORT} is to tell the compiler, that
 a global variable is imported from a DLL.
 
 This symbol is automatically defined in the configuration header file 
-@code{libov/ov_config.h}.
+@code{ov_config.h}.
 
 @strong{Example}
 
@@ -458,7 +458,7 @@ The following piece of code declares a global variable which is imported from a 
 *   bar.c
 */
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 #include <stdio.h>
 
 /*
@@ -529,7 +529,7 @@ If @code{OV_DEBUG} is defined, this macro logs a user-defined debugging message:
 
 @strong{Header file}
 
-@code{#include "libov/ov_debug.h"}
+@code{#include "ov_debug.h"}
 
 @strong{Macro usage}
 
@@ -558,7 +558,7 @@ In debugging mode (@code{OV_DEBUG} defined) this macro logs a user-defined debug
 
 @strong{Header file}
 
-@code{#include "libov/ov_debug.h"}
+@code{#include "ov_debug.h"}
 
 @strong{Macro usage}
 
@@ -587,7 +587,7 @@ In debugging mode (@code{OV_DEBUG} defined) this macro logs a user-defined debug
 
 @strong{Header file}
 
-@code{#include "libov/ov_debug.h"}
+@code{#include "ov_debug.h"}
 
 @strong{Macro usage}
 
@@ -617,7 +617,7 @@ if condition specified is TRUE:
 
 @strong{Header file}
 
-@code{#include "libov/ov_debug.h"}
+@code{#include "ov_debug.h"}
 
 @strong{Macro usage}
 
@@ -647,7 +647,7 @@ if condition specified is FALSE:
 
 @code{[ACPLT/OV Debug] @emph{file}:@emph{line}: Warning: Assertion failed: "(@emph{condition})".}
 
-@code{#include "libov/ov_debug.h"}
+@code{#include "ov_debug.h"}
 
 @strong{Macro usage}
 
@@ -677,7 +677,7 @@ if condition specified is TRUE and aborts the process:
 
 @strong{Header file}
 
-@code{#include "libov/ov_debug.h"}
+@code{#include "ov_debug.h"}
 
 @strong{Macro usage}
 
@@ -707,7 +707,7 @@ if condition specified is FALSE and aborts the process:
 
 @strong{Header file}
 
-@code{#include "libov/ov_debug.h"}
+@code{#include "ov_debug.h"}
 
 @strong{Macro usage}
 
@@ -801,7 +801,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -827,7 +827,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -853,7 +853,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -879,7 +879,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -905,7 +905,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -931,7 +931,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -957,7 +957,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -983,7 +983,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1011,7 +1011,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1041,7 +1041,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1069,7 +1069,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1099,7 +1099,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1125,7 +1125,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1153,7 +1153,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1181,7 +1181,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1207,7 +1207,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1233,7 +1233,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1261,7 +1261,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1289,7 +1289,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1315,7 +1315,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1341,7 +1341,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1371,7 +1371,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1403,7 +1403,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1433,7 +1433,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1465,7 +1465,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1493,7 +1493,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1523,7 +1523,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1555,7 +1555,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1583,7 +1583,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1611,7 +1611,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1643,7 +1643,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1679,7 +1679,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1707,7 +1707,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1733,7 +1733,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1759,7 +1759,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1785,7 +1785,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1811,7 +1811,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1841,7 +1841,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1865,7 +1865,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1891,7 +1891,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1917,7 +1917,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1941,7 +1941,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1969,7 +1969,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -1995,7 +1995,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2023,7 +2023,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2053,7 +2053,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2083,7 +2083,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2111,7 +2111,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2141,7 +2141,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2167,7 +2167,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2193,7 +2193,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2217,7 +2217,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2241,7 +2241,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2265,7 +2265,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2289,7 +2289,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2313,7 +2313,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2337,7 +2337,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2363,7 +2363,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2387,7 +2387,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_macros.h"}
+@code{#include "ov_macros.h"}
 
 @strong{Macro usage}
 
@@ -2518,7 +2518,7 @@ A bool value may have one out of two possible values, @code{TRUE} or
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2540,7 +2540,7 @@ into/from an XDR stream.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2553,7 +2553,7 @@ into/from an XDR stream.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2575,7 +2575,7 @@ in ACPLT/OV into/from an XDR stream.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2588,7 +2588,7 @@ in ACPLT/OV into/from an XDR stream.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2603,7 +2603,7 @@ A string value is a pointer a @code{NULL}-terminated @code{char} array.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2643,7 +2643,7 @@ in seconds and microseconds elapsed since January 1, 1970, 00:00:00.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2669,7 +2669,7 @@ which contains the time span in seconds and microseconds.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2696,7 +2696,7 @@ an object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2719,7 +2719,7 @@ ACPLT/OV variable.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2765,7 +2765,7 @@ length and the actual value of a variable.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2805,7 +2805,7 @@ ACPLT/OV variable.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2834,7 +2834,7 @@ state and the timestamp of a variable.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2860,7 +2860,7 @@ call.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2928,7 +2928,7 @@ ACPLT/OV association.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2949,7 +2949,7 @@ to objects.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -2979,7 +2979,7 @@ object or part is a part of another object or part.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3012,7 +3012,7 @@ ACPLT/KS authentification/verification ticket (compare ACPLT/KS documentation).
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3039,7 +3039,7 @@ ACPLT/KS authentification/verification ticket of a given ticket type
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3067,7 +3067,7 @@ the type of the ticket and, depending on this type, further parameters.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3096,7 +3096,7 @@ A byte value is a generic value which can store 8 bits.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3123,7 +3123,7 @@ A generic enumeration value can contain any possible value of an @code{enum}.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3148,7 +3148,7 @@ datatype.
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3168,7 +3168,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3188,7 +3188,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3208,7 +3208,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3228,7 +3228,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3248,7 +3248,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3268,7 +3268,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3288,7 +3288,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3308,7 +3308,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3328,7 +3328,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3348,7 +3348,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3369,7 +3369,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3390,7 +3390,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3411,7 +3411,7 @@ Even if some compilers (e.g. the GNU compiler) allow to calculate a
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3434,7 +3434,7 @@ typedef OV_ENUM   OV_VAR_PROPS;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3454,7 +3454,7 @@ typedef OV_ENUM   OV_CLASS_PROPS;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3473,7 +3473,7 @@ typedef OV_ENUM   OV_ASSOC_PROPS;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3492,7 +3492,7 @@ typedef OV_ENUM   OV_OP_PROPS;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3515,7 +3515,7 @@ typedef OV_ENUM   OV_TIME_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3540,7 +3540,7 @@ typedef OV_ENUM   OV_HSEL_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3570,7 +3570,7 @@ typedef OV_ENUM   OV_HIST_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3594,7 +3594,7 @@ typedef OV_ENUM   OV_INTERPOLATION_MODE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_ov.h"}
+@code{#include "ov_ov.h"}
 
 @strong{Declaration}
 
@@ -3627,7 +3627,7 @@ is associated with the association defining the link.
 
 The macros and functions implementing this functionality are generic and 
 @strong{not type safe}. Whenever possible, you should use the macros defined 
-in @code{libov/ov_macros.h} for improved type checking during compilation.
+in @code{ov_macros.h} for improved type checking during compilation.
 
 Macros for iterating over links of an association:
 @menu
@@ -3676,7 +3676,7 @@ child object of a link.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3711,7 +3711,7 @@ child object of a link.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3746,7 +3746,7 @@ child object of a link.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3781,7 +3781,7 @@ child object of a link.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3816,7 +3816,7 @@ object of a link.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3848,7 +3848,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3876,7 +3876,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3900,7 +3900,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3928,7 +3928,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3956,7 +3956,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -3982,7 +3982,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -4008,7 +4008,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -4038,7 +4038,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -4066,7 +4066,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -4094,7 +4094,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -4120,7 +4120,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -4146,7 +4146,7 @@ This generic macro is @strong{not type safe}. Whenever possible, use the macro
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Macro usage}
 
@@ -4179,7 +4179,7 @@ object of a namebinding link with a given identifier.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4227,7 +4227,7 @@ has the same identifier as another child object of the parent object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4279,7 +4279,7 @@ and a parent object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4317,7 +4317,7 @@ objects linked to a given parent object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4351,7 +4351,7 @@ is used (i.e. the parent object owning the head has child objects) or not.
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4385,7 +4385,7 @@ link is used (i.e. the child object owning the anchor has a parent object) or no
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4416,7 +4416,7 @@ The function returns @code{TRUE} if the anchor is used and @code{FALSE} otherwis
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4447,7 +4447,7 @@ The function returns @code{TRUE} if the anchor is used and @code{FALSE} otherwis
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4478,7 +4478,7 @@ The function returns @code{TRUE} if the anchor is used and @code{FALSE} otherwis
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4506,7 +4506,7 @@ The function returns @code{TRUE} if the anchor is used and @code{FALSE} otherwis
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4537,7 +4537,7 @@ The function returns @code{TRUE} if the anchor is used and @code{FALSE} otherwis
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4568,7 +4568,7 @@ The function returns @code{TRUE} if the anchor is used and @code{FALSE} otherwis
 
 @strong{Header file}
 
-@code{#include "libov/ov_association.h"}
+@code{#include "ov_association.h"}
 
 @strong{Declaration}
 
@@ -4634,7 +4634,7 @@ function @code{ov_class_createobject()}.
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -4675,7 +4675,7 @@ if the constructor of the object returns an error code other than @code{OV_ERR_O
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -4746,7 +4746,7 @@ An instance object can not be deleted if it is a part of another object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -4779,7 +4779,7 @@ a typecast is allowed, if the "from" class is derived from the "to" class.
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -4811,7 +4811,7 @@ otherwise.
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -4839,7 +4839,7 @@ otherwise.
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -4870,7 +4870,7 @@ otherwise.
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -4901,7 +4901,7 @@ otherwise.
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -4929,7 +4929,7 @@ otherwise.
 
 @strong{Header file}
 
-@code{#include "libov/ov_class.h"}
+@code{#include "ov_class.h"}
 
 @strong{Declaration}
 
@@ -5017,7 +5017,7 @@ The function can only succeed if no database is mapped.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5055,7 +5055,7 @@ is not used by another application.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5089,7 +5089,7 @@ The function can only succeed if no database is mapped.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5113,7 +5113,7 @@ of the database memory into the database file.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5134,7 +5134,7 @@ method.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5158,7 +5158,7 @@ mapped database by calling the root object's @code{shutdown} method.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5184,7 +5184,7 @@ does not succeed, the function fails.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5235,7 +5235,7 @@ does not succeed, the function fails.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5283,7 +5283,7 @@ allocated in the persistent database.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5315,7 +5315,7 @@ the database file.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5340,7 +5340,7 @@ The @code{ov_database_getfree()} function returns the amount of free
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5365,7 +5365,7 @@ The @code{ov_database_getused()} function returns the amount of used
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5395,7 +5395,7 @@ that can not be used to allocate memory blocks of average object size.
 
 @strong{Header file}
 
-@code{#include "libov/ov_database.h"}
+@code{#include "ov_database.h"}
 
 @strong{Declaration}
 
@@ -5448,7 +5448,7 @@ Functions associated with elements:
 
 @strong{Header file}
 
-@code{#include "libov/ov_element.h"}
+@code{#include "ov_element.h"}
 
 @strong{Declaration}
 
@@ -5476,7 +5476,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_element.h"}
+@code{#include "ov_element.h"}
 
 @strong{Declaration}
 
@@ -5513,7 +5513,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_element.h"}
+@code{#include "ov_element.h"}
 
 @strong{Declaration}
 
@@ -5547,7 +5547,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_element.h"}
+@code{#include "ov_element.h"}
 
 @strong{Declaration}
 
@@ -5584,7 +5584,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_element.h"}
+@code{#include "ov_element.h"}
 
 @strong{Declaration}
 
@@ -5615,7 +5615,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_element.h"}
+@code{#include "ov_element.h"}
 
 @strong{Declaration}
 
@@ -5649,7 +5649,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_element.h"}
+@code{#include "ov_element.h"}
 
 @strong{Declaration}
 
@@ -5695,7 +5695,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_library.h"}
+@code{#include "ov_library.h"}
 
 @strong{Declaration}
 
@@ -5723,7 +5723,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_library.h"}
+@code{#include "ov_library.h"}
 
 @strong{Declaration}
 
@@ -5751,7 +5751,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_library.h"}
+@code{#include "ov_library.h"}
 
 @strong{Declaration}
 
@@ -5779,7 +5779,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_library.h"}
+@code{#include "ov_library.h"}
 
 @strong{Declaration}
 
@@ -5810,7 +5810,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_library.h"}
+@code{#include "ov_library.h"}
 
 @strong{Declaration}
 
@@ -5841,7 +5841,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_library.h"}
+@code{#include "ov_library.h"}
 
 @strong{Declaration}
 
@@ -5869,7 +5869,7 @@ typedef enum_t   OV_ELEM_TYPE;}
 
 @strong{Header file}
 
-@code{#include "libov/ov_library.h"}
+@code{#include "ov_library.h"}
 
 @strong{Declaration}
 
@@ -5890,7 +5890,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_library.h"}
+@code{#include "ov_library.h"}
 
 @strong{Declaration}
 
@@ -5940,7 +5940,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -5974,7 +5974,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -5995,7 +5995,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6023,7 +6023,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6051,7 +6051,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6083,7 +6083,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6114,7 +6114,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6145,7 +6145,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6176,7 +6176,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6207,7 +6207,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6238,7 +6238,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6269,7 +6269,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 
 @strong{Header file}
 
-@code{#include "libov/ov_logfile.h"}
+@code{#include "ov_logfile.h"}
 
 @strong{Declaration}
 
@@ -6328,7 +6328,7 @@ You must call @code{ov_memstack_lock()} and @code{ov_memstack_unlock()} outside.
 
 @strong{Header file}
 
-@code{#include "libov/ov_malloc.h"}
+@code{#include "ov_malloc.h"}
 
 @strong{Declaration}
 
@@ -6356,7 +6356,7 @@ You must call @code{ov_memstack_lock()} and @code{ov_memstack_unlock()} outside.
 
 @strong{Header file}
 
-@code{#include "libov/ov_malloc.h"}
+@code{#include "ov_malloc.h"}
 
 @strong{Declaration}
 
@@ -6384,7 +6384,7 @@ You must call @code{ov_memstack_lock()} and @code{ov_memstack_unlock()} outside.
 
 @strong{Header file}
 
-@code{#include "libov/ov_malloc.h"}
+@code{#include "ov_malloc.h"}
 
 @strong{Declaration}
 
@@ -6415,7 +6415,7 @@ You must call @code{ov_memstack_lock()} and @code{ov_memstack_unlock()} outside.
 
 @strong{Header file}
 
-@code{#include "libov/ov_malloc.h"}
+@code{#include "ov_malloc.h"}
 
 @strong{Declaration}
 
@@ -6456,7 +6456,7 @@ You must call @code{ov_memstack_lock()} and @code{ov_memstack_unlock()} outside.
 
 @strong{Header file}
 
-@code{#include "libov/ov_memstack.h"}
+@code{#include "ov_memstack.h"}
 
 @strong{Declaration}
 
@@ -6477,7 +6477,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_memstack.h"}
+@code{#include "ov_memstack.h"}
 
 @strong{Declaration}
 
@@ -6505,7 +6505,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_memstack.h"}
+@code{#include "ov_memstack.h"}
 
 @strong{Declaration}
 
@@ -6951,7 +6951,7 @@ the object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_object.h"}
+@code{#include "ov_object.h"}
 
 @strong{Declaration}
 
@@ -6979,7 +6979,7 @@ the object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_object.h"}
+@code{#include "ov_object.h"}
 
 @strong{Declaration}
 
@@ -7021,7 +7021,7 @@ the object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_operation.h"}
+@code{#include "ov_operation.h"}
 
 @strong{Declaration}
 
@@ -7052,7 +7052,7 @@ the object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_operation.h"}
+@code{#include "ov_operation.h"}
 
 @strong{Declaration}
 
@@ -7083,7 +7083,7 @@ the object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_operation.h"}
+@code{#include "ov_operation.h"}
 
 @strong{Declaration}
 
@@ -7124,7 +7124,7 @@ the object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_part.h"}
+@code{#include "ov_part.h"}
 
 @strong{Declaration}
 
@@ -7155,7 +7155,7 @@ the object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_part.h"}
+@code{#include "ov_part.h"}
 
 @strong{Declaration}
 
@@ -7186,7 +7186,7 @@ the object.
 
 @strong{Header file}
 
-@code{#include "libov/ov_part.h"}
+@code{#include "ov_part.h"}
 
 @strong{Declaration}
 
@@ -7235,7 +7235,7 @@ Functions associated with paths:
 
 @strong{Header file}
 
-@code{#include "libov/ov_path.h"}
+@code{#include "ov_path.h"}
 
 @strong{Declaration}
 
@@ -7255,7 +7255,7 @@ Functions associated with paths:
 
 @strong{Header file}
 
-@code{#include "libov/ov_path.h"}
+@code{#include "ov_path.h"}
 
 @strong{Declaration}
 
@@ -7295,7 +7295,7 @@ of this function.
 
 @strong{Header file}
 
-@code{#include "libov/ov_path.h"}
+@code{#include "ov_path.h"}
 
 @strong{Declaration}
 
@@ -7329,7 +7329,7 @@ of this function.
 
 @strong{Header file}
 
-@code{#include "libov/ov_path.h"}
+@code{#include "ov_path.h"}
 
 @strong{Declaration}
 
@@ -7373,7 +7373,7 @@ You need @emph{not} call @code{ov_memstack_lock()}/@code{unlock()} outside of th
 
 @strong{Header file}
 
-@code{#include "libov/ov_result.h"}
+@code{#include "ov_result.h"}
 
 @strong{Declaration}
 
@@ -7425,7 +7425,7 @@ Functions associated with the scheduler:
 
 @strong{Header file}
 
-@code{#include "libov/ov_scheduler.h"}
+@code{#include "ov_scheduler.h"}
 
 @strong{Declaration}
 
@@ -7453,7 +7453,7 @@ Functions associated with the scheduler:
 
 @strong{Header file}
 
-@code{#include "libov/ov_scheduler.h"}
+@code{#include "ov_scheduler.h"}
 
 @strong{Declaration}
 
@@ -7477,7 +7477,7 @@ typedef struct OV_SCHEDULER_EVENT   OV_SCHEDULER_EVENT; }
 
 @strong{Header file}
 
-@code{#include "libov/ov_scheduler.h"}
+@code{#include "ov_scheduler.h"}
 
 @strong{Declaration}
 
@@ -7508,7 +7508,7 @@ typedef struct OV_SCHEDULER_EVENT   OV_SCHEDULER_EVENT; }
 
 @strong{Header file}
 
-@code{#include "libov/ov_scheduler.h"}
+@code{#include "ov_scheduler.h"}
 
 @strong{Declaration}
 
@@ -7536,7 +7536,7 @@ typedef struct OV_SCHEDULER_EVENT   OV_SCHEDULER_EVENT; }
 
 @strong{Header file}
 
-@code{#include "libov/ov_scheduler.h"}
+@code{#include "ov_scheduler.h"}
 
 @strong{Declaration}
 
@@ -7567,7 +7567,7 @@ typedef struct OV_SCHEDULER_EVENT   OV_SCHEDULER_EVENT; }
 
 @strong{Header file}
 
-@code{#include "libov/ov_scheduler.h"}
+@code{#include "ov_scheduler.h"}
 
 @strong{Declaration}
 
@@ -7598,7 +7598,7 @@ typedef struct OV_SCHEDULER_EVENT   OV_SCHEDULER_EVENT; }
 
 @strong{Header file}
 
-@code{#include "libov/ov_scheduler.h"}
+@code{#include "ov_scheduler.h"}
 
 @strong{Declaration}
 
@@ -7638,7 +7638,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7669,7 +7669,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7703,7 +7703,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7734,7 +7734,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7762,7 +7762,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7793,7 +7793,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7827,7 +7827,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7858,7 +7858,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7888,7 +7888,7 @@ You must call @code{ov_memstack_lock}/@code{unlock()} outside of this function!
 
 @strong{Header file}
 
-@code{#include "libov/ov_string.h"}
+@code{#include "ov_string.h"}
 
 @strong{Declaration}
 
@@ -7932,7 +7932,7 @@ You must call @code{ov_memstack_lock}/@code{unlock()} outside of this function!
 
 @strong{Header file}
 
-@code{#include "libov/ov_structure.h"}
+@code{#include "ov_structure.h"}
 
 @strong{Declaration}
 
@@ -7960,7 +7960,7 @@ You must call @code{ov_memstack_lock}/@code{unlock()} outside of this function!
 
 @strong{Header file}
 
-@code{#include "libov/ov_structure.h"}
+@code{#include "ov_structure.h"}
 
 @strong{Declaration}
 
@@ -7991,7 +7991,7 @@ You must call @code{ov_memstack_lock}/@code{unlock()} outside of this function!
 
 @strong{Header file}
 
-@code{#include "libov/ov_structure.h"}
+@code{#include "ov_structure.h"}
 
 @strong{Declaration}
 
@@ -8022,7 +8022,7 @@ You must call @code{ov_memstack_lock}/@code{unlock()} outside of this function!
 
 @strong{Header file}
 
-@code{#include "libov/ov_structure.h"}
+@code{#include "ov_structure.h"}
 
 @strong{Declaration}
 
@@ -8107,7 +8107,7 @@ Functions:
 @section Example code for the execution time supervision functions
 
 @format
-@t{#include "libov/ov_supervise.h"
+@t{#include "ov_supervise.h"
 
 OV_TIME_SPAN    timeout;
 OV_JUMPBUFFER   jumpbuffer;
@@ -8138,7 +8138,7 @@ This datatype describes the stack frame before calling the user function and all
 
 @strong{Header file}
 
-@code{#include "libov/ov_supervise.h"}
+@code{#include "ov_supervise.h"}
 
 @strong{Declaration}
 
@@ -8159,7 +8159,7 @@ typedef jmp_buf      OV_JUMPBUFFER;
 
 @strong{Header file}
 
-@code{#include "libov/ov_supervise.h"}
+@code{#include "ov_supervise.h"}
 
 @strong{Macro usage}
 
@@ -8183,7 +8183,7 @@ typedef jmp_buf      OV_JUMPBUFFER;
 
 @strong{Header file}
 
-@code{#include "libov/ov_supervise.h"}
+@code{#include "ov_supervise.h"}
 
 @strong{Declaration}
 
@@ -8214,7 +8214,7 @@ typedef jmp_buf      OV_JUMPBUFFER;
 
 @strong{Header file}
 
-@code{#include "libov/ov_supervise.h"}
+@code{#include "ov_supervise.h"}
 
 @strong{Declaration}
 
@@ -8251,7 +8251,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_time.h"}
+@code{#include "ov_time.h"}
 
 @strong{Declaration}
 
@@ -8279,7 +8279,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_time.h"}
+@code{#include "ov_time.h"}
 
 @strong{Declaration}
 
@@ -8313,7 +8313,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_time.h"}
+@code{#include "ov_time.h"}
 
 @strong{Declaration}
 
@@ -8347,7 +8347,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_time.h"}
+@code{#include "ov_time.h"}
 
 @strong{Declaration}
 
@@ -8378,7 +8378,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_time.h"}
+@code{#include "ov_time.h"}
 
 @strong{Declaration}
 
@@ -8406,7 +8406,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_time.h"}
+@code{#include "ov_time.h"}
 
 @strong{Declaration}
 
@@ -8450,7 +8450,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_variable.h"}
+@code{#include "ov_variable.h"}
 
 @strong{Declaration}
 
@@ -8481,7 +8481,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_variable.h"}
+@code{#include "ov_variable.h"}
 
 @strong{Declaration}
 
@@ -8512,7 +8512,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_variable.h"}
+@code{#include "ov_variable.h"}
 
 @strong{Declaration}
 
@@ -8554,7 +8554,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vector.h"}
+@code{#include "ov_vector.h"}
 
 @strong{Declaration}
 
@@ -8594,7 +8594,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vector.h"}
+@code{#include "ov_vector.h"}
 
 @strong{Declaration}
 
@@ -8634,7 +8634,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vector.h"}
+@code{#include "ov_vector.h"}
 
 @strong{Declaration}
 
@@ -8671,7 +8671,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vector.h"}
+@code{#include "ov_vector.h"}
 
 @strong{Declaration}
 
@@ -8760,7 +8760,7 @@ Functions associated with the vendor tree:
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -8791,7 +8791,7 @@ Functions associated with the vendor tree:
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -8812,7 +8812,7 @@ Functions associated with the vendor tree:
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -8833,7 +8833,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -8861,7 +8861,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -8895,7 +8895,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -8923,7 +8923,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -8951,7 +8951,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -8982,7 +8982,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9010,7 +9010,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9038,7 +9038,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9066,7 +9066,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9094,7 +9094,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9125,7 +9125,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9156,7 +9156,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9187,7 +9187,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9218,7 +9218,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9249,7 +9249,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9280,7 +9280,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9311,7 +9311,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9342,7 +9342,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9373,7 +9373,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9404,7 +9404,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9435,7 +9435,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9466,7 +9466,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9497,7 +9497,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9528,7 +9528,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9559,7 +9559,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9590,7 +9590,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9621,7 +9621,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9652,7 +9652,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 
@@ -9683,7 +9683,7 @@ none
 
 @strong{Header file}
 
-@code{#include "libov/ov_vendortree.h"}
+@code{#include "ov_vendortree.h"}
 
 @strong{Declaration}
 

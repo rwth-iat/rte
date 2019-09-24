@@ -22,10 +22,10 @@
 
 
 #include "TCPbind.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_malloc.h"
-#include "libov/ov_result.h"
-#include "libov/ov_memstack.h"
+#include "ov_macros.h"
+#include "ov_malloc.h"
+#include "ov_result.h"
+#include "ov_memstack.h"
 #include "TCPbind_helper.h"
 #include "ks_logfile.h"
 #include "TCPbind_config.h"

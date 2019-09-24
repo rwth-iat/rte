@@ -22,7 +22,7 @@
 
 
 #include "ksbase.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 /*
  * global pointer to the NoneTicketAuthenticator (this implies no problem since the authenticator is a sigleton)

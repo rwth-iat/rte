@@ -9,9 +9,9 @@
 #endif
 
 #include "kshist.h"
-#include "libov/ov_association.h"
+#include "ov_association.h"
 
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 OV_DLLFNCEXPORT OV_RESULT kshist_isTimetrackOf_link(
         const OV_PPT_kshist_isTimetrackOf                 pparent,

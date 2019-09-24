@@ -40,15 +40,15 @@
 
 #include <stdlib.h>
 
-#include "libov/ov_library.h"
-#include "libov/ov_structure.h"
-#include "libov/ov_class.h"
-#include "libov/ov_association.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_database.h"
-#include "libov/ov_string.h"
-#include "libov/ov_time.h"
-#include "libov/ov_macros.h"
+#include "ov_library.h"
+#include "ov_structure.h"
+#include "ov_class.h"
+#include "ov_association.h"
+#include "ov_logfile.h"
+#include "ov_database.h"
+#include "ov_string.h"
+#include "ov_time.h"
+#include "ov_macros.h"
 
 #if OV_SYSTEM_MC164
 #define memset xmemset

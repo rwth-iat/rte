@@ -19,7 +19,7 @@
 
 
 #include "ssclib.h"
-#include "libov/ov_association.h"
+#include "ov_association.h"
 
 /***********************************************************************
 	Link

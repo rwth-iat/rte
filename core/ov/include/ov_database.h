@@ -30,7 +30,8 @@
 #define OV_DATABASE_H_INCLUDED
 
 #include "ov.h"
-#include "libov/ov_vendortree.h"
+#include "ov_vendortree.h"
+#include "ov_debug.h"
 
 #ifdef __cplusplus
 extern "C" {

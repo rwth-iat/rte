@@ -1,8 +1,8 @@
 
 #include "ksbase_helper.h"
 #include <string.h>
-#include "libov/ov_macros.h"
-#include "libov/ov_path.h"
+#include "ov_macros.h"
+#include "ov_path.h"
 #include "ksbase.h"
 #include "ks_logfile.h"
 

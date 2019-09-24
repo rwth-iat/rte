@@ -29,12 +29,12 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_structure.h"
-#include "libov/ov_variable.h"
-#include "libov/ov_library.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_time.h"
-#include "libov/ov_macros.h"
+#include "ov_structure.h"
+#include "ov_variable.h"
+#include "ov_library.h"
+#include "ov_logfile.h"
+#include "ov_time.h"
+#include "ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
 

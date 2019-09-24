@@ -38,15 +38,15 @@
 #endif
 */
 
-#include "libov/ov_association.h"
-#include "libov/ov_class.h"
-#include "libov/ov_time.h"
-#include "libov/ov_string.h"
-#include "libov/ov_vector.h"
-#include "libov/ov_database.h"
-#include "libov/ov_memstack.h"
-#include "libov/ov_malloc.h"
-#include "libov/ov_vendortree.h"
+#include "ov_association.h"
+#include "ov_class.h"
+#include "ov_time.h"
+#include "ov_string.h"
+#include "ov_vector.h"
+#include "ov_database.h"
+#include "ov_memstack.h"
+#include "ov_malloc.h"
+#include "ov_vendortree.h"
 
 /*
 *	Upcast of an instance pointer of the parent class

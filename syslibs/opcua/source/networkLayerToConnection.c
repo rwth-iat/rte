@@ -20,8 +20,8 @@
 #endif
 
 #include "opcua.h"
-#include "libov/ov_association.h"
-#include "libov/ov_macros.h"
+#include "ov_association.h"
+#include "ov_macros.h"
 OV_IMPL_LINK(opcua_networkLayerToConnection)
 OV_IMPL_UNLINK(opcua_networkLayerToConnection)
 OV_IMPL_GETACCESS(opcua_networkLayerToConnection)

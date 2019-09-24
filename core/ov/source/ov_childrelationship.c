@@ -29,8 +29,8 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_association.h"
-#include "libov/ov_macros.h"
+#include "ov_association.h"
+#include "ov_macros.h"
 
 /*	----------------------------------------------------------------------	*/
 

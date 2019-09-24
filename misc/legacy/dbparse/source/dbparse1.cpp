@@ -35,11 +35,11 @@
 
 #include <time.h>
 #include "dbparse.h"
-#include "libov/ov_version.h"
+#include "ov_version.h"
 #include "ks/conversions.h"
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 //for saving dumps to database dir
-#include "libov/ov_database.h"
+#include "ov_database.h"
 
 #include "db_y.h"
 

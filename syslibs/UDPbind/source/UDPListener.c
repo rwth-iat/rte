@@ -22,8 +22,8 @@
 
 
 #include "UDPbind.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
+#include "ov_macros.h"
+#include "ov_result.h"
 #include "UDPbind_helper.h"
 #include "UDPbind_config.h"
 #include "ks_logfile.h"

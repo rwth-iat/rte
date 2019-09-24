@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
-#include "libov/ov_logfile.h"
+#include "ov_logfile.h"
 #include "open62541.h"
 
 #if LOG_UA

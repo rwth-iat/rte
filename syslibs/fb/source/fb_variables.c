@@ -22,9 +22,9 @@
 
 
 #include "fb.h"
-#include "libov/ov_association.h"
+#include "ov_association.h"
 
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 OV_IMPL_LINK(fb_variables)
 OV_IMPL_UNLINK(fb_variables)

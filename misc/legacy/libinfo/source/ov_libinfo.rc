@@ -28,7 +28,7 @@
 *	20-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 */
 
-#include "libov/ov_version.h"
+#include "ov_version.h"
 
 #ifdef OV_USE_WINDRES
 #define RC_INVOKED

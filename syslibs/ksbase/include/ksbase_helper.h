@@ -2,7 +2,7 @@
 #ifndef ksbase_helper_INCLUDED
 #define ksbase_helper_INCLUDED
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 #include "ksbase.h"
 
 /**

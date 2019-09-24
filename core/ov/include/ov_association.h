@@ -31,7 +31,8 @@
 #ifndef OV_ASSOCIATION_H_INCLUDED1
 #define OV_ASSOCIATION_H_INCLUDED1
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
+#include "ov_debug.h"
 #include "ov.ovt"
 
 /*

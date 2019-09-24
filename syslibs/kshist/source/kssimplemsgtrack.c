@@ -9,7 +9,7 @@
 #endif
 
 #include "kshist.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 
 OV_DLLFNCEXPORT OV_STRING * kshist_KsSimpleMsgTrack_MessageVec_get(

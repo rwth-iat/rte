@@ -22,9 +22,9 @@
 
 
 #include "ksapi.h"
-#include "libov/ov_association.h"
+#include "ov_association.h"
 
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 OV_IMPL_LINK(ksapi_operationToVariable)
 OV_IMPL_UNLINK(ksapi_operationToVariable)

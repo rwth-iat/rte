@@ -31,11 +31,11 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_string.h"
-#include "libov/ov_database.h"
-#include "libov/ov_memstack.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_logfile.h"
+#include "ov_string.h"
+#include "ov_database.h"
+#include "ov_memstack.h"
+#include "ov_macros.h"
+#include "ov_logfile.h"
 
 #include <stdarg.h>
 #include <ctype.h>

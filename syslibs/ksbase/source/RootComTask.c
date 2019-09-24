@@ -30,9 +30,9 @@ static unsigned long minorVersion;
 #endif
 
 #include "ksbase.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 #include "ks_logfile.h"
-#include "libov/ov_scheduler.h"
+#include "ov_scheduler.h"
 
 
 void ksbase_RootComTask_execute(OV_INSTPTR_ov_object	pobj);

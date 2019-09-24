@@ -31,20 +31,20 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_class.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_time.h"
-#include "libov/ov_variable.h"
-#include "libov/ov_part.h"
-#include "libov/ov_operation.h"
-#include "libov/ov_object.h"
-#include "libov/ov_database.h"
-#include "libov/ov_scheduler.h"
-#include "libov/ov_library.h"
-#include "libov/ov_string.h"
-#include "libov/ov_memstack.h"
-#include "libov/ov_result.h"
+#include "ov_class.h"
+#include "ov_logfile.h"
+#include "ov_macros.h"
+#include "ov_time.h"
+#include "ov_variable.h"
+#include "ov_part.h"
+#include "ov_operation.h"
+#include "ov_object.h"
+#include "ov_database.h"
+#include "ov_scheduler.h"
+#include "ov_library.h"
+#include "ov_string.h"
+#include "ov_memstack.h"
+#include "ov_result.h"
  
 #if OV_SYSTEM_MC164
 #define memset xmemset

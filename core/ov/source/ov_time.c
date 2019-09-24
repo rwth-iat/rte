@@ -34,9 +34,9 @@
 #define _BSD_SOURCE
 #define _DEFAULT_SOURCE
 
-#include "libov/ov_time.h"
-#include "libov/ov_database.h"
-#include "libov/ov_ov.h"
+#include "ov_time.h"
+#include "ov_database.h"
+#include "ov_ov.h"
 
 #if OV_SYSTEM_MC164
 #include "mc164/time.h"

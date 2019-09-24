@@ -36,14 +36,14 @@
 *
 ***********************************************************************/
 
-#include "libov/ov_ov.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
-#include "libov/ov_string.h"
-#include "libov/ov_vendortree.h"
-#include "libov/ov_path.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_time.h"
+#include "ov_ov.h"
+#include "ov_macros.h"
+#include "ov_result.h"
+#include "ov_string.h"
+#include "ov_vendortree.h"
+#include "ov_path.h"
+#include "ov_logfile.h"
+#include "ov_time.h"
 
 #include "kshttp.h"
 #include "ks_logfile.h"

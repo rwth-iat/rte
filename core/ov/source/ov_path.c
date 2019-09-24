@@ -29,12 +29,12 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_path.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_memstack.h"
-#include "libov/ov_database.h"
-#include "libov/ov_vendortree.h"
-#include "libov/ov_macros.h"
+#include "ov_path.h"
+#include "ov_logfile.h"
+#include "ov_memstack.h"
+#include "ov_database.h"
+#include "ov_vendortree.h"
+#include "ov_macros.h"
 
 #if OV_SYSTEM_MC164
 #define memcpy xmemcpy

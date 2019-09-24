@@ -21,11 +21,11 @@
 
 #include "TCPbind.h"
 #include "ks_logfile.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_vendortree.h"
-#include "libov/ov_memstack.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
+#include "ov_logfile.h"
+#include "ov_vendortree.h"
+#include "ov_memstack.h"
+#include "ov_macros.h"
+#include "ov_result.h"
 #include "TCPbind_config.h"
 
 #ifdef ov_library_open_TCPbind

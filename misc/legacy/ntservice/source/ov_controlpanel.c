@@ -28,7 +28,7 @@
 *	21-Jun-2000 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 */
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 #include "ov_controlpanel.h"
 
 #include <windows.h>

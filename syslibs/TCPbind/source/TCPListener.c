@@ -22,12 +22,12 @@
 
 
 #include "TCPbind.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 #include "TCPbind_helper.h"
 #include "ks_logfile.h"
 #include "TCPbind_config.h"
 #include "ksbase_helper.h"
-#include "libov/ov_vendortree.h"
+#include "ov_vendortree.h"
 
 
 #include <stdio.h>

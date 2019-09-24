@@ -24,8 +24,8 @@
 #undef ov_library_open_UDPbind
 #endif
 
-#include "libov/ov_macros.h"
-#include "libov/ov_result.h"
+#include "ov_macros.h"
+#include "ov_result.h"
 #include "ks_logfile.h"
 #include "UDPbind_config.h"
 /*

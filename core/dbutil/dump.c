@@ -33,12 +33,12 @@
 #include <time.h>
 #include <sys/stat.h>
 
-#include "libov/ov_database.h"
-#include "libov/ov_result.h"
-#include "libov/ov_logfile.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_path.h"
-#include "libov/ov_config.h"
+#include "ov_database.h"
+#include "ov_result.h"
+#include "ov_logfile.h"
+#include "ov_macros.h"
+#include "ov_path.h"
+#include "ov_config.h"
 
 #include "ov_dbutil.h"
 

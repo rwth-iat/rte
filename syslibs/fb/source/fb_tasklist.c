@@ -41,9 +41,9 @@
 #endif
 
 #include "fb.h"
-#include "libov/ov_association.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_path.h"
+#include "ov_association.h"
+#include "ov_macros.h"
+#include "ov_path.h"
 #include "fb_namedef.h"
 #include "fb_database.h"
 

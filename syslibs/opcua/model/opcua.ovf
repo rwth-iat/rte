@@ -2,8 +2,8 @@
 #define opcua_OVF_INCLUDED
 
 #include "opcua.ovt"
-#include "libov/ov_macros.h"
-#include "libov/ov_path.h"
+#include "ov_macros.h"
+#include "ov_path.h"
 
 typedef UA_NodestoreInterface* UA_FNC_OVNODESTOREINTERFACE2NEW();
 typedef void UA_FNC_OVNODESTOREINTERFACE2DELETE(UA_NodestoreInterface * nodestoreInterface);

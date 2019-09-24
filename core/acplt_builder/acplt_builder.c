@@ -722,7 +722,7 @@ int fb_builder_createsourcefiles(
 		*/
 		fprintf(fp, "\n");
 		fprintf(fp, "#include \"%s.h\"\n", plib->identifier);
-		fprintf(fp, "#include \"libov/ov_macros.h\"\n\n");
+		fprintf(fp, "#include \"ov_macros.h\"\n\n");
 
 		fprintf(fp, "\n");
 		for(pvar=pclass->variables;pvar;pvar=pvar->pnext) {
@@ -998,8 +998,8 @@ int fb_builder_createsourcefiles(
 		*/
 		fprintf(fp, "\n");
 		fprintf(fp, "#include \"%s.h\"\n", plib->identifier);
-		fprintf(fp, "#include \"libov/ov_association.h\"\n\n");
-		fprintf(fp, "#include \"libov/ov_macros.h\"\n\n");
+		fprintf(fp, "#include \"ov_association.h\"\n\n");
+		fprintf(fp, "#include \"ov_macros.h\"\n\n");
 
 		fprintf(fp,"OV_IMPL_LINK(%s_%s)\n", plib->identifier,passoc->identifier);
 		fprintf(fp,"OV_IMPL_UNLINK(%s_%s)\n",plib->identifier,passoc->identifier);

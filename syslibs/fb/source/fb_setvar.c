@@ -40,11 +40,11 @@
 #define OV_COMPILE_LIBRARY_fb
 #endif
 
-#include "libov/ov_macros.h"
-#include "libov/ov_string.h"
-#include "libov/ov_time.h"
-#include "libov/ov_path.h"
-#include "libov/ov_variable.h"
+#include "ov_macros.h"
+#include "ov_string.h"
+#include "ov_time.h"
+#include "ov_path.h"
+#include "ov_variable.h"
 #include "fb.h"
 #include "fb_namedef.h"
 

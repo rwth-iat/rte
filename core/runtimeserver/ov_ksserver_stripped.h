@@ -35,10 +35,10 @@
 
 //#include "libovks/ov_ksserver_xdr.h"
 #include "ov_ksserver_xdr_stripped.h"
-#include "libov/ov_ov.h"
-#include "libov/ov_element.h"
-#include "libov/ov_memstack.h"
-#include "libov/ov_logfile.h"
+#include "ov_ov.h"
+#include "ov_element.h"
+#include "ov_memstack.h"
+#include "ov_logfile.h"
 
 #ifdef __cplusplus
 extern "C" {

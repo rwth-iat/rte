@@ -37,7 +37,7 @@
 #include <malloc.h>
 #include <time.h>
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 
 #if OV_COMPILER_BORLAND
 #pragma warn -pro

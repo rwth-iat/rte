@@ -30,10 +30,10 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_vector.h"
-#include "libov/ov_database.h"
-#include "libov/ov_string.h"
-#include "libov/ov_macros.h"
+#include "ov_vector.h"
+#include "ov_database.h"
+#include "ov_string.h"
+#include "ov_macros.h"
 
 #if OV_SYSTEM_MC164
 #define memcpy xmemcpy

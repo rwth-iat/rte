@@ -50,12 +50,12 @@
 #include "fb_namedef.h"
 #include "fb_macros.h"
 #include "fb_database.h"
-#include "libov/ov_string.h"
-#include "libov/ov_time.h"
-#include "libov/ov_path.h"
-#include "libov/ov_supervise.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_logfile.h"
+#include "ov_string.h"
+#include "ov_time.h"
+#include "ov_path.h"
+#include "ov_supervise.h"
+#include "ov_macros.h"
+#include "ov_logfile.h"
 #include "fb_log.h"
 
 /*	----------------------------------------------------------------------	*/

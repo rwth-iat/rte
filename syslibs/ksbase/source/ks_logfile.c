@@ -19,7 +19,7 @@
 #endif
 
 #if LOG_KS_TO_OV
-#include "libov/ov_logfile.h"
+#include "ov_logfile.h"
 #endif
 
 #if LOG_KS || LOG_KS_INFO || LOG_KS_DEBUG || LOG_KS_WARNING || LOG_KS_ERROR || LOG_KS_COMPILE

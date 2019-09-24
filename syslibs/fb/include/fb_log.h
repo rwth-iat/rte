@@ -38,7 +38,7 @@
 *                                                                             *
 ******************************************************************************/
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 
 
 #include "ov_ksserver_backend.h"

@@ -50,9 +50,9 @@
 
 #define OV_COMPILE_LIBOV
 
-#include "libov/ov_memstack.h"
-#include "libov/ov_malloc.h"
-#include "libov/ov_macros.h"
+#include "ov_memstack.h"
+#include "ov_malloc.h"
+#include "ov_macros.h"
 
 #if OV_SYNC_PTHREAD
 #include <pthread.h>

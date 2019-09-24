@@ -9,9 +9,9 @@
 #endif
 
 #include "ksxdr.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_malloc.h"
-#include "libov/ov_result.h"
+#include "ov_macros.h"
+#include "ov_malloc.h"
+#include "ov_result.h"
 #include "ov_ksserver_backend.h"
 #include "KSDATAPACKET_xdrhandling.h"
 #include "ksxdr_config.h"

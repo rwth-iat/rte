@@ -28,7 +28,7 @@
 *	21-Jul-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 */
 
-#include "libov/ov_version.h"
+#include "ov_version.h"
 
 #ifdef OV_USE_WINDRES
 #define RC_INVOKED

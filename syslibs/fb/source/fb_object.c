@@ -42,8 +42,8 @@
 #include "fb.h"
 #include "fb_namedef.h"
 #include "fb_macros.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_logfile.h"
+#include "ov_macros.h"
+#include "ov_logfile.h"
 #include "fb_log.h"
 
 /*	----------------------------------------------------------------------	*/

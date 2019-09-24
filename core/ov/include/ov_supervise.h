@@ -66,7 +66,7 @@
 *	Example code:
 */
 #if 0
-	#include "libov/ov_supervise.h"
+	#include "ov_supervise.h"
 
 	OV_TIME_SPAN 	timeout;
 	OV_JUMPBUFFER	jumpbuffer;
@@ -88,7 +88,7 @@
 	}
 #endif
 
-#include "libov/ov_ov.h"
+#include "ov_ov.h"
 #include <setjmp.h>
 
 /*

@@ -22,9 +22,9 @@
 
 
 #include "ksbase.h"
-#include "libov/ov_association.h"
+#include "ov_association.h"
 
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 
 OV_IMPL_LINK(ksbase_AssocChannelClientHandler)
 OV_IMPL_UNLINK(ksbase_AssocChannelClientHandler)

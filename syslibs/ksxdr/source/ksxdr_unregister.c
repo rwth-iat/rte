@@ -9,7 +9,7 @@
 #include "ksxdr.h"
 #include "ksxdr_config.h"
 #include "ks_logfile.h"
-#include "libov/ov_macros.h"
+#include "ov_macros.h"
 #include "KSDATAPACKET_xdrhandling.h"
 #include "ov_ksserver_backend.h"
 #include "ksbase_helper.h"
