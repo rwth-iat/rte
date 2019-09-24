@@ -1,0 +1,11 @@
+if (WIN32)
+    add_definitions(-DOV_SYSTEM_NT=1 -DPLT_SYSTEM_NT=1 -DFD_SETSIZE=128 -DWIN32)
+else()
+    add_definitions(-DOV_SYSTEM_LINUX=1)
+endif()
+list(APPEND CMAKE_C_FLAGS_DEBUG -DOV_DEBUG)
+
+add_compile_options(-std=c99 -Wall)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    add_compile_options(-Wno-unused-parameter -Winit-self  -Wno-attributes)
+endif()

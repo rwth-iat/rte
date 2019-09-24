@@ -50,7 +50,7 @@
 }
 %{
 #include "ov_codegen.h"
-#include "ov_ovmparser.h"
+#include "ovmparser.h"
 
 /*
 *	Global variables
