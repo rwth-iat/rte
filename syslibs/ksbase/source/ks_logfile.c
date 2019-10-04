@@ -25,7 +25,7 @@
 #if LOG_KS || LOG_KS_INFO || LOG_KS_DEBUG || LOG_KS_WARNING || LOG_KS_ERROR || LOG_KS_COMPILE
 static char			msg[1024];
 #if LOG_KS_TO_OV
-	static char msg2[1044];
+	static char msg2[1091];
 #endif
 #endif
 
