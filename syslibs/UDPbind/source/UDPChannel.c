@@ -72,10 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPChannel_SendData(
 					pChannel->v_outData.length - (pChannel->v_outData.readPT - pChannel->v_outData.data),
 					0, (struct sockaddr*) &pChannel->v_remoteAddress, pChannel->v_remoteAddrLen);
 			if (ret == UDPBIND_SOCKET_ERROR) {
-#if OV_SYSTEM_NT
-				errno = WSAGetLastError();
-#endif
-				KS_logfile_error(("%s: error sending data (errno is %d)", this->v_identifier, errno));
+				KS_logfile_error(("%s: error sending data", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				ksbase_free_KSDATAPACKET(&pChannel->v_outData);
 				pChannel->v_remoteAddrLen = 0;
