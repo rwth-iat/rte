@@ -58,14 +58,6 @@ char* lts_encode_string(
 );
 
 /*
-*	Licence
-*/
-#if FB_OEM_LICENCE == 1
-#else
-#include "checklic.h"
-#endif
-
-/*
 *	Global variables
 */
 //Sten: was never used so I removed it
@@ -216,7 +208,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_dbinfoclass_flush_set(
     OV_ANY			pvarcurrprops;
     OV_RESULT       res;
     char            help[256];
-    static char     dbsav[256];
+    static char     dbsav[260];
     char            *ph;
     
 	if(!value) {
