@@ -108,11 +108,6 @@ static UA_ByteString loadCertificate(void) {
 }
 
 
-static void acpltDeleteNode(UA_Node* node)
-{
-
-}
-
 static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	UA_Logger logger;
 	//UA_String url;

@@ -13,7 +13,7 @@
 
 #if LOG_UA
 static char			logMsg[1024];
-static char			logMsg2[1096];
+static char			logMsg2[1117];
 
 #if !LOG_UA_TO_OV
 static const char *LogLevelNames[6] = {"trace", "debug", "info", "warning", "error", "fatal"};
