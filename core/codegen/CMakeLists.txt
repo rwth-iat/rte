@@ -31,10 +31,9 @@ add_executable(ov_codegen
 target_link_libraries(ov_codegen ov_codegen_lib)
 
 
-# FIXME development install does currently not work due to the issue with OV_MODEL_INCLUDE_DIRECTORIES (see below)
-# install(TARGETS ov_codegen
-#     EXPORT ${PROJECT_NAME}
-#     RUNTIME
-#         DESTINATION bin
-#     COMPONENT development
-# )
+install(TARGETS ov_codegen
+    EXPORT ${PROJECT_NAME}
+    RUNTIME
+        DESTINATION bin
+    COMPONENT development
+)

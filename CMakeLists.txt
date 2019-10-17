@@ -37,9 +37,13 @@ add_subdirectory(syslibs/cshmi)
 set(CMAKE_DISABLE_FIND_PACKAGE_RTE TRUE CACHE BOOL "")
 set(RTE_FOUND ON
     CACHE BOOL "" FORCE)
-set(RTE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-    CACHE PATH "" FORCE)
 
+# Add RTE_CMAKE_DIR property to ov library target and export it to allow other projects to find our cmake files
+set_property(TARGET ov
+    PROPERTY RTE_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set_property(TARGET ov
+    APPEND
+    PROPERTY EXPORT_PROPERTIES "RTE_CMAKE_DIR")
 
 
 # Export all targets to make build tree importable via find_package(OV)
