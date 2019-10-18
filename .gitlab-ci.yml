@@ -1,0 +1,40 @@
+image: ubuntu:18.04
+
+
+before_script:
+  - ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+  - DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get install -y -qq build-essential bison flex tcl cmake gcc-arm-linux-gnueabihf gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
+
+build:
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make -j$(nproc)
+
+build-win32-x64:
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make -j$(nproc) ov_codegen
+    - cd ..
+    - mkdir build-win32
+    - cd build-win32
+    - cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-x86_64.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" ..
+    - make -j$(nproc)
+
+build-linux-armhf:
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make -j$(nproc) ov_codegen
+    - cd ..
+    - mkdir build-win32
+    - cd build-win32
+    - cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/gcc-linux-armhf.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" ..
+    - make -j$(nproc)
