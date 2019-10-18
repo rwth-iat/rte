@@ -114,14 +114,29 @@ function(ov_library_includes OV_LIBRARY_NAME)
     list(REMOVE_DUPLICATES OV_MODEL_PATHS)
 
     # Add custom command for generating the <library>.{h,c} files
-    add_custom_command (
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.h ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.c
-      COMMAND ov_codegen -f ${CMAKE_CURRENT_SOURCE_DIR}/model/${OV_LIBRARY_NAME}.ovm -o ${CMAKE_CURRENT_BINARY_DIR} -l ${OV_LIBRARY_NAME} "-I;$<JOIN:${OV_MODEL_PATHS},;-I;>"
-      MAIN_DEPENDENCY model/${OV_LIBRARY_NAME}.ovm
-      DEPENDS ov_codegen
-      COMMENT "Generating OV library sources for library '${OV_LIBRARY_NAME}'"
-      COMMAND_EXPAND_LISTS
-      )
+    # For cross compilation, we expect the OV_CODEGEN_PATH variable to be set. Otherwise, we just take the ov_codegen binary that has been build (or imported) by this project
+    set(OV_CODEGEN_PATH ""
+        CACHE
+        FILEPATH
+        "Path of the ov_codegen binary (for cross compilation). If not given, the ov_codegen target of the RTE project is used.")
+    if(OV_CODEGEN_PATH)
+        add_custom_command (
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.h ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.c
+            COMMAND "${OV_CODEGEN_PATH}" -f ${CMAKE_CURRENT_SOURCE_DIR}/model/${OV_LIBRARY_NAME}.ovm -o ${CMAKE_CURRENT_BINARY_DIR} -l ${OV_LIBRARY_NAME} "-I;$<JOIN:${OV_MODEL_PATHS},;-I;>"
+            MAIN_DEPENDENCY model/${OV_LIBRARY_NAME}.ovm
+            COMMENT "Generating OV library sources for library '${OV_LIBRARY_NAME}'"
+            COMMAND_EXPAND_LISTS
+        )
+    else()
+        add_custom_command (
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.h ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.c
+            COMMAND ov_codegen -f ${CMAKE_CURRENT_SOURCE_DIR}/model/${OV_LIBRARY_NAME}.ovm -o ${CMAKE_CURRENT_BINARY_DIR} -l ${OV_LIBRARY_NAME} "-I;$<JOIN:${OV_MODEL_PATHS},;-I;>"
+            MAIN_DEPENDENCY model/${OV_LIBRARY_NAME}.ovm
+            COMMENT "Generating OV library sources for library '${OV_LIBRARY_NAME}'"
+            COMMAND_EXPAND_LISTS
+        )
+    endif()
+    
 
     # Export (transitive) ov_codegen model include paths
     set_property(TARGET ${OV_LIBRARY_NAME}
