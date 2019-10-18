@@ -59,6 +59,8 @@ function(add_ov_library OV_LIBRARY_NAME)
         # FIXME Don't install static libraries (.a) on Windows
         LIBRARY
             DESTINATION lib/
+        RUNTIME
+            DESTINATION lib/
         COMPONENT runtime
         OPTIONAL)
 
