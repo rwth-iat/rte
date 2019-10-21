@@ -4,7 +4,7 @@ if (WIN32)
 else()
     add_definitions(-DOV_SYSTEM_LINUX=1)
 endif()
-list(APPEND CMAKE_C_FLAGS_DEBUG -DOV_DEBUG)
+set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG -DOV_DEBUG)
 
 # General compiler options for OV and all libs
 add_compile_options(-std=c99 -Wall)
