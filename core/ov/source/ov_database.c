@@ -1011,7 +1011,7 @@ OV_UINT flags) {
 #if TLSF
 	dbpool= pdb->pstart;
 
-#if OV_SYSTEM_UNIX
+#if OV_RT && OV_SYSTEM_UNIX && !OV_SYSTEM_CYGWIN
 	if (mlockall(MCL_CURRENT | MCL_FUTURE )){
 		perror("mlockall failed:");
 	}
