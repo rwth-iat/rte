@@ -30,6 +30,11 @@
 
 #define OV_COMPILE_LIBOV
 
+#if OV_SYSTEM_CYGWIN
+// expose setitimer in cygwin
+#define _DEFAULT_SOURCE 1
+#endif
+
 #include "ov_supervise.h"
 #include "ov_config.h"
 #include <setjmp.h>

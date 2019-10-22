@@ -234,6 +234,10 @@ OV_DLLFNCEXPORT void fb___addenvpath(const char *pEnvVar, const char *pth);
 #define SERVER_SYSTEM "nt"
 #endif
 
+#if OV_SYSTEM_CYGWIN == 1
+#define SERVER_SYSTEM "cygwin"
+#endif
+
 #if OV_SYSTEM_OPENVMS == 1
 #define SERVER_SYSTEM "openvms"
 #endif
