@@ -1,4 +1,4 @@
-image: ubuntu:18.04
+image: ubuntu:19.04
 
 
 before_script:
