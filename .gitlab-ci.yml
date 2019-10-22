@@ -1,9 +1,4 @@
-image: ubuntu:19.04
-
-
-before_script:
-  - ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime
-  - DEBIAN_FRONTEND=noninteractive apt-get update -qq && apt-get install -y -qq build-essential bison flex tcl cmake gcc-arm-linux-gnueabihf gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
+image: registry.git.rwth-aachen.de/acplt/rte-tools/rte-build-docker-image/image
 
 build:
   stage: build
