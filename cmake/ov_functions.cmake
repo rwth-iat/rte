@@ -11,10 +11,16 @@
 #   add_ov_library(libname)
 #   ov_library_includes(libname ov fb otherlibname)
 function(add_ov_library OV_LIBRARY_NAME)
+    # Define library target type (STATIC or SHARED) based on OV_STATIC_LIBRARIES variable
+    if(OV_STATIC_LIBRARIES AND (TARGET ov_runtimeserver OR OV_LIBRARY_NAME MATCHES "ov"))
+        set(OV_LIBRARY_TYPE STATIC)
+    else()
+        set(OV_LIBRARY_TYPE SHARED)
+    endif()
 
     # Define library target
     file(GLOB SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/source/*.c)
-    add_library(${OV_LIBRARY_NAME} SHARED
+    add_library(${OV_LIBRARY_NAME} ${OV_LIBRARY_TYPE}
         ${SRC_FILES}
         ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.c)
 
@@ -40,41 +46,61 @@ function(add_ov_library OV_LIBRARY_NAME)
     # Prepending "libov_" to .so/.dll filename (instead of default "lib")
     set_target_properties(${OV_LIBRARY_NAME} PROPERTIES PREFIX "libov_")
 
-    # If ov (the core library) is compiled within this cmake build, add this library's binary dir to its RPATH for dynamic linking
-    if (TARGET ov)
-        set_property(TARGET ov
-            APPEND
-            PROPERTY BUILD_RPATH ${CMAKE_CURRENT_BINARY_DIR})
+    # If we want to build a statically linked ov_runtimeserver:
+    # Add every ov library as build dependency to ov_runtimeserver and generate the required lines into
+    # ov_serverlibs.c/ov_serverlibs.h
+    if(OV_STATIC_LIBRARIES)
+        if(NOT OV_LIBRARY_NAME MATCHES "ov" AND TARGET ov_runtimeserver)
+            target_link_libraries(ov_runtimeserver ${OV_LIBRARY_NAME})
+            get_target_property(OV_SERVERLIBS_FILE ov_runtimeserver STATIC_LIBRARY_DEFINE_FILE)
+            get_target_property(OV_SERVERLIBS_H_FILE ov_runtimeserver STATIC_LIBRARY_INCLUDE_FILE)
+            file(APPEND ${OV_SERVERLIBS_H_FILE}
+                "#include \"${OV_LIBRARY_NAME}.h\"\n"
+            )
+            file(APPEND ${OV_SERVERLIBS_FILE}
+                "Ov_DefineStaticLibrary(${OV_LIBRARY_NAME})\n"
+            )
+        endif()
+
+    # Otherwise, add library build dir to ov_runtimeserver's RPATH and add install rules for .so/.dll file
+    else()
+        # If ov (the core library) is compiled within this cmake build, add this library's binary dir to its RPATH for
+        # dynamic linking on linux
+        if(NOT OV_LIBRARY_NAME MATCHES "ov" AND TARGET ov)
+            set_property(TARGET ov
+                APPEND
+                PROPERTY BUILD_RPATH ${CMAKE_CURRENT_BINARY_DIR})
+        endif()
+
+        # Install rules
+        install(TARGETS ${OV_LIBRARY_NAME}
+            EXPORT ${PROJECT_NAME}
+            LIBRARY
+                DESTINATION lib/
+                COMPONENT runtime
+                OPTIONAL
+            # Put Windows DLL files (treated as RUNTIME by CMake) into bin/ as it is usual on Windows
+            RUNTIME
+                DESTINATION bin/
+                COMPONENT runtime
+                OPTIONAL)
+
+        # FIXME development install does currently not work due to the issue with OV_MODEL_INCLUDE_DIRECTORIES (see below)
+        # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.h
+        #     DESTINATION include/${OV_LIBRARY_NAME}
+        #     COMPONENT development
+        # )
+        # install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+        #     DESTINATION include/${OV_LIBRARY_NAME}
+        #     COMPONENT development
+        #     FILES_MATCHING PATTERN *.h
+        # )
+        # install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/model/
+        #     DESTINATION models
+        #     COMPONENT development
+        #     FILES_MATCHING PATTERN *.ovm PATTERN *.ovf PATTERN *.ovt
+        # )
     endif()
-
-    # Install rules
-    install(TARGETS ${OV_LIBRARY_NAME}
-        EXPORT ${PROJECT_NAME}
-        LIBRARY
-            DESTINATION lib/
-            COMPONENT runtime
-            OPTIONAL
-        # Put Windows DLL files (treated as RUNTIME by CMake) into bin/ as it is usual on Windows
-        RUNTIME
-            DESTINATION bin/
-            COMPONENT runtime
-            OPTIONAL)
-
-    # FIXME development install does currently not work due to the issue with OV_MODEL_INCLUDE_DIRECTORIES (see below)
-    # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.h
-    #     DESTINATION include/${OV_LIBRARY_NAME}
-    #     COMPONENT development
-    # )
-    # install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-    #     DESTINATION include/${OV_LIBRARY_NAME}
-    #     COMPONENT development
-    #     FILES_MATCHING PATTERN *.h
-    # )
-    # install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/model/
-    #     DESTINATION models
-    #     COMPONENT development
-    #     FILES_MATCHING PATTERN *.ovm PATTERN *.ovf PATTERN *.ovt
-    # )
 endfunction()
 
 # Add OV library dependencies to an OV library, manage the library's model include paths and add the custom_command for
@@ -140,4 +166,21 @@ function(ov_library_includes OV_LIBRARY_NAME)
     set_property(TARGET ${OV_LIBRARY_NAME}
         APPEND
         PROPERTY EXPORT_PROPERTIES OV_MODEL_INCLUDE_DIRECTORIES)
+endfunction()
+
+
+# CMake code to be executed after all ov libraries have been added
+# This function should be called as last command in the project's main CMakeLists.txt file
+#
+# Currently it is only required for statically linked ov builds, to finish the generated file ov_serverlibs.c
+function(ov_finish_project)
+    get_directory_property(hasParent PARENT_DIRECTORY)
+    if(NOT hasParent)
+        if(OV_STATIC_LIBRARIES AND TARGET ov_runtimeserver)
+            get_target_property(OV_SERVERLIBS_FILE ov_runtimeserver STATIC_LIBRARY_DEFINE_FILE)
+            file(APPEND ${OV_SERVERLIBS_FILE}
+                "Ov_EndStaticLibraryTable;\n"
+            )
+        endif()
+    endif()
 endfunction()

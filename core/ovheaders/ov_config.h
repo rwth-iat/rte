@@ -84,12 +84,6 @@
 #endif
 
 
-/* No-MMU Defines */
-/* set this to 1 if your hardware has no MMU 
-   No-MMU systems using uclibc do neither support dynamic linking nor the full libm	*/
-#define OV_ARCH_NOMMU	0
-
-
 /* TLSF Realtime memory allocator, used for database, memstack and heap */
 #ifndef TLSF_HEAP
 #define TLSF_HEAP 0
@@ -179,13 +173,6 @@
 */
 #if OV_SYSTEM_UNIX
 #define OV_DYNAMIC_DATABASE		0
-#if !OV_ARCH_NOMMU
-#define OV_STATIC_LIBRARIES		0
-#define OV_DYNAMIC_LIBRARIES		1
-#else
-#define OV_STATIC_LIBRARIES		1
-#define OV_DYNAMIC_LIBRARIES		0
-#endif
 #define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			".so"
 #if __GNUC__ >= 4
@@ -206,13 +193,6 @@
 
 #if OV_SYSTEM_NT
 #define OV_DYNAMIC_DATABASE		0
-#if !OV_ARCH_NOMMU
-#define OV_STATIC_LIBRARIES		0
-#define OV_DYNAMIC_LIBRARIES		1
-#else
-#define OV_STATIC_LIBRARIES		1
-#define OV_DYNAMIC_LIBRARIES		0
-#endif
 #define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			".dll"
 #if OV_COMPILER_MSVC
@@ -233,8 +213,6 @@
 #endif
 #if OV_SYSTEM_OPENVMS
 #define OV_DYNAMIC_DATABASE		0
-#define OV_STATIC_LIBRARIES		1
-#define OV_DYNAMIC_LIBRARIES	0
 #define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			""
 #define OV_DLLFNCEXPORT
@@ -244,8 +222,6 @@
 
 #if OV_SYSTEM_RMOS
 #define OV_DYNAMIC_DATABASE		0
-#define OV_STATIC_LIBRARIES		1
-#define OV_DYNAMIC_LIBRARIES	0
 #define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			""
 #define OV_DLLFNCEXPORT
@@ -255,8 +231,6 @@
 
 #if OV_SYSTEM_MC164
 #define OV_DYNAMIC_DATABASE		0
-#define OV_STATIC_LIBRARIES		1
-#define OV_DYNAMIC_LIBRARIES	0
 #define OV_MEMSPEC				xhuge
 #define OV_DLLFLNSUFFIX			""
 #define OV_DLLFNCEXPORT

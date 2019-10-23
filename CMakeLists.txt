@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.13)
 
 project(rte C)
 include(cmake/ov_functions.cmake)
@@ -56,3 +56,6 @@ export(EXPORT ${PROJECT_NAME}
 #     DESTINATION cmake
 #     COMPONENT development
 #     FILE OVConfig.cmake)
+
+
+ov_finish_project()
