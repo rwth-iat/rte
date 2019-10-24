@@ -53,4 +53,6 @@ OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst);
 
 UA_StatusCode addReference(UA_Node *node);
 
+OV_DLLFNCEXPORT const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *nodeId);
+
 #endif /* opcua_HELPERS_H_ */

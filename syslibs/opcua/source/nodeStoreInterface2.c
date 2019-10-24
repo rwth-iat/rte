@@ -798,7 +798,7 @@ static UA_Node * OV_NodeStore2_newNode(UA_NodeClass nodeClass){ //TODO add nodes
     return NULL;
 }
 
-static const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *nodeId){
+OV_DLLFNCEXPORT const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *nodeId){
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
