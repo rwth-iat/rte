@@ -29,6 +29,8 @@
 *	13-07-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: History concept changed.
 */
 
+#include "ov_ksserver_backend.h"
+
 /*
 *	Function prototype for method gethistory 
 *	(compare ACPLT/KS)
