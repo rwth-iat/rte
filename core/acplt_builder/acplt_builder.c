@@ -673,6 +673,65 @@ void fb_builder_print_overloadedfnc(
     return;
 }
 
+int fb_builder_createopenlib(const char *libname){
+    FILE			*fp;
+
+    fp = fb_builder_createfile("library_open", ".c");
+    if(!fp) {
+        exit(EXIT_FAILURE);
+    }
+
+    /*
+    *	undef OV_LIBRARY_OPEN option
+    */
+    fprintf(fp, "#ifndef OV_COMPILE_LIBRARY_%s\n", libname);
+    fprintf(fp, "#define OV_COMPILE_LIBRARY_%s\n", libname);
+    fprintf(fp, "#endif\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "#include \"%s.h\"\n", libname);
+    fprintf(fp, "#ifdef ov_library_open_%s\n", libname);
+    fprintf(fp, "#undef ov_library_open_%s\n", libname);
+    fprintf(fp, "#endif\n");
+    fprintf(fp, "\n");
+
+
+    fprintf(fp, "/*\n");
+    fprintf(fp, "* This function will be called, when the library is loaded.\n");
+    fprintf(fp, "* It could generate components and initializes the startup procedure\n");
+    fprintf(fp, "*/\n");
+    fprintf(fp, "OV_RESULT ov_library_setglobalvars_%s_new(void) {\n", libname);
+    fprintf(fp, "	OV_RESULT result;\n");
+    fprintf(fp, "	/*\n");
+    fprintf(fp, "	 *    set the global variables of the original version\n");
+    fprintf(fp, "	 *    and if successful, load other libraries\n");
+    fprintf(fp, "	 *    and create some objects\n");
+    fprintf(fp, "	 */\n");
+    fprintf(fp, "	result = ov_library_setglobalvars_%s();\n", libname);
+    fprintf(fp, "	return result;\n");
+    fprintf(fp, "}\n");
+
+    fprintf(fp, "/*\n");
+    fprintf(fp, "*       Replace the 'setglobalvars' function of a library with this\n");
+    fprintf(fp, "*       previous one, which additionally creates instances.\n");
+    fprintf(fp, "* 	This is called by the OV system upon library load.\n");
+    fprintf(fp, "*/\n");
+    fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_%s(void) {\n", libname);
+    fprintf(fp, "	/* local variables */\n");
+    fprintf(fp, "	static OV_LIBRARY_DEF *OV_LIBRARY_DEF_%s_new;\n", libname);
+    fprintf(fp, "	/*\n");
+    fprintf(fp, "	*       replace the 'setglobalvars' function created by the code generator\n");
+    fprintf(fp, "	*       with a new one.\n");
+    fprintf(fp, "	*/\n");
+    fprintf(fp, "	OV_LIBRARY_DEF_%s_new = ov_library_open_%s_old();\n", libname, libname);
+    fprintf(fp, "	OV_LIBRARY_DEF_%s_new->setglobalvarsfnc = ov_library_setglobalvars_%s_new;\n", libname, libname);
+    fprintf(fp, "	return OV_LIBRARY_DEF_%s_new;\n", libname);
+    fprintf(fp, "}\n");
+
+    fb_builder_closefile(fp);
+
+    return EXIT_SUCCESS;
+}
+
 /*	----------------------------------------------------------------------	*/
 /*
 *	Create source files of a library
@@ -1031,6 +1090,9 @@ int fb_builder_backend(const char* libname) {
 		*	create source files *.c
 		*/
 		if ( !strcmp(plib->identifier, libname) ) {
+			if(plib->custom_open) {
+				fb_builder_createopenlib(libname);
+			}
 			return fb_builder_createsourcefiles(plib);
 		}
 	}
@@ -1074,7 +1136,6 @@ int main(int argc, char **argv) {
 	char        	*libname=NULL;
 	
 	/* Aux variables for creation of openlib.c*/
-	FILE			*fp;
 	int	addOpenLib = 0;
 	
 	/*
@@ -1255,58 +1316,7 @@ HELP:
 
 	/* User defined open-lib option? */
 	if(addOpenLib == 1) {
-		fp = fb_builder_createfile("library_open", ".c");
-		if(!fp) {
-			return EXIT_FAILURE;
-		}
-
-		/*
-		*	undef OV_LIBRARY_OPEN option
-		*/
-		fprintf(fp, "#ifndef OV_COMPILE_LIBRARY_%s\n", libname);
-		fprintf(fp, "#define OV_COMPILE_LIBRARY_%s\n", libname);
-		fprintf(fp, "#endif\n");
-		fprintf(fp, "\n");
-		fprintf(fp, "#include \"%s.h\"\n", libname);
-		fprintf(fp, "#ifdef ov_library_open_%s\n", libname);
-		fprintf(fp, "#undef ov_library_open_%s\n", libname);
-		fprintf(fp, "#endif\n");
-		fprintf(fp, "\n");
-
-
-		fprintf(fp, "/*\n");
-		fprintf(fp, "* This function will be called, when the library is loaded.\n");
-		fprintf(fp, "* It could generate components and initializes the startup procedure\n");
-		fprintf(fp, "*/\n");
-		fprintf(fp, "OV_RESULT ov_library_setglobalvars_%s_new(void) {\n", libname);
-		fprintf(fp, "	OV_RESULT result;\n");
-		fprintf(fp, "	/*\n");
-		fprintf(fp, "	 *    set the global variables of the original version\n");
-		fprintf(fp, "	 *    and if successful, load other libraries\n");
-		fprintf(fp, "	 *    and create some objects\n");
-		fprintf(fp, "	 */\n");
-		fprintf(fp, "	result = ov_library_setglobalvars_%s();\n", libname);
-		fprintf(fp, "	return result;\n");
-		fprintf(fp, "}\n");
-
-		fprintf(fp, "/*\n");
-		fprintf(fp, "*       Replace the 'setglobalvars' function of a library with this\n");
-		fprintf(fp, "*       previous one, which additionally creates instances.\n");
-		fprintf(fp, "* 	This is called by the OV system upon library load.\n");
-		fprintf(fp, "*/\n");
-		fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_%s(void) {\n", libname);
-		fprintf(fp, "	/* local variables */\n");
-		fprintf(fp, "	static OV_LIBRARY_DEF *OV_LIBRARY_DEF_%s_new;\n", libname);
-		fprintf(fp, "	/*\n");
-		fprintf(fp, "	*       replace the 'setglobalvars' function created by the code generator\n");
-		fprintf(fp, "	*       with a new one.\n");
-		fprintf(fp, "	*/\n");
-		fprintf(fp, "	OV_LIBRARY_DEF_%s_new = ov_library_open_%s_old();\n", libname, libname);
-		fprintf(fp, "	OV_LIBRARY_DEF_%s_new->setglobalvarsfnc = ov_library_setglobalvars_%s_new;\n", libname, libname);
-		fprintf(fp, "	return OV_LIBRARY_DEF_%s_new;\n", libname);
-		fprintf(fp, "}\n");
-
-		fb_builder_closefile(fp);
+        fb_builder_createopenlib(libname);
 	}
 	
 	/*
