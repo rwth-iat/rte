@@ -4,8 +4,9 @@
 LIBRARY ksxdr
 	VERSION   = "V0.1 (28-Jan-2013)";
 	AUTHOR    = "Lars Evertz";
-	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT = "Lehrstuhl fÃ¼r Prozessleittechnik, RWTH Aachen University";
 	COMMENT   = "Library for handling ks-requests in XDR-format";
+	LIBRARY_OPEN;
 	
 	/**
 	 *   

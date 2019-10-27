@@ -23,8 +23,9 @@
 LIBRARY ksbase
 	VERSION   = "V0.1 (15-01-2013)";
 	AUTHOR    = "Lars Evertz";
-	COPYRIGHT = "Lehrstuhl f�r Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
 	COMMENT   = "Generic communication library. Offers tasking and basic management functions. It is independent of protocols and transport bindings.";
+	LIBRARY_OPEN;
 	
 	////////////////// Scheduling / Tasking components
 

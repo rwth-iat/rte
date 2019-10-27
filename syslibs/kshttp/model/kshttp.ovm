@@ -28,6 +28,7 @@ LIBRARY kshttp
 	AUTHOR    = "Sten Gruener, Henning Mersch, Holger Jeromin";
 	COPYRIGHT	= "Copyright (C) 2014 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "HTTP Webserver and Webclient with lightweight KS and static file support";
+	LIBRARY_OPEN;
 	
 	/**
 	 *	Checks whether received data is conforming to the http protocol

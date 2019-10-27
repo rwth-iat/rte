@@ -60,6 +60,7 @@ LIBRARY cshmi
 	AUTHOR		= "Gustavo Quiros, Holger Jeromin, Stefan Schmitz";
 	COPYRIGHT	= "Copyright (C) 2015 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "CSHMI - Client-Side Human-Machine Interface";
+	LIBRARY_OPEN;
 
 	CLASS Object : CLASS ov/domain
 		COMMENT = "base class for CSHMI objects";

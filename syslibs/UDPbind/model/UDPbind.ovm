@@ -6,6 +6,7 @@ LIBRARY UDPbind
 	AUTHOR    = "Lars Evertz";
 	COPYRIGHT = "";
 	COMMENT   = "UDP binding for generic communications.";
+	LIBRARY_OPEN;
 	
 	/**
 	*   
