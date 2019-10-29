@@ -31,6 +31,8 @@ add_executable(ov_codegen
 target_link_libraries(ov_codegen ov_codegen_lib)
 
 
+# Installing ov_codegen is only useful in development component, which we don't support yet. However, we need to add the
+# ov_codegen to the EXPORT to include it via find_project() from the build tree.
 install(TARGETS ov_codegen
     EXPORT ${PROJECT_NAME}
     RUNTIME

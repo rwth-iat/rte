@@ -48,9 +48,18 @@ make -j 4
 On Windows with MinGW (without Cygwin), use `mingw32-make.exe` instead of `make`.
 
 
-### Packaging
+### Packaging / Installing
 
-TODO
+Using the CMake install feature, we can pack or install the ACPLT/OV runtime executable together with the libraries for dynamic linking and templates/example files of the libraries.
+To do so, we must specify the install prefix (`CMAKE_INSTALL_PREFIX`) in the CMake configuration step and run the installation with `make install`.
+The install prefix may be set to `/usr` or `/usr/local` for direct install on Linux or to a relative directory path (e.g. `export/`) for packing the install tree in a local directory:
+
+```sh
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=export/ ..
+make -j 4 install
+```
+
 
 ### Cross Compiling
 
@@ -72,7 +81,7 @@ make -j 4 ov_codegen
 cd ..
 mkdir build-win32
 cd build-win32
-cmake cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/gcc-linux-armhf.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" ..
+cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/gcc-linux-armhf.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" ..
 make -j 4 ov_codegen
 ```
 
