@@ -5,8 +5,12 @@ build:
   script:
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake -DCMAKE_INSTALL_PREFIX=export ..
     - make -j$(nproc)
+    - make install
+  artifacts:
+    paths:
+      - build/export
 
 build-win32-x64:
   stage: build
@@ -18,8 +22,12 @@ build-win32-x64:
     - cd ..
     - mkdir build-win32
     - cd build-win32
-    - cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-x86_64.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" ..
+    - cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-x86_64.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" -DCMAKE_INSTALL_PREFIX=export ..
     - make -j$(nproc)
+    - make install
+  artifacts:
+    paths:
+      - build-win32/export
 
 build-linux-armhf:
   stage: build
@@ -29,7 +37,11 @@ build-linux-armhf:
     - cmake ..
     - make -j$(nproc) ov_codegen
     - cd ..
-    - mkdir build-win32
-    - cd build-win32
-    - cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/gcc-linux-armhf.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" ..
+    - mkdir build-linux-armhf
+    - cd build-linux-armhf
+    - cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/gcc-linux-armhf.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" -DCMAKE_INSTALL_PREFIX=export ..
     - make -j$(nproc)
+    - make install
+  artifacts:
+    paths:
+      - build-linux-armhf/export
