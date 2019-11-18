@@ -39,8 +39,8 @@ function(add_ov_library OV_LIBRARY_NAME)
                 EXCLUDE_FROM_DEFAULT_BUILD 1)
     endif()
 
-    # Stop cmake from prepending "lib" to .so/.dll filename
-    set_target_properties(${OV_LIBRARY_NAME} PROPERTIES PREFIX "")
+    # Prepending "libov_" to .so/.dll filename (instead of default "lib")
+    set_target_properties(${OV_LIBRARY_NAME} PROPERTIES PREFIX "libov_")
     # Override definition for custom library_open function
     if(${ARGV1})
         target_compile_definitions(${OV_LIBRARY_NAME} PRIVATE -Dov_library_open_${OV_LIBRARY_NAME}=ov_library_open_${OV_LIBRARY_NAME}_old)

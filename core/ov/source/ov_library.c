@@ -247,7 +247,7 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 		/*
 		 *	enter the DLL name into the string and try to open the DLL
 		 */
-		sprintf(tmpstring, "%s" OV_DLLFLNSUFFIX, plib->v_identifier);
+		sprintf(tmpstring, "libov_%s" OV_DLLFLNSUFFIX, plib->v_identifier);
 		handle = Ov_Library_OpenDLL(tmpstring);
 		if(handle) {
 			plib->v_handle = handle;
