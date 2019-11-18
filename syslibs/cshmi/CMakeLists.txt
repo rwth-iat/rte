@@ -1,5 +1,5 @@
 
-add_ov_library(cshmi TRUE)
+add_ov_library(cshmi)
 ov_library_includes(cshmi ov)
 
 # Generate StaticDisplayComponent.fbd from staticfiles/ using generateStaticFBD.tcl

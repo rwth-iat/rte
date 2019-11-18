@@ -1,5 +1,5 @@
 
-add_ov_library(opcua FALSE)
+add_ov_library(opcua)
 ov_library_includes(opcua ov ksbase)
 
 target_compile_definitions(opcua PRIVATE -DUA_EXTERNAL_NAMESPACES=1 -DSTATIC_LINKING=1 -DLOG_UA=1 -DLOG_UA_TO_OV=1 )

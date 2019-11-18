@@ -1,5 +1,5 @@
 
-add_ov_library(kshttp TRUE)
+add_ov_library(kshttp)
 ov_library_includes(kshttp ov ksbase)
 
 # Generate generated_static_index.c from staticfiles/ using prebuild.tcl
