@@ -47,10 +47,6 @@
 #include "cshmilib.h"
 
 
-#ifdef ov_library_open_cshmi
-#undef ov_library_open_cshmi
-#endif
-
 /*
 * This function will be called, when the library is loaded.
 * It creates the cshmi container objects

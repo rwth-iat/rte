@@ -20,14 +20,12 @@
 #endif
 
 #include "UDPbind.h"
-#ifdef ov_library_open_UDPbind
-#undef ov_library_open_UDPbind
-#endif
-
 #include "ov_macros.h"
 #include "ov_result.h"
 #include "ks_logfile.h"
 #include "UDPbind_config.h"
+
+
 /*
 * This function will be called, when the library is loaded.
 * It could generate components and initializes the startup procedure
