@@ -1107,7 +1107,6 @@ int main(int argc, char **argv) {
 	*	parse command line arguments
 	*/
     char*       libOvmPath = NULL;
-    int	        addOpenLib = 0;
 	for(int i=1; i<argc; i++) {
 		/*
 		*	set library option
@@ -1120,12 +1119,6 @@ int main(int argc, char **argv) {
 				goto HELP;
 			}
 		}
-    	/*
-    	 *	'open lib' option
-    	 */
-    	else if( !strcmp(argv[i], "-o") || !strcmp(argv[i], "--userdefined-open") ) {
-    	   addOpenLib = 1;
-    	}
 		/*
 		*	display help option
 		*/
@@ -1207,11 +1200,6 @@ HELP:
 	if(!acplt_isDir(outputpath)){
         //fprintf(stdout,"Creating directory '%s' ...\n", outputpath);
         acplt_mkdir(outputpath);
-	}
-
-	/* User defined open-lib option? */
-	if(addOpenLib == 1) {
-        fb_builder_createopenlib(libname);
 	}
 	
 	// parse input files
