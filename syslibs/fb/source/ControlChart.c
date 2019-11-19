@@ -52,7 +52,7 @@
  */
 
 
-OV_RESULT ssc_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value){
+static OV_RESULT ssc_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value){
 	OV_RESULT result = OV_ERR_OK;
 	OV_ELEMENT element;
 	OV_ELEMENT varElement;
