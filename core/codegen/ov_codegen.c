@@ -493,10 +493,9 @@ int ov_codegen_createheaderfile(
 	if(plib->custom_open){
 		fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s_old(void);\n",
 				plib->identifier);
-	} else {
-		fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void);\n",
-				plib->identifier);
-	}
+    }
+    fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void);\n",
+            plib->identifier);
 	fprintf(fp, "\n");
 	/*
 	*	local definitions
