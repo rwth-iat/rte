@@ -1158,7 +1158,12 @@ HELP:
     char libModelPath[MAX_PATH_LENGTH];
     getDirname(libModelPath, libOvmPath, MAX_PATH_LENGTH);
     char libPath[MAX_PATH_LENGTH];
-	snprintf(libPath, MAX_PATH_LENGTH, "%s/..", libModelPath);
+	int res = snprintf(libPath, MAX_PATH_LENGTH, "%s/..", libModelPath);
+    if (res > MAX_PATH_LENGTH) {
+        fprintf(stdout, "Error: model path is longer than %i characters. Aborting to prevent undefined behaviour.\n",
+                MAX_PATH_LENGTH);
+        exit(1);
+    }
 	compatiblePath(libPath);
 
     /*
@@ -1190,8 +1195,8 @@ HELP:
 	/*
 	*	Create output path
 	*/
-	int ret = snprintf(outputpath, MAX_PATH_LENGTH, "%s/source/sourcetemplates", libPath);
-	if (ret > MAX_PATH_LENGTH) {
+	res = snprintf(outputpath, MAX_PATH_LENGTH, "%s/source/sourcetemplates", libPath);
+	if (res > MAX_PATH_LENGTH) {
         fprintf(stdout, "Error: output path is longer than %i characters. Aborting to prevent undefined behaviour.\n",
                 MAX_PATH_LENGTH);
         exit(1);
