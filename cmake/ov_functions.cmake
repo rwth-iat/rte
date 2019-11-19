@@ -36,7 +36,7 @@ function(add_ov_library OV_LIBRARY_NAME)
         "Compile ACPLT/OV library '${OV_LIBRARY_NAME}'"
         ON)
     # Remove targets from default build, if user wished
-    if(NOT ${BUILD_OV_LIBRARY_${OV_LIBRARY_NAME}})
+    if(NOT BUILD_OV_LIBRARY_${OV_LIBRARY_NAME})
         set_target_properties(${OV_LIBRARY_NAME}
             PROPERTIES
                 EXCLUDE_FROM_ALL 1
@@ -50,7 +50,7 @@ function(add_ov_library OV_LIBRARY_NAME)
     # Add every ov library as build dependency to ov_runtimeserver and generate the required lines into
     # ov_serverlibs.c/ov_serverlibs.h
     if(OV_STATIC_LIBRARIES)
-        if(NOT OV_LIBRARY_NAME MATCHES "ov" AND TARGET ov_runtimeserver)
+        if(NOT OV_LIBRARY_NAME MATCHES "ov" AND BUILD_OV_LIBRARY_${OV_LIBRARY_NAME} AND TARGET ov_runtimeserver)
             target_link_libraries(ov_runtimeserver ${OV_LIBRARY_NAME})
             get_target_property(OV_SERVERLIBS_FILE ov_runtimeserver STATIC_LIBRARY_DEFINE_FILE)
             get_target_property(OV_SERVERLIBS_H_FILE ov_runtimeserver STATIC_LIBRARY_INCLUDE_FILE)
