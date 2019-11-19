@@ -11,6 +11,7 @@ build:
   artifacts:
     paths:
       - build/export
+      - build/core/acplt_builder/acplt_builder
 
 build-win32-x64:
   stage: build
@@ -45,3 +46,13 @@ build-linux-armhf:
   artifacts:
     paths:
       - build-linux-armhf/export
+
+test_acplt_builder:
+  stage: test
+  dependencies:
+    - build
+  script:
+    - cd syslibs/ssc
+    - export OV_LIBRARY_PATH=":../../core"
+    - ../../build/core/acplt_builder/acplt_builder -l model/ssc.ovm
+    - "[ -f \"source/sourcetemplates/actionBlock.c\" ]"

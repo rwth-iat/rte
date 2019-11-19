@@ -5,7 +5,7 @@
 ***   ################################                                      ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -25,6 +25,7 @@
 *   2007-04-09 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
 *   2011-06-21 Sten Gruener: Anpassung an MinGW, bugfixes, ACPLT	          *
 *   2013-04-24 Sten Gruener: Adoption to the new directory strucure           *
+*   2019-10-29 Michael Thies: Major refactoring, simpler search paths         *
 *                                                                             *
 *   Beschreibung                                                              *
 *   ------------                                                              *
@@ -32,12 +33,6 @@
 *                                                                             *
 ******************************************************************************/
 
-/*
- *	Definitionen
- *	------------
- */
-
-#include "definitions.h"
 
 /*
  *	Include-Dateien
@@ -49,26 +44,21 @@
 #include <string.h>
 #include <stdlib.h>
 
-/*
- *	Common Functions
- *	------------
- */
-
 #include "common.h"
-
 #include "ov_codegen.h"
 
 /*	----------------------------------------------------------------------	*/
-
 /*
 *	Global variables
 */
 
-	char            outputpath[MAX_INCLUDED_FILES + 1];
+char            outputpath[MAX_PATH_LENGTH + 1];
 
-	extern int		yydebug;
-	extern FILE*	yyin;
-	int 			addOpenLib = 0;
+extern int		yydebug;
+extern FILE*	yyin;
+
+// Additional global variables `OV_INT includepath` and
+// `OV_STRING* includepath_ptr` are included from ov_codegen.h
 
 
 /*	----------------------------------------------------------------------	*/
@@ -1048,34 +1038,7 @@ int main(int argc, char **argv) {
 	/*
 	*	local variables
 	*/
-	int     	i;
 	int			exit_status = EXIT_FAILURE;
-	char    	*penv = getenv(ACPLT_HOME_ENVPATH);
-	char    	*ph;
-
-	char        libPath[512] = "";
-	char        devModelPath[512] = "";
-	char        devBinPath[512] = "";
-	char        gitModelPath[512] = "";
-	char        sysModelPath[512] = "";
-	char        sysBinPath[512] = "";
-	int			newDirStructure = 0;
-
-	/*
-	*    exGlobal Variables
-	*/
-	char        	*devLibs[MAX_INCLUDED_FILES + 1];
-	int         	numDevLibs = 0;
-	char        	*gitLibs[MAX_INCLUDED_FILES + 1];
-	char        	*gitRelPath[MAX_INCLUDED_FILES + 1];
-	int         	numGitLibs = 0;
-	char        	*sysLibs[MAX_INCLUDED_FILES + 1];
-	int         	numSysLibs = 0;
-	char        	*libname=NULL;
-	
-	/* Aux variables for creation of openlib.c*/
-	FILE			*fp;
-	int	addOpenLib = 0;
 	
 	/*
 	*	initialization
@@ -1084,14 +1047,16 @@ int main(int argc, char **argv) {
 	/*
 	*	parse command line arguments
 	*/
-	for(i=1; i<argc; i++) {
+    char*       libOvmPath = NULL;
+    int	        addOpenLib = 0;
+	for(int i=1; i<argc; i++) {
 		/*
 		*	set library option
 		*/
 		if(!strcmp(argv[i], "-l") || !strcmp(argv[i], "--library")) {
 			i++;
 			if(i<argc) {
-				libname = argv[i];
+                libOvmPath = argv[i];
 			} else {
 				goto HELP;
 			}
@@ -1107,10 +1072,9 @@ int main(int argc, char **argv) {
 		*/
 		else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
 HELP:
-			fprintf(stderr, "Source builder: creates '*.c' files from '*.ovm' for compiling an user library.\n");
-            fprintf(stderr, "Each library directory contains the 'build', 'source', 'model' and (optional) 'include' directory.\n");
+			fprintf(stderr, "Source builder: creates '*.c' template files from '*.ovm' for creating an user library.\n");
+            fprintf(stderr, "Each library directory contains the 'source', 'model' and (optional) 'include' directory.\n");
             fprintf(stderr, "_ LIBNAME\n");
-            fprintf(stderr, "  |_ build\n");
             fprintf(stderr, "  |_ include\n");
             fprintf(stderr, "  |_ model\n");
             fprintf(stderr, "  |_ source\n");
@@ -1119,7 +1083,7 @@ HELP:
             fprintf(stderr, "Usage: acplt_builder [arguments]\n"
                             "\n"
                             "The following arguments are mandatory:\n"
-                            "-l  LIBNAME                 Create source files for this library\n"
+                            "-l  OVM_FILE                Path to the OVM file for the library to create sources for\n"
             				"\n"
                             "The following arguments are optional:\n"
                             "-o  OR --userdefined-open   Add user defined 'openlib' option\n"
@@ -1132,130 +1096,63 @@ HELP:
 	/*
 	*	test if mandatory arguments are set
 	*/
-	if(!libname) {
+	if(!libOvmPath) {
 		goto HELP;
 	}
 
-    /* Enviroment */
-	//locate library now
-	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, gitModelPath, sysModelPath, sysBinPath, &newDirStructure)){
-		return 1;
-	}
- 
-	
-	/*
-	*  Set include paths
-	*/
-	//includepath_ptr = 0;
-	//fb_builder_setincludepaths(penv, libname);
-	//we reuse a function of makmak
-	makmak_searchbaselibs(libname, devModelPath, gitModelPath, sysModelPath,
-			devLibs, &numDevLibs, gitLibs, gitRelPath, &numGitLibs, sysLibs, &numSysLibs);
+	// Get libname and libPath from libOvmPath
+	char libname[MAX_LIBNAME];
+	getFilenameWoExt(libname, libOvmPath, MAX_LIBNAME);
+    char libModelPath[MAX_PATH_LENGTH];
+    getDirname(libModelPath, libOvmPath, MAX_PATH_LENGTH);
+    char libPath[MAX_PATH_LENGTH];
+	snprintf(libPath, MAX_PATH_LENGTH, "%s/..", libModelPath);
+	compatiblePath(libPath);
 
-	//copy the output of searbaselibs
-	includepath_ptr = numDevLibs + numGitLibs +numSysLibs;
-	for(i=0; i<numDevLibs; i++) {
-	    sprintf(outputpath, "%s%s/model/", devModelPath, devLibs[i]);
-	    compatiblePath(outputpath);
-	    /* Hinzufuegen */
-	    ph = (char*)malloc(strlen(outputpath) + 1);
-	    if(!ph) {
-		fprintf(stderr, "Out of memory\n");
-		exit(1);
-	    }
-	    strcpy(ph, outputpath);
-	    includepath[i] = ph;
-	}
+    /*
+     * Recursively search included libraries to fill includepath.
+     */
+    char *libNames[MAX_INCLUDEPATHS];
+    char *searchPaths[MAX_SEARCHPATHS];
+    int numSearchPaths = getSearchPaths(searchPaths, MAX_SEARCHPATHS, libPath);
 
-	for(i=0; i<numGitLibs; i++) {
-		sprintf(outputpath, "%s/%s/%s/model/", gitModelPath, gitRelPath[i], gitLibs[i]);
-		compatiblePath(outputpath);
-		/* Hinzufuegen */
-		ph = (char*)malloc(strlen(outputpath) + 1);
-		if(!ph) {
-			fprintf(stderr, "Out of memory\n");
-			exit(1);
-		}
-		strcpy(ph, outputpath);
-		includepath[numDevLibs+i] = ph;
-	}
-
-	for(i=0; i<numSysLibs; i++) {
-	    sprintf(outputpath, "%s%s/model/", sysModelPath, sysLibs[i]);
-	    compatiblePath(outputpath);
-	    /* Hinzufuegen */
-	    ph = (char*)malloc(strlen(outputpath) + 1);
-	    if(!ph) {
-		fprintf(stderr, "Out of memory\n");
-		exit(1);
-	    }
-	    strcpy(ph, outputpath);
-	    includepath[numDevLibs+numGitLibs+i] = ph;
-	}
-
-	if(newDirStructure == 1){
-		//add ov model library
-		sprintf(outputpath, "%sov/model/", sysModelPath);
-	}else{
-		//add root model library
-		sprintf(outputpath, "%s/model/", penv);
-	}
-	compatiblePath(outputpath);
-
-	/* add to the include list */
-	ph = (char*)malloc(strlen(outputpath) + 1);
-	if(!ph) {
-		fprintf(stderr, "Out of memory\n");
-		exit(1);
-	}
-	strcpy(ph, outputpath);
-	includepath[includepath_ptr++] = ph;
-
-	//add own path to find ovm definitions in ovf for example
-	sprintf(outputpath, "%s/model/", libPath);
-	compatiblePath(outputpath);
-	/* add to the include list */
-	ph = (char*)malloc(strlen(outputpath) + 1);
-	if(!ph) {
-		fprintf(stderr, "Out of memory\n");
-		exit(1);
-	}
-	strcpy(ph, outputpath);
-	includepath[includepath_ptr++] = ph;
+    // We let searchBaseLibs write the model paths directly into `includepath`
+    searchBaseLibs(libname, libNames, includepath, &includepath_ptr, (const char *const *)searchPaths,
+            numSearchPaths);
 
 	/*
-	*	Input file 
-	*/
-	sprintf(outputpath, "%s/model/%s.ovm", libPath, libname);
-	compatiblePath(outputpath);
-
+	 * OpenInput file
+	 */
 	//Sten: hack to make error outputs work	
 	//this path needs to be relative to build/*/ to be marked by eclipse
 	if(filename!=NULL)free(filename);
-	filename = (OV_STRING)ov_codegen_malloc(strlen(outputpath)+17);
+	filename = (OV_STRING)ov_codegen_malloc(strlen(libname)+17);
 	sprintf(filename, "../../model/%s.ovm", libname);
 
-	yyin = fopen(outputpath, "r");
+	yyin = fopen(libOvmPath, "r");
 	if(!yyin) {
-		fprintf(stderr, "File '%s' not found.\n", outputpath);
+		fprintf(stderr, "File '%s' not found.\n", libOvmPath);
 		return EXIT_FAILURE;
 	}
 
 	/*
 	*	Create output path
 	*/
-	sprintf(outputpath, "%s/source/sourcetemplates", libPath);
+	int ret = snprintf(outputpath, MAX_PATH_LENGTH, "%s/source/sourcetemplates", libPath);
+	if (ret > MAX_PATH_LENGTH) {
+        fprintf(stdout, "Error: output path is longer than %i characters. Aborting to prevent undefined behaviour.\n",
+                MAX_PATH_LENGTH);
+        exit(1);
+	}
 	compatiblePath(outputpath);
-
-	/* Check if outputpath */
 	if(!acplt_isDir(outputpath)){
-			fprintf(stdout,"Creating directory '%s'... \n", outputpath);
-			acplt_mkdir(outputpath);
+        //fprintf(stdout,"Creating directory '%s' ...\n", outputpath);
+        acplt_mkdir(outputpath);
 	}
 
 	/* User defined open-lib option? */
 	if(addOpenLib == 1) {
-		fp = fb_builder_createfile("library_open", ".c");
+        FILE *fp = fb_builder_createfile("library_open", ".c");
 		if(!fp) {
 			return EXIT_FAILURE;
 		}
@@ -1309,18 +1206,12 @@ HELP:
 		fb_builder_closefile(fp);
 	}
 	
-	/*
-	*	syntactically parse the input
-	*/
-	
+	// parse input files
+	// main input file include paths are provided via global variables (yyin, includepath)
 	if(yyparse() == EXIT_SUCCESS) {
-		/*
-		*	Check the input semantically
-		*/
+		// Check the input semantically
 		if(ov_codegen_checksemantics()) {
-			/*
-			*	Create output
-			*/
+			// Generate template files
 			exit_status = fb_builder_backend(libname);
 		}
 	}
