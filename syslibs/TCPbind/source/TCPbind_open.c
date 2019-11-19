@@ -28,9 +28,6 @@
 #include "ov_result.h"
 #include "TCPbind_config.h"
 
-#ifdef ov_library_open_TCPbind
-#undef ov_library_open_TCPbind
-#endif
 
 /*
  * This function will be called, when the library is loaded.

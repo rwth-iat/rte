@@ -78,6 +78,7 @@ extern "C" {
 struct OV_OVM_LIBRARY_DEF {
 	struct OV_OVM_LIBRARY_DEF		*pnext;
 	OV_STRING						identifier;
+	OV_BOOL                         custom_open;
 	OV_STRING						version;
 	OV_STRING						author;
 	OV_STRING						copyright;

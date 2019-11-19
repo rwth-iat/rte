@@ -28,9 +28,6 @@
 #include "ks_logfile.h"
 #include "ksbase_helper.h"
 
-#ifdef ov_library_open_ksxdr
-#undef ov_library_open_ksxdr
-#endif
 
 /*
 * This function will be called, when the library is loaded.

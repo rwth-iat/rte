@@ -1,5 +1,5 @@
 
-add_ov_library(ksbase TRUE)
+add_ov_library(ksbase)
 ov_library_includes(ksbase ov)
 
 if (WIN32)

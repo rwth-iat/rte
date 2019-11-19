@@ -99,6 +99,9 @@ OV_UINT				defnum = 0;
 %token <varprops>	TOK_VARPROPS
 /*%token <assoctype>	TOK_ASSOCTYPE*/
 
+%token			TOK_LIBRARY_OPEN
+%type <bool>	library_open_opt
+
 %token <uint>		TOK_FLAGS
 
 %token <string>		TOK_STRING
@@ -185,6 +188,7 @@ library:
 	author_opt
 	copyright_opt
 	comment_opt
+	library_open_opt
 	structures_opt
 	classes_opt
 	associations_opt
@@ -193,13 +197,13 @@ library:
 			OV_OVM_STRUCTURE_DEF	*pstruct;
 			OV_OVM_CLASS_DEF		*pclass;
 			OV_OVM_ASSOCIATION_DEF	*passoc;
-			for(pstruct=$7; pstruct; pstruct=pstruct->pnext) {
+			for(pstruct=$8; pstruct; pstruct=pstruct->pnext) {
 				pstruct->libname = $2;
 			}
-			for(pclass=$8; pclass; pclass=pclass->pnext) {
+			for(pclass=$9; pclass; pclass=pclass->pnext) {
 				pclass->libname = $2;
 			}
-			for(passoc=$9; passoc; passoc=passoc->pnext) {
+			for(passoc=$10; passoc; passoc=passoc->pnext) {
 				passoc->libname = $2;
 			}
 			$$ = Ov_Codegen_Malloc(OV_OVM_LIBRARY_DEF);
@@ -209,11 +213,22 @@ library:
 			$$->author = $4;
 			$$->copyright = $5;
 			$$->comment = $6;
-			$$->structures = $7;
-			$$->classes = $8;
-			$$->associations = $9;
+			$$->custom_open = $7;
+			$$->structures = $8;
+			$$->classes = $9;
+			$$->associations = $10;
 		}
 ;
+
+library_open_opt:
+	/* empty */
+		{
+			$$ = FALSE;
+		}
+	| TOK_LIBRARY_OPEN ';'
+		{
+			$$ = TRUE;
+		}
 
 version_opt:
 	/* empty */

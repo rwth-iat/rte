@@ -41,13 +41,8 @@
 #endif
 
 #include "kshttp.h"
-
-#ifdef ov_library_open_kshttp
-#undef ov_library_open_kshttp
-#endif
-
-
 #include "config.h"
+
 
 /*
 * This function will be called, when the library is loaded.

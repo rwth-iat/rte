@@ -4,7 +4,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fÃ¼r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -52,8 +52,9 @@ LIBRARY fb
 
 	VERSION   = "2.7";
 	AUTHOR    = "Alexander Neugebauer";
-	COPYRIGHT = "Copyright © 1999-2013 LTSoft, Kerpen";
+	COPYRIGHT = "Copyright Â© 1999-2013 LTSoft, Kerpen";
 	COMMENT   = "iFBSpro Model";
+	LIBRARY_OPEN;
 
 	/*
 	*	Datenbasisinformation

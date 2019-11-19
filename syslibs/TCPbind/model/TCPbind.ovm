@@ -4,8 +4,9 @@
 LIBRARY TCPbind
 	VERSION   = "V0.1 (17-01-2013)";
 	AUTHOR    = "Lars Evertz";
-	COPYRIGHT = "Lehrstuhl f�r Prozessleittechnik 2013";
+	COPYRIGHT = "Lehrstuhl für Prozessleittechnik 2013";
 	COMMENT   = "TCP binding for generic communications. Includes a TCPListener and a TCPChannel.";
+	LIBRARY_OPEN;
 	
 	/**
 	*   

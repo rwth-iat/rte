@@ -1,5 +1,5 @@
 
-add_ov_library(ov FALSE)
+add_ov_library(ov)
 ov_library_includes(ov)
 target_link_libraries(ov ovheaders)
 

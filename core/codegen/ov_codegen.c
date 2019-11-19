@@ -28,7 +28,7 @@
 *	15-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
-*	07-Mai-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Bugfix: get and set parameters of static vectors.
+*	07-Mai-2001 Ansgar MÃ¼nnemann <ansgar@plt.rwth-aachen.de>: Bugfix: get and set parameters of static vectors.
 */
 
 #include <ctype.h>
@@ -490,8 +490,13 @@ int ov_codegen_createheaderfile(
 	fprintf(fp, "OV_RESULT ov_library_setglobalvars_%s(void);\n",
 		plib->identifier);
 	fprintf(fp, "\n");
-	fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void);\n",
-		plib->identifier);
+	if(plib->custom_open){
+		fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s_old(void);\n",
+				plib->identifier);
+	} else {
+		fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void);\n",
+				plib->identifier);
+	}
 	fprintf(fp, "\n");
 	/*
 	*	local definitions
@@ -786,7 +791,11 @@ int ov_codegen_createsourcefile(
 	/*
 	*	print implementation of function opening the library
 	*/
-	fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void) {\n", plib->identifier);
+	if(plib->custom_open){
+		fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s_old(void) {\n", plib->identifier);
+	} else {
+		fprintf(fp, "OV_DLLFNCEXPORT OV_LIBRARY_DEF *" OV_CONST_OPENFNC_PREFIX "%s(void) {\n", plib->identifier);
+	}
 	fprintf(fp, "    /*\n");
 	fprintf(fp, "     * loading required libraries\n");
 	fprintf(fp, "     */\n");

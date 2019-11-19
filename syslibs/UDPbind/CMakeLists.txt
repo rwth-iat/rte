@@ -1,5 +1,5 @@
 
-add_ov_library(UDPbind TRUE)
+add_ov_library(UDPbind)
 ov_library_includes(UDPbind ov ksbase)
 
 target_compile_definitions(UDPbind PRIVATE -DPLT_USE_WINSOCK2=1)

@@ -6,11 +6,9 @@
 # 
 # Arguments: 
 #   * OV_LIBRARY_NAME: Name of the OV library (= name of the cmake target and name of the linked .so/.dll file)
-#   * OV_CUSTOM_LIBOPEN (optional): If TRUE, the compiler define flag to override the default ov_library_open function
-#       is added. It must be set, if a custom ov_library_open function is defined.
 # 
 # Usage:
-#   add_ov_library(libname TRUE)
+#   add_ov_library(libname)
 #   ov_library_includes(libname ov fb otherlibname)
 function(add_ov_library OV_LIBRARY_NAME)
 
@@ -41,10 +39,6 @@ function(add_ov_library OV_LIBRARY_NAME)
 
     # Prepending "libov_" to .so/.dll filename (instead of default "lib")
     set_target_properties(${OV_LIBRARY_NAME} PROPERTIES PREFIX "libov_")
-    # Override definition for custom library_open function
-    if(${ARGV1})
-        target_compile_definitions(${OV_LIBRARY_NAME} PRIVATE -Dov_library_open_${OV_LIBRARY_NAME}=ov_library_open_${OV_LIBRARY_NAME}_old)
-    endif()
 
     # If ov (the core library) is compiled within this cmake build, add this library's binary dir to its RPATH for dynamic linking
     if (TARGET ov)

@@ -25,9 +25,6 @@
 #include "ov_logfile.h"
 #include "ov_memstack.h"
 
-#ifdef ov_library_open_ksbase
-#undef ov_library_open_ksbase
-#endif
 
 /*
 * This function will be called, when the library is loaded.
