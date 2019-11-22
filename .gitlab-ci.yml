@@ -1,4 +1,5 @@
-image: registry.git.rwth-aachen.de/acplt/rte-tools/rte-build-docker-image/image
+image: registry.git.rwth-aachen.de/acplt/build-docker-image/rte-crossbuild
+
 
 build:
   stage: build
