@@ -18,8 +18,8 @@ LIBRARY ipsms
 			SIProfile : INT
 			   	HAS_SET_ACCESSOR
     		   	FLAGS = "i"
-    		   	COMMENT = "Service interface profile. Supported values: 0 = UNKNOWN, 3 = CMD, 4 = OPERATIONS."
-    		   	INITIALVALUE = 4;
+    		   	COMMENT = "Service interface profile. Supported values: 0 = UNKNOWN (generic interface), 2 = ANY(all available), 3 = CMD, 4 = OPERATIONS."
+    		   	INITIALVALUE = 2;
 		END_VARIABLES;
 		OPERATIONS
 			constructor     : C_FUNCTION <OV_FNC_CONSTRUCTOR>;

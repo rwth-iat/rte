@@ -120,6 +120,7 @@ OV_DLLFNCEXPORT OV_RESULT ipsms_interface_SIProfile_set(
     const OV_INT  value
 ) {
 	if(		value == IPSMS_PROFILE_SI_UNKNOWN ||
+			value == IPSMS_PROFILE_SI_ANY ||
 			value == IPSMS_PROFILE_SI_CMD ||
 			value == IPSMS_PROFILE_SI_OPERATIONS){
 	    pobj->v_SIProfile = value;

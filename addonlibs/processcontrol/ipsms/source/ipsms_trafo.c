@@ -153,7 +153,7 @@ ipsms_trafo_controlchart(
 	opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "||STATUS");
 	UA_Node_addReference(node, ref);
 
-	if(profile == IPSMS_PROFILE_SI_OPERATIONS){
+	if(profile == IPSMS_PROFILE_SI_OPERATIONS || profile == IPSMS_PROFILE_SI_ANY){
 		// Add SERVICES reference
 		UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
 		UA_ExpandedNodeId_init(&ref->targetNodeId);
@@ -162,7 +162,7 @@ ipsms_trafo_controlchart(
 		ref->targetNodeId.nodeId.namespaceIndex = OPCUA_OVSTORE_DEFAULTNSINDEX;
 		UA_Node_addReference(node, ref);
 	}
-	if (profile == IPSMS_PROFILE_SI_CMD){
+	if (profile == IPSMS_PROFILE_SI_CMD || profile == IPSMS_PROFILE_SI_ANY){
 		//Add CMD Input
 		UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
 		UA_ExpandedNodeId_init(&ref->targetNodeId);
