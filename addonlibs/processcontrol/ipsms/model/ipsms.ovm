@@ -14,6 +14,13 @@ LIBRARY ipsms
 	CLASS interface : CLASS opcua/interface
 		IS_INSTANTIABLE;
 		COMMENT = "OPCUA interface for the Basys4.0 IPSMS profile.";
+		VARIABLES
+			SIProfile : INT
+			   	HAS_SET_ACCESSOR
+    		   	FLAGS = "i"
+    		   	COMMENT = "Service interface profile. Supported values: 0 = UNKNOWN, 3 = CMD, 4 = OPERATIONS."
+    		   	INITIALVALUE = 4;
+		END_VARIABLES;
 		OPERATIONS
 			constructor     : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			startup         : C_FUNCTION <OV_FNC_STARTUP>;

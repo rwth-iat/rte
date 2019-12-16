@@ -87,7 +87,8 @@ OV_DLLFNCEXPORT void ipsms_interface_shutdown(
 OV_DLLFNCEXPORT OV_BOOL ipsms_interface_checkNode(
 		OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode,
 		OV_STRING virtualNodePath, void *context) {
-	if (Ov_CanCastTo(fb_controlchart, pNode)) {
+	OV_INSTPTR_ipsms_interface pinst = Ov_StaticPtrCast(ipsms_interface, pobj);
+	if ( pinst->v_SIProfile != IPSMS_PROFILE_SI_UNKNOWN && Ov_CanCastTo(fb_controlchart, pNode) ) {
 		return TRUE;
 	}
 	return FALSE;
@@ -112,4 +113,19 @@ OV_DLLFNCEXPORT OV_BOOL ipsms_interface_checkReference(
 		return TRUE;
 	}
 	return FALSE;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ipsms_interface_SIProfile_set(
+    OV_INSTPTR_ipsms_interface          pobj,
+    const OV_INT  value
+) {
+	if(		value == IPSMS_PROFILE_SI_UNKNOWN ||
+			value == IPSMS_PROFILE_SI_CMD ||
+			value == IPSMS_PROFILE_SI_OPERATIONS){
+	    pobj->v_SIProfile = value;
+	    return OV_ERR_OK;
+	} else {
+		return OV_ERR_NOTIMPLEMENTED;
+	}
+
 }

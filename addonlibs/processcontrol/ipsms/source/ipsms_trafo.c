@@ -130,7 +130,7 @@ ipsms_trafo_genericTrafo(
 static UA_Node *
 ipsms_trafo_controlchart(
 		OV_INSTPTR_fb_controlchart pobj, const UA_Server * server,
-		const UA_NodeId * nodeId){
+		const UA_NodeId * nodeId, IPSMS_PROFILE_SI profile){
 	UA_AddReferencesItem * ref = NULL;
 	UA_Node * node = ipsms_trafo_genericTrafo(server,
 			pobj->v_identifier, "BaSys 4.0 control component.",
@@ -152,13 +152,25 @@ ipsms_trafo_controlchart(
 	UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
 	opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "||STATUS");
 	UA_Node_addReference(node, ref);
-	// Add SERVICES reference
-	UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
-	UA_ExpandedNodeId_init(&ref->targetNodeId);
-	UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
-	opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "/SERVICES");
-	ref->targetNodeId.nodeId.namespaceIndex = OPCUA_OVSTORE_DEFAULTNSINDEX;
-	UA_Node_addReference(node, ref);
+
+	if(profile == IPSMS_PROFILE_SI_OPERATIONS){
+		// Add SERVICES reference
+		UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
+		UA_ExpandedNodeId_init(&ref->targetNodeId);
+		UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
+		opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "/SERVICES");
+		ref->targetNodeId.nodeId.namespaceIndex = OPCUA_OVSTORE_DEFAULTNSINDEX;
+		UA_Node_addReference(node, ref);
+	}
+	if (profile == IPSMS_PROFILE_SI_CMD){
+		//Add CMD Input
+		UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
+		UA_ExpandedNodeId_init(&ref->targetNodeId);
+		UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
+		opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, ".CMD");
+		ref->targetNodeId.nodeId.namespaceIndex = OPCUA_OVSTORE_DEFAULTNSINDEX;
+		UA_Node_addReference(node, ref);
+	}
 
 	// Free resources
 	UA_AddReferencesItem_delete(ref);
@@ -375,7 +387,7 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 
 		// Visualize every control chart as BaSys 4.0 IPSMS component
 		if(Ov_CanCastTo(fb_controlchart, pobj)){
-			node = ipsms_trafo_controlchart(Ov_StaticPtrCast(fb_controlchart, pobj), uaServer, nodeId);
+			node = ipsms_trafo_controlchart(Ov_StaticPtrCast(fb_controlchart, pobj), uaServer, nodeId, pinterface->v_SIProfile);
 		}
 //		// Visualize a domain
 //		else if(Ov_CanCastTo(ov_domain, pobj)){
