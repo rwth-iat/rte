@@ -45,7 +45,7 @@
 #include "ov_logfile.h"
 #include "ov_path.h"
 #include "ov_vendortree.h"
-#if TLSF
+
 #include "tlsf.h"
 #include <sys/time.h>
 #include <unistd.h>
@@ -54,36 +54,9 @@
 #include <sys/mman.h>
 #if OV_VALGRIND
 #include <valgrind/valgrind.h>
-#endif
-#endif
-#endif
+#endif //OV_VALGRIND
+#endif //OV_SYSTEM_UNIX
 
-#if NO_LIBML && !TLSF
-#error enable TLSF or define NO_LIBML=0 when calling make
-#endif
-
-#if OV_SYNC_PTHREAD && (!TLSF || !TLSF_USE_LOCKS)
-#include <pthread.h>
-static pthread_mutex_t databaseMutex = PTHREAD_MUTEX_INITIALIZER;
-#define database_mutex_init()
-#define database_mutex_destroy()
-#define database_mutex_lock() pthread_mutex_lock(&databaseMutex)
-#define database_mutex_unlock() pthread_mutex_unlock(&databaseMutex)
-
-#elif OV_SYNC_NTMUTEX  && (!TLSF || !TLSF_USE_LOCKS)
-#include <windows.h>
-static HANDLE databaseMutex = NULL;
-#define database_mutex_init() databaseMutex = CreateMutexA(NULL, FALSE, NULL)
-#define database_mutex_destroy() CloseHandle(databaseMutex)
-#define database_mutex_lock() WaitForSingleObject(databaseMutex, INFINITE)
-#define database_mutex_unlock() ReleaseMutex(databaseMutex)
-
-#else
-#define database_mutex_lock()
-#define database_mutex_unlock()
-#define database_mutex_init()
-#define database_mutex_destroy()
-#endif
 
 #if OV_SYSTEM_SOLARIS
 #include "/usr/ucbinclude/sys/file.h"
@@ -139,15 +112,6 @@ static void ov_freelist_free();
 #include <starlet.h>
 #endif
 
-#if !TLSF
-#ifndef __STDC__
-#define __STDC__ 1
-#include "ml_malloc.h"
-#undef __STDC__
-#else
-#include "ml_malloc.h"
-#endif
-#endif
 
 #if OV_SYSTEM_MC164
 #define malloc	xmalloc
@@ -186,9 +150,8 @@ unsigned short channel = 0;
 OV_DATABASE_INFO OV_MEMSPEC *pdbmem;
 #endif
 
-#if TLSF
 static void* dbpool;
-#endif
+
 /*
  *	VTable of any object in case we dont start up the database
  */
@@ -217,84 +180,6 @@ static size_t ov_database_roundupFileSize(size_t size){
 #endif
 	return Ov_Roundup(size, pagesize);
 }
-/*	----------------------------------------------------------------------	*/
-
-#if !TLSF
-/*
- *	Macro: pointer to memory mempool info structure
- */
-#define pmpinfo ((ml_info OV_MEMSPEC *)(pdb+1))
-
-/*	----------------------------------------------------------------------	*/
-
-
-/*
- *	Get more core memory from the memory mempool (subroutine)
- */
-__ml_ptr ov_database_morecore(__ml_size_t size) {
-	/*
-	 *	local variables
-	 */
-	__ml_ptr pmem = (__ml_ptr) (pdb->pcurr);
-	OV_BYTE OV_MEMSPEC *psoon = pdb->pcurr + size;
-#if OV_DYNAMIC_DATABASE
-#if OV_SYSTEM_UNIX
-	char null = 0;
-#endif
-#endif
-
-	/*
-	 *	test if we can get/release memory
-	 */
-	if (psoon < pdb->pstart) {
-		return NULL;
-	}
-	if (psoon > pdb->pend) {
-#if OV_DYNAMIC_DATABASE
-		/*
-		 *	check database file size
-		 */
-		if(pdb->size+size > (OV_UINT) OV_DATABASE_MAXSIZE) {
-			return NULL;
-		}
-#if OV_SYSTEM_UNIX
-		/*
-		 *	extend the database file in size
-		 */
-		if(lseek(fd, pdb->size+size-sizeof(char), SEEK_SET) < 0) {
-			return NULL;
-		}
-		if(write(fd, (void*)&null, sizeof(char)) == -1) {
-			return NULL;
-		}
-#endif
-#if OV_SYSTEM_NT
-		/*
-		 *	extend the database file in size
-		 */
-		if(SetFilePointer(hfile, pdb->size+size, NULL, FILE_BEGIN)
-				== 0xFFFFFFFF
-				// TODO_ADJUST_WHEN_LARGE_DB
-		) {
-			return NULL;
-		}
-		if(!SetEndOfFile(hfile)) {
-			return NULL;
-		}
-#endif
-		pdb->pend += size;
-		pdb->size += size;
-#else
-		return NULL;
-#endif
-	}
-	/*
-	 *	yes we can. get/release it.
-	 */
-	pdb->pcurr = psoon;
-	return (__ml_ptr) pmem;
-}
-#endif
 
 /*	----------------------------------------------------------------------	*/
 
@@ -995,13 +880,10 @@ OV_UINT flags) {
 #endif
 	pdb->baseaddr = (OV_POINTER) pdb;
 	pdb->size = size;
-#if TLSF
+
    pdb->pstart = pdb->pcurr = (OV_BYTE*) ((OV_BYTE*) pdb->baseaddr
 			+ Ov_Roundup(sizeof(OV_DATABASE_INFO), 4*sizeof(void*)));
-#else
-	pdb->pstart = pdb->pcurr = (OV_BYTE*) ((OV_BYTE*) pdb->baseaddr
-			+ BLOCKIFY(sizeof(OV_DATABASE_INFO) + sizeof(ml_info)) * BLOCKSIZE);
-#endif
+
 	pdb->pend = (OV_BYTE*) ((OV_BYTE*) pdb + size);
 	pdb->started = FALSE;
 
@@ -1009,7 +891,6 @@ OV_UINT flags) {
 	 *	initialize the database memory mempool
 	 *
 	 */
-#if TLSF
 	dbpool= pdb->pstart;
 
 #if OV_RT && OV_SYSTEM_UNIX && !OV_SYSTEM_CYGWIN
@@ -1030,12 +911,7 @@ OV_UINT flags) {
 	init_memory_pool(pdb->pend-pdb->pstart,dbpool);
 	tlsf_set_pool(ov_database, dbpool);
 	tlsf_set_static(TRUE, dbpool);
-#else
-	if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
-		ov_database_unload();
-		return OV_ERR_DBOUTOFMEMORY;
-	}
-#endif
+
 	/*
 	 *	initialize idCounter
 	 */
@@ -1471,19 +1347,13 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_loadfile(OV_STRING filename) {
 			return result;
 		}
 	}
-#if TLSF
-	dbpool = pdb->pstart;
-	tlsf_set_pool(ov_database, dbpool);
-	init_memory_pool((size_t)(pdb->pend-pdb->pstart), dbpool);
-#else
+
 	/*
 	 *	restart the database memory mempool
 	 */
-	if (!ml_restart(pmpinfo, pdb->pstart, ov_database_morecore)) {
-		ov_database_unload();
-		return OV_ERR_BADDATABASE;
-	}
-#endif
+	dbpool = pdb->pstart;
+	tlsf_set_pool(ov_database, dbpool);
+	init_memory_pool((size_t)(pdb->pend-pdb->pstart), dbpool);
 
 	if ((dbFlags & OV_DBOPT_VERBOSE)) {
 		if (dbFlags & OV_DBOPT_NOMAP) {
@@ -1549,9 +1419,7 @@ OV_DLLFNCEXPORT void ov_database_unload(void) {
 	ov_freelist_free();
 
 	if (dbFlags & (OV_DBOPT_NOMAP | OV_DBOPT_NOFILE)) {
-#if TLSF
 		destroy_memory_pool(dbpool);
-#endif
 		free(pdb);
 	} else {
 		if (dbFlags & OV_DBOPT_VERBOSE) {
@@ -1855,7 +1723,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void) {
 	 */
 	if (dbFlags & OV_DBOPT_VERBOSE) {
 		ov_logfile_info("Database started up.");
-	} database_mutex_init();
+	}
 	pdb->started = TRUE;
 	return OV_ERR_OK;
 }
@@ -1890,7 +1758,7 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 		 *	close all libraries
 		 */Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, plib, ov_library) {
 			ov_library_close(plib);
-		} database_mutex_destroy();
+		}
 		pdb->started = FALSE;
 
 		if (dbFlags & OV_DBOPT_VERBOSE) {
@@ -1905,9 +1773,6 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
  *	Allocate memory in the database
  */
 OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(size_t size) {
-#if !TLSF
-	__ml_ptr ptmp = NULL;
-#endif
 
 #if OV_VALGRIND
 	if (ov_vendortree_checkUseMalloc()) {
@@ -1916,14 +1781,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(size_t size) {
 #endif
 
 	if (pdb) {
-#if TLSF
 		return tlsf_malloc(size, ov_database);
-#else
-		database_mutex_lock();
-		ptmp = ml_malloc(size);
-		database_mutex_unlock();
-		return ptmp;
-#endif
 	}
 	return NULL;
 }
@@ -1934,9 +1792,6 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(size_t size) {
  *	Reallocate memory in the database
  */
 OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, size_t size) {
-#if !TLSF
-	__ml_ptr ptmp = NULL;
-#endif
 
 #ifdef OV_VALGRIND
 	if(pdb && ptr != 0 && ov_vendortree_checkUseMalloc()==FALSE) {
@@ -1952,14 +1807,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, size_t size) {
 #endif
 
 	if (pdb) {
-#if TLSF
 		return tlsf_realloc(ptr, size, ov_database);
-#else
-		database_mutex_lock();
-		ptmp = ml_realloc(ptr, size);
-		database_mutex_unlock();
-		return ptmp;
-#endif
 	}
 	return NULL;
 }
@@ -1985,13 +1833,7 @@ OV_DLLFNCEXPORT void ov_database_free(OV_POINTER ptr) {
 #endif
 
 	if (pdb) {
-#if TLSF
 		tlsf_free(ptr, ov_database);
-#else
-		database_mutex_lock();
-		ml_free(ptr);
-		database_mutex_unlock();
-#endif
 	}
 
 }
@@ -2004,11 +1846,7 @@ OV_DLLFNCEXPORT void ov_database_free(OV_POINTER ptr) {
 OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
 
 	if (pdb) {
-#if TLSF
 		return get_pool_size(dbpool);
-#else
-		return pdb->size;
-#endif
 	}
 	return 0;
 }
@@ -2020,22 +1858,15 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
  */
 OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 
-	if (pdb) {
-
 #ifdef _STDINT_H
-		uintptr_t free;
+	uintptr_t free;
 #else
-		OV_UINT free;
+	OV_UINT free;
 #define uintptr_t OV_UINT
 #endif
-#if TLSF
+
+	if (pdb) {
 		free = get_free_size(dbpool);
-#else
-		database_mutex_lock();
-		free = (uintptr_t) pdb->pend - (uintptr_t) pdb->pcurr
-				+ (uintptr_t)pmpinfo->bytes_free;
-		database_mutex_unlock();
-#endif
 
 		if (free > OV_VL_MAXUINT) {
 			return OV_VL_MAXUINT;
@@ -2057,16 +1888,10 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
 #else
 	OV_UINT used;
 #endif
+
 	if (pdb) {
-#if TLSF
 		used = get_used_size(dbpool);
-#else
-		database_mutex_lock();
-		used = (uintptr_t) pdb->pstart - (uintptr_t) pdb->baseaddr
-				+ (uintptr_t)pmpinfo->bytes_used
-				- (uintptr_t)pmpinfo->bytes_free;
-		database_mutex_unlock();
-#endif
+
 		if (used > OV_VL_MAXUINT) {
 			return OV_VL_MAXUINT;
 		}
@@ -2082,52 +1907,7 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
  */
 OV_DLLFNCEXPORT OV_DOUBLE ov_database_getfrag(void) {
 
-#if TLSF
 	return (get_fragmentation(dbpool) * 100.0);
-#else
-	/*
-	 *	local variables
-	 */
-	OV_UINT i, num;
-	size_t sumsize, avgsize, logavgsize, sum;
-	OV_INSTPTR_ov_class pclass;
-	struct __ml_list OV_MEMSPEC *pnext;
-	/*
-	 *	calculate average instance size
-	 */
-	if (pdb) {
-		num = sumsize = 0;
-		Ov_ForEachChildEx(ov_instantiation, pclass_ov_class, pclass, ov_class) {
-			num++;
-			sumsize += pclass->v_size;
-		}
-		avgsize = sumsize / num;
-		/*
-		 *	calculate the log (base of 2) of the average instance size
-		 */
-		for (logavgsize = 0; avgsize; avgsize >>= 1) {
-			logavgsize++;
-		}
-		avgsize = sumsize / num;
-		/*
-		 *	find out how many blocks of the average size there are
-		 */
-		sum = 0;
-		database_mutex_lock();
-		for (i = logavgsize; i < BLOCKLOG; i++) {
-			num = 0;
-			for (pnext = pmpinfo->fraghead[i].next; pnext; pnext =
-					pnext->next) {
-				num++;
-			}
-			sum += num * (1 << (i - logavgsize));
-		} database_mutex_unlock();
-		sum += (pdb->pend - pdb->pcurr) / avgsize;
-		return ((ov_database_getfree() - sum * avgsize) * 100)
-				/ ov_database_getfree();
-	}
-	return 100;
-#endif
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -2166,10 +1946,6 @@ OV_RESULT ov_database_move(const OV_PTRDIFF distance) {
 	OV_INST_ov_association assoc_parentrelationship;
 	OV_IDLIST_NODE *pCurrNode = NULL;
 	OV_UINT iterator;
-#if !TLSF
-	int i;
-	struct __ml_list *phead;
-#endif
 
 	/*
 	 *	search inheritance, childrelationship, parentrelationship association
@@ -2279,24 +2055,9 @@ OV_RESULT ov_database_move(const OV_PTRDIFF distance) {
 	/*
 	 *	adjust pointers of the memory mempool
 	 */
-#if TLSF
 	if(tlsf_move_pool(pdb->pstart, distance)){
 		result = OV_ERR_BADDATABASE;
 	}
-#else
-	Ov_Adjust(__ml_byte_t*, pmpinfo->heapbase);
-	Ov_Adjust(__ml_byte_t*, pmpinfo->heapend);
-	for (i = 0; i < BLOCKLOG; i++) {
-		for (phead = &pmpinfo->fraghead[i]; phead; phead = phead->next) {
-			Ov_Adjust(struct __ml_list*, phead->next);
-			Ov_Adjust(struct __ml_list*, phead->prev);
-		}
-	}
-	for (phead = &pmpinfo->free_blocks; phead; phead = phead->next) {
-		Ov_Adjust(struct __ml_list*, phead->next);
-		Ov_Adjust(struct __ml_list*, phead->prev);
-	}
-#endif
 
 	/*
 	 *	adjust pointers of the ACPLT/OV objects
@@ -2541,13 +2302,12 @@ OV_DLLFNCEXPORT void ov_freelist_print(){
 	ov_freelist*	freelistNext;
 	OV_UINT64		iter = 0;
 	OV_POINTER		ptr = NULL;
-#if TLSF
+
 	void**			poolPtrs = NULL;
 	void**			pc = NULL;
 	size_t*			sizes = NULL;
 	size_t			tmpSize;
 	OV_BOOL			found = FALSE;
-#endif
 
 	ov_freelist_collect(&freelist);
 
@@ -2569,7 +2329,6 @@ OV_DLLFNCEXPORT void ov_freelist_print(){
 	}
 
 	// look in tlsf pool for blocks that are not reachable via ov meta model
-#if TLSF
 	tlsf_getPointerList(dbpool, &poolPtrs, &sizes);
 	pc = poolPtrs;
 
@@ -2596,7 +2355,6 @@ OV_DLLFNCEXPORT void ov_freelist_print(){
 
 	free(poolPtrs);
 	free(sizes);
-#endif
 
 	freelistCur = &freelist;
 	while(freelistCur){
@@ -2632,7 +2390,7 @@ static void ov_freelist_free() {
 
 			if(ptr>=(OV_POINTER)pdb->pstart && ptr<=(OV_POINTER)pdb->pend){
 //				ov_logfile_debug("pointer inside db  %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
-#if TLSF && OV_VALGRIND
+#if OV_VALGRIND
 				// set pointer as freed
 				VALGRIND_MEMPOOL_FREE(dbpool, ptr);
 #endif

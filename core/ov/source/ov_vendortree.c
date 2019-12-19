@@ -1037,21 +1037,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getRTAlloc(
 	const OV_TICKET	*pticket
 ){
 pvarcurrprops->value.vartype = OV_VT_STRING;
-pvarcurrprops->value.valueunion.val_string = "database: "
-#if TLSF
-		"tlsf"
+pvarcurrprops->value.valueunion.val_string = "database: tlsf; "
 #if TLSF_HEAP
-		"; heap: tlsf"
+		"heap: tlsf"
 #if USE_MMAP || USE_SBRK || USE_VIRTALLOC
 		" (dynamic)";
 #else
 		" (static)";
 #endif
 #else
-		"; heap: -";
-#endif
-#else
-		"-; heap: -";
+		"heap: -";
 #endif
 return OV_ERR_OK;
 }

@@ -88,13 +88,6 @@
 #ifndef TLSF_HEAP
 #define TLSF_HEAP 0
 #endif
-#if TLSF_HEAP
-#define TLSF 1
-#endif
-
-#ifndef TLSF
-#define TLSF 1
-#endif
 
 #ifndef OV_RT
 #define OV_RT 0
