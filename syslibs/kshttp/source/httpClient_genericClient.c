@@ -452,7 +452,8 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 	pVtblChannel->m_CloseConnection(pChannel);
 	ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 
-	thisCl->v_tempCallback.callbackFunction(thisCl->v_tempCallback.instanceCalled, instanceCalling);
+	if (thisCl->v_tempCallback.callbackFunction)
+		thisCl->v_tempCallback.callbackFunction(thisCl->v_tempCallback.instanceCalled, instanceCalling);
 
 	return;
 }
