@@ -2366,6 +2366,7 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 	OV_ANY*					pAny;
 	char					pathbuf[255] = {0};
 	char					descbuf[OV_FL_DESCBUFFER] = {0};
+	size_t					n = 0;
 	Ov_DefineIteratorNM(NULL, pit);
 
 	part.elemtype = OV_ET_NONE;
@@ -2374,7 +2375,8 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 	snprintf(pathbuf, 255, "(%u,%u)%s", pobj->v_idH, pobj->v_idL, ov_path_getcanonicalpath(pobj, 2));
 	ov_memstack_unlock();
 
-	snprintf(descbuf, OV_FL_DESCBUFFER, "%s.linktable", pathbuf);
+	n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.linktable", pathbuf);
+	if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated %s");
 	ov_freelist_add(ppfree, pobj->v_linktable, descbuf);
 
 	if(	pobj==(OV_INSTPTR)(&pdb->root) ||
@@ -2403,22 +2405,26 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 			case 1:
 				switch(part.elemunion.pvar->v_vartype){
 				case OV_VT_STRING:
-					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (str)", pathbuf, part.elemunion.pvar->v_identifier);
+					n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (str)", pathbuf, part.elemunion.pvar->v_identifier);
+					if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated %s", descbuf);
 					ov_freelist_add(ppfree, *((OV_STRING*)part.pvalue), descbuf);
 					break;
 
 				case OV_VT_ANY:
 					pAny = (OV_ANY*)part.pvalue;
 					if((pAny->value.vartype&OV_VT_KSMASK)==OV_VT_STRING){
-						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any str)", pathbuf, part.elemunion.pvar->v_identifier);
+						n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any str)", pathbuf, part.elemunion.pvar->v_identifier);
+						if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated (%s)", descbuf);
 						ov_freelist_add(ppfree, pAny->value.valueunion.val_string, descbuf);
 					}
 					if(pAny->value.vartype&OV_VT_ISVECTOR){
-						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any vec base)", pathbuf, part.elemunion.pvar->v_identifier);
+						n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any vec base)", pathbuf, part.elemunion.pvar->v_identifier);
+						if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated (%s)", descbuf);
 						ov_freelist_add(ppfree, pAny->value.valueunion.val_generic_vec.value, descbuf);
 						if((pAny->value.vartype&OV_VT_KSMASK)==OV_VT_STRING_VEC){
 							for(iter=0; iter<pAny->value.valueunion.val_string_vec.veclen; iter++){
-								snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any vec str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+								n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any vec str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+								if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated (%s)", descbuf);
 								ov_freelist_add(ppfree, pAny->value.valueunion.val_string_vec.value[iter], descbuf);
 							}
 						}
@@ -2428,11 +2434,13 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 
 			case 0:
 				// dynamic vector
-				snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (vec)", pathbuf, part.elemunion.pvar->v_identifier);
+				n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (vec)", pathbuf, part.elemunion.pvar->v_identifier);
+				if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated (%s)", descbuf);
 				ov_freelist_add(ppfree, ((OV_GENERIC_VEC*)part.pvalue)->value, descbuf);
 				if((part.elemunion.pvar->v_vartype&OV_VT_KSMASK&(~OV_VT_ISVECTOR))==OV_VT_STRING){
 					for(iter=0; iter<((OV_STRING_VEC*)part.pvalue)->veclen; iter++){
-						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (vec str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+						n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (vec str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+						if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated (%s)", descbuf);
 						ov_freelist_add(ppfree, ((OV_STRING_VEC*)part.pvalue)->value[iter], descbuf);
 					}
 				}
@@ -2443,7 +2451,8 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 				case OV_VT_STRING:
 				case OV_VT_STRING_VEC:
 					for(iter=0; iter<part.elemunion.pvar->v_veclen; iter++){
-						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (static str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+						n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (static str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+						if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated (%s)", descbuf);
 						ov_freelist_add(ppfree, ((OV_STRING_VEC*)part.pvalue)->value[iter], descbuf);
 					}
 					break;
@@ -2459,7 +2468,8 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 		case OV_ET_PARENTLINK:
 			if(part.elemunion.passoc->v_assoctype == OV_AT_MANY_TO_MANY){
 				for(Ov_Association_GetFirstChildNM(part.elemunion.passoc, pit, pobj); pit; pit = pit->parent.pnext){
-					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (OV_NMLINK)", pathbuf, part.elemunion.passoc->v_identifier);
+					n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (OV_NMLINK)", pathbuf, part.elemunion.passoc->v_identifier);
+					if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated (%s)", descbuf);
 					ov_freelist_add(ppfree, pit, descbuf);
 				}
 			}
@@ -2470,7 +2480,8 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 					// skip if linked to itself to avoid double free
 					if(pit->parent.pparent==pobj)
 						continue;
-					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (OV_NMLINK)", pathbuf, part.elemunion.passoc->v_identifier);
+					n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (OV_NMLINK)", pathbuf, part.elemunion.passoc->v_identifier);
+					if (n >= OV_FL_DESCBUFFER) ov_logfile_warning("ov_freelist: description truncated (%s)", descbuf);
 					ov_freelist_add(ppfree, pit, descbuf);
 				}
 			}
@@ -2481,7 +2492,7 @@ static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj
 	}
 
 	if((mode&0x1) && !pobj->v_pouterobject){ // free object pointer unless part object
-		snprintf(descbuf, OV_FL_DESCBUFFER, "%s (objptr)", pathbuf);
+		n = snprintf(descbuf, OV_FL_DESCBUFFER, "%s (objptr)", pathbuf);
 		ov_freelist_add(ppfree, pobj, descbuf);
 	}
 
@@ -2599,7 +2610,7 @@ OV_DLLFNCEXPORT void ov_freelist_print(){
 	}
 }
 
-static void ov_freelist_free(){
+static void ov_freelist_free() {
 	ov_freelist		freelist = {0};
 	ov_freelist*	freelistCur = NULL;
 	ov_freelist*	freelistNext = NULL;

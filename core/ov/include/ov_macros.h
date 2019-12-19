@@ -47,6 +47,7 @@
 #include "ov_memstack.h"
 #include "ov_malloc.h"
 #include "ov_vendortree.h"
+#include "ov_logfile.h"
 
 /*
 *	Upcast of an instance pointer of the parent class
