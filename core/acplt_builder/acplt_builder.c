@@ -1170,7 +1170,7 @@ HELP:
      * Recursively search included libraries to fill includepath.
      */
     char *libNames[MAX_INCLUDEPATHS];
-    char *searchPaths[MAX_SEARCHPATHS];
+    const char *searchPaths[MAX_SEARCHPATHS];
     int numSearchPaths = getSearchPaths(searchPaths, MAX_SEARCHPATHS, libPath);
 
     // We let searchBaseLibs write the model paths directly into `includepath`

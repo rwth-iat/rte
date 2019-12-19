@@ -244,7 +244,7 @@ void getDirname(char *dir, const char *path, size_t n) {
     char drive[_MAX_DRIVE];
     char dirpath[_MAX_DIR];
     _splitpath(path, drive, dirpath, NULL, NULL);
-    snprintf(dir, "%s%s", n, drive, dirpath);
+    snprintf(dir, n,"%s%s", drive, dirpath);
 #else
     char *pathClone = (char*)malloc(strlen(path)+1);
     strcpy(pathClone, path);
@@ -273,7 +273,7 @@ void getFilenameWoExt(char *filename, const char *path, size_t n) {
 #endif
 }
 
-size_t getSearchPaths(char **searchPaths, size_t maxNumSearchPaths, const char* currentLibPath) {
+size_t getSearchPaths(const char **searchPaths, size_t maxNumSearchPaths, const char* currentLibPath) {
     size_t numSearchPaths = 0;
 
     // First, add generic search paths

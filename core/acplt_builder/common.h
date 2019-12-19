@@ -75,4 +75,4 @@ void getFilenameWoExt(char *filename, const char *path, size_t n);
  * @param currentLibPath Path to the directory of the processed library
  * @return The number of searchPaths filled into searchPaths
  */
-size_t getSearchPaths(char **searchPaths, size_t maxNumSearchPaths, const char* currentLibPath);
+size_t getSearchPaths(const char **searchPaths, size_t maxNumSearchPaths, const char* currentLibPath);
