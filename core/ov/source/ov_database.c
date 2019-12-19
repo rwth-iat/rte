@@ -120,6 +120,7 @@ int flock_solaris (int filedes, int oper)
 #endif
 
 #if OV_DEBUG || OV_VALGRIND
+#include "ov_vendortree.h"
 static void ov_freelist_free();
 #else
 #define ov_freelist_free()

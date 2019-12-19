@@ -641,7 +641,7 @@ OV_DLLFNCEXPORT OV_UINT ov_vendortree_schedulerNumExceeds();
  */
 OV_DLLFNCEXPORT void ov_vendortree_incrementNumExceeds();
 
-#if OV_VALGRIND
+#if OV_DEBUG
 /*
  * get use malloc flag
  */

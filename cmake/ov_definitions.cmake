@@ -8,7 +8,7 @@ elseif(CYGWIN)
 else()
     add_definitions(-DOV_SYSTEM_LINUX=1)
 endif()
-set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG -DOV_DEBUG)
+add_compile_options($<$<CONFIG:Debug>:-DOV_DEBUG=1>)
 
 # General compiler options for OV and all libs
 add_compile_options(-std=c99 -Wall)
