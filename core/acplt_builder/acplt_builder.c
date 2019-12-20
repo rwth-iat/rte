@@ -54,8 +54,12 @@
 
 char            outputpath[MAX_PATH_LENGTH + 1];
 
+unsigned int flags = 0;
+
 extern int		yydebug;
 extern FILE*	yyin;
+
+#define BUILDER_FLAG_FORCE 0x01u
 
 // Additional global variables `OV_INT includepath` and
 // `OV_STRING* includepath_ptr` are included from ov_codegen.h
@@ -114,12 +118,10 @@ FILE *fb_builder_createfile(
 	sprintf(filename, "%s/%s%s", outputpath, name, extension);
 	compatiblePath(filename);
 
-	fp = fopen(filename, "r");
-	if(fp) {
+	if (!(flags&BUILDER_FLAG_FORCE) && acplt_isFile(filename)) {
 		fprintf(stderr, "Error: File '%s%s' already exists.\n",
 			name, extension);
 		free(filename);
-		fclose(fp);
 		return NULL;
 	}
 
@@ -1120,6 +1122,12 @@ int main(int argc, char **argv) {
 			}
 		}
 		/*
+		 *	force write option
+		 */
+		else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--force")) {
+			flags |= BUILDER_FLAG_FORCE;
+		}
+		/*
 		*	display help option
 		*/
 		else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
@@ -1138,6 +1146,7 @@ HELP:
                             "-l  OVM_FILE                Path to the OVM file for the library to create sources for\n"
             				"\n"
                             "The following arguments are optional:\n"
+                            "-f  OR --force              overwrite existing files\n"
                             "-o  OR --userdefined-open   Add user defined 'openlib' option\n"
                             "-h  OR --help               Display this help message and exit\n");
 			return EXIT_FAILURE;
