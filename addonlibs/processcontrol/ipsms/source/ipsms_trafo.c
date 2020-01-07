@@ -26,7 +26,9 @@ ipsms_trafo_addParentReference(
 	// parent reference
 	UA_AddReferencesItem * ref = UA_AddReferencesItem_new();
 	ref->isForward = UA_FALSE;
-	ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+	ref->referenceTypeId = UA_NODEID_NUMERIC(0,
+			(node->nodeClass == UA_NODECLASS_METHOD) ?
+			UA_NS0ID_HASCOMPONENT : UA_NS0ID_ORGANIZES);
 	UA_NodeId_copy(nodeId, &ref->sourceNodeId);
 	ref->targetNodeClass = UA_NODECLASS_OBJECT;
 	UA_ExpandedNodeId_init(&ref->targetNodeId);
@@ -83,6 +85,9 @@ ipsms_trafo_createNode(UA_NodeClass nodeClass, const OV_STRING identifier, const
 	case UA_NODECLASS_VARIABLE:
 		node = (UA_Node*) UA_malloc(sizeof(UA_VariableNode));
 		break;
+	case UA_NODECLASS_METHOD:
+		node = (UA_Node*) UA_malloc(sizeof(UA_MethodNode));
+		break;
 	case UA_NODECLASS_OBJECT:
 	default:
 		node = (UA_Node*) UA_malloc(sizeof(UA_ObjectNode));
@@ -123,7 +128,8 @@ ipsms_trafo_genericTrafo(
 
 	// Add references
 	*ref = ipsms_trafo_addParentReference(nodeId, parentNodeId, node);
-	ipsms_trafo_addTypeDefinitionReference(server, nodeId, typeNodeId,node, *ref);
+	if(nodeClass != UA_NODECLASS_METHOD)
+		ipsms_trafo_addTypeDefinitionReference(server, nodeId, typeNodeId,node, *ref);
 	return node;
 }
 
@@ -139,7 +145,7 @@ ipsms_trafo_controlchart(
 			&ref);
 
 	// Add references
-	// Organizes SERVICES and STATUS
+	// Organizes OPERATIONS and STATUS
 	ref->isForward = UA_TRUE;
 	UA_NodeId_deleteMembers(&ref->referenceTypeId);
 	ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
@@ -154,11 +160,11 @@ ipsms_trafo_controlchart(
 	UA_Node_addReference(node, ref);
 
 	if(profile == IPSMS_PROFILE_SI_OPERATIONS || profile == IPSMS_PROFILE_SI_ANY){
-		// Add SERVICES reference
+		// Add OPERATIONS reference
 		UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
 		UA_ExpandedNodeId_init(&ref->targetNodeId);
 		UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
-		opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "/SERVICES");
+		opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "||OPERATIONS");
 		ref->targetNodeId.nodeId.namespaceIndex = OPCUA_OVSTORE_DEFAULTNSINDEX;
 		UA_Node_addReference(node, ref);
 	}
@@ -189,7 +195,7 @@ ipsms_trafo_controlchart(
 //
 //	// Organizes childs
 //	OV_INSTPTR_ov_object pchild = NULL;
-//	OV_BOOL isServicesDomain = ov_string_compare(pobj->v_identifier, "SERVICES") == OV_STRCMP_EQUAL;
+//	OV_BOOL isServicesDomain = ov_string_compare(pobj->v_identifier, "OPERATIONS") == OV_STRCMP_EQUAL;
 //	ref->isForward = UA_TRUE;
 //	UA_NodeId_deleteMembers(&ref->referenceTypeId);
 //	UA_NodeId_deleteMembers(&ref->sourceNodeId);
@@ -226,7 +232,7 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 	ov_string_stack_print(&virtualParentPath, "%s||STATUS", parentPath);
 	UA_AddReferencesItem * ref = NULL;
 	UA_VariableNode * node = (UA_VariableNode*) ipsms_trafo_genericTrafo(server,
-			identifier, "Description",
+			identifier, "Description", //TODO get description from port value
 			UA_NODECLASS_VARIABLE, nodeId,
 			UA_NODEID_STRING(nodeId->namespaceIndex, virtualParentPath),
 			UA_NODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE),
@@ -337,6 +343,121 @@ ipsms_trafo_status(const UA_Server * server,
 	return node;
 }
 
+//TODO add arguments
+static UA_StatusCode
+ipsms_trafo_defaultOperationCallback(UA_Server *server, const UA_NodeId *sessionId,
+                     void *sessionContext, const UA_NodeId *methodId,
+                     void *methodContext, const UA_NodeId *objectId,
+                     void *objectContext, size_t inputSize,
+                     const UA_Variant *input, size_t outputSize,
+                     UA_Variant *output){
+	// Get parent node id and ordername by splitting the methodId string
+	if(methodId->identifierType != UA_NODEIDTYPE_STRING)
+		return UA_STATUSCODE_BADNODEIDINVALID;
+	OV_STRING path = NULL;
+	opcua_helpers_copyUAStringToOV(methodId->identifier.string, &path);
+	OV_UINT pathLength = 0;
+	OV_STRING* pathList = ov_string_split(path, "||", &pathLength);
+	if(pathLength < 3){
+		ov_string_setvalue(&path, NULL);
+		ov_string_freelist(pathList);
+		return UA_STATUSCODE_BADNODEIDUNKNOWN;
+	}
+	UA_NodeId componentId = UA_NODEID_STRING(methodId->namespaceIndex, pathList[pathLength-3]);
+
+	// Resolve parent node id and check that it is a controlchart aka BaSys 4.0 component
+	OV_INSTPTR_ov_object pobj = opcua_helpers_resolveNodeIdToOvObject(&componentId);
+	if(pobj == NULL || !Ov_CanCastTo(fb_controlchart, pobj)){
+		ov_string_setvalue(&path, NULL);
+		ov_string_freelist(pathList);
+		return UA_STATUSCODE_BADTYPEMISMATCH;
+	}
+	OV_INSTPTR_fb_functionchart pcomponent = Ov_StaticPtrCast(fb_functionchart, pobj);
+
+	// Assemble and set CMD input
+	//TODO get sender id via argument
+	OV_STRING cmdString = NULL;
+	OV_ANY cmd;
+	//assemble command in correct syntax
+	ov_string_print(&cmdString, "%s;%s;%s",
+			"ANONYM",
+			pathList[pathLength-1],
+			"");
+	cmd.state = OV_ST_GOOD;
+	cmd.value.vartype = OV_VT_STRING;
+	cmd.value.valueunion.val_string = cmdString;
+	//set CMD port of chart.
+	OV_RESULT result = fb_functionchart_setport(pcomponent, "CMD" ,&cmd);
+	ov_string_setvalue(&path, NULL);
+	ov_string_freelist(pathList);
+	return opcua_helpers_ovResultToUaStatusCode(result);
+}
+
+static UA_Node *
+ipsms_trafo_operationMethod(const UA_Server * server,
+		const UA_NodeId * nodeId, OV_STRING identifier, OV_STRING parentPath){
+
+	ov_memstack_lock();
+	OV_STRING virtualParentPath = NULL;
+	ov_string_stack_print(&virtualParentPath, "%s||OPERATIONS", parentPath);
+	UA_AddReferencesItem * ref = NULL;
+	UA_MethodNode * node = (UA_MethodNode*) ipsms_trafo_genericTrafo(server,
+			identifier, "",
+			UA_NODECLASS_METHOD, nodeId,
+			UA_NODEID_STRING(nodeId->namespaceIndex, virtualParentPath),
+			UA_NODEID_NULL,
+			&ref);
+	UA_AddReferencesItem_delete(ref);
+	ov_memstack_unlock();
+
+	node->executable = UA_TRUE;
+	node->method = ipsms_trafo_defaultOperationCallback;
+	return (UA_Node*)node;
+}
+
+static UA_Node *
+ipsms_trafo_operations(const UA_Server * server,
+		const UA_NodeId * nodeId, OV_STRING parentPath){
+	UA_AddReferencesItem * ref = NULL;
+	UA_Node * node = ipsms_trafo_genericTrafo(server,
+			"OPERATIONS", "IPSMS conform folder for service operations (methods).",
+			UA_NODECLASS_OBJECT, nodeId,
+			UA_NODEID_STRING(nodeId->namespaceIndex, parentPath),
+			UA_NODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE),
+			&ref);
+
+	// Add operations folder via organizes reference
+	// Resolve parent node id and check that it is a controlchart aka BaSys 4.0 component
+	UA_NodeId parentNodeId = UA_NODEID_STRING(nodeId->namespaceIndex, parentPath);
+	OV_INSTPTR_ov_object pobj = opcua_helpers_resolveNodeIdToOvObject(&parentNodeId);
+	if(pobj == NULL || !Ov_CanCastTo(fb_controlchart, pobj)){
+		return node;
+	}
+
+	// Set default values for all operations
+	ref->isForward = UA_TRUE;
+	UA_NodeId_deleteMembers(&ref->referenceTypeId);
+	ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT);
+	UA_NodeId_deleteMembers(&ref->sourceNodeId);
+	UA_NodeId_copy(nodeId, &ref->sourceNodeId);
+	ref->targetNodeClass = UA_NODECLASS_METHOD;
+	// Iterate over ORDERLIST values
+	OV_INSTPTR_fb_controlchart pcomponent = Ov_StaticPtrCast(fb_controlchart, pobj);
+	OV_STRING operationPath = NULL;
+	ov_memstack_lock();
+	for(int i = 0 ; i < pcomponent->v_ORDERLIST.veclen ; i++ ){
+		//Add has component reference for every ORDER
+		UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
+		ov_string_stack_print(&operationPath, "%s||OPERATIONS||%s", parentPath, pcomponent->v_ORDERLIST.value[i]);
+		ref->targetNodeId = UA_EXPANDEDNODEID_STRING_ALLOC(nodeId->namespaceIndex,
+				operationPath);
+		UA_Node_addReference(node, ref);
+	}
+	ov_memstack_unlock();
+	UA_AddReferencesItem_delete(ref);
+	return node;
+}
+
 static void ipsms_trafo_deleteNodestore(void *context){
 }
 
@@ -370,6 +491,13 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 					node = ipsms_trafo_status(uaServer, nodeId, pathList[0]);
 				}else if(length == 3){
 					node = ipsms_trafo_statusVariable(uaServer, nodeId, pathList[2], pathList[0]);
+				}
+			}
+			if(ov_string_compare(pathList[1], "OPERATIONS") == OV_STRCMP_EQUAL){
+				if(length == 2){
+					node = ipsms_trafo_operations(uaServer, nodeId, pathList[0]);
+				}else if(length == 3){
+					node = ipsms_trafo_operationMethod(uaServer, nodeId, pathList[2], pathList[0]);
 				}
 			}
 		}
