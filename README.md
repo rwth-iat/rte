@@ -31,7 +31,24 @@ On Windows, you can setup a Cygwin or MSys environment or download the required 
 * https://github.com/lexxmark/winflexbison/releases
 Make sure, that the binary dirctories of those tools are listed in your `%PATH%` variable.
 
-TODO Setup with MSYS2; Cygwin
+Instrcutions for MSys2 (mingw-w64):
+
+Install the msys2 and update the base installation.
+```sh
+pacman -Syu
+```
+Follow the instructions that are provided.
+
+Now install the required packages in the msys2 environment.
+Here we choose the 64-bit mingw-w64 toolchain.
+```sh
+pacman -S tcl flex bison mingw-w64-x86_64-toolchain
+```
+
+Add the ``$MSYS2_ROOT$\usr\bin`` directory to the PATH (either system wide or user).
+The Toolchain environment is places in ``MSYS2_ROOT\mingw64``.
+
+TODO Setup with Cygwin
 
 ### Compilation
 
@@ -104,7 +121,14 @@ core/runtimeserver/ov_runtimeserver -f test.ovd -s MANAGER -l stdout -c 10000000
 ```
 The parameters shown above will make the `ov_runtimeserver` create a new database file (`--force-create`) of size 10 MB (`-c`) named `test.ovd` (`-f`), start a server named "MANAGER" (`-s`) with that database, and load the shared libraries `ksbase`, `kshttp`, `TCPbind` and `fb`, which will make it accessible via TCP port 7509 and provide basic functionality for function block networks.
 
-Unfortunately, Windows executables don't support something like `RPATH`. Thus, the runtimeserver can only be started from the build tree if the build directory of every required .dll library is added to the %PATH%.
+Unfortunately, Windows executables don't support something like `RPATH`.
+To test ov from the build tree all build artefacts need to be moved to a single directory.
+This can be achived by adding following lines to the CMakeList.txt in the project root directory.
+```
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out CACHE STRING "" )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out CACHE STRING "" )
+```
+This creates a directory out in the cmake build directory where all executables and shared libraries are moved.
 
 TODO starting from *installed* package
 
