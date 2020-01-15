@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectTasksOptions">
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="--force -l $FilePath$" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="OV model" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="OV Templates" />
+      <option name="output" value="" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="acplt_builder" />
+      <option name="runOnExternalChanges" value="true" />
+      <option name="scopeName" value="Project Files" />
+      <option name="trackOnlyRoot" value="false" />
+      <option name="workingDir" value="$FileDir$/.." />
+      <envs>
+        <env name="OV_LIBRARY_PATH" value="$ProjectFileDir$/rte/core:$ProjectFileDir$/rte/syslibs:$ProjectFileDir$/rte_fblib:$ProjectFileDir$/rte_field:$ProjectFileDir$/rte_misc" />
+      </envs>
+    </TaskOptions>
+  </component>
+</project>
