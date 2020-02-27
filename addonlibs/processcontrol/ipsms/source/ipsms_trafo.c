@@ -28,7 +28,9 @@ ipsms_trafo_addParentReference(
 	ref->isForward = UA_FALSE;
 	ref->referenceTypeId = UA_NODEID_NUMERIC(0,
 			(node->nodeClass == UA_NODECLASS_METHOD) ?
-			UA_NS0ID_HASCOMPONENT : UA_NS0ID_ORGANIZES);
+			UA_NS0ID_HASCOMPONENT :
+			(node->nodeClass == UA_NODECLASS_VARIABLE) ? UA_NS0ID_HASPROPERTY :
+					UA_NS0ID_ORGANIZES);
 	UA_NodeId_copy(nodeId, &ref->sourceNodeId);
 	ref->targetNodeClass = UA_NODECLASS_OBJECT;
 	UA_ExpandedNodeId_init(&ref->targetNodeId);
@@ -223,6 +225,50 @@ ipsms_trafo_controlchart(
 //	return (UA_Node*)node;
 //}
 
+static UA_StatusCode ipsms_trafo_helperTransformVariableValue(UA_VariableNode * node, OV_ANY * value){
+UA_StatusCode result = UA_STATUSCODE_GOOD;
+	switch(value->value.vartype & OV_VT_KSMASK){
+		case OV_VT_ANY:
+		case OV_VT_VOID:
+			node->valueRank = -3;	//	scalar or one dimension
+			node->arrayDimensionsSize = 0;
+			node->arrayDimensions = UA_Array_new(node->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	//	scalar or one dimension
+			break;
+		default:
+			if(value->value.vartype & OV_VT_ISVECTOR){
+				//	vector
+				node->valueRank = 1;
+				node->arrayDimensionsSize = 1;
+				node->arrayDimensions = UA_Array_new(node->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	//	scalar or one dimension
+				if(!node->arrayDimensions){
+					result = UA_STATUSCODE_BADOUTOFMEMORY;
+					break;
+				} else {
+					result = UA_STATUSCODE_GOOD;
+				}
+				result = UA_Array_copy(&value->value.valueunion.val_generic_vec.veclen,
+						node->arrayDimensionsSize, (void**)&(node->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
+			} else {
+				//	scalar
+				node->valueRank = -1;
+				node->arrayDimensionsSize = 0;
+				node->arrayDimensions = UA_Array_new(node->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	//	scalar or one dimension
+			}
+			break;
+	}
+	value->value.vartype &= OV_VT_KSMASK;
+	if(result == UA_STATUSCODE_GOOD){
+		result = opcua_helpers_ovAnyToUAVariant(value, &node->value.data.value.value);
+		node->valueSource = UA_VALUESOURCE_DATA;
+		node->dataType = opcua_helpers_ovVarTypeToNodeId(value->value.vartype);
+	}
+	node->minimumSamplingInterval = 0;
+	node->historizing = UA_FALSE;
+	node->value.data.callback.onRead = NULL;
+	node->value.data.callback.onWrite = NULL;
+	return result;
+}
+
 static UA_Node *
 ipsms_trafo_statusVariable(const UA_Server * server,
 		const UA_NodeId * nodeId, OV_STRING identifier, OV_STRING parentPath){
@@ -251,47 +297,7 @@ ipsms_trafo_statusVariable(const UA_Server * server,
 	fb_functionchart_getport(pcomponent, identifier, &value); //TODO get port value directly by path
 	node->accessLevel = UA_ACCESSLEVELMASK_READ;
 
-	//TODO move to own function (for later fbInterface library
-	UA_StatusCode result = UA_STATUSCODE_GOOD;
-	switch(value.value.vartype & OV_VT_KSMASK){
-		case OV_VT_ANY:
-		case OV_VT_VOID:
-			node->valueRank = -3;	//	scalar or one dimension
-			node->arrayDimensionsSize = 0;
-			node->arrayDimensions = UA_Array_new(node->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	//	scalar or one dimension
-			break;
-		default:
-			if(value.value.vartype & OV_VT_ISVECTOR){
-				//	vector
-				node->valueRank = 1;
-				node->arrayDimensionsSize = 1;
-				node->arrayDimensions = UA_Array_new(node->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	//	scalar or one dimension
-				if(!node->arrayDimensions){
-					result = UA_STATUSCODE_BADOUTOFMEMORY;
-					break;
-				} else {
-					result = UA_STATUSCODE_GOOD;
-				}
-				result = UA_Array_copy(&value.value.valueunion.val_generic_vec.veclen,
-						node->arrayDimensionsSize, (void**)&(node->arrayDimensions), &UA_TYPES[UA_TYPES_INT32]);
-			} else {
-				//	scalar
-				node->valueRank = -1;
-				node->arrayDimensionsSize = 0;
-				node->arrayDimensions = UA_Array_new(node->arrayDimensionsSize, &UA_TYPES[UA_TYPES_INT32]);	//	scalar or one dimension
-			}
-			break;
-	}
-	value.value.vartype &= OV_VT_KSMASK;
-	if(result == UA_STATUSCODE_GOOD){
-		result = opcua_helpers_ovAnyToUAVariant(&value, &node->value.data.value.value);
-		node->valueSource = UA_VALUESOURCE_DATA;
-		node->dataType = opcua_helpers_ovVarTypeToNodeId(value.value.vartype);
-	}
-	node->minimumSamplingInterval = -1;
-	node->historizing = UA_FALSE;
-	node->value.data.callback.onRead = NULL;
-	node->value.data.callback.onWrite = NULL;
+	ipsms_trafo_helperTransformVariableValue(node, &value);
 
 	return (UA_Node*)node;
 }
@@ -318,10 +324,10 @@ ipsms_trafo_status(const UA_Server * server,
 	// Set default values for all ports
 	ref->isForward = UA_TRUE;
 	UA_NodeId_deleteMembers(&ref->referenceTypeId);
-	ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
+	ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
 	UA_NodeId_deleteMembers(&ref->sourceNodeId);
 	UA_NodeId_copy(nodeId, &ref->sourceNodeId);
-	ref->targetNodeClass = UA_NODECLASS_OBJECT;
+	ref->targetNodeClass = UA_NODECLASS_VARIABLE;
 	// Iterate over output ports
 	OV_INSTPTR_fb_controlchart pcomponent = Ov_StaticPtrCast(fb_controlchart, pobj);
 	OV_INSTPTR_fb_port pport = NULL;
@@ -343,7 +349,170 @@ ipsms_trafo_status(const UA_Server * server,
 	return node;
 }
 
-//TODO add arguments
+static OV_STRING
+ipsms_trafo_helperGetMethodParameterName(const UA_NodeId* nodeId, OV_STRING orderName, OV_STRING controlChartPath, OV_ANY* portValue){
+	// Resolve parent node id and check that it is a controlchart aka BaSys 4.0 component
+	UA_NodeId parentNodeId = UA_NODEID_STRING(nodeId->namespaceIndex, controlChartPath);
+	OV_INSTPTR_ov_object pobj = opcua_helpers_resolveNodeIdToOvObject(&parentNodeId);
+	if(pobj != NULL || !Ov_CanCastTo(fb_controlchart, pobj)){
+		// Try to find parameterlist port
+		OV_ANY parameterList = OV_ANY_INIT;
+		if(Ov_OK(fb_functionchart_getport(Ov_StaticPtrCast(fb_functionchart, pobj), "CMDOPREF", &parameterList))
+			&& parameterList.value.vartype == OV_VT_STRING_VEC
+			&& parameterList.value.valueunion.val_string_vec.veclen > 0){
+			// Iterate over ORDERLIST values to find order index
+			OV_INSTPTR_fb_controlchart pcomponent = Ov_StaticPtrCast(fb_controlchart, pobj);
+			int orderIndex = -1;
+			for(int i = 0 ; i < pcomponent->v_ORDERLIST.veclen ; i++ ){
+				if(ov_string_compare(pcomponent->v_ORDERLIST.value[i], orderName) == OV_STRCMP_EQUAL){
+					orderIndex = i;
+					break;
+				}
+			}
+			if(orderIndex != -1 && orderIndex < parameterList.value.valueunion.val_string_vec.veclen
+					&& parameterList.value.valueunion.val_string_vec.value[orderIndex] != NULL
+					&& ov_string_getlength(parameterList.value.valueunion.val_string_vec.value[orderIndex]) > 0){
+				//TODO allow multiple parameter
+				if(portValue != NULL)
+					fb_functionchart_getport(Ov_StaticPtrCast(fb_functionchart, pobj),
+							parameterList.value.valueunion.val_string_vec.value[orderIndex], portValue);
+				return parameterList.value.valueunion.val_string_vec.value[orderIndex];
+			}
+		}
+	}
+	return NULL;
+}
+
+static UA_Node *
+ipsms_trafo_operationMethodArguments(const UA_Server * server,
+		const UA_NodeId * nodeId, OV_STRING methodIdentifier, OV_STRING identifier, OV_STRING parentPath){
+	if(ov_string_compare(identifier, "OutputArguments") == OV_STRCMP_EQUAL)
+		return NULL; //Not implemented
+
+	ov_memstack_lock();
+	OV_STRING virtualParentPath = NULL;
+	ov_string_stack_print(&virtualParentPath, "%s||OPERATIONS||%s", parentPath, methodIdentifier);
+	UA_AddReferencesItem * ref = NULL;
+	UA_VariableNode * node = (UA_VariableNode*) ipsms_trafo_genericTrafo(server,
+			identifier, "",
+			UA_NODECLASS_VARIABLE, nodeId,
+			UA_NODEID_STRING(nodeId->namespaceIndex, virtualParentPath),
+			UA_NODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE),
+			&ref);
+	node->browseName.namespaceIndex = 0;
+
+	OV_ANY parameterPort = OV_ANY_INIT;
+	OV_STRING parameterName = ipsms_trafo_helperGetMethodParameterName(nodeId, methodIdentifier, parentPath, &parameterPort);
+	if(parameterName != NULL){
+		node->accessLevel = UA_ACCESSLEVELMASK_READ;
+		node->dataType = UA_NODEID_NUMERIC(0, UA_NS0ID_ARGUMENT);
+		node->minimumSamplingInterval = 0;
+		node->historizing = UA_FALSE;
+		node->valueSource = UA_VALUESOURCE_DATA;
+
+		node->value.data.callback.onRead = NULL;
+		node->value.data.callback.onWrite = NULL;
+		UA_DataValue_init(&node->value.data.value);
+
+		OV_UINT sizeInput = 1;
+		// arrayDimensions
+		node->arrayDimensionsSize = 1;
+		node->arrayDimensions = UA_UInt32_new();
+		node->arrayDimensions[0] = sizeInput;
+
+		// value
+		UA_Variant* value = ((UA_Variant*)&node->value.data.value.value);
+		value->type = &UA_TYPES[UA_TYPES_ARGUMENT];
+		value->arrayLength = sizeInput;
+		if (sizeInput > 1){
+			value->data = UA_Array_new(sizeInput, &UA_TYPES[UA_TYPES_ARGUMENT]);
+		}else{
+			value->data = UA_Argument_new();
+		}
+
+		node->value.data.value.hasValue = TRUE;
+		node->valueSource = UA_VALUESOURCE_DATA;
+		int count = sizeInput-1;
+
+		UA_Argument_init(&((UA_Argument*)value->data)[count]);
+		((UA_Argument*)value->data)[count].description = UA_LOCALIZEDTEXT_ALLOC("en_US","");
+		((UA_Argument*)value->data)[count].name = UA_STRING_ALLOC(parameterName);
+		switch(parameterPort.value.vartype){
+			case OV_VT_BOOL:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_BOOLEAN].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_SCALAR;
+				break;
+			case OV_VT_INT:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_INT32].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_SCALAR;
+				break;
+			case OV_VT_UINT:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_UINT32].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_SCALAR;
+				break;
+			case OV_VT_SINGLE:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_FLOAT].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_SCALAR;
+				break;
+			case OV_VT_DOUBLE:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_DOUBLE].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_SCALAR;
+				break;
+			case OV_VT_ANY:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_VARIANT].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_SCALAR_OR_ONE_DIMENSION;
+				//((UA_Argument*)value->data)[count].arrayDimensionsSize = ; //TODO get from tmpPart.pvalue
+				//((UA_Argument*)value->data)[count].arrayDimensions = UA_UInt32_new();
+				//((UA_Argument*)value->data)[count].arrayDimensions[0] = tmpPart.elemunion.pvar->v_veclen;
+				break;
+			case OV_VT_STRING:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_STRING].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_SCALAR;
+				break;
+			case OV_VT_BOOL_VEC:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_BOOLEAN].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_ONE_DIMENSION;
+				break;
+			case OV_VT_INT_VEC:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_INT32].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_ONE_DIMENSION;
+				break;
+			case OV_VT_UINT_VEC:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_UINT32].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_ONE_DIMENSION;
+				break;
+			case OV_VT_SINGLE_VEC:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_FLOAT].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_ONE_DIMENSION;
+				break;
+			case OV_VT_DOUBLE_VEC:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_DOUBLE].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_ONE_DIMENSION;
+				break;
+			case OV_VT_STRING_VEC:
+				((UA_Argument*)value->data)[count].dataType = UA_TYPES[UA_TYPES_STRING].typeId;
+				((UA_Argument*)value->data)[count].valueRank = UA_VALUERANK_ONE_DIMENSION;
+				break;
+			default:
+				break;
+		}
+		if(((UA_Argument*)value->data)[count].valueRank == UA_VALUERANK_SCALAR){
+			((UA_Argument*)value->data)[count].arrayDimensionsSize = 0;
+			((UA_Argument*)value->data)[count].arrayDimensions = NULL;
+		}else if(((UA_Argument*)value->data)[count].valueRank == UA_VALUERANK_ONE_DIMENSION){
+			((UA_Argument*)value->data)[count].arrayDimensionsSize = 1;
+			((UA_Argument*)value->data)[count].arrayDimensions = UA_UInt32_new();
+			((UA_Argument*)value->data)[count].arrayDimensions[0] = parameterPort.value.valueunion.val_bool_vec.veclen;
+		}
+	}
+
+	UA_AddReferencesItem_delete(ref);
+	ov_memstack_unlock();
+
+	return (UA_Node*)node;
+}
+
+//TODO add other data types for arguments
 static UA_StatusCode
 ipsms_trafo_defaultOperationCallback(UA_Server *server, const UA_NodeId *sessionId,
                      void *sessionContext, const UA_NodeId *methodId,
@@ -358,38 +527,53 @@ ipsms_trafo_defaultOperationCallback(UA_Server *server, const UA_NodeId *session
 	opcua_helpers_copyUAStringToOV(methodId->identifier.string, &path);
 	OV_UINT pathLength = 0;
 	OV_STRING* pathList = ov_string_split(path, "||", &pathLength);
+	ov_string_setvalue(&path, NULL);
 	if(pathLength < 3){
-		ov_string_setvalue(&path, NULL);
 		ov_string_freelist(pathList);
 		return UA_STATUSCODE_BADNODEIDUNKNOWN;
 	}
-	UA_NodeId componentId = UA_NODEID_STRING(methodId->namespaceIndex, pathList[pathLength-3]);
 
+	UA_NodeId componentId = UA_NODEID_STRING(methodId->namespaceIndex, pathList[pathLength-3]);
 	// Resolve parent node id and check that it is a controlchart aka BaSys 4.0 component
 	OV_INSTPTR_ov_object pobj = opcua_helpers_resolveNodeIdToOvObject(&componentId);
 	if(pobj == NULL || !Ov_CanCastTo(fb_controlchart, pobj)){
-		ov_string_setvalue(&path, NULL);
 		ov_string_freelist(pathList);
 		return UA_STATUSCODE_BADTYPEMISMATCH;
 	}
 	OV_INSTPTR_fb_functionchart pcomponent = Ov_StaticPtrCast(fb_functionchart, pobj);
 
+	// assemble parameterlist
+	ov_memstack_lock();
+	OV_STRING params = NULL;
+	for(int i = 0 ; i < inputSize ; i++){
+		//TODO support other parameter types
+		if(UA_Variant_isScalar(&input[i]) && input[i].type == &UA_TYPES[UA_TYPES_STRING]){
+			OV_STRING paramName = ipsms_trafo_helperGetMethodParameterName(methodId, pathList[pathLength-1], pathList[0], NULL);
+			OV_STRING paramValue = NULL;
+			opcua_helpers_copyUAStringToOV(*(UA_String*) input[i].data, &paramValue);
+			ov_string_stack_print(&params, "%s=%s", paramName, paramValue);
+			ov_string_setvalue(&paramValue, NULL);
+		}
+	}
+
 	// Assemble and set CMD input
-	//TODO get sender id via argument
+	//TODO get sender id via username from sessionContext
 	OV_STRING cmdString = NULL;
 	OV_ANY cmd;
 	//assemble command in correct syntax
-	ov_string_print(&cmdString, "%s;%s;%s",
-			"ANONYM",
+	ov_string_stack_print(&cmdString, "%s;%s;%s",
+			"Anonymous",
 			pathList[pathLength-1],
-			"");
+			params == NULL ? "" : params);
 	cmd.state = OV_ST_GOOD;
 	cmd.value.vartype = OV_VT_STRING;
 	cmd.value.valueunion.val_string = cmdString;
+
 	//set CMD port of chart.
 	OV_RESULT result = fb_functionchart_setport(pcomponent, "CMD" ,&cmd);
-	ov_string_setvalue(&path, NULL);
 	ov_string_freelist(pathList);
+	ov_memstack_unlock();
+
 	return opcua_helpers_ovResultToUaStatusCode(result);
 }
 
@@ -407,6 +591,22 @@ ipsms_trafo_operationMethod(const UA_Server * server,
 			UA_NODEID_STRING(nodeId->namespaceIndex, virtualParentPath),
 			UA_NODEID_NULL,
 			&ref);
+	// Add arguments
+	OV_STRING parameter = ipsms_trafo_helperGetMethodParameterName(nodeId, identifier, parentPath, NULL);
+	if(parameter != NULL) {
+		//Add has property reference to input args
+		ref->isForward = UA_TRUE;
+		UA_NodeId_deleteMembers(&ref->referenceTypeId);
+		ref->referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY);
+		UA_NodeId_copy(nodeId, &ref->sourceNodeId);
+		ref->targetNodeClass = UA_NODECLASS_METHOD;
+		UA_ExpandedNodeId_deleteMembers(&ref->targetNodeId);
+		UA_NodeId_copy(nodeId, &ref->targetNodeId.nodeId);
+		opcua_helpers_UA_String_append(&ref->targetNodeId.nodeId.identifier.string, "||InputArguments");
+		UA_Node_addReference((UA_Node*)node, ref);
+		//TODO add output parameter?
+	}
+
 	UA_AddReferencesItem_delete(ref);
 	ov_memstack_unlock();
 
@@ -498,6 +698,9 @@ static const UA_Node * ipsms_trafo_getNode(void * context, const UA_NodeId *node
 					node = ipsms_trafo_operations(uaServer, nodeId, pathList[0]);
 				}else if(length == 3){
 					node = ipsms_trafo_operationMethod(uaServer, nodeId, pathList[2], pathList[0]);
+				}
+				else if(length == 4){
+					node = ipsms_trafo_operationMethodArguments(uaServer, nodeId, pathList[2], pathList[3], pathList[0]);
 				}
 			}
 		}

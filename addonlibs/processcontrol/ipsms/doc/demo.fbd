@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2020-01-07 17:26:47
+* Erstellt: 2020-02-27 14:51:36
 * 
 * HOST   : LOCALHOST:7509
 * SERVER : MANAGER
@@ -23,7 +23,7 @@
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 936;
+      idL : INPUT UINT = 594;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -35,7 +35,7 @@
       Xpos : INPUT INT = 0;
       Ypos : INPUT INT = 0;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 937;
+      idL : INPUT UINT = 595;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -47,7 +47,7 @@
       unit : INPUT STRING = "(FREE|OCCUPIED|PRIO|LOCAL)";
       comment : INPUT STRING = "EN: Occupation State. DE: Belegungszustand.";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 938;
+      idL : INPUT UINT = 596;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -59,7 +59,7 @@
       unit : INPUT STRING = "(AUTO|SEMIAUTO|MANUAL|SIMULATE)";
       comment : INPUT STRING = "EN: Execution Mode. DE: Betriebsart.";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 939;
+      idL : INPUT UINT = 597;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -71,7 +71,7 @@
       unit : INPUT STRING = "";
       comment : INPUT STRING = "EN:Work state. E.g. active step in current operation mode;DE:Arbeitsphasenzustand. Aktueller Schritt in aktiver Fahrweise.";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 940;
+      idL : INPUT UINT = 598;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -83,7 +83,7 @@
       unit : INPUT STRING = "(IDLE|STARTING|EXECUTE|COMPLETING|RESETTING|ABORTING|ABORTED|CLEARING|STOPPING|STOPPED|SUSPENDING|SUSPENDED|UNSUSPENDING|HOLDING|HELD|UNHOLDING)";
       comment : INPUT STRING = "EN:Execution State;DE:Betriebszustand";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 941;
+      idL : INPUT UINT = 599;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -95,7 +95,7 @@
       unit : INPUT STRING = "";
       comment : INPUT STRING = "EN:Operation mode;DE:Fahrweise";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 942;
+      idL : INPUT UINT = 600;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -107,7 +107,7 @@
       unit : INPUT STRING = "";
       comment : INPUT STRING = "EN:ID of Occupier;DE:ID des Belegers";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 943;
+      idL : INPUT UINT = 601;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -119,7 +119,7 @@
       unit : INPUT STRING = "";
       comment : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 944;
+      idL : INPUT UINT = 602;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -131,7 +131,7 @@
       unit : INPUT STRING = "";
       comment : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 945;
+      idL : INPUT UINT = 603;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -143,7 +143,7 @@
       unit : INPUT STRING = "";
       comment : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 946;
+      idL : INPUT UINT = 604;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -155,7 +155,31 @@
       unit : INPUT STRING = "";
       comment : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 947;
+      idL : INPUT UINT = 605;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/ControlComponent1/CMDOPREF :
+    CLASS /acplt/fb/stringvecport;
+    VARIABLE_VALUES
+      value[18] : INPUT STRING = {"" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "" , "parameter1" , ""};
+      flags : INPUT UINT = 256;
+      unit : INPUT STRING = "";
+      comment : INPUT STRING = "Command Order Parameter Reference";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 656;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/ESE/ControlComponent1/parameter1 :
+    CLASS /acplt/fb/stringport;
+    VARIABLE_VALUES
+      value : INPUT STRING = "";
+      flags : INPUT UINT = 256;
+      unit : INPUT STRING = "";
+      comment : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 657;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -167,7 +191,7 @@
       actimode : INPUT INT = 1;
       cycInterval : INPUT INT = 5;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1102;
+      idL : INPUT UINT = 653;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -176,7 +200,7 @@
     VARIABLE_VALUES
       entryPath : INPUT STRING = "/TechUnits/ESE";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1103;
+      idL : INPUT UINT = 654;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -185,7 +209,7 @@
     VARIABLE_VALUES
       SIProfile : INPUT INT = 2;
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 1104;
+      idL : INPUT UINT = 655;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -194,7 +218,7 @@
      PARENT funchart : CLASS unknown
            = /TechUnits/ESE/ControlComponent1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/ESE/ControlComponent1/OCCST , /TechUnits/ESE/ControlComponent1/EXMODE , /TechUnits/ESE/ControlComponent1/WORKST , /TechUnits/ESE/ControlComponent1/EXST , /TechUnits/ESE/ControlComponent1/OPMODE , /TechUnits/ESE/ControlComponent1/OCCUPIER , /TechUnits/ESE/ControlComponent1/cmdOC , /TechUnits/ESE/ControlComponent1/cmdOP , /TechUnits/ESE/ControlComponent1/cmdEM , /TechUnits/ESE/ControlComponent1/cmdES};
+           = {/TechUnits/ESE/ControlComponent1/OCCST , /TechUnits/ESE/ControlComponent1/EXMODE , /TechUnits/ESE/ControlComponent1/WORKST , /TechUnits/ESE/ControlComponent1/EXST , /TechUnits/ESE/ControlComponent1/OPMODE , /TechUnits/ESE/ControlComponent1/OCCUPIER , /TechUnits/ESE/ControlComponent1/cmdOC , /TechUnits/ESE/ControlComponent1/cmdOP , /TechUnits/ESE/ControlComponent1/cmdEM , /TechUnits/ESE/ControlComponent1/cmdES , /TechUnits/ESE/ControlComponent1/CMDOPREF , /TechUnits/ESE/ControlComponent1/parameter1};
  END_LINK;
 
  LINK
@@ -283,6 +307,22 @@
            = /TechUnits/ESE/ControlComponent1;
      CHILDREN ports : CLASS unknown
            = {/TechUnits/ESE/ControlComponent1/cmdES};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/ControlComponent1;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/ControlComponent1/CMDOPREF};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION variables;
+     PARENT funchart : CLASS unknown
+           = /TechUnits/ESE/ControlComponent1;
+     CHILDREN ports : CLASS unknown
+           = {/TechUnits/ESE/ControlComponent1/parameter1};
  END_LINK;
 
  LINK
