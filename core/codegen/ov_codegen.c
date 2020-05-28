@@ -353,7 +353,7 @@ int ov_codegen_createheaderfile(
 	fprintf(fp, "#if OV_COMPILER_BORLAND\n");
 	fprintf(fp, "#define OV_VAREXTERN extern\n");
 	fprintf(fp, "#else\n");
-	fprintf(fp, "#define OV_VAREXTERN OV_DLLVAREXPORT\n");
+	fprintf(fp, "#define OV_VAREXTERN extern OV_DLLVAREXPORT\n");
 	fprintf(fp, "#endif\n");
 	fprintf(fp, "#define OV_FNCEXTERN OV_DLLFNCEXPORT\n");
 	fprintf(fp, "#else\n");

@@ -59,7 +59,7 @@ extern "C" {
 #if OV_COMPILER_BORLAND
 #define OV_EXTERN extern
 #else
-#define OV_EXTERN OV_DLLVAREXPORT
+#define OV_EXTERN extern OV_DLLVAREXPORT
 #endif
 #else
 #define OV_EXTERN OV_DLLVARIMPORT
