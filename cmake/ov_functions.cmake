@@ -51,7 +51,7 @@ function(add_ov_library OV_LIBRARY_NAME)
     # ov_serverlibs.c/ov_serverlibs.h
     if(OV_STATIC_LIBRARIES)
         if(NOT OV_LIBRARY_NAME MATCHES "ov" AND BUILD_OV_LIBRARY_${OV_LIBRARY_NAME} AND TARGET ov_runtimeserver)
-            target_link_libraries(ov_runtimeserver ${OV_LIBRARY_NAME})
+            target_link_libraries(ov_runtimeserver PUBLIC ${OV_LIBRARY_NAME})
             get_target_property(OV_SERVERLIBS_FILE ov_runtimeserver STATIC_LIBRARY_DEFINE_FILE)
             get_target_property(OV_SERVERLIBS_H_FILE ov_runtimeserver STATIC_LIBRARY_INCLUDE_FILE)
             file(APPEND ${OV_SERVERLIBS_H_FILE}
@@ -107,7 +107,7 @@ endfunction()
 # ov_codegen
 # 
 # This command cannot be used for external libraries (like -lpthread). Use the usual `target_link_libraries` instead:
-#   target_link_libraries(<libname> -lpthread)
+#   target_link_libraries(<libname> PRIVATE -lpthread)
 # 
 # Arguments:
 #   * OV_LIBRARY_NAME: Name of the OV library
@@ -118,7 +118,7 @@ endfunction()
 #   ov_library_includes(libname ov fb otherlibname)
 function(ov_library_includes OV_LIBRARY_NAME)
     # Add dependencies as cmake link link_libraries
-    target_link_libraries(${OV_LIBRARY_NAME} ${ARGN})
+    target_link_libraries(${OV_LIBRARY_NAME} PUBLIC ${ARGN})
 
     # Gather model directories of dependency libraries
     foreach(_dependency ${ARGN})

@@ -8,3 +8,6 @@ if(UNIX)
     target_compile_definitions(opcua
         PRIVATE -D_XOPEN_SOURCE=500 -D_GNU_SOURCE)
 endif()
+if (WIN32)
+    target_link_libraries(opcua PRIVATE -lwinmm -lws2_32)
+endif()
