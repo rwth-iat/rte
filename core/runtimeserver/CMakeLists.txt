@@ -2,7 +2,7 @@ add_executable(ov_runtimeserver
     ov_runtimeserver.c
     ovksxdr.c)
 target_include_directories(ov_runtimeserver PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(ov_runtimeserver ov)
+target_link_libraries(ov_runtimeserver PRIVATE ov)
 
 # Special treatment for static linkin of ov libraries
 option(OV_STATIC_LIBRARIES OFF "Link all ov libraries static to ov_runtimeserver")

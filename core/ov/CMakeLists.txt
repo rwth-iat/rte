@@ -1,10 +1,10 @@
 
 add_ov_library(ov)
 ov_library_includes(ov)
-target_link_libraries(ov ovheaders)
+target_link_libraries(ov PUBLIC ovheaders)
 
 if(UNIX)
-    target_link_libraries(ov -ldl)
+    target_link_libraries(ov PRIVATE -ldl)
 endif()
 
 option(OV_VALGRIND "Compile OV with valgrind support" OFF)

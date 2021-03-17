@@ -5,7 +5,7 @@ add_executable(ov_dbutil
     fbddump.c)
 target_include_directories(ov_dbutil PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(ov_dbutil ov)
+target_link_libraries(ov_dbutil PRIVATE ov)
 
 install(TARGETS ov_dbutil
         EXPORT ${PROJECT_NAME}
