@@ -166,7 +166,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_CONCATVEC_constructor(OV_INSTPTR_ov_obje
     		else	\
     		{	\
     			for(i=0; i<in2length; i++)	\
-    				pinst->v_OUT.value.valueunion.val_##type##_vec.value[copieditems+i] = pinst->v_IN1.value.valueunion.val_##type##_vec.value[i];	\
+    				pinst->v_OUT.value.valueunion.val_##type##_vec.value[copieditems+i] = pinst->v_IN2.value.valueunion.val_##type##_vec.value[i];	\
     		}	\
     	}	\
     	break
