@@ -32,7 +32,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_CONCATVEC_IN1_set(
     OV_INSTPTR_iec61131stdfb_CONCATVEC          pobj,
     const OV_ANY*  value
 ) {
-	if(((value->value.vartype & OV_VT_KSMASK) & (!OV_VT_ISVECTOR)) == ((pobj->v_IN1.value.vartype & OV_VT_KSMASK) & (!OV_VT_ISVECTOR)))
+	if(((value->value.vartype & OV_VT_KSMASK) & (~OV_VT_ISVECTOR)) == ((pobj->v_IN1.value.vartype & OV_VT_KSMASK) & (~OV_VT_ISVECTOR)))
 		return ov_variable_setanyvalue(&pobj->v_IN1, value);
 	else
 	{
@@ -54,7 +54,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_CONCATVEC_IN2_set(
     OV_INSTPTR_iec61131stdfb_CONCATVEC          pobj,
     const OV_ANY*  value
 ) {
-	if((value->value.vartype & OV_VT_KSMASK & (!OV_VT_ISVECTOR)) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK & (!OV_VT_ISVECTOR)))
+	if((value->value.vartype & OV_VT_KSMASK & (~OV_VT_ISVECTOR)) == (pobj->v_IN2.value.vartype & OV_VT_KSMASK & (~OV_VT_ISVECTOR)))
 		return ov_variable_setanyvalue(&pobj->v_IN2, value);
 	else
 	{
@@ -69,7 +69,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_CONCATVEC_IN2_set(
 		pobj->v_IN1.value.vartype = value->value.vartype;
 		pobj->v_OUT.value.vartype = value->value.vartype | OV_VT_ISVECTOR;
 	}
-	return ov_variable_setanyvalue(&pobj->v_IN1, value);
+	return ov_variable_setanyvalue(&pobj->v_IN2, value);
 }
 
 OV_DLLFNCEXPORT OV_ANY* iec61131stdfb_CONCATVEC_OUT_get(
