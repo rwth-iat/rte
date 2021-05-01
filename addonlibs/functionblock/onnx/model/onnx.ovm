@@ -1,0 +1,22 @@
+#include "ov.ovm"
+#include "fb.ovm"
+
+LIBRARY onnx
+	VERSION   = "V0.1 (01-May-2021)";
+	AUTHOR    = "Julian Grothoff";
+	COPYRIGHT = "PLT";
+	COMMENT   = "Library to use ONNX (http://onnx.ai) files from AI toolkits for inference in ACPLT/RTE";
+	
+	CLASS UnityMLAgent : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			FilePath : STRING HAS_SET_ACCESSOR FLAGS = "ip" COMMENT = "Path to ONNX file relative to RTE start directory or absolute starting with \\.";
+			Observation[] : SINGLE HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input vector for observations.";
+			ActionMask[] : BOOL HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input vector to mark allowed actions.";
+			Decisions[] : SINGLE HAS_GET_ACCESSOR FLAGS = "o" COMMENT = "Output vector of decisions from policy.";
+		END_VARIABLES;
+		OPERATIONS
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+END_LIBRARY;
