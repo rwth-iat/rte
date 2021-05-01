@@ -20,10 +20,12 @@
 #define OV_COMPILE_LIBRARY_onnx
 #endif
 
+#define ORT_DLL_IMPORT
 
 #include "onnx.h"
 #include "libov/ov_macros.h"
 
+#include "../include/onnxruntime_c_api.h"
 
 OV_DLLFNCEXPORT OV_RESULT onnx_UnityMLAgent_FilePath_set(
     OV_INSTPTR_onnx_UnityMLAgent          pobj,
@@ -63,7 +65,12 @@ OV_DLLFNCEXPORT void onnx_UnityMLAgent_typemethod(
     /*    
     *   local variables
     */
-    OV_INSTPTR_onnx_UnityMLAgent pinst = Ov_StaticPtrCast(onnx_UnityMLAgent, pfb);
+    //OV_INSTPTR_onnx_UnityMLAgent pinst = Ov_StaticPtrCast(onnx_UnityMLAgent, pfb);
+
+	const OrtApi* g_ort = OrtGetApiBase()->GetApi(ORT_API_VERSION);
+
+    OrtEnv* env;
+    OrtStatus* result = g_ort->CreateEnv(ORT_LOGGING_LEVEL_WARNING, "test", &env);
 
     return;
 }
