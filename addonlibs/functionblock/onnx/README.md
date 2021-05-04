@@ -1,12 +1,12 @@
 # ONNX Library
 
 ## Deployment
-The onnxruntime.dll and ortClib.dll need to be in the `acplt/system/sysbin` folder. It doesn't work, if they are in the `acplt/system/addonlibs` folder. But i don't know why?
+The onnxruntime.dll and ortClib.dll need to be in the `acplt/system/sysbin` folder. It doesn't work, if they are in the `acplt/system/addonlibs` folder:
 > "... place your DLL and the onnxruntime DLL in the same folder and use run-time dynamic linking to bind explicitly to that copy ..." 
 (https://www.onnxruntime.ai/docs/reference/api/c-api.html#deployment)
 
 ## Summary
-This is a simple library with functionblocks to load an [ONNX](http://onnx.ai) file via C-API from [onnxruntime](https://www.onnxruntime.ai/). The C-API got wrapped in the library `ortClib`, which is build via MSVC as VS solution. The corresponding project is embedded in [](onnx) folder. The `ortCTest` project shows the usage of ortClib in a small console application.
+This is a simple library with functionblocks to load an [ONNX](http://onnx.ai) file via C-API from [onnxruntime](https://www.onnxruntime.ai/). The C-API got wrapped in the library `ortClib`, which is build via MSVC as VS solution. The corresponding project is embedded in [](onnx) folder. The `ortCTest` project shows the usage of ortClib in a small console application. To build the ortClib you may need to restore the onnxruntime nuget package inside the sln. Buildevents will copy the results to [](include) folder of the onnx OV library.
 
 For now only one functionblock class (UnityMLAgent) is provided, that supports to perform inference (execute the ONNX file) based on following requirements:
 * 2 float vector inputs named `vector_observation` and `action_masks`
