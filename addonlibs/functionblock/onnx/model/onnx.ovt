@@ -4,5 +4,9 @@
 /* 
 	Define your data types here. 
 */
+#include "ortClib.h"
+
+typedef ORTCLIB_HANDLE* ORTCLIB_HANDLE_PTR;
+
 
 #endif

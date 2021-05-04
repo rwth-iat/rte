@@ -1,0 +1,33 @@
+/************************************************************
+* Sicherung der Datenbasis
+* Erstellt: 2021-05-03 21:05:07
+* 
+* HOST   : LOCALHOST:7509
+* SERVER : MANAGER
+************************************************************/
+
+ INSTANCE  /TechUnits/UnityMLAgent :
+    CLASS /acplt/onnx/UnityMLAgent;
+    VARIABLE_VALUES
+ /*     FilePath : INPUT STRING = "example.onnx";  */
+ /*     FilePath : INPUT STRING = "D:\Development\devkit\AcpltDevelopmentKit\acplt\git\rte\addonlibs\functionblock\onnx\doc\example.onnx"; */
+      Observation[28] : INPUT SINGLE = {1.000000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 0.500000 , 1.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 1.000000 , 1.000000};
+      ActionMask[9] : INPUT SINGLE = {0.000000 , 1.000000 , 1.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 0.000000 , 1.000000};
+      Decisions[9] : OUTPUT SINGLE = {-16.118095 , -5.887885 , -0.003247 , -16.118095 , -16.118095 , -16.118095 , -16.118095 , -16.118095 , -7.665059};
+      Decision : OUTPUT INT = 2;
+      Error : OUTPUT BOOL = FALSE;
+      actimode : INPUT INT = 1;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/UnityMLAgent};
+ END_LINK;
+
+ LIBRARY
+    /acplt/onnx
+ END_LIBRARY;

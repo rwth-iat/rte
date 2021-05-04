@@ -10,13 +10,18 @@ LIBRARY onnx
 	CLASS UnityMLAgent : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		VARIABLES
-			FilePath : STRING HAS_SET_ACCESSOR FLAGS = "ip" COMMENT = "Path to ONNX file relative to RTE start directory or absolute starting with \\.";
-			Observation[] : SINGLE HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input vector for observations.";
-			ActionMask[] : BOOL HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input vector to mark allowed actions.";
-			Decisions[] : SINGLE HAS_GET_ACCESSOR FLAGS = "o" COMMENT = "Output vector of decisions from policy.";
+			FilePath : 		STRING HAS_SET_ACCESSOR FLAGS = "ip" COMMENT = "Path to ONNX file relative to RTE start directory or absolute starting with \\.";
+			Observation[] : SINGLE FLAGS = "i" COMMENT = "Input vector for observations.";
+			ActionMask[] : 	SINGLE FLAGS = "i" COMMENT = "Input vector to mark allowed actions.";
+			Decisions[] : 	SINGLE FLAGS = "o" COMMENT = "Output vector of decisions from policy.";
+			Decision : 		INT HAS_GET_ACCESSOR IS_DERIVED FLAGS = "o" COMMENT = "Decision with highest value. Index of max value in Decisions vector. -1 if no Decissions value is available.";
+			Error : 		BOOL FLAGS = "o" COMMENT = "Last evaluation in typemethod had an error. Decissions and Decision value is not valid.";
+			Handle : 		C_TYPE <ORTCLIB_HANDLE_PTR>;
 		END_VARIABLES;
 		OPERATIONS
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+			constructor : 	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            destructor : 	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			typemethod : 	C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
 END_LIBRARY;

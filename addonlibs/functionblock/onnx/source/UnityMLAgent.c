@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2021-05-01   File created
+*   2021-05-03   File created
 *
 *******************************************************************************
 *
@@ -20,42 +20,68 @@
 #define OV_COMPILE_LIBRARY_onnx
 #endif
 
-#define ORT_DLL_IMPORT
 
 #include "onnx.h"
 #include "libov/ov_macros.h"
-
-#include "../include/onnxruntime_c_api.h"
 
 OV_DLLFNCEXPORT OV_RESULT onnx_UnityMLAgent_FilePath_set(
     OV_INSTPTR_onnx_UnityMLAgent          pobj,
     const OV_STRING  value
 ) {
-    return ov_string_setvalue(&pobj->v_FilePath,value);
+	if(ORTCLIB_load(pobj->v_Handle, value))
+		return ov_string_setvalue(&pobj->v_FilePath,value);
+	return OV_ERR_BADPATH;
 }
 
-OV_DLLFNCEXPORT OV_RESULT onnx_UnityMLAgent_Observation_set(
-    OV_INSTPTR_onnx_UnityMLAgent          pobj,
-    const OV_SINGLE*  value,
-    const OV_UINT veclen
+OV_DLLFNCEXPORT OV_INT onnx_UnityMLAgent_Decision_get(
+    OV_INSTPTR_onnx_UnityMLAgent          pobj
 ) {
-    return Ov_SetDynamicVectorValue(&pobj->v_Observation,value,veclen,SINGLE);
+	if (pobj->v_Decisions.veclen == 0 || pobj->v_Decisions.value == NULL)
+		return -1;
+    OV_INT max = 0;
+    for (size_t i = 1; i < pobj->v_Decisions.veclen; i++) {
+        if (pobj->v_Decisions.value[i] >= pobj->v_Decisions.value[max]) {
+            max = i;
+        }
+    }
+    return max;
 }
 
-OV_DLLFNCEXPORT OV_RESULT onnx_UnityMLAgent_ActionMask_set(
-    OV_INSTPTR_onnx_UnityMLAgent          pobj,
-    const OV_BOOL*  value,
-    const OV_UINT veclen
+OV_DLLFNCEXPORT OV_RESULT onnx_UnityMLAgent_constructor(
+	OV_INSTPTR_ov_object 	pobj
 ) {
-    return Ov_SetDynamicVectorValue(&pobj->v_ActionMask,value,veclen,BOOL);
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_onnx_UnityMLAgent pinst = Ov_StaticPtrCast(onnx_UnityMLAgent, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = fb_functionblock_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    pinst->v_Handle = ORTCLIB_init(pinst->v_identifier);
+
+    return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_SINGLE* onnx_UnityMLAgent_Decisions_get(
-    OV_INSTPTR_onnx_UnityMLAgent          pobj,
-    OV_UINT *pveclen
+OV_DLLFNCEXPORT void onnx_UnityMLAgent_destructor(
+	OV_INSTPTR_ov_object 	pobj
 ) {
-    *pveclen = pobj->v_Decisions.veclen;
-    return pobj->v_Decisions.value;
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_onnx_UnityMLAgent pinst = Ov_StaticPtrCast(onnx_UnityMLAgent, pobj);
+
+    /* do what */
+    ORTCLIB_close(pinst->v_Handle);
+
+    /* destroy object */
+    fb_functionblock_destructor(pobj);
+
+    return;
 }
 
 OV_DLLFNCEXPORT void onnx_UnityMLAgent_typemethod(
@@ -65,13 +91,26 @@ OV_DLLFNCEXPORT void onnx_UnityMLAgent_typemethod(
     /*    
     *   local variables
     */
-    //OV_INSTPTR_onnx_UnityMLAgent pinst = Ov_StaticPtrCast(onnx_UnityMLAgent, pfb);
+    OV_INSTPTR_onnx_UnityMLAgent pinst = Ov_StaticPtrCast(onnx_UnityMLAgent, pfb);
 
-	const OrtApi* g_ort = OrtGetApiBase()->GetApi(ORT_API_VERSION);
+    //Reset old values.
+    Ov_SetDynamicVectorLength(&pinst->v_Decisions, 0, SINGLE);
 
-    OrtEnv* env;
-    OrtStatus* result = g_ort->CreateEnv(ORT_LOGGING_LEVEL_WARNING, "test", &env);
-
+    //Need to copy values, as OV uses its own allocator (tlsf).
+    float* actions = NULL;
+    size_t actionsSize = 0;
+    //Evaluate model
+    if(ORTCLIB_evaluate(pinst->v_Handle,
+    		pinst->v_Observation.value, pinst->v_Observation.veclen,
+			(pinst->v_ActionMask.veclen > 0) ? pinst->v_ActionMask.value : NULL,
+			&actions, &actionsSize))
+    {
+    	pinst->v_Error = FALSE;
+    	Ov_SetDynamicVectorValue(&pinst->v_Decisions, actions, actionsSize, SINGLE);
+    	free(actions);
+    	actions = NULL;
+    }else{
+    	pinst->v_Error = TRUE;
+    }
     return;
 }
-
