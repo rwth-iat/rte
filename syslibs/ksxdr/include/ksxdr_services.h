@@ -35,23 +35,23 @@ OV_RESULT ksxdr_renameObject(const OV_UINT version, const OV_TICKET* pticket, KS
  * 			Client Side
  ****************************************************************************************************************************************************************************/
 
-OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL usesStreamProtocol, KS_DATAPACKET* datapacket, OV_UINT* xid, OV_UINT* pindex);
+OV_DLLFNCEXPORT OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL usesStreamProtocol, KS_DATAPACKET* datapacket, OV_UINT* xid, OV_UINT* pindex);
 
-OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+OV_DLLFNCEXPORT OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_UINT expectedXID, OV_BOOL usesStreamProtocol, OV_UINT* xid, OV_INT* msgAccepted, OV_INT* msgStatus, OV_UINT* functionStatus);
 
-OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksbase_DataHandler this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel);
+OV_DLLFNCEXPORT OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksbase_DataHandler this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel);
 
-OV_RESULT ksxdr_initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel,
+OV_DLLFNCEXPORT OV_RESULT ksxdr_initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel,
 		OV_BOOL isLocal, OV_STRING host, OV_STRING port);
 
-OV_RESULT ksxdr_trySend(OV_INSTPTR_ksxdr_xdrClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel);
+OV_DLLFNCEXPORT OV_RESULT ksxdr_trySend(OV_INSTPTR_ksxdr_xdrClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel);
 
-OV_RESULT ksxdr_insertTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator);
+OV_DLLFNCEXPORT OV_RESULT ksxdr_insertTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator);
 
-OV_RESULT ksxdr_readBackTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator);
+OV_DLLFNCEXPORT OV_RESULT ksxdr_readBackTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator);
 
-OV_RESULT ksxdr_checkPMAskList(OV_INSTPTR_ksxdr_xdrClient thisCl);
+OV_DLLFNCEXPORT OV_RESULT ksxdr_checkPMAskList(OV_INSTPTR_ksxdr_xdrClient thisCl);
 
 /****************************************************************************************************************************************************************************
  * 			some useful functions
@@ -61,7 +61,7 @@ OV_BOOL bufferHoldsCompleteRequest(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOf
 
 OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMessage);
 
-void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin);
+OV_DLLFNCEXPORT void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin);
 
 /*	callbackfunction for processing the getserver at the beginning of a ks-service call	*/
 void GetServerCallback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that);
