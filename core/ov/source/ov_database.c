@@ -47,8 +47,6 @@
 #include "ov_vendortree.h"
 
 #include "tlsf.h"
-#include <sys/time.h>
-#include <unistd.h>
 #if OV_SYSTEM_UNIX
 #include <sys/resource.h>
 #include <sys/mman.h>
