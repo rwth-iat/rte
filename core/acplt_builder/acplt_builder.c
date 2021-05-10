@@ -1180,7 +1180,9 @@ HELP:
      */
     char *libNames[MAX_INCLUDEPATHS];
     const char *searchPaths[MAX_SEARCHPATHS];
-    int numSearchPaths = getSearchPaths(searchPaths, MAX_SEARCHPATHS, libPath);
+    char libParentPath[MAX_PATH_LENGTH];
+    snprintf(libParentPath, MAX_PATH_LENGTH, "%s/..", libPath);
+    int numSearchPaths = getSearchPaths(searchPaths, MAX_SEARCHPATHS, libParentPath);
 
     // We let searchBaseLibs write the model paths directly into `includepath`
     searchBaseLibs(libname, libNames, includepath, &includepath_ptr, (const char *const *)searchPaths,
