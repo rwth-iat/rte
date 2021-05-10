@@ -227,8 +227,8 @@ static DWORD dpagesize = 0; /* doubled pagesize */
 
 #ifdef USE_PRINTF
 #include <stdio.h>
-# define PRINT_MSG(fmt, args...) printf(fmt, ## args)
-# define ERROR_MSG(fmt, args...) printf(fmt, ## args)
+# define PRINT_MSG(fmt, ...) printf(fmt, ##__VA_ARGS__)
+# define ERROR_MSG(fmt, ...) printf(fmt, ##__VA_ARGS__)
 #else
 # if !defined(PRINT_MSG)
 #  define PRINT_MSG(fmt, args...)
