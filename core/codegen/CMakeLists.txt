@@ -23,6 +23,9 @@ target_include_directories(ov_codegen_lib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}   # Required for ov_codegen.h
     )
 target_link_libraries(ov_codegen_lib PUBLIC ovheaders)
+if(WIN32)
+	target_compile_definitions(ov_codegen_lib PRIVATE -DYY_NO_UNISTD_H=1)
+endif()
 
 
 # Actual executable (linked against static library)
