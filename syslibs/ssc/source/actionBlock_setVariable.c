@@ -42,7 +42,7 @@ static void extractBehindSeperator(const OV_STRING inputstring, OV_STRING *pathn
  * @param pathname
  * @return
  */
-OV_INSTPTR_ov_object getrelativeobjectpointer(
+OV_DLLFNCEXPORT OV_INSTPTR_ov_object getrelativeobjectpointer(
 		const OV_STRING			startPoint,
 		const OV_STRING			pathname
 ) {
