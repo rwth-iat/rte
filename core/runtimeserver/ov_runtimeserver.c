@@ -1,10 +1,3 @@
-#if !OV_SYSTEM_NT
-#define _POSIX_C_SOURCE	 199309L
-#include <time.h>	//for timespec
-#else
-#include <windows.h>	//for Sleep
-#endif
-
 #include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
@@ -20,6 +13,13 @@
 #include "ov_macros.h"
 #include "ov_malloc.h"
 #include "ov_options.h"
+
+#if !OV_SYSTEM_NT
+#define _POSIX_C_SOURCE	 199309L
+#include <time.h>	//for timespec
+#else
+#include <windows.h>	//for Sleep
+#endif
 
 /*	----------------------------------------------------------------------	*/
 /*
