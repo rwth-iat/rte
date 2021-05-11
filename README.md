@@ -165,7 +165,44 @@ If, on the other hand, ACPLT/RTE has been packaged in a local directory, the `ov
 On Windows, this is not necessary, since the OV libarary DLL files are placed in the `bin/` directory together with the executable program.
 
 
+### Tools
+
+- TODO usage of ov_dbutil
+
+
 
 ## Creating and building custom libraries
 
-TODO
+### Project types and project dependencies
+
+ACPLT/OV is meant to be extended with custom libraries, providing custom object classes.
+The 
+
+
+- TODO building against rte/library project build tree vs. including rte sources as subdirectory
+
+- TODO application project structure vs. library project structure (include vs. reference rte and other library projects)
+
+
+### Creating a new project
+
+- TODO CMakeLists.txt template (ref to example project)
+
+
+### Creating a new library
+
+- TODO library structure
+- TODO CMakeLists.txt template
+- TODO OVM template
+
+
+### Generating library source templates
+
+- TODO codegen vs. acplt_builder
+- TODO acplt_builder usage
+- TODO OV_LIBRARY_PATH environment variable
+
+
+## Debugging
+
+- TODO Valgrind
