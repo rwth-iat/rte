@@ -50,6 +50,7 @@ The Toolchain environment is places in ``MSYS2_ROOT\mingw64``.
 
 TODO Setup with Cygwin
 
+
 ### Compilation
 
 Clone the acplt/rte project from github. Create a build directory, run cmake configuration and build:
@@ -76,6 +77,11 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=export/ ..
 make -j 4 install
 ```
+
+Executables (like the ov_runtimeserver) will be placed in `bin/` and the OV libraries in`lib/`, inside the prefix directory.
+Some OV libraries will install additional files like .fbd template files to the install prefix, typically in `templates/`.
+When building for Windows platforms, the OV libraries' DLL files will be added to the `bin` directory.
+This convention will ensure that the ov_runtimeserver will find the OV libraries for dynamic linking.
 
 
 ### Cross Compiling
@@ -115,11 +121,30 @@ make -j 4 ov_codegen
 
 ## Usage
 
-On Linux, thanks to the `RPATH` set by CMake, the `ov_runtimeserver` can be started directly from the build tree and will find all the shared libraries, compiled in the same build setup. 
+The main application of ACPLT/RTE is the `ov_runtimeserver` / `ov_runtimeserver.exe`.
+It manages the object database and dyanmically links with OV libraries which provide functionality by adding object classes.
+With the help of `TCPbind`, `ksbase` and `kshttp` OV libraries (which are bundled in this repository), it allows to provide an ACPLT/KS server.
+Alternatively, the `opcua` OV library (also bundled in this repository) can be used to run an OPC UA / IEC 62541 server in OV.
+
+The ov_runtimeserver can either be configured by comand line arguments or using a configuration file.
+A simple invocation for starting an OV server with a plain new object database would be
 ```sh
-core/runtimeserver/ov_runtimeserver -f test.ovd -s MANAGER -l stdout -c 10000000 --force-create -w ksbase -w kshttp -w TCPbind -w fb
+ov_runtimeserver -f test.ovd -s MANAGER -l stdout -c 10000000 --force-create -w ksbase -w kshttp -w TCPbind -w fb
 ```
-The parameters shown above will make the `ov_runtimeserver` create a new database file (`--force-create`) of size 10 MB (`-c`) named `test.ovd` (`-f`), start a server named "MANAGER" (`-s`) with that database, and load the shared libraries `ksbase`, `kshttp`, `TCPbind` and `fb`, which will make it accessible via TCP port 7509 and provide basic functionality for function block networks.
+
+The parameters will make the `ov_runtimeserver` create a new database file (`--force-create`) of size 10 MB (`-c`) named `test.ovd` (`-f`), start a server named "MANAGER" (`-s`) with that database, and load the OV libraries `ksbase`, `kshttp`, `TCPbind` and `fb`, which will make it accessible via TCP port 7509 and provide basic functionality for function block networks.
+
+As an alternative, these configuration options can be supplied via configuration file.
+An example configuration file is provided in [misc/MANAGER.conf](misc/MANAGER.conf) in this repository.
+The path to the configuration file is specified via the `-cf` command line option.
+
+
+### Running from build tree
+
+On Linux, thanks to the `RPATH` set by CMake, the `ov_runtimeserver` can be started directly from the build tree and will find all the shared libraries which have been compiled in the same build setup. 
+```sh
+core/runtimeserver/ov_runtimeserver -cf MANAGER.conf
+```
 
 Unfortunately, Windows executables don't support something like `RPATH`.
 To test ov from the build tree all build artefacts need to be moved to a single directory.
@@ -130,9 +155,14 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out CACHE STRING "" )
 ```
 This creates a directory out in the cmake build directory where all executables and shared libraries are moved.
 
-TODO starting from *installed* package
 
-TODO create and document a ready to use config file ("servers/MANAGER directory")
+### Running from installed package
+
+On unixoid systems, if ACPLT/RTE has been installed via `make install` without a special prefix, `ov_runtimeserver` should be part of the $PATH and be invokable like any other installed program.
+The OV libraries are placed in a system shared library directory, so they are automatically found for dynamic linking.
+
+If, on the other hand, ACPLT/RTE has been packaged in a local directory, the `ov_runtimeserver` will need a proper `LD_LIBRARY_PATH` environment variable, pointing to the `lib/` directory, to locate the OV libraries at runtime.
+On Windows, this is not necessary, since the OV libarary DLL files are placed in the `bin/` directory together with the executable program.
 
 
 
