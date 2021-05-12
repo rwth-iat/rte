@@ -109,6 +109,10 @@ make -j 4 ov_codegen
 ```
 
 
+### Static linking
+
+TODO
+
 
 ## Documentation
 
@@ -173,14 +177,18 @@ On Windows, this is not necessary, since the OV libarary DLL files are placed in
 
 ## Creating and building custom libraries
 
+ACPLT/OV is meant to be extended with custom libraries, providing custom object classes.
+The the object-oriented interface of these libraries is described using a domain specific language (DSL), the .ovm files.
+In these files, object classes with attributes, operations and inheritance are declared as well as relationship types.
+
+From this declaration, C header files and some definitions are generated during compilation.
+The corresponding implementation code needs to provided as C source files.
+Templates for these source files can also be generated from the OVM model (see below).
+
+
 ### Project types and project dependencies
 
-ACPLT/OV is meant to be extended with custom libraries, providing custom object classes.
-The 
-
-
 - TODO building against rte/library project build tree vs. including rte sources as subdirectory
-
 - TODO application project structure vs. library project structure (include vs. reference rte and other library projects)
 
 
@@ -191,9 +199,58 @@ The
 
 ### Creating a new library
 
-- TODO library structure
-- TODO CMakeLists.txt template
-- TODO OVM template
+For the provided tools (CMake build scripts, acplt_builder for templates) to work, OV libraries must follow the following file structure:
+
+```txt
+<library_name>
+├── include/                     [optional, for custom C header files]
+│   └── example_custom_header.h
+├── model/
+│   ├── <library_name>.ovm
+│   ├── <library_name>.ovf       [optional, C header for function type decl.]
+│   └── <library_name>.ovt       [optional, C header for data type declarations]
+├── source/
+│   ├── className1.c
+│   ├── className2.c
+│   └── example_custom_code.c
+└── CMakeLists.txt
+```
+
+For simple OV libraries, the `CMakeLists.txt` file only requires two lines:
+```cmake
+add_ov_library(<library_name>)
+ov_library_includes(<library_name> <dependency1> <dependency2>)
+```
+
+The `add_ov_library()` function defines a CMake library target for the OV library, which is compiled from all `.c` files in the `source/` directory as well as the sources generated from the OVM file in the `model/` directory.
+The `include/` directory is automatically added as include path for compilation (if present).
+The `ov_library_includes()` defines OV library dependencies which must be considered for code generation and linking.
+It also sets up the OV code generation build step for the library.
+
+Notes:
+- `ov_library_includes()` must name all OV library dependencies that are listed as `#include` in the library's OVM file.
+- `ov_library_includes()` must always be present. Typically there's at least one dependency, e.g. on one of the core libraries like `ov` or `fb`.
+- `ov_library_includes()` must not be used to link against other libraries/targets than OV libraries.
+
+Additional settings for the compilation or linking of the library can be added through the usual CMake commands, e.g.
+- adding compiler flags like `target_compile_definitions(<library_name> PRIVATE -DMY_PREPROCESSOR_DEF=1)`
+- linking additional libraries like
+  ```cmake
+  if (WIN32)
+      target_link_libraries(<library_name> PRIVATE winmm.lib ws2_32.lib)
+  endif()
+  ```
+  (If compiled libraries are provided with the OV library sources, they should by convention be placed in a `lib/` directory.)
+- Adding additional build steps for preperation of additional sources like
+  ```cmake
+  add_custom_command (
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated_foo.c
+      COMMAND tclsh ${CMAKE_CURRENT_SOURCE_DIR}/prebuild.tcl foo.txt ${CMAKE_CURRENT_BINARY_DIR}/generated_foo.c
+      DEPENDS foo.txt
+      COMMENT "Using tclsh to generate foo for <library_name>"
+      )
+  target_sources(<library_name> PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated_foo.c)
+  ```
 
 
 ### Generating library source templates
