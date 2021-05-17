@@ -111,7 +111,11 @@ make -j 4 ov_codegen
 
 ### Static linking
 
-TODO
+The build system allows to link the `ov_runtimeserver` statically with all OV libraries of a project.
+This way, the `ov_runtimeserver` can be installed as a single binary without additional .dll/.so files required at runtime.
+
+To enable static linking, set the CMake variable `OV_STATIC_LIBRARIES=ON`.
+This will change the definition of all OV libraries in the project to static libraries (instead of dynamic libraries) and add them as linker dependencies to the `ov_runtimeserver` executable.
 
 
 ## Documentation
