@@ -360,9 +360,43 @@ Additional settings for the compilation or linking of the library can be added t
 
 ### Generating library source templates
 
-- TODO codegen vs. acplt_builder
-- TODO acplt_builder usage
-- TODO OV_LIBRARY_PATH environment variable
+As explained above, the C header files and some definitions for the object-oriented model of the library are generated from the OVM file during build, using the `ov_codegen` program.
+However, the implementation of getter- and setter functions and operations, including inherited operations, must be provided in the user-provided C code.
+Their signature and naming must match the declarations in the generated C headers exactly to pass compilation.
+
+The `acplt_builder` program can be used to help with this.
+It generates template C files from the OVM definition and places them in a subdirectory `source/sourcetemplates/` in the library's directory.
+
+The usage is really simple:
+```sh
+acplt_builder -f -l path/to/library/model/library.ovm
+```
+
+However, to generated these templates, `acplt_builder` must be able to find and read OVM files of all dependency libraries, that have been included into the target library's OVM file.
+In contrast to `ov_codegen`, which gets the paths of included OVM files from the CMake build system, `acplt_builder` searches a list of search paths for the included libraries.
+These search paths include the current working directory, its parent directory and the target library's parent directory.
+Other search paths can be added via the `OV_LIBRARY_PATH` environment variable.
+Similar to the $PATH/%PATH% variable, it should contain a list of directories, which contain libraries, separated by colon `:` on \*NIX systems resp. semicolon `;` on Windows.
+
+To use `acplt_builder` for building the `project_specific_library` from the application-specific project example above, you would have to use it as follows (assuming, that you use `./build` as the build directory and already compiled `acplt_builder`):
+```bash
+cd project_example/
+export OV_LIBRARY_PATH="$(pwd)/rte/core:$(pwd)/rte/syslibs:$(pwd)/rte_fblib:$(pwd)/rte_example_libs"
+build/rte/core/acplt_builder -f -l project_specific_library/model/project_specific_library.ovm
+``` 
+
+You may want to create a shell script for each project to setup a development environment correctly, e.g.:
+```bash
+#!/bin/bash
+# to be placed in project root ...
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+export OV_LIBRARY_PATH="${SCRIPT_DIR}/rte/core:${SCRIPT_DIR}/rte/syslibs:${SCRIPT_DIR}/rte_fblib:${SCRIPT_DIR}/rte_example_libs"
+export PATH="${PATH}:${SCRIPT_DIR}/build/rte/core/"
+```
+
+You may also want to configure your IDE to invoke `acplt_builder` every time the model files are edited.
+An example configuration for CLion is provided in [tools/CLion](tools/CLion).
 
 
 ## Debugging
