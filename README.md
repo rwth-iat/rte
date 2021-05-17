@@ -186,15 +186,120 @@ The corresponding implementation code needs to provided as C source files.
 Templates for these source files can also be generated from the OVM model (see below).
 
 
-### Project types and project dependencies
+### Project structure
 
-- TODO building against rte/library project build tree vs. including rte sources as subdirectory
-- TODO application project structure vs. library project structure (include vs. reference rte and other library projects)
+Due to the required build metadata for code generation an compilation, OV libraries must be compiled in a single CMake project with all their OV library dependencies, including the OV core libraries in this repository.
+This means, that the sources of library dependencies must be added as a subdirectory of the custom library project (preferably as a Git submodule).
+As an alternative, the CMake build metadata can be imported from another project's build tree, which uses `export(EXPORT …)`.
+This allows to build dependency projects (like the OV core libraries) first and use `find_package()` in the depedent project's `CMakeLists.txt` for using the required build metadata, sources and build artifacts.
+
+To allow reusing of custom OV libraries in different application scenarios, we propose implementing them in separate "library projects" that can then be used as a dependency in application-specific projects.
+Application-specific projects can then include all the required library projects as well as this `rte` repository subdirectories (Git submodules) to build the runtime environment and all required libraries in a single build step.
+To allow any combination of library projects in an application-specific project, library projects should **not** include the `rte` core project.
+Instead they should use the `find_package()` import method, as described above, to be build independently.
 
 
-### Creating a new project
+#### Application-specific project
 
-- TODO CMakeLists.txt template (ref to example project)
+According to the description above, the structure of a library project should look like this:
+
+```txt
+project_example/
+├── project_specific_library/
+│   └── ...                      [see below]
+├── rte/                         [preferrably as Git submodule]
+│   └── ...
+├── rte_fblib/                   ["official" library project, preferrably as Git submodule]
+│   └── ...
+├── rte_example_libs/            [preferrably as Git submodule]
+│   └── ...
+└── CMakeLists.txt
+```
+
+With a `CMakeLists.txt`, similar to this:
+
+```cmake
+cmake_minimum_required(VERSION 3.13)
+
+project(project_example C)
+
+# Include ov core project from subdirectory
+add_subdirectory(rte)
+
+# Include ov helper functions and definitions
+# (required for `add_ov_library()` etc.)
+get_target_property(RTE_CMAKE_DIR ov RTE_CMAKE_DIR)
+include(${RTE_CMAKE_DIR}/ov_functions.cmake)
+include(${RTE_CMAKE_DIR}/ov_definitions.cmake)
+
+# Include library projects
+add_subdirectory(rte_fblib)
+add_subdirectory(rte_example_libs)
+
+# Disable default build of unrequired libraries from library projects
+# (can be re-enabled during CMake build using -DBUILD_OV_LIBRARY_UDPbind=ON etc.
+#  Libraries can also still be build explicitly with `make UDPbind` etc.)
+SET(BUILD_OV_LIBRARY_UDPbind OFF CACHE BOOL "")
+SET(BUILD_OV_LIBRARY_SSChelper OFF CACHE BOOL "")
+
+# Include libraries of this project
+add_subdirectory(project_specific_library)
+
+# Finish up build file generation, especially for statically linked builds
+# Must be called after last OV library definition!
+ov_finish_project()
+```
+
+
+#### Library project
+
+In contrast, a library project should only include the OV library sources, not the `rte` project or any other library project:
+
+```txt
+rte_example_libs/
+├── example_library/
+│   └── ...                      [see below]
+├── another_example_library/
+│   └── ...
+└── CMakeLists.txt
+```
+
+However, we need some additional tricks in the `CMakeLists.txt` to locate the `RTE` project's build metadata (and maybe other library projects' build metadata) and export this project's build metadata to be included by other library projects:
+
+```cmake
+cmake_minimum_required(VERSION 3.13)
+
+project(rte_example_libs C)
+
+# Find and include RTE CMake project (if it isn't already included by a parent project)
+find_package(RTE)
+
+# Include ov helper functions and definitions
+get_target_property(RTE_CMAKE_DIR ov RTE_CMAKE_DIR)
+include(${RTE_CMAKE_DIR}/ov_functions.cmake)
+include(${RTE_CMAKE_DIR}/ov_definitions.cmake)
+
+# Add libraries of this project
+add_subdirectory(example_library)
+add_subdirectory(another_example_library)
+
+# Export all targets to allow importing from build tree via find_package(RTEExampleLibs)
+# This does only make sense if this is the root project
+get_directory_property(hasParent PARENT_DIRECTORY)
+if(NOT hasParent)
+    export(EXPORT ${PROJECT_NAME}
+         FILE RTEExampleLibsConfig.cmake)
+endif()
+```
+
+If we want to build this library project as a stand-alone project (i.e. not as a subdirectory of an application-specific project), we need to build the `rte` project before and make sure that `find_package(RTE)` is able to find the rte project's metadata in its build directory.
+This can be achieved by setting the cmake variable `CMAKE_PREFIX_PATH` to the path to rte's build directory when invoking CMake for the library project:
+
+```sh
+...
+cmake -DCMAKE_PREFIX_PATH="/path/to/rte/build" ..
+make -j4
+```
 
 
 ### Creating a new library
