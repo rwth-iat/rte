@@ -74,7 +74,6 @@ function(add_ov_library OV_LIBRARY_NAME)
                 APPEND
                 PROPERTY BUILD_RPATH ${CMAKE_CURRENT_BINARY_DIR})
         endif()
-        target_compile_definitions(${OV_LIBRARY_NAME} PRIVATE -DOV_COMPILE_LIBRARY_${OV_LIBRARIY_NAME})
 
         # Install rules
         install(TARGETS ${OV_LIBRARY_NAME}
