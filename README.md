@@ -178,7 +178,7 @@ On Windows, this is not necessary, since the OV libarary DLL files are placed in
 ## Creating and building custom libraries
 
 ACPLT/OV is meant to be extended with custom libraries, providing custom object classes.
-The the object-oriented interface of these libraries is described using a domain specific language (DSL), the .ovm files.
+The object-oriented interface of these libraries is described using a domain specific language (DSL), the .ovm files.
 In these files, object classes with attributes, operations and inheritance are declared as well as relationship types.
 
 From this declaration, C header files and some definitions are generated during compilation.
@@ -202,7 +202,7 @@ Templates for these source files can also be generated from the OVM model (see b
 For the provided tools (CMake build scripts, acplt_builder for templates) to work, OV libraries must follow the following file structure:
 
 ```txt
-<library_name>
+<library_name>/
 ├── include/                     [optional, for custom C header files]
 │   └── example_custom_header.h
 ├── model/
