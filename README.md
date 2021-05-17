@@ -118,15 +118,6 @@ To enable static linking, set the CMake variable `OV_STATIC_LIBRARIES=ON`.
 This will change the definition of all OV libraries in the project to static libraries (instead of dynamic libraries) and add them as linker dependencies to the `ov_runtimeserver` executable.
 
 
-## Documentation
-
-* An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
-* Link to technological overview (german): [ACPLT-Technologiekonzept](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/ACPLT-Technologiekonzept.pdf)  
-* Link to functionblock and sequencial-state-chart overview (german): [ACPLT-Funktionsbausteine_und_SSCs](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/Funktionsbausteine_und_SSCs.pdf)
-* Old but useful documentations can be found at: [ACPLT-OV Doc old](https://github.com/acplt/rte-www/blob/gh-pages/doc/old)
-
-
-
 ## Usage
 
 The main application of ACPLT/RTE is the `ov_runtimeserver` / `ov_runtimeserver.exe`.
@@ -401,6 +392,14 @@ export PATH="${PATH}:${SCRIPT_DIR}/build/rte/core/"
 
 You may also want to configure your IDE to invoke `acplt_builder` every time the model files are edited.
 An example configuration for CLion is provided in [tools/CLion](tools/CLion).
+
+
+## Documentation
+
+* An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
+* Link to technological overview (german): [ACPLT-Technologiekonzept](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/ACPLT-Technologiekonzept.pdf)  
+* Link to functionblock and sequencial-state-chart overview (german): [ACPLT-Funktionsbausteine_und_SSCs](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/Funktionsbausteine_und_SSCs.pdf)
+* Old but useful documentations can be found at: [ACPLT-OV Doc old](https://github.com/acplt/rte-www/blob/gh-pages/doc/old)
 
 
 ## Debugging
