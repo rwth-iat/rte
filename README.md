@@ -404,4 +404,26 @@ An example configuration for CLion is provided in [tools/CLion](tools/CLion).
 
 ## Debugging
 
-- TODO Valgrind
+ACPLT/RTE can generally be debugged like any other C program. One feature of ACPLT/RTE is the persistent database which is used to preserve structures and states between server starts.
+
+On its own, the software already provides some debugging functionality.
+In debug builds the server will check the consistency of the database during shutdown.
+This includes the allocated data blocks in the database.
+The server will report allocated blocks that are no longer reachable through the OV data model and thus will be lost on the next start.
+The origin of lost blocks can be investigated with valgrind.
+
+A list of allocated pointers in a database can be obtained with the `ov_dbutil` executable and the `--print-pointer` option.
+
+Pointer found in the data model are listed with the offset from the start of the database, the object id of the containing ov object and the path to the object.
+Lost pointers are presented with the offset from the start of the database, the content of the block as a string, its length and the block number.
+
+### Valgrind
+
+ACPLT/RTE also provides extended valgrind support for debugging the persistent database.
+This support can be activated via the `OV_VALGRIND` cmake option.
+Instances build with this option and invoked with valgrind, will show mem leaks and access warnings for the database as well as for the default memory pool (malloc).
+
+This however decreases the performance of the custom memory allocator dramatically, to the point where the webinterface may no longer be usable.
+For such cases, allocation in the database can be redirected to malloc.
+To start redirecting allocations, change the variable `/vendortree/use_malloc` to True.
+This step cannot be reversed during runtime, and the database cannot be started again.
