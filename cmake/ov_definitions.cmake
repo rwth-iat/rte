@@ -11,7 +11,7 @@ endif()
 add_compile_options($<$<CONFIG:Debug>:-DOV_DEBUG=1>)
 
 # General compiler options for OV and all libs
-add_compile_options(-std=c99 -Wall)
+add_compile_options(-Wall)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     add_compile_options(-Wno-unused-parameter -Winit-self  -Wno-attributes)
 endif()

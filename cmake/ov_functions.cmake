@@ -31,6 +31,8 @@ function(add_ov_library OV_LIBRARY_NAME)
         $<INSTALL_INTERFACE:models>
         $<INSTALL_INTERFACE:include/${OV_LIBRARY_NAME}>)
 
+    set_property(TARGET ${OV_LIBRARY_NAME} PROPERTY C_STANDARD 99)
+
     # Define option to let the user disable default build of this library
     option(BUILD_OV_LIBRARY_${OV_LIBRARY_NAME}
         "Compile ACPLT/OV library '${OV_LIBRARY_NAME}'"
