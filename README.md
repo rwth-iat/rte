@@ -14,7 +14,7 @@ The runtime environment is used at industry scale in the petro chemical plants a
 
 To compile the ACPLT/RTE yourself you need to follow the steps presented here.
 Currently, ACPLT/RTE can be compiled on GNU/Linux and MinGW on Windows.
-Cross-compiling on Linux for Windows is also possible, using the MinGW compilers.
+Cross-compiling on Linux for Windows is also possible, using the MinGW compilers or (experimentally) the Microsoft Visual C compiler.
 
 On any platform, you'll need a C compiler, make, cmake, tclsh, bison and flex.
 
@@ -25,7 +25,7 @@ sudo apt install build-essential tcl bison flex cmake
 ```
 
 On Windows, you can setup a Cygwin or MSys environment or download the required tools separatly:
-* http://mingw-w64.org/doku.php/download/mingw-builds
+* http://mingw-w64.org/doku.php/download/mingw-builds  (if not using MSVC)
 * https://cmake.org/download/
 * https://www.magicsplat.com/tcl-installer/index.html
 * https://github.com/lexxmark/winflexbison/releases
@@ -65,6 +65,24 @@ make -j 4
 
 On Windows with MinGW (without Cygwin), use `mingw32-make.exe` instead of `make`.
 
+On Windows with Visual Studio / MSVC, you can either:
+* Start Visual Studio, open the project directory as a "local folder" or clone it from a Git repository.
+  Visual Studio will automatically detect the CMakeLists.txt and run CMake to create a Solution file.
+  If not, you can use *Project* → *Generate Cache for {project_name}* to run CMake.
+  When finished, you should be able to start compilation via *Build* → *Install {project_name}*.
+  ("Install" means packaging to `.\out\install` by default.)
+
+* Start a development command line (or PowerShell) in the project directory and run cmake and `msbuild.exe` manually.
+  See https://docs.microsoft.com/en-us/cpp/build/building-on-the-command-line for more details.
+  Example procedure, assuming Visual Studio 2019 Community Edition:
+  ```bat
+  "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat"
+  mkdir build
+  cd build
+  cmake ..
+  msbuild.exe INSTALL.vcxproj
+  ```
+Keep in mind, that you will still need to install tclsh, bison and flex manually (see above) and add them to your %PATH%.
 
 ### Packaging / Installing
 
