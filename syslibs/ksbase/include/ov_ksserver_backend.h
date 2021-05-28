@@ -870,7 +870,7 @@ OV_DLLFNCEXPORT void ov_ksserver_ticket_setdefaultaccess(OV_ACCESS access);
 /*
 *	Execute the GetPP service (subroutine)
 */
-void ov_ksserver_getpp(
+OV_DLLFNCEXPORT void ov_ksserver_getpp(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_GETPP_PAR	*params,
@@ -892,7 +892,7 @@ OV_RESULT ov_ksserver_getpp_additem(
 /*
 *	Execute the GetVar service (subroutine)
 */
-void ov_ksserver_getvar(
+OV_DLLFNCEXPORT void ov_ksserver_getvar(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_GETVAR_PAR	*params,
@@ -912,7 +912,7 @@ void ov_ksserver_getvar_getitem(
 /*
 *	Execute the SetVar service (subroutine)
 */
-void ov_ksserver_setvar(
+OV_DLLFNCEXPORT void ov_ksserver_setvar(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_SETVAR_PAR	*params,
@@ -932,7 +932,7 @@ OV_RESULT ov_ksserver_setvar_setitem(
 /*
 *	Execute the GetEP service (subroutine)
 */
-void ov_ksserver_getep(
+OV_DLLFNCEXPORT void ov_ksserver_getep(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_GETEP_PAR	*params,
@@ -955,7 +955,7 @@ OV_RESULT ov_ksserver_getep_additem(
 /*
 *	Execute the Link service (subroutine)
 */
-void ov_ksserver_link(
+OV_DLLFNCEXPORT void ov_ksserver_link(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_LINK_PAR	*params,
@@ -978,7 +978,7 @@ OV_RESULT ov_ksserver_link_linkitem(
 /*
 *	Execute the DataExchange service (subroutine)
 */
-void ov_ksserver_exgdata(
+OV_DLLFNCEXPORT void ov_ksserver_exgdata(
 	const OV_UINT			version,
 	const OV_TICKET			*pticket,
 	const OV_EXGDATA_PAR	*params,
@@ -988,7 +988,7 @@ void ov_ksserver_exgdata(
 /*
 *	Execute the CreateObject service (subroutine)
 */
-void ov_ksserver_createobject(
+OV_DLLFNCEXPORT void ov_ksserver_createobject(
 	const OV_UINT				version,
 	const OV_TICKET				*pticket,
 	const OV_CREATEOBJECT_PAR	*params,
@@ -1006,7 +1006,7 @@ OV_RESULT ov_ksserver_createobject_initobj(
 /*
 *	Execute the DeleteObject service (subroutine)
 */
-void ov_ksserver_deleteobject(
+OV_DLLFNCEXPORT void ov_ksserver_deleteobject(
 	const OV_UINT				version,
 	const OV_TICKET				*pticket,
 	const OV_DELETEOBJECT_PAR	*params,
@@ -1016,7 +1016,7 @@ void ov_ksserver_deleteobject(
 /*
 *	Execute the RenameObject service (subroutine)
 */
-void ov_ksserver_renameobject(
+OV_DLLFNCEXPORT void ov_ksserver_renameobject(
 	const OV_UINT				version,
 	const OV_TICKET				*pticket,
 	const OV_RENAMEOBJECT_PAR	*params,
@@ -1026,7 +1026,7 @@ void ov_ksserver_renameobject(
 /*
 *	Execute the GetCanonicalPath service (subroutine)
 */
-void ov_ksserver_getcanonicalpath(
+OV_DLLFNCEXPORT void ov_ksserver_getcanonicalpath(
 	const OV_UINT					version,
 	const OV_TICKET					*pticket,
 	const OV_GETCANONICALPATH_PAR	*params,
@@ -1036,7 +1036,7 @@ void ov_ksserver_getcanonicalpath(
 /*
 *	Execute the Unlink service (subroutine)
 */
-void ov_ksserver_unlink(
+OV_DLLFNCEXPORT void ov_ksserver_unlink(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_UNLINK_PAR	*params,
@@ -1055,7 +1055,7 @@ OV_RESULT ov_ksserver_unlink_unlinkitem(
 /*
 *	Execute the GetHist service (subroutine)
 */
-void ov_ksserver_gethist(
+OV_DLLFNCEXPORT void ov_ksserver_gethist(
 	const OV_UINT			version,
 	const OV_TICKET			*pticket,
 	const OV_GETHIST_PAR	*params,

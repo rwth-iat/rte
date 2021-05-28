@@ -47,8 +47,9 @@
 #include "ov_vendortree.h"
 
 #include "tlsf.h"
-#include <sys/time.h>
-#include <unistd.h>
+
+#include <stdint.h>
+
 #if OV_SYSTEM_UNIX
 #include <sys/resource.h>
 #include <sys/mman.h>
@@ -2320,9 +2321,9 @@ OV_DLLFNCEXPORT void ov_freelist_print(){
 			}
 
 			if(ptr>=(OV_POINTER)pdb->pstart && ptr<=(OV_POINTER)pdb->pend){
-				ov_logfile_debug("pointer inside db  %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+				ov_logfile_debug("pointer inside db  %p -> %s", (uintptr_t)ptr-(uintptr_t)pdb, freelistCur->desc[iter]);
 			} else {
-				ov_logfile_debug("pointer outside db %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+				ov_logfile_debug("pointer outside db %p -> %s", (uintptr_t)ptr-(uintptr_t)pdb, freelistCur->desc[iter]);
 
 			}
 		}
@@ -2342,12 +2343,11 @@ OV_DLLFNCEXPORT void ov_freelist_print(){
 			}
 			freelistCur = freelistCur->pnext;
 		}
-
 		if(!found){
 			tmpSize = sizes[pc - poolPtrs];
 			ov_logfile_debug(
 					"block pointer %p not found in pointer list (content: %*.*s; length: %u; block nr. %u)",
-					*pc - (void*) pdb, tmpSize, tmpSize, *pc, tmpSize, pc - poolPtrs);
+					(uintptr_t)*pc - (uintptr_t) pdb, tmpSize, tmpSize, *pc, tmpSize, pc - poolPtrs);
 		}
 
 		pc++;
@@ -2399,7 +2399,7 @@ static void ov_freelist_free() {
 				if(mallocActive)
 					free(ptr);
 				else
-					ov_logfile_warning("pointer outside db %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+					ov_logfile_warning("pointer outside db %p -> %s", (uintptr_t)ptr-(uintptr_t)pdb, freelistCur->desc[iter]);
 			}
 		}
 	}
@@ -2420,13 +2420,11 @@ static void ov_freelist_free() {
 			}
 			freelistCur = freelistCur->pnext;
 		}
-
 		if(!found){
 			ov_logfile_warning(
 					"block pointer %p not found in pointer list (content: %s; length: %u; block nr. %u)",
-					*pc - (void*) pdb, *pc, sizes[pc - poolPtrs], pc - poolPtrs);
+					(uintptr_t )*pc - (uintptr_t) pdb, *pc, sizes[pc - poolPtrs], pc - poolPtrs);
 		}
-
 		pc++;
 	}
 

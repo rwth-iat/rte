@@ -36,12 +36,12 @@
 
 UA_Logger ov_UAlogger_new(void);
 
-UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result);
-UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant);
-UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type);
-UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny);
-UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess);
-OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess);
+OV_DLLFNCEXPORT UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result);
+OV_DLLFNCEXPORT UA_StatusCode ov_AnyToVariant(const OV_ANY* pAny, UA_Variant* pVariant);
+OV_DLLFNCEXPORT UA_NodeId ov_varTypeToNodeId(OV_VAR_TYPE type);
+OV_DLLFNCEXPORT UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny);
+OV_DLLFNCEXPORT UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess);
+OV_DLLFNCEXPORT OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess);
 
 UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port);
 
@@ -49,9 +49,9 @@ OV_INSTPTR_opcua_ovNetworkLayer getOvNetworkLayer();
 void opcua_ovNetworklayer_addConnToDelete(UA_Connection* connection);
 void opcua_ovNetworklayer_addConnToClose(UA_Connection* connection);
 
-OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst);
+OV_DLLFNCEXPORT OV_RESULT copyOPCUAStringToOV(UA_String src, OV_STRING *dst);
 
-UA_StatusCode addReference(UA_Node *node);
+OV_DLLFNCEXPORT UA_StatusCode addReference(UA_Node *node);
 
 OV_DLLFNCEXPORT const UA_Node * OV_NodeStore2_getNode(void *handle, const UA_NodeId *nodeId);
 

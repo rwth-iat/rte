@@ -184,11 +184,11 @@ typedef OV_ENUM OV_VAR_PROPS;
 	#define OV_VL_MININT	INT32_MIN
 	#define OV_VL_MININT64	INT64_MIN
 #else
-	typedef	boot_t	OV_BOOL;		/* bool value */
+	typedef	bool_t	OV_BOOL;		/* bool value */
 	typedef long	OV_INT;			/* integer value */
 	typedef u_long	OV_UINT;	/* unsigned integer value */
 	typedef __int64		OV_INT64;			/* 64bit integer value -- internal use only -- */
-	typedef __uint64	OV_UINT64;	/* 64bit unsigned integer value -- internal use only -- */
+	typedef unsigned __int64	OV_UINT64;	/* 64bit unsigned integer value -- internal use only -- */
 
 	#define OV_VL_MAXINT 2147483647
 	#define OV_VL_MAXINT64 9223372036854775807LL

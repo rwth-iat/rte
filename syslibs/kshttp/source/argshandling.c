@@ -281,7 +281,7 @@ OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP
 *	Note: the memory for the returned string is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
 */
-OV_DLLFNCEXPORT OV_STRING kshttp_ov_path_topercent_noslash (
+OV_STRING kshttp_ov_path_topercent_noslash (
 				OV_STRING org
 ) {
 	OV_STRING newstring;

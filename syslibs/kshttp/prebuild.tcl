@@ -71,6 +71,7 @@ proc processDir {dirname} {
 		puts $out "		ov_string_setvalue(&(pindexhtml->v_content), \"\\"
 		
 		# line-by-line, read the original file
+		set literal_length 0
 		while {[gets $in line] != -1} {
 			#transform $line somehow, order of manipulation matters
 			
@@ -85,6 +86,12 @@ proc processDir {dirname} {
 			}
 			#recode lineending
 			set line "$line\\n\\"
+			set literal_length [expr {$literal_length} + [string length $line]]
+			# MSVC does not like long string literals. So let's use C string literal concatenation before this limit is reached.
+			if {$literal_length > 2048 - 100} {
+				puts -nonewline $out "\" \""
+				set literal_length 0
+			}
 			# then write the transformed line
 			puts $out $line
 		}

@@ -42,7 +42,7 @@
 
 /*	----------------------------------------------------------------------	*/
 
-static OV_RESULT ov_string_print_allocator(
+OV_DLLFNCEXPORT OV_RESULT ov_string_print_allocator(
 	OV_STRING			*pstring,
 	enum ov_allocator	allocator,
 	const OV_STRING		format,

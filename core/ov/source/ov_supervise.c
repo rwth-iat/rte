@@ -100,7 +100,7 @@ LRESULT CALLBACK ov_supervise_timerwndproc(HWND hWnd, UINT Msg,
 				CONTEXT context;
 				context.ContextFlags = CONTEXT_CONTROL;
 				if(GetThreadContext(mainthread, &context)) {
-#ifdef __x86_64
+#if defined(__x86_64) || defined(_M_AMD64)
 					context.Rip = (DWORD64)ov_supervise_execlongjump;
 #else
 					context.Eip = (DWORD)ov_supervise_execlongjump;

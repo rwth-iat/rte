@@ -122,6 +122,6 @@
 
 #endif
 
-OV_INSTPTR_ov_object getrelativeobjectpointer(const OV_STRING startPoint, const OV_STRING pathname);
+OV_DLLFNCEXPORT OV_INSTPTR_ov_object getrelativeobjectpointer(const OV_STRING startPoint, const OV_STRING pathname);
 OV_RESULT ssc_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value);
 OV_RESULT ssc_getObjectFromExecute(const OV_INSTPTR_ssc_execute pinst, const OV_STRING nameToCheck, OV_INSTPTR_fb_functionblock *pTargetObj);
