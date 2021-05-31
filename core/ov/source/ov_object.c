@@ -1501,7 +1501,7 @@ OV_RESULT ov_object_move(
 			if(Ov_IsVar(pelem)) {
 				Ov_UndoCopyAdjust(OV_ATBLPTR, pelem->v_linktable);
 				pvar = Ov_StaticPtrCast(ov_variable, pelem);
-				//fixme ignore initial value
+				//fixme ignore initial value -> clear in ov_library_shutdown
 				if(!(pvar->v_varprops & OV_VP_DERIVED)) {
 					if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRUCT) {
 						/*
@@ -1541,6 +1541,7 @@ OV_RESULT ov_object_move(
 									if(pany->value.valueunion.val_generic_vec.value && (((OV_BYTE*) pany->value.valueunion.val_generic_vec.value + distance) < pdb->pstart || ((OV_BYTE*) pany->value.valueunion.val_generic_vec.value + distance) > pdb->pend))
 									{
 										#ifdef OV_DEBUG
+										if(pany->value.valueunion.val_generic_vec.veclen)
 											ov_logfile_error("moving pointers: vector variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));
 										#endif
 										pany->value.valueunion.val_generic_vec.veclen = 0;
@@ -1554,6 +1555,7 @@ OV_RESULT ov_object_move(
 										if(pvector->value && (((OV_BYTE*) pvector->value + distance) < pdb->pstart || ((OV_BYTE*) pvector->value + distance) > pdb->pend))
 										{
 											#ifdef OV_DEBUG
+											if(pvector->veclen)
 												ov_logfile_error("moving pointers: string vector variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));
 											#endif
 											pvector->value = NULL;
@@ -1585,11 +1587,12 @@ OV_RESULT ov_object_move(
 							Ov_Adjust(OV_POINTER, ((OV_GENERIC_VEC*)Ov_VarAddress
 								(pobj, pvar->v_offset))->value);
 							
-							#ifdef OV_DEBUG							
-							if(((OV_BYTE*) ((OV_GENERIC_VEC*) Ov_VarAddress
-								(pobj, pvar->v_offset))->value + distance) < pdb->pstart || ((OV_BYTE*) ((OV_GENERIC_VEC*) Ov_VarAddress
-								(pobj, pvar->v_offset))->value + distance) > pdb->pend)
+							#ifdef OV_DEBUG
+							if(((OV_GENERIC_VEC*) Ov_VarAddress(pobj, pvar->v_offset))->veclen &&
+								(((OV_BYTE*) ((OV_GENERIC_VEC*) Ov_VarAddress(pobj, pvar->v_offset))->value) < pdb->pstart ||
+								((OV_BYTE*) ((OV_GENERIC_VEC*) Ov_VarAddress(pobj, pvar->v_offset))->value) > pdb->pend))
 							{
+								ov_logfile_error("vector value outside database; setting length to 0");
 								((OV_GENERIC_VEC*) Ov_VarAddress (pobj, pvar->v_offset))->veclen = 0;
 							}
 							#endif
