@@ -11,10 +11,10 @@ endif()
 add_compile_options($<$<CONFIG:Debug>:-DOV_DEBUG=1>)
 
 # General compiler options for OV and all libs
-if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+if (NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
     add_compile_options(-Wall)
 endif()
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
     add_compile_options(-Wno-unused-parameter -Winit-self  -Wno-attributes)
 endif()
 if(OV_STATIC_LIBRARIES)
