@@ -86,11 +86,11 @@ jobs:
         Invoke-WebRequest -Uri "https://github.com/lexxmark/winflexbison/releases/download/v2.5.24/win_flex_bison-2.5.24.zip" -OutFile win_flex_bison.zip
         mkdir flex_bison
         Expand-Archive win_flex_bison.zip -DestinationPath flex_bison
+        Add-Content $env:GITHUB_PATH "$pwd\flex_bison"
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
     - name: build
       run: |
-        $env:Path += ";$pwd\flex_bison"
         mkdir build
         cd build
         cmake ..
