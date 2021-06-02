@@ -211,9 +211,17 @@ Application-specific projects can then include all the required library projects
 To allow any combination of library projects in an application-specific project, library projects should **not** include the `rte` core project.
 Instead they should use the `find_package()` import method, as described above, to be build independently.
 
+A lot of the standard OV libraries, previously packaged as "addonlibs" in this repository are now provided in separate library projects:
+- [rte_fblib](https://github.com/acplt/rte_fblib) provides several generic and special function block libraries
+- [rte_field](https://github.com/acplt/rte_field) provides OV/FB libraries for field device connection
+- [rte_misc](https://github.com/acplt/rte_misc) provides miscellaneous helper libraries
+
+The libraries for creating AssetAdministrationShells in ACPLT/RTE, originally from the openAAS project, have been moved to an application-specific project: [rte_project_openaas](https://github.com/acplt/rte_project_openaas),
+
 
 #### Application-specific project
 
+An example of an application-specific project can be found in a separate Git repository on GitHub: https://github.com/acplt/rte_example_project
 According to the description above, the structure of a library project should look like this:
 
 ```txt
@@ -266,7 +274,9 @@ ov_finish_project()
 
 #### Library project
 
-In contrast, a library project should only include the OV library sources, not the `rte` project or any other library project:
+In contrast, a library project should only include the OV library sources, not the `rte` project or any other library project.
+As an example for a library project, take a look at the `rte_fblib` repository at GitHub: https://github.com/acplt/rte_fblib
+A typical structure would look like this:
 
 ```txt
 rte_example_libs/
