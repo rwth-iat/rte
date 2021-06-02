@@ -1,0 +1,97 @@
+name: build
+
+on:
+  push:
+    branches: [ master, develop, ov3 ]
+  pull_request:
+    branches: [ master, develop, ov3 ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install additional build dependencies
+      run: |
+        sudo apt-get install -y --no-install-recommends tcl
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make -j 3
+
+  build-mingw-x64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install additional build dependencies
+      run: |
+        sudo apt-get install -y --no-install-recommends tcl gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make -j 3 ov_codegen
+        cd ..
+        mkdir build-win32
+        cd build-win32
+        cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-x86_64.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" ..
+        make -j 3
+
+  build-linux-armhf:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install additional build dependencies
+      run: |
+        sudo apt-get install -y --no-install-recommends tcl gcc-arm-linux-gnueabihf libc6-dev-armhf-cross
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make -j 3 ov_codegen
+        cd ..
+        mkdir build-armhf
+        cd build-armhf
+        cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/gcc-linux-armhf.cmake -DOV_CODEGEN_PATH="../build/core/codegen/ov_codegen" ..
+        make -j 3
+
+  build-static:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install additional build dependencies
+      run: |
+        sudo apt-get install -y --no-install-recommends tcl
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake -DOV_STATIC_LIBRARIES=TRUE ..
+        make -j 3
+
+  build-msvc:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Magicsplat Tcl
+      run: |
+        Invoke-WebRequest -Uri "https://sourceforge.net/projects/magicsplat/files/magicsplat-tcl/tcl-8.6.11-installer-1.11.2-x64.msi/download" -OutFile tcl-installer.msi -UserAgent "NativeHost"
+        msiexec /passive /i tcl-installer.msi
+    - name: Install WinFlexBison
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/lexxmark/winflexbison/releases/download/v2.5.24/win_flex_bison-2.5.24.zip" -OutFile win_flex_bison.zip
+        mkdir flex_bison
+        Expand-Archive win_flex_bison.zip -DestinationPath flex_bison
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+    - name: build
+      run: |
+        $env:Path += ";$pwd\flex_bison"
+        mkdir build
+        cd build
+        cmake ..
+        msbuild.exe INSTALL.vcxproj
