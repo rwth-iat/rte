@@ -210,8 +210,12 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 				}
 
     			/* exit */
-				if(pExit->v_actimode!=FB_AM_ON || fb_task_is_urtaskchild(pExit))
-					Ov_Call1 (fb_task, pExit, execute, pltc);
+				// check exit task is linked correctly
+				if(Ov_GetParent(fb_tasklist, pExit)!=(Ov_PtrUpCast(fb_task,pinst))){
+					Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pExit), pExit);
+					Ov_Link(fb_tasklist, pinst, pExit);
+				}
+				Ov_Call1 (fb_task, pExit, execute, pltc);
     			pDo->v_actimode = FB_AM_OFF;
     			// unlink from SequentialStateChart.taskActiveStep
     			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
