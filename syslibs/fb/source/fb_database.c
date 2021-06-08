@@ -4,7 +4,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur f�r Leittechnik Software GmbH                                 ***
+***   Agentur für Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -267,9 +267,16 @@ OV_DLLFNCEXPORT OV_BOOL fb_task_is_urtaskchild(
 	OV_INSTPTR_fb_task urtask = (OV_INSTPTR_fb_task)fb_database_geturtask();
 	OV_INSTPTR_fb_task pcurTask = Ov_GetParent(fb_tasklist, ptask);
 
+	int count = 0;
+
 	for(pcurTask=ptask; pcurTask; pcurTask=Ov_GetParent(fb_tasklist, pcurTask)){
 		if(pcurTask==urtask)
 			return TRUE;
+		if(count > FB_SEARCH_URTASK_MAX){
+			ov_logfile_warning("%s: max search depth reached; assuming not connected to urtask", ptask->v_identifier);
+			return FALSE;
+		}
+		count++;
 	}
 
 	return FALSE;
