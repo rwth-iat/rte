@@ -26,6 +26,7 @@
 
 
 #include "ssclib.h"
+#include "fb_database.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
@@ -57,6 +58,17 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
 	pEntry->v_actimode = FB_AM_ON;
 	pDo->v_actimode = FB_AM_ON;
 	pExit->v_actimode = FB_AM_ON;
+
+	// link do task
+	result = Ov_Link(fb_tasklist, pinst, pEntry);
+	if(Ov_Fail(result))
+		return result;
+	result = Ov_Link(fb_tasklist, pinst, pDo);
+	if(Ov_Fail(result))
+		return result;
+	result = Ov_Link(fb_tasklist, pinst, pExit);
+	if(Ov_Fail(result))
+		return result;
 
 	//activate
 	pinst->v_iexreq=TRUE;
@@ -120,12 +132,14 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     			//initialized with zero
     			ov_time_diff(&pinst->v_T, &pinst->v_startTime, &pinst->v_startTime);
     			//printf("%s/%s/entry\n", pSSC->v_identifier, pinst->v_identifier);
-    			Ov_Call1 (fb_task, pEntry, execute, pltc);
+    			//Ov_Call1 (fb_task, pEntry, execute, pltc);
     			pinst->v_qualifier = SSC_QUALIFIER_DO;
+    			pEntry->v_actimode = FB_AM_ONCE;
+    			pDo->v_actimode = FB_AM_ON;
     		}
     		/* do */
     		//printf("%s/%s/do\n", pSSC->v_identifier, pinst->v_identifier);
-    		Ov_Call1 (fb_task, pDo, execute, pltc);
+    		//Ov_Call1 (fb_task, pDo, execute, pltc);
 
     		/* event: SSC terminates */
     		if (pinst->v_internalRole == SSC_STEPROLE_END){
@@ -183,7 +197,10 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 						// stop subSSC
 						pSubSsc = Ov_StaticPtrCast(ssc_SequentialStateChart, pTargetObj);
     					pSubSsc->v_EN = SSC_CMD_STOP;
-    					Ov_Call1(fb_task, Ov_PtrUpCast(fb_task, pSubSsc), execute, pltc);
+    					if(fb_task_is_urtaskchild(Ov_PtrUpCast(fb_task, pSubSsc)))
+    						Ov_Call1(fb_task, Ov_PtrUpCast(fb_task, pSubSsc), execute, pltc);
+    					else
+    						ov_logfile_warning("%s: tried to execute ssc %s which is not connected to UrTask", pinst->v_identifier, pSubSsc->v_identifier);
 					}
 				}
 
@@ -193,7 +210,9 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 				}
 
     			/* exit */
-    			Ov_Call1 (fb_task, pExit, execute, pltc);
+				if(pExit->v_actimode!=FB_AM_ON || fb_task_is_urtaskchild(pExit))
+					Ov_Call1 (fb_task, pExit, execute, pltc);
+    			pDo->v_actimode = FB_AM_OFF;
     			// unlink from SequentialStateChart.taskActiveStep
     			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
     			pinst->v_X = FALSE;

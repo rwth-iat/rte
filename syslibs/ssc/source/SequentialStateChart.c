@@ -133,9 +133,17 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_constructor(
 	result = Ov_CreateObject(ssc_step, pEndStep, pinst, "END");
 	pEndStep->v_internalRole = SSC_STEPROLE_END;
 
+	// link ssc tasks to intask
+	result = Ov_Link(fb_tasklist, &pinst->p_intask, &pinst->p_taskActiveStep);
+	if(Ov_Fail(result))
+		return result;
+	result = Ov_Link(fb_tasklist, &pinst->p_intask, &pinst->p_trans);
+	if(Ov_Fail(result))
+		return result;
+
 	//init variables
 	pinst->v_workingState = SSC_WOST_INIT;
-	pinst->v_actimode = FB_AM_ON;
+	//pinst->v_actimode = FB_AM_ON;
 	//pinst->v_iexreq = TRUE;
 
 	return OV_ERR_OK;
@@ -425,10 +433,6 @@ OV_DLLFNCEXPORT void ssc_SequentialStateChart_typemethod(
     } while (!exitLoop);
     /* END: state machine: working state
     #################################*/
-
-	/* Execute internal tasks */
-	Ov_Call1 (fb_task, taskActivestep, execute, pltc);
-	Ov_Call1 (fb_task, pTrans, execute, pltc);
 
 	/* Trigger all connections on chart output ports */
 	//fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pinst));
