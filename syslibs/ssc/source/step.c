@@ -149,7 +149,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
         				pNextStep = Ov_GetParent(ssc_previousTransitions, pTransition);
         				if(pNextStep){
         					//transition is correct linked
-        					if(!Ov_GetParent(fb_tasklist, pNextStep)){
+        					if(Ov_GetParent(fb_tasklist, pNextStep)){
         						//ensure the next step is linked right
         						Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pNextStep), pNextStep);
         					}
@@ -187,7 +187,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 					}
 				}
 
-				if (pSSC->v_workingState == SSC_WOST_STOP){
+				if (pinst->v_evTransTrigger){
 					//we are leaving the step
 					pExit->v_actimode = FB_AM_ONCE;
 				}
