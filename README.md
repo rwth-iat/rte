@@ -24,14 +24,14 @@ sudo apt install build-essential tcl bison flex cmake
 
 ```
 
-On Windows, you can setup a Cygwin or MSys environment or download the required tools separatly:
+On Windows, you can set up a Cygwin or MSys environment or download the required tools separately:
 * http://mingw-w64.org/doku.php/download/mingw-builds  (if not using MSVC)
 * https://cmake.org/download/
 * https://www.magicsplat.com/tcl-installer/index.html
 * https://github.com/lexxmark/winflexbison/releases
-Make sure, that the binary dirctories of those tools are listed in your `%PATH%` variable.
+Make sure, that the binary directories of those tools are listed in your `%PATH%` variable.
 
-Instrcutions for MSys2 (mingw-w64):
+Instructions for MSys2 (mingw-w64):
 
 Install the msys2 and update the base installation.
 ```sh
@@ -104,7 +104,7 @@ This convention will ensure that the ov_runtimeserver will find the OV libraries
 
 ### Cross Compiling
 
-Cross compilation is possible and tested on Linux, especially using `arm-linux-gnueabihf-gcc` to target Raspberri Pi and similar platforms or using `x86_64-w64-mingw32-cpp` to target Windows systems.
+Cross compilation is possible and tested on Linux, especially using `arm-linux-gnueabihf-gcc` to target Raspberry Pi and similar platforms or using `x86_64-w64-mingw32-cpp` to target Windows systems.
 CMake toolchain files for those target platforms are provided in the repository.
 However, cross compilation requires additional steps to make the code generation tool available on the host platform before starting the build:
 
@@ -139,11 +139,11 @@ This will change the definition of all OV libraries in the project to static lib
 ## Usage
 
 The main application of ACPLT/RTE is the `ov_runtimeserver` / `ov_runtimeserver.exe`.
-It manages the object database and dyanmically links with OV libraries which provide functionality by adding object classes.
+It manages the object database and dynamically links with OV libraries which provide functionality by adding object classes.
 With the help of `TCPbind`, `ksbase` and `kshttp` OV libraries (which are bundled in this repository), it allows to provide an ACPLT/KS server.
 Alternatively, the `opcua` OV library (also bundled in this repository) can be used to run an OPC UA / IEC 62541 server in OV.
 
-The ov_runtimeserver can either be configured by comand line arguments or using a configuration file.
+The ov_runtimeserver can either be configured by command line arguments or using a configuration file.
 A simple invocation for starting an OV server with a plain new object database would be
 ```sh
 ov_runtimeserver -f test.ovd -s MANAGER -l stdout -c 10000000 --force-create -w ksbase -w kshttp -w TCPbind -w fb
@@ -165,7 +165,7 @@ core/runtimeserver/ov_runtimeserver -cf MANAGER.conf
 
 Unfortunately, Windows executables don't support something like `RPATH`.
 To test ov from the build tree all build artefacts need to be moved to a single directory.
-This can be achived by adding following lines to the CMakeList.txt in the project root directory.
+This can be achieved by adding following lines to the CMakeList.txt in the project root directory.
 ```
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out CACHE STRING "" )
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out CACHE STRING "" )
@@ -179,7 +179,7 @@ On unixoid systems, if ACPLT/RTE has been installed via `make install` without a
 The OV libraries are placed in a system shared library directory, so they are automatically found for dynamic linking.
 
 If, on the other hand, ACPLT/RTE has been packaged in a local directory, the `ov_runtimeserver` will need a proper `LD_LIBRARY_PATH` environment variable, pointing to the `lib/` directory, to locate the OV libraries at runtime.
-On Windows, this is not necessary, since the OV libarary DLL files are placed in the `bin/` directory together with the executable program.
+On Windows, this is not necessary, since the OV library DLL files are placed in the `bin/` directory together with the executable program.
 
 
 ### Tools
@@ -204,24 +204,16 @@ Templates for these source files can also be generated from the OVM model (see b
 Due to the required build metadata for code generation an compilation, OV libraries must be compiled in a single CMake project with all their OV library dependencies, including the OV core libraries in this repository.
 This means, that the sources of library dependencies must be added as a subdirectory of the custom library project (preferably as a Git submodule).
 As an alternative, the CMake build metadata can be imported from another project's build tree, which uses `export(EXPORT …)`.
-This allows to build dependency projects (like the OV core libraries) first and use `find_package()` in the depedent project's `CMakeLists.txt` for using the required build metadata, sources and build artifacts.
+This allows to build dependency projects (like the OV core libraries) first and use `find_package()` in the dependent project's `CMakeLists.txt` for using the required build metadata, sources and build artifacts.
 
 To allow reusing of custom OV libraries in different application scenarios, we propose implementing them in separate "library projects" that can then be used as a dependency in application-specific projects.
 Application-specific projects can then include all the required library projects as well as this `rte` repository subdirectories (Git submodules) to build the runtime environment and all required libraries in a single build step.
 To allow any combination of library projects in an application-specific project, library projects should **not** include the `rte` core project.
 Instead they should use the `find_package()` import method, as described above, to be build independently.
 
-A lot of the standard OV libraries, previously packaged as "addonlibs" in this repository are now provided in separate library projects:
-- [rte_fblib](https://github.com/acplt/rte_fblib) provides several generic and special function block libraries
-- [rte_field](https://github.com/acplt/rte_field) provides OV/FB libraries for field device connection
-- [rte_misc](https://github.com/acplt/rte_misc) provides miscellaneous helper libraries
-
-The libraries for creating AssetAdministrationShells in ACPLT/RTE, originally from the openAAS project, have been moved to an application-specific project: [rte_project_openaas](https://github.com/acplt/rte_project_openaas),
-
 
 #### Application-specific project
 
-An example of an application-specific project can be found in a separate Git repository on GitHub: https://github.com/acplt/rte_example_project
 According to the description above, the structure of a library project should look like this:
 
 ```txt
@@ -274,9 +266,7 @@ ov_finish_project()
 
 #### Library project
 
-In contrast, a library project should only include the OV library sources, not the `rte` project or any other library project.
-As an example for a library project, take a look at the `rte_fblib` repository at GitHub: https://github.com/acplt/rte_fblib
-A typical structure would look like this:
+In contrast, a library project should only include the OV library sources, not the `rte` project or any other library project:
 
 ```txt
 rte_example_libs/
@@ -369,7 +359,7 @@ Additional settings for the compilation or linking of the library can be added t
   endif()
   ```
   (If compiled libraries are provided with the OV library sources, they should by convention be placed in a `lib/` directory.)
-- Adding additional build steps for preperation of additional sources like
+- Adding additional build steps for preparation of additional sources like
   ```cmake
   add_custom_command (
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated_foo.c
@@ -426,7 +416,7 @@ An example configuration for CLion is provided in [tools/CLion](tools/CLion).
 
 * An API Reference can be found here: [API Reference](http://acplt.github.io/rte-www/doc/current/)
 * Link to technological overview (german): [ACPLT-Technologiekonzept](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/ACPLT-Technologiekonzept.pdf)  
-* Link to functionblock and sequencial-state-chart overview (german): [ACPLT-Funktionsbausteine_und_SSCs](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/Funktionsbausteine_und_SSCs.pdf)
+* Link to functionblock and sequential-state-chart overview (german): [ACPLT-Funktionsbausteine_und_SSCs](https://github.com/acplt/rte-www/blob/gh-pages/doc/overview/Funktionsbausteine_und_SSCs.pdf)
 * Old but useful documentations can be found at: [ACPLT-OV Doc old](https://github.com/acplt/rte-www/blob/gh-pages/doc/old)
 
 
