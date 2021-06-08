@@ -280,7 +280,7 @@ OV_DLLFNCEXPORT void fb_controlchart_typemethod(
 		}
 	}*/
 
-	/* Trigger all connections and internal tasks */
+	/* make sure intask is linked correctly */
 	fb_functionchart_typemethod(pfb, pltc);
 
 	return;

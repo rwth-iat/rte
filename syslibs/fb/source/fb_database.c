@@ -259,6 +259,22 @@ OV_DLLFNCEXPORT void* fb_database_geturtask(void) {
 	return (void*)pUrTask;
 }
 
+/*
+ * check if task is connected to UrTask
+ */
+OV_DLLFNCEXPORT OV_BOOL fb_task_is_urtaskchild(
+	OV_INSTPTR_fb_task ptask){
+	OV_INSTPTR_fb_task urtask = (OV_INSTPTR_fb_task)fb_database_geturtask();
+	OV_INSTPTR_fb_task pcurTask = Ov_GetParent(fb_tasklist, ptask);
+
+	for(pcurTask=ptask; pcurTask; pcurTask=Ov_GetParent(fb_tasklist, pcurTask)){
+		if(pcurTask==urtask)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 /*	----------------------------------------------------------------------	*/
 
 /*

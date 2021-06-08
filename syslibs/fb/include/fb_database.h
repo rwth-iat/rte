@@ -95,6 +95,13 @@ OV_DLLFNCEXPORT OV_RESULT fb_database_checkstruct(void);
 OV_DLLFNCEXPORT void* fb_database_geturtask(void);
 
 /*
+ * check if task is connected to UrTask
+ */
+OV_DLLFNCEXPORT OV_BOOL fb_task_is_urtaskchild(
+	OV_INSTPTR_fb_task ptask
+);
+
+/*
 *	Get libraries container object
 */
 OV_DLLFNCEXPORT void* fb_database_getlibcontainer(void);

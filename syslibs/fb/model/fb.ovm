@@ -176,9 +176,11 @@ LIBRARY fb
             intask : CLASS fb/task;
         END_PARTS;
         OPERATIONS
-    		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-    		getport    : C_FUNCTION <FB_FNC_GETPORT>;
-			setport    : C_FUNCTION <FB_FNC_SETPORT>;
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			execute     : C_FUNCTION <FB_FNC_EXECUTE>;
+    		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+    		getport     : C_FUNCTION <FB_FNC_GETPORT>;
+			setport     : C_FUNCTION <FB_FNC_SETPORT>;
         END_OPERATIONS;
     END_CLASS;
     
@@ -336,8 +338,9 @@ LIBRARY fb
         END_VARIABLES;
     END_CLASS;
     
-    	CLASS controlchart : CLASS fb/functionchart
+    CLASS controlchart : CLASS fb/functionchart
 		IS_INSTANTIABLE;
+		FLAGS = "i";
 		COMMENT = "a Chart with ability to provide services";
 		VARIABLES
 			CMD			: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "Command input for services";
