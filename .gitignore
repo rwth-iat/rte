@@ -1,0 +1,3 @@
+# ignore generated sourcetemplates folders
+
+**/source/sourcetemplates/
