@@ -57,9 +57,9 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
 	// local tasklist
 	pEntry->v_actimode = FB_AM_ON;
 	pDo->v_actimode = FB_AM_ON;
-	pExit->v_actimode = FB_AM_ON;
+	pExit->v_actimode = FB_AM_OFF;
 
-	// link do task
+	// link entry, do and exit task
 	result = Ov_Link(fb_tasklist, pinst, pEntry);
 	if(Ov_Fail(result))
 		return result;
@@ -132,14 +132,10 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     			//initialized with zero
     			ov_time_diff(&pinst->v_T, &pinst->v_startTime, &pinst->v_startTime);
     			//printf("%s/%s/entry\n", pSSC->v_identifier, pinst->v_identifier);
-    			//Ov_Call1 (fb_task, pEntry, execute, pltc);
     			pinst->v_qualifier = SSC_QUALIFIER_DO;
     			pEntry->v_actimode = FB_AM_ONCE;
     			pDo->v_actimode = FB_AM_ON;
     		}
-    		/* do */
-    		//printf("%s/%s/do\n", pSSC->v_identifier, pinst->v_identifier);
-    		//Ov_Call1 (fb_task, pDo, execute, pltc);
 
     		/* event: SSC terminates */
     		if (pinst->v_internalRole == SSC_STEPROLE_END){
