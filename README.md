@@ -236,6 +236,12 @@ cmake_minimum_required(VERSION 3.13)
 
 project(project_example C)
 
+# Disable default build of unrequired libraries from library projects
+# (can be re-enabled during CMake build using -DBUILD_OV_LIBRARY_UDPbind=ON etc.
+#  Libraries can also still be build explicitly with `make UDPbind` etc.)
+SET(BUILD_OV_LIBRARY_UDPbind OFF CACHE BOOL "")
+SET(BUILD_OV_LIBRARY_SSChelper OFF CACHE BOOL "")
+
 # Include ov core project from subdirectory
 add_subdirectory(rte)
 
@@ -248,12 +254,6 @@ include(${RTE_CMAKE_DIR}/ov_definitions.cmake)
 # Include library projects
 add_subdirectory(rte_fblib)
 add_subdirectory(rte_example_libs)
-
-# Disable default build of unrequired libraries from library projects
-# (can be re-enabled during CMake build using -DBUILD_OV_LIBRARY_UDPbind=ON etc.
-#  Libraries can also still be build explicitly with `make UDPbind` etc.)
-SET(BUILD_OV_LIBRARY_UDPbind OFF CACHE BOOL "")
-SET(BUILD_OV_LIBRARY_SSChelper OFF CACHE BOOL "")
 
 # Include libraries of this project
 add_subdirectory(project_specific_library)
