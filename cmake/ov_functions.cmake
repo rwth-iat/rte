@@ -76,17 +76,19 @@ function(add_ov_library OV_LIBRARY_NAME)
         endif()
 
         # Install rules
-        install(TARGETS ${OV_LIBRARY_NAME}
-            EXPORT ${PROJECT_NAME}
-            LIBRARY
-                DESTINATION lib/
-                COMPONENT runtime
-                OPTIONAL
-            # Put Windows DLL files (treated as RUNTIME by CMake) into bin/ as it is usual on Windows
-            RUNTIME
-                DESTINATION bin/
-                COMPONENT runtime
-                OPTIONAL)
+        if(BUILD_OV_LIBRARY_${OV_LIBRARY_NAME})
+            install(TARGETS ${OV_LIBRARY_NAME}
+                EXPORT ${PROJECT_NAME}
+                LIBRARY
+                    DESTINATION lib/
+                    COMPONENT runtime
+                    OPTIONAL
+                # Put Windows DLL files (treated as RUNTIME by CMake) into bin/ as it is usual on Windows
+                RUNTIME
+                    DESTINATION bin/
+                    COMPONENT runtime
+                    OPTIONAL)
+        endif()
 
         # FIXME development install does currently not work due to the issue with OV_MODEL_INCLUDE_DIRECTORIES (see below)
         # install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${OV_LIBRARY_NAME}.h
