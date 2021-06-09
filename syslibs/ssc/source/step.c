@@ -204,10 +204,8 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 					}
 				}
 
-				if (pinst->v_evTransTrigger){
-					//we are leaving the step
-					pExit->v_actimode = FB_AM_ONCE;
-				}
+				//we are leaving the step
+				pExit->v_actimode = FB_AM_ONCE;
 
     			/* exit */
 				// check exit task is linked correctly
