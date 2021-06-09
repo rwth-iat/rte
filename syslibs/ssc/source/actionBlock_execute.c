@@ -121,7 +121,7 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 		pTargetSequentialControlChart->v_EN = SSC_CMD_START;
 	}
 	// execute action for once
-	if(fb_task_is_urtaskchild(Ov_PtrUpCast(fb_task, pTargetObj)))
+	if(fb_task_has_initial_taskparent(Ov_PtrUpCast(fb_task, pTargetObj)))
 		Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pTargetObj), execute, pltc);
 	else
 		ov_logfile_warning("%s: tried to execute fb %s which is not connected to UrTask", pinst->v_identifier, pTargetObj->v_identifier);

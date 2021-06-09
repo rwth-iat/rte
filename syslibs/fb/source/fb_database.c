@@ -260,9 +260,9 @@ OV_DLLFNCEXPORT void* fb_database_geturtask(void) {
 }
 
 /*
- * check if task is connected to UrTask
+ * check if task is connected to UrTask or an initial task
  */
-OV_DLLFNCEXPORT OV_BOOL fb_task_is_urtaskchild(
+OV_DLLFNCEXPORT OV_BOOL fb_task_has_initial_taskparent(
 	OV_INSTPTR_fb_task ptask){
 	OV_INSTPTR_fb_task urtask = (OV_INSTPTR_fb_task)fb_database_geturtask();
 	OV_INSTPTR_fb_task pcurTask = Ov_GetParent(fb_tasklist, ptask);
@@ -272,14 +272,14 @@ OV_DLLFNCEXPORT OV_BOOL fb_task_is_urtaskchild(
 	for(pcurTask=ptask; pcurTask; pcurTask=Ov_GetParent(fb_tasklist, pcurTask)){
 		if(pcurTask==urtask)
 			return TRUE;
-		if(count > FB_SEARCH_URTASK_MAX){
+		if(count > FB_SEARCH_INITIAL_TASK_MAX){
 			ov_logfile_warning("%s: max search depth reached; assuming not connected to urtask", ptask->v_identifier);
 			return FALSE;
 		}
 		count++;
 	}
 
-	return FALSE;
+	return TRUE;
 }
 
 /*	----------------------------------------------------------------------	*/

@@ -193,7 +193,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 						// stop subSSC
 						pSubSsc = Ov_StaticPtrCast(ssc_SequentialStateChart, pTargetObj);
     					pSubSsc->v_EN = SSC_CMD_STOP;
-    					if(fb_task_is_urtaskchild(Ov_PtrUpCast(fb_task, pSubSsc)))
+    					if(fb_task_has_initial_taskparent(Ov_PtrUpCast(fb_task, pSubSsc)))
     						Ov_Call1(fb_task, Ov_PtrUpCast(fb_task, pSubSsc), execute, pltc);
     					else
     						ov_logfile_warning("%s: tried to execute ssc %s which is not connected to UrTask", pinst->v_identifier, pSubSsc->v_identifier);

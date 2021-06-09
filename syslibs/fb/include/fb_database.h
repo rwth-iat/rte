@@ -95,10 +95,10 @@ OV_DLLFNCEXPORT OV_RESULT fb_database_checkstruct(void);
 OV_DLLFNCEXPORT void* fb_database_geturtask(void);
 
 /*
- * check if task is connected to UrTask
+ * check if task is connected to UrTask or an initial task
  */
-#define FB_SEARCH_URTASK_MAX 64
-OV_DLLFNCEXPORT OV_BOOL fb_task_is_urtaskchild(
+#define FB_SEARCH_INITIAL_TASK_MAX 64
+OV_DLLFNCEXPORT OV_BOOL fb_task_has_initial_taskparent(
 	OV_INSTPTR_fb_task ptask
 );
 
