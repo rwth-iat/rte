@@ -27,9 +27,9 @@
 *	19-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 *	23-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Optimized (use of macros).
-*	17-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ONE_TO_ONE Link.
-*	10-Dec-2002 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (inheritance).
-*	22-Aug-2003 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (parentoffset).
+*	17-Jul-2001 Ansgar MÃ¼nnemann <ansgar@plt.rwth-aachen.de>: ONE_TO_ONE Link.
+*	10-Dec-2002 Ansgar MÃ¼nnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (inheritance).
+*	22-Aug-2003 Ansgar MÃ¼nnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (parentoffset).
 */
 
 #define OV_COMPILE_LIBOV
@@ -827,9 +827,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 				return OV_ERR_BADPLACEMENT;
 			}
 		}
-		passoc->v_unlinkfnc(pparent, pchild);
-		if(Ov_Fail(result))
-			return result;
 
 		parenthint2 = parenthint;
 		childhint2 = childhint;
@@ -858,6 +855,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 			}
 		}
 
+		passoc->v_unlinkfnc(pparent, pchild);
+		if(Ov_Fail(result))
+			return result;
+
+		// call link function again, since unlinking may have invalidated the computed placement
 		return ov_association_link(passoc, pparent, pchild, parenthint2, prelparent2, childhint2, prelchild2);
 	}
 
