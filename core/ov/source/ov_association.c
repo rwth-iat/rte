@@ -502,13 +502,15 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		*	in this case simply check, if the child link (anchor) is not already used
 		*/
 		if(Ov_Association_GetParent(passoc, pchild)) {
-			if(Ov_Association_GetParent(passoc, pchild)!=pparent ||
-					childhint == OV_PMH_DEFAULT)
+			if(Ov_Association_GetParent(passoc, pchild)!=pparent)
 				return OV_ERR_ALREADYEXISTS;
 			/*
 			 * check if position is already correct
 			 */
 			switch(childhint){
+			case OV_PMH_DEFAULT:
+				// on placement and already linked
+				return OV_ERR_OK;
 			case OV_PMH_BEGIN:
 				pcurrchild = Ov_Association_GetFirstChild(passoc, pparent);
 				break;
@@ -524,7 +526,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 			}
 
 			if(pcurrchild==pchild)
-				return OV_ERR_ALREADYEXISTS;
+				// placement already correct; nothing to do
+				return OV_ERR_OK;
 
 			relink = TRUE;
 		}
@@ -544,7 +547,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		Ov_Association_ForEachChildNM(passoc, pit, pparent, pcurrchild) {
 			if(pcurrchild == pchild) {
 				if(parenthint==OV_PMH_DEFAULT && childhint==OV_PMH_DEFAULT)
-					return OV_ERR_ALREADYEXISTS;
+					// already linked
+					return OV_ERR_OK;
 
 				/*
 				 * check if position is already correct
@@ -585,7 +589,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 				}
 
 				if(pcurrchild==pchild && pcurrparent==pparent)
-					return OV_ERR_ALREADYEXISTS;
+					return OV_ERR_OK;
 
 				relink = TRUE;
 				break;
