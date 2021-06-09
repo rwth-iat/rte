@@ -267,12 +267,13 @@ OV_DLLFNCEXPORT OV_BOOL fb_task_has_initial_taskparent(
 	OV_INSTPTR_fb_task urtask = (OV_INSTPTR_fb_task)fb_database_geturtask();
 	OV_INSTPTR_fb_task pcurTask = Ov_GetParent(fb_tasklist, ptask);
 
-	int count = 0;
+	OV_UINT count = 0;
+	OV_UINT max_count = ov_vendortree_MaxHierarchyDepth() * 2;
 
 	for(pcurTask=ptask; pcurTask; pcurTask=Ov_GetParent(fb_tasklist, pcurTask)){
 		if(pcurTask==urtask)
 			return TRUE;
-		if(count > FB_SEARCH_INITIAL_TASK_MAX){
+		if(count > max_count){
 			ov_logfile_warning("%s: max search depth reached; assuming not connected to urtask", ptask->v_identifier);
 			return FALSE;
 		}
