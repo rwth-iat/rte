@@ -240,7 +240,9 @@ int main(int argc, char **argv) {
 		ov_logfile_info("Sending terminate message...");
 		result = ov_ksserver_terminate(taskid);
 		if(Ov_Fail(result)) {
-			goto ERRORMSG;
+			ov_logfile_error("Error terminating ks server: %s (error code 0x%4.4x).",
+					ov_result_getresulttext(result), result);
+			goto CLEANUP;
 		}
 		ov_logfile_info("Message sent successfully.");
 		ov_logfile_free();
@@ -377,22 +379,26 @@ int main(int argc, char **argv) {
 #else
 	result = ov_database_load(opts.dbFilename, opts.dbSize, opts.dbflags);
 #endif
-	if (Ov_Fail(result) && db_backup_filename) {
-		MAPBACKUP:
-		ov_backup = TRUE;
-		ov_logfile_error("Error: %s (error code 0x%4.4x).",
+	if (Ov_Fail(result)) {
+		ov_logfile_error("Error mapping database: %s (error code 0x%4.4x).",
 				ov_result_getresulttext(result), result);
+		if (db_backup_filename) {
+			MAPBACKUP:
+			ov_backup = TRUE;
 
 #ifdef OV_CATCH_EXCEPTIONS
-		result = ov_supervised_database_map(db_backup_filename);
+			result = ov_supervised_database_map(db_backup_filename);
 #else
-		result = ov_database_load(db_backup_filename, opts.dbSize, opts.dbflags|OV_DBOPT_BACKUP);
+			result = ov_database_load(db_backup_filename, opts.dbSize, opts.dbflags|OV_DBOPT_BACKUP);
 #endif
+			if(Ov_Fail(result)) {
+				ov_logfile_error("Error mapping backup database: %s (error code 0x%4.4x).",
+						ov_result_getresulttext(result), result);
+			}
+		}
 	}
 	if(Ov_Fail(result)) {
-		ERRORMSG:
-		ov_logfile_error("Error: %s (error code 0x%4.4x).",
-				ov_result_getresulttext(result), result);
+		CLEANUP:
 		ov_logfile_free();
 		ov_vendortree_free();
 		ov_options_free(&opts);
@@ -487,8 +493,10 @@ int main(int argc, char **argv) {
 		result = ov_database_startup();
 #endif
 		if(Ov_Fail(result)) {
+			ov_logfile_error("Error starting up database: %s (error code 0x%4.4x).",
+					ov_result_getresulttext(result), result);
 			if ((!ov_backup) && (db_backup_filename)) goto MAPBACKUP;
-			goto ERRORMSG;
+			goto CLEANUP;
 		}
 	}
 	/*
@@ -536,12 +544,13 @@ int main(int argc, char **argv) {
 
 			ov_server_run=FALSE;
 			ov_logfile_info("Server stopped.");
+			// FIXME This if will never be entered, right? -- Michael Thies, 2019-09-02
 			if (Ov_Fail(result) && (!ov_backup) && db_backup_filename) {
 				ov_ksserver_stripped_delete();
 				goto MAPBACKUP;
 			}
 		} else {
-			ov_logfile_error("Error: %s (error code 0x%4.4x).",
+			ov_logfile_error("Error creating stripped ks server: %s (error code 0x%4.4x).",
 					ov_result_getresulttext(result), result);
 			exit_status = EXIT_FAILURE;
 		};
