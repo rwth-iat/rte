@@ -558,16 +558,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 					pcurrparent = pparent;
 					break;
 				case OV_PMH_BEGIN:
-					pcurrparent = pit->child.pprevious?NULL:pparent;
+					pcurrparent = pit->child.pprevious?(NULL):pparent;
 					break;
 				case OV_PMH_END:
 					pcurrparent = pit->child.pnext?(NULL):pparent;
 					break;
 				case OV_PMH_BEFORE:
-					pcurrparent = (pit->child.pnext)->parent.pparent==prelparent?(pparent):(NULL);
+					pcurrparent = (pit->child.pnext)?(pit->child.pnext)->parent.pparent==prelparent?(pparent):(NULL):(NULL);
 					break;
 				case OV_PMH_AFTER:
-					pcurrparent = (pit->child.pprevious)->parent.pparent==prelparent?(pparent):(NULL);
+					pcurrparent = (pit->child.pprevious)?(pit->child.pprevious)->parent.pparent==prelparent?(pparent):(NULL):(NULL);
 					break;
 				}
 
@@ -581,10 +581,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 					pcurrchild = pit->parent.pnext?(NULL):pchild;
 					break;
 				case OV_PMH_BEFORE:
-					pcurrchild = (pit->parent.pnext)->child.pchild==prelchild?(pchild):(NULL);
+					pcurrchild = (pit->parent.pnext)?(pit->parent.pnext)->child.pchild==prelchild?(pchild):(NULL):(NULL);
 					break;
 				case OV_PMH_AFTER:
-					pcurrchild = (pit->parent.pnext)->child.pchild==prelchild?(pchild):(NULL);
+					pcurrchild = (pit->parent.pprevious)?(pit->parent.pprevious)->child.pchild==prelchild?(pchild):(NULL):(NULL);
 					break;
 				}
 
@@ -821,13 +821,13 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		 * additional sanity checks
 		 */
 		switch(passoc->v_assoctype){
-		case OV_AT_ONE_TO_MANY:
-			if((childhint==OV_PMH_BEFORE || childhint==OV_PMH_AFTER) && prelchild==pchild){
+		case OV_AT_MANY_TO_MANY:
+			if((parenthint==OV_PMH_BEFORE || parenthint==OV_PMH_AFTER) && prelparent==pparent){
 				return OV_ERR_BADPLACEMENT;
 			}
 			//fall through
-		case OV_AT_MANY_TO_MANY:
-			if((parenthint==OV_PMH_BEFORE || parenthint==OV_PMH_AFTER) && prelparent==pparent){
+		case OV_AT_ONE_TO_MANY:
+			if((childhint==OV_PMH_BEFORE || childhint==OV_PMH_AFTER) && prelchild==pchild){
 				return OV_ERR_BADPLACEMENT;
 			}
 		}
