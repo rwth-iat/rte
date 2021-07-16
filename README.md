@@ -182,7 +182,18 @@ If, on the other hand, ACPLT/RTE has been packaged in a local directory, the `ov
 On Windows, this is not necessary, since the OV library DLL files are placed in the `bin/` directory together with the executable program.
 
 
-### Tools
+### Clients
+
+Interaction with an ACPLT/OV server (including reading/writing values, creating, moving, deleting and linking objects, etc.) is typically done via the ACPLT/KS protocol.
+Different KS clients and KS client libraries for different purposes exist:
+
+- [acplt-ks](https://github.com/acplt/acplt-ks): a C++ KS library for writing KS clients and servers
+- [fb_dbcommands](https://github.com/acplt/dbcommands): a simple command line client program for dumping and loading OV data into/from the "FBD" file format
+- [iFBSpro](https://github.com/ltsoft-gmbh/ifbspro): A full-featured KS graphical client, originally intended for function block engineering, written in Tcl and Tks
+- [henson](https://github.com/acplt/henson): A client-side web-based KS client for inspecting and modifying OV objects, written in JavaScript
+
+
+### Miscellaneous Tools
 
 - TODO usage of ov_dbutil
 
