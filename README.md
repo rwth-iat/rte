@@ -192,6 +192,8 @@ Different KS clients and KS client libraries for different purposes exist:
 - [iFBSpro](https://github.com/ltsoft-gmbh/ifbspro): A full-featured KS graphical client, originally intended for function block engineering, written in Tcl and Tks
 - [henson](https://github.com/acplt/henson): A client-side web-based KS client for inspecting and modifying OV objects, written in JavaScript
 
+An (incomplete) approach towards a Python client library for KS servers can be found in the `tools/kshttp-python/` directory of this repository.
+
 
 ### Miscellaneous Tools
 
