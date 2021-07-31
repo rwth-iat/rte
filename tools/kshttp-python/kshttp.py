@@ -138,7 +138,7 @@ class Server:
             print(r.text)
             raise RequestException('bad return code')
 
-        if fmt == 'plain':
+        if fmt == FMT.PLAIN:
             return r.text.rstrip(';').split('; ')
         else:
             return r.text
@@ -153,7 +153,7 @@ class Server:
         :return:
         """
         args = list()
-        args.append(('format', 'plain'))
+        args.append(('format', FMT.PLAIN.value))
         args.append(('path', path))
         if not isinstance(value, list):
             args.append(('newvalue', str(value)))
@@ -182,7 +182,7 @@ class Server:
         :return: returns if the create call was successful
         """
         args = list()
-        args.append(('format', 'plain'))
+        args.append(('format', FMT.PLAIN.value))
         args.append(('factory', factory))
         args.append(('path', path))
 
@@ -204,7 +204,7 @@ class Server:
         :return: returns if the delete call was successful
         """
         args = list()
-        args.append(('format', 'plain'))
+        args.append(('format', FMT.PLAIN.value))
         args.append(('path', path))
 
         url = 'http://{host}:{port}/deleteObject'.format(host=self.host, port=self.port)
@@ -266,7 +266,7 @@ class Server:
         :return: returns if the link call wass successful
         """
         args = list()
-        args.append(('format', 'plain'))
+        args.append(('format', FMT.PLAIN.value))
         args.append(('path', path))
         args.append(('element', other))
 
@@ -300,7 +300,7 @@ class Server:
         :return: returns if call to unlink was successful
         """
         args = list()
-        args.append(('format', 'plain'))
+        args.append(('format', FMT.PLAIN.value))
         args.append(('path', path))
         args.append(('element', other))
 
@@ -334,8 +334,7 @@ def ks_get_server(host: str, server: str) -> int:
     :return: port of requested server
     """
     args = list()
-    args.append(('format', 'plain'))
-    args.append(('servername', server))
+    args.append(('format', FMT.PLAIN.value))
     args.append(('servername', server))
 
     url = 'http://{host}:{port}/getServer'.format(host=host, port=7509)
@@ -560,14 +559,20 @@ def print_instance_counts(server: Server, lib: str = None, cls: str = None):
         print(cls + ': ', len(get_instances(server, cls)))
 
     if lib is not None:
-        if object_exists(server, '/acplt/' + lib):
-            base = '/acplt/' + lib
-        elif object_exists(server, '/Libraries/' + lib):
-            base = '/Libraries/' + lib
-        else:
+        base = None
+        for l in server.get_var('/acplt/ov/library.instance'):
+            if l.endswith('/' + lib):
+                base = l
+
+        if base is None:
             return
 
-        cls = list_ep(server, base)
+        ep = server.get_ep(base, output=[OP.NAME, OP.CLASS], fmt=FMT.TCL).lstrip('{').rstrip('}').split('} {')
+        cls = list()
+        for element in ep:
+            name, c = element.split(' ')
+            if c == '/acplt/ov/class':
+                cls.append(name)
 
         for c in cls:
             print(c + ': ', len(get_instances(server, base + '/' + c)))
