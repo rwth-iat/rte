@@ -1,6 +1,6 @@
 """
 Example for using the kshttp-python functions
-In this example we change the times of videvde3696 blocks to account for different behaviour when switching to a
+In this example we change the times of some videvde3696 blocks to account for different behaviour when switching to a
 build with fixed tasklist patch.
 This only works if all relevant vdivde3696 blocks run with the cycle time of the UrTask.
 """
@@ -19,7 +19,7 @@ def fix_vdivde(server_name: str = 'MANAGER', host: str = 'localhost', max_time: 
     s = server_by_name(server_name, host=host)
 
     # fix vdivde3696 timer
-    if object_exists(s, '/acplt/vdivde3696'):
+    if object_exists(s, '/acplt/vdivde3696'):  # assuming vdivde lib is instantiated in /acplt
         time_blocks = list()
         fix_flag = False
 
