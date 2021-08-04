@@ -283,7 +283,6 @@ class Server:
         url = 'http://{host}:{port}/link'.format(host=self.host, port=self.port)
 
         r = requests.get(url, params=args)
-        print(r.url)
 
         if r.status_code != 200:
             print(r.text)
@@ -483,6 +482,7 @@ def get_all_subclasses(server: Server, cls: str) -> List['str']:
     sub_cls: List[str] = list()
 
     while not q.empty():
+        cls = q.get()
         try:
             for sub in server.get_var(cls + '.derivedclass'):
                 if len(sub) > 0:
