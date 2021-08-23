@@ -386,13 +386,18 @@ proc build_package {package args} {
 	global ov_debug
 	global ov_arch_bitwidth_str
 	global crossArch
+	global targetOS
+	set ov_valgrind ""
 	print_msg "Building $package via build_package"
+	if { $ov_debug != "" && $package == "ov" && $targetOS == "linux" } {
+		set ov_valgrind "OV_VALGRIND=1"
+	}
 	if {$crossArch == "ARM"} {
 		set crossOverrideBitwidthFlags	"OV_ARCH_BITWIDTH_CFLAGS= OV_ARCH_BITWIDTH_LDFLAGS= "	
-		return [execute $args $ov_debug $ov_arch_bitwidth_str $crossOverrideBitwidthFlags]
+		return [execute $args $ov_debug $ov_valgrind $ov_arch_bitwidth_str $crossOverrideBitwidthFlags]
 	} else {
 		#puts stderr "$args $ov_debug $ov_arch_bitwidth_str"
-		return [execute $args $ov_debug $ov_arch_bitwidth_str]
+		return [execute $args $ov_debug $ov_valgrind $ov_arch_bitwidth_str]
 	}
 }
 

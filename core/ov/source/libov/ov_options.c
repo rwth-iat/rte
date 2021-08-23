@@ -88,6 +88,10 @@ void ov_options_init(ov_options* opts){
  */
 void ov_options_free(ov_options* opts){
 	int i;
+	free(opts->dbFilename);
+	opts->dbFilename = NULL;
+	free(opts->logfile);
+	opts->logfile = NULL;
 	free(opts->commandline_options);
 	opts->commandline_options = NULL;
 	free(opts->configBasePath);
@@ -1108,6 +1112,13 @@ OV_RESULT ov_readArgs(ov_options* opts, int argc, char** argv){
 		else if(!strcmp(argv[i], "-e") || !strcmp(argv[i], "--extended")) {
 			if(opts->ctx!=ov_dbutil) goto HELP;
 			opts->extended = TRUE;
+		}
+		/*
+		 *	print pointer in database
+		 */
+		else if(!strcmp(argv[i], "--print-pointer")) {
+			if(opts->ctx!=ov_dbutil) goto HELP;
+			opts->printPtr = TRUE;
 		}
 		/*
 		 *	dump database

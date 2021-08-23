@@ -44,6 +44,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_path.h"
+#include "libov/ov_vendortree.h"
 #if TLSF
 #include "libov/tlsf.h"
 #include <sys/time.h>
@@ -51,6 +52,9 @@
 #if OV_SYSTEM_UNIX
 #include <sys/resource.h>
 #include <sys/mman.h>
+#if OV_VALGRIND
+#include <valgrind/valgrind.h>
+#endif
 #endif
 #endif
 
@@ -113,6 +117,12 @@ int flock_solaris (int filedes, int oper)
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#endif
+
+#if OV_DEBUG || OV_VALGRIND
+static void ov_freelist_free();
+#else
+#define ov_freelist_free()
 #endif
 
 #if OV_SYSTEM_NT || OV_SYSTEM_RMOS
@@ -752,6 +762,7 @@ OV_UINT flags) {
 	// TODO_ADJUST_WHEN_LARGE_DB
 	if (!size || (size > (size_t) OV_DATABASE_MAXSIZE)
 			|| (!filename && !(dbFlags & (OV_DBOPT_NOFILE | OV_DBOPT_NOMAP)))) {
+		ov_logfile_error("ov_database_create: No or invalid database size given.");
 		return OV_ERR_BADPARAM;
 	}
 
@@ -1534,6 +1545,9 @@ OV_DLLFNCEXPORT void ov_database_unload(void) {
 	if (pdb)
 		ov_database_shutdown();
 
+	// mark reachable pointer as freed
+	ov_freelist_free();
+
 	if (dbFlags & (OV_DBOPT_NOMAP | OV_DBOPT_NOFILE)) {
 #if TLSF
 		destroy_memory_pool(dbpool);
@@ -1632,7 +1646,13 @@ OV_DLLFNCEXPORT void ov_database_flush(void) {
 		}
 #endif
 #if OV_SYSTEM_UNIX
+#if OV_VALGRIND
+		VALGRIND_DISABLE_ERROR_REPORTING;
 		msync((void*) pdb, pdb->size, MS_SYNC);
+		VALGRIND_ENABLE_ERROR_REPORTING;
+#else
+		msync((void*) pdb, pdb->size, MS_SYNC);
+#endif
 #endif
 #if OV_SYSTEM_NT
 		FlushViewOfFile((LPCVOID)pdb, 0);
@@ -1889,8 +1909,8 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(size_t size) {
 	__ml_ptr ptmp = NULL;
 #endif
 
-#ifdef OV_VALGRIND
-	if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+#if OV_VALGRIND
+	if (ov_vendortree_checkUseMalloc()) {
 		return malloc(size);
 	}
 #endif
@@ -1919,12 +1939,12 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, size_t size) {
 #endif
 
 #ifdef OV_VALGRIND
-	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL) {
+	if(pdb && ptr != 0 && ov_vendortree_checkUseMalloc()==FALSE) {
 		if(!((uintptr_t)ptr >= (uintptr_t)pdb->baseaddr && (uintptr_t)ptr <= (uintptr_t)pdb->baseaddr+(uintptr_t)pdb->size)) {
 			printf("realloc missed database, install a breakpoint here\n");
 		}
 	}
-	if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+	if (ov_vendortree_checkUseMalloc()) {
 		if(ptr == 0 || !pdb || ptr < pdb->baseaddr || ptr > pdb->baseaddr+pdb->size) {
 			return realloc(ptr, size);
 		}
@@ -1951,12 +1971,12 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(OV_POINTER ptr, size_t size) {
  */
 OV_DLLFNCEXPORT void ov_database_free(OV_POINTER ptr) {
 #ifdef OV_VALGRIND
-	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL) {
+	if(pdb && ptr != 0 && ov_vendortree_checkUseMalloc()==FALSE) {
 		if(!((uintptr_t)ptr >= (uintptr_t)pdb->baseaddr && (uintptr_t)ptr <= (uintptr_t)pdb->baseaddr+(uintptr_t)pdb->size)) {
 			printf("free missed database, install a breakpoint here\n");
 		}
 	}
-	if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+	if (ov_vendortree_checkUseMalloc()) {
 		if(ptr == NULL || !pdb || ptr < pdb->baseaddr || ptr > pdb->baseaddr+pdb->size) {
 			free(ptr);
 			return;
@@ -2303,6 +2323,368 @@ OV_RESULT ov_database_move(const OV_PTRDIFF distance) {
 }
 
 /*	----------------------------------------------------------------------	*/
+
+#if OV_DEBUG || OV_VALGRIND
+
+#if OV_VALGRIND
+#include <valgrind/memcheck.h>
+#endif
+
+#define OV_FREELIST_SIZE 512
+#define OV_FL_DESCBUFFER 255
+
+typedef struct freelist{
+	OV_UINT				count;
+	struct freelist*	pnext;
+	OV_POINTER			pfree[OV_FREELIST_SIZE];
+	char*				desc[OV_FREELIST_SIZE];
+} ov_freelist;
+
+static OV_INLINE void ov_freelist_add(ov_freelist** ppfree, OV_POINTER ptr, char* desc){
+	char* temp;
+
+	// add next chunk
+	if((*ppfree)->count>=OV_FREELIST_SIZE){
+		(*ppfree)->pnext = ov_malloc(sizeof(ov_freelist));
+		(*ppfree) = (*ppfree)->pnext;
+		memset(*ppfree, 0, sizeof(ov_freelist));
+	}
+
+	// add pointer to list
+	(*ppfree)->pfree[(*ppfree)->count] = ptr;
+	if(desc){
+		temp = malloc(strlen(desc)+1);
+		strcpy(temp, desc);
+		(*ppfree)->desc[(*ppfree)->count] = temp;
+	}
+	(*ppfree)->count++;
+}
+
+static OV_RESULT ov_freelist_collect_object(ov_freelist** ppfree,OV_INSTPTR pobj, OV_INT mode){
+	OV_ELEMENT				part;
+	OV_UINT					iter;
+	OV_ANY*					pAny;
+	char					pathbuf[255] = {0};
+	char					descbuf[OV_FL_DESCBUFFER] = {0};
+	Ov_DefineIteratorNM(NULL, pit);
+
+	part.elemtype = OV_ET_NONE;
+
+	ov_memstack_lock();
+	snprintf(pathbuf, 255, "(%u,%u)%s", pobj->v_idH, pobj->v_idL, ov_path_getcanonicalpath(pobj, 2));
+	ov_memstack_unlock();
+
+	snprintf(descbuf, OV_FL_DESCBUFFER, "%s.linktable", pathbuf);
+	ov_freelist_add(ppfree, pobj->v_linktable, descbuf);
+
+	if(	pobj==(OV_INSTPTR)(&pdb->root) ||
+		pobj==(OV_INSTPTR)(&pdb->vendordom) ||
+		pobj==(OV_INSTPTR)(&pdb->acplt) ||
+		pobj==(OV_INSTPTR)(&pdb->containment) ||
+		pobj==(OV_INSTPTR)(&pdb->instantiation) ||
+		pobj==(OV_INSTPTR)(&pdb->ov)){
+		mode = 0x0;
+	}
+
+	ov_element_getnextpart_object(pobj, &part, OV_ET_ANY);
+	while(part.elemtype!=OV_ET_NONE){
+		switch(part.elemtype){
+		case OV_ET_VARIABLE:
+			if(part.elemunion.pvar->v_varprops&OV_VP_DERIVED){
+				break;
+			}
+
+			if(Ov_CanCastTo(ov_variable, pobj) && !strcmp(part.elemunion.pvar->v_identifier, "initialvalue")){
+				// initial values are not allocated
+				break;
+			}
+
+			switch(part.elemunion.pvar->v_veclen){
+			case 1:
+				switch(part.elemunion.pvar->v_vartype){
+				case OV_VT_STRING:
+					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (str)", pathbuf, part.elemunion.pvar->v_identifier);
+					ov_freelist_add(ppfree, *((OV_STRING*)part.pvalue), descbuf);
+					break;
+
+				case OV_VT_ANY:
+					pAny = (OV_ANY*)part.pvalue;
+					if((pAny->value.vartype&OV_VT_KSMASK)==OV_VT_STRING){
+						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any str)", pathbuf, part.elemunion.pvar->v_identifier);
+						ov_freelist_add(ppfree, pAny->value.valueunion.val_string, descbuf);
+					}
+					if(pAny->value.vartype&OV_VT_ISVECTOR){
+						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any vec base)", pathbuf, part.elemunion.pvar->v_identifier);
+						ov_freelist_add(ppfree, pAny->value.valueunion.val_generic_vec.value, descbuf);
+						if((pAny->value.vartype&OV_VT_KSMASK)==OV_VT_STRING_VEC){
+							for(iter=0; iter<pAny->value.valueunion.val_string_vec.veclen; iter++){
+								snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (any vec str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+								ov_freelist_add(ppfree, pAny->value.valueunion.val_string_vec.value[iter], descbuf);
+							}
+						}
+					}
+				}
+				break;
+
+			case 0:
+				// dynamic vector
+				snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (vec)", pathbuf, part.elemunion.pvar->v_identifier);
+				ov_freelist_add(ppfree, ((OV_GENERIC_VEC*)part.pvalue)->value, descbuf);
+				if((part.elemunion.pvar->v_vartype&OV_VT_KSMASK&(~OV_VT_ISVECTOR))==OV_VT_STRING){
+					for(iter=0; iter<((OV_STRING_VEC*)part.pvalue)->veclen; iter++){
+						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (vec str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+						ov_freelist_add(ppfree, ((OV_STRING_VEC*)part.pvalue)->value[iter], descbuf);
+					}
+				}
+				break;
+
+			default:
+				switch(part.elemunion.pvar->v_vartype&OV_VT_KSMASK){
+				case OV_VT_STRING:
+				case OV_VT_STRING_VEC:
+					for(iter=0; iter<part.elemunion.pvar->v_veclen; iter++){
+						snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (static str) %u", pathbuf, part.elemunion.pvar->v_identifier, iter);
+						ov_freelist_add(ppfree, ((OV_STRING_VEC*)part.pvalue)->value[iter], descbuf);
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+			break;
+		case OV_ET_OBJECT:
+			break;
+			// fixme N:M associations not thoroughly tested
+		case OV_ET_PARENTLINK:
+			if(part.elemunion.passoc->v_assoctype == OV_AT_MANY_TO_MANY){
+				for(Ov_Association_GetFirstChildNM(part.elemunion.passoc, pit, pobj); pit; pit = pit->parent.pnext){
+					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (OV_NMLINK)", pathbuf, part.elemunion.passoc->v_identifier);
+					ov_freelist_add(ppfree, pit, descbuf);
+				}
+			}
+			break;
+		case OV_ET_CHILDLINK:
+			if(part.elemunion.passoc->v_assoctype == OV_AT_MANY_TO_MANY){
+				for(Ov_Association_GetFirstParentNM(part.elemunion.passoc, pit, pobj); pit; pit = pit->child.pnext ){
+					// skip if linked to itself to avoid double free
+					if(pit->parent.pparent==pobj)
+						continue;
+					snprintf(descbuf, OV_FL_DESCBUFFER, "%s.%s (OV_NMLINK)", pathbuf, part.elemunion.passoc->v_identifier);
+					ov_freelist_add(ppfree, pit, descbuf);
+				}
+			}
+			break;
+		}
+
+		ov_element_getnextpart_object(pobj, &part, OV_ET_ANY);
+	}
+
+	if((mode&0x1) && !pobj->v_pouterobject){ // free object pointer unless part object
+		snprintf(descbuf, OV_FL_DESCBUFFER, "%s (objptr)", pathbuf);
+		ov_freelist_add(ppfree, pobj, descbuf);
+	}
+
+	return OV_ERR_OK;
+}
+
+static OV_RESULT ov_freelist_collect(ov_freelist* freeFirst){
+	ov_freelist*	pFreeCur = freeFirst;
+	OV_IDLIST_NODE* pNodeCur = NULL;
+	OV_INSTPTR		pobj = NULL;
+	OV_UINT			iterator = 0;
+	OV_UINT			nodecount = 0;
+	char			descbuf[50] = {0};
+
+	ov_freelist_add(&pFreeCur, pdb->idList, "pdb.idList");
+	ov_freelist_add(&pFreeCur, pdb->idList->pNodes, "pdb.idList.pNodes");
+
+
+	// vendor objects are not in idList
+	Ov_ForEachChild(ov_containment, &pdb->vendordom, pobj){
+		ov_freelist_collect_object(&pFreeCur, pobj, 0x0);
+	}
+
+	pNodeCur = pdb->idList->pFirst;
+
+	while(pNodeCur){
+		for(iterator = 0; iterator<pNodeCur->relationCount; iterator++){
+			if(!pNodeCur->relations[iterator].pobj)
+				continue;
+
+			ov_freelist_collect_object(&pFreeCur, pNodeCur->relations[iterator].pobj, 0x1);
+
+		}
+		snprintf(descbuf, 50, "pdb.idList.pNodes[%u]", nodecount);
+		ov_freelist_add(&pFreeCur, pNodeCur, descbuf);
+		pNodeCur = pNodeCur->pNext;
+		nodecount++;
+	}
+
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT void ov_freelist_print(){
+	ov_freelist		freelist = {0};
+	ov_freelist*	freelistCur = NULL;
+	ov_freelist*	freelistNext;
+	OV_UINT64		iter = 0;
+	OV_POINTER		ptr = NULL;
+#if TLSF
+	void**			poolPtrs = NULL;
+	void**			pc = NULL;
+	size_t*			sizes = NULL;
+	size_t			tmpSize;
+	OV_BOOL			found = FALSE;
+#endif
+
+	ov_freelist_collect(&freelist);
+
+	// print allocated pointers found via ov meta model
+	for(freelistCur=&freelist; freelistCur; freelistCur=freelistCur->pnext){
+		for(iter=0; iter<freelistCur->count; iter++){
+			ptr = freelistCur->pfree[iter];
+			if(!ptr){
+				continue;
+			}
+
+			if(ptr>=(OV_POINTER)pdb->pstart && ptr<=(OV_POINTER)pdb->pend){
+				ov_logfile_debug("pointer inside db  %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+			} else {
+				ov_logfile_debug("pointer outside db %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+
+			}
+		}
+	}
+
+	// look in tlsf pool for blocks that are not reachable via ov meta model
+#if TLSF
+	tlsf_getPointerList(dbpool, &poolPtrs, &sizes);
+	pc = poolPtrs;
+
+	while(*pc){
+		found = FALSE;
+		freelistCur = &freelist;
+		while(freelistCur&&!found){
+			for(iter=0; iter<freelistCur->count && !found; iter++){
+				if(freelistCur->pfree[iter]==*pc)
+					found = TRUE;
+			}
+			freelistCur = freelistCur->pnext;
+		}
+
+		if(!found){
+			tmpSize = sizes[pc - poolPtrs];
+			ov_logfile_debug(
+					"block pointer %p not found in pointer list (content: %*.*s; length: %u; block nr. %u)",
+					*pc - (void*) pdb, tmpSize, tmpSize, *pc, tmpSize, pc - poolPtrs);
+		}
+
+		pc++;
+	}
+
+	free(poolPtrs);
+	free(sizes);
+#endif
+
+	freelistCur = &freelist;
+	while(freelistCur){
+		freelistNext = freelistCur->pnext;
+		for(iter=0; iter<freelistCur->count; iter++){
+			free(freelistCur->desc[iter]);
+		}
+		if(freelistCur!=&freelist)
+			ov_free(freelistCur);
+		freelistCur = freelistNext;
+	}
+}
+
+static void ov_freelist_free(){
+	ov_freelist		freelist = {0};
+	ov_freelist*	freelistCur = NULL;
+	ov_freelist*	freelistNext = NULL;
+	OV_UINT64		iter = 0;
+	OV_POINTER		ptr = NULL;
+	OV_BOOL			mallocActive = FALSE;
+
+	if (ov_vendortree_checkUseMalloc())
+		mallocActive = TRUE;
+
+	ov_freelist_collect(&freelist);
+
+	for(freelistCur=&freelist; freelistCur; freelistCur=freelistCur->pnext){
+		for(iter=0; iter<freelistCur->count; iter++){
+			ptr = freelistCur->pfree[iter];
+			if(!ptr){
+				continue;
+			}
+
+			if(ptr>=(OV_POINTER)pdb->pstart && ptr<=(OV_POINTER)pdb->pend){
+//				ov_logfile_debug("pointer inside db  %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+#if TLSF && OV_VALGRIND
+				// set pointer as freed
+				VALGRIND_MEMPOOL_FREE(dbpool, ptr);
+#endif
+			} else {
+				// free pointer outside of database
+				if(mallocActive)
+					free(ptr);
+				else
+					ov_logfile_warning("pointer outside db %p -> %s", ptr-(void*)pdb, freelistCur->desc[iter]);
+			}
+		}
+	}
+
+	size_t* sizes;
+	void** poolPtrs = NULL;
+	tlsf_getPointerList(dbpool, &poolPtrs, &sizes);
+	void** pc = poolPtrs;
+	OV_BOOL found = FALSE;
+
+	while(*pc){
+		found = FALSE;
+		freelistCur = &freelist;
+		while(freelistCur&&!found){
+			for(iter=0; iter<freelistCur->count && !found; iter++){
+				if(freelistCur->pfree[iter]==*pc)
+					found = TRUE;
+			}
+			freelistCur = freelistCur->pnext;
+		}
+
+		if(!found){
+			ov_logfile_warning(
+					"block pointer %p not found in pointer list (content: %s; length: %u; block nr. %u)",
+					*pc - (void*) pdb, *pc, sizes[pc - poolPtrs], pc - poolPtrs);
+		}
+
+		pc++;
+	}
+
+	free(poolPtrs);
+	free(sizes);
+
+	// free freelists
+	freelistCur = &freelist;
+	while(freelistCur){
+		freelistNext = freelistCur->pnext;
+		for(iter=0; iter<freelistCur->count; iter++){
+			free(freelistCur->desc[iter]);
+		}
+		if(freelistCur!=&freelist)
+			ov_free(freelistCur);
+		freelistCur = freelistNext;
+	}
+}
+
+#else
+
+OV_DLLFNCEXPORT void ov_freelist_print(){
+	fprintf(stderr, "print pointer is not available if not compiled with OV_DEBUG\n");
+}
+
+#endif
+
 
 /*
  *	End of file

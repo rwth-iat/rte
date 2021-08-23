@@ -314,6 +314,12 @@ OV_RESULT ov_database_move(
 	const OV_PTRDIFF	distance
 );
 
+/*
+ * print available/missing pointers in database
+ */
+OV_DLLFNCEXPORT void ov_freelist_print();
+
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif

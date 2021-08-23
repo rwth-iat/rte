@@ -38,7 +38,11 @@ extern "C" {
 /*
 *	Number of objects in the vendor tree
 */
+#if OV_VALGRIND
+#define	OV_NUM_VENDOROBJECTS	37
+#else
 #define	OV_NUM_VENDOROBJECTS	36
+#endif
 
 /*
 *	Number of configuration bits
@@ -637,7 +641,27 @@ OV_DLLFNCEXPORT OV_UINT ov_vendortree_schedulerNumExceeds();
  */
 OV_DLLFNCEXPORT void ov_vendortree_incrementNumExceeds();
 
+#if OV_VALGRIND
+/*
+ * get use malloc flag
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getUseMalloc(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
 
+/*
+ * set use malloc flag
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setUseMalloc(
+		const OV_ANY	*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+/*
+ * check use malloc value
+ */
+OV_DLLFNCEXPORT OV_BOOL ov_vendortree_checkUseMalloc();
+#endif
 
 #ifdef __cplusplus
 }	/* extern "C" */

@@ -75,6 +75,7 @@
 #define OV_SYSTEM_UNIX 0
 #endif
 
+
 /* No-MMU Defines */
 /* set this to 1 if your hardware has no MMU 
    No-MMU systems using uclibc do neither support dynamic linking nor the full libm	*/
