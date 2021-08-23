@@ -27,9 +27,9 @@
 *	19-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	08-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 *	23-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Optimized (use of macros).
-*	17-Jul-2001 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: ONE_TO_ONE Link.
-*	10-Dec-2002 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (inheritance).
-*	22-Aug-2003 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (parentoffset).
+*	17-Jul-2001 Ansgar MÃ¼nnemann <ansgar@plt.rwth-aachen.de>: ONE_TO_ONE Link.
+*	10-Dec-2002 Ansgar MÃ¼nnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (inheritance).
+*	22-Aug-2003 Ansgar MÃ¼nnemann <ansgar@plt.rwth-aachen.de>: Dynamic Assoc Load BugFix (parentoffset).
 */
 
 #define OV_COMPILE_LIBOV
@@ -450,14 +450,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	/*
 	*	local variables
 	*/
+	OV_BOOL					relink = FALSE;
+	OV_RESULT				result = OV_ERR_OK;
 	OV_UINT					parentoffset;
 	OV_UINT					childoffset;
 	OV_INSTPTR_ov_object	pnextchild = NULL;
 	OV_INSTPTR_ov_object 	ppreviouschild = NULL;
-	OV_INSTPTR_ov_object	pcurrchild;
-	OV_INSTPTR_ov_object	pcurrparent;
+	OV_INSTPTR_ov_object	pcurrchild = NULL;
+	OV_INSTPTR_ov_object	pcurrparent = NULL;
 	OV_PLACEMENT_HINT		parenthint2 = parenthint;
 	OV_PLACEMENT_HINT		childhint2 = childhint;
+	OV_INSTPTR_ov_object	prelparent2 = prelparent;
 	OV_INSTPTR_ov_object	prelchild2 = prelchild;
 	Ov_Association_DefineIteratorNM(pit);
 	Ov_Association_DefineIteratorNM(pparentit);
@@ -499,7 +502,34 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		*	in this case simply check, if the child link (anchor) is not already used
 		*/
 		if(Ov_Association_GetParent(passoc, pchild)) {
-			return OV_ERR_ALREADYEXISTS;
+			if(Ov_Association_GetParent(passoc, pchild)!=pparent)
+				return OV_ERR_ALREADYEXISTS;
+			/*
+			 * check if position is already correct
+			 */
+			switch(childhint){
+			case OV_PMH_DEFAULT:
+				// on placement and already linked
+				return OV_ERR_OK;
+			case OV_PMH_BEGIN:
+				pcurrchild = Ov_Association_GetFirstChild(passoc, pparent);
+				break;
+			case OV_PMH_END:
+				pcurrchild = Ov_Association_GetLastChild(passoc, pparent);
+				break;
+			case OV_PMH_BEFORE:
+				pcurrchild = Ov_Association_GetPreviousChild(passoc, prelchild);
+				break;
+			case OV_PMH_AFTER:
+				pcurrchild = Ov_Association_GetNextChild(passoc, prelchild);
+				break;
+			}
+
+			if(pcurrchild==pchild)
+				// placement already correct; nothing to do
+				return OV_ERR_OK;
+
+			relink = TRUE;
 		}
 		/*
 		*	ensure, that there is no name clash
@@ -516,7 +546,53 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 		*/
 		Ov_Association_ForEachChildNM(passoc, pit, pparent, pcurrchild) {
 			if(pcurrchild == pchild) {
-				return OV_ERR_ALREADYEXISTS;
+				if(parenthint==OV_PMH_DEFAULT && childhint==OV_PMH_DEFAULT)
+					// already linked
+					return OV_ERR_OK;
+
+				/*
+				 * check if position is already correct
+				 */
+				switch(parenthint){
+				case OV_PMH_DEFAULT:
+					pcurrparent = pparent;
+					break;
+				case OV_PMH_BEGIN:
+					pcurrparent = pit->child.pprevious?(NULL):pparent;
+					break;
+				case OV_PMH_END:
+					pcurrparent = pit->child.pnext?(NULL):pparent;
+					break;
+				case OV_PMH_BEFORE:
+					pcurrparent = (pit->child.pnext)?(pit->child.pnext)->parent.pparent==prelparent?(pparent):(NULL):(NULL);
+					break;
+				case OV_PMH_AFTER:
+					pcurrparent = (pit->child.pprevious)?(pit->child.pprevious)->parent.pparent==prelparent?(pparent):(NULL):(NULL);
+					break;
+				}
+
+				switch(childhint){
+				case OV_PMH_DEFAULT:
+					pcurrchild = pchild;
+				case OV_PMH_BEGIN:
+					pcurrchild = pit->parent.pprevious?(NULL):pchild;
+					break;
+				case OV_PMH_END:
+					pcurrchild = pit->parent.pnext?(NULL):pchild;
+					break;
+				case OV_PMH_BEFORE:
+					pcurrchild = (pit->parent.pnext)?(pit->parent.pnext)->child.pchild==prelchild?(pchild):(NULL):(NULL);
+					break;
+				case OV_PMH_AFTER:
+					pcurrchild = (pit->parent.pprevious)?(pit->parent.pprevious)->child.pchild==prelchild?(pchild):(NULL):(NULL);
+					break;
+				}
+
+				if(pcurrchild==pchild && pcurrparent==pparent)
+					return OV_ERR_OK;
+
+				relink = TRUE;
+				break;
 			}
 		}
 		break;
@@ -740,6 +816,57 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	/*
 	*	finally do the actual linkage
 	*/
+	if(relink){
+		/*
+		 * additional sanity checks
+		 */
+		switch(passoc->v_assoctype){
+		case OV_AT_MANY_TO_MANY:
+			if((parenthint==OV_PMH_BEFORE || parenthint==OV_PMH_AFTER) && prelparent==pparent){
+				return OV_ERR_BADPLACEMENT;
+			}
+			//fall through
+		case OV_AT_ONE_TO_MANY:
+			if((childhint==OV_PMH_BEFORE || childhint==OV_PMH_AFTER) && prelchild==pchild){
+				return OV_ERR_BADPLACEMENT;
+			}
+		}
+
+		parenthint2 = parenthint;
+		childhint2 = childhint;
+		prelparent2 = prelparent;
+		prelchild2 = prelchild;
+
+		/*
+		 * keep position for parent/child in N:M association and default placement
+		 */
+		if(passoc->v_assoctype==OV_AT_MANY_TO_MANY){
+			if(parenthint==OV_PMH_DEFAULT){
+				if(pit->child.pprevious){
+					parenthint2 = OV_PMH_AFTER;
+					prelparent2 =(pit->child.pprevious)->parent.pparent;
+				} else {
+					parenthint2 = OV_PMH_BEGIN;
+				}
+			}
+			if(childhint==OV_PMH_DEFAULT){
+				if(pit->parent.pprevious){
+					childhint2 = OV_PMH_AFTER;
+					prelchild2 = (pit->parent.pprevious)->child.pchild;
+				} else {
+					childhint2 = OV_PMH_BEGIN;
+				}
+			}
+		}
+
+		passoc->v_unlinkfnc(pparent, pchild);
+		if(Ov_Fail(result))
+			return result;
+
+		// call link function again, since unlinking may have invalidated the computed placement
+		return ov_association_link(passoc, pparent, pchild, parenthint2, prelparent2, childhint2, prelchild2);
+	}
+
 	switch(passoc->v_assoctype) {
 	case OV_AT_ONE_TO_ONE:
 		*( (OV_INSTPTR_ov_object*) ((pparent->v_linktable)+parentoffset) ) = pchild;
