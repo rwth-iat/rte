@@ -56,6 +56,7 @@ LIBRARY ssc
 
 	CLASS SequentialStateChart : CLASS fb/functionchart
 		IS_INSTANTIABLE;
+		FLAGS = "i";
 		COMMENT = "holds all steps and transitions and does the call logic";
 		VARIABLES
 			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: stop=0/start=1/break=2/reset=3" INITIALVALUE = 0;

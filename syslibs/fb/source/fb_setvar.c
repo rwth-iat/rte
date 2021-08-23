@@ -2389,6 +2389,10 @@ fprintf(stderr, "ANY: INT_VAL %" OV_PRINT_INT " != %" OV_PRINT_INT "\n",pany->va
 	           return OV_ERR_BADTYPE;
     }
 
+    if(pelem->elemunion.pvar->v_setfnc){
+    	return ov_object_setvar(pobj, pelem, pvarcurrprops);;
+    }
+
     return OV_ERR_OK;
 }
 

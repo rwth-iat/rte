@@ -122,7 +122,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_constructor(
 	OV_RESULT    result;
 
 	/* do what the base class does first */
-	result = fb_functionblock_constructor(pobj);
+	result = fb_functionchart_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 
@@ -133,10 +133,16 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_constructor(
 	result = Ov_CreateObject(ssc_step, pEndStep, pinst, "END");
 	pEndStep->v_internalRole = SSC_STEPROLE_END;
 
+	// link ssc tasks to intask
+	result = Ov_Link(fb_tasklist, &pinst->p_intask, &pinst->p_taskActiveStep);
+	if(Ov_Fail(result))
+		return result;
+	result = Ov_Link(fb_tasklist, &pinst->p_intask, &pinst->p_trans);
+	if(Ov_Fail(result))
+		return result;
+
 	//init variables
 	pinst->v_workingState = SSC_WOST_INIT;
-	pinst->v_actimode = FB_AM_ON;
-	pinst->v_iexreq = TRUE;
 
 	return OV_ERR_OK;
 }
@@ -156,14 +162,8 @@ OV_DLLFNCEXPORT void ssc_SequentialStateChart_typemethod(
     OV_RESULT    			 result;
     OV_BOOL	                 exitLoop = TRUE;
 
-	OV_INSTPTR_fb_task          intask = Ov_GetPartPtr(intask, pinst);
-
-	/* Init functionchart intask */
-	intask->v_actimode = FB_AM_ON;
-	intask->v_cyctime.secs = 0;
-	intask->v_cyctime.usecs = 0;
-	intask->v_proctime = *pltc;
-
+    /* make sure intask is linked correctly */
+    fb_functionchart_typemethod(pfb, pltc);
 
     // init variables
     pinst->v_error=FALSE;
@@ -172,9 +172,6 @@ OV_DLLFNCEXPORT void ssc_SequentialStateChart_typemethod(
     taskActivestep->v_cyctime.secs = 0;
     taskActivestep->v_cyctime.usecs = 0;
     pTrans->v_actimode = FB_AM_ON;
-
-	/* Trigger all connections on chart input ports */
-	fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, pinst));
 
     // find active step
     Ov_GetFirstChildEx(fb_tasklist, taskActivestep, pActiveStep, ssc_step);
@@ -431,16 +428,6 @@ OV_DLLFNCEXPORT void ssc_SequentialStateChart_typemethod(
     /* END: state machine: working state
     #################################*/
 
-	/* Execute internal tasks */
-	Ov_Call1 (fb_task, taskActivestep, execute, pltc);
-	Ov_Call1 (fb_task, pTrans, execute, pltc);
-
-	/* Execute internal SSC task */
-	Ov_Call1(fb_task, intask, execute, pltc);
-
-	/* Trigger all connections on chart output ports */
-	fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pinst));
-
 	return;
 }
 
@@ -454,8 +441,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialStateChart_resetSsc(
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_ssc_SequentialStateChart pSscAction = NULL;
 	OV_RESULT result = OV_ERR_OK;
-	//OV_ANY orderVar = OV_ANY_INIT;
-	//OV_UINT iterator = 0;
 
 	//reset all steps; find and link INIT-step to taskActiveStep
 	Ov_ForEachChildEx(ov_containment, pinst, pStep, ssc_step){

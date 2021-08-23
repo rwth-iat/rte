@@ -25,26 +25,92 @@
 #include "ov_macros.h"
 #include "fb_namedef.h"
 #include "fb_macros.h"
+#include "fb_log.h"
 #include "ov_call_macros_10.h"
 
-/*
- *	Execute internal task
- */
-void fbchart_execIntask(
-		OV_INSTPTR_fb_task	pIntask,
-		OV_TIME				*pltc
+
+OV_DLLFNCEXPORT void fb_functionchart_execute(
+	OV_INSTPTR_fb_task	ptask,
+	OV_TIME				*pltc
 ) {
-	OV_VTBLPTR_fb_task	             pvtable;
+	/*
+	*	local variables
+	*/
+	char						help[128];
+	OV_TIME						t0;
+	OV_TIME						t1;
+	OV_BOOL						ret;
+	OV_INSTPTR_fb_functionchart	pinst = Ov_StaticPtrCast(fb_functionchart, ptask);
 
 
-	Ov_GetVTablePtr(fb_task, pvtable, pIntask);
-
-	if(!pvtable) {
-		/* ? */
+	/*
+	*	is otc >= ltc or function off?
+	*/
+	if((ov_time_compare(&pinst->v_proctime, pltc) == OV_TIMECMP_AFTER) || (pinst->v_actimode == FB_AM_OFF)) {
 		return;
 	}
-	pvtable->m_execute(pIntask, pltc);
+
+	/* Logging */
+	FbSvcLog_incrIndent();
+	sprintf(help, "executing (method counter %" OV_PRINT_UINT ")", pinst->v_methcount);
+	FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pinst, help);
+
+	/* trigger input get connections */
+	fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, pinst));
+
+	/* test if we need to calculate new outputs */
+	ov_time_gettime(&t0);
+	if(pinst->v_iexreq || pinst->v_eexreq) {
+
+		/* call typemethod and supervise if appropriate */
+		ret = fb_functionblock_execTypeMethod(Ov_PtrUpCast(fb_functionblock, pinst), pltc);
+
+		/* Typemethod ausgefuehrt? */
+		if(ret == FALSE) {
+			/* Logging */
+			FbSvcLog_decrIndent();
+			return;
+		}
+	}
+
+	/* execute the child objects */
+	fb_task_execChildObjects(ptask, pltc);
+
+	/* trigger output send connections */
+	fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pinst));
+
+	/* calculate new value of otc */
+	fb_task_setNextProcTime(ptask, pltc);
+
+	/* calctime */
+	ov_time_gettime(&t1);
+	ov_time_diff(&pinst->v_calctime, &t1, &t0);
+
+	/* Logging */
+	FbSvcLog_decrIndent();
+
+	return;
 }
+
+
+OV_DLLFNCEXPORT OV_RESULT fb_functionchart_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_fb_functionchart pinst = Ov_StaticPtrCast(fb_functionchart, pobj);
+    OV_RESULT    result;
+
+    /* do what the base class does first */
+    result = fb_functionblock_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    return Ov_Link(fb_tasklist, pinst, &pinst->p_intask);
+}
+
 
 /*
  *	Typemethod of functionchart
@@ -55,6 +121,7 @@ OV_DLLFNCEXPORT void fb_functionchart_typemethod(
 ) {
 	OV_INSTPTR_fb_functionchart pfc = Ov_StaticPtrCast(fb_functionchart, pfb);
 	OV_INSTPTR_fb_task          intask = Ov_GetPartPtr(intask, pfc);
+	OV_INSTPTR_fb_task			parentTask = Ov_GetParent(fb_tasklist, intask);
 
 	/* Init intask */
 	intask->v_actimode = FB_AM_ON;
@@ -62,14 +129,13 @@ OV_DLLFNCEXPORT void fb_functionchart_typemethod(
 	intask->v_cyctime.usecs = 0;
 	intask->v_proctime = *pltc;
 
-	/* Trigger all connections on chart input ports */
-	fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, pfb));
+	if(!parentTask){
+		Ov_Link(fb_tasklist, pfc, intask);
+	} else if((OV_INSTPTR)parentTask!=(OV_INSTPTR)pfc){
+		Ov_Unlink(fb_tasklist, parentTask, intask);
+		Ov_Link(fb_tasklist, pfc, intask);
+	}
 
-	/* Execute internal task */
-	fbchart_execIntask(intask, pltc);
-
-	/* Trigger all connections on chart output ports */
-	fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pfb));
 }
 
 /**
