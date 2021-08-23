@@ -1,6 +1,0 @@
-#ifndef modbusTcpLib_OVT_INCLUDED
-#define modbusTcpLib_OVT_INCLUDED
-
-/* 
-	Define your data types here. 
-*/

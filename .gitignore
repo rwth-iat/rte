@@ -1,14 +1,3 @@
-Thumbs.db
+# ignore generated sourcetemplates folders
 
-# ignore library build artifacts
-/**/.settings/
-/**/build/
-/**/ov/source/libml/
-/**/source/sourcetemplates/
-
-# include rte build folder
-!/build/
-# ignore rte build artifacts
-/build/acplt/
-/build/acplt.build/
-/build/*.log
+**/source/sourcetemplates/
