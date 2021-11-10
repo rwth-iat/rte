@@ -27,4 +27,6 @@ ORTCLIB_API bool ORTCLIB_evaluate(ORTCLIB_HANDLE* handle,
 	float* observation,	size_t observationSize, float* actionMask,
 	float** actions, size_t* actionsSize);
 
+ORTCLIB_API void ORTCLIB_freeActions(float* actions);
+
 #endif /* ORTCLIB_ORTCLIB_H */

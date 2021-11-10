@@ -44,7 +44,7 @@ static void evaluate(ORTCLIB_HANDLE* handle, float* observations, float* actionM
         printf("Actions:\n");
         printArray("", ", ", actions, actionsSize);
         printf("Most likely action: %i\n", maxValue(actions, actionsSize));
-        free(actions);
+        ORTCLIB_freeActions(actions);
     }
 }
 

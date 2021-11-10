@@ -218,16 +218,14 @@ bool ORTCLIB_load(ORTCLIB_HANDLE* handle, char* modelPath)
 	}
 
 	// Convert modelPath to wchar
-	size_t requiredSize = mbstowcs(NULL, modelPath, 0);
-	wchar_t* pwc = (wchar_t*)malloc((requiredSize + 1) * sizeof(wchar_t));
-	if (!pwc)
+	size_t requiredSize = strlen(modelPath) + 1;
+	wchar_t* pwc = (wchar_t*)malloc(requiredSize * sizeof(wchar_t));
+	size_t convertedChars = 0;
+	errno_t err = mbstowcs_s(&convertedChars, pwc, requiredSize, modelPath, _TRUNCATE);
+	if (err != 0 || convertedChars == 0)
 	{
-		fprintf(stderr, "ORTCLIB: not enough memory to allocate model path.\n");
-		return false;
-	}
-	if (mbstowcs(pwc, modelPath, requiredSize + 1) == (size_t)(-1))
-	{
-		fprintf(stderr, "ORTCLIB: couldn't convert modelPath - invalid multibyte character.\n");
+		fprintf(stderr, "ORTCLIB: couldn't convert modelPath: %s\n", modelPath);
+		free(pwc);
 		return false;
 	}
 
@@ -373,4 +371,8 @@ bool ORTCLIB_evaluate(ORTCLIB_HANDLE* handle,
 		free(actionMask);
 	}
 	return true;
+}
+
+ORTCLIB_API void ORTCLIB_freeActions(float* actions) {
+	free(actions);
 }

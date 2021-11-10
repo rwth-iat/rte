@@ -107,7 +107,7 @@ OV_DLLFNCEXPORT void onnx_UnityMLAgent_typemethod(
     {
     	pinst->v_Error = FALSE;
     	Ov_SetDynamicVectorValue(&pinst->v_Decisions, actions, actionsSize, SINGLE);
-    	free(actions);
+    	ORTCLIB_freeActions(actions);
     	actions = NULL;
     }else{
     	pinst->v_Error = TRUE;
