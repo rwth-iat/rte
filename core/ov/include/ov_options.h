@@ -21,6 +21,7 @@ typedef struct struct_ov_options {
 	int			port;
 	OV_UINT		dbSize;
 	char*		libraries[MAX_STARTUP_LIBRARIES];
+	OV_BOOL		librariesRequired;
 	int			libcount;
 	char*		logfile;
 	char*		commandline_options;

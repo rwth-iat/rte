@@ -143,6 +143,8 @@ static void ov_server_usage(void)
 				"-i ID, --identify ID             Set Ticket Identification for server access\n"
 				"-p PORT, --port-number PORT      Set server port number\n"
 				"-w LIBRARY, --start-with LIBRARY Start server with library\n"
+				"--require-libs                   Exit immediately if loading one of the \n"
+				"                                 specified libraries fails\n"
 				"-l LOGFILE, --logfile LOGFILE    Set logfile name, you may use stdout"
 #if OV_SYSTEM_NT
 				", stderr\n"
@@ -194,6 +196,7 @@ int main(int argc, char **argv) {
 	OV_RESULT				result;
 	OV_ANY					tempAny = {{OV_VT_VOID, {0}}, 0, {0,0}};
 	int						exit_status = EXIT_SUCCESS;
+	OV_BOOL 				libraryLoadingFailed = FALSE;
 
 	ov_options	opts;
 
@@ -512,6 +515,9 @@ int main(int argc, char **argv) {
 		else if(Ov_Fail(result)) {
 			ov_logfile_error("Could'nt create library %s: %s (error code 0x%4.4x).",
 					opts.libraries[i], ov_result_getresulttext(result), result);
+			if (opts.librariesRequired) {
+				libraryLoadingFailed = TRUE;
+			}
 		}
 		i++;
 	}
@@ -520,7 +526,7 @@ int main(int argc, char **argv) {
 	 */
 	if (!pdb->serverpassword) ov_vendortree_setserverpassword(opts.password);
 	ov_vendortree_setServerPID();
-	if(!opts.exit){
+	if(!opts.exit && !libraryLoadingFailed){
 		/*
 		 *   run server
 		 */
@@ -587,7 +593,9 @@ int main(int argc, char **argv) {
 	ov_vendortree_free();
 	ov_options_free(&opts);
 	ov_destroyHeap();
-	return exit_status;
+	// Exit with code 1 if either creating stripped KS server failed
+	// or loading a library failed (and opts.librariesRequired was given)
+	return exit_status || libraryLoadingFailed;
 }
 
 /*	----------------------------------------------------------------------	*/
