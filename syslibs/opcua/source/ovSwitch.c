@@ -64,11 +64,10 @@ static void opcua_ovSwitch_deleteNode(void * context, UA_Node *node){
 				return pServer->v_ovTrafo->deleteNode(context, node);
 			}
 		}
-		
+	} else {
+		ov_string_setvalue(&virtualPath, NULL);
+		pServer->v_ovTrafo->deleteNode(context, node);
 	}
-
-	ov_string_setvalue(&virtualPath, NULL);
-	pServer->v_ovTrafo->deleteNode(context, node);
 }
 static void opcua_ovSwitch_releaseNode(void *context, const UA_Node *node){
 	OV_INSTPTR_opcua_server pServer = (OV_INSTPTR_opcua_server)context;
@@ -93,10 +92,10 @@ static void opcua_ovSwitch_releaseNode(void *context, const UA_Node *node){
 				return pServer->v_ovTrafo->releaseNode(context, node);
 			}
 		}
-		
+	} else {
+		ov_string_setvalue(&virtualPath, NULL);
+		pServer->v_ovTrafo->releaseNode(context, node);
 	}
-	ov_string_setvalue(&virtualPath, NULL);
-	pServer->v_ovTrafo->releaseNode(context, node);
 }
 
 static void opcua_ovSwitch_iterate(void *context, UA_NodestoreVisitor visitor, void* visitorHandle){
@@ -133,15 +132,16 @@ static const UA_Node * opcua_ovSwitch_getNode(void * context, const UA_NodeId *n
 			}
 		}
 		
+	} else {
+		ov_string_setvalue(&virtualPath, NULL);
+		return pServer->v_ovTrafo->getNode(context, nodeId);
 	}
-
-	ov_string_setvalue(&virtualPath, NULL);
-	return pServer->v_ovTrafo->getNode(context, nodeId);
+	return NULL;
 }
 static UA_StatusCode opcua_ovSwitch_getNodeCopy(void *context, const UA_NodeId *nodeId, UA_Node ** nodeOut){
 	OV_INSTPTR_opcua_server pServer = (OV_INSTPTR_opcua_server)context;
 	if(pServer == NULL)
-		return UA_STATUSCODE_BADNODEIDEXISTS;
+		return UA_STATUSCODE_BADNODEIDUNKNOWN;
 
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_STRING virtualPath = NULL;
@@ -161,15 +161,16 @@ static UA_StatusCode opcua_ovSwitch_getNodeCopy(void *context, const UA_NodeId *
 				return pServer->v_ovTrafo->getNodeCopy(context, nodeId, nodeOut);
 			}
 		}
-		
+	} else {
+		ov_string_setvalue(&virtualPath, NULL);
+		return pServer->v_ovTrafo->getNodeCopy(context, nodeId, nodeOut);
 	}
-	ov_string_setvalue(&virtualPath, NULL);
-	return pServer->v_ovTrafo->getNodeCopy(context, nodeId, nodeOut);
+	return UA_STATUSCODE_BADNODEIDUNKNOWN;
 }
 static UA_StatusCode opcua_ovSwitch_removeNode(void *context, const UA_NodeId *nodeId){
 	OV_INSTPTR_opcua_server pServer = (OV_INSTPTR_opcua_server)context;
 	if(pServer == NULL)
-		return UA_STATUSCODE_BADNODEIDEXISTS;
+		return UA_STATUSCODE_BADNODEIDUNKNOWN;
 
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_STRING virtualPath = NULL;
@@ -189,14 +190,16 @@ static UA_StatusCode opcua_ovSwitch_removeNode(void *context, const UA_NodeId *n
 				return pServer->v_ovTrafo->removeNode(context, nodeId);
 			}
 		}
+	} else {
+		ov_string_setvalue(&virtualPath, NULL);
+		return pServer->v_ovTrafo->removeNode(context, nodeId);
 	}
-	ov_string_setvalue(&virtualPath, NULL);
-	return pServer->v_ovTrafo->removeNode(context, nodeId);
+	return UA_STATUSCODE_BADNODEIDUNKNOWN;
 }
 static UA_StatusCode opcua_ovSwitch_insertNode(void *context, UA_Node *node, UA_NodeId *parrentNode){
 	OV_INSTPTR_opcua_server pServer = (OV_INSTPTR_opcua_server)context;
 	if(pServer == NULL)
-		return UA_STATUSCODE_BADNODEIDEXISTS;
+		return UA_STATUSCODE_BADNODEIDUNKNOWN;
 
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_STRING virtualPath = NULL;
@@ -216,14 +219,16 @@ static UA_StatusCode opcua_ovSwitch_insertNode(void *context, UA_Node *node, UA_
 				return pServer->v_ovTrafo->insertNode(context, node, parrentNode);
 			}
 		}
+	} else {
+		ov_string_setvalue(&virtualPath, NULL);
+		return pServer->v_ovTrafo->insertNode(context, node, parrentNode);
 	}
-	ov_string_setvalue(&virtualPath, NULL);
-	return pServer->v_ovTrafo->insertNode(context, node, parrentNode);
+	return UA_STATUSCODE_BADNODEIDUNKNOWN;
 }
 static UA_StatusCode opcua_ovSwitch_replaceNode(void *context, UA_Node *node){
 	OV_INSTPTR_opcua_server pServer = (OV_INSTPTR_opcua_server)context;
 	if(pServer == NULL)
-		return UA_STATUSCODE_BADNODEIDEXISTS;
+		return UA_STATUSCODE_BADNODEIDUNKNOWN;
 		
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_STRING virtualPath = NULL;
@@ -243,9 +248,11 @@ static UA_StatusCode opcua_ovSwitch_replaceNode(void *context, UA_Node *node){
 				return pServer->v_ovTrafo->replaceNode(context, node);
 			}
 		}
+	} else {
+		ov_string_setvalue(&virtualPath, NULL);
+		return pServer->v_ovTrafo->replaceNode(context, node);
 	}
-	ov_string_setvalue(&virtualPath, NULL);
-	return pServer->v_ovTrafo->replaceNode(context, node);
+	return UA_STATUSCODE_BADNODEIDUNKNOWN;
 }
 
 UA_NodestoreInterface*
