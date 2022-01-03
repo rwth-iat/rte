@@ -77,7 +77,7 @@ OV_DLLFNCEXPORT void myLibrary_uaInterface_destructor(
     pinst->v_trafo = NULL;
     //Delete the types
     //UA_String_deleteMembers(&pinst->v_types->uri);
-    //opcua_ovStore_delete(pinst->v_types->store);
+    //opcua_ovSwitch_delete(pinst->v_types->store);
     Ov_HeapFree(pinst->v_types);
     pinst->v_types = NULL;
 

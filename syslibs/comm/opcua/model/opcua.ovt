@@ -1,8 +1,10 @@
 #ifndef opcua_OVT_INCLUDED
 #define opcua_OVT_INCLUDED
 
-
-/*	Needed to prevent redefined warnings :-S	*/
+/*
+* Needed to prevent redefined warnings :-S
+* TODO: Check if necessary and only define if it was defined before
+*/
 #ifdef WIN32
 #undef WIN32
 #endif
@@ -14,14 +16,8 @@
 #define WIN32
 #endif
 
-
-/* 
-	Define your data types here. 
-*/
-
 #define OPCUA_DEFAULT_APPLICATIONURI "acplt.org/"
-#define OPCUA_DEFAULT_APPLICATIONNAME "ACPLT/RTE" // is filled with /SERVERNAME in uaServer startup via ov_vendortree_getServer
-
+#define OPCUA_DEFAULT_APPLICATIONNAME "ACPLT/RTE" // the suffix /SERVERNAME is appended in uaServer startup via ov_vendortree_getServer, e.g. ACPLT/RTE/MANAGER
 
 typedef UA_Server* OPCUA_PTR_UA_Server;
 typedef UA_NodestoreInterface* OPCUA_PTR_NODESTOREINTERFACE;

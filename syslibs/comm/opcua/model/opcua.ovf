@@ -5,16 +5,16 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 
-// Loads the information model of pobj into the running server
-typedef OV_RESULT OPCUA_FNC_LOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pobj, OV_BOOL forceLoad);
-// Unloads the information model pobj into the running server
-typedef OV_RESULT OPCUA_FNC_UNLOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pobj);
-// Checks whether pobj has a transformation in namespace and returns its forward parent reference if given
-// Is used by generic interface to determine whether a specialices transformation is used.
-// If parentRef is filled, all values (strings) have to be alloced
-// parentRef->sourceNodeId and parentRef->targetServerUri don't need to be filled.
+// Loads the information model of pobj into the server during startup of UA_Server
+typedef OV_RESULT OPCUA_FNC_LOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pobj);
+
+/*
+* Checks whether pobj has a transformation in namespace and returns its forward parent reference if given
+* Is used by generic interface to determine whether a specialices transformation is used.
+* If parentRef is filled, all values (strings) have to be alloced
+* parentRef->sourceNodeId and parentRef->targetServerUri don't need to be filled.
+*/
 typedef OV_BOOL OPCUA_FNC_CHECKREFERENCE(OV_INSTPTR_opcua_interface pobj, OV_UINT applicationIndex, OV_INSTPTR_ov_object pNode, UA_AddReferencesItem * parentRef);
-typedef OV_BOOL OPCUA_FNC_CHECKNODE(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath, void *context);
-typedef UA_StatusCode OPCUA_FNC_NODESET(UA_Server* server);
+typedef OV_BOOL OPCUA_FNC_CHECKNODE(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath);
 
 #endif

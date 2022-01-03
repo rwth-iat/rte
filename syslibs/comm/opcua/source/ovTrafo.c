@@ -11,38 +11,15 @@
 #define OV_COMPILE_LIBRARY_opcua
 #endif
 
-#include "opcua_ovTrafo.h"
+#include "ovTrafo.h"
 #include "libov/ov_macros.h"
 #include "opcua.h"
-#include "opcua_helpers.h"
+#include "helpers.h"
 #include "NoneTicketAuthenticator.h"
 
 #define OPCUA_OVTRAFO_ADDREFERENCEDIRECTION_FORWARD 0x01
 #define OPCUA_OVTRAFO_ADDREFERENCEDIRECTION_BACKWARD 0x02
 #define OPCUA_OVTRAFO_ADDREFERENCEDIRECTION_BOTH 0x04
-
-//OV_DLLFNCEXPORT UA_UInt16 opcua_ovTrafo_searchNamespaceIndex(
-//		OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pobj, OV_BOOL forTypes){
-//	//Get ua server connected to this interface
-//	if(pInterface == NULL)
-//		return OPCUA_OVTRAFO_DEFAULTNSINDEX;
-//	OV_INSTPTR_opcua_server pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
-//	if(pServer == NULL)
-//		return forTypes ? pInterface->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
-//	OV_INSTPTR_opcua_interface pInterfaceCheck = NULL;
-//	OV_VTBLPTR_opcua_interface pVtblInterface = NULL; //TODO use Call makro instead?
-//	Ov_ForEachChild(opcua_serverToInterfaces, pServer, pInterfaceCheck){
-//		if(pInterface == pInterfaceCheck)
-//			continue;
-//		Ov_GetVTablePtr(opcua_interface, pVtblInterface, pInterfaceCheck);
-//		if(pVtblInterface){
-//			if(pVtblInterface->m_checkReference(pInterfaceCheck, pobj, NULL)){
-//				return forTypes ? pInterfaceCheck->v_index : OPCUA_OVTRAFO_DEFAULTNSINDEX;
-//			}
-//		}
-//	}
-//	return OPCUA_OVTRAFO_DEFAULTNSINDEX;
-//}
 
 OV_DLLFNCEXPORT OV_BOOL opcua_ovTrafo_addReferenceToSpecificObject(
 		OV_INSTPTR_opcua_server pServer, OV_INSTPTR_ov_object pobj, UA_Node* node){
@@ -65,8 +42,7 @@ OV_DLLFNCEXPORT OV_BOOL opcua_ovTrafo_addReferenceToSpecificObject(
 	return FALSE;
 }
 
-static UA_StatusCode opcua_ovTrafo_addReference(
-		OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pElement, UA_NodeId referenceTypeId, UA_Boolean isForward,
+static UA_StatusCode opcua_ovTrafo_addReference(OV_ELEMENT* pElement, UA_NodeId referenceTypeId, UA_Boolean isForward,
 		UA_Node * node){
 	OV_INSTPTR_ov_object	pObject			=	NULL;
 	UA_StatusCode			result			=	UA_STATUSCODE_GOOD;
@@ -104,7 +80,7 @@ static UA_StatusCode opcua_ovTrafo_addReference(
  *****************************************************************/
 
 //Maps to ov_containment
-static UA_StatusCode opcua_ovTrafo_addOrganizes(OV_INSTPTR_opcua_interface pInterface,
+static UA_StatusCode opcua_ovTrafo_addOrganizes(OV_INSTPTR_opcua_server pServer,
 		OV_ELEMENT* pNode,
 		UA_Node * node, OV_UINT direction){
 	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
@@ -113,10 +89,6 @@ static UA_StatusCode opcua_ovTrafo_addOrganizes(OV_INSTPTR_opcua_interface pInte
 	if(pNode->elemtype != OV_ET_OBJECT)
 		return UA_STATUSCODE_GOOD;
 
-	OV_INSTPTR_opcua_server pServer = NULL;
-	if(pInterface){
-		pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
-	}
 	//Forward direction
 	if (direction & OPCUA_OVTRAFO_ADDORGANIZES_FORWARD){
 		childElement.elemtype = OV_ET_OBJECT;
@@ -129,7 +101,7 @@ static UA_StatusCode opcua_ovTrafo_addOrganizes(OV_INSTPTR_opcua_interface pInte
 				// Check whether child has a specific transformation
 				if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, childElement.pobj, node))
 					// Child has no specific transformation --> use generic interface
-					statusCode |= opcua_ovTrafo_addReference(pInterface, &childElement,
+					statusCode |= opcua_ovTrafo_addReference(&childElement,
 							UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, node);
 			}
 		}
@@ -144,7 +116,7 @@ static UA_StatusCode opcua_ovTrafo_addOrganizes(OV_INSTPTR_opcua_interface pInte
 			childElement.elemunion.pobj = parentElement.pobj;
 			access = opcua_helpers_getAccess(&parentElement);
 			if(access & OV_AC_READ){
-				statusCode |= opcua_ovTrafo_addReference(pInterface, &parentElement,
+				statusCode |= opcua_ovTrafo_addReference(&parentElement,
 						UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_FALSE, node);
 			}
 		} else {	//	ov root-node --> bridge node in ns0
@@ -159,7 +131,7 @@ static UA_StatusCode opcua_ovTrafo_addOrganizes(OV_INSTPTR_opcua_interface pInte
  *****************************************************************/
 
 //	maps to ov_instantiation
-static UA_StatusCode opcua_ovTrafo_addHasTypeDefinition(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
+static UA_StatusCode opcua_ovTrafo_addHasTypeDefinition(OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
 	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_INSTPTR_ov_object	pChildObject	=	NULL;
@@ -178,7 +150,7 @@ static UA_StatusCode opcua_ovTrafo_addHasTypeDefinition(OV_INSTPTR_opcua_interfa
 					parentTypeDefinition.elemtype = OV_ET_OBJECT;
 					parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_instantiation, pNode->pobj));
 					if (Ov_GetClassPtr(pNode->pobj) != pclass_ov_class){
-						statusCode |= opcua_ovTrafo_addReference(pInterface, &parentTypeDefinition,
+						statusCode |= opcua_ovTrafo_addReference(&parentTypeDefinition,
 									UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION), UA_TRUE, node);
 					}
 				} else if (pNode->elemtype == OV_ET_VARIABLE || pNode->elemtype == OV_ET_MEMBER){
@@ -191,7 +163,7 @@ static UA_StatusCode opcua_ovTrafo_addHasTypeDefinition(OV_INSTPTR_opcua_interfa
 				}else if (pNode->elemtype == OV_ET_PARENTLINK || pNode->elemtype == OV_ET_CHILDLINK){
 					parentTypeDefinition.elemtype = OV_ET_OBJECT;
 					parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.passoc);
-					statusCode |= opcua_ovTrafo_addReference(pInterface, &parentTypeDefinition,
+					statusCode |= opcua_ovTrafo_addReference(&parentTypeDefinition,
 									UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION), UA_TRUE, node);
 				}
 			}
@@ -206,7 +178,7 @@ static UA_StatusCode opcua_ovTrafo_addHasTypeDefinition(OV_INSTPTR_opcua_interfa
 				childTypeDefinition.pobj = pChildObject;
 				access = opcua_helpers_getAccess(&childTypeDefinition);
 				if(access & OV_AC_READ){
-					statusCode |= opcua_ovTrafo_addReference(pInterface, &childTypeDefinition,
+					statusCode |= opcua_ovTrafo_addReference(&childTypeDefinition,
 							UA_NODEID_NUMERIC(0, UA_NS0ID_HASTYPEDEFINITION), UA_FALSE, node);
 				}
 			}
@@ -220,7 +192,7 @@ static UA_StatusCode opcua_ovTrafo_addHasTypeDefinition(OV_INSTPTR_opcua_interfa
  *****************************************************************/
 
 // Maps to ov_inheritance
-static UA_StatusCode opcua_ovTrafo_addHasSubtype(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node * node, OV_UINT direction){
+static UA_StatusCode opcua_ovTrafo_addHasSubtype(OV_ELEMENT* pNode, UA_Node * node, OV_UINT direction){
 	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_INSTPTR_ov_class		pChildClass	=	NULL;
@@ -234,7 +206,7 @@ static UA_StatusCode opcua_ovTrafo_addHasSubtype(OV_INSTPTR_opcua_interface pInt
 				referencedElement.pobj = Ov_PtrUpCast(ov_object, pChildClass);
 				access = opcua_helpers_getAccess(&referencedElement);
 				if(access & OV_AC_READ){
-						statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+						statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 							UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_TRUE, node);
 				}
 			}
@@ -262,7 +234,7 @@ static UA_StatusCode opcua_ovTrafo_addHasSubtype(OV_INSTPTR_opcua_interface pInt
 				referencedElement.pobj = Ov_PtrUpCast(ov_object, pParentClass);
 				access = opcua_helpers_getAccess(&referencedElement);
 				if(access & OV_AC_READ){
-					statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+					statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 							UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_FALSE, node);
 				}
 			}
@@ -286,15 +258,10 @@ static UA_StatusCode opcua_ovTrafo_addHasSubtype(OV_INSTPTR_opcua_interface pInt
  *****************************************************************/
 
 //	Maps to variables in objects
-static UA_StatusCode opcua_ovTrafo_addHasProperty(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
+static UA_StatusCode opcua_ovTrafo_addHasProperty(OV_INSTPTR_opcua_server pServer, OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
 	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_ELEMENT				referencedElement;
-
-	OV_INSTPTR_opcua_server pServer = NULL;
-	if(pInterface){
-		pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
-	}
 
 	// Forward direction
 	if (direction & OPCUA_OVTRAFO_ADDHASPROPERTY_FORWARD){
@@ -314,7 +281,7 @@ static UA_StatusCode opcua_ovTrafo_addHasProperty(OV_INSTPTR_opcua_interface pIn
 					// Check whether child has a specific transformation
 					if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, referencedElement.pobj, node))
 						// Child has no specific transformation --> use generic interface
-						statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+						statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 							UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY), UA_TRUE, node);
 				}
 				ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE | OV_ET_MEMBER);
@@ -328,7 +295,7 @@ static UA_StatusCode opcua_ovTrafo_addHasProperty(OV_INSTPTR_opcua_interface pIn
 			referencedElement.pobj = pNode->pobj;
 			access = opcua_helpers_getAccess(&referencedElement);
 			if(access & OV_AC_READ){
-				statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+				statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 						UA_NODEID_NUMERIC(0, UA_NS0ID_HASPROPERTY), UA_FALSE, node);
 			}
 		}
@@ -340,15 +307,11 @@ static UA_StatusCode opcua_ovTrafo_addHasProperty(OV_INSTPTR_opcua_interface pIn
  * helper for HasComponent
  *****************************************************************/
 
-static UA_StatusCode opcua_ovTrafo_addHasComponent(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
+static UA_StatusCode opcua_ovTrafo_addHasComponent(OV_INSTPTR_opcua_server pServer, OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
 	UA_StatusCode statusCode = UA_STATUSCODE_GOOD;
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_ELEMENT				referencedElement;
 
-	OV_INSTPTR_opcua_server pServer = NULL;
-	if(pInterface){
-		pServer = Ov_GetParent(opcua_serverToInterfaces, pInterface);
-	}
 	//	maps to variables in objects
 	// Forward direction
 	if (direction & OPCUA_OVTRAFO_ADDHASCOMPONENT_FORWARD){
@@ -361,7 +324,7 @@ static UA_StatusCode opcua_ovTrafo_addHasComponent(OV_INSTPTR_opcua_interface pI
 					// Check whether child has a specific transformation
 					if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, referencedElement.pobj, node))
 						// Child has no specific transformation --> use generic interface
-						statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+						statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 								UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT), UA_TRUE, node);
 				}
 				ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
@@ -376,7 +339,7 @@ static UA_StatusCode opcua_ovTrafo_addHasComponent(OV_INSTPTR_opcua_interface pI
 				referencedElement.pobj = pNode->pobj->v_pouterobject;
 				access = opcua_helpers_getAccess(&referencedElement);
 				if(access & OV_AC_READ){
-					statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+					statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 							UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT), UA_FALSE, node);
 				}
 			}
@@ -389,7 +352,7 @@ static UA_StatusCode opcua_ovTrafo_addHasComponent(OV_INSTPTR_opcua_interface pI
  * helper for OVReferences
  *****************************************************************/
 
-static UA_StatusCode opcua_ovTrafo_getOvReferences(OV_INSTPTR_opcua_interface pInterface, OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
+static UA_StatusCode opcua_ovTrafo_getOvReferences(OV_ELEMENT* pNode, UA_Node* node, OV_UINT direction){
 	OV_ACCESS				access		=	OV_AC_NONE;
 	OV_ELEMENT				linkElement;
 	OV_ELEMENT				referencedElement;
@@ -409,7 +372,7 @@ static UA_StatusCode opcua_ovTrafo_getOvReferences(OV_INSTPTR_opcua_interface pI
 						if(access & OV_AC_READ){
 							ov_memstack_lock();
 							path = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, linkElement.elemunion.passoc), 2);
-							statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+							statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 										UA_NODEID_STRING(OPCUA_OVTRAFO_DEFAULTNSINDEX, path), UA_TRUE, node);
 							ov_memstack_unlock();
 						}
@@ -422,7 +385,7 @@ static UA_StatusCode opcua_ovTrafo_getOvReferences(OV_INSTPTR_opcua_interface pI
 						if(access & OV_AC_READ){
 							ov_memstack_lock();
 							path = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, linkElement.elemunion.passoc), 2);
-							statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+							statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 										UA_NODEID_STRING(OPCUA_OVTRAFO_DEFAULTNSINDEX, path), UA_TRUE, node);
 							ov_memstack_unlock();
 						}
@@ -445,7 +408,7 @@ static UA_StatusCode opcua_ovTrafo_getOvReferences(OV_INSTPTR_opcua_interface pI
 					if(access & OV_AC_READ){
 						ov_memstack_lock();
 						path = ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, linkElement.elemunion.passoc), 2);
-						statusCode |= opcua_ovTrafo_addReference(pInterface, &referencedElement,
+						statusCode |= opcua_ovTrafo_addReference(&referencedElement,
 									UA_NODEID_STRING(OPCUA_OVTRAFO_DEFAULTNSINDEX, path), UA_FALSE, node);
 						ov_memstack_unlock();
 					}
@@ -461,7 +424,7 @@ static UA_StatusCode opcua_ovTrafo_getOvReferences(OV_INSTPTR_opcua_interface pI
 //TODO add inverse HasSubtype (HasSupertype) reference for classes.
 //TODO variable and port values are NULL, BadNotReadable
 //TODO method propertys are not displayed correctly --> servicesOPCUAInterface
-OV_DLLFNCEXPORT UA_StatusCode opcua_ovTrafo_addReferences(OV_INSTPTR_opcua_interface pInterface, UA_Node *node, OV_UINT direction){
+OV_DLLFNCEXPORT UA_StatusCode opcua_ovTrafo_addReferences(OV_INSTPTR_opcua_server pServer, UA_Node *node, OV_UINT direction){
 	// references
 	OV_ELEMENT 				pNode;
 	OV_PATH					nodePath;
@@ -478,17 +441,17 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_ovTrafo_addReferences(OV_INSTPTR_opcua_inter
 	 * fill in results for all reference types
 	 ********************************************************************************************************************************/
 	// HasProperty
-	result |= opcua_ovTrafo_addHasProperty(pInterface, &pNode, node, direction);
+	result |= opcua_ovTrafo_addHasProperty(pServer, &pNode, node, direction);
 	// HasComponent
-	result |= opcua_ovTrafo_addHasComponent(pInterface, &pNode, node, direction);
+	result |= opcua_ovTrafo_addHasComponent(pServer, &pNode, node, direction);
 	// Organizes
-	result |= opcua_ovTrafo_addOrganizes(pInterface, &pNode, node, direction);
+	result |= opcua_ovTrafo_addOrganizes(pServer, &pNode, node, direction);
 	// HasTypeDefinition
-	result |= opcua_ovTrafo_addHasTypeDefinition(pInterface, &pNode, node, direction);
+	result |= opcua_ovTrafo_addHasTypeDefinition(&pNode, node, direction);
 	// HasSubtype
-	result |= opcua_ovTrafo_addHasSubtype(pInterface, &pNode, node, direction);
+	result |= opcua_ovTrafo_addHasSubtype(&pNode, node, direction);
 	// OvReferences
-	result |= opcua_ovTrafo_getOvReferences(pInterface, &pNode, node, direction);
+	result |= opcua_ovTrafo_getOvReferences(&pNode, node, direction);
 
 	return result;
 }
@@ -590,7 +553,6 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 	OV_PATH 				path;
 	OV_INSTPTR_ov_object	pobj = NULL;
 	OV_INSTPTR_ov_object	pobjtemp = NULL;
-	OV_INSTPTR_opcua_interface pInterface = NULL;
 	OV_VTBLPTR_ov_object	pVtblObj = NULL;
 	OV_ACCESS				access;
 	OV_ELEMENT				element;
@@ -654,15 +616,11 @@ static const UA_Node * opcua_ovTrafo_getNode(void * context, const UA_NodeId *no
 		return NULL;
 	}
 
-	if(Ov_CanCastTo(opcua_interface, (OV_INSTPTR_opcua_interface)context)){
-		pInterface = Ov_StaticPtrCast(opcua_interface, context);
-	}
-
 	// Basic Attribute
 	// BrowseName
 	UA_QualifiedName_init(&newNode->browseName);
 	newNode->browseName.name = UA_String_fromChars(pobj->v_identifier);
-	newNode->browseName.namespaceIndex = pInterface->v_index;
+	newNode->browseName.namespaceIndex = OPCUA_OVTRAFO_DEFAULTNSINDEX;
 
 	// Description
 	UA_LocalizedText_init(&newNode->description);
@@ -1190,7 +1148,7 @@ static UA_StatusCode opcua_ovTrafo_replaceNode(void *context, UA_Node *node){
 }
 
 UA_NodestoreInterface*
-opcua_ovTrafo_new(OV_INSTPTR_opcua_ovInterface context) {
+opcua_ovTrafo_new(OV_INSTPTR_opcua_server context) {
 	UA_NodestoreInterface* nsi = (UA_NodestoreInterface*)UA_malloc(sizeof(UA_NodestoreInterface));
 	if(nsi == NULL)
 		return NULL;

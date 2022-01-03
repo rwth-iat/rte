@@ -1,71 +1,15 @@
 #include "ov.ovm"
 #include "ksbase.ovm"
 
-/*
-    TODO: Create optional OV Networklayer again
-*/
-
-
 LIBRARY opcua
-    VERSION   = "V0.2 (16-01-2019)";
-    AUTHOR    = "Lars Evertz, Florian Palm, Torben Deppe, Julian Grothoff";
+    VERSION   = "V1.0 (16-01-2022)";
+    AUTHOR    = "Torben Deppe, Julian Grothoff";
     COPYRIGHT = "";
     COMMENT   = "Implements an OPC UA server with access to the models in the ov system.";
 
-
-    CLASS interface	:	CLASS ov/object
-    	COMMENT = "Abstract class to define interface for an uaServer object. Holds the corresponding nodestores for UA Types and Transformations.";
-    	VARIABLES
-            store	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
-                FLAGS = "n"
-                COMMENT = "Default store for interface specific types";
-            trafo	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
-                FLAGS = "n"
-                COMMENT = "Interface for transformation of instances";
-            dataTypes	:    C_TYPE <OPCUA_PTR_DATATYPEARRAY>
-                FLAGS = "n"
-                COMMENT = "Interface specific OPCUA data types for opcua internal handling";
-			uri		:    STRING 
-    		   	FLAGS = "o"
-    		   	COMMENT = "Namespace (application) uri.";
-			index	:    UINT
-    		   	FLAGS = "o"
-    		   	COMMENT = "Namespace index for instances and types";  
-    		dependentUri[]		:    STRING 
-    		   	FLAGS = "o"
-    		   	COMMENT = "Dependent Namespace uris.";
-    	END_VARIABLES;
-    	OPERATIONS
-            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
-            load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
-            unload             :    C_FUNCTION <OPCUA_FNC_UNLOADINFORMATIONMODEL>;
-            checkNode          :    C_FUNCTION <OPCUA_FNC_CHECKNODE>;
-            checkReference     :    C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>;
-            nodeset			   :    C_FUNCTION <OPCUA_FNC_NODESET>;
-        END_OPERATIONS; 
-    END_CLASS;
-     
-    CLASS ovInterface :	CLASS opcua/interface
-    	IS_INSTANTIABLE;
-    	COMMENT = "Generic interface for ov. Holds the corresponding nodestores for UA Types and Transformations.";
-    	VARIABLES
-    		entryPath : STRING
-    			HAS_SET_ACCESSOR
-    			COMMENT="Path to ov domain as entry point in UA. Default: '/'. Example: '/TechUnits'"
-    			INITIALVALUE="/";	
-    	END_VARIABLES;
-    	OPERATIONS
-        	constructor     : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            load            : C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;                     
-        	startup         : C_FUNCTION <OV_FNC_STARTUP>;
-            shutdown        : C_FUNCTION <OV_FNC_SHUTDOWN>;
-        END_OPERATIONS;
-    END_CLASS;
-
-
     CLASS server        :    CLASS ksbase/ComTask
         IS_INSTANTIABLE;
-        COMMENT = "Represents a UA Server with access to the OV Information model.";
+        COMMENT = "Represents a UA Server with access to the OV information model.";
         VARIABLES
         	//public variables
         	run                :    BOOL
@@ -86,28 +30,7 @@ LIBRARY opcua
         		FLAGS = "o"
         	    COMMENT = "Text of last error."
         	    INITIALVALUE = "";
-        	//privat variables
-            server             :    C_TYPE <OPCUA_PTR_UA_Server>
-                FLAGS = "n"
-                COMMENT = "Stack-specific representation of server data.";
-        END_VARIABLES;
-        PARTS
-		    genericInterface   :	CLASS	opcua/ovInterface;
-        END_PARTS;    
-        OPERATIONS
-        	startup            :    C_FUNCTION <OV_FNC_STARTUP>;
-            shutdown           :    C_FUNCTION <OV_FNC_SHUTDOWN>;
-            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
-            typemethod         :    C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
-        END_OPERATIONS;
-    END_CLASS;
-
-//TODO add reset method, to reset config to default values.
-    CLASS serverConfig	:	CLASS ov/object
-    	IS_INSTANTIABLE;
-    	COMMENT = "Holds all configuration data for an OPC UA Server, that are configurable in the OV System. Should be placed beneath uaServer.";
-    	VARIABLES
-    		applicationURI     :    STRING
+            applicationURI     :    STRING
     		   	FLAGS = "i"
     		   	COMMENT = "Namespace 1 (Application) uri. Default is acplt.org/"
                 INITIALVALUE   =    "acplt.org/"; // = opcua.ovt OPCUA_DEFAULT_APPLICATIONURI
@@ -120,22 +43,45 @@ LIBRARY opcua
             	FLAGS = "i"
             	COMMENT = "Has to be unique within the system, otherwise undefined behaviour. Default is 4840."
             	INITIALVALUE   =    4840;
+        	//privat variables
+            server             :    C_TYPE <OPCUA_PTR_UA_Server>
+                FLAGS = "n"
+                COMMENT = "Stack-specific representation of server data.";
+            ovSwitch	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
+                FLAGS = "n"
+                COMMENT = "Nodestore switch that forwards accesses to custom trafo that is linked via serverToInterfaces, if checkNode of the interface returns true. Otherwise ovTrafo is used.";
+            ovTrafo	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
+                FLAGS = "n"
+                COMMENT = "Generic transformation of an OV object to OPC UA nodes.";
+        END_VARIABLES; 
+        OPERATIONS
+        	startup            :    C_FUNCTION <OV_FNC_STARTUP>;
+            shutdown           :    C_FUNCTION <OV_FNC_SHUTDOWN>;
+            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
+            typemethod         :    C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
+        END_OPERATIONS;
+    END_CLASS;
+
+    CLASS interface	:	CLASS ov/object
+    	COMMENT = "Abstract class to define a custom interface for an uaServer object. Holds the corresponding nodestores for UA types and transformations.";
+    	VARIABLES
+            trafo	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
+                FLAGS = "n"
+                COMMENT = "Nodestore interface for transformation of instances";
+            entryPath : STRING
+    			HAS_SET_ACCESSOR
+    			COMMENT="Path to ov domain as entry point in UA. Default: '/'. Example: '/TechUnits'"
+    			INITIALVALUE="/";
     	END_VARIABLES;
     	OPERATIONS
             getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
-        END_OPERATIONS;
+            load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
+            checkNode          :    C_FUNCTION <OPCUA_FNC_CHECKNODE>;
+            checkReference     :    C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>;
+        END_OPERATIONS; 
     END_CLASS;
     
-    /*    
-        Add associations and their documentation here.
-        Association syntax is:
-    */
-    ASSOCIATION configToServer : ONE_TO_ONE
-        PARENT server    : CLASS opcua/server;
-        CHILD  config    : CLASS opcua/serverConfig;
-    END_ASSOCIATION;
-    
-    ASSOCIATION serverToInterfaces : ONE_TO_MANY
+    ASSOCIATION serverToInterfaces : ONE_TO_ONE
         PARENT server    : CLASS opcua/server;
         CHILD  interfaces: CLASS opcua/interface;
     END_ASSOCIATION;

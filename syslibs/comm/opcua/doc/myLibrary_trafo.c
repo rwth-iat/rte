@@ -8,8 +8,6 @@
 #include "libov/ov_macros.h"
 #include "myLibrary_trafo.h"
 
-//#include "opcua_helpers.h"
-
 static void myLibrary_trafo_deleteNodestore(void *context){
 }
 
