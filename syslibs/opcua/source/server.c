@@ -27,6 +27,7 @@
 #include "helpers.h"
 #include "ovSwitch.h"
 #include "ovTrafo.h"
+#include "nsSwitch.h"
 
 OV_DLLFNCEXPORT OV_RESULT opcua_server_applicationURI_set(
     OV_INSTPTR_opcua_server         pobj,
@@ -62,25 +63,16 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_port_set(
 		return OV_ERR_BADPARAM;
 }
 
-UA_StatusCode opcua_server_resetConfig(OV_INSTPTR_opcua_server pServer){
-	UA_StatusCode result = UA_STATUSCODE_GOOD;
-	UA_ServerConfig* config = UA_Server_getConfig(pServer->v_server);
-
-    //Delete old application name and uri
-    UA_String_deleteMembers(&config->applicationDescription.applicationName.text);
-    UA_String_deleteMembers(&config->applicationDescription.applicationUri);
-
-	//TODO Delete / Clear nsSwitch
-	//TODO Clear DataTypes
-	return result;
-}
-
 UA_StatusCode opcua_server_setConfig(OV_INSTPTR_opcua_server pServer){
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	UA_ServerConfig* config = UA_Server_getConfig(pServer->v_server);
 	result = UA_ServerConfig_setMinimal(config, pServer->v_port, NULL);
 	if (result != UA_STATUSCODE_GOOD)
 		return result;
+
+	//Delete old application name and uri
+    UA_String_clear(&config->applicationDescription.applicationName.text);
+    UA_String_clear(&config->applicationDescription.applicationUri);
 
     //Fill in application name
     if(pServer != NULL && ov_string_getlength(pServer->v_applicationName)){
@@ -104,8 +96,8 @@ UA_StatusCode opcua_server_setConfig(OV_INSTPTR_opcua_server pServer){
 
     //Copy application name and uri to endpoint spec //TODO issue in open62541
 	for(size_t i=0 ; i < config->endpointsSize ; i++){
-	    UA_String_deleteMembers(&config->endpoints[i].server.applicationName.text);
-	    UA_String_deleteMembers(&config->endpoints[i].server.applicationUri);
+	    UA_String_clear(&config->endpoints[i].server.applicationName.text);
+	    UA_String_clear(&config->endpoints[i].server.applicationUri);
 		UA_String_copy(&config->applicationDescription.applicationName.text, &config->endpoints[i].server.applicationName.text);
 		UA_String_copy(&config->applicationDescription.applicationUri, &config->endpoints[i].server.applicationUri);
 	}
@@ -129,12 +121,81 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 
 	if(value != pobj->v_run){
 		if(value){ //start server
+			
+			//Create new server
+			pobj->v_server = UA_Server_new();
+			if(!pobj->v_server){
+				ov_string_setvalue(&pobj->v_errorText, "UA_Server_new failed.");
+				pobj->v_error = TRUE;
+				return OV_ERR_GENERIC;
+			}
+
+			pobj->v_ovSwitch = opcua_ovSwitch_new(pobj);
+			if(!pobj->v_ovSwitch){
+				ov_string_setvalue(&pobj->v_errorText, "opcua_ovSwitch_new failed.");
+				pobj->v_error = TRUE;
+				return OV_ERR_GENERIC;
+			}
+			pobj->v_ovTrafo = opcua_ovTrafo_new(pobj);
+			if(!pobj->v_ovTrafo){
+				ov_string_setvalue(&pobj->v_errorText, "opcua_ovTrafo_new failed.");
+				pobj->v_error = TRUE;
+				return OV_ERR_GENERIC;
+			}
+
 		    //Create new config
 			retval = opcua_server_setConfig(pobj);
 			if(retval != UA_STATUSCODE_GOOD){
 				ov_string_print(&pobj->v_errorText, "UA_Server_run_startup failed: %s" , UA_StatusCode_name(retval));
 				pobj->v_error = TRUE;
 				return OV_ERR_GENERIC;
+			}
+
+			//create new fresh nsSwitch in createConfig instead
+			UA_ServerConfig *config = UA_Server_getConfig(pobj->v_server);
+
+			UA_Nodestore_Switch* nsSwitch = NULL;
+			UA_StatusCode result = UA_Nodestore_Switch_newEmpty(&nsSwitch);
+			if (result != UA_STATUSCODE_GOOD){
+				return OV_ERR_GENERIC;
+			}
+			UA_Nodestore * defaultNodestore = (UA_Nodestore*) UA_malloc(sizeof(UA_Nodestore));
+			defaultNodestore->context = config->nodestore.context;
+			defaultNodestore->clear = config->nodestore.clear;
+			defaultNodestore->newNode = config->nodestore.newNode;
+			defaultNodestore->deleteNode = config->nodestore.deleteNode;
+			defaultNodestore->getNode = config->nodestore.getNode;
+			defaultNodestore->releaseNode = config->nodestore.releaseNode;
+			defaultNodestore->getNodeCopy = config->nodestore.getNodeCopy;
+			defaultNodestore->insertNode = config->nodestore.insertNode;
+			defaultNodestore->replaceNode = config->nodestore.replaceNode;
+			defaultNodestore->iterate = config->nodestore.iterate;
+			defaultNodestore->removeNode = config->nodestore.removeNode;
+			defaultNodestore->getReferenceTypeId = config->nodestore.getReferenceTypeId;
+
+			result = UA_Nodestore_Switch_setNodestoreDefault(nsSwitch, defaultNodestore);
+			if (result != UA_STATUSCODE_GOOD){
+				return OV_ERR_GENERIC;
+			}
+
+			UA_Nodestore_Switch_link(&config->nodestore, nsSwitch);
+
+			//Load ovSwitch in nsSwitch
+			result = UA_Nodestore_Switch_setNodestore(nsSwitch, OV_OPCUA_DEFAULTNSINDEX, pobj->v_ovSwitch);
+			if (result != UA_STATUSCODE_GOOD){
+				return OV_ERR_GENERIC;
+			}
+
+			//Load custom interface if linked and add references from NS0 to OV trafo adress space
+			OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pobj);
+			if(pInterface){
+				Ov_Call0(opcua_interface, pInterface, load);
+				if(pInterface->v_useOvTrafo)
+					opcua_helpers_addReferencesToTrafo(pobj->v_server, pInterface->v_entryPath);
+			}
+			else
+			{
+				opcua_helpers_addReferencesToTrafo(pobj->v_server, "/");
 			}
 
 		    //Startup server
@@ -159,29 +220,11 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 					30); //TODO define constant
 			ov_string_setvalue(&serverPortStr, NULL);
 
-			//Load ovSwitch in nsSwitch
-			// TODO create new fresh nsSwitch in createConfig instead
-			UA_Nodestore_Switch *nsSwitch = UA_Server_getNodestore(pobj->v_server);
-			UA_StatusCode result = UA_Nodestore_Switch_setNodestore(nsSwitch, OV_OPCUA_DEFAULTNSINDEX, pobj->v_ovSwitch);
-			if (result != UA_STATUSCODE_GOOD){
-				return OV_ERR_GENERIC;
-			}
-
-			//Load custom interface if linked and add references from NS0 to OV trafo adress space
-			OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pobj);
-			if(pInterface){
-				Ov_Call0(opcua_interface, pInterface, load);
-				if(pInterface->v_useOvTrafo)
-					opcua_helpers_addReferencesToTrafo(pobj->v_server, pInterface->v_entryPath);
-			}
-			else
-			{
-				opcua_helpers_addReferencesToTrafo(pobj->v_server, "/");
-			}
-
 		}else{
 			//Shutdown server
 			retval = UA_Server_run_shutdown(pobj->v_server); //Always returns good
+			UA_Server_delete(pobj->v_server);
+			pobj->v_server = NULL;
 
 			//Unregister opc.tcp port and protocol to server representation
 	    	OV_ANY serverName = OV_ANY_INIT;
@@ -193,13 +236,6 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 			pobj->v_isRunning = FALSE;
 			if(retval != UA_STATUSCODE_GOOD){
 				ov_string_print(&pobj->v_errorText, "UA_Server_run_shutdown failed: %s" , UA_StatusCode_name(retval));
-				pobj->v_error = TRUE;
-			}
-
-			// Clear config
-			retval = opcua_server_resetConfig(pobj);
-			if(retval != UA_STATUSCODE_GOOD){
-				ov_string_print(&pobj->v_errorText, "opcua_server_resetConfig failed: %s" , UA_StatusCode_name(retval));
 				pobj->v_error = TRUE;
 			}
 		}
@@ -231,33 +267,6 @@ OV_DLLFNCEXPORT void opcua_server_startup(
     ov_object_startup(pobj);
 
     /* do what */
-    //Create new server
-	UA_Server *server = UA_Server_new();
-	if(!server){
-		ov_string_setvalue(&pinst->v_errorText, "UA_Server_new failed.");
-		pinst->v_error = TRUE;
-		return;
-	}
-	pinst->v_server = server;
-	UA_StatusCode retval = opcua_server_resetConfig(pinst);
-	if(retval != UA_STATUSCODE_GOOD){
-		ov_string_print(&pinst->v_errorText, "opcua_server_resetConfig failed: %s" , UA_StatusCode_name(retval));
-		pinst->v_error = TRUE;
-	}
-
-	pinst->v_ovSwitch = opcua_ovSwitch_new(pinst);
-	if(!pinst->v_ovSwitch){
-		ov_string_setvalue(&pinst->v_errorText, "opcua_ovSwitch_new failed.");
-		pinst->v_error = TRUE;
-		return;
-	}
-	pinst->v_ovTrafo = opcua_ovTrafo_new(pinst);
-	if(!pinst->v_ovTrafo){
-		ov_string_setvalue(&pinst->v_errorText, "opcua_ovTrafo_new failed.");
-		pinst->v_error = TRUE;
-		return;
-	}
-
     //Restore running state from shutdown
     opcua_server_run_set(pinst, pinst->v_isRunning);
 
@@ -277,9 +286,6 @@ OV_DLLFNCEXPORT void opcua_server_shutdown(
 	if (pinst->v_run == TRUE){
 		opcua_server_run_set(pinst, FALSE);
 	}
-	if(pinst->v_server) UA_Server_delete(pinst->v_server);
-	if(pinst->v_ovTrafo) opcua_ovTrafo_delete(pinst->v_ovTrafo);
-	if(pinst->v_ovSwitch) opcua_ovSwitch_delete(pinst->v_ovSwitch);
 
     pinst->v_isRunning = isRunning; //Restore running state
 

@@ -11,7 +11,7 @@
 
 #include "opcua.h"
 
-UA_NodestoreInterface* opcua_ovSwitch_new(OV_INSTPTR_opcua_server context);
-void opcua_ovSwitch_delete(UA_NodestoreInterface * nodestoreInterface);
+UA_Nodestore* opcua_ovSwitch_new(OV_INSTPTR_opcua_server context);
+void opcua_ovSwitch_delete(UA_Nodestore * nodestoreInterface);
 
 #endif /* opcua_ovSwitch_H_ */

@@ -15,8 +15,6 @@
 #define OV_OPCUA_DEFAULTNSINDEX 1
 #define OV_OPCUA_VIRTUALNODESEPERATOR "||"
 #define OV_OPCUA_NSINDEX_UNDEFINED UA_UINT16_MAX
-#define OV_OPCUA_TRAFO_OVREFERENCES "||ovReferences"
-
 
 //TODO move OV_DLLFNCEXPORT to header
 UA_Logger opcua_ovUAlogger_new(void);
@@ -52,9 +50,9 @@ OV_INSTPTR_ov_object opcua_helpers_resolveNodeIdToOvObject(const UA_NodeId *node
 OV_RESULT opcua_helpers_setRootEntryReference(const OV_STRING newPath, OV_INSTPTR_opcua_interface pobj, OV_STRING * poldPath);
 OV_RESULT opcua_helpers_addReferencesToTrafo(UA_Server* pUaServer, OV_STRING entryPath);
 
-UA_StatusCode opcua_helpers_addReference(
-		UA_Node* node, const UA_NodeId * sourceNodeId , const UA_NodeId referenceTypeId,
-		const UA_ExpandedNodeId targetNodeId, UA_NodeClass targetNodeClass, UA_Boolean isForward);
+UA_StatusCode
+opcua_helpers_addReference(UA_Node* node, UA_Byte refTypeIndex,
+		const UA_ExpandedNodeId targetNodeId, OV_STRING targetBrowseName, UA_Boolean isForward);
 
 UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String uriOld, const UA_String uriNew, size_t * indexOut);
 UA_StatusCode opcua_helpers_getNumericalNodeIdForInputOutputArgs(UA_Server *server, UA_NodeId methodId, UA_NodeId* inArgsId, UA_NodeId* outArgsId);

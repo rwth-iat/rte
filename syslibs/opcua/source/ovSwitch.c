@@ -39,6 +39,15 @@ static void opcua_ovSwitch_getObjData(const UA_NodeId *nodeId, OV_INSTPTR_ov_obj
 
 
 static void opcua_ovSwitch_deleteNodestore(void *context){
+	OV_INSTPTR_opcua_server pServer = (OV_INSTPTR_opcua_server)context;
+	pServer->v_ovTrafo->clear(pServer->v_ovTrafo->context);
+	UA_free(pServer->v_ovTrafo);
+	pServer->v_ovTrafo = NULL;
+
+	OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pServer);
+	if(pInterface && pInterface->v_trafo){
+		pInterface->v_trafo->clear(pInterface->v_trafo->context);
+	}
 }
 
 static void opcua_ovSwitch_deleteNode(void * context, UA_Node *node){
@@ -49,7 +58,7 @@ static void opcua_ovSwitch_deleteNode(void * context, UA_Node *node){
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_STRING virtualPath = NULL;
 
-	opcua_ovSwitch_getObjData((const UA_NodeId*)&node->nodeId, &pobj, &virtualPath);
+	opcua_ovSwitch_getObjData((const UA_NodeId*)&node->head.nodeId, &pobj, &virtualPath);
 
 	OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pServer);
 	if(pInterface){
@@ -77,7 +86,7 @@ static void opcua_ovSwitch_releaseNode(void *context, const UA_Node *node){
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_STRING virtualPath = NULL;
 
-	opcua_ovSwitch_getObjData((const UA_NodeId*)&node->nodeId, &pobj, &virtualPath);
+	opcua_ovSwitch_getObjData((const UA_NodeId*)&node->head.nodeId, &pobj, &virtualPath);
 
 	OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pServer);
 	if(pInterface){
@@ -204,7 +213,7 @@ static UA_StatusCode opcua_ovSwitch_insertNode(void *context, UA_Node *node, UA_
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_STRING virtualPath = NULL;
 
-	opcua_ovSwitch_getObjData((const UA_NodeId*)&node->nodeId, &pobj, &virtualPath);
+	opcua_ovSwitch_getObjData((const UA_NodeId*)&node->head.nodeId, &pobj, &virtualPath);
 
 	OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pServer);
 	if(pInterface){
@@ -233,7 +242,7 @@ static UA_StatusCode opcua_ovSwitch_replaceNode(void *context, UA_Node *node){
 	OV_INSTPTR_ov_object pobj = NULL;
 	OV_STRING virtualPath = NULL;
 
-	opcua_ovSwitch_getObjData((const UA_NodeId*)&node->nodeId, &pobj, &virtualPath);
+	opcua_ovSwitch_getObjData((const UA_NodeId*)&node->head.nodeId, &pobj, &virtualPath);
 
 	OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pServer);
 	if(pInterface){
@@ -255,13 +264,13 @@ static UA_StatusCode opcua_ovSwitch_replaceNode(void *context, UA_Node *node){
 	return UA_STATUSCODE_BADNODEIDUNKNOWN;
 }
 
-UA_NodestoreInterface*
+UA_Nodestore*
 opcua_ovSwitch_new(OV_INSTPTR_opcua_server context) {
-	UA_NodestoreInterface* nsi = (UA_NodestoreInterface*)UA_malloc(sizeof(UA_NodestoreInterface));
+	UA_Nodestore* nsi = (UA_Nodestore*)UA_malloc(sizeof(UA_Nodestore));
 	if(nsi == NULL)
 		return NULL;
     nsi->context =        	context;
-    nsi->deleteNodestore =  opcua_ovSwitch_deleteNodestore;
+    nsi->clear =  			opcua_ovSwitch_deleteNodestore;
     nsi->newNode =       	opcua_ovSwitch_newNode;
     nsi->deleteNode =    	opcua_ovSwitch_deleteNode;
     nsi->insertNode =       opcua_ovSwitch_insertNode;
@@ -274,7 +283,7 @@ opcua_ovSwitch_new(OV_INSTPTR_opcua_server context) {
     return nsi;
 }
 void
-opcua_ovSwitch_delete(UA_NodestoreInterface * nodestoreInterface){
+opcua_ovSwitch_delete(UA_Nodestore * nodestoreInterface){
 	if (nodestoreInterface){
 		if (nodestoreInterface->context)
 			nodestoreInterface->context = NULL;

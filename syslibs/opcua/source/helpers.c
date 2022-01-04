@@ -162,7 +162,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_Boolean_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_Boolean_copy(&tempBool, pVariant->data);
@@ -173,7 +173,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_Byte_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_Byte_copy(value, pVariant->data);
@@ -185,7 +185,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_Double_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_Double_copy(value, pVariant->data);
@@ -197,7 +197,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_Int32_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_Int32_copy(value, pVariant->data);
@@ -208,7 +208,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_Int32_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_Int32_copy(value, pVariant->data);
@@ -220,7 +220,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_Float_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_Float_copy(value, pVariant->data);
@@ -237,7 +237,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_String_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_String_copy(&tempString, pVariant->data);
@@ -249,7 +249,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_DateTime_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_DateTime_copy(&tempTime, pVariant->data);
@@ -262,7 +262,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_Double_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_Double_copy(&duration, pVariant->data);
@@ -274,13 +274,13 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			pVariant->data = UA_UInt32_new();
 			if(!pVariant->data){
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			UA_UInt32_copy(value, pVariant->data);
 			break;
 		default:
-			UA_Variant_deleteMembers(pVariant);
+			UA_Variant_clear(pVariant);
 			return opcua_helpers_ovResultToUaStatusCode(OV_ERR_BADTYPE);
 		}
 		return result;
@@ -295,7 +295,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			tempBoolArray = ov_memstack_alloc(arrayLength * sizeof(UA_Boolean));
 			if(!tempBoolArray){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return opcua_helpers_ovResultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 			}
 			for(iterator = 0; iterator < arrayLength; iterator++){
@@ -310,13 +310,13 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			if(!pVariant->data){
 				ov_memstack_unlock();
 				result = UA_STATUSCODE_BADOUTOFMEMORY;
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_BOOLEAN]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -328,7 +328,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_BYTE]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -341,7 +341,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -354,7 +354,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -366,7 +366,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_INT32]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -379,7 +379,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_FLOAT]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -390,7 +390,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			tempStringArray = ov_memstack_alloc(arrayLength * sizeof(UA_String));
 			if(!tempStringArray){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return opcua_helpers_ovResultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 			}
 			for(iterator = 0; iterator < arrayLength; iterator++){
@@ -406,7 +406,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_STRING]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -417,7 +417,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			tempTimeArray = ov_memstack_alloc(arrayLength * sizeof(UA_DateTime));
 			if(!tempTimeArray){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return opcua_helpers_ovResultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 			}
 			for(iterator = 0; iterator < arrayLength; iterator++){
@@ -428,7 +428,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DATETIME]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -439,7 +439,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			tempDoubleArray = ov_memstack_alloc(arrayLength * sizeof(UA_Double));
 			if(!tempDoubleArray){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return opcua_helpers_ovResultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 			}
 			for(iterator = 0; iterator < arrayLength; iterator++){
@@ -451,7 +451,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_DOUBLE]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
@@ -464,14 +464,14 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny,
 			result = UA_Array_copy(value, arrayLength, &(pVariant->data), &UA_TYPES[UA_TYPES_UINT32]);
 			if(result != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
-				UA_Variant_deleteMembers(pVariant);
+				UA_Variant_clear(pVariant);
 				return result;
 			}
 			pVariant->arrayLength = arrayLength;
 			break;
 		default:
 			ov_memstack_unlock();
-			UA_Variant_deleteMembers(pVariant);
+			UA_Variant_clear(pVariant);
 			return opcua_helpers_ovResultToUaStatusCode(OV_ERR_BADTYPE);
 		}
 		ov_memstack_unlock();
@@ -854,14 +854,14 @@ opcua_helpers_setRootEntryReference(const OV_STRING newPath, OV_INSTPTR_opcua_in
 		retval = UA_Server_deleteReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
 				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_TRUE, UA_EXPANDEDNODEID_STRING(OV_OPCUA_DEFAULTNSINDEX, *poldPath), UA_FALSE);
 		if(retval != UA_STATUSCODE_GOOD){
-			Ov_Warning(UA_StatusCode_name(retval));
+			//Ov_Warning(UA_StatusCode_name(retval));
 		}
 
 		//Add reference to new specified entry object
 		retval = UA_Server_addReference(server->v_server, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
 				UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_STRING(OV_OPCUA_DEFAULTNSINDEX, newPath), true);
 		if(retval != UA_STATUSCODE_GOOD){
-			Ov_Warning(UA_StatusCode_name(retval));
+			//Ov_Warning(UA_StatusCode_name(retval));
 		}
 	}
 
@@ -883,29 +883,16 @@ opcua_helpers_addReferencesToTrafo(UA_Server* pUaServer, OV_STRING entryPath){
 	//Add reference to ov object
 	retval |= UA_Server_addReference(pUaServer, UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
 			UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(OV_OPCUA_DEFAULTNSINDEX, "/acplt/ov/object"), UA_TRUE);
-	//Add references to virtual ovReferences object for browsing References in Ov
-	retval |= UA_Server_addReference(pUaServer, UA_NODEID_NUMERIC(0, UA_NS0ID_NONHIERARCHICALREFERENCES),
-				UA_NODEID_NUMERIC(0, UA_NS0ID_HASSUBTYPE), UA_EXPANDEDNODEID_STRING(OV_OPCUA_DEFAULTNSINDEX, OV_OPCUA_TRAFO_OVREFERENCES), UA_TRUE);
 	return retval == UA_STATUSCODE_GOOD ? OV_ERR_OK : OV_ERR_GENERIC;
 }
 
 //Make sure that string node ids are allocated!
-//Make sure that node has correct node id
 OV_DLLFNCEXPORT UA_StatusCode
-opcua_helpers_addReference(
-		UA_Node* node, const UA_NodeId * sourceNodeId, const UA_NodeId referenceTypeId,
-		const UA_ExpandedNodeId targetNodeId, UA_NodeClass targetNodeClass, UA_Boolean isForward){
-	UA_AddReferencesItem ref;
-	UA_AddReferencesItem_init(&ref);
-	ref.isForward = isForward;
-	UA_NodeId_copy(&referenceTypeId, &ref.referenceTypeId);
-	UA_NodeId_copy((sourceNodeId) ? sourceNodeId : &node->nodeId, &ref.sourceNodeId);
-	ref.targetNodeClass = targetNodeClass;
-	UA_ExpandedNodeId_copy(&targetNodeId, &ref.targetNodeId);
-	UA_String_init(&ref.targetServerUri);
-	UA_StatusCode result = UA_Node_addReference(node, &ref);
-	UA_AddReferencesItem_deleteMembers(&ref);
-	return result;
+opcua_helpers_addReference(UA_Node* node, UA_Byte refTypeIndex,
+		const UA_ExpandedNodeId targetNodeId, OV_STRING targetBrowseName, UA_Boolean isForward){
+
+	UA_QualifiedName targetBrowseNameQualified = UA_QUALIFIEDNAME(targetNodeId.nodeId.namespaceIndex, targetBrowseName);
+	return UA_Node_addReference(node, refTypeIndex, isForward, &targetNodeId, UA_QualifiedName_hash(&targetBrowseNameQualified));	
 }
 
 // Needed for setting namespace 1
@@ -928,7 +915,7 @@ UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String ur
 	}
 
 	// Replace namespace URI
-	UA_String_deleteMembers(&(((UA_String*)namespaceArray.data)[index]));
+	UA_String_clear(&(((UA_String*)namespaceArray.data)[index]));
 	if(uriNew.data == NULL)
 		UA_String_init(&(((UA_String*)namespaceArray.data)[index]));
 	else{
@@ -945,7 +932,7 @@ UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String ur
 	}
 
 	// Free resources
-	UA_Variant_deleteMembers(&namespaceArray);
+	UA_Variant_clear(&namespaceArray);
 	return result;
 }
 
@@ -971,25 +958,25 @@ UA_StatusCode opcua_helpers_getNumericalNodeIdForInputOutputArgs(UA_Server *serv
 			*inArgsId = bR.references[i].nodeId.nodeId;
 			found1 = true;
 			//UA_NodeId_copy(&bR.references[i].nodeId.nodeId,&inArgsId);
-			UA_String_deleteMembers(&tmpBN);
-			UA_QualifiedName_deleteMembers(&bN);
+			UA_String_clear(&tmpBN);
+			UA_QualifiedName_clear(&bN);
 			continue;
 		}
-		UA_String_deleteMembers(&tmpBN);
+		UA_String_clear(&tmpBN);
 		tmpBN = UA_String_fromChars("OutputArguments");
 		if (UA_String_equal(&bN.name, &tmpBN)) {
 			*outArgsId = bR.references[i].nodeId.nodeId;
 			found2 = true;
 			//UA_NodeId_copy(&bR.references[i].nodeId.nodeId,&outArgsId);
-			UA_String_deleteMembers(&tmpBN);
-			UA_QualifiedName_deleteMembers(&bN);
+			UA_String_clear(&tmpBN);
+			UA_QualifiedName_clear(&bN);
 			continue;
 		}
-		UA_String_deleteMembers(&tmpBN);
-		UA_QualifiedName_deleteMembers(&bN);
+		UA_String_clear(&tmpBN);
+		UA_QualifiedName_clear(&bN);
 	}
-	UA_BrowseDescription_deleteMembers(&bD);
-	UA_BrowseResult_deleteMembers(&bR);
+	UA_BrowseDescription_clear(&bD);
+	UA_BrowseResult_clear(&bR);
 	if (found1 && found2)
 		return UA_STATUSCODE_GOOD;
 	return UA_STATUSCODE_BADNOTFOUND;

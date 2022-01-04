@@ -30,7 +30,7 @@
 
 OV_BOOL opcua_ovTrafo_addReferenceToSpecificObject(OV_INSTPTR_opcua_server pServer, OV_INSTPTR_ov_object pobj, UA_Node* node);
 UA_StatusCode opcua_ovTrafo_addReferences(OV_INSTPTR_opcua_server pServer, UA_Node *node, OV_UINT direction);
-UA_NodestoreInterface* opcua_ovTrafo_new(OV_INSTPTR_opcua_server context);
-void opcua_ovTrafo_delete(UA_NodestoreInterface * nodestoreInterface);
+UA_Nodestore* opcua_ovTrafo_new(OV_INSTPTR_opcua_server context);
+void opcua_ovTrafo_delete(UA_Nodestore * nodestoreInterface);
 
 #endif /* opcua_ovTrafo_H_ */
