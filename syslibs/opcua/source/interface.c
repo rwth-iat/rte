@@ -81,11 +81,10 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pobj) 
 	return OV_ERR_OK;
 }
 
-
-OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkNode(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode, OV_STRING virtualNodePath) {
+OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkNode(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, OV_STRING virtualNodePath) {
     return FALSE;
 }
 
-OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkReference(OV_INSTPTR_opcua_interface pobj, OV_INSTPTR_ov_object pNode) {
+OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkReference(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, UA_Node* pNode) {
     return FALSE;
 }

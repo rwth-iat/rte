@@ -27,7 +27,7 @@ OV_DLLFNCEXPORT OV_BOOL opcua_ovTrafo_addReferenceToSpecificObject(
 		return FALSE;
 	OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pServer);
 	if(pInterface){
-		if(Ov_Call1(opcua_interface, pInterface, checkReference, pobj)){
+		if(Ov_Call2(opcua_interface, pInterface, checkReference, pobj, node)){
 			return TRUE;
 		}
 	}
@@ -971,6 +971,8 @@ opcua_ovTrafo_new(OV_INSTPTR_opcua_server context) {
     nsi->removeNode =       opcua_ovTrafo_removeNode;
     nsi->iterate =          opcua_ovTrafo_iterate;
     nsi->releaseNode =      opcua_ovTrafo_releaseNode;
+	// Not needed, already handled by the nsSwitch
+	nsi->getReferenceTypeId = NULL;
     return nsi;
 }
 void
