@@ -5,14 +5,22 @@
 #include "ov_macros.h"
 #include "ov_path.h"
 
-// Loads the information model of pobj into the server during startup of UA_Server
-typedef OV_RESULT OPCUA_FNC_LOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pobj);
+/*
+* Is called each time before the opcua server is started to allow for custom modifications in the OPC UA server, e.g. to load nodesets and datatypes.
+*/
+typedef OV_RESULT OPCUA_FNC_LOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pInterface, UA_Server* pServer);
 
 /*
-* Checks whether pobj has a transformation and allows to add custom references.
-* Is used by generic interface to determine whether a specialices transformation is used.
+* The checkNode is called from the OV switch (ovSwitch.c) and OV transformation (ovTrafo.c) for every object that is accessed via the nodestore of the OPC UA server.
+* The check is used to determine, whether pInterface has a custom transformation for pObj and its virtual node.
 */
-typedef OV_BOOL OPCUA_FNC_CHECKREFERENCE(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, UA_Node* pNode);
 typedef OV_BOOL OPCUA_FNC_CHECKNODE(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, OV_STRING virtualNodePath);
+
+/*
+* The checkReference is called from the generic OV tranformation (ovTrafo.c) for every child (pObj) of the currently transforemed node (pNode).
+* Overwrite this function and return true, if a specific reference type is needed and/or the generic reference should not be created.
+* Otherwise, the generic reference from type refTypeIndex will be added.
+*/
+typedef OV_BOOL OPCUA_FNC_CHECKREFERENCE(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, UA_Node* pNode, UA_Byte refTypeIndex);
 
 #endif

@@ -189,7 +189,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 			//Load custom interface if linked and add references from NS0 to OV trafo adress space
 			OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pobj);
 			if(pInterface){
-				Ov_Call0(opcua_interface, pInterface, load);
+				Ov_Call1(opcua_interface, pInterface, load, pobj->v_server);
 				if(pInterface->v_useOvTrafo)
 					opcua_helpers_addReferencesToTrafo(pobj->v_server, pInterface->v_entryPath);
 			}

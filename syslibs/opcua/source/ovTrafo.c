@@ -17,24 +17,36 @@
 #include "helpers.h"
 #include "NoneTicketAuthenticator.h"
 
-#define OPCUA_OVTRAFO_ADDREFERENCEDIRECTION_FORWARD 0x01
-#define OPCUA_OVTRAFO_ADDREFERENCEDIRECTION_BACKWARD 0x02
-#define OPCUA_OVTRAFO_ADDREFERENCEDIRECTION_BOTH 0x04
+#define OPCUA_OVTRAFO_ADDHASPROPERTY_FORWARD 			0x00000001
+#define OPCUA_OVTRAFO_ADDHASPROPERTY_BACKWARD 			0x00000002
+#define OPCUA_OVTRAFO_ADDHASCOMPONENT_FORWARD 			0x00000004
+#define OPCUA_OVTRAFO_ADDHASCOMPONENT_BACKWARD 			0x00000008
+#define OPCUA_OVTRAFO_ADDORGANIZES_FORWARD 				0x00000010
+#define OPCUA_OVTRAFO_ADDORGANIZES_BACKWARD 			0x00000020
+#define OPCUA_OVTRAFO_ADDHASTYPEDEFINITION_FORWARD 		0x00000040
+#define OPCUA_OVTRAFO_ADDHASTYPEDEFINITION_BACKWARD 	0x00000080
+#define OPCUA_OVTRAFO_ADDHASSUBTYPE_FORWARD 			0x00000100
+#define OPCUA_OVTRAFO_ADDHASSUBTYPE_BACKWARD 			0x00000200
+#define OPCUA_OVTRAFO_ADDALL_FORWARD 					0x00000555
+#define OPCUA_OVTRAFO_ADDALL_BACKWARD 					0x00000AAA
+#define OPCUA_OVTRAFO_ADDALL			 				0x00000FFF
 
-OV_DLLFNCEXPORT OV_BOOL opcua_ovTrafo_addReferenceToSpecificObject(
-		OV_INSTPTR_opcua_server pServer, OV_INSTPTR_ov_object pobj, UA_Node* node){
+static OV_BOOL
+opcua_ovTrafo_addReferenceToSpecificObject(
+		OV_INSTPTR_opcua_server pServer, OV_INSTPTR_ov_object pobj, UA_Node* node, UA_Byte refTypeIndex){
 	if(!pServer)
 		return FALSE;
 	OV_INSTPTR_opcua_interface pInterface = Ov_GetChild(opcua_serverToInterfaces, pServer);
 	if(pInterface){
-		if(Ov_Call2(opcua_interface, pInterface, checkReference, pobj, node)){
+		if(Ov_Call3(opcua_interface, pInterface, checkReference, pobj, node, refTypeIndex)){
 			return TRUE;
 		}
 	}
 	return FALSE;
 }
 
-static UA_StatusCode opcua_ovTrafo_addReference(OV_ELEMENT* pElement, UA_Byte refTypeIndex, UA_Boolean isForward,
+static UA_StatusCode
+opcua_ovTrafo_addReference(OV_ELEMENT* pElement, UA_Byte refTypeIndex, UA_Boolean isForward,
 		UA_Node * node){
 	OV_INSTPTR_ov_object	pObject			=	NULL;
 	UA_StatusCode			result			=	UA_STATUSCODE_GOOD;
@@ -88,7 +100,7 @@ static UA_StatusCode opcua_ovTrafo_addOrganizes(OV_INSTPTR_opcua_server pServer,
 			Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pNode->pobj), childElement.pobj){
 				childElement.elemunion.pobj = childElement.pobj;
 				// Check whether child has a specific transformation
-				if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, childElement.pobj, node))
+				if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, childElement.pobj, node, UA_REFERENCETYPEINDEX_ORGANIZES))
 					// Child has no specific transformation --> use generic interface
 					statusCode |= opcua_ovTrafo_addReference(&childElement, UA_REFERENCETYPEINDEX_ORGANIZES, UA_TRUE, node);
 			}
@@ -251,7 +263,7 @@ static UA_StatusCode opcua_ovTrafo_addHasProperty(OV_INSTPTR_opcua_server pServe
 				access = opcua_helpers_getAccess(&referencedElement);
 				if(access & OV_AC_READ){
 					// Check whether child has a specific transformation
-					if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, referencedElement.pobj, node))
+					if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, referencedElement.pobj, node, UA_REFERENCETYPEINDEX_HASPROPERTY))
 						// Child has no specific transformation --> use generic interface
 						statusCode |= opcua_ovTrafo_addReference(&referencedElement, UA_REFERENCETYPEINDEX_HASPROPERTY, UA_TRUE, node);
 				}
@@ -292,7 +304,7 @@ static UA_StatusCode opcua_ovTrafo_addHasComponent(OV_INSTPTR_opcua_server pServ
 				access = opcua_helpers_getAccess(&referencedElement);
 				if(access & OV_AC_READ){
 					// Check whether child has a specific transformation
-					if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, referencedElement.pobj, node))
+					if(!opcua_ovTrafo_addReferenceToSpecificObject(pServer, referencedElement.pobj, node, UA_REFERENCETYPEINDEX_HASCOMPONENT))
 						// Child has no specific transformation --> use generic interface
 						statusCode |= opcua_ovTrafo_addReference(&referencedElement, UA_REFERENCETYPEINDEX_HASCOMPONENT, UA_TRUE, node);
 				}
