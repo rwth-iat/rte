@@ -12,80 +12,80 @@ LIBRARY opcua
         COMMENT = "Represents a UA Server with access to the OV information model.";
         VARIABLES
         	//public variables
-        	run                :    BOOL
+        	run                : BOOL
         		HAS_SET_ACCESSOR
         		FLAGS = "i"
         	    COMMENT = "Toggle OPCUA server on or off.";
-        	isRunning          :    BOOL
+        	isRunning          : BOOL
         		FLAGS = "o"
         	    COMMENT = "Determins, whether OPC UA server is running";
-        	reset              :    BOOL
+        	reset              : BOOL
         		HAS_SET_ACCESSOR
         		FLAGS = "i"
         		COMMENT = "Shuts down the server and resets the error flag.";
-        	error              :    BOOL
+        	error              : BOOL
         		FLAGS = "o"
         	    COMMENT = "Determins, whether an error occured.";
-        	errorText          :    STRING
+        	errorText          : STRING
         		FLAGS = "o"
         	    COMMENT = "Text of last error."
         	    INITIALVALUE = "";
-            applicationURI     :    STRING
+            applicationURI     : STRING
     		   	HAS_SET_ACCESSOR
                 FLAGS = "i"
     		   	COMMENT = "Namespace 1 (Application) uri. Default is acplt.org/"
                 INITIALVALUE   =    "acplt.org/"; // = opcua.ovt OPCUA_DEFAULT_APPLICATIONURI
-            applicationName    :    STRING
+            applicationName    : STRING
                	HAS_SET_ACCESSOR
                 FLAGS = "i"
                	COMMENT = "Name of the Appliction. Is replaced with ACPLT/RTE/SERVERNAME if left empty or NULL."
                 INITIALVALUE   =    "";
-            port               :	UINT
+            port               : UINT
             	HAS_SET_ACCESSOR
             	FLAGS = "i"
             	COMMENT = "Has to be unique within the system, otherwise undefined behaviour. Default is 4840."
             	INITIALVALUE   =    4840;
         	//privat variables
-            server             :    C_TYPE <OPCUA_PTR_UA_Server>
+            server             : C_TYPE <OPCUA_PTR_UA_Server>
                 FLAGS = "n"
                 COMMENT = "Stack-specific representation of server data.";
-            ovSwitch	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
+            ovSwitch	        : C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
                 FLAGS = "n"
                 COMMENT = "Nodestore switch that forwards accesses to custom trafo that is linked via serverToInterfaces, if checkNode of the interface returns true. Otherwise ovTrafo is used.";
-            ovTrafo	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
+            ovTrafo	            : C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
                 FLAGS = "n"
                 COMMENT = "Generic transformation of an OV object to OPC UA nodes.";
         END_VARIABLES; 
         OPERATIONS
-        	startup            :    C_FUNCTION <OV_FNC_STARTUP>;
-            shutdown           :    C_FUNCTION <OV_FNC_SHUTDOWN>;
-            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
-            typemethod         :    C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
+        	startup            : C_FUNCTION <OV_FNC_STARTUP>;
+            shutdown           : C_FUNCTION <OV_FNC_SHUTDOWN>;
+            getaccess          : C_FUNCTION <OV_FNC_GETACCESS>;
+            typemethod         : C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
         END_OPERATIONS;
     END_CLASS;
 
     CLASS interface	:	CLASS ov/object
-    	COMMENT = "Abstract class to define a custom interface for an uaServer object. Holds the corresponding nodestores for UA types and transformations.";
+    	COMMENT = "Abstract class to define a custom interface for an server object.";
     	VARIABLES
-            trafo	:    C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
+            trafo	            : C_TYPE <OPCUA_PTR_NODESTOREINTERFACE>
                 FLAGS = "n"
                 COMMENT = "Nodestore interface for transformation of instances";
-            entryPath : STRING
+            entryPath           : STRING
        			HAS_SET_ACCESSOR
                 FLAGS = "ip"
     			COMMENT="Path to ov domain as entry point in UA. Default: '/'. Example: '/TechUnits'"
     			INITIALVALUE="/";
-            useOvTrafo : BOOL
+            useOvTrafo          : BOOL
                 HAS_SET_ACCESSOR
                 FLAGS = "ip"
     			COMMENT="Use the generic transformation for OV objects (ovTrafo) and adds references to entryPath, ov/domain, ov/object and OPCUA_OVTRAFO_OVREFERENCES"
     			INITIALVALUE=TRUE;
     	END_VARIABLES;
     	OPERATIONS
-            getaccess          :    C_FUNCTION <OV_FNC_GETACCESS>;
-            load               :    C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
-            checkNode          :    C_FUNCTION <OPCUA_FNC_CHECKNODE>;
-            checkReference     :    C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>;
+            getaccess          : C_FUNCTION <OV_FNC_GETACCESS>;
+            load               : C_FUNCTION <OPCUA_FNC_LOADINFORMATIONMODEL>;
+            checkNode          : C_FUNCTION <OPCUA_FNC_CHECKNODE>;
+            checkReference     : C_FUNCTION <OPCUA_FNC_CHECKREFERENCE>;
         END_OPERATIONS; 
     END_CLASS;
     
