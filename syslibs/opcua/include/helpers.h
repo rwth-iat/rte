@@ -52,7 +52,7 @@ OV_RESULT opcua_helpers_addReferencesToTrafo(UA_Server* pUaServer, OV_STRING ent
 
 UA_StatusCode
 opcua_helpers_addReference(UA_Node* node, UA_Byte refTypeIndex,
-		const UA_ExpandedNodeId targetNodeId, OV_STRING targetBrowseName, UA_Boolean isForward);
+		const UA_ExpandedNodeId targetNodeId, OV_STRING targetBrowseName, UA_UInt32 targetBrowseNameIndex, UA_Boolean isForward);
 
 UA_StatusCode opcua_interface_setNamespace(UA_Server* server, const UA_String uriOld, const UA_String uriNew, size_t * indexOut);
 UA_StatusCode opcua_helpers_getNumericalNodeIdForInputOutputArgs(UA_Server *server, UA_NodeId methodId, UA_NodeId* inArgsId, UA_NodeId* outArgsId);

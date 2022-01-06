@@ -889,9 +889,9 @@ opcua_helpers_addReferencesToTrafo(UA_Server* pUaServer, OV_STRING entryPath){
 //Make sure that string node ids are allocated!
 OV_DLLFNCEXPORT UA_StatusCode
 opcua_helpers_addReference(UA_Node* node, UA_Byte refTypeIndex,
-		const UA_ExpandedNodeId targetNodeId, OV_STRING targetBrowseName, UA_Boolean isForward){
+		const UA_ExpandedNodeId targetNodeId, OV_STRING targetBrowseName, UA_UInt32 targetBrowseNameIndex, UA_Boolean isForward){
 
-	UA_QualifiedName targetBrowseNameQualified = UA_QUALIFIEDNAME(targetNodeId.nodeId.namespaceIndex, targetBrowseName);
+	UA_QualifiedName targetBrowseNameQualified = UA_QUALIFIEDNAME(targetBrowseNameIndex, targetBrowseName);
 	return UA_Node_addReference(node, refTypeIndex, isForward, &targetNodeId, UA_QualifiedName_hash(&targetBrowseNameQualified));	
 }
 

@@ -71,7 +71,7 @@ opcua_ovTrafo_addReference(OV_ELEMENT* pElement, UA_Byte refTypeIndex, UA_Boolea
 	}
 
 	UA_ExpandedNodeId tmpNodeId = UA_EXPANDEDNODEID_STRING(OV_OPCUA_DEFAULTNSINDEX, path);
-	result = opcua_helpers_addReference(node, refTypeIndex, tmpNodeId, pObject->v_identifier , isForward);
+	result = opcua_helpers_addReference(node, refTypeIndex, tmpNodeId, pObject->v_identifier, OV_OPCUA_DEFAULTNSINDEX, isForward);
 	ov_memstack_unlock();
 	return result;
 }
@@ -156,7 +156,7 @@ static UA_StatusCode opcua_ovTrafo_addHasTypeDefinition(OV_ELEMENT* pNode, UA_No
 					parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.pvar);
 					// if variable node add hasTypedefinition to PropertyType
 					opcua_helpers_addReference(node, UA_REFERENCETYPEINDEX_HASTYPEDEFINITION,
-					UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE), "PropertyType", UA_TRUE);
+					UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_PROPERTYTYPE), "PropertyType", 0, UA_TRUE);
 				}else if (pNode->elemtype == OV_ET_PARENTLINK || pNode->elemtype == OV_ET_CHILDLINK){
 					parentTypeDefinition.elemtype = OV_ET_OBJECT;
 					parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.passoc);
@@ -214,12 +214,12 @@ static UA_StatusCode opcua_ovTrafo_addHasSubtype(OV_ELEMENT* pNode, UA_Node * no
 			// Set inverse reference to namespace 0 UA types
 			if(ov_string_compare(pNode->pobj->v_identifier, "object") == OV_STRCMP_EQUAL){
 				statusCode |= opcua_helpers_addReference(node, UA_REFERENCETYPEINDEX_HASSUBTYPE,
-						UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE), "BaseObjectType", UA_FALSE);
+						UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE), "BaseObjectType", 0, UA_FALSE);
 			}
 			// Set inverse reference to namespace 0 UA types
 			if(ov_string_compare(pNode->pobj->v_identifier, "domain") == OV_STRCMP_EQUAL){
 				statusCode |= opcua_helpers_addReference(node, UA_REFERENCETYPEINDEX_HASSUBTYPE,
-						UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), "FolderType", UA_FALSE);
+						UA_EXPANDEDNODEID_NUMERIC(0, UA_NS0ID_FOLDERTYPE), "FolderType", 0, UA_FALSE);
 			}
 
 			pParentClass = Ov_GetParent(ov_inheritance, Ov_StaticPtrCast(ov_class, pNode->pobj));
