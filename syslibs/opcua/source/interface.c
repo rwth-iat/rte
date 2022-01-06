@@ -76,3 +76,15 @@ OV_DLLFNCEXPORT OV_RESULT opcua_interface_useOvTrafo_set(
 	pobj->v_useOvTrafo = value;
     return OV_ERR_OK;
 }
+
+OV_DLLFNCEXPORT OV_RESULT opcua_interface_load(OV_INSTPTR_opcua_interface pInterface, UA_Server* pServer) {
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkNode(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, OV_STRING virtualNodePath) {
+    return FALSE;
+}
+
+OV_DLLFNCEXPORT OV_BOOL opcua_interface_checkReference(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, UA_Node* pNode, UA_Byte refTypeIndex) {
+    return FALSE;
+}
