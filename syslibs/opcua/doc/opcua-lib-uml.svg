@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="850px" preserveAspectRatio="none" style="width:1187px;height:850px;background:#FFFFFF;" version="1.1" viewBox="0 0 1187 850" width="1187px" zoomAndPan="magnify"><defs/><g><!--MD5=[8580b6fd2f124f74cf4218510f231ed6]
+cluster ov--><polygon fill="#FFFFFF" points="21,255.6885,56,255.6885,63,287.2979,129,287.2979,129,343.6885,21,343.6885,21,255.6885" style="stroke:#000000;stroke-width:1.0;"/><line style="stroke:#000000;stroke-width:1.0;" x1="21" x2="63" y1="287.2979" y2="287.2979"/><text fill="#000000" font-family="Verdana" font-size="22" font-weight="bold" lengthAdjust="spacing" textLength="29" x="25" y="278.1094">ov</text><!--MD5=[6351cbf6755c29cbb8c51d768f0ee741]
+cluster ksbase--><polygon fill="#FFFFFF" points="861,12.6885,954,12.6885,961,44.2979,987,44.2979,987,100.6885,861,100.6885,861,12.6885" style="stroke:#000000;stroke-width:1.0;"/><line style="stroke:#000000;stroke-width:1.0;" x1="861" x2="961" y1="44.2979" y2="44.2979"/><text fill="#000000" font-family="Verdana" font-size="22" font-weight="bold" lengthAdjust="spacing" textLength="87" x="865" y="35.1094">ksbase</text><!--MD5=[fb12f5f72bafe8b11cad061d17593009]
+cluster opcua--><polygon fill="#FFFFFF" points="153,133.6885,234,133.6885,241,165.2979,1170,165.2979,1170,843.6885,153,843.6885,153,133.6885" style="stroke:#000000;stroke-width:1.0;"/><line style="stroke:#000000;stroke-width:1.0;" x1="153" x2="241" y1="165.2979" y2="165.2979"/><text fill="#000000" font-family="Verdana" font-size="22" font-weight="bold" lengthAdjust="spacing" textLength="75" x="157" y="156.1094">opcua</text><!--MD5=[fd039009a03203d9459b59f1dc478a65]
+cluster open62541--><polygon fill="#FFFFFF" points="813,731.6885,957,731.6885,964,763.2979,1111,763.2979,1111,819.6885,813,819.6885,813,731.6885" style="stroke:#000000;stroke-width:1.0;"/><line style="stroke:#000000;stroke-width:1.0;" x1="813" x2="964" y1="763.2979" y2="763.2979"/><text fill="#000000" font-family="Verdana" font-size="22" font-weight="bold" lengthAdjust="spacing" textLength="138" x="817" y="754.1094">open62541</text><!--MD5=[f42b146e1926d521b9358e53f30c06eb]
+class object--><rect codeLine="5" fill="#FFFFFF" height="28" id="object" style="stroke:#000000;stroke-width:1.5;" width="75" x="37.5" y="299.6885"/><ellipse cx="50.5" cy="313.6885" fill="#FFFFFF" rx="9" ry="9" style="stroke:#000000;stroke-width:1.0;"/><path d="M52.8438,309.3604 C51.9063,308.9229 51.3125,308.7822 50.4375,308.7822 C47.8125,308.7822 45.8125,310.8604 45.8125,313.5791 L45.8125,314.7041 C45.8125,317.2822 47.9219,319.1729 50.8125,319.1729 C52.0313,319.1729 53.1875,318.876 53.9375,318.3291 C54.5156,317.9229 54.8438,317.4697 54.8438,317.0791 C54.8438,316.626 54.4531,316.2354 53.9844,316.2354 C53.7656,316.2354 53.5625,316.3135 53.375,316.501 C52.9219,316.9854 52.9219,316.9854 52.7344,317.0791 C52.3125,317.3447 51.625,317.4697 50.8594,317.4697 C48.8125,317.4697 47.5156,316.376 47.5156,314.6729 L47.5156,313.5791 C47.5156,311.7979 48.7656,310.4854 50.5,310.4854 C51.0781,310.4854 51.6875,310.6416 52.1563,310.8916 C52.6406,311.1729 52.8125,311.3916 52.9063,311.7979 C52.9688,312.2041 53,312.3291 53.1406,312.4541 C53.2813,312.5947 53.5156,312.7041 53.7344,312.7041 C54,312.7041 54.2656,312.5635 54.4375,312.3447 C54.5469,312.1885 54.5781,312.001 54.5781,311.5791 L54.5781,310.1572 C54.5781,309.7197 54.5625,309.5947 54.4688,309.4385 C54.3125,309.1729 54.0313,309.0322 53.7344,309.0322 C53.4375,309.0322 53.2344,309.126 53.0156,309.4385 L52.8438,309.3604 Z " fill="#000000"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="47" x="62.5" y="318.5352">object</text><!--MD5=[47ac730f622e099c8860b8c57c7fd94b]
+class ComTask--><rect codeLine="9" fill="#FFFFFF" height="28" id="ComTask" style="stroke:#000000;stroke-width:1.5;" width="94" x="877" y="56.6885"/><ellipse cx="890" cy="70.6885" fill="#FFFFFF" rx="9" ry="9" style="stroke:#000000;stroke-width:1.0;"/><path d="M892.3438,66.3604 C891.4063,65.9229 890.8125,65.7822 889.9375,65.7822 C887.3125,65.7822 885.3125,67.8604 885.3125,70.5791 L885.3125,71.7041 C885.3125,74.2822 887.4219,76.1729 890.3125,76.1729 C891.5313,76.1729 892.6875,75.876 893.4375,75.3291 C894.0156,74.9229 894.3438,74.4697 894.3438,74.0791 C894.3438,73.626 893.9531,73.2354 893.4844,73.2354 C893.2656,73.2354 893.0625,73.3135 892.875,73.501 C892.4219,73.9854 892.4219,73.9854 892.2344,74.0791 C891.8125,74.3447 891.125,74.4697 890.3594,74.4697 C888.3125,74.4697 887.0156,73.376 887.0156,71.6729 L887.0156,70.5791 C887.0156,68.7979 888.2656,67.4854 890,67.4854 C890.5781,67.4854 891.1875,67.6416 891.6563,67.8916 C892.1406,68.1729 892.3125,68.3916 892.4063,68.7979 C892.4688,69.2041 892.5,69.3291 892.6406,69.4541 C892.7813,69.5947 893.0156,69.7041 893.2344,69.7041 C893.5,69.7041 893.7656,69.5635 893.9375,69.3447 C894.0469,69.1885 894.0781,69.001 894.0781,68.5791 L894.0781,67.1572 C894.0781,66.7197 894.0625,66.5947 893.9688,66.4385 C893.8125,66.1729 893.5313,66.0322 893.2344,66.0322 C892.9375,66.0322 892.7344,66.126 892.5156,66.4385 L892.3438,66.3604 Z " fill="#000000"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="66" x="902" y="75.5352">ComTask</text><!--MD5=[7288765a1906b576ad30e4ceee268498]
+class server--><rect codeLine="19" fill="#FFFFFF" height="272.1563" id="server" style="stroke:#000000;stroke-width:1.5;" width="197" x="825.5" y="177.6885"/><ellipse cx="897.75" cy="191.6885" fill="#FFFFFF" rx="9" ry="9" style="stroke:#000000;stroke-width:1.0;"/><path d="M900.0938,187.3604 C899.1563,186.9229 898.5625,186.7822 897.6875,186.7822 C895.0625,186.7822 893.0625,188.8604 893.0625,191.5791 L893.0625,192.7041 C893.0625,195.2822 895.1719,197.1729 898.0625,197.1729 C899.2813,197.1729 900.4375,196.876 901.1875,196.3291 C901.7656,195.9229 902.0938,195.4697 902.0938,195.0791 C902.0938,194.626 901.7031,194.2354 901.2344,194.2354 C901.0156,194.2354 900.8125,194.3135 900.625,194.501 C900.1719,194.9854 900.1719,194.9854 899.9844,195.0791 C899.5625,195.3447 898.875,195.4697 898.1094,195.4697 C896.0625,195.4697 894.7656,194.376 894.7656,192.6729 L894.7656,191.5791 C894.7656,189.7979 896.0156,188.4854 897.75,188.4854 C898.3281,188.4854 898.9375,188.6416 899.4063,188.8916 C899.8906,189.1729 900.0625,189.3916 900.1563,189.7979 C900.2188,190.2041 900.25,190.3291 900.3906,190.4541 C900.5313,190.5947 900.7656,190.7041 900.9844,190.7041 C901.25,190.7041 901.5156,190.5635 901.6875,190.3447 C901.7969,190.1885 901.8281,190.001 901.8281,189.5791 L901.8281,188.1572 C901.8281,187.7197 901.8125,187.5947 901.7188,187.4385 C901.5625,187.1729 901.2813,187.0322 900.9844,187.0322 C900.6875,187.0322 900.4844,187.126 900.2656,187.4385 L900.0938,187.3604 Z " fill="#000000"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="45" x="915.25" y="196.5352">server</text><line style="stroke:#000000;stroke-width:1.5;" x1="826.5" x2="1021.5" y1="205.6885" y2="205.6885"/><ellipse cx="836.5" cy="216.6885" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;fill:none;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="64" x="843.5" y="222.6836">run: bool</text><ellipse cx="836.5" cy="232.9854" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;fill:none;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="79" x="843.5" y="238.9805">reset: bool</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="0" x="847.5" y="255.2773"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="110" x="843.5" y="271.5742">isRunning: bool</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="77" x="843.5" y="287.8711">error: bool</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="110" x="843.5" y="304.168">errorText: bool</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="0" x="847.5" y="320.4648"/><ellipse cx="836.5" cy="330.7666" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;fill:none;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="155" x="843.5" y="336.7617">applicationURI: string</text><ellipse cx="836.5" cy="347.0635" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;fill:none;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="173" x="843.5" y="353.0586">applicationName: string</text><ellipse cx="836.5" cy="363.3604" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;fill:none;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="69" x="843.5" y="369.3555">port: uint</text><line style="stroke:#000000;stroke-width:1.5;" x1="826.5" x2="1021.5" y1="376.6572" y2="376.6572"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="143" x="831.5" y="393.6523">«override» startup()</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="159" x="831.5" y="409.9492">«override» shutdown()</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="162" x="831.5" y="426.2461">«override» getaccess()</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="181" x="831.5" y="442.543">«override» typemethod()</text><!--MD5=[d9847530b5dea828dbcbb50914b76f30]
+class interface--><rect codeLine="41" fill="#FFFFFF" height="141.7813" id="interface" style="stroke:#000000;stroke-width:1.5;" width="619" x="169.5" y="526.6885"/><ellipse cx="443.25" cy="540.6885" fill="#FFFFFF" rx="9" ry="9" style="stroke:#000000;stroke-width:1.0;"/><path d="M445.3281,542.501 L445.7188,543.4854 L445.3281,543.4854 C444.875,543.4854 444.7656,543.501 444.6094,543.6104 C444.3594,543.7666 444.2031,544.0479 444.2031,544.3447 C444.2031,544.6104 444.3438,544.8604 444.5625,545.0166 C444.7031,545.1416 444.9063,545.1885 445.3281,545.1885 L447.6875,545.1885 C448.0469,545.1885 448.2656,545.1572 448.4063,545.0635 C448.6563,544.9229 448.8125,544.626 448.8125,544.3447 C448.8125,544.0635 448.6719,543.8135 448.4531,543.6572 C448.2813,543.5166 448.125,543.4854 447.6563,543.4854 L444.2656,535.2822 L440.5938,535.2822 C440.1406,535.2822 440.0156,535.2979 439.8594,535.3916 C439.6094,535.5635 439.4531,535.8447 439.4531,536.126 C439.4531,536.4072 439.5938,536.6572 439.8125,536.8291 C439.9844,536.9385 440.1563,536.9697 440.5938,536.9697 L441.6719,536.9697 L439.0313,543.4854 C438.6094,543.4854 438.4531,543.501 438.2969,543.6104 C438.0469,543.7666 437.8906,544.0479 437.8906,544.3447 C437.8906,544.9072 438.2656,545.1885 439.0156,545.1885 L441.2813,545.1885 C441.6406,545.1885 441.8594,545.1572 441.9844,545.0635 C442.25,544.9229 442.3906,544.626 442.3906,544.3447 C442.3906,544.0635 442.2656,543.8135 442.0469,543.6416 C441.875,543.5166 441.7344,543.4854 441.2813,543.4854 L440.8906,543.4854 L441.2813,542.501 L445.3281,542.501 Z M444.625,540.7979 L441.9531,540.7979 L443.2969,537.5322 L444.625,540.7979 Z " fill="#000000"/><text fill="#000000" font-family="Verdana" font-size="14" font-style="italic" lengthAdjust="spacing" textLength="64" x="460.75" y="545.5352">interface</text><line style="stroke:#000000;stroke-width:1.5;" x1="170.5" x2="787.5" y1="554.6885" y2="554.6885"/><ellipse cx="180.5" cy="565.6885" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;fill:none;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="123" x="187.5" y="571.6836">entryPath: string</text><ellipse cx="180.5" cy="581.9854" rx="3" ry="3" style="stroke:#000000;stroke-width:1.0;fill:none;"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="122" x="187.5" y="587.9805">useOvTrafo: bool</text><line style="stroke:#000000;stroke-width:1.5;" x1="170.5" x2="787.5" y1="595.2822" y2="595.2822"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="162" x="175.5" y="612.2773">«override» getaccess()</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="267" x="175.5" y="628.5742">OV_RESULT load(UA_Server* pServer)</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="480" x="175.5" y="644.8711">OV_BOOL checkNode(ov_object pObj, OV_STRING virtualNodePath)</text><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="607" x="175.5" y="661.168">OV_BOOL checkReference(ov_object pObj, UA_Node* pNode, UA_Byte refTypeIndex)</text><!--MD5=[2f4d722371e911114e1732defe1f457b]
+class UA_Server--><rect codeLine="15" fill="#FFFFFF" height="28" id="UA_Server" style="stroke:#000000;stroke-width:1.5;" width="101" x="993.5" y="775.6885"/><ellipse cx="1006.5" cy="789.6885" fill="#FFFFFF" rx="9" ry="9" style="stroke:#000000;stroke-width:1.0;"/><path d="M1008.8438,785.3604 C1007.9063,784.9229 1007.3125,784.7822 1006.4375,784.7822 C1003.8125,784.7822 1001.8125,786.8604 1001.8125,789.5791 L1001.8125,790.7041 C1001.8125,793.2822 1003.9219,795.1729 1006.8125,795.1729 C1008.0313,795.1729 1009.1875,794.876 1009.9375,794.3291 C1010.5156,793.9229 1010.8438,793.4697 1010.8438,793.0791 C1010.8438,792.626 1010.4531,792.2354 1009.9844,792.2354 C1009.7656,792.2354 1009.5625,792.3135 1009.375,792.501 C1008.9219,792.9854 1008.9219,792.9854 1008.7344,793.0791 C1008.3125,793.3447 1007.625,793.4697 1006.8594,793.4697 C1004.8125,793.4697 1003.5156,792.376 1003.5156,790.6729 L1003.5156,789.5791 C1003.5156,787.7979 1004.7656,786.4854 1006.5,786.4854 C1007.0781,786.4854 1007.6875,786.6416 1008.1563,786.8916 C1008.6406,787.1729 1008.8125,787.3916 1008.9063,787.7979 C1008.9688,788.2041 1009,788.3291 1009.1406,788.4541 C1009.2813,788.5947 1009.5156,788.7041 1009.7344,788.7041 C1010,788.7041 1010.2656,788.5635 1010.4375,788.3447 C1010.5469,788.1885 1010.5781,788.001 1010.5781,787.5791 L1010.5781,786.1572 C1010.5781,785.7197 1010.5625,785.5947 1010.4688,785.4385 C1010.3125,785.1729 1010.0313,785.0322 1009.7344,785.0322 C1009.4375,785.0322 1009.2344,785.126 1009.0156,785.4385 L1008.8438,785.3604 Z " fill="#000000"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="73" x="1018.5" y="794.5352">UA_Server</text><!--MD5=[69e4dfa83e43b05588c006f282780f80]
+class UA_Nodestore--><rect codeLine="16" fill="#FFFFFF" height="28" id="UA_Nodestore" style="stroke:#000000;stroke-width:1.5;" width="129" x="829.5" y="775.6885"/><ellipse cx="842.5" cy="789.6885" fill="#FFFFFF" rx="9" ry="9" style="stroke:#000000;stroke-width:1.0;"/><path d="M844.8438,785.3604 C843.9063,784.9229 843.3125,784.7822 842.4375,784.7822 C839.8125,784.7822 837.8125,786.8604 837.8125,789.5791 L837.8125,790.7041 C837.8125,793.2822 839.9219,795.1729 842.8125,795.1729 C844.0313,795.1729 845.1875,794.876 845.9375,794.3291 C846.5156,793.9229 846.8438,793.4697 846.8438,793.0791 C846.8438,792.626 846.4531,792.2354 845.9844,792.2354 C845.7656,792.2354 845.5625,792.3135 845.375,792.501 C844.9219,792.9854 844.9219,792.9854 844.7344,793.0791 C844.3125,793.3447 843.625,793.4697 842.8594,793.4697 C840.8125,793.4697 839.5156,792.376 839.5156,790.6729 L839.5156,789.5791 C839.5156,787.7979 840.7656,786.4854 842.5,786.4854 C843.0781,786.4854 843.6875,786.6416 844.1563,786.8916 C844.6406,787.1729 844.8125,787.3916 844.9063,787.7979 C844.9688,788.2041 845,788.3291 845.1406,788.4541 C845.2813,788.5947 845.5156,788.7041 845.7344,788.7041 C846,788.7041 846.2656,788.5635 846.4375,788.3447 C846.5469,788.1885 846.5781,788.001 846.5781,787.5791 L846.5781,786.1572 C846.5781,785.7197 846.5625,785.5947 846.4688,785.4385 C846.3125,785.1729 846.0313,785.0322 845.7344,785.0322 C845.4375,785.0322 845.2344,785.126 845.0156,785.4385 L844.8438,785.3604 Z " fill="#000000"/><text fill="#000000" font-family="Verdana" font-size="14" lengthAdjust="spacing" textLength="101" x="854.5" y="794.5352">UA_Nodestore</text><!--MD5=[e94767a719f59c13a359143e14e773ce]
+reverse link ComTask to server--><path codeLine="36" d="M924,105.1195 C924,124.5635 924,150.4985 924,177.4315 " fill="none" id="ComTask-backto-server" style="stroke:#000000;stroke-width:1.0;"/><polygon fill="none" points="917,104.9895,924,84.9885,931,104.9885,917,104.9895" style="stroke:#000000;stroke-width:1.0;"/><!--MD5=[c633b589dcdcf3465e9a68bb7d737fac]
+link server to UA_Server--><path codeLine="37" d="M993.254,449.9375 C1003.729,474.9315 1013.27,501.1995 1020,526.6885 C1043.55,615.8355 1044.88,727.3005 1044.39,770.4557 " fill="none" id="server-to-UA_Server" style="stroke:#000000;stroke-width:1.0;"/><polygon fill="#000000" points="1044.32,775.6109,1048.4441,766.667,1044.3891,770.6114,1040.4448,766.5564,1044.32,775.6109" style="stroke:#000000;stroke-width:1.0;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="41" x="1042" y="602.2554">server</text><!--MD5=[143009cd8f5e62257ccd517f3482fd4a]
+link server to UA_Nodestore--><path codeLine="38" d="M896.074,449.9205 C891.879,475.3205 888.219,501.7345 886,526.6885 C880.411,589.5515 883.9,605.6125 886,668.6885 C887.202,704.7735 890.43,746.8615 892.399,770.3785 " fill="none" id="server-to-UA_Nodestore" style="stroke:#000000;stroke-width:1.0;"/><polygon fill="#000000" points="892.823,775.3849,896.0498,766.0796,892.4013,770.4027,888.0783,766.7543,892.823,775.3849" style="stroke:#000000;stroke-width:1.0;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="58" x="887" y="602.2554">ovSwitch</text><!--MD5=[143009cd8f5e62257ccd517f3482fd4a]
+link server to UA_Nodestore--><path codeLine="39" d="M952.191,450.0795 C961.437,516.5975 965.782,597.5475 950,668.6885 C941.411,707.4055 918.97,748.4305 905.245,771.074 " fill="none" id="server-to-UA_Nodestore-1" style="stroke:#000000;stroke-width:1.0;"/><polygon fill="#000000" points="902.623,775.3515,910.737,769.7691,905.2362,771.0887,903.9166,765.5879,902.623,775.3515" style="stroke:#000000;stroke-width:1.0;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="50" x="961" y="602.2554">ovTrafo</text><!--MD5=[a1e4458fd8cff2bbf687b037f6da0487]
+reverse link object to interface--><path codeLine="50" d="M86.8523,346.9015 C99.3097,376.9145 121.499,421.1985 153,449.6885 C187.304,480.7135 229.252,506.1315 271.488,526.5765 " fill="none" id="object-backto-interface" style="stroke:#000000;stroke-width:1.0;"/><polygon fill="none" points="80.2268,349.1775,79.5074,327.9995,93.2762,344.1065,80.2268,349.1775" style="stroke:#000000;stroke-width:1.0;"/><!--MD5=[e264604a0a2ff6d6cc9195e177ba2bb5]
+link interface to UA_Nodestore--><path codeLine="51" d="M632.057,668.7625 C715.305,706.8765 811.134,750.7495 860.591,773.393 " fill="none" id="interface-to-UA_Nodestore" style="stroke:#000000;stroke-width:1.0;"/><polygon fill="#000000" points="865.231,775.5171,858.7131,768.1336,860.6848,773.4356,855.3828,775.4074,865.231,775.5171" style="stroke:#000000;stroke-width:1.0;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="31" x="724" y="711.7554">trafo</text><!--MD5=[cb599a0e63af6c32907e653bc6f640f3]
+link server to interface--><path codeLine="53" d="M825.24,377.2735 C756.828,420.6265 665.531,478.4825 593.862,523.8995 " fill="none" id="server-to-interface" style="stroke:#000000;stroke-width:1.0;"/><polygon fill="#000000" points="589.603,526.5985,599.3465,525.1617,593.8269,523.923,595.0657,518.4034,589.603,526.5985" style="stroke:#000000;stroke-width:1.0;"/><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="121" x="662" y="492.7554">serverToInterfaces</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="20" x="797.5928" y="378.283">0,1</text><text fill="#000000" font-family="Verdana" font-size="13" lengthAdjust="spacing" textLength="20" x="579.9777" y="515.5789">0,1</text><!--MD5=[33ada5ffd38f9e21403f64cccb87eed4]
+@startuml
+!theme plain
+hide empty members
+
+package ov{
+ class object
+}
+
+package ksbase{
+ class ComTask
+}
+
+package opcua{
+
+  package open62541{
+    class UA_Server
+    class UA_Nodestore
+  }
+
+  class server{
+    + run: bool
+    + reset: bool
+
+    isRunning: bool
+    error: bool
+    errorText: bool
+
+    + applicationURI: string
+    + applicationName: string
+    + port: uint
+    
+    <<override>> startup() 
+    <<override>> shutdown()
+    <<override>> getaccess()
+    <<override>> typemethod()
+  }
+  ComTask <|- - server
+  server - -> UA_Server: server
+  server - -> UA_Nodestore: ovSwitch
+  server - -> UA_Nodestore: ovTrafo
+
+  abstract class interface{
+    + entryPath: string
+    + useOvTrafo: bool
+    
+    <<override>> getaccess()
+    OV_RESULT load(UA_Server* pServer)
+    OV_BOOL checkNode(ov_object pObj, OV_STRING virtualNodePath)
+    OV_BOOL checkReference(ov_object pObj, UA_Node* pNode, UA_Byte refTypeIndex)
+  }
+  object <|- - interface
+  interface - -> UA_Nodestore: trafo
+
+  server "0,1" - -> "0,1" interface: serverToInterfaces
+}
+@enduml
+
+@startuml
+
+
+
+
+
+
+
+<style>
+  root {
+    BackgroundColor white
+    FontColor black
+    FontName Verdana
+    HyperLinkColor blue
+    LineColor black
+    LineThickness 1
+    Margin 5
+  }
+  caption {
+    LineThickness 0
+  }
+  footer {
+    LineThickness 0
+  }
+  header {
+    LineThickness 0
+  }
+  node {
+    MaximumWidth 300
+  }
+  title {
+    FontSize 22
+    LineThickness 0
+  }
+</style>
+
+skinparam ArrowLollipopColor black
+skinparam BackgroundColor white
+skinparam DefaultFontName Verdana
+skinparam DefaultMonospacedFontName Courier
+skinparam LifelineStrategy nosolid
+skinparam ParticipantPadding 10
+skinparam SequenceLifeLineBorderColor black
+skinparam Shadowing false
+skinparam UseBetaStyle true
+
+skinparam Activity {
+  BackgroundColor white
+  BarColor black
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam Boundary {
+  FontColor black
+}
+skinparam Box {
+  Padding 5
+}
+skinparam CircledCharacter {
+  FontColor black
+  FontName Courier
+  Radius 9
+}
+skinparam Class {
+  BackgroundColor white
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam ClassAttribute {
+  FontColor black
+  FontName Verdana
+}
+skinparam ClassStereotype {
+  FontColor black
+  FontName Verdana
+}
+skinparam Footer {
+  FontColor black
+  FontName Verdana
+}
+skinparam Header {
+  FontColor black
+  FontName Verdana
+}
+skinparam Hyperlink {
+  Color blue
+}
+skinparam IconPackage {
+  Color black
+  BackgroundColor white
+}
+skinparam IconPrivate {
+  Color black
+  BackgroundColor white
+}
+skinparam IconProtected {
+  Color black
+  BackgroundColor white
+}
+skinparam IconPublic {
+  Color black
+  BackgroundColor white
+}
+skinparam Note {
+  FontColor black
+  FontName Verdana
+}
+skinparam Object {
+  BorderColor black
+}
+skinparam Package {
+  BorderColor black
+  FontColor black
+  FontName Verdana
+}
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeA {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeC {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeE {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeI {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam StereotypeN {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam UseCaseStereoType {
+  FontColor black
+  FontName Verdana
+}
+hide empty members
+
+package ov{
+ class object
+}
+
+package ksbase{
+ class ComTask
+}
+
+package opcua{
+
+  package open62541{
+    class UA_Server
+    class UA_Nodestore
+  }
+
+  class server{
+    + run: bool
+    + reset: bool
+
+    isRunning: bool
+    error: bool
+    errorText: bool
+
+    + applicationURI: string
+    + applicationName: string
+    + port: uint
+    
+    <<override>> startup() 
+    <<override>> shutdown()
+    <<override>> getaccess()
+    <<override>> typemethod()
+  }
+  ComTask <|- - server
+  server - -> UA_Server: server
+  server - -> UA_Nodestore: ovSwitch
+  server - -> UA_Nodestore: ovTrafo
+
+  abstract class interface{
+    + entryPath: string
+    + useOvTrafo: bool
+    
+    <<override>> getaccess()
+    OV_RESULT load(UA_Server* pServer)
+    OV_BOOL checkNode(ov_object pObj, OV_STRING virtualNodePath)
+    OV_BOOL checkReference(ov_object pObj, UA_Node* pNode, UA_Byte refTypeIndex)
+  }
+  object <|- - interface
+  interface - -> UA_Nodestore: trafo
+
+  server "0,1" - -> "0,1" interface: serverToInterfaces
+}
+@enduml
+
+PlantUML version 1.2021.17beta10(Unknown compile time)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
