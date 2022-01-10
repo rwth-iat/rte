@@ -137,11 +137,32 @@ UA_Nodestore_Switch_deleteNode(void *nsCtx, UA_Node *node) {
 }
 
 static const UA_Node *
-UA_Nodestore_Switch_getNode(void *nsCtx, const UA_NodeId *nodeId) {
+UA_Nodestore_Switch_getNode(void *nsCtx, const UA_NodeId *nodeId,
+                               UA_UInt32 attributeMask,
+                               UA_ReferenceTypeSet references,
+                               UA_BrowseDirection referenceDirections) {
 	UA_Nodestore * nsi = UA_Nodestore_Switch_getNodestore((UA_Nodestore_Switch *) nsCtx,
 			nodeId->namespaceIndex, UA_TRUE);
 	if (nsi != NULL) {
-		return (nsi->getNode(nsi->context, nodeId));
+		return (nsi->getNode(nsi->context, nodeId, attributeMask, references, referenceDirections));
+	}
+	return NULL;
+}
+
+const UA_Node *
+UA_Nodestore_Switch_getNodeFromPtr(void *nsCtx, UA_NodePointer ptr,
+                                      UA_UInt32 attributeMask,
+                                      UA_ReferenceTypeSet references,
+                                      UA_BrowseDirection referenceDirections) {
+	UA_NodeId nodeId = UA_NodePointer_toNodeId(ptr);
+	UA_Nodestore * nsi = UA_Nodestore_Switch_getNodestore((UA_Nodestore_Switch *) nsCtx,
+			nodeId.namespaceIndex, UA_TRUE);
+	if (nsi != NULL) {
+		if(nsi->getNodeFromPtr != NULL){
+			return (nsi->getNodeFromPtr(nsi->context, ptr, attributeMask, references, referenceDirections));
+		} else {
+			return (nsi->getNode(nsi->context, &nodeId, attributeMask, references, referenceDirections));
+		}
 	}
 	return NULL;
 }
@@ -293,6 +314,7 @@ static UA_Nodestore* UA_Nodestore_Switch_Interface_new(
 	ns->newNode = UA_Nodestore_Switch_newNode;
 	ns->deleteNode = UA_Nodestore_Switch_deleteNode;
 	ns->getNode = UA_Nodestore_Switch_getNode;
+	ns->getNodeFromPtr = UA_Nodestore_Switch_getNodeFromPtr;
 	ns->releaseNode = UA_Nodestore_Switch_releaseNode;
 	ns->getNodeCopy = UA_Nodestore_Switch_getNodeCopy;
 	ns->insertNode = UA_Nodestore_Switch_insertNode;
@@ -300,6 +322,7 @@ static UA_Nodestore* UA_Nodestore_Switch_Interface_new(
 	ns->iterate = UA_Nodestore_Switch_iterate;
 	ns->removeNode = UA_Nodestore_Switch_removeNode;
     ns->getReferenceTypeId = UA_Nodestore_Switch_getReferenceTypeId;
+
 	return ns;
 }
 
@@ -351,6 +374,7 @@ UA_Nodestore_Switch_link(UA_Nodestore *ns, UA_Nodestore_Switch* nsSwitch) {
 	ns->newNode = UA_Nodestore_Switch_newNode;
 	ns->deleteNode = UA_Nodestore_Switch_deleteNode;
 	ns->getNode = UA_Nodestore_Switch_getNode;
+	ns->getNodeFromPtr = UA_Nodestore_Switch_getNodeFromPtr;
 	ns->releaseNode = UA_Nodestore_Switch_releaseNode;
 	ns->getNodeCopy = UA_Nodestore_Switch_getNodeCopy;
 	ns->insertNode = UA_Nodestore_Switch_insertNode;

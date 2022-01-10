@@ -117,7 +117,10 @@ static UA_Node * opcua_ovSwitch_newNode(void * context, UA_NodeClass nodeClass){
 	return pServer->v_ovTrafo->newNode(context, nodeClass);
 }
 
-static const UA_Node * opcua_ovSwitch_getNode(void * context, const UA_NodeId *nodeId){
+static const UA_Node * opcua_ovSwitch_getNode(void *context, const UA_NodeId *nodeId,
+                               UA_UInt32 attributeMask,
+                               UA_ReferenceTypeSet references,
+                               UA_BrowseDirection referenceDirections){
 	OV_INSTPTR_opcua_server pServer = (OV_INSTPTR_opcua_server)context;
 	if(pServer == NULL)
 		return NULL;
@@ -131,19 +134,19 @@ static const UA_Node * opcua_ovSwitch_getNode(void * context, const UA_NodeId *n
 	if(pInterface){
 		if(Ov_Call2(opcua_interface, pInterface, checkNode, pobj, virtualPath)){
 			ov_string_setvalue(&virtualPath, NULL);
-			return pInterface->v_trafo->getNode(pInterface, nodeId);
+			return pInterface->v_trafo->getNode(pInterface, nodeId, attributeMask, references, referenceDirections);
 		}
 		else
 		{
 			if(pInterface->v_useOvTrafo){
 				ov_string_setvalue(&virtualPath, NULL);
-				return pServer->v_ovTrafo->getNode(context, nodeId);
+				return pServer->v_ovTrafo->getNode(context, nodeId, attributeMask, references, referenceDirections);
 			}
 		}
 		
 	} else {
 		ov_string_setvalue(&virtualPath, NULL);
-		return pServer->v_ovTrafo->getNode(context, nodeId);
+		return pServer->v_ovTrafo->getNode(context, nodeId, attributeMask, references, referenceDirections);
 	}
 	return NULL;
 }
@@ -275,6 +278,7 @@ opcua_ovSwitch_new(OV_INSTPTR_opcua_server context) {
     nsi->deleteNode =    	opcua_ovSwitch_deleteNode;
     nsi->insertNode =       opcua_ovSwitch_insertNode;
     nsi->getNode =          opcua_ovSwitch_getNode;
+	nsi->getNodeFromPtr =   NULL; //use redirect to getNode in nsSwitch
     nsi->getNodeCopy =      opcua_ovSwitch_getNodeCopy;
     nsi->replaceNode =      opcua_ovSwitch_replaceNode;
     nsi->removeNode =       opcua_ovSwitch_removeNode;

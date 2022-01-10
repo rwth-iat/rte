@@ -66,6 +66,8 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_port_set(
 UA_StatusCode opcua_server_setConfig(OV_INSTPTR_opcua_server pServer){
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	UA_ServerConfig* config = UA_Server_getConfig(pServer->v_server);
+    //Set ov logger
+    config->logger = opcua_ovUAlogger_new();
 	result = UA_ServerConfig_setMinimal(config, pServer->v_port, NULL);
 	if (result != UA_STATUSCODE_GOOD)
 		return result;
@@ -101,9 +103,6 @@ UA_StatusCode opcua_server_setConfig(OV_INSTPTR_opcua_server pServer){
 		UA_String_copy(&config->applicationDescription.applicationName.text, &config->endpoints[i].server.applicationName.text);
 		UA_String_copy(&config->applicationDescription.applicationUri, &config->endpoints[i].server.applicationUri);
 	}
-
-    //Set ov logger
-    config->logger = opcua_ovUAlogger_new();
 
     return UA_STATUSCODE_GOOD;
 }
@@ -165,6 +164,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 			defaultNodestore->newNode = config->nodestore.newNode;
 			defaultNodestore->deleteNode = config->nodestore.deleteNode;
 			defaultNodestore->getNode = config->nodestore.getNode;
+			defaultNodestore->getNodeFromPtr = config->nodestore.getNodeFromPtr;
 			defaultNodestore->releaseNode = config->nodestore.releaseNode;
 			defaultNodestore->getNodeCopy = config->nodestore.getNodeCopy;
 			defaultNodestore->insertNode = config->nodestore.insertNode;

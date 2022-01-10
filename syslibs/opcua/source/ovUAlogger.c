@@ -16,9 +16,9 @@ static char			logMsg[1024];
 static char			logMsg2[1096];
 
 #if !LOG_UA_TO_OV
-static const char *LogLevelNames[6] = {"trace", "debug", "info", "warning", "error", "fatal"};
+static const char *LogLevelNames[6] = {"Trace", "Debug", "Info", "Warning", "Error", "Fatal"};
 #endif
-static const char *LogCategoryNames[7] = {"network", "securechannel", "session", "server", "client", "userland", "securityPolicy"};
+static const char *LogCategoryNames[8] = {"Network", "Channel", "Session", "Server", "Client", "User", "Security", "Eventloop"};
 #endif
 
 static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory category, const char *msg, va_list args) {
@@ -32,11 +32,11 @@ static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory categor
 	vsnprintf(logMsg, sizeof(logMsg), msg, args);
 #if LOG_UA_TO_OV
 	if(level == 0){
-		snprintf(logMsg2, sizeof(logMsg2), "[UA-trace] %s | %s - %s", LogCategoryNames[category], str, logMsg);
+		snprintf(logMsg2, sizeof(logMsg2), "[UA-Trace] %s\t | %s - %s", LogCategoryNames[category], str, logMsg);
 	} else if(level >= 5){
-		snprintf(logMsg2, sizeof(logMsg2), "[UA-fatal] %s | %s - %s", LogCategoryNames[category], str, logMsg);
+		snprintf(logMsg2, sizeof(logMsg2), "[UA-Fatal] %s\t | %s - %s", LogCategoryNames[category], str, logMsg);
 	} else {
-		snprintf(logMsg2, sizeof(logMsg2), "[UA] %s | %s - %s", LogCategoryNames[category], str, logMsg);
+		snprintf(logMsg2, sizeof(logMsg2), "[UA] %s\t | %s - %s", LogCategoryNames[category], str, logMsg);
 	}
 	switch(level){
 	case 0:
