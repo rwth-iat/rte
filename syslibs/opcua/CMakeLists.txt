@@ -19,4 +19,4 @@ if (WIN32)
     target_link_libraries(opcua PRIVATE winmm.lib ws2_32.lib)
 endif()
 
-target_link_libraries(opcua PRIVATE open62541)
+target_link_libraries(opcua PUBLIC open62541)
