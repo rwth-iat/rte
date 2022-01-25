@@ -56,12 +56,19 @@ As shown in the UML diagram above, the library comprises a `server`, an abstract
   * **Server to Interfaces** ([serverToInterfaces.c](source/interface.c)):
     Used to link a server to a custom interface that is derived from the abstract interface class.
 
-## Features / Remarks
+## Remarks
 
 TODO: What features are missing, what is not fully implemented? E.g. security (anonymous, user/pass, certificates)
 TODO: Generic Trafo is unidirectional (OV-->UA)
 
-# Compilation Hints
+* Currently, a whole node is temporarily created and respectively transformed for every getNode call, even though only parts of it are needed and evaluated by the open62541 server, e.g. a single attribute like the browse name.
+This is a huge overhead, especially if a single service call from OPC UA might lead to multiple getNode calls, e.g. by traversing browspaths or types.
+The [current changes to the nodestore api](https://github.com/open62541/open62541/commit/6b8db940e5fb4699c7bcde777fc7b21234cc947b) seem promising for future optimizations, but they are currently only available in the master branch and will probably become available in v1.4 or later as the api for v1.3 is already frozen.
 
-TODO: Remarks on used version (v1.2.3) and submodule
+## Compilation Hints
+
+The open62541 project is included as a shallow submodule referencing a commit of branch 1.3 after release candidate 1 ([v1.3-rc1](https://github.com/open62541/open62541/releases/tag/v1.3-rc1)), so that the 1.3 api should be stable within minor version changes.
+This allows us to keep the opcua library up-to-date with open62541 v1.3.
+To update to newer minor open62541 versions (e.g. v1.3.0 or v1.3.1) check out the submodule withouth depth set to 1 (not shallow).
+
 TODO: Remarks on setting necessary open62541 defines, e.g. NS0 and IMMUTABLE_NODES, ...

@@ -2,4 +2,4 @@
 	path = syslibs/opcua/open62541
 	url = https://github.com/open62541/open62541
 	shallow = true
-	branch = 1.2
+	branch = 1.3

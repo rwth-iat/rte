@@ -349,10 +349,7 @@ static UA_Node * opcua_ovTrafo_newNode(void * context, UA_NodeClass nodeClass){
 }
 
 
-static const UA_Node * opcua_ovTrafo_getNode(void *context, const UA_NodeId *nodeId,
-                               UA_UInt32 attributeMask,
-                               UA_ReferenceTypeSet references,
-                               UA_BrowseDirection referenceDirections){
+static const UA_Node * opcua_ovTrafo_getNode(void *context, const UA_NodeId *nodeId){
 	UA_Node 				*newNode = NULL;
 	UA_StatusCode 			result = UA_STATUSCODE_GOOD;
 	OV_PATH 				path;
@@ -728,8 +725,7 @@ static const UA_Node * opcua_ovTrafo_getNode(void *context, const UA_NodeId *nod
 	return newNode;
 }
 static UA_StatusCode opcua_ovTrafo_getNodeCopy(void *context, const UA_NodeId *nodeId, UA_Node ** nodeOut){
-	UA_Node* node = (UA_Node*) opcua_ovTrafo_getNode(context, nodeId, UA_NODEATTRIBUTESMASK_ALL,
-                       UA_REFERENCETYPESET_ALL, UA_BROWSEDIRECTION_BOTH);
+	UA_Node* node = (UA_Node*) opcua_ovTrafo_getNode(context, nodeId);
 	if(node == NULL)
 		return UA_STATUSCODE_BADNODEIDUNKNOWN;
 	*nodeOut = node;
@@ -937,7 +933,7 @@ opcua_ovTrafo_new(OV_INSTPTR_opcua_server context) {
     nsi->deleteNode =    	opcua_ovTrafo_deleteNode;
     nsi->insertNode =       opcua_ovTrafo_insertNode;
     nsi->getNode =          opcua_ovTrafo_getNode;
-	nsi->getNodeFromPtr =	NULL;
+	//nsi->getNodeFromPtr =	NULL;
     nsi->getNodeCopy =      opcua_ovTrafo_getNodeCopy;
     nsi->replaceNode =      opcua_ovTrafo_replaceNode;
     nsi->removeNode =       opcua_ovTrafo_removeNode;

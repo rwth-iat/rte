@@ -164,7 +164,7 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_run_set(
 			defaultNodestore->newNode = config->nodestore.newNode;
 			defaultNodestore->deleteNode = config->nodestore.deleteNode;
 			defaultNodestore->getNode = config->nodestore.getNode;
-			defaultNodestore->getNodeFromPtr = config->nodestore.getNodeFromPtr;
+			//defaultNodestore->getNodeFromPtr = config->nodestore.getNodeFromPtr;
 			defaultNodestore->releaseNode = config->nodestore.releaseNode;
 			defaultNodestore->getNodeCopy = config->nodestore.getNodeCopy;
 			defaultNodestore->insertNode = config->nodestore.insertNode;
