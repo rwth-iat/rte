@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
     - name: Install additional build dependencies
       run: |
         sudo apt-get install -y --no-install-recommends tcl
@@ -25,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
     - name: Install additional build dependencies
       run: |
         sudo apt-get install -y --no-install-recommends tcl gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
@@ -44,6 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
     - name: Install additional build dependencies
       run: |
         sudo apt-get install -y --no-install-recommends tcl gcc-arm-linux-gnueabihf libc6-dev-armhf-cross
@@ -63,6 +69,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
     - name: Install additional build dependencies
       run: |
         sudo apt-get install -y --no-install-recommends tcl
@@ -77,6 +85,8 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
     - name: Install Magicsplat Tcl
       run: |
         Invoke-WebRequest -Uri "https://sourceforge.net/projects/magicsplat/files/magicsplat-tcl/tcl-8.6.11-installer-1.11.2-x64.msi/download" -OutFile tcl-installer.msi -UserAgent "NativeHost"
