@@ -19,5 +19,9 @@ else()
     add_subdirectory(open62541)
 endif()
 
+if(WIN32)
+    target_compile_definitions(opcua PRIVATE -D_WINSOCKAPI_)
+endif()
+
 target_link_libraries(opcua PUBLIC open62541)
 endif()
