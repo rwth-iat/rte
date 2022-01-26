@@ -1,10 +1,16 @@
 # OPC UA Server library (opcua)
 
 This library provides the basic server functionalities for **OPC Unified Architecture** (OPC UA, IEC 62541).
-It based on the [open62541](http://www.open62541.org/) stack, which is an open source implementation of the OPC UA stack, with server and client functionality in C.
-The library supports a standard **OPC UA server** with an integrated **interface** to browse the ACPLT/OV object model, which is transformed to the OPC UA adress space model, in an ACPLT/RTE runtime environment.
+It is based on the [open62541](http://www.open62541.org/) stack, which is an open source implementation of the OPC UA stack with server and client functionality in C.
+The library allows to add **OPC UA server** objects in an ACPLT/RTE runtime environment to browse the ACPLT/OV object model, which is transformed to the OPC UA adress space model.
 Hence, the ACPLT/RTE can be viewed and manipulated from an OCP UA client.
-An [example project](https://github.com/acplt/rte_opcua_example) with a ACPLT/RTE demo library shows how to extend the transformation by overwriting the `interface` class of this library to customize the OPC UA representation.
+
+An [example project](https://github.com/acplt/rte_opcua_example) with a ACPLT/RTE demo library shows how to extend the transformation by specializing the `interface` class of this library to customize the OPC UA representation.
+In this context **interfaces** are an abstract concept to:
+
+* add or replace transformation rules to be evaluated by the server,
+* to load information models like [OPC UA nodesets](https://github.com/OPCFoundation/UA-Nodeset) for [OPC UA Companion Specifications](https://reference.opcfoundation.org/),
+* to add custom datatypes and their en/decoding.
 
 ## Usage
 
@@ -61,7 +67,20 @@ As shown in the UML diagram above, the library comprises a `server`, an abstract
 TODO: What features are missing, what is not fully implemented? E.g. security (anonymous, user/pass, certificates)
 TODO: Generic Trafo is unidirectional (OV-->UA)
 
-* Currently, a whole node is temporarily created and respectively transformed for every getNode call, even though only parts of it are needed and evaluated by the open62541 server, e.g. a single attribute like the browse name.
+### Cardinality and dynamic changes of serverToInterfaces
+
+In prototypical versions (c.f. literature under [concept](#Concept)) multiple interfaces could be connected to the server, which was even possible if the opcua server was already running.
+The generic transformation was also modeled as an interface, which was added to the server as a part.
+This is very flexible and modular, but demands very robust and complicated interface implementations.
+Moreover, the dependency of different transformations, nodesets and data types has to be considered.
+Also, multiple possibilities exisist to decide which transformation / interface to use.
+
+For the sake of simplicity and maintainability we decided to allow only one interface for each opcua server, which can only be changed if the server is offline.
+This is suitable for most use cases and - if necessary - a special interface could be created, that manages to integrate multiple other interfaces.
+
+### Partial Transformation of nodes
+
+Currently, a whole node is temporarily created and respectively transformed for every getNode call, even though only parts of it are needed and evaluated by the open62541 server, e.g. a single attribute like the browse name.
 This is a huge overhead, especially if a single service call from OPC UA might lead to multiple getNode calls, e.g. by traversing browspaths or types.
 The [current changes to the nodestore api](https://github.com/open62541/open62541/commit/6b8db940e5fb4699c7bcde777fc7b21234cc947b) seem promising for future optimizations, but they are currently only available in the master branch and will probably become available in v1.4 or later as the api for v1.3 is already frozen.
 
@@ -71,4 +90,14 @@ The open62541 project is included as a shallow submodule referencing a commit of
 This allows us to keep the opcua library up-to-date with open62541 v1.3.
 To update to newer minor open62541 versions (e.g. v1.3.0 or v1.3.1) check out the submodule withouth depth set to 1 (not shallow).
 
-TODO: Remarks on setting necessary open62541 defines, e.g. NS0 and IMMUTABLE_NODES, ...
+The following defines for open62541 are important (c.f. [CMakeLists](CMakeLists.txt)):
+
+* UA_ENABLE_IMMUTABLE_NODES: ON.
+For performance reasons the UA_Server retrieves nodes via `getNode` and edits them in place on default.
+Our nodes exist only temporarily as they are created on access.
+Hence, we need to enable the immutable nodes option to let the server use `getNodeCopy` and `replaceNode` instead of modifying nodes directly.
+* UA_ENABLE_NODEMANAGEMENT: OFF.
+Nodemanagement (adding and deleting nodes from an OPC UA client) is currently not implemented, as no backtransformations (UA_Node --> OV object/element) are implemented.
+* UA_NAMESPACE_ZERO: REDUCED.
+If the full namespace 0 is compiled, the server startup is very slow, which is a problem, as the server is started via set accessor of the run variable.
+Hence, we stick to the default setting of open62541, which includes the most important nodes for many use cases.
