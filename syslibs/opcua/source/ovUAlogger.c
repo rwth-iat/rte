@@ -9,7 +9,7 @@
 #include <time.h>
 #include "ov_logfile.h"
 
-#if UA_ENABLE_AMALGAMATION
+#ifdef UA_ENABLE_AMALGAMATION
 #include <open62541.h>
 #else
 #include <open62541/plugin/log.h>

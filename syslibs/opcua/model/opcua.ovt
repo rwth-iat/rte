@@ -1,7 +1,12 @@
 #ifndef opcua_OVT_INCLUDED
 #define opcua_OVT_INCLUDED
 
-#include "open62541.h"
+#ifdef UA_ENABLE_AMALGAMATION
+#include <open62541.h>
+#else
+#include <open62541/server.h>
+#include <open62541/plugin/nodestore.h>
+#endif
 
 typedef UA_Server* OPCUA_PTR_UA_Server;
 typedef UA_Nodestore* OPCUA_PTR_NODESTOREINTERFACE;

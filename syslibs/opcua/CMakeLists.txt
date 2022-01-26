@@ -6,26 +6,16 @@ option(OV_UA_USE_INSTALLED_OPEN62541 "Use find_package to include an installed o
 option(OV_UA_ENABLE_UA_LOG "Print UA log output." ON)
 option(OV_UA_USE_OV_LOGGER "Redirect UA log output to OV logger (OV_UA_USE_OV_LOGGER has to be ON)." ON)
 
-#alternative syntax:
+# Set CMake options for open62541 library:
 set(UA_NAMESPACE_ZERO "REDUCED" CACHE STRING "Enable reduced NS0 (default) to allow for faster server startup." FORCE)
-set(UA_ENABLE_AMALGAMATION "ON" CACHE BOOL "Merge als .c and .h files from open62541 in one open62541.c/.h" FORCE)
-set(UA_AMALGAMATION_ARCHITECTURES "posix;win32" CACHE STRING "Include posix and win32 architecture." FORCE)
 set(UA_ENABLE_IMMUTABLE_NODES "ON" CACHE BOOL "Use getNodeCopy and replaceNode instead of modifying nodes directly." FORCE)
 set(UA_ENABLE_NODEMANAGEMENT "OFF" CACHE BOOL "Nodemanagement is currently not implemented, as no backtransformations are implemented." FORCE)
 
+# Include installed open62541 library or add submodule
 if(OV_UA_USE_INSTALLED_OPEN62541)
     find_package(open62541 1.3) #TODO add with correct component name: REQUIRED COMPONENTS ImmutableNodes
 else()
     add_subdirectory(open62541)
-endif()
-
-target_compile_definitions(opcua
-        PRIVATE -DUA_DYNAMIC_LINKING_EXPORT)
-if(UNIX)
-    target_compile_definitions(opcua PRIVATE -D_XOPEN_SOURCE=500 -D_GNU_SOURCE)
-endif()
-if (WIN32)
-    target_link_libraries(opcua PRIVATE winmm.lib ws2_32.lib)
 endif()
 
 target_link_libraries(opcua PUBLIC open62541)

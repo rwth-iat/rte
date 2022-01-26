@@ -29,6 +29,10 @@
 #include "opcua_ovTrafo.h"
 #include "opcua_nsSwitch.h"
 
+#ifndef UA_ENABLE_AMALGAMATION
+#include <open62541/server_config_default.h>
+#endif
+
 OV_DLLFNCEXPORT OV_RESULT opcua_server_applicationURI_set(
     OV_INSTPTR_opcua_server         pobj,
     const OV_STRING  value

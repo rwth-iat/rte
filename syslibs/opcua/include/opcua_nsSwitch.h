@@ -7,7 +7,13 @@
 #ifndef UA_NODESTORE_SWITCH_H_
 #define UA_NODESTORE_SWITCH_H_
 
-#include "open62541.h"
+#ifdef UA_ENABLE_AMALGAMATION
+#include <open62541.h>
+#else
+#include <open62541/server.h>
+#include <open62541/plugin/nodestore.h>
+#endif
+
 /*
  * Forward declaration of nodestore switch
  */
