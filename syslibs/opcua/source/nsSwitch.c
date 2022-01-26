@@ -224,7 +224,7 @@ static void
 UA_Nodestore_Switch_iterate(void *nsCtx, UA_NodestoreVisitor visitor,
 		void *visitorCtx) {
 	UA_Nodestore_Switch *storeSwitch = (UA_Nodestore_Switch *) nsCtx;
-	UA_Nodestore *tempArray[storeSwitch->size];
+	UA_Nodestore ** tempArray = (UA_Nodestore **) UA_malloc(sizeof(UA_Nodestore *) *storeSwitch->size);
 	for (size_t i = 0; i < storeSwitch->size; i++) {
 		for (size_t j = 0; j <= i; j++) {
 			if (tempArray[j] == storeSwitch->stores[i])
