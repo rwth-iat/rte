@@ -15,9 +15,11 @@
 #include <open62541/plugin/log.h>
 #endif
 
+#if OV_UA_ENABLE_LOG && OV_UA_USE_OV_LOGGER 
 static char			logMsg[1024];
 static char			logMsg2[1101];
 static const char *LogCategoryNames[8] = {"Network", "Channel", "Session", "Server", "Client", "User", "Security", "Eventloop"};
+#endif
 
 static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory category, const char *msg, va_list args) {
 #if OV_UA_ENABLE_LOG && OV_UA_USE_OV_LOGGER 
