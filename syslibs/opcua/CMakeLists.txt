@@ -1,7 +1,7 @@
+if(OV_WITH_OPCUA)
 add_ov_library(opcua)
 ov_library_includes(opcua ov ksbase)
 
-if(BUILD_OV_LIBRARY_opcua)
 # Custom CMake options for opcua library:
 option(OV_UA_USE_INSTALLED_OPEN62541 "Use find_package to include an installed open62541 library instead of including the submodule." OFF)
 option(OV_UA_ENABLE_UA_LOG "Print UA log output." ON)
