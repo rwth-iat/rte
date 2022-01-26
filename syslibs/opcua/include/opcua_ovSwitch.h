@@ -1,5 +1,5 @@
 /*
- * ovSwitch.h
+ * opcua_ovSwitch.h
  *
  *  Created on: 23.02.2019
  *      Author: Julian Grothoff

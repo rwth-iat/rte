@@ -1,5 +1,5 @@
 /*
- * ovTrafo.h
+ * opcua_ovTrafo.h
  *
  *  Created on: 23.02.2019
  *      Author: Julian Grothoff
