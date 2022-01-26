@@ -4,25 +4,23 @@
  *  Created on: 26.05.2015
  *      Author: lars
  */
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
 #include "ov_logfile.h"
-#include "open62541.h"
 
-#if LOG_UA
+#if UA_ENABLE_AMALGAMATION
+#include <open62541.h>
+#else
+#include <open62541/plugin/log.h>
+#endif
+
 static char			logMsg[1024];
-static char			logMsg2[1096];
-
-#if !LOG_UA_TO_OV
-static const char *LogLevelNames[6] = {"Trace", "Debug", "Info", "Warning", "Error", "Fatal"};
-#endif
+static char			logMsg2[1101];
 static const char *LogCategoryNames[8] = {"Network", "Channel", "Session", "Server", "Client", "User", "Security", "Eventloop"};
-#endif
 
 static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory category, const char *msg, va_list args) {
-#if LOG_UA
+#if OV_UA_ENABLE_LOG && OV_UA_USE_OV_LOGGER 
 	time_t now;
 	struct tm *ptr;
 	char str[60];
@@ -30,7 +28,6 @@ static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory categor
 	ptr = localtime(&now);
 	strftime(str ,100 , "%H:%M.%S",ptr);
 	vsnprintf(logMsg, sizeof(logMsg), msg, args);
-#if LOG_UA_TO_OV
 	if(level == 0){
 		snprintf(logMsg2, sizeof(logMsg2), "[UA-Trace] %s\t | %s - %s", LogCategoryNames[category], str, logMsg);
 	} else if(level >= 5){
@@ -39,35 +36,24 @@ static void ov_UAlogger(void* context, UA_LogLevel level, UA_LogCategory categor
 		snprintf(logMsg2, sizeof(logMsg2), "[UA] %s\t | %s - %s", LogCategoryNames[category], str, logMsg);
 	}
 	switch(level){
-	case 0:
-	case 1:
+	case UA_LOGLEVEL_TRACE:
+	case UA_LOGLEVEL_DEBUG:
 		ov_logfile_print(OV_MT_DEBUG, logMsg2);
 		break;
-	case 2:
+	case UA_LOGLEVEL_INFO:
 		ov_logfile_print(OV_MT_INFO, logMsg2);
 		break;
-	case 3:
+	case UA_LOGLEVEL_WARNING:
 		ov_logfile_print(OV_MT_WARNING, logMsg2);
 		break;
+	case UA_LOGLEVEL_ERROR:
+	case UA_LOGLEVEL_FATAL:
 	default:
 		ov_logfile_print(OV_MT_ERROR, logMsg2);
 		break;
 	}
-#else
-	fprintf(stdout,"[UA-%s] %s | %s - %s\n", LogLevelNames[level], LogCategoryNames[category], str, logMsg);
-#if OV_SYSTEM_NT
-/*
- *	added to handle output for eclipse consoles on windows
- * 	workaround for the bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732
- *	we need to see whether this has performance issues
-*/
-	fflush(stdout);
-#endif
-#endif
+#endif /*OV_UA_USE_OV_LOGGER*/
 	va_end(args);
-#endif
-
-
 }
 
 UA_Logger opcua_ovUAlogger_new(void) {

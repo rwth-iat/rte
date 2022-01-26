@@ -16,7 +16,6 @@
 #define OV_OPCUA_VIRTUALNODESEPERATOR "||"
 #define OV_OPCUA_NSINDEX_UNDEFINED UA_UINT16_MAX
 
-//TODO move OV_DLLFNCEXPORT to header
 UA_Logger opcua_ovUAlogger_new(void);
 
 void opcua_helpers_UA_String_append(UA_String * string, const char * append);

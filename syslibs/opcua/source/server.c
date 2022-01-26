@@ -66,8 +66,10 @@ OV_DLLFNCEXPORT OV_RESULT opcua_server_port_set(
 UA_StatusCode opcua_server_setConfig(OV_INSTPTR_opcua_server pServer){
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
 	UA_ServerConfig* config = UA_Server_getConfig(pServer->v_server);
-    //Set ov logger
+    // Use a custom logger, if log should be redirected to OV logger or if log should be disabled
+#if OV_UA_USE_OV_LOGGER || !OV_UA_ENABLE_LOG
     config->logger = opcua_ovUAlogger_new();
+#endif
 	result = UA_ServerConfig_setMinimal(config, pServer->v_port, NULL);
 	if (result != UA_STATUSCODE_GOOD)
 		return result;
