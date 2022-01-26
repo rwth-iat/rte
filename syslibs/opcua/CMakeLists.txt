@@ -20,7 +20,7 @@ else()
 endif()
 
 if(WIN32)
-    target_compile_definitions(opcua PRIVATE -D_WINSOCKAPI_)
+    target_compile_definitions(opcua PRIVATE -DWIN32_LEAN_AND_MEAN -DPLT_USE_WINSOCK2=1)
 endif()
 
 target_link_libraries(opcua PUBLIC open62541)
