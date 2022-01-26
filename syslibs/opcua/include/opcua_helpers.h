@@ -26,7 +26,7 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovResultToUaStatusCode(OV_RESULT res
 OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_ovAnyToUAVariant(const OV_ANY* pAny, UA_Variant* pVariant);
 OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_UAVariantToOVAny(const UA_Variant* pVariant, OV_ANY* pAny);
 OV_DLLFNCEXPORT UA_NodeId opcua_helpers_ovVarTypeToNodeId(OV_VAR_TYPE type);
-OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access);
+OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_getVtblPointer(OV_ELEMENT *pelem, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj);
 OV_DLLFNCEXPORT OV_ACCESS opcua_helpers_getAccess(const OV_ELEMENT* pElem);
 OV_DLLFNCEXPORT UA_NodeClass opcua_helpers_getNodeClass(const OV_ELEMENT* pElem);
 

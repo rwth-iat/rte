@@ -21,12 +21,11 @@
 #include "ov_time.h"
 #include "ov_path.h"
 #include "ov_macros.h"
+#include "ov_object.h"
 
 #define EPOCHDIFFERENCE_SECONDS	11644473600LL
 #define TOSECONDS				10000000LL
 #define TOMICROSECONDS			10LL
-
-
 
 OV_DLLFNCEXPORT void opcua_helpers_UA_String_append(UA_String * string, const char * append){
 	if(string == NULL)
@@ -762,7 +761,7 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_object opcua_helpers_resolveNodeIdToOvObject(const
 }
 
 
-OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access){
+OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_getVtblPointer(OV_ELEMENT *pelem, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj){
 	switch(pelem->elemtype){
 	case OV_ET_OBJECT:
 	case OV_ET_OPERATION:
@@ -784,26 +783,14 @@ OV_DLLFNCEXPORT UA_StatusCode opcua_helpers_getVtblPointerAndCheckAccess(OV_ELEM
 	if((!*ppVtblObj) || (ov_activitylock)){
 		*ppVtblObj = pclass_ov_object->v_pvtable;
 	}
-	if(pelem->elemtype == OV_ET_VARIABLE) //FIXME Allow read access for all variables, even if they don't have get/set accesors
-		*access = OV_AC_READWRITE;
-	else
-		*access = (*ppVtblObj)->m_getaccess(pelem->pobj, pelem, NULL);
 	return UA_STATUSCODE_GOOD;
 }
 
 OV_DLLFNCEXPORT OV_ACCESS opcua_helpers_getAccess(const OV_ELEMENT* pElem){
-	OV_VTBLPTR_ov_object	pVtbl	=	NULL;
-	if(!pElem->pobj){
+	if(pElem && pElem->pobj)
+		return ov_object_getaccessEx(pElem->pobj, pElem, NULL);
+	else
 		return OV_AC_NONE;
-	} else {
-		Ov_GetVTablePtr(ov_object, pVtbl, pElem->pobj);
-		if(pVtbl){
-			return pVtbl->m_getaccess(pElem->pobj, pElem, NULL);
-		} else {
-			return OV_AC_NONE;
-		}
-	}
-	return OV_AC_NONE;
 }
 
 OV_DLLFNCEXPORT UA_NodeClass opcua_helpers_getNodeClass(const OV_ELEMENT* pElem){

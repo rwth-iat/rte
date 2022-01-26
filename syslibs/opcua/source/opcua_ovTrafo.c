@@ -370,7 +370,7 @@ static const UA_Node * opcua_ovTrafo_getNode(void *context, const UA_NodeId *nod
 	element = path.elements[path.size-1];
 	ov_memstack_unlock();
 
-	result = opcua_helpers_getVtblPointerAndCheckAccess(&element, &pobj, &pVtblObj, &access);
+	result = opcua_helpers_getVtblPointer(&element, &pobj, &pVtblObj);
 	if(result != UA_STATUSCODE_GOOD){
 		return NULL;
 	}
@@ -449,6 +449,7 @@ static const UA_Node * opcua_ovTrafo_getNode(void *context, const UA_NodeId *nod
 
 	// WriteMask
 	UA_UInt32 writeMask = 0;
+	access = opcua_helpers_getAccess(&element);
 	if(element.elemtype != OV_ET_VARIABLE){
 		if(access & OV_AC_WRITE){
 			writeMask |= UA_WRITEMASK_BROWSENAME;
