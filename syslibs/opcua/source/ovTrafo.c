@@ -11,10 +11,10 @@
 #define OV_COMPILE_LIBRARY_opcua
 #endif
 
-#include "ovTrafo.h"
+#include "opcua_ovTrafo.h"
 #include "ov_macros.h"
 #include "opcua.h"
-#include "helpers.h"
+#include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
 
 static OV_BOOL

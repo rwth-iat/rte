@@ -24,10 +24,10 @@
 #include "opcua.h"
 #include "ov_macros.h"
 #include "ov_object.h" //for ov_object_getaccessEx
-#include "helpers.h"
-#include "ovSwitch.h"
-#include "ovTrafo.h"
-#include "nsSwitch.h"
+#include "opcua_helpers.h"
+#include "opcua_ovSwitch.h"
+#include "opcua_ovTrafo.h"
+#include "opcua_nsSwitch.h"
 
 OV_DLLFNCEXPORT OV_RESULT opcua_server_applicationURI_set(
     OV_INSTPTR_opcua_server         pobj,

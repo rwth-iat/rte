@@ -24,8 +24,8 @@
 #include "opcua.h"
 #include "ov_macros.h"
 #include "ov_object.h"
-#include "ovSwitch.h"
-#include "helpers.h"
+#include "opcua_ovSwitch.h"
+#include "opcua_helpers.h"
 
 OV_DLLFNCEXPORT OV_ACCESS opcua_interface_getaccess(
 	OV_INSTPTR_ov_object	pobj,

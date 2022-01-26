@@ -1,5 +1,5 @@
 /*
- * helpers.h
+ * opcua_helpers.h
  *
  *  Created on: 21.10.2014
  *      Author: lars

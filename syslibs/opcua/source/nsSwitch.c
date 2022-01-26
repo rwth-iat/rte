@@ -3,7 +3,7 @@
  *
  *    Copyright 2019 (c) Julian Grothoff, Torben Deppe, Florian Palm
  */
-#include "nsSwitch.h"
+#include "opcua_nsSwitch.h"
 
 //TODO Make multithreading save
 //TODO rename Switch

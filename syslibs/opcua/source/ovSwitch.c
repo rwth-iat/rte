@@ -11,12 +11,12 @@
 #define OV_COMPILE_LIBRARY_opcua
 #endif
 
-#include "ovSwitch.h"
+#include "opcua_ovSwitch.h"
 #include "ov_macros.h"
 #include "opcua.h"
-#include "helpers.h"
+#include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
-#include "ovTrafo.h"
+#include "opcua_ovTrafo.h"
 
 static void opcua_ovSwitch_getObjData(const UA_NodeId *nodeId, OV_INSTPTR_ov_object *pobj, OV_STRING *virtualPath){
 	OV_STRING *plist = NULL;
