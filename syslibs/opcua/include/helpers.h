@@ -15,6 +15,8 @@
 #define OV_OPCUA_DEFAULTNSINDEX 1
 #define OV_OPCUA_VIRTUALNODESEPERATOR "||"
 #define OV_OPCUA_NSINDEX_UNDEFINED UA_UINT16_MAX
+#define OV_OPCUA_DEFAULT_APPLICATIONURI "acplt.org/"
+#define OV_OPCUA_DEFAULT_APPLICATIONNAME "ACPLT/RTE" // the suffix /SERVERNAME is appended in uaServer startup via ov_vendortree_getServer, e.g. ACPLT/RTE/MANAGER
 
 UA_Logger opcua_ovUAlogger_new(void);
 

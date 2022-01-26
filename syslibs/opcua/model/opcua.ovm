@@ -34,7 +34,7 @@ LIBRARY opcua
     		   	HAS_SET_ACCESSOR
                 FLAGS = "i"
     		   	COMMENT = "Namespace 1 (Application) uri. Default is acplt.org/"
-                INITIALVALUE   =    "acplt.org/"; // = opcua.ovt OPCUA_DEFAULT_APPLICATIONURI
+                INITIALVALUE   =    "acplt.org/"; // = opcua.ovt OV_OPCUA_DEFAULT_APPLICATIONURI
             applicationName    : STRING
                	HAS_SET_ACCESSOR
                 FLAGS = "i"

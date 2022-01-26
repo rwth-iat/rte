@@ -3,9 +3,6 @@
 
 #include "open62541.h"
 
-#define OPCUA_DEFAULT_APPLICATIONURI "acplt.org/"
-#define OPCUA_DEFAULT_APPLICATIONNAME "ACPLT/RTE" // the suffix /SERVERNAME is appended in uaServer startup via ov_vendortree_getServer, e.g. ACPLT/RTE/MANAGER
-
 typedef UA_Server* OPCUA_PTR_UA_Server;
 typedef UA_Nodestore* OPCUA_PTR_NODESTOREINTERFACE;
 typedef UA_DataTypeArray* OPCUA_PTR_DATATYPEARRAY; 

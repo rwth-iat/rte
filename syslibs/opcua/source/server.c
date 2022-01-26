@@ -82,11 +82,11 @@ UA_StatusCode opcua_server_setConfig(OV_INSTPTR_opcua_server pServer){
     if(pServer != NULL && ov_string_getlength(pServer->v_applicationName)){
     	config->applicationDescription.applicationName.text = UA_String_fromChars(pServer->v_applicationName);
     }else{
-    	//Append OPCUA_DEFAULT_APPLICATIONNAME and SERVERNAME
+    	//Append OV_OPCUA_DEFAULT_APPLICATIONNAME and SERVERNAME
     	OV_ANY serverName = OV_ANY_INIT;
     	OV_STRING applicationName = NULL;
     	ov_vendortree_getservername(&serverName, NULL); //Do not free, points to static servername
-    	ov_string_print(&applicationName,"%s/%s",  OPCUA_DEFAULT_APPLICATIONNAME, serverName.value.valueunion.val_string);
+    	ov_string_print(&applicationName,"%s/%s",  OV_OPCUA_DEFAULT_APPLICATIONNAME, serverName.value.valueunion.val_string);
     	config->applicationDescription.applicationName.text = UA_String_fromChars(applicationName);
     	ov_string_setvalue(&applicationName, NULL);
     }
@@ -95,7 +95,7 @@ UA_StatusCode opcua_server_setConfig(OV_INSTPTR_opcua_server pServer){
     if(pServer != NULL && ov_string_getlength(pServer->v_applicationURI)){
     	config->applicationDescription.applicationUri = UA_String_fromChars(pServer->v_applicationURI);
     }else{
-    	config->applicationDescription.applicationUri = UA_String_fromChars(OPCUA_DEFAULT_APPLICATIONURI);
+    	config->applicationDescription.applicationUri = UA_String_fromChars(OV_OPCUA_DEFAULT_APPLICATIONURI);
     }
 
     //Copy application name and uri to endpoint spec //TODO issue in open62541
