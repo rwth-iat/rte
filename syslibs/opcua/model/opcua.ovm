@@ -78,7 +78,7 @@ LIBRARY opcua
             useOvTrafo          : BOOL
                 HAS_SET_ACCESSOR
                 FLAGS = "ip"
-    			COMMENT="Use the generic transformation for OV objects (ovTrafo) and adds references to entryPath, ov/domain, ov/object and OPCUA_OVTRAFO_OVREFERENCES"
+    			COMMENT="Use the generic transformation for OV objects (ovTrafo) as default, if no trafo is specified in this interface or if the checkNode function of this interface returns false. Add references to entryPath, ov/domain and ov/object."
     			INITIALVALUE=TRUE;
     	END_VARIABLES;
     	OPERATIONS
