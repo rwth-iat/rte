@@ -5,6 +5,10 @@
  */
 #include "opcua_nsSwitch.h"
 
+#ifndef UA_ENABLE_AMALGAMATION
+#include <open62541/plugin/nodestore_default.h>
+#endif
+
 //TODO Make multithreading save
 //TODO rename Switch
 
