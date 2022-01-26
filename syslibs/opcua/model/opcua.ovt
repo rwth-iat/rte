@@ -1,20 +1,7 @@
 #ifndef opcua_OVT_INCLUDED
 #define opcua_OVT_INCLUDED
 
-/*
-* Needed to prevent redefined warnings :-S
-* TODO: Check if necessary and only define if it was defined before
-*/
-#ifdef WIN32
-#undef WIN32
-#endif
-
 #include "open62541.h"
-
-/*	restore pre-anti-warning state	*/
-#ifndef WIN32
-#define WIN32
-#endif
 
 #define OPCUA_DEFAULT_APPLICATIONURI "acplt.org/"
 #define OPCUA_DEFAULT_APPLICATIONNAME "ACPLT/RTE" // the suffix /SERVERNAME is appended in uaServer startup via ov_vendortree_getServer, e.g. ACPLT/RTE/MANAGER
