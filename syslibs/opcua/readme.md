@@ -41,6 +41,14 @@ Another view of the structure focussed on the nodestore switches is shown below:
 
 ![Structure of switches in opcua lib](doc/opcua-concept-switches.svg)
 
+The *opcua* library contains a *server* class derived from *ksbase/ComTask*, which holds a pointer to the *UA_Server* as *server* variable.
+An UA_Server contains a *configuration*, which holds the *nodestore* that is redirected to the namespace index based nodestore switch *nsSwitch*.
+Accesses to namespace zero (OPC UA namespace) are directed to the open62541 *UA_HashMap* nodestore.
+Accesses to namespace one (application namespace) are directed to the interface based nodestore switch *ovSwitch*.
+The ovSwitch redirects accesses to the generic transformation of ov elements *ovTrafo*, if no interface is connected or the *checkNode* function of a connected interface returns false and the variable *useOvTrafo* is set to true.
+Otherwise the transformation (*trafo* variable) of the connected interface is used.
+The opcua_helpers.c/h provide utility functions for the generic and custom tranformations.
+
 ## Library Content
 
 ![Kind of UML class diagram for opcua lib](doc/opcua-lib-uml.svg)
@@ -64,8 +72,16 @@ As shown in the UML diagram above, the library comprises a `server`, an abstract
 
 ## Remarks
 
-TODO: What features are missing, what is not fully implemented? E.g. security (anonymous, user/pass, certificates)
-TODO: Generic Trafo is unidirectional (OV-->UA)
+### Unidirectional transformation
+
+The generic transformation is mainly unidirectional from ACPLT/OV to OPC UA.
+Only necessary backtransformations for writing variable values are implemented via the getNodeCopy and replaceNode nodestore functions.
+So the ACPLT/OV model can't be directly modified via [OPC UA nodemanagement services](https://open62541.org/doc/1.2/services.html?highlight=nodemanagement#nodemanagement-service-set).
+
+### Historic data access
+
+Currently, no [historic data access](https://open62541.org/doc/1.2/services.html?highlight=nodemanagement#historyread-service) is implemented.
+If historic variable values should be accessed, the opcua library has to be extended according to [kshist](../kshist/) library.
 
 ### Cardinality and dynamic changes of serverToInterfaces
 
@@ -83,6 +99,17 @@ This is suitable for most use cases and - if necessary - a special interface cou
 Currently, a whole node is temporarily created and respectively transformed for every getNode call, even though only parts of it are needed and evaluated by the open62541 server, e.g. a single attribute like the browse name.
 This is a huge overhead, especially if a single service call from OPC UA might lead to multiple getNode calls, e.g. by traversing browspaths or types.
 The [current changes to the nodestore api](https://github.com/open62541/open62541/commit/6b8db940e5fb4699c7bcde777fc7b21234cc947b) seem promising for future optimizations, but they are currently only available in the master branch and will probably become available in v1.4 or later as the api for v1.3 is already frozen.
+
+### Security
+
+Currently, the security configuration of the OPC UA server is [set to the default minimum config](https://github.com/open62541/open62541/blob/fc20b59cc886d42e5e43f3904fe3cd139433ecce/plugins/include/open62541/server_config_default.h#L53-L63) during [server startup](source/server.c#L77) with no certificate.
+To extend this, the opcua library or a derived one should expose the configuration as variables of the opcua server object, e.g. User/Password or certificate/key locations, utilizing OPC UA and respectively open62541 security options.
+Although, this would expose the UA security settings via KS.
+Hence, it may be necesseary to align the security settings with the KS ticket system.
+
+Moreover, the [access control plugin](https://open62541.org/doc/1.2/plugin_accesscontrol.html#access-control) should be utilized if node or attribute based access control should be realized instead of server wide (securechannel based) authorization.
+
+As multiple OPC UA servers can be instantiated within one ACPLT/RTE server the ACPLT/OV model can be explored with different security settings (and transformations/views) via different network ports.
 
 ## Compilation Hints
 
