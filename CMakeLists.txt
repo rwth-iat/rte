@@ -22,6 +22,7 @@ add_subdirectory(syslibs/kshttp)
 add_subdirectory(syslibs/ksxdr)
 add_subdirectory(syslibs/TCPbind)
 add_subdirectory(syslibs/UDPbind)
+option(OV_WITH_OPCUA "Enable building of opcua librar. Respectively, includes or searches for open62541." ON)
 add_subdirectory(syslibs/opcua)
 add_subdirectory(syslibs/ksapi)
 

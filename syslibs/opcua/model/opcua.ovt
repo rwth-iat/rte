@@ -1,35 +1,15 @@
 #ifndef opcua_OVT_INCLUDED
 #define opcua_OVT_INCLUDED
 
-
-/*	Needed to prevent redefined warnings :-S	*/
-#ifdef WIN32
-#undef WIN32
+#ifdef UA_ENABLE_AMALGAMATION
+#include <open62541.h>
+#else
+#include <open62541/server.h>
+#include <open62541/plugin/nodestore.h>
 #endif
 
-#include "open62541.h"
-
-/*	restore pre-anti-warning state	*/
-#ifndef WIN32
-#define WIN32
-#endif
-
-#define OV_UA_NAMESPACEURI "iec62541-ov.acplt.org"
-/* 
-	Define your data types here. 
-*/
-struct UA_NodeStore {
-    struct nodeEntry **entries;
-    UA_UInt32          size;
-    UA_UInt32          count;
-    UA_UInt32          sizePrimeIndex;
-};
-
-
-typedef UA_Connection* UA_ConnectionPTR;       
-typedef UA_Connection** UA_ConnectionPTRPTR;
-typedef UA_Server* OV_PTR_UA_Server;
-	
-typedef UA_StatusCode opcua_loadInformationModel(UA_Server *server, UA_UInt16 *namespacesSize, UA_Namespace **namespaces);
+typedef UA_Server* OPCUA_PTR_UA_Server;
+typedef UA_Nodestore* OPCUA_PTR_NODESTOREINTERFACE;
+typedef UA_DataTypeArray* OPCUA_PTR_DATATYPEARRAY; 
 
 #endif

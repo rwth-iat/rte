@@ -5,37 +5,22 @@
 #include "ov_macros.h"
 #include "ov_path.h"
 
-typedef UA_NodestoreInterface* UA_FNC_OVNODESTOREINTERFACE2NEW();
-typedef void UA_FNC_OVNODESTOREINTERFACE2DELETE(UA_NodestoreInterface * nodestoreInterface);
-	
-/* opcua-Server functions */
-typedef UA_StatusCode UA_FNC_ADDINFORMATIONMODEL(UA_Namespace **namespace, OV_UINT namespaceSize, OV_STRING *StartFolder, opcua_loadInformationModel *loadInfoModel);
-typedef UA_Int32 UA_FNC_RESOLVENODEIDTOPATH(UA_NodeId nodeId, OV_PATH* pPath);
-typedef OV_INSTPTR_ov_object UA_FNC_RESOLVENDOEIDTOOVOBJECT(UA_NodeId *nodeId);
-typedef UA_Int32 UA_FNC_GETVTBLPOINTERANDCHECKACCESS(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access);
+/*
+* Is called each time before the opcua server is started to allow for custom modifications in the OPC UA server, e.g. to load nodesets and datatypes.
+*/
+typedef OV_RESULT OPCUA_FNC_LOADINFORMATIONMODEL(OV_INSTPTR_opcua_interface pInterface, UA_Server* pServer);
 
+/*
+* The checkNode is called from the OV switch (ovSwitch.c) and OV transformation (ovTrafo.c) for every object that is accessed via the nodestore of the OPC UA server.
+* The check is used to determine, whether pInterface has a custom transformation for pObj and its virtual node.
+*/
+typedef OV_BOOL OPCUA_FNC_CHECKNODE(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, OV_STRING virtualNodePath);
 
-typedef UA_StatusCode UA_FNC_STARTNL(
-	struct UA_ServerNetworkLayer *nl, 
-	UA_Logger logger
-);
+/*
+* The checkReference is called from the generic OV tranformation (ovTrafo.c) for every child (pObj) of the currently transforemed node (pNode).
+* Overwrite this function and return true, if a specific reference type is needed and/or the generic reference should not be created.
+* Otherwise, the generic reference from type refTypeIndex will be added.
+*/
+typedef OV_BOOL OPCUA_FNC_CHECKREFERENCE(OV_INSTPTR_opcua_interface pInterface, OV_INSTPTR_ov_object pObj, UA_Node* pNode, UA_Byte refTypeIndex);
 
-typedef size_t UA_FNC_NLGETWORK(
-	struct UA_ServerNetworkLayer *nl, 
-	UA_Job** jobs, 
-	UA_UInt16 timeout
-);
-
-
-typedef size_t UA_FNC_STOPNL(
-	struct UA_ServerNetworkLayer *nl, 
-	UA_Job** jobs
-);
-
-typedef void UA_FNC_DELETENL(
-	struct UA_ServerNetworkLayer *nl
-);
-
-	
 #endif
-
