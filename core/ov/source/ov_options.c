@@ -69,6 +69,7 @@ void ov_options_init(ov_options* opts){
 	opts->servername = NULL;
 	opts->startup = TRUE;
 	memset(opts->libraries, 0, sizeof(opts->libraries));
+	opts->librariesRequired = FALSE;
 
 #if TLSF_HEAP
 	opts->poolsize = 0;
@@ -960,6 +961,13 @@ OV_RESULT ov_readArgs(ov_options* opts, int argc, char** argv){
 				}
 			}
 			else 	ov_logfile_error("Too many libraries in start command and configfile.\n");
+		}
+		/*
+		 *	require startup libraries, i.e. exit and fail if loading one of them fails
+		 */
+		else if(!strcmp(argv[i], "--require-libs")) {
+			if(opts->ctx!=ov_runtimeserver) goto HELP;
+			opts->librariesRequired = TRUE;
 		}
 		/*
 		 *	exit immideately

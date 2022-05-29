@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 project(rte C)
 include(cmake/ov_functions.cmake)
+
 include(cmake/ov_definitions.cmake)
 
 # OV Core system
